@@ -1,0 +1,174 @@
+.lx-curtain {
+  background: var(--color-cover-background);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 9000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lx-curtain
+  .lx-modal
+  > header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(
+    .lx-filter header.lx-head
+  ) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: auto;
+}
+
+.lx-curtain
+  .lx-modal
+  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-head):not(
+    .lx-list-item header
+  ):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky)
+  .lx-primary {
+  margin-left: 2rem;
+  font-size: var(--h2-font-size);
+  font-weight: var(--h2-font-weight);
+  color: var(--color-data);
+  padding-top: 0.5rem;
+}
+
+.lx-curtain
+  .lx-modal
+  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(
+    .lx-filter header.lx-head
+  )
+  .lx-button {
+  align-self: flex-start;
+  min-width: var(--row-size);
+}
+
+.lx-modal {
+  background-color: var(--color-region);
+  min-height: var(--row-size);
+  border: var(--region-border);
+  min-width: var(--aside-size);
+  margin: var(--row-size);
+  box-shadow: var(--shadow-modal);
+}
+
+.lx-modal > .lx-main {
+  padding: var(--padding-modal);
+  overflow-y: auto;
+  max-height: 80vh;
+  max-height: calc(100vh - 10rem);
+}
+
+.lx-modal > footer.lx-button-set {
+  justify-content: stretch;
+  flex-direction: row-reverse;
+  gap: 0;
+}
+
+.lx-modal > footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) {
+  flex-grow: 1;
+  height: auto;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+  flex-shrink: 0;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+
+.lx-modal > footer.lx-button-set.lx-two-buttons .lx-button {
+  max-width: 50%;
+}
+
+.lx-modal.lx-modal-xs {
+  width: var(--aside-size);
+}
+
+.lx-modal.lx-modal-s {
+  width: 40rem;
+}
+
+.lx-modal.lx-modal-m {
+  width: 60rem;
+}
+
+.lx-modal.lx-modal-l {
+  width: var(--body-column-size);
+}
+
+.lx-modal.lx-modal-xl {
+  width: 100%;
+}
+
+@media (max-width: 800px) {
+  .lx-modal {
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0;
+  }
+
+  .lx-modal .lx-main {
+    height: 100%;
+    max-height: calc(100vh - 8.75rem);
+    margin-bottom: 0;
+  }
+}
+
+dialog.lx-modal {
+  border: none;
+  margin: auto;
+  padding: 0;
+}
+
+dialog.lx-modal::backdrop {
+  background-color: var(--color-cover-background);
+}
+
+dialog.lx-modal > header > .lx-primary {
+  margin-left: 2rem;
+  font-size: var(--h2-font-size);
+  font-weight: var(--h2-font-weight);
+  color: var(--color-data);
+  padding-top: 0.5rem;
+  display: block;
+  padding-right: 3rem;
+}
+
+dialog.lx-modal > .lx-button-set > .lx-button {
+  font-weight: var(--font-weight-interactive);
+}
+
+dialog.lx-modal > header > .lx-button {
+  border-color: transparent;
+  margin: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+dialog {
+  outline: none;
+}
+
+.lx-modal > header > label {
+  overflow-wrap: break-word;
+  padding-right: 1rem;
+}
+
+.lx-modal.lx-modal-s > header > label {
+  max-width: calc(40rem - var(--row-size) - 2rem);
+}
+
+.lx-modal.lx-modal-m > header > label {
+  max-width: calc(60rem - var(--row-size) - 2rem);
+}
+
+.lx-modal.lx-modal-l > header > label {
+  max-width: calc(var(--body-column-size) - var(--row-size) - 2rem);
+}
+
+.lx-modal.lx-modal-xl > header > label {
+  max-width: calc(100% - var(--row-size) - 2rem);
+}

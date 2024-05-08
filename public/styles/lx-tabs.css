@@ -1,0 +1,181 @@
+.lx-tab-control {
+  display: block;
+  position: relative;
+}
+
+.lx-tab-body {
+  padding: var(--padding-tab-body);
+}
+
+.lx-form .lx-tab-control {
+  margin-left: var(--padding-form-negative);
+  margin-right: var(--padding-form-negative);
+}
+
+.lx-tab-control .lx-tab-container {
+  display: flex;
+  position: sticky;
+  top: var(--nav-row-size);
+  z-index: 10;
+  background-color: var(--color-background);
+  min-height: var(--row-size);
+  width: 100%;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.lx-tab-control .lx-toolbar.lx-sticky-2:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  top: calc(var(--nav-row-size) + var(--row-size));
+}
+
+.lx-layout-read-only .lx-tab-control .lx-toolbar.lx-sticky-2:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  top: var(--row-size);
+}
+
+.lx-tab-control .lx-tab-container::-webkit-scrollbar {
+  display: none;
+}
+
+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  height: auto;
+  position: sticky;
+  top: var(--nav-row-size);
+  z-index: 2;
+}
+
+.lx-tab-control header.lx-toolbar .lx-group {
+  display: flex;
+  height: var(--row-size);
+  flex-shrink: 0;
+}
+
+.lx-form .lx-tab-control .lx-tab-container {
+  background-color: var(--color-region);
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-left: 1.5rem;
+  width: 100%;
+}
+
+.lx-modal .lx-tab-control .lx-tab-container {
+  top: -2rem;
+}
+
+.lx-tab-control .lx-tab-body {
+  z-index: 1;
+}
+
+.lx-tab-control .lx-tab-container .lx-tab {
+  min-height: var(--row-size);
+  display: flex;
+  padding: var(--padding);
+  align-items: flex-end;
+  justify-content: flex-start;
+  margin-right: 0.5rem;
+  margin-bottom: -1px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  max-width: 14rem;
+  flex-shrink: 0;
+}
+
+.lx-tab-control .lx-toolbar:not(.lx-modal .lx-toolbar) .lx-group {
+  background-color: var(--color-region);
+}
+
+.lx-tab-control .lx-tab-container .lx-tab svg {
+  height: 1.2rem;
+  flex-shrink: 0;
+  flex-grow: 0;
+  margin-bottom: 0.2rem;
+  margin-left: 0.5rem;
+  fill: var(--color-bad);
+  visibility: hidden;
+}
+
+.lx-tab-control .lx-tab-container .lx-tab.lx-invalid svg {
+  visibility: visible;
+}
+
+.lx-tab-control .lx-tab-container .lx-tab.lx-invalid .lx-primary {
+  color: var(--color-bad);
+}
+
+.lx-tab-control .lx-tab-container .lx-tab .lx-primary {
+  cursor: pointer;
+  color: var(--color-label);
+  font-weight: normal;
+}
+
+.lx-tab-control .lx-tab-container .lx-tab.lx-selected {
+  border-color: var(--color-interactive-background);
+  background-color: var(--color-tab-selected-background);
+}
+
+.lx-tab-control .lx-tab-container .lx-tab.lx-selected .lx-primary {
+  color: var(--color-tab-selected-foreground);
+  font-weight: normal;
+}
+
+.lx-tab-control .lx-tab-container .lx-tab:hover {
+  background-color: var(--color-region-hover-background);
+}
+
+.lx-tab-control .lx-tab-container .lx-tab:hover .lx-primary {
+  color: var(--color-region-hover-foreground);
+}
+
+.lx .lx-card .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  border-bottom: 2px var(--color-chrome) solid;
+  background-color: var(--color-region);
+}
+
+.lx .lx-card .lx-tab-control .lx-tab-container {
+  margin-bottom: -4px;
+  background-color: transparent;
+}
+
+.lx .lx-card .lx-tab-control .lx-tab-container .lx-tab {
+  border-bottom: none;
+  padding-left: 1rem;
+  padding-top: 0px;
+  border-left: 2px transparent solid;
+  border-top: 2px transparent solid;
+  border-right: 2px transparent solid;
+  align-items: center;
+}
+
+.lx .lx-card .lx-tab-control .lx-tab-body {
+  padding-top: 2rem;
+}
+
+.lx .lx-card .lx-tab-control .lx-tab-container .lx-tab .lx-primary {
+  margin-top: 0.25rem;
+}
+
+.lx .lx-card .lx-tab-control .lx-tab-container .lx-tab.lx-selected {
+  background-color: var(--color-region);
+  border-color: var(--color-chrome);
+  border-left: 2px var(--color-chrome) solid;
+  border-top: 2px var(--color-interactive-background) solid;
+  border-right: 2px var(--color-chrome) solid;
+}
+
+.lx .lx-card .lx-tab-control .lx-tab-container .lx-tab.lx-selected .lx-primary {
+  font-weight: normal;
+  color: var(--color-data);
+}
+
+.lx-tab-control>header.lx-sticky.lx-toolbar::after {
+  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
+  content: '';
+  height: 3rem;
+  position: absolute;
+  top: var(--row-size);
+  top: var(--tab-control-header-size);
+  left: 0;
+  right: 0;
+  opacity: 0;
+  opacity: var(--tab-control-shadow-opacity);
+  pointer-events: none;
+}

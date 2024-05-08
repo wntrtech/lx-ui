@@ -1,0 +1,14 @@
+.lx {
+  --color-brand: #414875;
+  --color-interactive-background: #414875;
+  --color-interactive-hover-background: #293059;
+  --color-nav-selected-background: #edefff;
+  --color-background: #f5f0e3;
+  --color-region: #fefcf8;
+  --color-region-2: #f5f0e3;
+}
+.lx.lx-theme-dark {
+  --color-brand: #6a72b1;
+  --color-interactive-background: #6a72b1;
+  --color-interactive-hover-background: #414875;
+}

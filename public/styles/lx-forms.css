@@ -1,0 +1,607 @@
+.lx .lx-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: var(--row-size);
+}
+
+.lx .lx-form.lx-form-2,
+.lx .lx-form.lx-form-3 {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-items: flex-start;
+  justify-content: flex-start;
+}
+
+.lx .lx-form .lx-column {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.lx .lx-form.lx-form-2 .lx-column {
+  width: calc(50% - 1rem);
+}
+
+.lx .lx-form.lx-form-region {
+  background: var(--color-region);
+  border: var(--region-border);
+  padding: var(--padding-form);
+}
+
+.lx .lx-form .lx-button-set:not(.lx-dropdown-panel .lx-button-set):not(.lx-modal .lx-button-set),
+.lx .lx-form .lx-button-set .lx-group,
+.lx .lx-modal .lx-form .lx-pseudo-grid .lx-button-set:not(.lx-dropdown-panel .lx-button-set):not(.lx-modal > footer.lx-button-set) {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.lx .lx-form .lx-button-set .lx-group {
+  margin-top: 0;
+}
+
+.lx .lx-form .lx-button-set {
+  flex-grow: 1;
+  width: 100%;
+}
+
+.lx .lx-form-region .lx-button-set.lx-sticky {
+  position: sticky;
+  bottom: 0;
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+  width: 100%;
+  border-top: 2px solid var(--color-chrome);
+  background-color: var(--color-region);
+}
+
+.lx-sticky-header .lx-tab-control>header {
+  box-shadow: 0px 1rem 2rem -1rem rgba(0, 0, 0, 0.2);
+}
+
+.lx-sticky-footer>footer {
+  box-shadow: 0px -1rem 2rem -1rem rgba(0, 0, 0, 0.2);
+}
+
+.lx .lx-form .lx-button-set.lx-justified-toolbar {
+  justify-content: space-between;
+}
+
+.lx .lx-form .lx-button-set .lx-button {
+  min-width: 12rem;
+}
+
+.lx .lx-form .lx-row {
+  min-height: var(--row-size);
+  display: flex;
+  flex-direction: column;
+  width: var(--form-column-size);
+}
+
+.lx .lx-form.lx-form-2 .lx-row,
+.lx .lx-form.lx-form-3 .lx-row {
+  width: 100%;
+}
+
+.lx .lx-form .lx-row.lx-short {
+  width: calc(var(--form-column-size) / 2);
+}
+
+.lx .lx-form.lx-form-2 .lx-row.lx-short {
+  width: 50%;
+}
+
+.lx .lx-form .lx-row .lx-row-value {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.lx .lx-form .lx-row .lx-row-value span {
+  margin-top: 0.5rem;
+}
+
+.lx .lx-form .lx-row label:not(.lx-button label),
+.lx .lx-form .lx-row label:not(.lx-radio-button-wrapper label) {
+  font-size: var(--small-font-size);
+}
+
+.lx .lx-form .lx-row .lx-button label,
+.lx .lx-form .lx-row .lx-radio-button-wrapper label {
+  font-size: var(--font-size) !important;
+  line-height: 1.1em;
+}
+
+.lx .lx-form .lx-row .lx-data,
+.lx .lx-form .lx-row .lx-data .lx-tag {
+  font-weight: var(--data-weight);
+  color: var(--color-data);
+  min-height: 2.5rem;
+}
+
+.lx .lx-form .lx-row .lx-data {
+  padding-top: 0.2rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.lx .lx-form .lx-row .lx-data a {
+  font-weight: var(--data-weight);
+}
+
+.lx .lx-tag-set {
+  display: flex;
+  gap: 0.25rem;
+  list-style: none;
+  padding: 0;
+  flex-wrap: wrap;
+}
+
+.lx .lx-tag-set .lx-tag {
+  padding: 0.25rem 1rem;
+  background-color: var(--color-region);
+  display: flex;
+  align-items: center;
+}
+
+.lx .lx-tag-set .lx-tag .lx-button {
+  margin-left: 0.25rem;
+  margin-right: -1rem;
+  margin-top: -0.25rem;
+  margin-bottom: -0.25rem;
+}
+
+.lx .lx-tag-set .lx-tag:focus,
+.lx .lx-tag-set .lx-tag:focus-visible {
+  outline: 2px solid var(--color-focus-background);
+}
+
+.lx .lx-region .lx-tag-set .lx-tag,
+.lx .lx-form-region .lx-tag-set .lx-tag {
+  background-color: var(--color-region-2);
+}
+
+.lx-highlight {
+  background-color: var(--color-highlight);
+  color: var(--color-highlight-foreground);
+}
+
+.lx-state {
+  display: flex;
+  align-items: center;
+  line-height: 1rem;
+  background-color: var(--color-region);
+  border-radius: 1rem;
+  padding-left: 0.2rem;
+  padding-right: 0.75rem;
+  width: auto;
+}
+
+.lx-state .lx-state-indicator {
+  height: 0.66rem;
+  width: 0.66rem;
+  background-color: var(--color-chrome);
+  border: 2px solid var(--color-chrome);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.lx .lx-state .lx-primary {
+  margin-top: 0.05rem;
+  color: var(--color-data);
+  font-size: var(--font-size);
+}
+
+.lx-state-draft .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-state-new);
+}
+
+.lx .lx-state-draft .lx-primary {
+  color: var(--color-state-new);
+}
+
+.lx-state-new .lx-state-indicator {
+  background-color: var(--color-state-new);
+  border-color: var(--color-state-new);
+}
+
+.lx .lx-state-new .lx-primary {
+  color: var(--color-state-new);
+}
+
+.lx-state-editing .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-state-edited);
+}
+
+.lx .lx-state-editing .lx-primary {
+  color: var(--color-state-edited);
+}
+
+.lx-state-edited .lx-state-indicator {
+  background-color: var(--color-state-edited);
+  border-color: var(--color-state-edited);
+}
+
+.lx .lx-state-edited .lx-primary {
+  color: var(--color-state-edited);
+}
+
+.lx-state-disabling .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-state-deleted);
+}
+
+.lx .lx-state-disabling .lx-primary {
+  color: var(--color-state-deleted);
+}
+
+.lx-state-inactive .lx-state-indicator {
+  background-color: var(--color-chrome);
+  border-color: var(--color-chrome);
+}
+
+.lx .lx-state-inactive .lx-primary {
+  color: var(--color-state-deleted);
+}
+
+.lx-state-finishing .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-state-finished);
+}
+
+.lx .lx-state-finishing .lx-primary {
+  color: var(--color-state-finished);
+}
+
+.lx-state-finished .lx-state-indicator {
+  background-color: var(--color-state-finished);
+  border-color: var(--color-state-finished);
+}
+
+.lx .lx-state-finished .lx-primary {
+  color: var(--color-state-finished);
+}
+
+.lx-state-deleting .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-state-error);
+}
+
+.lx .lx-state-deleting .lx-primary {
+  color: var(--color-state-error);
+}
+
+.lx-state-icon {
+  margin-right: 0.5rem;
+}
+
+.lx-state-shape-diamond .lx-state-icon {
+  margin-left: 0.1rem;
+  margin-right: 0.55rem;
+}
+
+.lx-state-shape-diamond .lx-state-indicator {
+  height: 0.5rem;
+  width: 0.5rem;
+  margin-top: -0.1rem;
+  border-radius: 0px;
+  transform: rotate(45deg);
+}
+
+.lx-state-red-full .lx-state-indicator {
+  background-color: var(--color-red);
+  border-color: var(--color-red);
+}
+
+.lx .lx-state-red-full .lx-primary {
+  color: var(--color-red);
+}
+
+.lx-state-red .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-red);
+}
+
+.lx .lx-state-red .lx-primary {
+  color: var(--color-red);
+}
+
+.lx-state-green-full .lx-state-indicator {
+  background-color: var(--color-green);
+  border-color: var(--color-green);
+}
+
+.lx .lx-state-green-full .lx-primary {
+  color: var(--color-green);
+}
+
+.lx-state-green .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-green);
+}
+
+.lx .lx-state-green .lx-primary {
+  color: var(--color-green);
+}
+
+.lx-state-orange .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-orange);
+}
+
+.lx .lx-state-orange .lx-primary {
+  color: var(--color-orange);
+}
+
+.lx-state-orange-full .lx-state-indicator {
+  background-color: var(--color-orange);
+  border-color: var(--color-orange);
+}
+
+.lx .lx-state-orange-full .lx-primary {
+  color: var(--color-orange);
+}
+
+.lx-state-purple-full .lx-state-indicator {
+  background-color: var(--color-purple);
+  border-color: var(--color-purple);
+}
+
+.lx .lx-state-purple-full .lx-primary {
+  color: var(--color-purple);
+}
+
+.lx-state-purple .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-purple);
+}
+
+.lx .lx-state-purple .lx-primary {
+  color: var(--color-purple);
+}
+
+.lx-state-blue-full .lx-state-indicator {
+  background-color: var(--color-blue);
+  border-color: var(--color-blue);
+}
+
+.lx .lx-state-blue-full .lx-primary {
+  color: var(--color-blue);
+}
+
+.lx-state-blue .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-blue);
+}
+
+.lx .lx-state-blue .lx-primary {
+  color: var(--color-blue);
+}
+
+.lx-state-yellow-full .lx-state-indicator {
+  background-color: var(--color-yellow);
+  border-color: var(--color-yellow);
+}
+
+.lx .lx-state-yellow-full .lx-primary {
+  color: var(--color-data);
+}
+
+.lx-state-yellow .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-yellow);
+}
+
+.lx .lx-state-yellow .lx-primary {
+  color: var(--color-data);
+}
+
+.lx-state-black-full .lx-state-indicator {
+  background-color: var(--color-data);
+  border-color: var(--color-data);
+}
+
+.lx .lx-state-black-full .lx-primary {
+  color: var(--color-data);
+}
+
+.lx-state-black .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-data);
+}
+
+.lx .lx-state-black .lx-primary {
+  color: var(--color-data);
+}
+
+.lx-row.lx-button-row {
+  padding-top: 1.2rem;
+}
+
+.lx-row.lx-button-row .lx-button {
+  height: 2.5rem;
+}
+
+.lx .lx-form>.lx-form,
+.lx .lx-column>.lx-form {
+  margin-bottom: 0;
+}
+
+.lx .lx-form.lx-form-2 .lx-column.lx-column-wide,
+.lx .lx-form.lx-form-3 .lx-column.lx-column-wide,
+.lx .lx-form h2 {
+  width: 100%;
+}
+
+.lx .lx-form h2 {
+  margin-bottom: 0.5em;
+}
+
+.lx .lx-form h3 {
+  margin-top: 1em;
+}
+
+.lx .lx-form hr {
+  border: none;
+  border-bottom: 2px var(--color-background) solid;
+  width: calc(100% + 4rem);
+  margin-left: -2rem;
+  margin-right: -2rem;
+}
+
+.lx .lx-form .lx-form {
+  width: 100%;
+  margin-bottom: 0;
+}
+
+.lx .lx-form .lx-row.lx-row-toggle {
+  margin-bottom: -2rem;
+}
+
+.lx .lx-layout .lx-form .lx-divider {
+  height: 2rem;
+}
+
+.lx .lx-form.lx-form-3 .lx-column {
+  width: calc(31% - 1rem);
+}
+
+.lx .lx-form.lx-form-4 {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-items: flex-start;
+  justify-content: flex-start;
+}
+
+.lx .lx-form .lx-item-region {
+  width: 100%;
+  padding: 1rem;
+  background: var(--color-background);
+  position: relative;
+  margin-bottom: -1rem !important;
+}
+
+.lx .lx-form .lx-item-region.lx-value {
+  display: flex;
+  flex-direction: row;
+}
+
+.lx .lx-form .lx-item-region>svg.lx-item-icon {
+  height: 2rem;
+  width: 2rem;
+  margin-right: 1rem;
+  fill: var(--color-label);
+}
+
+.lx .lx-form .lx-item-region .lx-toolbar {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.lx .lx-form.lx-form-4 .lx-column {
+  width: calc(23% - 1rem);
+}
+
+.lx .lx-form-3 .lx-column-2 {
+  width: calc(65% - 1rem) !important;
+}
+
+.lx-form-flex {
+  width: 100%;
+  gap: 2rem;
+  display: flex;
+  flex-direction: row;
+  flex-shrink: 0;
+}
+
+.lx-form-flex .lx-column,
+.lx-form-flex .lx-column-2,
+.lx-form-flex .lx-column-3,
+.lx-form-flex .lx-column-4 {
+  flex-shrink: 0;
+  flex-basis: 2rem;
+  width: auto !important;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 0;
+}
+
+.lx-form-flex .lx-column {
+  flex-grow: 1;
+}
+
+.lx-form-flex .lx-column-2 {
+  flex-grow: 2;
+}
+
+.lx-form-flex .lx-column-3 {
+  flex-grow: 3;
+}
+
+.lx-form-flex .lx-column-4 {
+  flex-grow: 3;
+}
+
+.lx-form-flex .lx-column .lx-row,
+.lx-form-flex .lx-column-2 .lx-row,
+.lx-form-flex .lx-column-3 .lx-row,
+.lx-form-flex .lx-column-4 .lx-row {
+  width: auto !important;
+}
+
+.lx-collapser {
+  margin-top: -2rem;
+}
+
+.lx-card .lx-toolbar.lx-sticky {
+  border-bottom: 2px solid var(--color-chrome);
+}
+
+.lx-row>.lx-info-wrapper.lx-info-slot-wrapper label svg {
+  width: 1rem;
+  margin-bottom: -0.2rem;
+  margin-left: 0.2rem;
+  fill: var(--color-label);
+}
+
+.lx-row>.lx-info-wrapper {
+  display: inline-block;
+}
+
+.lx-row>.lx-info-wrapper label {
+  font-size: var(--label-font-size);
+}
+
+@media (max-width: 1300px) {
+  .lx-form-flex.lx-responsive {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 1000px) {
+
+  .lx .lx-form.lx-form-2,
+  .lx .lx-form.lx-form-3 {
+    flex-direction: column !important;
+  }
+
+  .lx .lx-form.lx-form-2 .lx-column,
+  .lx .lx-form.lx-form-3 .lx-column {
+    width: 100% !important;
+  }
+
+  .lx-form-flex {
+    flex-direction: column;
+  }
+
+  .lx .lx-form.lx-form-region .lx-row {
+    width: 100%;
+  }
+}

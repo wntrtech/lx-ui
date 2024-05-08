@@ -1,0 +1,179 @@
+<script setup>
+import { computed, watch, onMounted } from 'vue';
+
+import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
+import LxValuePickerDropDown from '@/components/valuePickers/Dropdown.vue';
+import LxValuePickerTileTag from '@/components/valuePickers/TileTag.vue';
+
+const props = defineProps({
+  id: { type: String, default: null },
+  modelValue: { type: [Array, String], default: () => [] },
+  items: { type: Array, default: () => [] },
+  idAttribute: { type: String, default: 'id' },
+  nameAttribute: { type: String, default: 'name' },
+  descriptionAttribute: { type: String, default: 'description' },
+  groupId: { type: String, default: null },
+  variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'
+  kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
+  nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
+  placeholder: { type: String, default: null },
+  hasSearch: { type: Boolean, default: false },
+  tooltip: { type: String, default: null },
+  readOnly: { type: Boolean, default: false },
+  readOnlyRenderType: { type: String, default: 'row' }, // 'row' || 'column'
+  alwaysAsArray: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
+  invalid: { type: Boolean, default: false },
+  invalidationMessage: { type: String, default: null },
+  searchAttributes: { type: Array, default: null },
+  texts: {
+    type: Object,
+    default: () => ({
+      clearQuery: 'Notīrīt meklēšanu',
+      clearChosen: 'Notīrīt visas atlasītās vērtības',
+      notSelected: 'Nav izvēlēts',
+      searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+    }),
+  },
+});
+
+const emits = defineEmits(['update:modelValue']);
+
+const model = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    if (
+      !props.alwaysAsArray &&
+      !(props.variant === 'dropdown' || props.variant === 'dropdown-custom')
+    ) {
+      emits('update:modelValue', props.kind === 'single' ? value[0] : value);
+    } else if (
+      props.alwaysAsArray &&
+      (props.variant === 'dropdown' || props.variant === 'dropdown-custom')
+    ) {
+      if (value) {
+        emits('update:modelValue', [value]);
+      } else {
+        emits('update:modelValue', null);
+      }
+    } else {
+      emits('update:modelValue', value);
+    }
+  },
+});
+
+watch(
+  () => model.value,
+  (newValue) => {
+    if (newValue && (newValue === 'notSelected' || newValue[0] === 'notSelected')) {
+      emits('update:modelValue', null);
+    }
+  }
+);
+
+onMounted(() => {
+  if (
+    model.value &&
+    !Array.isArray(model.value) &&
+    (props.alwaysAsArray || props.kind === 'multiple')
+  ) {
+    emits('update:modelValue', [model.value]);
+  } else if (!model.value) {
+    emits('update:modelValue', []);
+  }
+});
+</script>
+
+<template>
+  <div class="lx-field-wrapper" ref="refRoot">
+    <LxValuePickerDefault
+      :role="kind === 'single' ? 'radiogroup' : 'group'"
+      v-if="variant === 'default' || variant === 'default-custom'"
+      v-model="model"
+      :items="items"
+      :idAttribute="idAttribute"
+      :nameAttribute="nameAttribute"
+      :descriptionAttribute="descriptionAttribute"
+      :groupId="groupId"
+      :kind="kind"
+      :disabled="disabled"
+      :invalid="invalid"
+      :invalidation-message="invalidationMessage"
+      :texts="texts"
+      :placeholder="placeholder"
+      :tooltip="tooltip"
+      :has-search="hasSearch"
+      :always-as-array="alwaysAsArray"
+      :nullable="nullable"
+      :readOnly="readOnly"
+      :readOnlyRenderType="readOnlyRenderType"
+      :variant="variant"
+      :search-attributes="searchAttributes"
+    >
+      <template v-slot:customItem="slotData" v-if="$slots.customItem">
+        <slot name="customItem" v-bind="slotData" />
+      </template>
+    </LxValuePickerDefault>
+    <LxValuePickerDropDown
+      v-if="variant === 'dropdown' || variant === 'dropdown-custom'"
+      v-model="model"
+      :items="items"
+      :idAttribute="idAttribute"
+      :nameAttribute="nameAttribute"
+      :descriptionAttribute="descriptionAttribute"
+      :groupId="groupId"
+      :kind="kind"
+      :disabled="disabled"
+      :invalid="invalid"
+      :invalidation-message="invalidationMessage"
+      :texts="texts"
+      :placeholder="placeholder"
+      :tooltip="tooltip"
+      :has-search="hasSearch"
+      :always-as-array="alwaysAsArray"
+      :nullable="nullable"
+      :readOnly="readOnly"
+      :readOnlyRenderType="readOnlyRenderType"
+      :variant="variant"
+      :search-attributes="searchAttributes"
+    >
+      <template v-slot:customItemDropdown="slotData">
+        <slot name="customItem" v-bind="slotData" />
+      </template>
+    </LxValuePickerDropDown>
+    <LxValuePickerTileTag
+      v-if="
+        variant === 'tiles' ||
+        variant === 'tags' ||
+        variant === 'tiles-custom' ||
+        variant === 'tags-custom'
+      "
+      v-model="model"
+      :items="items"
+      :idAttribute="idAttribute"
+      :nameAttribute="nameAttribute"
+      :descriptionAttribute="descriptionAttribute"
+      :groupId="groupId"
+      :variant="variant"
+      :kind="kind"
+      :disabled="disabled"
+      :invalid="invalid"
+      :invalidation-message="invalidationMessage"
+      :texts="texts"
+      :placeholder="placeholder"
+      :tooltip="tooltip"
+      :always-as-array="alwaysAsArray"
+      :has-search="hasSearch"
+      :nullable="nullable"
+      :readOnly="readOnly"
+      :readOnlyRenderType="readOnlyRenderType"
+      :search-attributes="searchAttributes"
+    >
+      <template v-slot:customItem="slotData" v-if="$slots.customItem">
+        <slot name="customItem" v-bind="slotData" />
+      </template>
+    </LxValuePickerTileTag>
+  </div>
+</template>

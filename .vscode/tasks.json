@@ -1,0 +1,36 @@
+{
+  "version": "2.0.0",
+  "command": "pnpm",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "group": {
+        "kind": "build"
+      },
+      "args": [
+        "build"
+      ]
+    },
+    {
+      "label": "test",
+      "type": "shell",
+      "group": {
+        "kind": "test"
+      },
+      "args": [
+        "test"
+      ]
+    },
+    {
+      "label": "install",
+      "type": "shell",
+      "group": {
+        "kind": "none"
+      },
+      "args": [
+        "i"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "components": {
+    "dataGrid": {
+      "itemLabel": {
+        "singular": "ieraksts",
+        "plural": "ieraksti",
+        "pluralEndingWith234": "ieraksti",
+        "pluralEndingWith1": "ieraksts"
+      },
+      "ofItemsLabel": {
+        "singular": "ieraksta",
+        "plural": "ierakstiem",
+        "pluralEndingWith234": "ierakstiem",
+        "pluralEndingWith1": "ieraksta"
+      },
+      "itemsOfLabel": "Ieraksti",
+      "ofLabel": "no",
+      "nextPage": "Nākamā lapa",
+      "previousPage": "Iepriekšējā lapa"
+    }
+  }
+}

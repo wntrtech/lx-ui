@@ -1,0 +1,40 @@
+.lx {
+  --color-brand: #9f1853;
+  --color-brand-secondary: #f58828;
+  --color-interactive-background: #9f1853;
+  --color-interactive-hover-background: #b11d63;
+  --color-interactive-secondary-background: #393939;
+  --color-interactive-secondary-hover-background: #4c4c4c;
+  --color-nav-selected-background: #fae5d7;
+  --body-column-size: 1300px;
+  --nav-row-size: 3rem;
+  --color-highlight: #fdcda2;
+  --color-bad: #da1e28;
+  --color-region: #fff;
+  --color-background: #f4f4f4;
+  --color-label: #525252;
+  --color-data: #161616;
+  --color-grid-hover-background: #e5e5e5;
+  --color-focus-background: #9f1853;
+  --color-destructive: #ba1b23;
+
+  --font-family: 'Poppins', 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'Poppins', 'IBM Plex Mono', monospace;
+  --font-weight-data: 600;
+  --font-weight-bold: 600;
+  --data-weight: var(--font-weight-data);
+  --h1-font-size: 2.25rem;
+
+  --color-cover-title: var(--color-brand);
+}
+.lx .lx-notifications-list .lx-notification p.lx-title {
+  font-weight: var(--font-weight-data) !important;
+}
+.lx .lx-notifications-list {
+  top: calc(var(--row-size) * 3 + 0.5rem) !important;
+}
+.lx-button .lx-loader.lx-small,
+.patient-data .lx-loader.lx-small {
+  width: 1.25rem;
+  height: 1.25rem;
+}

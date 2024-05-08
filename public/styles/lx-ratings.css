@@ -1,0 +1,80 @@
+.lx-ratings {
+    display: flex;
+    height: var(--row-size);
+    width: auto;
+    align-items: center;
+    padding-left: 0.5rem;
+}
+.lx-ratings > div {
+    height: 2rem;
+}
+.lx-ratings svg {
+    height: 2rem;
+    width: 2rem;
+    fill: var(--color-interactive-background);
+    cursor: pointer;
+}
+.lx-ratings.lx-read-only svg {
+    fill: var(--color-data);
+    cursor: help;
+}
+.lx-ratings.lx-read-only>div:not(.lx-selected) {
+    display: none;
+}
+
+.lx-ratings.lx-select-1 .lx-star-1 svg,
+.lx-ratings.lx-select-2 .lx-star-1 svg,
+.lx-ratings.lx-select-2 .lx-star-2 svg,
+.lx-ratings.lx-select-3 .lx-star-1 svg,
+.lx-ratings.lx-select-3 .lx-star-2 svg,
+.lx-ratings.lx-select-3 .lx-star-3 svg,
+.lx-ratings.lx-select-4 .lx-star-1 svg,
+.lx-ratings.lx-select-4 .lx-star-2 svg,
+.lx-ratings.lx-select-4 .lx-star-3 svg,
+.lx-ratings.lx-select-4 .lx-star-4 svg,
+.lx-ratings.lx-select-5 .lx-star-1 svg,
+.lx-ratings.lx-select-5 .lx-star-2 svg,
+.lx-ratings.lx-select-5 .lx-star-3 svg,
+.lx-ratings.lx-select-5 .lx-star-4 svg,
+.lx-ratings.lx-select-5 .lx-star-5 svg {
+    fill: var(--color-interactive-hover-background);
+}
+
+.lx-grid-row .lx-ratings {
+    height: auto;
+    margin-top:0rem;
+    margin-bottom: 0rem;
+}
+.lx-grid-row .lx-ratings > div {
+    height: 1.1rem;
+    width: 1.1rem;
+}
+.lx-grid-row .lx-ratings svg {
+    height: 1.1rem;
+    width: 1.1rem;
+}
+.lx-grid-row .lx-cell-primary .lx-ratings svg.lx-category-green,
+.lx-ratings.lx-colorful svg.lx-category-green  {
+    fill: var(--color-green);
+}
+.lx-grid-row .lx-cell-primary .lx-ratings svg.lx-category-orange,
+.lx-ratings.lx-colorful svg.lx-category-orange  {
+    fill: var(--color-orange);
+}
+.lx-grid-row .lx-cell-primary .lx-ratings svg.lx-category-red,
+.lx-ratings.lx-colorful svg.lx-category-red  {
+    fill: var(--color-red);
+}
+.lx-grid-row .lx-cell-secondary .lx-ratings svg {
+    opacity: 0.25;
+}
+.lx-grid-row:hover .lx-cell-secondary .lx-ratings svg {
+    opacity: 1;
+}
+.lx-grid-row .lx-tooltip .lx-row {
+    width: 5rem !important;
+}
+
+.lx-card .lx-toolbar .lx-ratings {
+    padding-right: 0.5rem;
+}

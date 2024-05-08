@@ -1,0 +1,5 @@
+* text eol=lf
+*.woff2 text=auto
+*.woff text=auto
+*.ttf text=auto
+*.png binary

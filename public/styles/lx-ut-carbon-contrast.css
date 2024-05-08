@@ -1,0 +1,120 @@
+.lx.lx-theme-contrast ::backdrop {
+  --color-cover-background: rgba(0, 0, 0, 0.75);
+}
+.lx.lx-theme-contrast {
+  --contrast-background: #000;
+  --contrast-foreground: #ffff00;
+  --contrast-interactive: #ffff00;
+  --contrast-hover: #00ffff;
+
+  --color-brand: var(--contrast-foreground);
+  --color-interactive-background: var(--contrast-interactive);
+  --color-interactive-foreground: var(--contrast-background);
+  --color-interactive-hover-background: var(--contrast-hover);
+  --color-interactive-hover-foreground: var(--contrast-background);
+  --color-interactive-secondary-background: var(--contrast-interactive);
+  --color-interactive-secondary-foreground: var(--contrast-background);
+  --color-interactive-secondary-hover-background: var(--contrast-hover);
+  --color-interactive-secondary-hover-foreground: var(--contrast-background);
+  --color-interactive-active-background: var(--contrast-hover);
+  --color-interactive-active-foreground: var(--contrast-background);
+  --color-navbar-button-foreground: var(--contrast-foreground);
+  --color-disabled-background: var(--contrast-background);
+  --color-disabled-foreground: var(--contrast-background);
+  --color-focus-background: var(--contrast-hover);
+  --color-focus-foreground: var(--contrast-background);
+  --color-layout-background: var(--contrast-background);
+  --color-navbar-background: var(--contrast-background);
+  --color-nav-background: var(--color-layout-background);
+  --color-nav-foreground: var(--contrast-foreground);
+  --color-nav-chrome: var(--contrast-foreground);
+  --color-nav-selected-background: var(--contrast-foreground);
+  --color-nav-selected-foreground: var(--contrast-background);
+  --color-nav-hover-background: var(--contrast-hover);
+  --color-nav-hover-foreground: var(--contrast-background);
+  --color-dropdown-button-background: var(--contrast-background);
+  --color-dropdown-button-foreground: var(--contrast-interactive);
+  --color-tooltip-background: var(--contrast-interactive);
+  --color-tooltip-foreground: var(--contrast-background);
+  --color-tile-background: var(--contrast-background);
+  --color-tile-foreground: var(--contrast-foreground);
+  --color-tile-hover-background: var(--contrast-hover);
+  --color-tile-hover-foreground: var(--contrast-background);
+  --color-grid-header: var(--contrast-background);
+  --color-grid-hover-background: var(--contrast-background);
+  --color-grid-header-hover-background: var(--contrast-background);
+  --color-highlight: var(--contrast-interactive);
+  --color-highlight-background: var(--color-highlight);
+  --color-highlight-foreground: var(--contrast-background);
+
+  --color-toggle-border-true: var(--contrast-foreground);
+  --color-toggle-background-true: var(--contrast-foreground);
+  --color-toggle-foreground-true: var(--contrast-background);
+  --color-toggle-border-false: var(--contrast-foreground);
+  --color-toggle-background-false: var(--contrast-background);
+  --color-toggle-foreground-false: var(--contrast-foreground);
+  --color-toggle-border-null: var(--contrast-foreground);
+  --color-toggle-background-null: var(--contrast-background);
+  --color-toggle-foreground-null: var(--contrast-foreground);
+  --color-toggle-indeterminate: var(--contrast-foreground);
+  --color-toggle-indeterminate-hover: var(--contrast-hover);
+
+  --color-content-switcher-foreground: var(--contrast-interactive);
+  --color-cover-title: var(--contrast-foreground);
+  --color-checkmark-foreground: var(--contrast-background);
+  --color-checkmark-hover-foreground: var(--contrast-hover);
+  --color-badge-foreground: var(--contrast-background);
+
+  --color-background: var(--contrast-background);
+  --color-background-overlay: var(--contrast-background);
+  --color-foreground: var(--contrast-foreground);
+  --color-cover-background: var(--contrast-background);
+  --color-region: var(--contrast-background);
+  --color-region-hover: var(--contrast-hover);
+  --color-region-hover-background: var(--color-region-hover);
+  --color-region-hover-foreground: var(--contrast-background);
+  --color-tab-selected: transparent;
+  --color-tab-selected-background: var(--contrast-interactive);
+  --color-tab-selected-foreground: var(--contrast-background);
+  --color-region-2: var(--contrast-background);
+  --color-chrome: var(--contrast-foreground);
+  --color-label: var(--contrast-foreground);
+  --color-data: var(--color-foreground);
+  --color-disabled: var(--color-foreground);
+
+  --color-green: var(--contrast-foreground);
+  --color-red: var(--contrast-foreground);
+  --color-orange: var(--contrast-foreground);
+  --color-purple: var(--contrast-foreground);
+  --color-blue: var(--contrast-foreground);
+  --color-teal: var(--contrast-foreground);
+  --color-yellow: var(--contrast-foreground);
+  --color-grey: var(--contrast-foreground);
+
+  --color-good: var(--contrast-foreground);
+  --color-bad: var(--contrast-foreground);
+  --color-warning: var(--contrast-foreground);
+  --color-neutral: var(--contrast-foreground);
+  --color-destructive: var(--contrast-foreground);
+
+  --color-state-new: var(--color-blue);
+  --color-state-edited: var(--color-orange);
+  --color-state-finished: var(--color-green);
+  --color-state-deleted: var(--color-label);
+
+  --color-notification-success-foreground: var(--contrast-foreground);
+  --color-notification-success-background: var(--contrast-background);
+  --color-notification-warning-foreground: var(--contrast-foreground);
+  --color-notification-warning-background: var(--contrast-background);
+  --color-notification-error-foreground: var(--contrast-foreground);
+  --color-notification-error-background: var(--contrast-background);
+
+  --color-shadow: transparent;
+
+  --color-placeholder: var(--contrast-background);
+  --color-placeholder-disabled: var(--contrast-background);
+
+  --region-border: 2px solid var(--color-chrome);
+  --list-item-border: 2px solid var(--color-chrome);
+  --input-border: 1px solid var(--color-chrome);
+}

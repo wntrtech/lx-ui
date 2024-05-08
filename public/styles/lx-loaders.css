@@ -1,0 +1,184 @@
+.lx-loading-screen {
+  width: 100%;
+  height: calc(16 * var(--row-size));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lx-loading-screen.lx-loading-infinite-list {
+  height: calc(3 * var(--row-size));
+}
+
+.lx-loader {
+  width: 5.5rem;
+  height: 5.5rem;
+  line-height: normal;
+}
+
+.lx-loader svg {
+  fill: transparent;
+}
+
+.lx-loader svg circle {
+  stroke-dasharray: 276.4608 276.4608;
+  stroke-linecap: butt;
+  stroke-width: 10;
+  stroke: var(--color-interactive-background);
+  stroke-dashoffset: 52.52755;
+}
+
+.lx-loader .lx-loader-stroke {
+  stroke: var(--color-interactive-background);
+  stroke-dashoffset: 52.52755;
+}
+
+.lx-loader.lx-small {
+  width: 1rem;
+  height: 1rem;
+}
+
+.lx-loader.lx-small svg {
+  stroke: var(--color-interactive-background);
+}
+
+.lx-loader.lx-small circle {
+  stroke-width: 16;
+}
+
+.lx-loader.lx-small .lx-loader-stroke {
+  stroke-dashoffset: 143.75962;
+}
+
+.lx-loader .lx-loader-background {
+  stroke: var(--color-chrome);
+  stroke-dashoffset: -22;
+}
+
+.lx-loader-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.lx-loader-wrapper .lx-success-icon {
+  fill: var(--color-good);
+}
+
+.lx-loader-state {
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 1.5rem;
+}
+
+.lx-loader-indeterminate.lx-small .lx-loader-state,
+.lx-loader-default-progress.lx-small .lx-loader-state,
+.lx-loader-state-bar {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-bottom: 0;
+}
+
+.lx-loader-indeterminate,
+.lx-loader-default-progress,
+.lx-loader-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.lx-loader-indeterminate.lx-small:not(.bar),
+.lx-loader-default-progress.lx-small {
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.lx-loader-indeterminate.bar,
+.lx-loader-progress {
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.lx-loader-data {
+  padding: 0.1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+}
+
+.lx-loader-default-progress-default-fill,
+.lx-loader-default-progress-default-track {
+  fill: transparent;
+}
+
+.lx-loader-default-progress>svg {
+  line-height: normal;
+  transform: rotate(-90deg);
+}
+
+.lx-loader-default-progress.lx-large>svg {
+  width: 5.5rem;
+  height: 5.5rem;
+}
+
+.lx-loader-default-progress.lx-small>svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.lx-loader-default-progress-default-fill {
+  stroke: var(--color-brand);
+  stroke-linecap: butt;
+}
+
+.lx-loader-default-progress-default-track {
+  stroke: var(--color-chrome);
+}
+
+.lx-loader-bar-track {
+  width: 100%;
+  min-width: var(--aside-size);
+  overflow: hidden;
+  background-color: var(--color-region);
+}
+
+.lx-loader-bar-track.lx-small {
+  block-size: 0.25rem;
+}
+
+.lx-loader-bar-track.lx-large {
+  block-size: 0.5rem;
+}
+
+.lx-form-grid>.lx-main .lx-loader-bar-track {
+  background-color: var(--color-region-2);
+}
+
+.lx-loader-bar-indeterminate {
+  content: '';
+  height: 100%;
+
+  width: 100%;
+  background-color: var(--color-brand);
+  transform-origin: 0% 50%;
+}
+
+.lx-loader-bar-progress {
+  height: 100%;
+  background-color: var(--lx-color-primary);
+  background-color: var(--color-brand);
+}
+
+.lx-loader-progress.state-error .lx-loader-bar-progress {
+  background-color: var(--color-bad);
+}
+
+.lx-loader-progress.state-success .lx-loader-bar-progress {
+  background-color: var(--color-good);
+}

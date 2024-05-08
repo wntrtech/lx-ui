@@ -1,0 +1,28 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+eslint-report.json
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/wordlist**
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

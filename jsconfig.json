@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "jsx": "preserve",
+        "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "src/*"
+            ],
+            "tests/*": [
+                "tests/*"
+            ]
+        },
+    },
+    "include": [
+        "src/**/*.js",
+        "src/**/*.vue",
+        "tests/**/*.js",
+        "tests/**/*.vue"
+    ],
+}

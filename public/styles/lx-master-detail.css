@@ -1,0 +1,260 @@
+.lx-master-detail {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.lx-master-detail .lx-master {
+    width: var(--aside-size);
+    margin-right: 1rem;
+}
+
+.lx-master-detail .lx-master.lx-sticky {
+    position: sticky;
+    top: calc(var(--row-size));
+}
+
+.lx-master-detail .lx-master.lx-sticky-2 {
+    position: sticky;
+    top: calc(var(--row-size) * 2);
+}
+
+.lx-master-detail .lx-master.lx-sticky-3 {
+    position: sticky;
+    top: calc(var(--row-size) * 3);
+}
+
+.lx-master-detail .lx-master ul {
+    padding: 0;
+    margin-top: 0;
+    margin-block-end: 0;
+}
+
+.lx-master-detail .lx-master .lx-button {
+    width: 100%;
+}
+
+.lx-master-detail .lx-master li:last-of-type {
+    margin-bottom: 1rem;
+}
+
+.lx-master-detail .lx-master li:first-of-type {
+    margin-top: 1rem;
+}
+
+.lx-master-detail .lx-master li:hover {
+    background-color: var(--color-tile-hover-background);
+}
+
+.lx-master-detail .lx-master li.lx-selected {
+    cursor: default;
+    background-color: var(--color-region);
+    border-color: var(--color-interactive-background);
+}
+
+.lx-form-region .lx-master-detail .lx-master li.lx-selected {
+    cursor: default;
+    background-color: var(--color-nav-selected-background);
+}
+
+
+.lx-master-detail .lx-master li svg {
+    height: 1.2rem;
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+}
+
+.lx-master-detail .lx-master li.lx-selected svg {
+    opacity: 0;
+}
+
+.lx-master-detail .lx-master li.lx-selected.lx-invalid svg {
+    opacity: 1;
+}
+
+.lx-master-detail .lx-master li .lx-list-item {
+    background-color: #eee;
+}
+
+.lx-master-detail .lx-master li.lx-selected .lx-list-item {
+    background-color: #fff;
+}
+
+.lx-master-detail .lx-detail {
+    width: 100%;
+    max-width: calc(100% - var(--aside-size));
+    border-left: 2px var(--color-chrome) solid;
+    padding-left: 2rem;
+}
+
+.lx-master-detail .lx-master li .master-detail-item {
+    display: flex;
+    justify-content: space-between;
+    font-weight: var(--font-weight-bold);
+    padding: 0;
+    margin: 0;
+    line-height: 1rem;
+    align-items: center;
+}
+
+.lx-master-detail .lx-master li {
+    display: flex;
+    flex-direction: column;
+    justify-self: start;
+    padding: 0.3rem;
+    padding-left: 0.5rem;
+    border-left: 4px transparent solid;
+    padding-right: 0.85rem;
+    font-weight: var(--font-weight-bold);
+    min-height: var(--row-size);
+    justify-content: center;
+}
+
+.lx-secondary {
+    font-weight: normal;
+    font-size: var(--small-font-size);
+    color: var(--color-label);
+    line-height: 1.1em;
+    margin-top: 0.05rem;
+}
+
+
+.lx-master-detail .lx-master li.label-item,
+.lx-master-detail .lx-master li.label-item:hover {
+    background-color: var(--color-disabled-foreground);
+}
+
+.label-item>span.lx-secondary {
+    color: var(--color-data);
+    line-height: 1.1rem;
+}
+
+.lx-master-detail .lx-master li.lx-selected .lx-secondary,
+.lx-master-detail .lx-master li:hover .lx-secondary {
+    color: var(--color-data);
+}
+
+.lx-context-container.overflow-button,
+.lx-master-detail .lx-master li.label-item-vertical {
+    display: none;
+}
+
+.lx-master-detail .lx-master div.label-item.menu-btn {
+    display: none;
+}
+
+@media (max-width: 1200px) {
+
+    .lx-master-detail.lx-collapsed>.lx-master.lx-sticky,
+    .lx-master-detail.lx-collapsed>.lx-master.lx-sticky-2,
+    .lx-master-detail.lx-collapsed>.lx-master.lx-sticky-3 {
+        width: calc(var(--row-size) + 4px);
+        position: sticky;
+    }
+
+    .lx-master-detail.lx-master-detail-hidden-button>.lx-detail,
+    .lx-master-detail>.lx-detail {
+        padding-left: calc(var(--row-size));
+    }
+
+    .lx-collapsed.lx-master-detail>.lx-detail {
+        max-width: calc(100% - var(--row-size));
+        padding-left: 0;
+    }
+
+    .lx-master-detail .lx-detail {
+        max-width: 100%;
+    }
+
+    .lx-master-detail .lx-master.lx-sticky,
+    .lx-master-detail .lx-master.lx-sticky-2,
+    .lx-master-detail .lx-master.lx-sticky-3 {
+        width: var(--aside-size);
+        position: absolute;
+        z-index: 99;
+        height: 100%;
+        background-color: var(--color-region);
+        top: 0;
+        border-right: 2px solid var(--color-chrome);
+    }
+
+    .lx-master-detail.lx-collapsed .lx-master.lx-sticky,
+    .lx-master-detail.lx-collapsed .lx-master.lx-sticky-2,
+    .lx-master-detail.lx-collapsed .lx-master.lx-sticky-3 {
+        border-right: 0;
+    }
+
+    .lx-master-detail .lx-master .label-item.menu-btn {
+        display: block !important;
+        position: absolute;
+        width: var(--aside-size);
+        overflow: hidden;
+        background-color: var(--color-disabled-foreground);
+    }
+
+    .lx-master-detail-hidden-button.lx-master-detail .lx-master .label-item.menu-btn .lx-button,
+    .lx-master-detail .lx-master .label-item.menu-btn .lx-button {
+        display: block !important;
+        width: var(--icon-size);
+    }
+
+    .lx-collapsed>.lx-master li:not(.label-item.menu-btn, .label-item-vertical) {
+        display: none;
+    }
+
+    .lx-master-detail .lx-master li.label-item-vertical {
+        display: flex;
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        padding-left: 1rem;
+        padding-right: 0rem;
+        border-left-width: 0px;
+        writing-mode: vertical-rl;
+    }
+
+    .lx-master-detail .lx-master li.label-item-vertical span {
+        display: flex;
+        align-items: center;
+        transform: rotate(180deg);
+        line-height: 0.75rem;
+    }
+
+    .lx-master-detail .label-item.menu-btn {
+        padding: 0;
+        margin: 0;
+        border: 0;
+    }
+
+    .lx-layout.lx-layout-default.lx-collapsed .lx-master-detail nav {
+        margin-left: 0;
+    }
+
+    .lx-master-detail {
+        position: relative;
+    }
+
+    .lx-master-detail.lx-collapsed>.lx-master>.lx-button {
+        display: none;
+    }
+
+    .lx-master-detail>nav {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .lx-master-detail.lx-collapsed .lx-master .label-item.menu-btn {
+        position: static;
+        width: auto;
+        margin-bottom: 0;
+    }
+
+    .lx-master-detail>nav.lx-master>ul {
+        margin-top: 3.5rem;
+        overflow-y: auto;
+        height: calc(100% - var(--row-size) - 4rem);
+    }
+
+    .lx-master-detail.lx-collapsed>nav.lx-master>ul {
+        margin-top: 0;
+    }
+}

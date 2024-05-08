@@ -1,0 +1,95 @@
+.lx {
+  font-size: var(--font-size);
+  --font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'IBM Plex Mono', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono',
+    Courier, monospace;
+  --font-smoothing-moz: grayscale;
+  --font-smoothing-wk: antialiased;
+  --text-rendering: optimizeLegibility;
+  --font-size: 15px;
+  --font-weight: 400;
+  --font-weight-interactive: 400;
+  --font-weight-data: 600;
+  --font-weight-bold: 600;
+  --text-decoration-button: none;
+  --text-decoration-link: underline;
+
+  --h1-font-size: 3.3rem;
+  --h1-font-weight: 300;
+  --h2-font-size: 1.5rem;
+  --h2-font-weight: 500;
+  --small-font-size: 0.8rem;
+  --label-font-size: 0.8rem;
+  --data-weight: 600;
+
+  --letter-spacing-1: 0.01rem;
+  --letter-spacing-2: 0.02rem;
+
+  --gap: 1rem;
+  --gap-form: 2rem;
+  --gap-buttons: 0.5rem;
+
+  --row-size: 3rem;
+  --nav-row-size: 3rem;
+  --input-size: 2.5rem;
+  --notification-size: 28rem;
+  --body-column-size: 1300px;
+  --tile-column-size: 20rem;
+  --tile-column-x2-size: calc(var(--tile-column-size) * 2 + 1rem);
+  --tile-row-size: 12rem;
+  --form-column-size: 30rem;
+  --aside-size: 16rem;
+  --grid-primary-button-size: 12rem;
+  --icon-size: 2rem;
+  --content-switcher-height: 2.5rem;
+
+  --content-padding-l: 16rem;
+  --content-padding: 8rem;
+  --content-padding-s: 2rem;
+  --aside-border: 0px solid var(--color-chrome);
+  --region-border: none;
+  --list-item-border: 2px solid transparent;
+  --input-border: 1px solid transparent;
+  --toggle-border: 2px solid transparent;
+  --margin-default: 0.25rem;
+  --margin-button-icon: 0 -0.35rem 0 1rem;
+  --margin-button-icon-reverse: 0 1rem 0 -0.33rem;
+
+  --notification-border: 0px 0px 0px 4px;
+
+  --padding: 0.5rem;
+  --padding-tile: 1rem;
+  --padding-button: 0 1rem;
+  --padding-dropdown: 0.5rem;
+  --padding-cell: 0.75rem 1rem;
+  --padding-grid-header: 1rem;
+  --padding-min: 1rem;
+  --padding-form: 3rem 2rem;
+  --padding-default: var(--gap);
+  --padding-modal: 1rem 2rem 2rem 2rem;
+  --padding-form-negative: -2rem;
+  --padding-tab-body: 1rem 2rem 1rem 2rem;
+
+  --button-border: 2px;
+
+  --radius-default: 0;
+  --radius-1: 0.25rem;
+  --radius-2: 0.5rem;
+
+  --shadow-1: 0 1px 2px 0 var(--color-shadow);
+  --shadow-dropdown: 0 4px 8px 0 var(--color-shadow);
+  --shadow-modal: 0 1px 2px 0 var(--color-shadow);
+
+  --button-flex-direction: row-reverse;
+  --button-justify: space-between;
+
+  --screen-xxxl: 2000px;
+  --screen-xxl: 1900px;
+  --screen-xl: 1784px;
+  --screen-l: 1584px;
+  --screen-m: 1312px;
+  --screen-s: 1056px;
+  --screen-xs: 800px;
+  --screen-xxs: 672px;
+  --screen-xxxs: 320px;
+}

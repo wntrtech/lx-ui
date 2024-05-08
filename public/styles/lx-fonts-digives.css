@@ -1,0 +1,103 @@
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 100;
+  src: local('Poppins Thin'), local('Poppins-Thin'), url(/lx-fonts/Poppins-Thin.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Poppins Light'), local('Poppins-Light'), url(/lx-fonts/Poppins-Light.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Poppins Regular'), local('Poppins-Regular'),
+    url(/lx-fonts/Poppins-Regular.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  src: local('Poppins SemiBold'), local('Poppins-SemiBold'),
+    url(/lx-fonts/Poppins-SemiBold.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Poppins Bold'), local('Poppins-Bold'), url(/lx-fonts/Poppins-Bold.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 900;
+  src: local('Poppins Black'), local('Poppins-Black'), url(/lx-fonts/Poppins-Black.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 100;
+  src: local('Poppins Thin Italic'), local('Poppins-Thin-Italic'),
+    url(/lx-fonts/Poppins-ThinItalic.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 300;
+  src: local('Poppins Light Italic'), local('Poppins-Light-Italic'),
+    url(/lx-fonts/Poppins-LightItalic.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Poppins Italic'), local('Poppins-Italic'),
+    url(/lx-fonts/Poppins-Italic.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 600;
+  src: local('Poppins SemiBold Italic'), local('Poppins-SemiBold-Italic'),
+    url(/lx-fonts/Poppins-SemiBoldItalic.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 700;
+  src: local('Poppins Bold Italic'), local('Poppins-Bold-Italic'),
+    url(/lx-fonts/Poppins-BoldItalic.ttf) format('ttf');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'Poppins';
+  font-style: italic;
+  font-weight: 900;
+  src: local('Poppins Black Italic'), local('Poppins-Black-Italic'),
+    url(/lx-fonts/Poppins-BlackItalic.ttf) format('ttf');
+}

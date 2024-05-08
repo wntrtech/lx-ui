@@ -1,0 +1,501 @@
+.lx-expander .lx-head {
+  position: relative;
+  padding: 0.625rem 1rem;
+  padding-right: 3rem;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  cursor: pointer;
+  display: flex;
+}
+
+.lx-expander .lx-head h4 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lx-expander .lx-head .lx-modifier-icon {
+  right: inherit;
+  top: inherit;
+  position: static;
+  flex-shrink: 0;
+  flex-grow: 0;
+  margin-right: 0.5rem;
+  margin-left: -0.1rem;
+  fill: var(--color-data);
+  background-color: var(color-warning);
+  -webkit-transform: none;
+  transform: none;
+}
+
+.lx-expander:not([data-disabled]) .lx-head:hover {
+  background-color: var(--color-region-hover);
+}
+
+.lx-expander:not([data-disabled]) .lx-head:hover h4 {
+  color: var(--color-region-hover-foreground);
+}
+
+.lx-expander:not([data-disabled]) .lx-head:hover svg {
+  fill: var(--color-region-hover-foreground);
+}
+
+.lx-expander:not([data-disabled]) .lx-head:active,
+.lx-expander:not([data-disabled]) .lx-head:focus {
+  outline-color: var(--color-focus-background);
+}
+
+.lx-expander[data-disabled] .lx-head {
+  color: var(--color-disabled-background);
+  cursor: not-allowed;
+}
+
+.lx-expander .lx-body {
+  padding: 0rem 0rem 1.5rem 0rem;
+}
+
+.lx-expander .lx-chevron-icon {
+  fill: var(--color-foreground);
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  height: 1rem;
+  width: 1rem;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.lx-expander[data-disabled]>.lx-head>.lx-chevron-icon,
+.lx-expander[data-disabled] .lx-modifier-icon {
+  fill: var(--color-disabled-background);
+}
+
+.lx-expander .lx-body>.lx-invalidation-message {
+  padding: 0.25rem 2rem;
+}
+
+.lx-expander.lx-expander-column {
+  display: flex;
+  height: 100%;
+}
+
+.lx-expander.lx-expander-column .lx-head {
+  display: flex;
+  padding: 3rem 0.625rem 1rem 0.625rem;
+}
+
+.lx-expander.lx-expander-column .lx-head h4,
+.lx-expander.lx-expander-column .lx-head label {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+.lx-expander .lx-head label {
+  color: var(--color-data);
+  font-weight: bold;
+  font-size: 1rem;
+  line-height: 1em;
+  margin-top: 0.15rem;
+  cursor: pointer;
+}
+
+.lx-expander .lx-head label::before {
+  content: '*';
+  border: 1px solid var(--color-background);
+  background-color: var(--color-warning);
+  color: var(--color-warning);
+  display: inline-block;
+  height: 0.75rem;
+  width: 0.75rem;
+  border-radius: 50%;
+  margin-left: -1.1rem;
+  position: absolute;
+  top: 0.5rem;
+  opacity: 0;
+  transform: scale(0.1);
+}
+
+.lx-expander.lx-expander-highlighted .lx-head label::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.lx-expander.lx-invalid .lx-head h4 {
+  color: var(--color-bad);
+}
+
+.lx-expander.lx-invalid .lx-head svg {
+  height: auto;
+  flex-shrink: 0;
+  flex-grow: 0;
+  fill: var(--color-bad);
+}
+
+.lx-expander.lx-invalid .lx-body .lx-invalidation-message {
+  display: block;
+  overflow: visible;
+  max-height: 12.5rem;
+  color: var(--color-bad);
+  font-size: var(--small-font-size);
+  font-weight: 400;
+  letter-spacing: var(--letter-spacing-1);
+  margin-top: 0.1rem;
+}
+
+.lx-expander.lx-expander-column .lx-head .lx-chevron-icon {
+  -webkit-transform: rotate(-90deg) translateY(50%);
+  -moz-transform: rotate(-90deg) translateY(50%);
+  -o-transform: rotate(-90deg) translateY(50%);
+  transform: rotate(-90deg) translateY(50%);
+  top: 1rem;
+  right: 50%;
+}
+
+.lx-expander.lx-expander-column .lx-body {
+  padding: 1rem;
+  width: 100%;
+}
+
+.lx-expander .lx-toolbar {
+  margin-top: 0.5rem;
+}
+
+.lx-modal .lx-accordion .lx-expander .lx-head:not(:hover) {
+  background-color: var(--color-background);
+}
+
+.lx-modal .lx-accordion .lx-expander {
+  border: 2px var(--color-background) solid;
+  border-bottom: 2px transparent none;
+}
+
+.lx-modal .lx-accordion .lx-expander.lx-expanded:last-of-type {
+  border-bottom: 2px var(--color-background) solid;
+}
+
+.lx-modal .lx-accordion .lx-expander.lx-expanded .lx-head:not(:hover) {
+  background-color: var(--color-region);
+}
+
+.lx-modal .lx-accordion .lx-expander .lx-body {
+  padding: 1rem;
+  padding-bottom: 0;
+}
+
+.lx-modal .lx-accordion .lx-expander .lx-body .lx-form {
+  margin-bottom: 0;
+}
+
+.lx-data-block-wrapper.lx-data-block-wrapper-m {
+  display: grid;
+  grid-template-rows: var(--row-size) 1fr;
+  padding: 0;
+  margin-bottom: var(--row-size);
+}
+
+.lx-data-block-wrapper.lx-data-block-wrapper-l {
+  display: grid;
+  grid-template-rows: 4rem 1fr;
+  padding: 0;
+  margin-bottom: var(--row-size);
+}
+
+.lx-data-block {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-row: 1;
+  padding: 0;
+}
+
+.lx-data-block-wrapper-l>.lx-data-block {
+  grid-template-rows: 4rem;
+}
+
+.lx-data-block-wrapper-m>.lx-data-block>.lx-data-block-header {
+  min-height: var(--row-size);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: var(--row-size);
+  grid-column: 1;
+}
+
+.lx-data-block-wrapper-l>.lx-data-block>.lx-data-block-header {
+  min-height: var(--row-size);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 4rem;
+  grid-column: 1;
+}
+
+.lx-data-block-header>.lx-icons,
+.lx-data-block-header>.lx-indications {
+  align-self: center;
+  justify-self: center;
+  display: flex;
+}
+
+.lx-data-block-wrapper-m>.lx-data-block>.lx-data-block-header>.lx-icons,
+.lx-data-block-wrapper-m>.lx-data-block>.lx-data-block-header>.lx-indications {
+  width: var(--row-size);
+  justify-content: center;
+}
+
+.lx-data-block-wrapper-l>.lx-data-block>.lx-data-block-header>.lx-icons,
+.lx-data-block-wrapper-l>.lx-data-block>.lx-data-block-header>.lx-indications {
+  width: 4rem;
+  justify-content: center;
+}
+
+.lx-data-block-header>.lx-icons>svg {
+  height: 2rem;
+}
+
+.lx-data-block-header>.lx-content,
+.lx-data-block-expanded>.lx-data-block>.lx-data-block-header>.lx-content>.lx-primary {
+  display: block;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  align-self: center;
+  height: auto;
+  width: auto;
+}
+
+.lx-data-block-wrapper.lx-data-block-expanded>.lx-data-block>.lx-data-block-header>.lx-content>.lx-primary {
+  padding-top: 0.5rem;
+  padding-left: 0;
+}
+
+.lx-data-block-header>.lx-content {
+  overflow-x: hidden;
+  background-color: transparent;
+}
+
+.lx-data-block-header>.lx-content>p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lx-data-block-header>.lx-indications>svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container,
+.lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container>.lx-dropdown-toggler>.lx-toolbar,
+.lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container>.lx-dropdown-toggler>.lx-toolbar>button {
+  width: 4rem;
+  height: 4rem;
+}
+
+.lx-data-block-wrapper-l .lx-data-block .lx-context-container .additional-buttons .lx-dropdown-toggler,
+.additional-buttons {
+  align-self: center;
+  justify-self: center;
+}
+
+.lx-data-block-wrapper.lx-data-block-expander>.lx-data-block>.lx-data-block-header:hover {
+  background-color: var(--color-region-hover);
+  cursor: pointer;
+}
+
+.lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-content,
+.lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-icons,
+.lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-indications,
+.lx-data-block-wrapper.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-content,
+.lx-data-block-wrapper.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-icons,
+.lx-data-block-wrapper.lx-data-block-disabled>.lx-data-block,
+.lx-data-block-wrapper.lx-data-block-wrapper-l.lx-data-block-expander.lx-data-block-disabled>.lx-data-block {
+  cursor: not-allowed;
+}
+
+.lx-data-block-content,
+.lx-data-block,
+.lx-data-block-header,
+.lx-data-block>.additional-buttons,
+.lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header:hover {
+  background-color: var(--color-region);
+}
+
+.lx-region .lx-data-block-content,
+.lx-region .lx-data-block,
+.lx-region .lx-data-block-header,
+.lx-region .lx-data-block>.additional-buttons,
+.lx-region .lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header:hover,
+.modal-display .lx-data-block-content,
+.modal-display .lx-data-block,
+.modal-display .lx-data-block-header,
+.modal-display .lx-data-block>.additional-buttons,
+.lx-card .lx-data-block-content,
+.lx-card .lx-data-block,
+.lx-card .lx-data-block-header,
+.lx-card .lx-data-block>.additional-buttons,
+.lx-card .lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header:hover {
+  background-color: var(--color-region-2);
+}
+
+.lx-data-block-wrapper-m>.lx-data-block-content>.lx-main {
+  padding: var(--row-size);
+}
+
+.lx-data-block-wrapper-l>.lx-data-block-content>.lx-main {
+  padding: 4rem;
+}
+
+.lx-data-block-wrapper>.lx-data-block-content>.lx-main button {
+  margin-bottom: 0.5rem;
+  margin-left: 0.5rem;
+}
+
+.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button svg {
+  fill: var(--color-dropdown-button-foreground);
+  margin: var(--margin-button-icon-reverse);
+}
+
+.lx-data-block-wrapper.lx-data-block-expanded>.lx-data-block>.lx-data-block-header>.lx-content>.lx-secondary {
+  opacity: 0;
+  padding-top: 0.3rem;
+  height: 0;
+}
+
+.lx-data-block-wrapper>.lx-data-block>.lx-data-block-header>.lx-content>.lx-primary {
+  text-transform: uppercase;
+}
+
+.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-indications>svg {
+  fill: var(--color-disabled-background);
+}
+
+.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-content>p {
+  color: var(--color-disabled-background);
+}
+
+.lx .lx-data-block-wrapper .lx-button-set.lx-justified-toolbar {
+  justify-content: space-between;
+}
+
+.lx .lx-data-block-wrapper .lx-button-set {
+  flex-grow: 1;
+  width: 100%;
+}
+
+.lx .lx-data-block-wrapper .lx-button-set:not(.lx-dropdown-panel .lx-button-set):not(.lx-modal .lx-button-set),
+.lx .lx-data-block-wrapper .lx-button-set .lx-group,
+.lx .lx-modal .lx-data-block-wrapper .lx-pseudo-grid .lx-button-set:not(.lx-dropdown-panel .lx-button-set):not(.lx-modal > footer.lx-button-set) {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.lx .lx-data-block p.lx-primary {
+  width: 100%;
+  font-weight: bold;
+  line-height: 1.1em;
+}
+
+.lx .lx-data-block header p.lx-primary.lx-title {
+  margin-bottom: 0.25rem;
+}
+
+.lx .lx-data-block p.lx-secondary {
+  width: 100%;
+  font-size: var(--small-font-size);
+  color: var(--color-label);
+  line-height: 1.1em;
+}
+
+.lx-data-block-wrapper>.lx-data-block-content {
+  overflow: hidden;
+}
+
+.lx-data-block-wrapper>.lx-data-block>.lx-data-block-header>.lx-icons>.lx-icon {
+  fill: var(--color-label);
+}
+
+.lx-data-block>.additional-buttons>.lx-context-container .lx-toolbar .lx-button>svg,
+.lx-data-block>.additional-buttons>.lx-button>svg {
+  fill: var(--color-data);
+}
+
+.lx-data-block>.additional-buttons>.lx-button>.lx-button-content {
+  color: var(--color-data);
+}
+
+.lx-data-block>.additional-buttons>.lx-button:hover>.lx-button-content {
+  color: var(--color-interactive-hover-foreground);
+}
+
+.lx-data-block>.additional-buttons>.lx-context-container .lx-toolbar .lx-button:hover svg {
+  fill: var(--color-interactive-hover-foreground);
+}
+
+.lx-expander header.lx-head {
+  padding-top: 0;
+  padding-bottom: 0;
+  min-height: var(--row-size);
+  align-items: center;
+}
+
+.lx-expander header.lx-head>div:not(.lx-chevron-icon) {
+  width: 100%;
+}
+
+.lx .lx-expander header.lx-head .lx-group div {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lx-expander header.lx-head h4+.lx-description {
+  font-size: var(--small-font-size);
+  margin-top: -0.25rem;
+  color: var(--color-label);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.lx-expander header.lx-head:hover h4+.lx-description {
+  color: var(--color-data);
+}
+
+.lx-expander.lx-region {
+  background-color: var(--color-region);
+}
+
+.lx-expander>header .lx-modifier-icon+.lx-indicator {
+  opacity: 0;
+  background-color: var(--color-orange);
+  min-width: 0.5rem;
+  min-height: 0.5rem;
+  padding: 0 !important;
+  height: 1rem !important;
+  width: 1rem !important;
+  border: 2px solid var(--color-region);
+  border-radius: 50%;
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  transform: scale(0.1, 0.1);
+}
+
+.lx-expander>header:hover .lx-modifier-icon+.lx-indicator {
+  border: 2px solid var(--color-grid-hover-background);
+}
+
+.lx-expander.lx-expander-highlighted>header .lx-modifier-icon+.lx-indicator {
+  opacity: 1;
+  transform: scale(1, 1);
+}
+
+.lx-expander>header .lx-group {
+  display: flex;
+  align-items: center;
+}

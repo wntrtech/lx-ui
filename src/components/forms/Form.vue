@@ -1,0 +1,855 @@
+<script setup>
+import { computed, useSlots, ref, watch, onMounted, nextTick, provide } from 'vue';
+import {
+  useElementVisibility,
+  useElementBounding,
+  useElementSize,
+  useWindowSize,
+} from '@vueuse/core';
+import LxButton from '@/components/Button.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxSection from '@/components/forms/Section.vue';
+import LxTabControl from '@/components/TabControl.vue';
+import LxIcon from '@/components/Icon.vue';
+import { generateUUID } from '@/utils/stringUtils';
+
+// Calculates the offset for the form header and footer
+function calculateOffset(el, considerRow = true) {
+  const navRems = getComputedStyle(el).getPropertyValue('--nav-row-size').trim();
+  const headerRems = getComputedStyle(el).getPropertyValue('--row-size').trim();
+  const { fontSize } = getComputedStyle(el);
+  if (considerRow) {
+    return (
+      parseInt(navRems, 10) * parseFloat(fontSize) + parseInt(headerRems, 10) * parseFloat(fontSize)
+    );
+  }
+  return parseInt(navRems, 10) * parseFloat(fontSize);
+}
+
+const slots = useSlots();
+const emits = defineEmits(['buttonClick']);
+
+/**
+ * The Form component represents a form with various sections and rows.
+ *
+ * @property {String} id - The unique identifier for the form. Defaults to a generated UUID.
+ * @property {Number} columnCount - The number of columns in the form. Defaults to 1.
+ * @property {Boolean} showHeader - Determines whether to show the form header. Defaults to true.
+ * @property {Boolean} stickyHeader - Determines whether the form header should be sticky. Defaults to true.
+ * @property {Boolean} showFooter - Determines whether to show the form footer. Defaults to true.
+ * @property {Boolean} stickyFooter - Determines whether the form footer should be sticky. Defaults to true.
+ * @property {Boolean} showPreHeaderInfo - Determines whether to show the pre-header information slot. Defaults to true.
+ * @property {Boolean} showPostHeaderInfo - Determines whether to show the post-header information slot. Defaults to true.
+ * @property {Array} index - The array of sections in the form. Defaults to an empty array.
+ * @property {String} indexType - The type of index for the form. Can be 'default', 'tabs', or 'expanders'. Defaults to 'default'.
+ * @property {Array} actionDefinitions - The array of buttons for the form. Defaults to an empty array.
+ * @property {String} requiredMode - The required mode for the form. Can be 'required', 'required-asterisk', or 'optional'. Defaults to 'optional'.
+ * @property {String} kind - The kind of form. Can be 'default', 'compact', or 'stripped'. Defaults to 'default'.
+ * @property {Object} texts - The object containing text translations for the form.
+ *
+ * @fires buttonClick - Emitted when a button in the form is clicked.
+ *
+ * @function highlightRow - Highlights a row in the form.
+ * @function clearHighlights - Clears all highlights in the form.
+ *
+ * @example
+ * <Form
+ *   id="myForm"
+ *   columnCount="2"
+ *   showHeader="true"
+ *   stickyHeader="true"
+ *   showFooter="true"
+ *   stickyFooter="true"
+ *   showPreHeaderInfo="true"
+ *   showPostHeaderInfo="true"
+ *   :index="[{ id: 'section1', name: 'Section 1' }, { id: 'section2', name: 'Section 2' }]"
+ *   indexType="default"
+ *   :actionDefinitions="[{ actionName: 'save', name: 'Save', icon: 'save', kind: 'primary' }]"
+ *   requiredMode="optional"
+ *   kind="default"
+ *   :texts="{ otherActions: 'Other Actions' }"
+ *   @buttonClick="handleButtonClick"
+ *   @highlightRow="handleHighlightRow"
+ *   @clearHighlights="handleClearHighlights"
+ * >
+ *   <template #pre-header>
+ *     <h2>Pre-Header Content</h2>
+ *   </template>
+ *   <template #pre-header-info>
+ *     <p>Pre-Header Information Content</p>
+ *   </template>
+ *   <template #header>
+ *     <h1>Form Header</h1>
+ *   </template>
+ *   <template #post-header>
+ *     <h2>Post-Header Content</h2>
+ *   </template>
+ *   <template #post-header-info>
+ *     <p>Post-Header Information Content</p>
+ *   </template>
+ * </Form>
+ */
+
+const props = defineProps({
+  /**
+   * The unique identifier for the form.
+   * @type {String}
+   * @default generateUUID()
+   * @since 0.1.63
+   */
+  id: {
+    type: String,
+    default: () => generateUUID(),
+  },
+  /**
+   * The number of columns to display in the form.
+   * @type {Number}
+   * @default 1
+   * @since 0.1.63
+   */
+  columnCount: {
+    type: Number,
+    default: 1,
+  },
+  /**
+   * Determines whether to show the header of the form.
+   * @type {Boolean}
+   * @default true
+   * @since 0.1.63
+   */
+  showHeader: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * Determines whether the header should be sticky or not.
+   * @type {Boolean}
+   * @default true
+   * @since 0.1.63
+   */
+  stickyHeader: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * Determines whether to show the footer of the form.
+   * @type {Boolean}
+   * @default true
+   * @since 0.1.63
+   */
+  showFooter: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * Determines whether the footer should be sticky or not.
+   * @type {Boolean}
+   * @default true
+   * @since 0.1.63
+   */
+  stickyFooter: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * Determines whether to show pre-header information slot.
+   * @type {Boolean}
+   * @default true
+   * @since 0.1.63
+   */
+  showPreHeaderInfo: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * Determines whether to show post-header information slot.
+   * @type {Boolean}
+   * @default true
+   * @since 0.1.63
+   */
+  showPostHeaderInfo: {
+    type: Boolean,
+    default: true,
+  },
+  /**
+   * The array of sections in the form.
+   * @type {Array}
+   * @default []
+   * @since 0.1.63
+   */
+  index: {
+    type: Array,
+    default: () => [],
+  },
+  /**
+   * The type of index for the form.
+   * @type {String}
+   * @default 'default'
+   * @since 0.3.0
+   */
+  indexType: {
+    type: String,
+    default: 'default', // 'default' or 'tabs' or 'expanders'
+  },
+  /**
+   * An array of buttons for the form.
+   * @type {Array}
+   * @default []
+   * @since 0.1.63
+   */
+  actionDefinitions: {
+    type: Array,
+    default: () => [], // { actionName: '', name: '', icon: '', kind: 'primary'/'secondary'/'tertiary'/'additional' }
+  },
+  /**
+   * The required mode for the form.
+   * @type {String}
+   * @default 'optional'
+   * @since 0.3.11
+   */
+  requiredMode: { type: String, default: 'none' }, // none || required || required-asterisk || optional
+  /**
+   * Determines spacings between, before, after rows and sections in form.
+   * @type {String}
+   * @default 'default'
+   * @since 0.3.11
+   */
+  kind: { type: String, default: 'default' }, // default || compact || stripped
+  /**
+   * The object containing text translations for the form.
+   * @type {Object}
+   * @since 0.3.5
+   */
+  texts: {
+    type: Object,
+    default: () => ({
+      otherActions: 'Citas darbības',
+      required: '(obligāts)',
+      optional: '(neobligāts)',
+    }),
+  },
+});
+
+// Scrolls to the element with the specified ID
+function scrollTo(id) {
+  const elementForm = document.getElementById(props.id);
+  const element = elementForm?.querySelector(`#${id}`);
+  const topPosition =
+    element && element.getBoundingClientRect()
+      ? element.getBoundingClientRect().top + window.scrollY
+      : 0;
+
+  const offset = calculateOffset(element);
+
+  const targetPosition = topPosition - offset;
+
+  window.scrollTo({
+    top: targetPosition,
+    behavior: 'smooth',
+  });
+}
+
+const form = ref();
+const formHeader = ref();
+const formFooter = ref();
+
+const bounding = useElementBounding(form);
+const windowSize = useWindowSize();
+const headerSize = useElementSize(formHeader);
+const footerSize = useElementSize(formFooter);
+
+/**
+ * Computed property that calculates the CSS properties for the top out of bounds effect.
+ * @returns {string} The CSS properties for the top out of bounds effect.
+ * @since 1.2.2
+ */
+const topOutOfBounds = computed(() => {
+  const keyOpacity = '--form-top-shadow-opacity';
+  const keySize = '--form-header-size';
+  const limit = 100;
+  const size = headerSize.height?.value;
+
+  if (!form.value || !formHeader.value) return `${keyOpacity}: 0; ${keySize}: var(--row-size);`;
+
+  const v = bounding.top ? bounding.top.value - calculateOffset(form.value, false) : 0;
+
+  if (v < 0 - limit) {
+    return `${keyOpacity}: 1; ${keySize}: ${size}px;`;
+  }
+  if (v < 0) {
+    return `${keyOpacity}: ${(0 - v) / limit}; ${keySize}: ${size}px;`;
+  }
+  return `${keyOpacity}: 0; ${keySize}: ${size}px;`;
+});
+/**
+ * Computes the CSS properties for the bottom shadow and footer size of the form component.
+ * @returns {string} The computed CSS properties as a string.
+ * @since 1.2.2
+ */
+const bottomOutOfBounds = computed(() => {
+  const keyOpacity = '--form-bottom-shadow-opacity';
+  const keySize = '--form-footer-size';
+  const limit = 100;
+  const size = footerSize.height?.value;
+
+  if (!form.value || !formFooter.value) return `${keyOpacity}: 0; ${keySize}: var(--row-size);`;
+
+  const v =
+    bounding.bottom && windowSize.height ? bounding.bottom.value - windowSize.height.value : 0;
+
+  if (v > limit) {
+    return `${keyOpacity}: 1; ${keySize}: ${size}px;`;
+  }
+  if (v > 0) {
+    return `${keyOpacity}: ${v / limit}; ${keySize}: ${size}px;`;
+  }
+  return `${keyOpacity}: 0; ${keySize}: ${size}px;`;
+});
+
+const indexTypeRef = computed(() => props.indexType);
+const indexRef = computed(() => props.index);
+
+// eslint-disable-next-line vue/no-setup-props-destructure
+provide('requiredTexts', { required: props.texts.required, optional: props.texts.optional });
+provide('formMode', props.requiredMode);
+provide('formIndexType', indexTypeRef);
+provide('formIndex', indexRef);
+
+const primaryButtons = computed(() => {
+  const ret = props.actionDefinitions?.filter((x) => x.kind === 'primary');
+  if (ret?.length > 2) {
+    return ret.slice(0, 2);
+  }
+  return ret;
+});
+const secondaryButtons = computed(() =>
+  props.actionDefinitions?.filter((x) => x.kind === 'secondary')
+);
+const tertiaryButtons = computed(() =>
+  props.actionDefinitions?.filter((x) => x.kind === 'tertiary')
+);
+const additionalButtons = computed(() =>
+  props.actionDefinitions?.filter((x) => x.kind === 'additional')
+);
+
+const hasPreHeaderInfoSlot = computed(
+  () => props.showPreHeaderInfo && slots['pre-header-info'] !== undefined
+);
+const hasPostHeaderInfoSlot = computed(
+  () => props.showPostHeaderInfo && slots['post-header-info'] !== undefined
+);
+
+const sectionLocations = ref({});
+
+const visibilities = ref({});
+
+const clickHandler = (actionName) => {
+  emits('buttonClick', actionName);
+};
+
+watch(
+  () => props.index,
+  () => {
+    nextTick(() => {
+      const elementForm = document.getElementById(props.id);
+      props.index?.forEach((o) => {
+        const el = elementForm?.querySelector(`#${o.id}`);
+        const visible = useElementVisibility(el);
+        visibilities.value[o.id] = visible;
+      });
+    });
+  }
+);
+const tabControl = ref();
+const selectedSection = computed(() => {
+  const ret = [];
+  Object.keys(visibilities.value).forEach((key) => {
+    if (visibilities.value[key]) {
+      ret.push(key);
+    }
+  });
+  return ret;
+});
+
+function findIfSectionSelected(id) {
+  const res = selectedSection.value?.find((x) => x === id);
+  return res !== undefined;
+}
+
+const selectedTabValue = computed(() => {
+  let res = props.index[0]?.id;
+  props.index?.forEach((o) => {
+    if (tabControl.value?.isActiveTab(o.id)) {
+      res = o.id;
+    }
+  });
+  return res;
+});
+
+// Hides all sections in the form. Necessary for indexType 'tabs'
+function hideAll() {
+  const idValue = document.getElementById(props.id);
+  const allElements = idValue.querySelectorAll(`.lx-tab-body > div.lx-main > .lx-form-section`);
+
+  for (let i = 0; i < allElements.length; i += 1) {
+    allElements[i].style.display = 'none';
+  }
+  const selectedForm = document.getElementById(props.id);
+  const selectedElement = selectedForm?.querySelector(`#${selectedTabValue.value}`);
+  selectedElement.style.display = 'grid';
+}
+
+watch(
+  () => props.indexType,
+  (newValue) => {
+    if (newValue === 'default' || newValue === 'expanders') {
+      const allElements = document
+        .getElementById(props.id)
+        .getElementsByClassName('lx-form-section');
+      for (let i = 0; i < allElements.length; i += 1) {
+        allElements[i].style.display = 'grid';
+      }
+      nextTick(() => {
+        const elementForm = document.getElementById(props.id);
+        props.index?.forEach((o) => {
+          const el = elementForm?.querySelector(`#${o.id}`);
+          const visible = useElementVisibility(el);
+          visibilities.value[o.id] = visible;
+        });
+      });
+    } else {
+      nextTick(() => {
+        hideAll();
+      });
+    }
+  }
+);
+
+const notPrimaryButtonCount = computed(() => {
+  const secondary = secondaryButtons.value?.length ? secondaryButtons.value?.length : 0;
+  const tertiary = tertiaryButtons.value?.length ? tertiaryButtons.value?.length : 0;
+  return secondary + tertiary;
+});
+
+/**
+ * Highlights a row in the form.
+ * @param {string} rowId - The ID of the row element to highlight.
+ * @param {string} kind - The kind of highlight to apply (default is 'default').
+ * @param {number} duration - The duration of the highlight animation in milliseconds (default is 500).
+ * @since 1.1.0
+ */
+function highlightRow(rowId, kind = 'default', duration = 500) {
+  const element = document.getElementById(rowId);
+  if (kind === 'default') {
+    element.classList.add('lx-highlight');
+    setTimeout(() => {
+      element.classList.remove('lx-highlight');
+    }, duration);
+  }
+}
+
+/**
+ * Removes  the lx-highlight class from all rows in the form.
+ * @since 1.1.0
+ */
+function clearHighlights() {
+  const element = document.getElementsByClassName('lx-highlight');
+  while (element[0]) {
+    element[0].classList.remove('lx-highlight');
+  }
+}
+
+onMounted(() => {
+  const elementForm = document.getElementById(props.id);
+  props.index?.forEach((o) => {
+    const el = elementForm?.querySelector(`#${o.id}`);
+    const visible = useElementVisibility(el);
+    visibilities.value[o.id] = visible;
+  });
+  if (props.indexType === 'tabs') hideAll();
+});
+defineExpose({ highlightRow, clearHighlights });
+</script>
+<template>
+  <article
+    :id="id"
+    class="lx-form-grid"
+    role="form"
+    :class="[{ 'lx-form-grid-stripped': kind === 'stripped' }]"
+    ref="form"
+    :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
+  >
+    <aside
+      class="lx-index"
+      aria-label="navigation block"
+      v-if="props.indexType === 'default' && index?.length > 0"
+    >
+      <ul>
+        <li
+          v-for="i in index"
+          :key="i.id"
+          ref="indexItems"
+          :class="[{ 'lx-selected': findIfSectionSelected(i.id) }]"
+          tabindex="0"
+          v-on:keyup.enter="scrollTo(i.id)"
+          v-on:keyup.space="scrollTo(i.id)"
+          @click="scrollTo(i.id)"
+        >
+          <div
+            class="index-text"
+            :class="{ 'lx-invalid': i?.invalid }"
+            :title="i.invalid ? i.invalidationMessage : ''"
+          >
+            {{ sectionLocations[i.id] }}
+            <p>{{ i.name }}</p>
+            <LxIcon value="invalid" v-if="i?.invalid" />
+          </div>
+        </li>
+      </ul>
+    </aside>
+    <aside
+      class="lx-index lx-index-small"
+      aria-label="navigation block"
+      v-if="props.indexType === 'default' && index?.length > 0"
+    >
+      <ul>
+        <li
+          v-for="(i, index) in index"
+          :key="i.id"
+          ref="indexItems"
+          :class="[{ 'lx-selected': findIfSectionSelected(i.id) }]"
+          tabindex="0"
+          v-on:keyup.enter="scrollTo(i.id)"
+          v-on:keyup.space="scrollTo(i.id)"
+          @click="scrollTo(i.id)"
+        >
+          <div
+            class="index-text"
+            :class="{ 'lx-invalid': i?.invalid }"
+            :title="i.invalid ? i.invalidationMessage : ''"
+          >
+            <div class="inner-text">
+              {{ sectionLocations[i.id] }}
+
+              {{ index + 1 }}
+              <span class="index-hide-collapsed">&nbsp;{{ i.name }} </span>
+            </div>
+            <LxIcon value="invalid" v-if="i?.invalid" />
+          </div>
+        </li>
+      </ul>
+    </aside>
+    <header
+      ref="formHeader"
+      :class="[
+        { 'lx-sticky': stickyHeader },
+        { 'lx-simple': slots['pre-header'] === undefined },
+        { 'lx-form-with-tabs': props.indexType === 'tabs' },
+        { 'lx-form-with-aside': props.indexType === 'default' && index?.length > 0 },
+      ]"
+      v-if="showHeader && kind !== 'stripped'"
+    >
+      <div class="lx-group pre-header-group">
+        <LxInfoWrapper v-if="hasPreHeaderInfoSlot">
+          <div class="lx-toolbar-chip">
+            <slot name="pre-header" />
+          </div>
+          <template #panel>
+            <slot name="pre-header-info" />
+          </template>
+        </LxInfoWrapper>
+        <div class="lx-toolbar-chip" v-else>
+          <slot name="pre-header" />
+        </div>
+      </div>
+      <div class="lx-group lx-primary">
+        <div class="lx-toolbar-chip">
+          <slot name="header" />
+        </div>
+      </div>
+      <div class="lx-group post-header-group">
+        <LxInfoWrapper v-if="hasPostHeaderInfoSlot">
+          <div class="lx-toolbar-chip">
+            <slot name="post-header" />
+          </div>
+          <template #panel>
+            <slot name="post-header-info" />
+          </template>
+        </LxInfoWrapper>
+        <div class="lx-toolbar-chip" v-else>
+          <slot name="post-header" />
+        </div>
+      </div>
+      <div class="responsive-overflow-header">
+        <div class="overflow-icon-container">
+          <LxInfoWrapper v-if="slots['pre-header'] || slots['post-header']">
+            <LxIcon value="info" />
+            <template #panel>
+              <slot name="pre-header" /> <br v-if="slots['pre-header']" />
+              <slot name="pre-header-info" /><br v-if="slots['pre-header-info']" />
+              <slot name="post-header" /><br v-if="slots['post-header']" />
+              <slot name="post-header-info" />
+            </template>
+          </LxInfoWrapper>
+        </div>
+      </div>
+      <div
+        class="lx-group"
+        :class="[{ 'lx-single-header-button': props.indexType === 'default' }]"
+        v-if="additionalButtons?.length === 1"
+      >
+        <LxButton
+          v-for="button in additionalButtons"
+          @click="clickHandler(button.id)"
+          :key="button.id"
+          :label="button.name"
+          :destructive="button.destructive"
+          :icon="button.icon"
+          :title="button.tooltip"
+          :loading="button.loading"
+          :busy="button.busy"
+          :active="button.active"
+          :disabled="button.disabled"
+          :badge="button.badge"
+          :badge-type="button.badgeType"
+          kind="ghost"
+          variant="icon-only"
+        />
+      </div>
+      <div
+        class="lx-group"
+        :class="[
+          {
+            'lx-multiple-header-button':
+              props.indexType === 'default' && additionalButtons?.length === 1,
+          },
+        ]"
+        v-if="
+          additionalButtons?.length > 1 ||
+          (additionalButtons?.length === 1 && props.indexType === 'default' && index?.length > 0)
+        "
+      >
+        <LxDropDownMenu>
+          <LxButton
+            icon="overflow-menu"
+            kind="ghost"
+            variant="icon-only"
+            custom-class="additional-button-icon"
+          />
+          <LxButton
+            :icon="index?.length > 0 && props.indexType === 'default' ? 'menu' : 'overflow-menu'"
+            kind="ghost"
+            variant="icon-only"
+            custom-class="additional-button-icon-menu"
+          />
+          <template #panel>
+            <p
+              class="lx-description additional-buttons-label"
+              v-if="index?.length > 0 && props.indexType === 'default'"
+            >
+              Papildus darbības
+            </p>
+            <LxButton
+              v-for="button in additionalButtons"
+              @click="clickHandler(button.id)"
+              :key="button.id"
+              :label="button.name"
+              :disabled="button.disabled"
+              :destructive="button.destructive"
+              :icon="button.icon"
+              :title="button.tooltip"
+              :loading="button.loading"
+              :busy="button.busy"
+              :active="button.active"
+              :badge="button.badge"
+              :badge-type="button.badgeType"
+              kind="ghost"
+            />
+            <div
+              class="responsive-default-index-button"
+              v-if="props.indexType === 'default' && index?.length > 0"
+            >
+              <hr />
+              <p class="lx-description additional-buttons-label">Satura rādītājs</p>
+              <div
+                class="additional-index-button"
+                v-for="i in index"
+                :key="i.id"
+                ref="indexItems"
+                :class="[
+                  { 'lx-selected': findIfSectionSelected(i.id) },
+                  { 'lx-invalid': i?.invalid },
+                ]"
+                v-on:keyup.enter="scrollTo(i.id)"
+                v-on:keyup.space="scrollTo(i.id)"
+                @click="scrollTo(i.id)"
+                :title="i.invalid ? i.invalidationMessage : ''"
+              >
+                <p>{{ i.name }}</p>
+                <LxIcon value="invalid" v-if="i.invalid" />
+              </div>
+            </div>
+          </template>
+        </LxDropDownMenu>
+      </div>
+      <div
+        class="responsive-default-index-button"
+        v-if="additionalButtons?.length === 0 && props.indexType === 'default' && index?.length > 0"
+      >
+        <LxDropDownMenu>
+          <LxButton icon="menu" kind="ghost" variant="icon-only" />
+          <template #panel>
+            <div
+              class="additional-index-button"
+              v-for="i in index"
+              :key="i.id"
+              ref="indexItems"
+              :class="[
+                { 'lx-selected': findIfSectionSelected(i.id) },
+                { 'lx-invalid': i?.invalid },
+              ]"
+              v-on:keyup.enter="scrollTo(i.id)"
+              v-on:keyup.space="scrollTo(i.id)"
+              @click="scrollTo(i.id)"
+              :title="i.invalid ? i.invalidationMessage : ''"
+            >
+              <p>{{ i.name }}</p>
+              <LxIcon value="invalid" v-if="i.invalid" />
+            </div>
+          </template>
+        </LxDropDownMenu>
+      </div>
+    </header>
+    <LxTabControl
+      ref="tabControl"
+      :value="props.index"
+      v-if="props.indexType === 'tabs' && index?.length > 0"
+      @click="hideAll"
+    >
+      <template #body>
+        <div
+          class="lx-main"
+          :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
+        >
+          <LxSection id="default" :column-count="columnCount">
+            <slot />
+          </LxSection>
+          <slot name="sections" />
+        </div>
+      </template>
+    </LxTabControl>
+    <div
+      class="lx-main"
+      v-else
+      :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
+    >
+      <LxSection id="default" :column-count="columnCount">
+        <slot />
+      </LxSection>
+      <slot name="sections" />
+    </div>
+    <footer
+      :class="[{ 'lx-sticky': stickyFooter }]"
+      v-if="showFooter && kind !== 'stripped'"
+      ref="formFooter"
+    >
+      <div class="lx-group lx-buttons">
+        <LxButton
+          v-for="button in primaryButtons"
+          @click="clickHandler(button.id)"
+          :key="button.id"
+          :label="button.name"
+          :disabled="button.disabled"
+          :destructive="button.destructive"
+          :icon="button.icon"
+          :title="button.tooltip"
+          :loading="button.loading"
+          :busy="button.busy"
+          :active="button.active"
+          :badge="button.badge"
+          :badge-type="button.badgeType"
+          kind="primary"
+        />
+        <LxDropDownMenu custom-class="responsive-overflow" v-if="notPrimaryButtonCount > 1">
+          <LxButton kind="secondary" icon="overflow-menu" :label="texts?.otherActions" />
+          <template #panel>
+            <LxButton
+              v-for="button in secondaryButtons"
+              @click="clickHandler(button.id)"
+              :key="button.id"
+              :label="button.name"
+              :disabled="button.disabled"
+              :destructive="button.destructive"
+              :icon="button.icon"
+              :title="button.tooltip"
+              :loading="button.loading"
+              :busy="button.busy"
+              :active="button.active"
+              :badge="button.badge"
+              :badge-type="button.badgeType"
+              kind="ghost"
+            />
+            <LxButton
+              v-for="button in tertiaryButtons"
+              @click="clickHandler(button.id)"
+              :key="button.id"
+              :label="button.name"
+              :disabled="button.disabled"
+              :destructive="button.destructive"
+              :icon="button.icon"
+              :title="button.tooltip"
+              :loading="button.loading"
+              :busy="button.busy"
+              :active="button.active"
+              :badge="button.badge"
+              :badge-type="button.badgeType"
+              kind="ghost"
+            />
+          </template>
+        </LxDropDownMenu>
+        <LxButton
+          v-for="button in secondaryButtons"
+          @click="clickHandler(button.id)"
+          :custom-class="
+            notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
+          "
+          :key="button.id"
+          :label="button.name"
+          :disabled="button.disabled"
+          :destructive="button.destructive"
+          :icon="button.icon"
+          :title="button.tooltip"
+          :loading="button.loading"
+          :busy="button.busy"
+          :active="button.active"
+          :badge="button.badge"
+          :badge-type="button.badgeType"
+          kind="secondary"
+        />
+      </div>
+      <div class="lx-group"><slot name="footer" /></div>
+      <div class="lx-group lx-responsive-l">
+        <LxButton
+          v-for="button in tertiaryButtons"
+          @click="clickHandler(button.id)"
+          :key="button.id"
+          :label="button.name"
+          :disabled="button.disabled"
+          :destructive="button.destructive"
+          :icon="button.icon"
+          :custom-class="
+            notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
+          "
+          :title="button.tooltip"
+          :loading="button.loading"
+          :busy="button.busy"
+          :active="button.active"
+          :badge="button.badge"
+          :badge-type="button.badgeType"
+          kind="tertiary"
+        />
+      </div>
+    </footer>
+  </article>
+</template>

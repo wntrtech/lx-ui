@@ -1,0 +1,107 @@
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Mono';
+  font-style: italic;
+  font-weight: 300;
+  src: local('IBM Plex Mono Light Italic'), local('IBMPlexMono-LightItalic'),
+    url(/lx-fonts/IBMPlexMono-LightItalic.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Mono';
+  font-style: italic;
+  font-weight: 400;
+  src: local('IBM Plex Mono Italic'), local('IBMPlexMono-Italic'),
+    url(/lx-fonts/IBMPlexMono-Italic.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Mono';
+  font-style: italic;
+  font-weight: 600;
+  src: local('IBM Plex Mono SemiBold Italic'), local('IBMPlexMono-SemiBoldItalic'),
+    url(/lx-fonts/IBMPlexMono-SemiBoldItalic.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 300;
+  src: local('IBM Plex Mono Light'), local('IBMPlexMono-Light'),
+    url(/lx-fonts/IBMPlexMono-Light.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  src: local('IBM Plex Mono Regular'), local('IBMPlexMono-Regular'),
+    url(/lx-fonts/IBMPlexMono-Regular.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  src: local('IBM Plex Mono SemiBold'), local('IBMPlexMono-SemiBold'),
+    url(/lx-fonts/IBMPlexMono-SemiBold.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  font-weight: 300;
+  src: local('IBM Plex Sans Light Italic'), local('IBMPlexSans-LightItalic'),
+    url(/lx-fonts/IBMPlexSans-LightItalic.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: local('IBM Plex Sans Italic'), local('IBMPlexSans-Italic'),
+    url(/lx-fonts/IBMPlexSans-Italic.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Sans';
+  font-style: italic;
+  font-weight: 600;
+  src: local('IBM Plex Sans SemiBold Italic'), local('IBMPlexSans-SemiBoldItalic'),
+    url(/lx-fonts/IBMPlexSans-SemiBoldItalic.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 300;
+  src: local('IBM Plex Sans Light'), local('IBMPlexSans-Light'),
+    url(/lx-fonts/IBMPlexSans-Light.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('IBM Plex Sans'), local('IBMPlexSans'),
+    url(/lx-fonts/IBMPlexSans-Regular.woff) format('woff');
+}
+
+@font-face {
+  font-display: auto;
+  font-family: 'IBM Plex Sans';
+  font-style: normal;
+  font-weight: 600;
+  src: local('IBM Plex Sans SemiBold'), local('IBMPlexSans-SemiBold'),
+    url(/lx-fonts/IBMPlexSans-SemiBold.woff) format('woff');
+}

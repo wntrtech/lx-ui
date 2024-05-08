@@ -1,0 +1,569 @@
+<script setup>
+import { computed, watch, ref } from 'vue';
+
+import LxButton from '@/components/Button.vue';
+import LxIcon from '@/components/Icon.vue';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxToggle from '@/components/Toggle.vue';
+import LxAvatar from '@/components/Avatar.vue';
+
+import { shortenUserName, safeString } from '@/utils/stringUtils';
+
+const props = defineProps({
+  mode: { type: String, default: 'default' },
+  userInfo: { type: Object, default: null }, // firstName, lastName, description, role, institution
+  hasAvatar: { type: Boolean, default: false },
+  alternativeProfilesInfo: { type: Array, default: null },
+  contextPersonsInfo: { type: Array, default: () => [] },
+  selectedContextPerson: { type: Object, default: null },
+  navItems: { type: Array, default: null },
+  hasLanguagePicker: { type: Boolean, default: false },
+  languages: { type: Array, default: () => [] },
+  selectedLanguage: { type: Object, default: null },
+  hasThemePicker: { type: Boolean, default: false },
+  availableThemes: { type: Array, default: () => ['auto', 'light', 'dark'] },
+  theme: { type: String, default: 'auto' },
+  hasAnimations: { type: Boolean, default: true },
+  hasAlerts: { type: Boolean, default: false },
+  alertsKind: { type: String, default: 'menu' },
+  clickSafeAlerts: { type: Boolean, default: false },
+  alerts: { type: Array, default: () => [] },
+  alertCount: { type: Number, default: null },
+  alertLevel: { type: String, default: null },
+  hasHelp: { type: Boolean, default: false },
+  headerNavDisable: { type: Boolean, default: false },
+  hasNavBar: { type: Boolean, default: false },
+  texts: {
+    type: Object,
+    required: false,
+    default: () => ({
+      logOut: 'Iziet',
+      openAlerts: 'Atvērt sarakstu',
+      helpTitle: 'Palīdzība',
+      alertsTitle: 'Paziņojumi',
+      languagesTitle: 'Valodu izvēle',
+      contextPersonsButtonLabel: 'Konteksta personas',
+      alternativeProfilesButtonLabel: 'Alternatīvie profili',
+      themeTitle: 'Noformējuma izvēle',
+      themeAuto: 'Automātiskais režīms',
+      themeLight: 'Gaišais režīms',
+      themeDark: 'Tumšais režīms',
+      themeContrast: 'Kontrastais režīms',
+      animations: 'Samazināt kustības',
+    }),
+  },
+});
+
+const emits = defineEmits([
+  'log-out',
+  'language-changed',
+  'alert-item-click',
+  'alerts-click',
+  'help-click',
+  'openAlternativeProfilesModal',
+  'openContextPersonModal',
+  'update:selected-language',
+  'update:theme',
+  'update:hasAnimations',
+]);
+
+const themeIcon = ref('theme');
+const themeMenu = ref();
+
+function openAlternativeProfilesModal() {
+  emits('openAlternativeProfilesModal');
+}
+
+function openContextPersonModal() {
+  emits('openContextPersonModal');
+}
+
+watch(
+  () => props.selectedLanguage,
+  (newValue) => {
+    emits('language-changed', newValue);
+  }
+);
+
+const selectedLanguageModel = computed({
+  get() {
+    if (!props.selectedLanguage) {
+      return props.languages[0];
+    }
+    return props.selectedLanguage;
+  },
+  set(value) {
+    emits('update:selected-language', value);
+  },
+});
+
+const helpLabel = computed(() => {
+  if (props.mode === 'cover') {
+    return props.texts.helpTitle;
+  }
+  return '';
+});
+
+function logOut() {
+  emits('log-out');
+}
+
+function languageChange(locale) {
+  selectedLanguageModel.value = locale;
+}
+
+function alertItemClicked(alert) {
+  if (alert.clickable) {
+    setTimeout(() => {
+      emits('alert-item-click', alert);
+    }, 50);
+  }
+}
+
+function alertsClicked() {
+  emits('alerts-click');
+}
+
+function helpClicked() {
+  emits('help-click');
+}
+
+const themeIcons = {
+  auto: 'theme-auto',
+  light: 'theme-light',
+  dark: 'theme-dark',
+  contrast: 'theme-contrast',
+};
+
+const themeNames = computed(() => ({
+  auto: props.texts.themeAuto,
+  light: props.texts.themeLight,
+  dark: props.texts.themeDark,
+  contrast: props.texts.themeContrast,
+}));
+
+function themeChange(theme) {
+  themeIcon.value = themeIcons[theme];
+  setTimeout(() => {
+    themeIcon.value = 'theme';
+  }, 1000);
+  emits('update:theme', theme);
+}
+
+const fullName = computed(() => {
+  if (props.userInfo && props.userInfo.firstName && props.userInfo.lastName) {
+    if (props.userInfo.firstName.length + props.userInfo.lastName.length > 20)
+      return shortenUserName(props.userInfo.firstName, props.userInfo.lastName);
+    return `${props.userInfo.firstName} ${props.userInfo.lastName}`;
+  }
+  return '';
+});
+
+const navItemsUserMenu = computed(() =>
+  props.navItems?.filter((item) => item.type === 'user-menu')
+);
+
+const badgeLevelMap = {
+  success: 'good',
+  warning: 'warning',
+  error: 'important',
+  info: 'info',
+};
+
+function pickBadgeLevel(level) {
+  return badgeLevelMap[level] || badgeLevelMap.info;
+}
+
+const alertLevelToBadgeType = computed(() => {
+  if (!props.alertLevel) {
+    const tmp = {};
+    tmp.value = props.alerts?.find((alert) => alert?.level === 'error');
+    if (tmp.value) {
+      return 'important';
+    }
+    tmp.value = props.alerts?.find((alert) => alert?.level === 'warning');
+    if (tmp.value) {
+      return 'warning';
+    }
+    tmp.value = props.alerts?.find((alert) => alert?.level === 'success');
+    if (tmp.value) {
+      return 'good';
+    }
+    tmp.value = props.alerts?.find((alert) => alert?.level === 'info');
+    if (tmp.value) {
+      return 'info';
+    }
+  }
+  return pickBadgeLevel(props.alertLevel);
+});
+
+const alertsCount = computed(() => {
+  if (!props.alertCount || props.alertCount === null) {
+    return props.alerts?.length ? String(props.alerts.length) : '';
+  }
+  return String(props.alertCount);
+});
+
+const iconMap = {
+  success: 'notification-success',
+  warning: 'notification-warning',
+  error: 'notification-error',
+  info: 'notification-info',
+};
+
+function pickIcon(level) {
+  return iconMap[level] || iconMap.info;
+}
+
+const contextPersonFullName = computed(() => {
+  if (
+    props.selectedContextPerson &&
+    props.selectedContextPerson.firstName &&
+    props.selectedContextPerson.lastName
+  ) {
+    if (
+      props.selectedContextPerson.firstName.length + props.selectedContextPerson.lastName.length >
+      20
+    ) {
+      return shortenUserName(
+        props.selectedContextPerson.firstName,
+        props.selectedContextPerson.lastName
+      );
+    }
+
+    return `${props.selectedContextPerson.firstName} ${props.selectedContextPerson.value.lastName}`;
+  }
+
+  return '';
+});
+
+const animationsModel = computed({
+  get() {
+    return props.hasAnimations;
+  },
+  set(value) {
+    emits('update:hasAnimations', value);
+  },
+});
+
+function triggerThemeMenu(e) {
+  themeMenu.value.preventClose(e);
+}
+</script>
+
+<template>
+  <div class="lx-group" v-if="!hasNavBar">
+    <div class="lx-help-button" v-if="hasHelp">
+      <LxButton
+        kind="ghost"
+        icon="help"
+        :label="helpLabel"
+        :disabled="headerNavDisable"
+        :title="texts.helpTitle"
+        @click="helpClicked"
+      />
+    </div>
+
+    <div class="lx-theme-menu" v-if="hasThemePicker">
+      <LxDropDownMenu ref="themeMenu">
+        <div class="lx-toolbar">
+          <LxButton
+            variant="icon-only"
+            kind="ghost"
+            :icon="themeIcon"
+            :disabled="headerNavDisable"
+            :title="texts.themeTitle"
+          />
+        </div>
+        <template v-slot:panel>
+          <div class="lx-button-set">
+            <LxButton
+              v-for="item in availableThemes"
+              :key="item"
+              :icon="themeIcons[item]"
+              :label="themeNames[item]"
+              :active="theme === item ? true : false"
+              @click="themeChange(item)"
+            />
+          </div>
+          <div class="lx-animations-controller">
+            <p>{{ texts.animations }}</p>
+            <LxToggle v-model="animationsModel" @click="triggerThemeMenu"></LxToggle>
+          </div>
+        </template>
+      </LxDropDownMenu>
+    </div>
+
+    <div class="lx-alert-menu" v-if="hasAlerts">
+      <LxDropDownMenu v-if="alertsKind === 'menu' || alertsKind === 'combo'">
+        <div class="lx-toolbar">
+          <LxButton
+            variant="icon-only"
+            kind="ghost"
+            icon="notifications"
+            :title="texts.alertsTitle"
+            :badge="alertsCount"
+            :disabled="headerNavDisable"
+            :badgeType="alertLevelToBadgeType"
+          />
+        </div>
+
+        <template v-if="clickSafeAlerts" v-slot:clickSafePanel>
+          <div class="lx-button-set">
+            <LxButton
+              v-if="alertsKind === 'combo'"
+              kind="ghost"
+              :label="texts.openAlerts"
+              :title="texts.openAlerts"
+              :disabled="headerNavDisable"
+              icon="open"
+              @click="alertsClicked"
+            />
+            <div
+              class="lx-alert-button"
+              :class="[
+                { 'lx-alert-success': item?.level === 'success' },
+                { 'lx-alert-info': item?.level === 'info' },
+                { 'lx-alert-warning': item?.level === 'warning' },
+                { 'lx-alert-error': item?.level === 'error' },
+                { 'lx-alert-clickable': item?.clickable },
+              ]"
+              v-for="item in alerts"
+              :key="item?.alerts"
+              @click="alertItemClicked(item)"
+              @keyup.enter="alertItemClicked(item)"
+              @keyup.space="alertItemClicked(item)"
+            >
+              <div class="lx-icon">
+                <LxIcon :value="pickIcon(item.level)" />
+              </div>
+              <div class="lx-alert-data">
+                <div class="lx-alert-header">
+                  <p class="lx-data">{{ item?.name }}</p>
+                </div>
+                <div class="lx-alert-description">
+                  <p class="lx-description">{{ item?.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <template v-else v-slot:panel>
+          <div class="lx-button-set">
+            <LxButton
+              v-if="alertsKind === 'combo'"
+              kind="ghost"
+              :label="texts.openAlerts"
+              :title="texts.openAlerts"
+              :disabled="headerNavDisable"
+              icon="open"
+              @click="alertsClicked"
+            />
+            <div
+              class="lx-alert-button"
+              :class="[
+                { 'lx-alert-success': item?.level === 'success' },
+                { 'lx-alert-info': item?.level === 'info' },
+                { 'lx-alert-warning': item?.level === 'warning' },
+                { 'lx-alert-error': item?.level === 'error' },
+                { 'lx-alert-clickable': item?.clickable },
+              ]"
+              v-for="item in alerts"
+              :key="item?.alerts"
+              @click="alertItemClicked(item)"
+              @keyup.enter="alertItemClicked(item)"
+              @keyup.space="alertItemClicked(item)"
+            >
+              <div class="lx-icon">
+                <LxIcon :value="pickIcon(item.level)" />
+              </div>
+              <div class="lx-alert-data">
+                <div class="lx-alert-header">
+                  <p class="lx-data">{{ item?.name }}</p>
+                </div>
+                <div class="lx-alert-description">
+                  <p class="lx-description">{{ item?.description }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </LxDropDownMenu>
+
+      <LxButton
+        v-if="alertsKind === 'button'"
+        variant="icon-only"
+        kind="ghost"
+        icon="notifications"
+        :disabled="headerNavDisable"
+        :title="texts.alertsTitle"
+        :badge="alertsCount"
+        :badgeType="alertLevelToBadgeType"
+        @click="alertsClicked"
+      />
+    </div>
+
+    <div class="lx-language-menu" v-if="hasLanguagePicker">
+      <LxDropDownMenu>
+        <div class="lx-toolbar">
+          <LxButton
+            variant="icon-only"
+            kind="ghost"
+            icon="language"
+            :title="texts.languagesTitle"
+          />
+        </div>
+
+        <template v-slot:panel>
+          <div class="lx-button-set">
+            <LxButton
+              v-for="item in languages"
+              kind="ghost"
+              :key="item?.languages"
+              :active="selectedLanguageModel.id === item.id ? true : false"
+              :label="item?.name"
+              @click="languageChange(item)"
+            />
+          </div>
+        </template>
+      </LxDropDownMenu>
+    </div>
+
+    <div class="lx-user-menu" v-if="userInfo">
+      <LxDropDownMenu :disabled="headerNavDisable">
+        <div class="lx-user-button" tabindex="0">
+          <div class="lx-avatar" v-if="!hasAvatar">
+            <LxIcon
+              :value="!selectedContextPersonModel ? 'user' : 'context-person'"
+              customClass="lx-icon"
+            />
+          </div>
+
+          <LxAvatar v-if="hasAvatar" :value="safeString(fullName)" />
+
+          <div class="lx-user-info">
+            <p class="lx-primary">
+              <span v-if="!selectedContextPersonModel">{{ fullName }}</span>
+              <span v-else>{{ contextPersonFullName }}</span>
+            </p>
+            <p class="lx-secondary">
+              <span v-if="!selectedContextPersonModel">{{ userInfo?.description }}</span>
+              <span v-else>{{ selectedContextPersonModel?.description }}</span>
+            </p>
+          </div>
+        </div>
+
+        <template #panel>
+          <div class="lx-region user-menu-context">
+            <LxAvatar size="xl" :value="safeString(fullName)" />
+            <p class="lx-data">{{ fullName }}</p>
+            <p class="lx-description" v-if="userInfo?.description">{{ userInfo?.description }}</p>
+            <p class="lx-description" v-if="userInfo?.role">{{ userInfo?.role }}</p>
+            <p class="lx-description" v-if="userInfo?.institution">{{ userInfo?.institution }}</p>
+          </div>
+
+          <LxButton
+            v-if="alternativeProfilesInfo"
+            kind="ghost"
+            :label="texts.alternativeProfilesButtonLabel"
+            icon="switch"
+            @click="openAlternativeProfilesModal"
+          ></LxButton>
+
+          <LxButton
+            v-if="contextPersonsInfo"
+            kind="ghost"
+            :label="texts.contextPersonsButtonLabel"
+            icon="context-person"
+            @click="openContextPersonModal"
+          ></LxButton>
+
+          <ul class="lx-group">
+            <li v-for="item in navItemsUserMenu" :key="item.label">
+              <LxButton
+                kind="ghost"
+                :label="item.label"
+                :href="item.to"
+                :icon="item.icon"
+                :disabled="headerNavDisable"
+              />
+            </li>
+          </ul>
+          <ul class="lx-group">
+            <li>
+              <LxButton
+                kind="ghost"
+                icon="logout"
+                :label="texts.logOut"
+                :destructive="true"
+                @click="logOut"
+              />
+            </li>
+          </ul>
+        </template>
+      </LxDropDownMenu>
+    </div>
+  </div>
+
+  <template v-if="hasNavBar">
+    <span class="header-items">
+      <li v-if="hasLanguagePicker" class="lx-language-picker">
+        <div class="lx-language-menu">
+          <LxDropDownMenu>
+            <div class="lx-toolbar">
+              <LxButton
+                :label="texts.languagesTitle"
+                kind="ghost"
+                icon="language"
+                :title="texts.languagesTitle"
+              />
+            </div>
+            <template v-slot:panel>
+              <div class="lx-button-set">
+                <LxButton
+                  v-for="item in languages"
+                  kind="ghost"
+                  :key="item?.languages"
+                  :active="selectedLanguageModel.id === item.id ? true : false"
+                  :label="item?.name"
+                  @click="languageChange(item)"
+                />
+              </div>
+            </template>
+          </LxDropDownMenu>
+        </div>
+      </li>
+      <li v-if="hasThemePicker" class="lx-theme-picker">
+        <div class="lx-theme-menu">
+          <LxDropDownMenu>
+            <div class="lx-toolbar">
+              <LxButton
+                :label="texts.themeTitle"
+                kind="ghost"
+                :icon="themeIcon"
+                :title="texts.themeTitle"
+              />
+            </div>
+            <template v-slot:panel>
+              <div class="lx-button-set">
+                <LxButton
+                  v-for="item in availableThemes"
+                  :key="item"
+                  :icon="themeIcons[item]"
+                  :label="themeNames[item]"
+                  :active="theme === item ? true : false"
+                  @click="themeChange(item)"
+                />
+              </div>
+              <div class="lx-animations-controller">
+                <p>{{ texts.animations }}</p>
+                <LxToggle v-model="animationsModel"></LxToggle>
+              </div>
+            </template>
+          </LxDropDownMenu>
+        </div>
+      </li>
+    </span>
+  </template>
+</template>
