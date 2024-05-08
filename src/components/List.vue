@@ -12,6 +12,9 @@ import { useDebounceFn } from '@vueuse/core';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
 import LxToolbar from '@/components/Toolbar.vue';
+import LxRadioButton from '@/components/RadioButton.vue';
+import LxCheckbox from '@/components/Checkbox.vue';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
 
 import draggable from 'vuedraggable/src/vuedraggable';
 
@@ -47,6 +50,9 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
   hideFilteredItems: { type: Boolean, default: false },
+  hasSelecting: { type: Boolean, default: false },
+  selectingKind: { type: String, default: 'single' }, // single, multiple
+  selectionActionDefinitions: { type: Array, default: () => [] },
   texts: {
     type: Object,
     default: () => ({
@@ -57,6 +63,28 @@ const props = defineProps({
       noItemsDescription: '',
       loadMore: 'Ielādēt vēl',
       search: 'Meklēt',
+      items: {
+        singular: 'ieraksts',
+        plural: 'ieraksti',
+        endingWith234: 'ieraksti',
+        endingWith1: 'ieraksts',
+      },
+      ofItems: {
+        label: 'Ieraksti',
+        singular: 'ieraksta',
+        plural: 'ierakstiem',
+        endingWith234: 'ierakstiem',
+        endingWith1: 'ieraksta',
+      },
+      selected: {
+        singular: 'Izvēlēts',
+        plural: 'Izvēlēti',
+        endingWith234: 'Izvēlēti',
+        endingWith1: 'Izvēlēts',
+      },
+      of: 'no',
+      clearSelected: 'Attīrīt izvēles',
+      selectAllRows: 'Izvēlēties visu',
     }),
   },
 });
@@ -68,6 +96,8 @@ const emits = defineEmits([
   'loadMore',
   'emptyStateActionClick',
   'update:items',
+  'selectionChanged',
+  'selectionActionClick',
 ]);
 function prepareCode(value) {
   return value?.toString();
@@ -221,7 +251,6 @@ onMounted(() => {
   itemsArray.value = fillItemsArray();
   ungroupedItemsArray.value = setByOrders(filteredItems.value);
 });
-defineExpose({ validate });
 
 function searchInItemsArray() {
   if (query.value !== '') {
@@ -392,43 +421,171 @@ const filteredUngroupedItems = filteredItems.value.filter((item) =>
     (group) => !group.some((groupedItem) => groupedItem.id === item.id)
   )
 );
+
+const selectedItemsRaw = ref({});
+
+const selectedItems = computed(() => {
+  const ret = [];
+  Object.keys(selectedItemsRaw.value).forEach((key) => {
+    if (selectedItemsRaw.value[key]) {
+      if (props.selectingKind === 'multiple') {
+        ret.push(key);
+      } else if (props.selectingKind === 'single') {
+        ret[0] = key;
+      }
+    }
+  });
+  emits('selectionChanged', ret);
+  return ret;
+});
+
+function selectRow(id) {
+  selectedItemsRaw.value = {};
+  selectedItemsRaw.value[id] = true;
+}
+
+function arrayToObject(arr) {
+  const ret = {};
+  arr.forEach((o) => {
+    ret[o] = true;
+  });
+  return ret;
+}
+
+function selectRows(arr = null) {
+  if (arr === null) {
+    selectedItemsRaw.value = arrayToObject(
+      props.items?.map((x) => x[props.idAttribute].toString())
+    );
+  } else {
+    selectedItemsRaw.value = arrayToObject(arr.map((x) => x[props.idAttribute].toString()));
+  }
+}
+
+function cancelSelection() {
+  selectedItemsRaw.value = {};
+}
+
+const selectedLabel = computed(() => {
+  const num = selectedItems.value?.length;
+  const numDisplay = num?.toString();
+  let label = props.texts?.items?.plural;
+  let labelStart = props.texts?.selected?.plural;
+  let ret = numDisplay;
+
+  if (num === 1) {
+    label = props.texts?.items?.singular;
+    labelStart = props.texts?.selected?.singular;
+  } else if (num > 20 && (num % 10 === 2 || num % 10 === 3 || num % 10 === 4)) {
+    label = props.texts?.items?.endingWith234;
+    labelStart = props.texts?.selected?.endingWith234;
+  } else if (num > 11 && num % 10 === 1) {
+    label = props.texts?.items?.endingWith1;
+    labelStart = props.texts?.selected?.endingWith1;
+  }
+  ret = `${labelStart} ${numDisplay} ${label} ${props.texts?.of} ${props.items?.length}`;
+
+  return ret;
+});
+
+function selectionActionClick(actinoId, selectedItemsIds) {
+  emits('selectionActionClick', actinoId, selectedItemsIds);
+}
+
+defineExpose({ validate, cancelSelection, selectRows });
 </script>
 <template>
   <div class="lx-list-wrapper">
     <LxToolbar class="lx-search-toolbar lx-list-toolbar" :no-borders="true">
       <template #leftArea>
-        <lx-text-input
-          v-if="hasSearch"
-          ref="queryInput"
-          v-model="queryRaw"
-          :kind="searchSide === 'server' ? 'default' : 'search'"
-          :disabled="loading || busy"
-          :placeholder="props.texts.placeholder"
-          role="search"
-          @keydown.enter="serverSideSearch()"
+        <LxButton
+          icon="checkbox"
+          kind="ghost"
+          v-if="selectedItems.length === 0 && hasSelecting && selectingKind === 'multiple'"
+          @click="selectRows()"
+          :disabled="loading || busy || queryRaw?.length > 0"
+          :title="texts.selectAllRows"
         />
-        <div class="lx-group lx-slot-wrapper">
-          <lx-button
-            v-if="searchSide === 'server' && hasSearch"
-            icon="search"
-            kind="ghost"
-            :busy="busy"
-            :disabled="loading"
-            :title="texts.search"
-            @click="serverSideSearch()"
-          />
-          <lx-button
-            v-if="query || queryRaw"
-            icon="clear"
-            kind="ghost"
-            variant="icon-only"
-            :title="texts.clear"
+
+        <template v-if="selectedItems.length === 0">
+          <lx-text-input
+            v-if="hasSearch"
+            ref="queryInput"
+            v-model="queryRaw"
+            :kind="searchSide === 'server' ? 'default' : 'search'"
             :disabled="loading || busy"
-            @click="clear()"
+            :placeholder="props.texts.placeholder"
+            role="search"
+            @keydown.enter="serverSideSearch()"
           />
+          <div class="lx-group lx-slot-wrapper">
+            <lx-button
+              v-if="searchSide === 'server' && hasSearch"
+              icon="search"
+              kind="ghost"
+              :busy="busy"
+              :disabled="loading"
+              :title="texts.search"
+              @click="serverSideSearch()"
+            />
+            <lx-button
+              v-if="query || queryRaw"
+              icon="clear"
+              kind="ghost"
+              variant="icon-only"
+              :title="texts.clear"
+              :disabled="loading || busy"
+              @click="clear()"
+            />
+          </div>
+        </template>
+        <div class="lx-selection-toolbar" v-if="hasSelecting && selectedItems.length > 0">
+          <div class="selection-action-text">
+            <LxButton
+              :icon="
+                selectedItems?.length === items?.length
+                  ? 'checkbox-filled'
+                  : selectingKind === 'multiple'
+                  ? 'checkbox-indeterminate'
+                  : 'radiobutton-filled'
+              "
+              :title="texts.clearSelected"
+              @click="cancelSelection()"
+            />
+            <p>{{ selectedLabel }}</p>
+          </div>
+          <div class="selection-action-buttons">
+            <LxButton
+              v-for="selectAction in selectionActionDefinitions"
+              :key="selectAction.id"
+              :icon="selectAction.icon"
+              :label="selectAction.name"
+              :title="selectAction.name"
+              :destructive="selectAction.destructive"
+              :disabled="selectAction.disabled"
+              @click="selectionActionClick(selectAction.id, selectedItems)"
+            />
+          </div>
+          <div class="selection-action-buttons-small">
+            <LxDropDownMenu>
+              <LxButton icon="menu" />
+              <template #panel>
+                <LxButton
+                  v-for="selectAction in selectionActionDefinitions"
+                  :key="selectAction.id"
+                  :icon="selectAction.icon"
+                  :label="selectAction.name"
+                  :title="selectAction.name"
+                  :destructive="selectAction.destructive"
+                  :disabled="selectAction.disabled"
+                  @click="selectionActionClick(selectAction.id, selectedItems)"
+                />
+              </template>
+            </LxDropDownMenu>
+          </div>
         </div>
       </template>
-      <template #rightArea> <slot name="toolbar" /> </template>
+      <template #rightArea v-if="selectedItems.length === 0"> <slot name="toolbar" /> </template>
     </LxToolbar>
     <div v-if="groupDefinitions">
       <ul
@@ -442,6 +599,23 @@ const filteredUngroupedItems = filteredItems.value.filter((item) =>
             v-for="item in itemsArray[prepareCode('lx_list_nullable_group')]"
             :key="item[idAttribute]"
           >
+            <div class="selecting-block" v-if="hasSelecting">
+              <LxRadioButton
+                v-if="selectingKind === 'single'"
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedItemsRaw[item[idAttribute]]"
+                :value="item[idAttribute]"
+                @click="selectRow(item[idAttribute])"
+                :disabled="loading || busy || queryRaw?.length > 0"
+              />
+              <LxCheckbox
+                v-else
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedItemsRaw[item[idAttribute]]"
+                :value="item[idAttribute]"
+                :disabled="loading || busy || queryRaw?.length > 0"
+              />
+            </div>
             <LxListItem
               :id="item[idAttribute]"
               :label="item[primaryAttribute]"
@@ -563,6 +737,23 @@ const filteredUngroupedItems = filteredItems.value.filter((item) =>
               v-for="item in filteredGroupedItems[prepareCode(group.id)]"
               :key="item[idAttribute]"
             >
+              <div class="selecting-block" v-if="hasSelecting">
+                <LxRadioButton
+                  v-if="selectingKind === 'single'"
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  @click="selectRow(item[idAttribute])"
+                  :disabled="loading || busy || queryRaw?.length > 0"
+                />
+                <LxCheckbox
+                  v-else
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  :disabled="loading || busy || queryRaw?.length > 0"
+                />
+              </div>
               <lx-list-item
                 :id="item[idAttribute]"
                 :label="item[primaryAttribute]"
@@ -597,6 +788,23 @@ const filteredUngroupedItems = filteredItems.value.filter((item) =>
     >
       <template v-if="kind === 'default'">
         <li v-for="item in filteredItems" :key="item[idAttribute]">
+          <div class="selecting-block" v-if="hasSelecting">
+            <LxRadioButton
+              v-if="selectingKind === 'single'"
+              :id="`select-${id}-${item[idAttribute]}`"
+              v-model="selectedItemsRaw[item[idAttribute]]"
+              :value="item[idAttribute]"
+              @click="selectRow(item[idAttribute])"
+              :disabled="loading || busy || queryRaw?.length > 0"
+            />
+            <LxCheckbox
+              v-else
+              :id="`select-${id}-${item[idAttribute]}`"
+              v-model="selectedItemsRaw[item[idAttribute]]"
+              :value="item[idAttribute]"
+              :disabled="loading || busy || queryRaw?.length > 0"
+            />
+          </div>
           <LxListItem
             :id="item[idAttribute]"
             :label="item[primaryAttribute]"

@@ -502,7 +502,8 @@ const toolbarActions = computed(() => {
         {
           id: 'checkIndeterminate',
           name: props.texts.clear,
-          icon: 'checkbox-indeterminate',
+          icon:
+            props.selectingKind === 'multiple' ? 'checkbox-indeterminate' : 'radiobutton-filled',
           groupId: '1',
         },
       ];
