@@ -4,7 +4,6 @@
   grid-template-columns: 1fr;
   position: relative;
   border: var(--region-border);
-  overflow-x: hidden;
 }
 
 .lx-form-grid>.lx-main {
@@ -472,7 +471,7 @@
   display: none;
 }
 
-.lx-row>.lx-info-wrapper>.inline-block>.popper>.lx-info-wrapper-panel {
+.lx-row-header>.lx-info-wrapper>.inline-block>.popper>.lx-info-wrapper-panel {
   white-space: normal;
 }
 
