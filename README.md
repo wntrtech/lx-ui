@@ -40,7 +40,7 @@ import App from '@/App.vue';
 …
 const myApp = createApp(App);
 myApp.use(createPinia());
-myApp.use(createLx);
+myApp.use(createLx());
 …
 ```
 
