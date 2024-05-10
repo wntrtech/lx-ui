@@ -6,6 +6,7 @@ const DASH = '—';
 
 export function acceptedMimeImage(name) {
   const mimeType = mime.getType(name);
+  // List of valid mime types for exifreader library
   const validMimeTypes = [
     'image/jpeg',
     'image/tiff',
@@ -27,6 +28,23 @@ export function acceptedMimeImage(name) {
   ];
 
   return validMimeTypes.includes(mimeType);
+}
+
+export function checkExtension(extension, allowedExtensions) {
+  const mimeType = mime.getType(extension);
+
+  if (!mimeType) {
+    return false;
+  }
+  // mime library cannot determine image/*, so we need to check it manually
+  if (mimeType.startsWith('image/') && allowedExtensions.includes('image/*')) {
+    return true;
+  }
+
+  const isExtensionAllowed = allowedExtensions.includes(extension);
+  const isMIMETypeAllowed = allowedExtensions.includes(mimeType);
+
+  return isExtensionAllowed || isMIMETypeAllowed;
 }
 
 export function getMeta(file) {

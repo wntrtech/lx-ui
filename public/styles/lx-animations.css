@@ -221,7 +221,8 @@
     border-color 0.1s ease-in;
 }
 
-.lx:not(.lx-no-animations) .lx-button svg {
+.lx:not(.lx-no-animations) .lx-button svg,
+.lx:not(.lx-no-animations) .lx-file-wrapper.lx-disabled .lx-list-item .lx-download-icon svg {
   transition: fill 0.1s ease-in;
 }
 

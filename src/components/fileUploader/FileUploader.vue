@@ -212,6 +212,11 @@ const triggerFileUpload = () => {
 const formatExtensions = computed(() =>
   props.allowedFileExtensions
     .map((ext) => {
+      // Check if its a MIME type
+      if (ext.includes('/')) {
+        return ext;
+      }
+      // Otherwise treat it as file extension
       const match = ext.match(/(?:\.([^.]+))?$/);
       return match ? match[1] : null;
     })
@@ -224,7 +229,10 @@ async function processFiles(files) {
   const promises = files.map(async (file) => {
     const fileId = generateUUID();
     const fileExtension = file.name.split('.').pop();
-    if (formatExtensions.value.length > 0 && !formatExtensions.value.includes(fileExtension)) {
+    if (
+      formatExtensions.value.length > 0 &&
+      !fileUploaderUtils.checkExtension(fileExtension, formatExtensions.value)
+    ) {
       onError(file.id ? file.id : fileId, 'format');
       return;
     }
@@ -341,7 +349,7 @@ function openModal(id) {
       { 'lx-disabled': props.disabled },
     ]"
   >
-    <template v-if="kind === 'single' && !props.readOnly">
+    <template v-if="props.kind === 'single' && !props.readOnly">
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
       <input
         :id="props.id"
@@ -352,16 +360,16 @@ function openModal(id) {
         @change="uploadFiles"
       />
       <LxButton
-        v-if="!draggable && advancedFilesData.length < 1"
+        v-if="!props.draggable && advancedFilesData.length < 1"
         :label="props.texts.buttonLabel"
         kind="tertiary"
-        icon="share"
+        icon="upload"
         :disabled="props.disabled"
         :loading="props.loading"
         @click="triggerFileUpload"
       ></LxButton>
       <div
-        v-if="draggable && advancedFilesData.length < 1"
+        v-if="props.draggable && advancedFilesData.length < 1"
         class="lx-draggable-upload-wrapper"
         :class="[{ 'lx-dragging': isDragging }, { 'lx-disabled': props.disabled || props.loading }]"
         @dragover.prevent="handleDragOver"
@@ -389,7 +397,7 @@ function openModal(id) {
         v-if="!draggable"
         :label="props.texts.buttonLabel"
         kind="tertiary"
-        icon="share"
+        icon="upload"
         @click="triggerFileUpload"
         :disabled="props.disabled"
         :loading="props.loading"

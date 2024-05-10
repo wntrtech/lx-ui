@@ -60,7 +60,7 @@ const reactiveContainerElementWidth = computed(() => containerElementSize.width.
   <div
     v-if="props.mode === 'default'"
     class="lx-file-wrapper"
-    :class="{ 'lx-invalid': props.customItem.state === 'invalid' }"
+    :class="{ 'lx-invalid': props.customItem.state === 'invalid', 'lx-disabled': props.disabled }"
     ref="wrapperContainer"
   >
     <div class="lx-file-main-part">
@@ -211,7 +211,10 @@ const reactiveContainerElementWidth = computed(() => containerElementSize.width.
     <LxInfoWrapper :disabled="!props.imagePreview">
       <div
         class="lx-file-wrapper"
-        :class="{ 'lx-invalid': props.customItem.state === 'invalid' }"
+        :class="{
+          'lx-invalid': props.customItem.state === 'invalid',
+          'lx-disabled': props.disabled,
+        }"
         ref="wrapperContainer"
       >
         <div class="lx-file-main-part">

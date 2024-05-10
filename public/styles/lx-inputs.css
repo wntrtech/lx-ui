@@ -3205,6 +3205,16 @@ input[type='range']:hover::-moz-range-thumb {
   overflow: hidden;
 }
 
+.lx-file-wrapper.lx-disabled .lx-file-name,
+.lx-file-wrapper.lx-disabled .lx-list-item .lx-download-icon svg {
+  color: var(--color-disabled-foreground);
+  fill: var(--color-disabled-foreground);
+}
+
+.lx-file-wrapper.lx-disabled .lx-file-main-part {
+  cursor: not-allowed;
+}
+
 .lx-download-icon {
   width: var(--row-size);
   height: calc(var(--row-size) - 2px);
