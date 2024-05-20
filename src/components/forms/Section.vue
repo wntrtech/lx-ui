@@ -120,7 +120,9 @@ const rowRequiredTexts = computed(() => {
 const globalEnvironment = useLx().getGlobals()?.environment;
 
 function checkElements() {
-  const elemList = document.querySelectorAll(`.lx-form-section#${props.id}>:not(.lx-row)`);
+  const elemList = document.querySelectorAll(
+    `.lx-form-section#${CSS.escape(props.id)}>:not(.lx-row)`
+  );
   if (elemList?.length > 1 || (elemList?.length === 1 && elemList[0].tagName !== 'HEADER')) {
     lxDevUtils.log(
       `LxSection '${props.id}' contains elements that are not LxRow.`,

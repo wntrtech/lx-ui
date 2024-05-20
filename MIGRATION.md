@@ -4,7 +4,7 @@
 
 Starting 1.5 we're using different namespace for LX/UI library.
 
-We'll be using **`@wntr/lx-ui`** instead of ~~`@zzdats/lx-ui`~~ from now on (make sure to update your css and font imports, which are probably in your `main.js`). Other than that - no breaking changes.
+We'll be using **`@wntr/lx-ui`** instead of ~~`@zzdats/lx-ui`~~ from now on (make sure to update your css and font imports, which are probably in your `main.js` and `vite.config.js`). Other than that - no breaking changes.
 
 ## 1.2 → 1.3
 
