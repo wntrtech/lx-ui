@@ -197,17 +197,17 @@ function formatTooltip(displayName, title) {
 }
 
 function actionClicked(actionName, rowCode, additionalParam) {
-  if (!props.loading) {
+  if (!props.loading && !props.busy) {
     emits('actionClick', actionName, rowCode, additionalParam);
   }
 }
 function selectionActionClicked(actionName, selectedRowCodes) {
-  if (!props.loading) {
+  if (!props.loading && !props.busy) {
     emits('selectionActionClicked', actionName, selectedRowCodes);
   }
 }
 function selectPageClicked(pageNum) {
-  if (!props.loading) {
+  if (!props.loading && !props.busy) {
     emits('selectPage', pageNum);
   }
 }
@@ -222,7 +222,7 @@ function checkEnableByAttributeName(row) {
 }
 
 function defaultActionClicked(rowCode, row) {
-  if (checkEnableByAttributeName(row) && props.defaultActionName && !props.loading) {
+  if (checkEnableByAttributeName(row) && props.defaultActionName && !props.loading && !props.busy) {
     actionClicked(props.defaultActionName, rowCode, props.actionAdditionalParameter);
   }
 }
@@ -540,6 +540,8 @@ function emptyStateActionClicked(actionName) {
     </header>
     <LxToolbar
       :actionDefinitions="toolbarActions"
+      :disabled="props.busy"
+      :loading="props.loading"
       @action-click="toolbarClick"
       :class="[
         { 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length },
@@ -629,6 +631,7 @@ function emptyStateActionClicked(actionName) {
                 :id="`select-${id}-${row[idAttribute]}`"
                 v-model="selectedRowsRaw[row[idAttribute]]"
                 :value="row[idAttribute]?.toString()"
+                :disabled="isDisabled"
                 @click="selectRow(row[idAttribute])"
               />
             </td>
@@ -639,7 +642,7 @@ function emptyStateActionClicked(actionName) {
               :key="col.id"
               class="lx-cell"
               @click="
-                defaultActionName && col.kind === 'clickable'
+                defaultActionName && col.kind === 'clickable' && !isDisabled
                   ? defaultActionClicked(row[idAttribute], row)
                   : null
               "
@@ -683,7 +686,7 @@ function emptyStateActionClicked(actionName) {
                 },
                 {
                   'lx-cell-link-disabled':
-                    col.kind === 'clickable' && !checkEnableByAttributeName(row),
+                    (col.kind === 'clickable' && !checkEnableByAttributeName(row)) || isDisabled,
                 },
               ]"
             >
@@ -706,6 +709,7 @@ function emptyStateActionClicked(actionName) {
               />
               <lx-rating
                 v-if="col.type === 'rating'"
+                :disabled="props.busy"
                 mode="read"
                 v-model="row[col.attributeName]"
               />
@@ -787,7 +791,7 @@ function emptyStateActionClicked(actionName) {
               </div>
               <lx-dropdown-menu placement="left-start">
                 <div class="lx-toolbar" v-if="actionDefinitions.length > 2">
-                  <lx-button icon="overflow-menu" kind="ghost" />
+                  <lx-button icon="overflow-menu" kind="ghost" :disabled="isDisabled" />
                 </div>
                 <template v-slot:panel>
                   <div class="lx-button-set">
@@ -912,6 +916,7 @@ function emptyStateActionClicked(actionName) {
           />
           <LxRating
             v-else-if="col.type === 'rating'"
+            :disabled="props.busy"
             mode="read"
             v-model="item[col.attributeName]"
           />
@@ -957,7 +962,7 @@ function emptyStateActionClicked(actionName) {
                 :key="i"
                 :label="`${i.toString()} ${texts.itemsPerPageLabel}`"
                 :title="`${i.toString()} ${texts.itemsPerPageLabel}`"
-                :disabled="itemsPerPage === i"
+                :disabled="itemsPerPage === i || isDisabled"
                 @click="changeItemsPerPage(i)"
               />
             </div>
@@ -971,21 +976,21 @@ function emptyStateActionClicked(actionName) {
         <lx-button
           kind="ghost"
           icon="first-page"
-          :disabled="pageCurrent < 1"
+          :disabled="pageCurrent < 1 || isDisabled"
           @click="selectFirstPage()"
         ></lx-button>
         <div class="lx-divider"></div>
         <lx-button
           kind="ghost"
           icon="previous-page"
-          :disabled="pageCurrent < 1"
+          :disabled="pageCurrent < 1 || isDisabled"
           @click="selectPreviousPage"
         ></lx-button>
         <div class="lx-divider"></div>
         <lx-button
           kind="ghost"
           icon="next-page"
-          :disabled="Number(pageCurrent) + 1 >= Number(pagesTotal)"
+          :disabled="Number(pageCurrent) + 1 >= Number(pagesTotal) || isDisabled"
           @click="selectNextPage"
         ></lx-button>
       </div>

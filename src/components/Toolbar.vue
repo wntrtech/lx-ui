@@ -8,6 +8,8 @@ const props = defineProps({
   id: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
   noBorders: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
 });
 
 const emits = defineEmits(['actionClick']);
@@ -101,7 +103,7 @@ function actionClicked(id) {
             :icon-set="action?.iconSet"
             :title="action?.name"
             :destructive="action?.destructive"
-            :disabled="action?.disabled"
+            :disabled="action?.disabled || props.disabled || props.loading"
             :label="action?.label"
             @click="actionClicked(action.id)"
           />
@@ -114,7 +116,7 @@ function actionClicked(id) {
               :icon-set="action?.iconSet"
               :title="action?.name"
               :destructive="action?.destructive"
-              :disabled="action?.disabled"
+              :disabled="action?.disabled || props.disabled || props.loading"
             />
             <template #panel>
               <template v-for="button in leftActions" :key="button.id">
@@ -127,7 +129,7 @@ function actionClicked(id) {
                   :title="button?.name"
                   :label="button?.name"
                   :destructive="button?.destructive"
-                  :disabled="button?.disabled"
+                  :disabled="button?.disabled || props.disabled || props.loading"
                   @click="actionClicked(button.id)"
                 />
               </template>
@@ -149,7 +151,7 @@ function actionClicked(id) {
                 :title="button?.name"
                 :label="button?.name"
                 :destructive="button?.destructive"
-                :disabled="button?.disabled"
+                :disabled="button?.disabled || props.disabled || props.loading"
                 @click="actionClicked(button.id)"
               />
             </template>
@@ -163,7 +165,7 @@ function actionClicked(id) {
           :icon-set="leftActions?.[0]?.iconSet"
           :title="leftActions?.[0]?.name"
           :destructive="leftActions?.[0]?.destructive"
-          :disabled="leftActions?.[0]?.disabled"
+          :disabled="leftActions?.[0]?.disabled || props.disabled || props.loading"
           @click="actionClicked(leftActions?.[0].id)"
         />
       </LxToolbarGroup>
@@ -193,7 +195,7 @@ function actionClicked(id) {
             :icon-set="action?.iconSet"
             :title="action?.name"
             :destructive="action?.destructive"
-            :disabled="action?.disabled"
+            :disabled="action?.disabled || props.disabled || props.loading"
             :label="action?.label"
             @click="actionClicked(action.id)"
           />
@@ -206,7 +208,7 @@ function actionClicked(id) {
               :icon-set="action?.iconSet"
               :title="action?.name"
               :destructive="action?.destructive"
-              :disabled="action?.disabled"
+              :disabled="action?.disabled || props.disabled || props.loading"
             />
             <template #panel>
               <template v-for="button in rightActions" :key="button.id">
@@ -219,7 +221,7 @@ function actionClicked(id) {
                   :title="button?.name"
                   :label="button?.name"
                   :destructive="button?.destructive"
-                  :disabled="button?.disabled"
+                  :disabled="button?.disabled || props.disabled || props.loading"
                   @click="actionClicked(button.id)"
                 />
               </template>
@@ -241,7 +243,7 @@ function actionClicked(id) {
                 :title="button?.name"
                 :label="button?.name"
                 :destructive="button?.destructive"
-                :disabled="button?.disabled"
+                :disabled="button?.disabled || props.disabled || props.loading"
                 @click="actionClicked(button.id)"
               />
             </template>
@@ -255,7 +257,7 @@ function actionClicked(id) {
           :icon-set="rightActions?.[0]?.iconSet"
           :title="rightActions?.[0]?.name"
           :destructive="rightActions?.[0]?.destructive"
-          :disabled="rightActions?.[0]?.disabled"
+          :disabled="rightActions?.[0]?.disabled || props.disabled || props.loading"
           @click="actionClicked(rightActions?.[0].id)"
         />
       </LxToolbarGroup>

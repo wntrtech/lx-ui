@@ -10,6 +10,10 @@ const props = defineProps({
   modelValue: { type: Number, default: 0 },
   kind: { type: String, default: '5stars' },
   variant: { type: String, default: 'default' }, // 'default' or 'colorful'
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
   texts: {
     type: Object,
     default: () => ({
@@ -100,7 +104,7 @@ function reset() {
 }
 </script>
 <template>
-  <lx-info-wrapper>
+  <lx-info-wrapper :disabled="props.disabled">
     <div
       class="lx-ratings"
       :class="[
