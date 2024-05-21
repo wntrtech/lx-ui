@@ -54,5 +54,6 @@ export { default as LxTile } from '@/components/Tile.vue';
 export { default as LxToggle } from '@/components/Toggle.vue';
 export { default as LxValuePicker } from '@/components/ValuePicker.vue';
 export { default as LxWidget } from '@/components/Widget.vue';
+export { default as LxDayInput } from '@/components/DayInput.vue';
 
 // Other components you plan to publish go here
