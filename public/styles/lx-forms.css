@@ -579,6 +579,13 @@
   font-size: var(--label-font-size);
 }
 
+.lx-row .lx-action-controller .lx-action-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0 0.5rem 1rem;
+}
+
 @media (max-width: 1300px) {
   .lx-form-flex.lx-responsive {
     flex-direction: column;

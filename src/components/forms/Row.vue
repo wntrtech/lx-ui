@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, inject, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -187,11 +187,11 @@ const validatedColumnSpan = computed(() => {
       { 'lx-row-column-4': validatedColumnSpan === 4 },
       { 'lx-row-column-6': validatedColumnSpan === 6 },
       { 'lx-row-column-8': validatedColumnSpan === 8 },
-      { 'lx-row-row-2': Number(props.rowSpan) === 2 },
-      { 'lx-row-row-3': Number(props.rowSpan) === 3 },
-      { 'lx-row-row-4': Number(props.rowSpan) === 4 },
-      { 'lx-row-row-6': Number(props.rowSpan) === 6 },
-      { 'lx-row-row-8': Number(props.rowSpan) === 8 },
+      { 'lx-row-row-2': Number(rowSpan) === 2 },
+      { 'lx-row-row-3': Number(rowSpan) === 3 },
+      { 'lx-row-row-4': Number(rowSpan) === 4 },
+      { 'lx-row-row-6': Number(rowSpan) === 6 },
+      { 'lx-row-row-8': Number(rowSpan) === 8 },
     ]"
   >
     <div class="lx-row-header" v-if="!hideLabel && !$slots.info">
@@ -211,15 +211,18 @@ const validatedColumnSpan = computed(() => {
           >{{ requiredTexts.optional }}
         </span>
       </label>
+
       <div>
         <template v-if="actionDefinitions?.length === 1">
           <LxToggle
             v-if="actionDefinitions?.[0]?.kind === 'toggle'"
             size="s"
-            v-model="actionDefinitions[0].value"
+            :modelValue="actionDefinitions?.[0]?.value || false"
             :tooltip="actionDefinitions?.[0].name"
-            @update:model-value="
-              actionClicked(props.id, actionDefinitions?.[0].id, actionDefinitions?.[0].value)
+            @update:modelValue="
+              (newValue) => {
+                actionClicked(id, actionDefinitions?.[0].id, newValue);
+              }
             "
           />
           <LxButton
@@ -230,22 +233,29 @@ const validatedColumnSpan = computed(() => {
             :disabled="actionDefinitions?.[0]?.disabled"
             :loading="actionDefinitions?.[0]?.loading"
             :destructive="actionDefinitions?.[0]?.destructive"
-            @click="actionClicked(props.id, actionDefinitions?.[0].id)"
+            @click="actionClicked(id, actionDefinitions?.[0].id)"
           />
         </template>
+
         <LxDropDownMenu ref="actionDropDown" v-else-if="actionDefinitions?.length > 1">
           <LxButton icon="overflow-menu" kind="ghost" />
           <template #panel>
-            <div v-for="action in actionDefinitions" :key="action.id">
-              <LxToggle
-                v-if="action?.kind === 'toggle'"
-                v-model="action.value"
-                :tooltip="action.name"
-                @update:model-value="actionClicked(props.id, action.id, action.value)"
-                @click="toggleClick($event)"
-              >
-                {{ action?.name }}
-              </LxToggle>
+            <div class="lx-action-controller" v-for="action in actionDefinitions" :key="action.id">
+              <div class="lx-action-toggle" v-if="action?.kind === 'toggle'">
+                <p v-if="action?.kind === 'toggle'">{{ action?.name }}</p>
+                <LxToggle
+                  :modelValue="action.value || false"
+                  :tooltip="action.name"
+                  @update:modelValue="
+                    (newValue) => {
+                      actionClicked(id, action.id, newValue);
+                    }
+                  "
+                  @click="toggleClick($event)"
+                >
+                </LxToggle>
+              </div>
+
               <LxButton
                 v-else
                 kind="ghost"
@@ -255,13 +265,14 @@ const validatedColumnSpan = computed(() => {
                 :disabled="action?.disabled"
                 :loading="action?.loading"
                 :destructive="action?.destructive"
-                @click="actionClicked(props.id, action.id)"
+                @click="actionClicked(id, action.id)"
               />
             </div>
           </template>
         </LxDropDownMenu>
       </div>
     </div>
+
     <div class="lx-row-header" v-if="!hideLabel && $slots.info">
       <LxInfoWrapper class="lx-info-slot-wrapper">
         <label :title="!$slots.info ? tooltip : ''" :for="inputId">
@@ -287,15 +298,18 @@ const validatedColumnSpan = computed(() => {
           <slot name="info" />
         </template>
       </LxInfoWrapper>
+
       <div>
         <template v-if="actionDefinitions?.length === 1">
           <LxToggle
             v-if="actionDefinitions?.[0]?.kind === 'toggle'"
             size="s"
-            v-model="actionDefinitions[0].value"
+            :modelValue="actionDefinitions[0].value || false"
             :tooltip="actionDefinitions?.[0].name"
-            @update:model-value="
-              actionClicked(props.id, actionDefinitions?.[0].id, actionDefinitions?.[0].value)
+            @update:modelValue="
+              (newValue) => {
+                actionClicked(id, actionDefinitions?.[0].id, newValue);
+              }
             "
           />
           <LxButton
@@ -306,22 +320,29 @@ const validatedColumnSpan = computed(() => {
             :disabled="actionDefinitions?.[0]?.disabled"
             :loading="actionDefinitions?.[0]?.loading"
             :destructive="actionDefinitions?.[0]?.destructive"
-            @click="actionClicked(props.id, actionDefinitions?.[0].id)"
+            @click="actionClicked(id, actionDefinitions?.[0].id)"
           />
         </template>
+
         <LxDropDownMenu ref="actionDropDown" v-else-if="actionDefinitions?.length > 1">
           <LxButton icon="overflow-menu" kind="ghost" />
           <template #panel>
-            <div v-for="action in actionDefinitions" :key="action.id">
-              <LxToggle
-                v-if="action?.kind === 'toggle'"
-                v-model="action.value"
-                :tooltip="action.name"
-                @update:model-value="actionClicked(props.id, action.id, action.value)"
-                @click="toggleClick($event)"
-              >
-                {{ action?.name }}
-              </LxToggle>
+            <div class="lx-action-controller" v-for="action in actionDefinitions" :key="action.id">
+              <div class="lx-action-toggle" v-if="action?.kind === 'toggle'">
+                <p v-if="action?.kind === 'toggle'">{{ action?.name }}</p>
+                <LxToggle
+                  v-if="action?.kind === 'toggle'"
+                  :modelValue="action.value || false"
+                  :tooltip="action.name"
+                  @update:modelValue="
+                    (newValue) => {
+                      actionClicked(id, action.id, newValue);
+                    }
+                  "
+                  @click="toggleClick($event)"
+                >
+                </LxToggle>
+              </div>
               <LxButton
                 v-else
                 kind="ghost"
@@ -331,7 +352,7 @@ const validatedColumnSpan = computed(() => {
                 :disabled="action?.disabled"
                 :loading="action?.loading"
                 :destructive="action?.destructive"
-                @click="actionClicked(props.id, action.id)"
+                @click="actionClicked(id, action.id)"
               />
             </div>
           </template>
