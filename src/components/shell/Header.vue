@@ -6,7 +6,7 @@ import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
 import LxModal from '@/components/Modal.vue';
-import LxList from '@/components/List.vue';
+import LxList from '@/components/list/List.vue';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },

@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 
 import LxButton from '@/components/Button.vue';
-import LxList from '@/components/List.vue';
+import LxList from '@/components/list/List.vue';
 import LxModal from '@/components/Modal.vue';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';

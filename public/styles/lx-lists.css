@@ -470,6 +470,19 @@ li .lx-category-orange {
   padding: 0;
 }
 
+.lx-list-item-wrapper>.lx-list-item-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: var(--row-size);
+  width: var(--row-size);
+  background-color: var(--color-region);
+}
+
+.lx-region .lx-list-item-wrapper>.lx-list-item-loader {
+  background-color: var(--color-region-2);
+}
+
 @media (max-width: 1900px) {
   .lx-list-3 li {
     max-width: calc(33% - 0.25rem);

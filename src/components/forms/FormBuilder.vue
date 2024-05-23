@@ -16,10 +16,10 @@ import useLx from '@/hooks/useLx';
 import LxDataBlock from '@/components/DataBlock.vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxAppendableListSimple from '@/components/forms/AppendableListSimple.vue';
-import LxList from '@/components/List.vue';
+import LxList from '@/components/list/List.vue';
 import LxModal from '@/components/Modal.vue';
 import LxButton from '@/components/Button.vue';
-import LxListItem from '@/components/ListItem.vue';
+import LxListItem from '@/components/list/ListItem.vue';
 import LxDataGrid from '@/components/DataGrid.vue';
 
 /**

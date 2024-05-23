@@ -5,6 +5,7 @@ import LxButton from '@/components/Button.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import useLx from '@/hooks/useLx';
+import LxLoader from '@/components/Loader.vue';
 
 const emits = defineEmits(['click', 'actionClick']);
 
@@ -24,6 +25,7 @@ const props = defineProps({
   clickable: { type: Boolean, default: false },
   selected: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
+  busy: { type: Boolean, default: false },
   searchString: { type: String, default: '' },
   tooltip: { type: String, default: '' },
   actionDefinitions: { type: Array, default: () => [] },
@@ -119,6 +121,7 @@ function secureURL(url) {
       </header>
       <lx-icon :value="icon" :icon-set="iconSet" v-if="href || clickable" />
     </router-link>
+    <div class="lx-list-item-loader" v-if="busy"><LxLoader :loading="true" size="s" /></div>
     <div
       class="lx-list-item-actions"
       v-if="actionDefinitions?.length && actionDefinitions?.length === 1"

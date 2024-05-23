@@ -5,7 +5,7 @@ import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxExpander from '@/components/Expander.vue';
 import LxIcon from '@/components/Icon.vue';
-import LxListItem from '@/components/ListItem.vue';
+import LxListItem from '@/components/list/ListItem.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxLoader from '@/components/Loader.vue';
 import { useDebounceFn } from '@vueuse/core';
@@ -15,6 +15,7 @@ import LxToolbar from '@/components/Toolbar.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxTreeList from '@/components/list/TreeList.vue';
 
 import draggable from 'vuedraggable/src/vuedraggable';
 
@@ -28,7 +29,7 @@ const props = defineProps({
     type: String,
     default: () => useLx().getGlobals()?.iconSet,
   },
-  kind: { type: String, default: 'default' }, // default, draggable
+  kind: { type: String, default: 'default' }, // default, draggable, treelist
   idAttribute: { type: String, default: 'id' },
   primaryAttribute: { type: String, default: 'name' },
   secondaryAttribute: { type: String, default: 'description' },
@@ -39,6 +40,8 @@ const props = defineProps({
   iconSetAttribute: { type: String, default: 'iconSet' },
   tooltipAttribute: { type: String, default: 'tooltip' },
   categoryAttribute: { type: String, default: 'category' },
+  childrenAttribute: { type: String, default: 'children' },
+  hasChildrenAttribute: { type: String, default: 'hasChildren' },
   orderAttribute: { type: String, default: 'order' },
   actionDefinitions: { type: Array, default: null },
   emptyStateActionDefinitions: { type: Array, default: null },
@@ -53,6 +56,8 @@ const props = defineProps({
   hasSelecting: { type: Boolean, default: false },
   selectingKind: { type: String, default: 'single' }, // single, multiple
   selectionActionDefinitions: { type: Array, default: () => [] },
+  itemsStates: { type: Object, default: () => {} },
+  mode: { type: String, default: 'client' }, // client, server
   texts: {
     type: Object,
     default: () => ({
@@ -85,6 +90,10 @@ const props = defineProps({
       of: 'no',
       clearSelected: 'Attīrīt izvēles',
       selectAllRows: 'Izvēlēties visu',
+      loadingError: 'Notika ielādes kļūda',
+      reload: 'Ielādēt atkārtoti',
+      collapse: 'Sakļaut elementu',
+      expand: 'Izvērst elementu',
     }),
   },
 });
@@ -98,6 +107,8 @@ const emits = defineEmits([
   'update:items',
   'selectionChanged',
   'selectionActionClick',
+  'update:itemsStates',
+  'loadChildren',
 ]);
 function prepareCode(value) {
   return value?.toString();
@@ -173,6 +184,42 @@ const filteredItems = computed(() => {
     );
   }
   return [];
+});
+
+function findObjectById(array) {
+  const res = [];
+  const queue = [...array];
+  while (queue.length > 0) {
+    const obj = queue.shift();
+    if (isFiltered(obj[props.primaryAttribute]) || isFiltered(obj[props.secondaryAttribute])) {
+      res.push(obj);
+    }
+    if (obj?.[props.childrenAttribute]) {
+      queue.unshift(...obj[props.childrenAttribute]);
+    }
+  }
+  return res;
+}
+
+const filteredTreeItems = computed(() => {
+  let res = [];
+  if (props.items) {
+    res = findObjectById(props.items);
+  }
+  return res;
+});
+
+const treeItems = computed(() => {
+  const res = [];
+  const queue = [...props.items];
+  while (queue.length > 0) {
+    const obj = queue.shift();
+    res.push(obj);
+    if (obj?.[props.childrenAttribute]) {
+      queue.unshift(...obj[props.childrenAttribute]);
+    }
+  }
+  return res;
 });
 
 const filteredGroupedItems = computed(() => {
@@ -454,9 +501,15 @@ function arrayToObject(arr) {
 
 function selectRows(arr = null) {
   if (arr === null) {
-    selectedItemsRaw.value = arrayToObject(
-      props.items?.map((x) => x[props.idAttribute].toString())
-    );
+    if (props.kind !== 'treelist')
+      selectedItemsRaw.value = arrayToObject(
+        props.items?.map((x) => x[props.idAttribute].toString())
+      );
+    else {
+      selectedItemsRaw.value = arrayToObject(
+        treeItems.value?.map((x) => x[props.idAttribute].toString())
+      );
+    }
   } else {
     selectedItemsRaw.value = arrayToObject(arr.map((x) => x[props.idAttribute].toString()));
   }
@@ -483,13 +536,33 @@ const selectedLabel = computed(() => {
     label = props.texts?.items?.endingWith1;
     labelStart = props.texts?.selected?.endingWith1;
   }
-  ret = `${labelStart} ${numDisplay} ${label} ${props.texts?.of} ${props.items?.length}`;
+  if (props.kind !== 'treelist')
+    ret = `${labelStart} ${numDisplay} ${label} ${props.texts?.of} ${props.items?.length}`;
+  else ret = `${labelStart} ${numDisplay} ${label} ${props.texts?.of} ${treeItems.value?.length}`;
 
   return ret;
 });
 
 function selectionActionClick(actinoId, selectedItemsIds) {
   emits('selectionActionClick', actinoId, selectedItemsIds);
+}
+
+const statesNotDefined = ref({});
+
+const states = computed({
+  get() {
+    // Šis vajadzīgs, jo, ja nav definēts, tad nez kāpēc props.itemsStates ir null, nevis {}
+    // kā norādīts defaultā, līdz ar to komponenti nav iespējams izmantot bez props.itemsState definēšanas
+    if (!props.itemsStates) return statesNotDefined.value;
+    return props.itemsStates;
+  },
+  set(value) {
+    emits('update:itemsStates', value);
+  },
+});
+
+function loadChildren(id) {
+  emits('loadChildren', id);
 }
 
 defineExpose({ validate, cancelSelection, selectRows });
@@ -501,7 +574,12 @@ defineExpose({ validate, cancelSelection, selectRows });
         <LxButton
           icon="checkbox"
           kind="ghost"
-          v-if="selectedItems.length === 0 && hasSelecting && selectingKind === 'multiple'"
+          v-if="
+            selectedItems.length === 0 &&
+            hasSelecting &&
+            selectingKind === 'multiple' &&
+            kind !== 'treelist'
+          "
           @click="selectRows()"
           :disabled="loading || busy || queryRaw?.length > 0"
           :title="texts.selectAllRows"
@@ -540,7 +618,7 @@ defineExpose({ validate, cancelSelection, selectRows });
           </div>
         </template>
         <div class="lx-selection-toolbar" v-if="hasSelecting && selectedItems.length > 0">
-          <div class="selection-action-text">
+          <div class="selection-action-text" v-if="kind !== 'treelist'">
             <LxButton
               :icon="
                 selectedItems?.length === items?.length
@@ -583,9 +661,38 @@ defineExpose({ validate, cancelSelection, selectRows });
               </template>
             </LxDropDownMenu>
           </div>
+          <div class="selection-action-text" v-if="kind === 'treelist'">
+            <p>{{ selectedLabel }}</p>
+            <LxButton
+              :icon="
+                selectedItems?.length === items?.length
+                  ? 'checkbox-filled'
+                  : selectingKind === 'multiple'
+                  ? 'checkbox-indeterminate'
+                  : 'radiobutton-filled'
+              "
+              :title="texts.clearSelected"
+              @click="cancelSelection()"
+            />
+          </div>
         </div>
       </template>
-      <template #rightArea v-if="selectedItems.length === 0"> <slot name="toolbar" /> </template>
+      <template #rightArea v-if="selectedItems.length === 0">
+        <slot name="toolbar" />
+        <LxButton
+          icon="checkbox"
+          kind="ghost"
+          v-if="
+            selectedItems.length === 0 &&
+            hasSelecting &&
+            selectingKind === 'multiple' &&
+            kind === 'treelist'
+          "
+          @click="selectRows()"
+          :disabled="loading || busy || queryRaw?.length > 0"
+          :title="texts.selectAllRows"
+        />
+      </template>
     </LxToolbar>
     <div v-if="groupDefinitions">
       <ul
@@ -984,6 +1091,54 @@ defineExpose({ validate, cancelSelection, selectRows });
         </ul>
       </lx-expander>
     </template>
+    <div v-if="kind === 'treelist' && queryRaw?.length === 0">
+      <LxTreeList
+        :items="items"
+        :idAttribute="idAttribute"
+        :primaryAttribute="primaryAttribute"
+        :secondaryAttribute="secondaryAttribute"
+        :childrenAttribute="childrenAttribute"
+        :hasChildrenAttribute="hasChildrenAttribute"
+        :hrefAttribute="hrefAttribute"
+        :clickableAttribute="clickableAttribute"
+        :iconAttribute="iconAttribute"
+        :iconSetAttribute="iconSetAttribute"
+        :tooltipAttribute="tooltipAttribute"
+        :categoryAttribute="categoryAttribute"
+        :action-definitions="actionDefinitions"
+        :icon="icon"
+        :iconSet="iconSet"
+        :hasSelecting="hasSelecting"
+        :selectingKind="selectingKind"
+        @actionClick="actionClicked"
+        v-model:selected-items="selectedItemsRaw"
+        v-model:itemsStates="states"
+        :mode="mode"
+        :texts="texts"
+        @loadChildren="loadChildren"
+      />
+    </div>
+    <div v-else-if="kind === 'treelist' && queryRaw?.length > 0" class="tree-list-search">
+      <LxListItem
+        v-for="element in filteredTreeItems"
+        :key="element?.[idAttribute]"
+        :id="element[idAttribute]"
+        :label="element[primaryAttribute]"
+        :description="element[secondaryAttribute]"
+        :value="element"
+        :href="element[hrefAttribute]"
+        :actionDefinitions="actionDefinitions"
+        :icon="element[iconAttribute] ? element[iconAttribute] : icon"
+        :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
+        :tooltip="element[tooltipAttribute]"
+        :searchString="query"
+        :clickable="element[clickableAttribute]"
+        :category="element[categoryAttribute]"
+        :disabled="loading || busy"
+        @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
+        @action-click="actionClicked"
+      />
+    </div>
     <LxEmptyState
       v-if="items?.length === 0 && !(loading || busy)"
       :label="texts?.noItems"
@@ -992,7 +1147,15 @@ defineExpose({ validate, cancelSelection, selectRows });
       :actionDefinitions="emptyStateActionDefinitions"
       @empty-state-action-click="emptyStateActionClicked"
     />
-    <div class="lx-empty-state" v-if="query && filteredItems && filteredItems.length === 0">
+    <div
+      class="lx-empty-state"
+      v-if="
+        query &&
+        filteredItems &&
+        ((props.kind !== 'treelist' && filteredItems.length === 0) ||
+          (props.kind === 'treelist' && filteredTreeItems?.length === 0))
+      "
+    >
       <p>{{ texts.notFoundSearch }} {{ JSON.stringify(query) }}</p>
     </div>
     <div class="lx-load-more-button" v-if="showLoadMore">
