@@ -364,7 +364,7 @@
   height: 0;
 }
 
-.lx-data-block-wrapper>.lx-data-block>.lx-data-block-header>.lx-content>.lx-primary {
+.lx-data-block-wrapper>.lx-data-block>.lx-data-block-header>.lx-content>.lx-primary-uppercase {
   text-transform: uppercase;
 }
 

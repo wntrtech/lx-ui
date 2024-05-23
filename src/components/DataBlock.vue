@@ -19,6 +19,7 @@ const props = defineProps({
   },
   name: { type: String, default: null },
   description: { type: String, default: null },
+  forceUppercase: { type: Boolean, default: true },
   expandable: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: () => [] },
   disabled: { type: Boolean, default: false },
@@ -126,7 +127,13 @@ const selected = computed({
         </div>
         <div v-if="props.icon === null && !hasSelecting"></div>
         <div class="lx-content">
-          <p class="lx-primary lx-title" :title="name">{{ name }}</p>
+          <p
+            :class="[{ 'lx-primary-uppercase': forceUppercase }]"
+            class="lx-primary lx-title"
+            :title="name"
+          >
+            {{ name }}
+          </p>
           <p class="lx-secondary" :title="description" v-show="description">{{ description }}</p>
         </div>
         <div class="lx-indications" v-if="expandable">
@@ -178,7 +185,9 @@ const selected = computed({
         <div class="lx-main" v-show="expanded">
           <slot />
 
-          <footer v-show="$slots.toolbar" class="lx-button-set"><slot name="toolbar" /></footer>
+          <footer v-show="$slots.toolbar" class="lx-button-set">
+            <slot name="toolbar" />
+          </footer>
         </div>
       </transition>
     </article>
