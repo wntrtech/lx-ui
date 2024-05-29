@@ -1,4 +1,4 @@
-![LX/UI](/public/imgs/cover.png)
+![LX/UI](https://raw.githubusercontent.com/wntrtech/lx-ui/main/public/imgs/cover.png)
 
 # LX/UI
 
