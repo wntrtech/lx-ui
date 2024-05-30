@@ -31,18 +31,9 @@ const inputMask = ref('integer');
 const convertToString = ref(true);
 const inputMaxLength = ref(4);
 const unitOptionTypes = ref([
-  {
-    id: 'days',
-    name: 'Dienas',
-  },
-  {
-    id: 'months',
-    name: 'Mēneši',
-  },
-  {
-    id: 'years',
-    name: 'Gadi',
-  },
+  { id: 'days', name: 'Dienas' },
+  { id: 'months', name: 'Mēneši' },
+  { id: 'years', name: 'Gadi' },
 ]);
 
 const inputValue = ref(props.modelValue);
@@ -56,14 +47,34 @@ const selectedUnitName = computed(() => {
 });
 
 const shouldShowInfoIcon = computed(
-  () =>
-    (props.kind === 'icon' && !props.readOnly) ||
-    (props.kind === 'icon' && props.readOnly && inputValue.value)
+  () => props.kind === 'icon' && (inputValue.value || !props.readOnly)
 );
+
+const tooltipText = computed(() =>
+  inputValue.value ? `${inputValue.value} ${selectedUnitName.value}` : ''
+);
+
+const computedTitle = computed(() => (props.kind === 'label' ? tooltipText.value : ''));
+
+const displayText = computed(() => {
+  if (result.value) {
+    return props.readOnly ? tooltipText.value : result.value;
+  }
+  return !props.readOnly ? 'Nav rezultāta' : '';
+});
+
+function updatePlaceholder(unit) {
+  if (unit === 'days') {
+    inputPlaceholder.value = props.texts.inputDaysPlaceholder;
+  } else if (unit === 'months') {
+    inputPlaceholder.value = props.texts.inputMonthsPlaceholder;
+  } else if (unit === 'years') {
+    inputPlaceholder.value = props.texts.inputYearsPlaceholder;
+  }
+}
 
 function calculateResult() {
   let value = Number(inputValue.value);
-  const unit = selectedUnit.value;
 
   const daysInYear = 365.25;
   const daysInMonth = 30.44;
@@ -74,7 +85,7 @@ function calculateResult() {
   let days = 0;
   let daysResult = 0;
 
-  switch (unit) {
+  switch (selectedUnit.value) {
     case 'years':
       years = Math.floor(value);
       daysResult = Math.floor(value * daysInYear);
@@ -91,8 +102,9 @@ function calculateResult() {
       value -= years * daysInYear;
       months = Math.floor(value / daysInMonth);
       days = Math.floor(value - months * daysInMonth);
-      daysResult = Math.floor(value);
+      daysResult = Math.floor(Number(inputValue.value));
       break;
+
     default:
       break;
   }
@@ -102,22 +114,23 @@ function calculateResult() {
   const dayString = days !== 0 ? `${days} ${days === 1 ? 'diena' : 'dienas'}` : '';
 
   result.value = [yearString, monthString, dayString].filter(Boolean).join(', ');
-
   emits('update:modelValue', daysResult);
 }
 
 watch(
   () => selectedUnit.value,
   (newValue) => {
-    if (newValue === 'days') {
-      inputPlaceholder.value = props.texts.inputDaysPlaceholder;
-    } else if (newValue === 'months') {
-      inputPlaceholder.value = props.texts.inputMonthsPlaceholder;
-    } else if (newValue === 'years') {
-      inputPlaceholder.value = props.texts.inputYearsPlaceholder;
-    }
+    updatePlaceholder(newValue);
   },
   { immediate: true }
+);
+
+watch(
+  () => props.texts,
+  () => {
+    updatePlaceholder(selectedUnit.value);
+  },
+  { deep: true, immediate: true }
 );
 </script>
 
@@ -125,14 +138,7 @@ watch(
   <div
     :class="[{ 'lx-day-input-wrapper': !readOnly }, { 'lx-day-input-readonly-wrapper': readOnly }]"
   >
-    <template v-if="readOnly">
-      <p>
-        <span v-if="inputValue">{{ inputValue }}</span>
-        <span v-else>—</span>
-        <span v-if="inputValue">—</span>
-        <span v-if="inputValue">{{ selectedUnitName }}</span>
-      </p>
-    </template>
+    <p v-if="readOnly" class="lx-data" :title="computedTitle">{{ result }}</p>
 
     <template v-else>
       <LxTextInput
@@ -141,7 +147,6 @@ watch(
         :kind="inputKind"
         :maxlength="inputMaxLength"
         :convert-to-string="convertToString"
-        :readOnly="readOnly"
         :disabled="disabled"
         :placeholder="inputPlaceholder"
         :tooltip="texts.inputTooltip"
@@ -151,7 +156,6 @@ watch(
       <LxDropDown
         v-model="selectedUnit"
         :items="unitOptionTypes"
-        :readOnly="readOnly"
         :placeholder="texts.dropdownPlaceholder"
         :tooltip="texts.dropdownTooltip"
         :disabled="disabled"
@@ -159,26 +163,18 @@ watch(
       ></LxDropDown>
     </template>
 
-    <div
-      :class="[
-        'lx-day-input-result-info-icon',
-        { 'lx-day-input-result-readonly-wrapper': readOnly },
-      ]"
-    >
+    <div class="lx-day-input-result-info-icon">
       <LxInfoWrapper v-if="shouldShowInfoIcon" :placement="'top'">
         <LxIcon value="info" />
 
         <template #panel>
-          <p v-if="result" class="lx-data">{{ result }}</p>
-          <p v-else class="lx-data">Nav rezultāta</p>
+          <p class="lx-data">{{ displayText }}</p>
         </template>
       </LxInfoWrapper>
     </div>
   </div>
 
-  <div
-    :class="['lx-day-input-result-info-icon', { 'lx-day-input-result-readonly-wrapper': readOnly }]"
-  >
+  <div v-if="!readOnly" class="lx-day-input-result-info-icon">
     <div v-if="kind === 'label'" class="lx-day-input-tooltip-text">{{ result }}</div>
   </div>
 </template>

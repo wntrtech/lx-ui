@@ -10,10 +10,8 @@
   justify-content: center;
 }
 
-.lx-day-input-result-readonly-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.lx-day-input-readonly-wrapper>.lx-data {
+  margin-right: 0.5rem;
 }
 
 .lx-day-input-result-info-icon svg{
