@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, useSlots, ref, watch, onMounted, nextTick, provide } from 'vue';
 import {
   useElementVisibility,
@@ -394,10 +394,12 @@ function hideAll() {
 
   for (let i = 0; i < allElements.length; i += 1) {
     allElements[i].style.display = 'none';
+    allElements[i].style.gridTemplateColumns = 'none';
   }
   const selectedForm = document.getElementById(props.id);
   const selectedElement = selectedForm?.querySelector(`#${selectedTabValue.value}`);
   selectedElement.style.display = 'grid';
+  selectedElement.style.gridTemplateColumns = '1fr';
 }
 
 watch(

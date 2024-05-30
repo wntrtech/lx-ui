@@ -2,6 +2,7 @@
 import { onMounted, ref, computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
+import LxDropDown from '@/components/Dropdown.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
 
 const props = defineProps({
@@ -103,6 +104,13 @@ defineExpose({ setActiveTab, isActiveTab });
         />
       </div>
     </header>
+    <div class="lx-dropdown-container">
+      <LxDropDown
+        :items="props.value"
+        :modelValue="activeItemCode"
+        @update:modelValue="setActiveTab"
+      />
+    </div>
     <article class="lx-tab-body">
       <transition name="nav">
         <slot name="body" />

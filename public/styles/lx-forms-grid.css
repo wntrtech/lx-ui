@@ -1,7 +1,7 @@
 .lx-form-grid {
   display: grid;
   background-color: var(--color-region);
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   position: relative;
   border: var(--region-border);
 }
@@ -1104,5 +1104,11 @@ p .lx-person-display-wrapper {
   .lx-form-grid>footer .lx-context-container.responsive-overflow {
     display: flex;
     align-items: stretch;
+  }
+}
+
+@media (max-width: 700px) {
+  .lx-tab-control>.lx-toolbar.lx-sticky {
+    display: none;
   }
 }
