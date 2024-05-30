@@ -14,9 +14,7 @@
 }
 
 .lx:not(.lx-no-animations) .nav-enter-active {
-  transition:
-    opacity 0.2s ease-out,
-    transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 .lx:not(.lx-no-animations) .nav-enter-from {
@@ -30,16 +28,12 @@
 }
 
 .lx:not(.lx-no-animations) .appear-down-enter-active {
-  transition:
-    opacity 0.05s ease-out,
-    transform 0.05s ease-out;
+  transition: opacity 0.05s ease-out, transform 0.05s ease-out;
   transform-origin: top center;
 }
 
 .lx:not(.lx-no-animations) .appear-down-leave-active {
-  transition:
-    opacity 0.1s ease-out,
-    transform 0.1s ease-out;
+  transition: opacity 0.1s ease-out, transform 0.1s ease-out;
   transform-origin: top center;
 }
 
@@ -58,9 +52,7 @@
 
 .lx:not(.lx-no-animations) .slide-right-enter-active,
 .lx:not(.lx-no-animations) .slide-right-leave-active {
-  transition:
-    opacity 1s ease-out,
-    transform 1s ease-out;
+  transition: opacity 1s ease-out, transform 1s ease-out;
 }
 
 .lx:not(.lx-no-animations) .slide-right-enter-from,
@@ -69,15 +61,11 @@
 }
 
 .lx:not(.lx-no-animations) .slide-left-enter-active {
-  transition:
-    opacity 0.2s ease-out,
-    transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 .lx:not(.lx-no-animations) .slide-left-leave-active {
-  transition:
-    opacity 0.2s ease-in,
-    transform 0.2s ease-in;
+  transition: opacity 0.2s ease-in, transform 0.2s ease-in;
 }
 
 .lx:not(.lx-no-animations) .slide-left-enter-from {
@@ -91,15 +79,11 @@
 }
 
 .lx:not(.lx-no-animations) .shell-switch-enter-active {
-  transition:
-    opacity 0.2s ease-out,
-    transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 .lx:not(.lx-no-animations) .shell-switch-leave-active {
-  transition:
-    opacity 0.1s ease-out,
-    transform 0.1s ease-out;
+  transition: opacity 0.1s ease-out, transform 0.1s ease-out;
 }
 
 .lx:not(.lx-no-animations) .shell-switch-enter-from,
@@ -119,9 +103,7 @@
 .lx:not(.lx-no-animations) .shell-switch-enter-active .lx-nav-panel,
 .lx:not(.lx-no-animations) .shell-switch-leave-active .lx-main-header,
 .lx:not(.lx-no-animations) .shell-switch-leave-active .lx-nav-panel {
-  transition:
-    opacity 0.2s ease-out,
-    transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 .lx:not(.lx-no-animations) .shell-switch-enter-from .lx-main-header,
@@ -148,15 +130,11 @@
 }
 
 .lx:not(.lx-no-animations) .modal-enter-active .lx-modal {
-  transition:
-    opacity 0.2s ease-out,
-    transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 .lx:not(.lx-no-animations) .modal-leave-active .lx-modal {
-  transition:
-    opacity 0.1s ease-out,
-    transform 0.1s ease-out;
+  transition: opacity 0.1s ease-out, transform 0.1s ease-out;
 }
 
 .lx:not(.lx-no-animations) .modal-enter-from .lx-modal,
@@ -205,20 +183,13 @@
 
 /* interactions */
 .lx:not(.lx-no-animations) .lx-layout-default .lx-nav-panel ul li {
-  transition:
-    background-color 0.2s ease-in,
-    color 0.2s ease-in,
-    font-weight 0.2s ease-in,
-    border-color 0.2s ease-in,
-    border-thickness 0.2s ease-in;
+  transition: background-color 0.2s ease-in, color 0.2s ease-in, font-weight 0.2s ease-in,
+    border-color 0.2s ease-in, border-thickness 0.2s ease-in;
 }
 
 .lx:not(.lx-no-animations) .lx-button,
-.lx:not(.lx-no-animations) .lx-alert-menu .lx-button:not(#userMenuButton)>.lx-badge {
-  transition:
-    background-color 0.1s ease-in,
-    color 0.1s ease-in,
-    border-color 0.1s ease-in;
+.lx:not(.lx-no-animations) .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-badge {
+  transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
 
 .lx:not(.lx-no-animations) .lx-button svg,
@@ -231,10 +202,7 @@
 .lx:not(.lx-no-animations) .lx-list-item-interactive,
 .lx:not(.lx-no-animations) .lx-tile .lx-description,
 .lx:not(.lx-no-animations) .lx-draggable-group-list-item {
-  transition:
-    background-color 0.1s ease-in,
-    color 0.1s ease-in,
-    border-color 0.1s ease-in;
+  transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
 
 .lx:not(.lx-no-animations) .lx-modal {
@@ -242,8 +210,7 @@
 }
 
 .lx:not(.lx-no-animations) .lx-toggle-appearance {
-  transition:
-    padding-left 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83),
+  transition: padding-left 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83),
     background-color 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83),
     border-color 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83);
 }
@@ -282,21 +249,15 @@
 }
 
 .lx:not(.lx-no-animations) .lx-radio-button-appearance .lx-radio-thumb {
-  transition:
-    opacity 0.2s ease-out,
-    transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 .lx:not(.lx-no-animations) .lx-checkbox-appearance {
-  transition:
-    background-color 0.2s ease-out,
-    border-color 0.2s ease-out;
+  transition: background-color 0.2s ease-out, border-color 0.2s ease-out;
 }
 
 .lx:not(.lx-no-animations) .lx-checkbox-appearance .lx-checkbox-thumb {
-  transition:
-    opacity 0.2s ease-out,
-    transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
 @keyframes pulse {
@@ -338,14 +299,11 @@
 .lx:not(.lx-no-animations) .vc-slide-down-leave-active,
 .lx:not(.lx-no-animations) .vc-slide-fade-enter-active,
 .lx:not(.lx-no-animations) .vc-slide-fade-leave-active {
-  transition:
-    opacity var(--slide-duration) var(--slide-timing),
+  transition: opacity var(--slide-duration) var(--slide-timing),
     -webkit-transform var(--slide-duration) var(--slide-timing);
-  transition:
-    transform var(--slide-duration) var(--slide-timing),
+  transition: transform var(--slide-duration) var(--slide-timing),
     opacity var(--slide-duration) var(--slide-timing);
-  transition:
-    transform var(--slide-duration) var(--slide-timing),
+  transition: transform var(--slide-duration) var(--slide-timing),
     opacity var(--slide-duration) var(--slide-timing),
     -webkit-transform var(--slide-duration) var(--slide-timing);
 }
@@ -368,18 +326,14 @@
 /* lx-expanders */
 
 .lx:not(.lx-no-animations) .lx-expander .lx-head {
-  -webkit-transition:
-    background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9),
+  -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9),
     outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
-  transition:
-    background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9),
+  transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9),
     outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
 }
 
 .lx:not(.lx-no-animations) .lx-expander .lx-head label::before {
-  transition:
-    opacity 0.1s ease-in-out,
-    transform 0.2s ease-in-out;
+  transition: opacity 0.1s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .lx:not(.lx-no-animations) .lx-expander.lx-expander-row .expander-transition-enter-active {
@@ -398,11 +352,13 @@
   animation: expand-collapse-column 0.1s ease-out;
 }
 
-.lx:not(.lx-no-animations) .lx-data-block-wrapper>.lx-data-block>.lx-data-block-header>.lx-content>.lx-secondary {
-  transition:
-    opacity ease-out 0.2s,
-    padding-top ease-out 0.2s,
-    height ease-out 0.2s;
+.lx:not(.lx-no-animations)
+  .lx-data-block-wrapper
+  > .lx-data-block
+  > .lx-data-block-header
+  > .lx-content
+  > .lx-secondary {
+  transition: opacity ease-out 0.2s, padding-top ease-out 0.2s, height ease-out 0.2s;
 }
 
 .lx:not(.lx-no-animations) .lx-data-block-wrapper .expander-transition-enter-active {
@@ -417,16 +373,16 @@
   transition: font-size ease-out 0.1s;
 }
 
-.lx:not(.lx-no-animations) .lx-expander>header .lx-modifier-icon+.lx-indicator {
-  transition:
-    opacity 0.5s ease-in-out,
-    transform 0.5s ease-in-out;
+.lx:not(.lx-no-animations) .lx-expander > header .lx-modifier-icon + .lx-indicator {
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
-.lx:not(.lx-no-animations) .lx-expander.lx-expander-highlighted>header .lx-modifier-icon+.lx-indicator {
-  transition:
-    opacity 0.2s ease-in-out,
-    transform 0.2s ease-in-out;
+.lx:not(.lx-no-animations)
+  .lx-expander.lx-expander-highlighted
+  > header
+  .lx-modifier-icon
+  + .lx-indicator {
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .lx-loader-default-progress-default-fill {
@@ -489,11 +445,9 @@
 .lx:not(.lx-no-animations) .lx-date-time-picker,
 .lx:not(.lx-no-animations) .lx-dropdown,
 .lx:not(.lx-no-animations) .lx-markdown-text-area {
-  -webkit-transition:
-    background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9),
+  -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9),
     outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
-  transition:
-    background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9),
+  transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9),
     outline 70ms cubic-bezier(0.2, 0, 0.38, 0.9);
 }
 
@@ -504,22 +458,27 @@
 
 .lx:not(.lx-no-animations) .lx-radio-button-appearance,
 .lx:not(.lx-no-animations) .lx-checkbox-appearance {
-  -webkit-transition:
-    background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
+  -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
     border-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
-  transition:
-    background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
+  transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
     border-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
 }
 
-.lx:not(.lx-no-animations) .lx-radio-button:checked+.lx-radio-button-label-wrapper .lx-radio-button-appearance::before,
-.lx:not(.lx-no-animations) .lx-checkbox:checked+.lx-checkbox-label-wrapper .lx-checkbox-appearance::before,
-.lx:not(.lx-no-animations) .lx-checkbox:indeterminate+.lx-checkbox-label-wrapper .lx-checkbox-appearance::before {
-  -webkit-transition:
-    background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
+.lx:not(.lx-no-animations)
+  .lx-radio-button:checked
+  + .lx-radio-button-label-wrapper
+  .lx-radio-button-appearance::before,
+.lx:not(.lx-no-animations)
+  .lx-checkbox:checked
+  + .lx-checkbox-label-wrapper
+  .lx-checkbox-appearance::before,
+.lx:not(.lx-no-animations)
+  .lx-checkbox:indeterminate
+  + .lx-checkbox-label-wrapper
+  .lx-checkbox-appearance::before {
+  -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
     border-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
-  transition:
-    background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
+  transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
     border-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
 }
 
@@ -528,7 +487,11 @@
   transition: 70ms cubic-bezier(0.2, 0, 1, 0.9) all;
 }
 
-.lx:not(.lx-no-animations) .lx-toggle-wrapper.lx-small .lx-toggle:checked+.lx-toggle-label-wrapper .lx-toggle-appearance::after {
+.lx:not(.lx-no-animations)
+  .lx-toggle-wrapper.lx-small
+  .lx-toggle:checked
+  + .lx-toggle-label-wrapper
+  .lx-toggle-appearance::after {
   -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
   transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
 }
@@ -557,9 +520,7 @@
 /* lx-shell-flex */
 
 .lx:not(.lx-no-animations) .lx-layout-default .lx-nav-panel {
-  transition:
-    0.1s ease-in-out width,
-    0.1s ease-in-out box-shadow;
+  transition: 0.1s ease-in-out width, 0.1s ease-in-out box-shadow;
 }
 
 /* lx-loaders */
@@ -662,7 +623,7 @@
   }
 }
 
-.lx:not(.lx-no-animations) .lx-qr-scanner-wrapper .lx-qr-center>svg {
+.lx:not(.lx-no-animations) .lx-qr-scanner-wrapper .lx-qr-center > svg {
   animation: pulse-scale 1s alternate-reverse ease-in-out infinite;
 }
 
@@ -697,5 +658,16 @@
   100% {
     left: 100%;
     width: 100%;
+  }
+}
+
+/* Markdown loader */
+@keyframes markdown-loader {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }

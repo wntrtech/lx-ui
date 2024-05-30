@@ -4,13 +4,20 @@ import { Editor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
+
 import CharacterCount from '@tiptap/extension-character-count';
 import PlaceholderData from '@/components/markdownExtensions/PlaceholderData';
+
+import ImageComponent from '@/components/markdownExtensions/Image';
+import HiddenIdNode from '@/components/markdownExtensions/Node';
 import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Markdown } from 'tiptap-markdown';
-import { isUrl } from '@/utils/stringUtils';
+import { isUrl, generateUUID } from '@/utils/stringUtils';
 import { checkArrayObjectProperty } from '@/utils/arrayUtils';
+import { lxDevUtils } from '@/utils';
+import useLx from '@/hooks/useLx';
+import { useElementSize } from '@vueuse/core';
 
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 
@@ -19,13 +26,17 @@ import LxModal from '@/components/Modal.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import { formatValue } from '@/utils/formatUtils';
+import LxFileUploader from '@/components/fileUploader/FileUploader.vue';
+import { formatValue, formatUrl } from '@/utils/formatUtils';
+import LxForm from '@/components/forms/Form.vue';
+import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
+import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
   placeholder: { type: String, default: null },
   rows: { type: Number, default: 3 },
@@ -38,6 +49,11 @@ const props = defineProps({
   showLinkEditor: { type: Boolean, default: true },
   tooltip: { type: String, default: null },
   showPlaceholderPicker: { type: Boolean, default: false },
+  showImagePicker: { type: Boolean, default: false },
+  imageAllowInline: { type: Boolean, default: false },
+  imageAllowBase64: { type: Boolean, default: true },
+  imageResizable: { type: Boolean, default: false },
+  imageMaxSize: { type: Number, default: 3000000 }, // 3MB
   dictionary: { type: Object, default: null },
   texts: {
     type: Object,
@@ -52,23 +68,44 @@ const props = defineProps({
       bulleted: 'Saraksts bez numerācijas',
       numbered: 'Saraksts ar numerāciju',
       link: 'Saite',
+      image: 'Attēls',
       templatePicker: 'Vietturi',
       modalLabel: 'Saites izveidošana',
       modalDescription: 'Pievienot saiti uz:',
       save: 'Saglabāt',
       close: 'Aizvērt',
+      imageModalLabel: 'Attēla pievienošana',
+      imageModalLinkDescription: 'Pievienot attēlu no URL:',
+      imageModalAltDescription: 'Attēla alternatīvais nosaukums',
+      imageModalTitleDescription: 'Attēla virsraksts',
+      invalidImageLink: 'Ievadītais URL nav derīgs',
+      chooseFile: 'Izvēlēties attēlu',
+      imageModalFileDescription: 'Pievienot attēla datni',
+      inputTypeUrl: 'Saite',
+      inputTypeFile: 'Datne',
     }),
   },
 });
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'notification', 'preparedImage']);
 
 const editor = ref(null);
 const text = ref(null);
 const maxlengthExceeded = ref(false);
 
+const inputImage = ref();
+const inputAlt = ref();
+const inputTitle = ref();
+const inputImageField = ref();
+
+const imageLink = ref();
+
 const editUrlModal = ref();
 const inputLink = ref();
 const inputLinkField = ref();
+const markdownImageModal = ref();
+
+const isNotLink = ref(false);
+const isNotImage = ref(false);
 
 const outputHtmlText = ref();
 const model = computed({
@@ -80,15 +117,20 @@ const model = computed({
   },
 });
 
+watch(inputImage, (n) => {
+  const fn = formatUrl(n);
+  imageLink.value = isUrl(fn) ? fn : null;
+});
+
 const isDisabled = computed(() => props.disabled);
 
 const characterCount = computed(
   () => editor.value && editor.value.storage.characterCount.characters()
 );
 
-const isOpen = ref(false);
+const isModalOpen = ref(false);
 function focus() {
-  if (!editor.value || isOpen.value) {
+  if (!editor.value || isModalOpen.value) {
     return;
   }
   editor.value.commands.focus();
@@ -138,6 +180,8 @@ function createEditorExtensions() {
     StarterKit,
     TextStyle,
     Color,
+    ImageComponent,
+    HiddenIdNode,
     Link.configure({
       autolink: false,
       validate: (href) => /^https?:\/\//.test(href),
@@ -174,6 +218,149 @@ function createEditorExtensions() {
   });
 }
 
+const uploadedImage = ref();
+const fileUploader = ref();
+const allowedFileExtensions = ref(['image/*']);
+
+function clearModalVariables() {
+  inputImage.value = null;
+  inputAlt.value = null;
+  inputTitle.value = null;
+  uploadedImage.value = null;
+}
+
+function closeImageModal() {
+  markdownImageModal.value.close();
+  clearModalVariables();
+}
+
+function openImage() {
+  markdownImageModal.value.open();
+  isModalOpen.value = true;
+}
+const markdownWrapper = ref();
+
+function getImageSource() {
+  let src = null;
+  let alt = '';
+  let title = '';
+  let width = null;
+  let height = null;
+  let isBase64 = false;
+
+  const file = fileUploader.value?.getFiles()[0];
+  if (file) {
+    if (file.meta?.exif?.['Image Height']?.description) {
+      height = file.meta.exif['Image Height'].description;
+    }
+    if (file.meta?.exif?.['Image Width']?.description) {
+      width = file.meta.exif['Image Width'].description;
+    }
+  }
+
+  if (imageLink.value) {
+    src = imageLink.value;
+  } else if (uploadedImage.value) {
+    src = uploadedImage.value[0].content;
+    alt = uploadedImage.value[0].name;
+    title = uploadedImage.value[0].name;
+    isBase64 = true;
+  }
+
+  return { src, alt, title, width, height, isBase64 };
+}
+
+function emitNotification(message) {
+  emits('notification', message);
+}
+
+function createImageLoader(base64, width, height, loaderClass, alt, title, aspect) {
+  const id = generateUUID();
+  editor.value
+    .chain()
+    .focus()
+    .createHiddenIdNode({ class: loaderClass, id, width, height, aspect })
+    .run();
+  emits('preparedImage', base64, id, alt, title);
+}
+
+function repleaceImageLoader(src, id, alt, title) {
+  editor.value
+    .chain()
+    .swapToImage({
+      id,
+      src,
+      alt,
+      title,
+    })
+    .run();
+}
+function setHTML(html) {
+  editor.value.commands.setContent(html);
+}
+function removeImageLoader(id) {
+  editor.value.chain().focus().removeNode(id).run();
+}
+function removeAllImageLoaders() {
+  editor.value.chain().focus().removeAllNodes().run();
+}
+
+function formatSize(size) {
+  return Number(size?.replace('px', ''));
+}
+
+defineExpose({ getHTML, setHTML, removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
+
+function setImage() {
+  let { src, alt, title, width, height } = getImageSource();
+  const { isBase64 } = getImageSource();
+  const containerElementSize = useElementSize(markdownWrapper);
+  let loaderClass = 'image-loader default';
+  const aspect = formatSize(width) / formatSize(height) || 4 / 3;
+
+  if (!src) {
+    emitNotification('noImageGiven');
+    return;
+  }
+
+  if (alt === '' || (isBase64 && inputAlt.value)) {
+    alt = inputAlt.value;
+  }
+  if (title === '' || (isBase64 && inputTitle.value)) {
+    title = inputTitle.value;
+  }
+
+  if ((height && formatSize(height) < 30) || (width && formatSize(width) < 30)) {
+    loaderClass = 'image-loader no-loader';
+  } else if ((height && formatSize(height) < 100) || (width && formatSize(width) < 100)) {
+    loaderClass = 'image-loader small';
+  } else if (width && formatSize(width) > containerElementSize.width.value) {
+    width = `${containerElementSize.width.value - 35}px`;
+    height = 'auto';
+    loaderClass = 'image-loader large';
+  }
+  const idx = src.indexOf('?');
+  const fUrl = formatUrl(src.slice(0, idx === -1 ? undefined : idx));
+  if (/^data:image\/.{0,11};base64,/.test(src)) {
+    createImageLoader(src, width, height, loaderClass, alt, title, aspect);
+    closeImageModal();
+    return;
+  }
+  if (isNotImage.value) {
+    emitNotification('imageNotFound');
+    return;
+  }
+  if (isUrl(fUrl)) {
+    src = fUrl;
+  } else {
+    emitNotification('invalidAdress');
+    return;
+  }
+
+  editor.value.chain().focus().setImage({ src, alt, title }).run();
+  closeImageModal();
+}
+
 onMounted(() => {
   createEditorExtensions();
 });
@@ -188,18 +375,20 @@ function updateEditorExtensions() {
 }
 
 watch(
-  () => [props.dictionary, props.maxlength],
+  [
+    () => [props.dictionary, props.maxlength],
+    () => props.imageAllowBase64,
+    () => props.imageAllowInline,
+    () => props.imageResizable,
+  ],
   () => {
     updateEditorExtensions();
   }
 );
 
-function setHTML(html) {
-  editor.value.commands.setContent(html);
-}
 const isSelectionEmpty = computed(() => editor.value?.state?.selection?.empty);
 const InvalidMessage = ref('Saite tika ievadīta nekorektā formā!');
-const isNotLink = ref(false);
+
 function setLink() {
   isNotLink.value = false;
   const url = inputLink;
@@ -222,8 +411,8 @@ function setLink() {
   inputLink.value = '';
 }
 function checkIfOpen() {
-  if (!isOpen.value) {
-    isOpen.value = !isOpen.value;
+  if (!isModalOpen.value) {
+    isModalOpen.value = !isModalOpen.value;
     editUrlModal.value.open();
     nextTick(() => {
       inputLinkField.value.focus();
@@ -233,10 +422,8 @@ function checkIfOpen() {
   }
 }
 function onClosing() {
-  isOpen.value = false;
+  isModalOpen.value = false;
 }
-
-defineExpose({ getHTML, setHTML });
 
 function chooseColor(color) {
   switch (color) {
@@ -272,10 +459,21 @@ function chooseColor(color) {
 function postPlaceholder(content) {
   editor.value.chain().focus().deleteSelection().setPlaceholderData({ content }).run();
 }
+
+function onError(id, error) {
+  lxDevUtils.log(`Error on file: ${id} - ${error}`, useLx().getGlobals()?.environment, 'error');
+}
+
+const imageModalInputType = ref('url');
+
+const imageInputTypes = [
+  { id: 'url', name: props.texts.inputTypeUrl },
+  { id: 'fileUploader', name: props.texts.inputTypeFile },
+];
 </script>
 
 <template>
-  <div class="lx-field-wrapper">
+  <div class="lx-field-wrapper" ref="markdownWrapper">
     <div
       v-show="!readOnly"
       class="lx-markdown-text-area-wrapper"
@@ -472,7 +670,7 @@ function postPlaceholder(content) {
               :active="editor.isActive('orderedList')"
             />
           </LxToolbarGroup>
-          <LxToolbarGroup v-if="props.showLinkEditor" class="left-group">
+          <LxToolbarGroup v-if="props.showLinkEditor || props.showImagePicker" class="left-group">
             <lx-button
               icon="link"
               kind="ghost"
@@ -505,6 +703,70 @@ function postPlaceholder(content) {
               >
               </lx-text-input>
             </lx-modal>
+
+            <div v-if="props.showImagePicker" class="lx-toolbar-group">
+              <lx-button
+                icon="image"
+                kind="ghost"
+                variant="icon-only"
+                :title="texts.image"
+                :disabled="isDisabled || !isSelectionEmpty"
+                :active="editor.isActive('image')"
+                @click="openImage()"
+              />
+              <lx-modal
+                id="imageModal"
+                ref="markdownImageModal"
+                :label="texts.imageModalLabel"
+                size="s"
+                :button-primary-visible="true"
+                :button-primary-label="texts.save"
+                @primary-action="setImage()"
+                :button-secondary-visible="true"
+                :button-secondary-label="texts.close"
+                :button-secondary-is-cancel="false"
+                @secondary-action="closeImageModal()"
+                @closed="clearModalVariables()"
+              >
+                <LxContentSwitcher :items="imageInputTypes" v-model="imageModalInputType" />
+                <LxForm :show-header="false" :show-footer="false">
+                  <LxRow
+                    :label="texts.imageModalLinkDescription"
+                    v-if="imageModalInputType === 'url'"
+                  >
+                    <lx-text-input
+                      id="inputImageField"
+                      ref="inputImageField"
+                      v-model="inputImage"
+                      :invalid="isNotImage"
+                      :invalidation-message="texts.invalidImageLink"
+                    >
+                    </lx-text-input>
+                  </LxRow>
+                  <LxRow
+                    :label="texts.imageModalFileDescription"
+                    v-if="imageModalInputType === 'fileUploader'"
+                  >
+                    <LxFileUploader
+                      ref="fileUploader"
+                      v-model="uploadedImage"
+                      data-type="content"
+                      :disabled="isDisabled"
+                      :draggable="true"
+                      :allowedFileExtensions="allowedFileExtensions"
+                      :maxFileSize="imageMaxSize"
+                      @onError="onError"
+                    />
+                  </LxRow>
+                  <LxRow :label="texts.imageModalAltDescription">
+                    <LxTextInput id="inputAltField" v-model="inputAlt" />
+                  </LxRow>
+                  <LxRow :label="texts.imageModalTitleDescription">
+                    <LxTextInput id="inputTitleField" v-model="inputTitle" />
+                  </LxRow>
+                </LxForm>
+              </lx-modal>
+            </div>
           </LxToolbarGroup>
           <LxToolbarGroup v-if="props.showPlaceholderPicker" class="left-group">
             <LxDropDownMenu>

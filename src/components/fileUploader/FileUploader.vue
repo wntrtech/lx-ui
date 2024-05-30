@@ -443,7 +443,7 @@ function openModal(id) {
         multiple
       />
       <LxButton
-        v-if="!draggable"
+        v-if="!props.draggable"
         :label="props.texts.buttonLabel"
         kind="tertiary"
         icon="upload"
@@ -452,7 +452,7 @@ function openModal(id) {
         :loading="props.loading"
       ></LxButton>
       <div
-        v-if="draggable"
+        v-if="props.draggable"
         class="lx-draggable-upload-wrapper"
         :class="[{ 'lx-dragging': isDragging }, { 'lx-disabled': props.disabled || props.loading }]"
         @dragover.prevent="handleDragOver"
