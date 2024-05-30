@@ -1082,8 +1082,6 @@ h2.lx-section-header+p.lx-invalidation-message {
 .lx .lx-value-picker-tile-wrapper {
   display: flex;
   flex-wrap: nowrap;
-  overflow-x: auto;
-  white-space: wrap;
 }
 
 .lx-value-picker-tile {
@@ -1852,6 +1850,11 @@ h2.lx-section-header+p.lx-invalidation-message {
 .lx-field-wrapper .lx-item-display .lx-data {
   font-weight: regular;
   height: auto;
+}
+
+.lx-field-wrapper:has(.lx-value-picker-tile-wrapper) {
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 /* Number slider */
