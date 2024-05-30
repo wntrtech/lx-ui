@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
+import useLx from '@/hooks/useLx';
+import { lxDevUtils } from '@/utils';
 
 import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
@@ -61,6 +63,9 @@ onMounted(() => {
   }
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
+  }
+  if (props.items.length === 0 && (model.value !== null && model.value !== undefined && model.value.length > 0)) {
+    lxDevUtils.log('Error: No items available but v-model value is set.', useLx().getGlobals()?.environment, 'error');
   }
 });
 
@@ -166,32 +171,18 @@ function getName(returnPlaceholder = true) {
 function getItemId(id) {
   return `${id}---${generateUUID()}`;
 }
+
 function selectSingle(id) {
-  if (props.disabled) {
-    return;
-  }
-  let prevId = null;
-  if (model.value) {
-    prevId = model.value[0]?.toString();
-  }
+  if (props.disabled) return;
 
-  if (!Array.isArray(model.value)) {
-    prevId = model.value;
+  // Deselect previously selected item
+  if (model.value && !Array.isArray(model.value) && model.value !== notSelectedId) {
+    itemsModel.value[model.value.toString()] = false;
+  } else if (Array.isArray(model.value) && model.value.length > 0) {
+    itemsModel.value[model.value[0].toString()] = false;
   }
-
-  if (prevId === id) {
-    // Same radio button selected
-    return;
-  }
-  if (!prevId) {
-    // Model was empty
-    if (props.nullable) {
-      itemsModel.value[notSelectedId] = false;
-    }
-  } else {
-    itemsModel.value[prevId] = false;
-  }
-
+  
+  // Select the new item
   itemsModel.value[id] = true;
 
   if (id === notSelectedId) {
@@ -218,6 +209,7 @@ watch(
     }
   }
 );
+
 function selectMultiple(id) {
   if (props.disabled) {
     return;
@@ -254,7 +246,9 @@ function selectMultiple(id) {
     }
   }
 }
+
 const query = ref();
+
 function defineSelector(item) {
   if (props.kind === 'single') {
     selectSingle(item);
@@ -281,31 +275,30 @@ watch(
   () => {
     hiddenValues.value = [];
     itemsDisplay.value?.forEach((val) => {
-      if(props.searchAttributes){
+      if (props.searchAttributes) {
+        if (!attributesSearch(val) && query.value.length !== 0) {
+          hiddenValues.value.push(val);
+        }
+      } else {
         if (
-        !attributesSearch(val) &&
-        query.value.length !== 0
-      ) {
-        hiddenValues.value.push(val);
-      }
-      }else{
-      if (
-        !textSearch(query.value, val[props.nameAttribute]) &&
-        !textSearch(query.value, val[props.descriptionAttribute]) &&
-        query.value.length !== 0
-      ) {
-        hiddenValues.value.push(val);
-      }
+          !textSearch(query.value, val[props.nameAttribute]) &&
+          !textSearch(query.value, val[props.descriptionAttribute]) &&
+          query.value.length !== 0
+        ) {
+          hiddenValues.value.push(val);
+        }
       }
     });
   }
 );
+
 watch(
   () => props.hasSearch,
   () => {
     query.value = '';
   }
 );
+
 function isElementHidden(item) {
   if (query.value?.length > 0) {
     return hiddenValues.value.some(
@@ -317,26 +310,24 @@ function isElementHidden(item) {
   return false;
 }
 
-
-
 const columnReadOnly = computed(() => {
   return selectedItems.value?.map((item) => item[props.nameAttribute]);
 });
 </script>
 
 <template>
-  <div class="lx-value-picker-default-wrapper" :class="[{'lx-invalid': invalid}]" role="radiogroup"  :title="tooltip">
+  <div class="lx-value-picker-default-wrapper" :class="[{'lx-invalid': invalid}]" role="radiogroup" :title="tooltip">
     <span v-if="readOnly">
       <p v-if="readOnlyRenderType === 'row'" class="lx-data">
-        {{ getName(false) }} 
+        {{ getName(false) }}
       </p>
       <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
         <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
       </ul>
-      <span v-if="model === null || model === undefined || model?.length < 1" >—</span>
+      <span v-if="model === null || model === undefined || model?.length < 1">—</span>
     </span>
-      
-    <template v-else >
+
+    <template v-else>
       <div
         class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
         v-if="hasSearch && !readOnly"
@@ -346,7 +337,7 @@ const columnReadOnly = computed(() => {
           ref="queryInput"
           v-model="query"
           kind="search"
-          role='search'
+          role="search"
           :placeholder="texts.searchPlaceholder"
         />
         <lx-button
@@ -380,7 +371,7 @@ const columnReadOnly = computed(() => {
           :disabled="disabled"
           :value="item[idAttribute].toString()"
           @click="selectSingle(item[idAttribute])"
-          >
+        >
           <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
             <div class="lx-value-picker-default-item-label">
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
@@ -396,7 +387,7 @@ const columnReadOnly = computed(() => {
             <div>
               <slot name="customItem" v-bind="item"></slot>
             </div>
-          </div> 
+          </div>
         </lx-radio-button>
         <lx-checkbox
           v-if="kind === 'multiple'"
@@ -408,25 +399,24 @@ const columnReadOnly = computed(() => {
           @click="selectMultiple(item[idAttribute])"
           @keydown.space="selectMultiple(item[idAttribute])"
         >
-        <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
-          <div class="lx-value-picker-default-item-label">
-            <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+          <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
+            <div class="lx-value-picker-default-item-label">
+              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+            </div>
+            <div class="lx-value-picker-default-item-description">
+              <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
+            </div>
           </div>
-          <div class="lx-value-picker-default-item-description">
-            <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
+          <div
+            class="lx-value-picker-default-item-container"
+            v-else-if="variant === 'default-custom'"
+          >
+            <div>
+              <slot name="customItem" v-bind="item"></slot>
+            </div>
           </div>
-        </div>
-        <div
-          class="lx-value-picker-default-item-container"
-          v-else-if="variant === 'default-custom'"
-        >
-          <div>
-            <slot name="customItem" v-bind="item"></slot>
-          </div>
-        </div>
         </lx-checkbox>
       </div>
-      
 
       <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
     </template>
