@@ -2,6 +2,8 @@
 import { computed, ref, onMounted } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import useLx from '@/hooks/useLx';
+import { useWindowSize } from '@vueuse/core';
+import { lxDevUtils } from '@/utils';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -12,7 +14,7 @@ const props = defineProps({
   readOnly: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   kind: { type: String, default: 'default' }, // default, icon-only, combo
-  icon: { type: String, default: 'default' },
+  icon: { type: String, default: null },
   iconSet: {
     type: String,
     default: () => useLx().getGlobals()?.iconSet,
@@ -21,6 +23,10 @@ const props = defineProps({
 });
 
 const emits = defineEmits(['update:modelValue', 'changed']);
+
+const globalEnvironment = useLx().getGlobals()?.environment;
+const windowSize = useWindowSize();
+const isWideScreen = computed(() => windowSize.width.value > 800);
 
 const model = computed({
   get() {
@@ -64,13 +70,25 @@ function focusNextTab() {
   document.getElementById(highlightedItemId.value).focus();
 }
 
+const showIconsMode = computed(
+  () =>
+    props.kind === 'iconOnly' ||
+    props.kind === 'icon-only' ||
+    props.kind === 'combo' ||
+    (props.kind === 'default' && !isWideScreen.value)
+);
+
 onMounted(() => {
   if (model.value) {
     highlightedItemId.value = model.value;
   } else {
     highlightedItemId.value = props.items[0][props.idAttribute];
   }
+  if (props.items.length > 4) {
+    lxDevUtils.logWarn('There are more than 4 items', globalEnvironment);
+  }
 });
+
 function checkIfHihlighted(id) {
   if (highlightedItemId.value === id) {
     return 0;
@@ -84,11 +102,10 @@ function checkIfHihlighted(id) {
   </div>
   <div
     class="lx-content-switcher"
-    :class="[{ 'lx-icons-content-switcher': kind === 'combo' }]"
+    :class="[{ 'lx-icons-content-switcher': kind === 'combo' && isWideScreen }]"
     v-else
   >
     <div
-      :title="tooltip"
       class="lx-content-switcher-grid"
       :class="[{ 'lx-disabled': props.disabled }]"
       tabindex="-1"
@@ -96,11 +113,12 @@ function checkIfHihlighted(id) {
       :style="`grid-template-columns: repeat(${props.items.length}, 1fr)`"
     >
       <div
-        v-for="item in items"
+        v-for="(item, index) in items"
         :key="item[props.idAttribute]"
         :id="item[props.idAttribute]"
         :disabled="disabled"
         :tabindex="checkIfHihlighted(item[props.idAttribute])"
+        :title="props.tooltip ? `${props.tooltip}: ${item.name}` : item.name"
         role="tab"
         class="lx-content-switcher-item"
         :class="[
@@ -118,12 +136,22 @@ function checkIfHihlighted(id) {
         @keydown.left.prevent="focusPreviousTab"
         @click="model = item[props.idAttribute]"
       >
+        <!--Fade-in strādā, fade-out vajag noņemt-->
+        <Transition :name="`icon-default`">
+          <p class="index-icon" v-if="showIconsMode && !item['icon'] && icon === null">
+            {{ index + 1 }}
+          </p>
+        </Transition>
+
         <LxIcon
-          :value="item['icon'] ? item['icon'] : icon"
+          :value="item['icon'] || icon"
           :iconSet="item['iconSet'] ? item['iconSet'] : iconSet"
-          v-if="kind === 'iconOnly' || kind === 'icon-only' || kind === 'combo'"
+          v-if="(showIconsMode && item['icon']) || (icon && showIconsMode)"
         />
-        <p v-if="kind === 'default' || kind === 'combo'">{{ item[props.nameAttribute] }}</p>
+
+        <p v-if="(kind === 'default' || kind === 'combo') && isWideScreen">
+          {{ item[props.nameAttribute] }}
+        </p>
       </div>
     </div>
   </div>

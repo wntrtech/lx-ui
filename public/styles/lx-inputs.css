@@ -1481,6 +1481,11 @@ h2.lx-section-header+p.lx-invalidation-message {
   outline: 2px solid var(--color-focus-background);
 }
 
+.lx-content-switcher .index-icon {
+  width: 1.15rem;
+  text-align: center;
+}
+
 .lx-file-upload {
   min-height: var(--row-size);
 }
