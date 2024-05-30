@@ -578,14 +578,14 @@ defineExpose({ validate, cancelSelection, selectRows });
             selectedItems.length === 0 &&
             hasSelecting &&
             selectingKind === 'multiple' &&
-            kind !== 'treelist'
+            kind === 'default'
           "
           @click="selectRows()"
           :disabled="loading || busy || queryRaw?.length > 0"
           :title="texts.selectAllRows"
         />
 
-        <template v-if="selectedItems.length === 0">
+        <template v-if="selectedItems.length === 0 || kind === 'draggable'">
           <lx-text-input
             v-if="hasSearch"
             ref="queryInput"
@@ -617,7 +617,10 @@ defineExpose({ validate, cancelSelection, selectRows });
             />
           </div>
         </template>
-        <div class="lx-selection-toolbar" v-if="hasSelecting && selectedItems.length > 0">
+        <div
+          class="lx-selection-toolbar"
+          v-if="hasSelecting && selectedItems.length > 0 && kind !== 'draggable'"
+        >
           <div class="selection-action-text" v-if="kind !== 'treelist'">
             <LxButton
               :icon="
@@ -677,7 +680,7 @@ defineExpose({ validate, cancelSelection, selectRows });
           </div>
         </div>
       </template>
-      <template #rightArea v-if="selectedItems.length === 0">
+      <template #rightArea v-if="selectedItems.length === 0 || kind === 'draggable'">
         <slot name="toolbar" />
         <LxButton
           icon="checkbox"
@@ -1091,7 +1094,7 @@ defineExpose({ validate, cancelSelection, selectRows });
         </ul>
       </lx-expander>
     </template>
-    <div v-if="kind === 'treelist' && queryRaw?.length === 0">
+    <div v-if="kind === 'treelist' && (queryRaw?.length === 0 || searchSide === 'server')">
       <LxTreeList
         :items="items"
         :idAttribute="idAttribute"
@@ -1118,7 +1121,10 @@ defineExpose({ validate, cancelSelection, selectRows });
         @loadChildren="loadChildren"
       />
     </div>
-    <div v-else-if="kind === 'treelist' && queryRaw?.length > 0" class="tree-list-search">
+    <div
+      v-else-if="kind === 'treelist' && queryRaw?.length > 0 && searchSide === 'client'"
+      class="tree-list-search"
+    >
       <LxListItem
         v-for="element in filteredTreeItems"
         :key="element?.[idAttribute]"
