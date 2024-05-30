@@ -111,6 +111,7 @@ function getArchiveContentData(archive) {
       path: file.path,
       size: file.size,
       children: file.children ? getArchiveContentData(file.children) : null,
+      category: file.children ? null : 'blue',
     };
   });
 }

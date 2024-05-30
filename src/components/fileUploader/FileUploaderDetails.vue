@@ -193,7 +193,7 @@ const additionalData = ref(props.value?.additionalData || null);
         :column-count="2"
         v-if="props.value?.archiveContentData && props.value?.archiveContentData?.length !== 0"
       >
-        <LxRow>
+        <LxRow :column-span="2">
           <LxList kind="treelist" list-type="1" :items="props.value?.archiveContentData" />
         </LxRow>
       </LxSection>
