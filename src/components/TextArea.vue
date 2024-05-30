@@ -27,8 +27,6 @@ const model = computed({
   },
 });
 
-const textarea = ref(null);
-
 const isInvalid = computed(() => {
   let ret = false;
   if (props.invalid) {
@@ -37,22 +35,27 @@ const isInvalid = computed(() => {
   return ret;
 });
 
-function resize() {
-  textarea.value.style.height = '1rem';
-  textarea.value.style.height = `${textarea.value.scrollHeight}px`;
+const textarea = ref(null);
+const shadowTextarea = ref(null);
+
+function triggerResize() {
+  if (!textarea.value || !shadowTextarea.value) return;
+
+  shadowTextarea.value.value = model.value || '';
+  const newHeight = `${shadowTextarea.value.scrollHeight}px`;
+  textarea.value.style.height = newHeight;
 }
 
 watch(
   model,
   () => {
     if (props.dynamicHeight) {
-      nextTick(() => {
-        resize();
-      });
+      nextTick(triggerResize);
     }
   },
   { immediate: true }
 );
+
 function focus() {
   if (textarea.value !== null && textarea.value !== undefined) textarea.value.focus();
 }
@@ -61,27 +64,46 @@ defineExpose({ focus });
 
 <template>
   <div class="lx-field-wrapper">
-    <p v-if="readOnly" class="lx-data">{{ model }} <span v-if="!model">—</span></p>
+    <p v-if="props.readOnly" class="lx-data">{{ model }} <span v-if="!model">—</span></p>
     <template v-else>
       <div class="lx-text-area-wrapper" :data-invalid="isInvalid ? '' : null">
         <lx-icon v-show="isInvalid" customClass="lx-invalidation-icon" value="invalid" />
+
+        <label class="lx-visually-hidden" :for="props.id"></label>
         <textarea
           v-model="model"
           ref="textarea"
-          class="lx-text-area"
-          :class="[{ 'lx-invalid': isInvalid }, { 'lx-text-area-dynamic': dynamicHeight }]"
-          :id="id"
-          :placeholder="placeholder"
-          :rows="rows"
-          :disabled="disabled"
-          :maxlength="maxlength"
-          :title="tooltip"
+          :class="[
+            'lx-text-area',
+            { 'lx-invalid': isInvalid },
+            { 'lx-text-area-dynamic': props.dynamicHeight },
+          ]"
+          :id="props.id"
+          :placeholder="props.placeholder"
+          :rows="props.rows"
+          :disabled="props.disabled"
+          :maxlength="props.maxlength"
+          :title="props.tooltip"
+          @input="triggerResize"
         ></textarea>
-        <div v-if="maxlength" class="lx-text-length">
-          {{ model?.toString()?.length || 0 }}/{{ maxlength }}
+
+        <div v-if="props.maxlength" class="lx-text-length">
+          {{ model?.toString()?.length || 0 }}/{{ props.maxlength }}
         </div>
+
+        <!-- Hidden template textarea for height calculation -->
+        <label class="lx-visually-hidden" :for="props.id"></label>
+        <textarea
+          v-if="props.dynamicHeight"
+          ref="shadowTextarea"
+          class="lx-text-area lx-text-area-template"
+          :id="props.id"
+          readonly
+          :tabindex="-1"
+        ></textarea>
       </div>
-      <div class="lx-invalidation-message">{{ invalidationMessage }}</div>
+
+      <div class="lx-invalidation-message">{{ props.invalidationMessage }}</div>
     </template>
   </div>
 </template>
