@@ -7,6 +7,7 @@ import LxMap from '@/components/Map.vue';
 import LxSection from '@/components/forms/Section.vue';
 import LxFormBuilder from '@/components/forms/FormBuilder.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
+import LxList from '@/components/list/List.vue';
 
 const props = defineProps({
   value: {
@@ -54,6 +55,7 @@ const props = defineProps({
       metaFlash: 'Zibspuldzes iestatījums',
       metaColorSpace: 'Color space',
       metaDateTime: 'Datums un laiks',
+      metaArchiveContentLabel: 'Arhīva saturs',
     }),
   },
 });
@@ -65,6 +67,7 @@ const mainDataWithoutAuthor = computed(() => {
   const { author, ...rest } = props.value.mainData;
   return rest;
 });
+
 const mapData = ref({
   center: {
     lat: props.value?.locationData?.lat?.value || null,
@@ -72,6 +75,7 @@ const mapData = ref({
   },
   zoom: 17,
 });
+
 const objDefinitions = ref([
   {
     id: 'position',
@@ -83,6 +87,7 @@ const objDefinitions = ref([
     draggable: false,
   },
 ]);
+
 const additionalData = ref(props.value?.additionalData || null);
 </script>
 <template>
@@ -94,6 +99,7 @@ const additionalData = ref(props.value?.additionalData || null);
     indexType="expanders"
     :index="[
       { id: 'metaPreview', expanded: true },
+      { id: 'metaArchiveContent', expanded: true },
       { id: 'metaMain', expanded: true },
       { id: 'metaLocation', expanded: true },
       { id: 'metaImage', expanded: true },
@@ -113,6 +119,7 @@ const additionalData = ref(props.value?.additionalData || null);
           </div>
         </LxRow>
       </LxSection>
+
       <LxSection id="metaMain" :label="props.texts?.metaMainLabel" :column-count="3">
         <LxRow :label="props.texts?.metaMainAuthor">
           <LxPersonDisplay
@@ -125,6 +132,7 @@ const additionalData = ref(props.value?.additionalData || null);
           <p class="lx-data">{{ item.value }}</p>
         </LxRow>
       </LxSection>
+
       <LxSection
         id="metaLocation"
         :label="props.texts?.metaLocationLabel"
@@ -158,6 +166,7 @@ const additionalData = ref(props.value?.additionalData || null);
           />
         </LxRow>
       </LxSection>
+
       <LxSection
         id="metaImage"
         :label="props.texts?.metaImageLabel"
@@ -168,6 +177,7 @@ const additionalData = ref(props.value?.additionalData || null);
           <p class="lx-data">{{ row.value }}</p>
         </LxRow>
       </LxSection>
+
       <LxSection
         id="metaAdditional"
         :label="props.texts?.metaAdditionalLabel"
@@ -175,6 +185,17 @@ const additionalData = ref(props.value?.additionalData || null);
         v-if="props.value?.additionalData"
       >
         <LxFormBuilder v-model="additionalData" mode="mixed" :readOnly="true"></LxFormBuilder>
+      </LxSection>
+
+      <LxSection
+        id="metaArchiveContent"
+        :label="props.texts?.metaArchiveContentLabel"
+        :column-count="2"
+        v-if="props.value?.archiveContentData && props.value?.archiveContentData?.length !== 0"
+      >
+        <LxRow>
+          <LxList kind="treelist" list-type="1" :items="props.value?.archiveContentData" />
+        </LxRow>
       </LxSection>
     </template>
   </LxForm>

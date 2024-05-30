@@ -161,10 +161,6 @@
   color: var(--color-region-hover-foreground);
 }
 
-.lx-list-item-interactive:not(.lx-list-item-disabled):hover svg {
-  fill: var(--color-region-hover-foreground);
-}
-
 .lx-list-item-disabled {
   cursor: not-allowed;
 }

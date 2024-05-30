@@ -1,6 +1,8 @@
 import mime from 'mime';
 import ExifReader from 'exifreader';
-import { lxDateUtils } from '@/utils';
+import JSZip from 'jszip';
+import { lxDateUtils, lxDevUtils } from '@/utils';
+import useLx from '@/hooks/useLx';
 
 const DASH = '—';
 
@@ -30,6 +32,18 @@ export function acceptedMimeImage(name) {
   return validMimeTypes.includes(mimeType);
 }
 
+export function acceptedMimeArchive(name) {
+  const mimeType = mime.getType(name);
+  const validMimeTypes = ['application/zip'];
+
+  return validMimeTypes.includes(mimeType);
+}
+
+function isMacOsMetaFile(filename) {
+  // Check if the file is a Mac-specific __MACOSX and ._  metadata file
+  return filename.startsWith('__MACOSX') || filename.startsWith('._');
+}
+
 export function checkExtension(extension, allowedExtensions) {
   const mimeType = mime.getType(extension);
 
@@ -47,27 +61,113 @@ export function checkExtension(extension, allowedExtensions) {
   return isExtensionAllowed || isMIMETypeAllowed;
 }
 
+export function convertBytesToFormattedString(bytes) {
+  if (bytes < 1048576) {
+    return `${(bytes / 1024).toFixed(2).replace('.', ',')} KiB`;
+  }
+  return `${(bytes / 1048576).toFixed(2).replace('.', ',')} MiB`;
+}
+
+function addFileToArchive(archive, zipEntry, size) {
+  const parts = zipEntry.name.split('/');
+  let currentLevel = archive;
+
+  parts.forEach((part, index) => {
+    let existingPart = currentLevel.find((item) => item.name === part);
+
+    if (!existingPart) {
+      existingPart = {
+        name: part,
+        path: parts.slice(0, index + 1).join('/'),
+        size: index === parts.length - 1 && !zipEntry.dir ? size : 0,
+        children: index === parts.length - 1 && !zipEntry.dir ? null : [],
+      };
+
+      currentLevel.push(existingPart);
+    }
+
+    if (index === parts.length - 1 && !zipEntry.dir) {
+      existingPart.size = size;
+    }
+
+    if (existingPart.children !== null) {
+      currentLevel = existingPart.children;
+    }
+  });
+}
+
+function getArchiveContentData(archive) {
+  return archive.map((file) => {
+    const descriptionSizeString =
+      file.size === 0 ? '' : `${convertBytesToFormattedString(file.size)}`;
+    const descriptionNameString = file.children
+      ? ''
+      : `${file.name.split('.').pop().toUpperCase()}`;
+
+    return {
+      id: file.name,
+      name: file.name,
+      description: [descriptionSizeString, descriptionNameString].filter(Boolean).join(', '),
+      path: file.path,
+      size: file.size,
+      children: file.children ? getArchiveContentData(file.children) : null,
+    };
+  });
+}
+
 export function getMeta(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
+
     const meta = {
       name: file.name,
       size: file.size,
       type: file.type,
       lastModified: file.lastModified,
+      archive: [],
     };
-    reader.onload = (e) => {
+
+    reader.onload = async (e) => {
       try {
-        // Add new meta... types here
+        const arrayBuffer = e.target.result;
+
+        // Handle image files with ExifReader
         if (acceptedMimeImage(file.name)) {
-          const exif = ExifReader.load(e.target.result);
+          const exif = ExifReader.load(arrayBuffer);
           meta.exif = exif;
         }
+
+        // Handle zip archive files
+        if (acceptedMimeArchive(file.name)) {
+          const zip = await JSZip.loadAsync(arrayBuffer);
+
+          const promises = [];
+          zip.forEach((relativePath, zipEntry) => {
+            if (!zipEntry.dir && !isMacOsMetaFile(zipEntry.name)) {
+              promises.push(
+                zipEntry.async('arraybuffer').then((data) => {
+                  addFileToArchive(meta.archive, zipEntry, data.byteLength);
+                })
+              );
+            }
+          });
+
+          await Promise.all(promises);
+          meta.archive = getArchiveContentData(meta.archive);
+        }
+
+        // Add new meta... types here
+
         resolve(meta);
       } catch (error) {
-        reject(error);
+        if (error.message === 'Encrypted zip are not supported') {
+          reject(new Error('password-protected'));
+        } else {
+          reject(error);
+        }
       }
     };
+
     reader.onerror = (error) => reject(error);
     reader.readAsArrayBuffer(file);
   });
@@ -88,6 +188,7 @@ export function getContent(file) {
     reader.readAsDataURL(file);
   });
 }
+
 function findExifHeightAndWidth(exif) {
   if (exif && exif['Image Height'] && exif['Image Width']) {
     return `${exif['Image Height'].value} × ${exif['Image Width'].value} px`;
@@ -95,28 +196,60 @@ function findExifHeightAndWidth(exif) {
   return '';
 }
 
-export function getExtraParameter(meta) {
-  if (!meta) {
-    return null;
-  }
-  // Add new extra parameter types here
+export function getExtraParameter(meta, texts) {
+  if (!meta) return null;
+
   switch (true) {
-    // If its Image with exif data
+    // If it's Image with exif data
     case Object.prototype.hasOwnProperty.call(meta, 'exif'):
       return findExifHeightAndWidth(meta.exif);
+
+    // If it's a ZIP file
+    case Object.prototype.hasOwnProperty.call(meta, 'archive'): {
+      const fileCountSingle =
+        meta.archive.length === 1 && texts.metaAdditionalInfoFileCountLabelSingle
+          ? `${meta.archive.length} ${texts.metaAdditionalInfoFileCountLabelSingle}`
+          : '';
+      const fileCountMulti =
+        meta.archive.length > 1 && texts.metaAdditionalInfoFileCountLabelMulti
+          ? `${meta.archive.length} ${texts.metaAdditionalInfoFileCountLabelMulti}`
+          : '';
+
+      const text = [fileCountSingle, fileCountMulti].filter(Boolean).join(', ');
+
+      return text;
+    }
+
+    // Case when meta contain only "additionalInfo" param to show additional info
+    case Object.prototype.hasOwnProperty.call(meta, 'additionalInfo'): {
+      return meta.additionalInfo;
+    }
+
+    // Add new extra parameter types here
     default:
       return null;
   }
 }
 
 export function getFileExtension(name) {
-  return mime.getExtension(mime.getType(name)).toUpperCase();
-}
-export function convertBytesToFormattedString(bytes) {
-  if (bytes < 1048576) {
-    return `${(bytes / 1024).toFixed(2).replace('.', ',')} KiB`;
+  const mimeType = mime.getType(name);
+
+  if (mimeType) {
+    const extension = mime.getExtension(mimeType);
+    if (extension) {
+      return extension.toUpperCase();
+    }
   }
-  return `${(bytes / 1048576).toFixed(2).replace('.', ',')} MiB`;
+
+  const parts = name.split('.');
+  if (parts.length === 1) {
+    return lxDevUtils.log(
+      `Cannot determine extension for file: ${name}`,
+      useLx().getGlobals()?.environment,
+      'error'
+    );
+  }
+  return parts.pop().toUpperCase();
 }
 
 function getFormatTime(timeStomp) {
@@ -125,6 +258,7 @@ function getFormatTime(timeStomp) {
   }
   return lxDateUtils.formatDateTime(new Date(timeStomp));
 }
+
 function stringToDate(dateString) {
   if (!dateString) {
     return null;
@@ -336,7 +470,7 @@ export function getDetails(advancedFile, base64String, texts) {
   const details = {};
 
   switch (true) {
-    // If its Image with exif data
+    // If it's Image with exif data
     case Object.prototype.hasOwnProperty.call(advancedFile.meta, 'exif'):
       if (acceptedMimeImage(advancedFile.name)) {
         details.preview = base64String;
@@ -348,6 +482,13 @@ export function getDetails(advancedFile, base64String, texts) {
       }
       details.additionalData = getAdditionaImageData(advancedFile);
       return details;
+    // If it's a ZIP file
+    case Object.prototype.hasOwnProperty.call(advancedFile.meta, 'archive'): {
+      details.mainData = getDefaultMainData(advancedFile, texts);
+      details.archiveContentData = getArchiveContentData(advancedFile.meta.archive);
+      return details;
+    }
+
     default:
       details.mainData = getDefaultMainData(advancedFile, texts);
       return details;

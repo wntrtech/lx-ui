@@ -69,6 +69,14 @@ const props = defineProps({
       metaFlash: 'Zibspuldzes iestatījums',
       metaColorSpace: 'Color space',
       metaDateTime: 'Datums un laiks',
+      metaArchiveContentLabel: 'Arhīva saturs',
+      metaAdditionalInfoSizeTitle: 'Izmērs',
+      metaAdditionalInfoExtensionTitle: 'Paplašinājums',
+      metaAdditionalInfoResolutionTitle: 'Izšķirtspēja',
+      metaAdditionalInfoFileCountTitle: 'Datņu skaits',
+      metaAdditionalInfoFileCountLabelSingle: 'datne',
+      metaAdditionalInfoFileCountLabelMulti: 'datnes',
+      metaAdditionalInfoProtectedArchive: 'Arhīvs aizargāts ar paroli',
     }),
   },
 });
@@ -120,7 +128,7 @@ const model = computed({
   },
 });
 
-// erros: format, size
+// errors: format, size
 function onError(id, errorType) {
   emits('onError', id, errorType);
 }
@@ -191,31 +199,55 @@ function findImagePreview(id) {
 }
 function provideDefaultIcon(id) {
   const advancedFile = advancedFilesData.value.find((file) => file.id === id);
-  if (!advancedFile) {
-    return 'file';
-  }
+  if (!advancedFile) return 'file';
 
   switch (true) {
     case fileUploaderUtils.acceptedMimeImage(advancedFile.meta?.name):
       return 'image';
+    case fileUploaderUtils.acceptedMimeArchive(advancedFile.meta?.name):
+      return 'file-archive';
     default:
       return 'file';
   }
 }
 
-const triggerFileUpload = () => {
-  if (props.disabled || props.loading) {
-    return;
+function provideAdditionalIcon(id) {
+  const advancedFile = advancedFilesData.value.find((file) => file.id === id);
+  if (!advancedFile) return '';
+
+  switch (true) {
+    case advancedFile.meta?.passwordProtected:
+      return 'lock';
+
+    default:
+      return '';
   }
+}
+
+function provideAdditionalBadgeType(id) {
+  const advancedFile = advancedFilesData.value.find((file) => file.id === id);
+  if (!advancedFile) return '';
+
+  switch (true) {
+    case advancedFile.meta?.passwordProtected:
+      return 'warning';
+
+    default:
+      return '';
+  }
+}
+
+const triggerFileUpload = () => {
+  if (props.disabled || props.loading) return;
   fileInput.value.click();
 };
+
 const formatExtensions = computed(() =>
   props.allowedFileExtensions
     .map((ext) => {
       // Check if its a MIME type
-      if (ext.includes('/')) {
-        return ext;
-      }
+      if (ext.includes('/')) return ext;
+
       // Otherwise treat it as file extension
       const match = ext.match(/(?:\.([^.]+))?$/);
       return match ? match[1] : null;
@@ -229,6 +261,7 @@ async function processFiles(files) {
   const promises = files.map(async (file) => {
     const fileId = generateUUID();
     const fileExtension = file.name.split('.').pop();
+
     if (
       formatExtensions.value.length > 0 &&
       !fileUploaderUtils.checkExtension(fileExtension, formatExtensions.value)
@@ -240,6 +273,7 @@ async function processFiles(files) {
       onError(file.id ? file.id : fileId, 'size');
       return;
     }
+
     const fileData = {
       id: fileId,
       name: file.name,
@@ -251,28 +285,43 @@ async function processFiles(files) {
         lastModified: file.lastModified,
       },
     };
+
     advancedFilesData.value.push(fileData);
-    if (!props.maxSizeForMeta || file.size <= props.maxSizeForMeta) {
-      const fileMeta = await fileUploaderUtils.getMeta(file);
-      const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
-      if (tempFileDataMeta) {
-        tempFileDataMeta.meta = fileMeta;
-      }
-    }
 
-    const fileContent = await fileUploaderUtils.getContent(file);
+    try {
+      if (!props.maxSizeForMeta || file.size <= props.maxSizeForMeta) {
+        const fileMeta = await fileUploaderUtils.getMeta(file);
 
-    const tempFileDataContent = advancedFilesData.value.find((f) => f.id === fileId);
-    if (tempFileDataContent) {
-      if (props.dataType === 'content') {
-        tempFileDataContent.content = fileContent.base64Content;
-      } else {
-        tempFileDataContent.content = fileContent.newFile;
+        const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
+
+        if (tempFileDataMeta) {
+          tempFileDataMeta.meta = fileMeta;
+        }
       }
-      storedBase64Strings.value.push({
-        id: fileId,
-        base64String: fileContent.base64Content,
-      });
+
+      const fileContent = await fileUploaderUtils.getContent(file);
+
+      const tempFileDataContent = advancedFilesData.value.find((f) => f.id === fileId);
+      if (tempFileDataContent) {
+        if (props.dataType === 'content') {
+          tempFileDataContent.content = fileContent.base64Content;
+        } else {
+          tempFileDataContent.content = fileContent.newFile;
+        }
+        storedBase64Strings.value.push({
+          id: fileId,
+          base64String: fileContent.base64Content,
+        });
+      }
+    } catch (error) {
+      if (error.message === 'password-protected') {
+        const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
+        if (tempFileDataMeta) {
+          tempFileDataMeta.meta.passwordProtected = true;
+          tempFileDataMeta.meta.additionalInfo = props.texts.metaAdditionalInfoProtectedArchive;
+        }
+      }
+      onError(file.id ? file.id : fileId, error.message);
     }
   });
 
@@ -436,11 +485,13 @@ function openModal(id) {
           :texts="props.texts"
           :isUploading="isUploading"
           :defaultIcon="provideDefaultIcon(id)"
+          :additionalBagdeIcon="provideAdditionalIcon(id)"
+          :additionalBagdeType="provideAdditionalBadgeType(id)"
           :imagePreview="findImagePreview(id)?.base64String"
           @downloadFile="downloadFile"
           @removeFile="removeFile"
           @openModal="openModal"
-        ></FileUploaderItem>
+        />
       </template>
     </LxList>
   </div>

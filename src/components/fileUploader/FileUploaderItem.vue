@@ -1,13 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue';
+import { useElementSize } from '@vueuse/core';
 
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxIcon from '@/components/Icon.vue';
-
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-
-import { useElementSize } from '@vueuse/core';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 
@@ -20,13 +18,24 @@ const props = defineProps({
   hasDownloadButton: { type: Boolean, default: false },
   showMeta: { type: Boolean, default: true },
   defaultIcon: { type: String, default: 'file' },
+  additionalBagdeIcon: { type: String, default: '' },
+  additionalBagdeType: { type: String, default: 'default' },
   imagePreview: { type: String, default: null },
   isUploading: { type: Boolean, default: false },
   texts: {
     type: Object,
-    default: () => ({}),
+    default: () => ({
+      metaAdditionalInfoSizeTitle: 'Izmērs',
+      metaAdditionalInfoExtensionTitle: 'Paplašinājums',
+      metaAdditionalInfoResolutionTitle: 'Izšķirtspēja',
+      metaAdditionalInfoFileCountTitle: 'Datņu skaits',
+      metaAdditionalInfoFileCountLabelSingle: 'datne',
+      metaAdditionalInfoFileCountLabelMulti: 'datnes',
+      metaAdditionalInfoProtectedArchive: 'Arhīvs aizargāts ar paroli',
+    }),
   },
 });
+
 const emits = defineEmits(['downloadFile', 'openModal', 'removeFile']);
 
 function downloadFile(id) {
@@ -55,6 +64,16 @@ const infoButtonVariant = computed(() => {
 });
 
 const reactiveContainerElementWidth = computed(() => containerElementSize.width.value);
+
+const additionalInfoTitle = computed(() => {
+  if (props.customItem.meta?.type?.startsWith('image/')) {
+    return props.texts.metaAdditionalInfoResolutionTitle;
+  }
+  if (props.customItem.meta?.type?.endsWith('/zip')) {
+    return props.texts.metaAdditionalInfoFileCountTitle;
+  }
+  return '';
+});
 </script>
 <template>
   <div
@@ -146,12 +165,24 @@ const reactiveContainerElementWidth = computed(() => containerElementSize.width.
         <div class="lx-file-preview-wrapper">
           <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview"></div>
           <div class="lx-file-preview" v-else>
-            <LxIcon
-              v-if="!props.imagePreview"
-              customClass="lx-icon"
-              :value="props.defaultIcon"
-            ></LxIcon>
-            <img v-else :src="props.imagePreview" alt="Image Preview" />
+            <LxIcon v-if="!props.imagePreview" customClass="lx-icon" :value="props.defaultIcon" />
+
+            <p
+              :title="texts.metaAdditionalInfoProtectedArchive"
+              v-if="props.additionalBagdeIcon && props.additionalBagdeType"
+              class="lx-badge"
+              :class="[
+                {
+                  'lx-badge-info':
+                    additionalBagdeType === 'default' || additionalBagdeType === 'info',
+                },
+                { 'lx-badge-warning': additionalBagdeType === 'warning' },
+              ]"
+            >
+              <LxIcon customClass="lx-icon" :value="props.additionalBagdeIcon" />
+            </p>
+
+            <img v-if="props.imagePreview" :src="props.imagePreview" alt="Image Preview" />
             <div
               class="lx-file-info-button"
               :class="{ 'lx-icon-only-button': infoButtonVariant === 'icon-only' }"
@@ -172,18 +203,18 @@ const reactiveContainerElementWidth = computed(() => containerElementSize.width.
         </div>
         <div class="lx-file-addition-data-wrapper">
           <div class="lx-file-meta" v-if="props.customItem.meta">
-            <p class="lx-data" title="Size">
+            <p class="lx-data" :title="texts.metaAdditionalInfoSizeTitle">
               {{ fileUploaderUtils.convertBytesToFormattedString(props.customItem.meta?.size) }}
             </p>
-            <p class="lx-data" title="Extension">
+            <p class="lx-data" :title="texts.metaAdditionalInfoExtensionTitle">
               {{ fileUploaderUtils.getFileExtension(props.customItem.name) }}
             </p>
             <p
               class="lx-data"
-              title="Resolution"
-              v-if="fileUploaderUtils.getExtraParameter(props.customItem.meta)"
+              :title="additionalInfoTitle"
+              v-if="fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts)"
             >
-              {{ fileUploaderUtils.getExtraParameter(props.customItem.meta) }}
+              {{ fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts) }}
             </p>
           </div>
           <div v-else></div>
@@ -207,6 +238,7 @@ const reactiveContainerElementWidth = computed(() => containerElementSize.width.
       </div>
     </div>
   </div>
+
   <div v-if="props.mode === 'compact'">
     <LxInfoWrapper :disabled="!props.imagePreview">
       <div
@@ -230,13 +262,30 @@ const reactiveContainerElementWidth = computed(() => containerElementSize.width.
             @click="downloadFile(props.customItem.id)"
           >
             <div class="lx-file-name-main-data-wrapper">
-              <p class="lx-file-name">{{ props.customItem.name }}</p>
+              <div class="lx-file-name-wrapper">
+                <p class="lx-file-name">{{ props.customItem.name }}</p>
+                <p
+                  :title="texts.metaAdditionalInfoProtectedArchive"
+                  v-if="props.additionalBagdeIcon && props.additionalBagdeType"
+                  class="lx-badge"
+                  :class="[
+                    {
+                      'lx-badge-info':
+                        additionalBagdeType === 'default' || additionalBagdeType === 'info',
+                    },
+                    { 'lx-badge-warning': additionalBagdeType === 'warning' },
+                  ]"
+                >
+                  <LxIcon customClass="lx-icon" :value="props.additionalBagdeIcon" />
+                </p>
+              </div>
+
               <p class="lx-file-main-additional-info lx-secondary">
                 {{
                   [
                     fileUploaderUtils.convertBytesToFormattedString(props.customItem.meta?.size),
                     fileUploaderUtils.getFileExtension(props.customItem.meta.name),
-                    fileUploaderUtils.getExtraParameter(props.customItem.meta),
+                    fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts),
                   ]
                     .filter(Boolean)
                     .join('; ')
