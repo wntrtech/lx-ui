@@ -17,6 +17,7 @@ import LxEmptyState from '@/components/EmptyState.vue';
 import LxAppendableList from '@/components/forms/AppendableList.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
+import LxPersonDisplay from '@/components/PersonDisplay.vue';
 
 const emits = defineEmits([
   'actionClick',
@@ -696,7 +697,8 @@ function emptyStateActionClicked(actionName) {
                   col.type !== 'rating' &&
                   col.type !== 'array' &&
                   col.type !== 'flag' &&
-                  col.type !== 'country'
+                  col.type !== 'country' &&
+                  col.type !== 'person'
                 "
               >
                 {{ formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) }}
@@ -734,6 +736,11 @@ function emptyStateActionClicked(actionName) {
                   idAttribute="id"
                 />
               </div>
+              <LxPersonDisplay
+                v-if="col.type === 'person'"
+                :value="row[col.attributeName]"
+                size="s"
+              />
               <template v-if="col.type === 'array'">
                 <lx-info-wrapper
                   v-if="
@@ -892,7 +899,8 @@ function emptyStateActionClicked(actionName) {
               col.type !== 'rating' &&
               col.type !== 'array' &&
               col.type !== 'flag' &&
-              col.type !== 'country'
+              col.type !== 'country' &&
+              col.type !== 'person'
             "
             :tabindex="col.kind === 'clickable' ? 0 : -1"
             @click="
@@ -941,6 +949,11 @@ function emptyStateActionClicked(actionName) {
               idAttribute="id"
             />
           </div>
+          <LxPersonDisplay
+            v-else-if="col.type === 'person'"
+            :value="item[col.attributeName]"
+            size="s"
+          />
         </LxRow>
       </template>
     </LxAppendableList>

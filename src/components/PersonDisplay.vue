@@ -105,40 +105,49 @@ const showMultiple = computed(() => {
 const description = computed(() => {
   if (props.description) return props.description;
   if (props.value && typeof props.value === 'object') {
-    return props.value[props.descriptionAttribute] ? props.value[props.descriptionAttribute] : '—';
+    return props.value[props.descriptionAttribute] ? props.value[props.descriptionAttribute] : '';
   }
-  if (props.role) return props.role;
-  if (props.institution) return props.institution;
-  return '—';
+  if (props.value && props.size === 'l' && !props.description) {
+    return '—';
+  }
+  return '';
 });
 
 const role = computed(() => {
   if (props.role) return props.role;
-  if (props.role && typeof props.value === 'object') {
-    return props.value[props.roleAttribute] ? props.value[props.roleAttribute] : '—';
+  if (props.value && typeof props.value === 'object') {
+    return props.value[props.roleAttribute] ? props.value[props.roleAttribute] : '';
   }
-  return '—';
+  return '';
 });
 
 const institution = computed(() => {
   if (props.institution) return props.institution;
-  if (props.institution && typeof props.value === 'object') {
-    return props.value[props.institution] ? props.value[props.institution] : '—';
+  if (props.value && typeof props.value === 'object') {
+    return props.value[props.institutionAttribute] ? props.value[props.institutionAttribute] : '';
   }
-  return '—';
+  return '';
+});
+
+const filteredValues = computed(() => {
+  if (!Array.isArray(props.value) || props.value.length === 0) return '';
+  const filteredItems = props.value.filter(
+    (item) => (item.firstName && item.lastName) || item.description
+  );
+  return filteredItems;
 });
 
 const displayItems = computed(() => {
-  if (!Array.isArray(props.value) || props.value.length === 0) return '—';
-  if (props.value.length <= props.maxLength) {
-    return props.value;
+  if (!Array.isArray(filteredValues.value) || filteredValues.value.length === 0) return '';
+  if (filteredValues.value.length <= props.maxLength) {
+    return filteredValues.value;
   }
-  return props.value.slice(0, props.maxLength - 1);
+  return filteredValues.value.slice(0, props.maxLength - 1);
 });
+
 const tooltipItems = computed(() => {
-  if (!Array.isArray(props.value) || props.value.length === 0) return '—';
-  if (props.value.length <= 10) return props.value;
-  return props.value.slice(0, 10);
+  if (!Array.isArray(props.value) || props.value.length === 0) return '';
+  return filteredValues.value;
 });
 
 const nameKey = computed(() => safeString(name.value));
@@ -155,47 +164,83 @@ const showDescription = computed(() => description.value && props.size === 'l');
         :class="[{ 'lx-person-display-s': size === 's' }, { 'lx-person-display-l': size === 'l' }]"
       >
         <LxAvatar v-if="showAvatar" :value="nameKey" :size="size" />
-        <LxIcon v-if="!showAvatar" value="user" />
+
+        <template v-if="!showAvatar">
+          <template v-if="description && size !== 'l'">
+            <div
+              class="lx-user-icon-display"
+              :class="[
+                { 'lx-user-icon-display-s': size === 's' },
+                { 'lx-user-icon-display-l': size === 'l' },
+              ]"
+              :size="size"
+            >
+              <LxIcon value="user" />
+            </div>
+            {{ '—' }}
+          </template>
+          <template v-else-if="showDescription">
+            <LxIcon value="user" />
+          </template>
+          <template v-else>
+            {{ '—' }}
+          </template>
+        </template>
+
         <template v-if="variant !== 'icon-only'">
-          <p class="lx-data">{{ name }}</p>
+          <p class="lx-data lx-person-display-name">{{ name }}</p>
           <p class="lx-description" v-if="showDescription">{{ description }}</p>
         </template>
       </div>
       <div class="lx-person-display-multiple" v-if="showMultiple">
-        <LxAvatar
-          v-for="i in displayItems"
-          :key="i"
-          :value="safeString(formatName(i))"
-          :size="size"
-        />
-        <div class="overflow" v-if="displayItems.length < value.length">
+        <template v-for="(item, index) in displayItems" :key="index">
+          <LxAvatar
+            v-if="item.firstName && item.lastName"
+            :value="safeString(formatName(item))"
+            :size="size"
+          />
+          <div
+            v-else-if="item.description"
+            class="lx-user-icon-display"
+            :class="[
+              { 'lx-user-icon-display-s': size === 's' },
+              { 'lx-user-icon-display-l': size === 'l' },
+            ]"
+            :size="size"
+          >
+            <LxIcon value="user" />
+          </div>
+        </template>
+        <div class="overflow" v-if="displayItems.length < filteredValues.length">
           <p>
-            <span :class="[{ plus: value.length - maxLength + 1 >= 10 }]">+</span
-            >{{ value.length - maxLength + 1 }}
+            <span :class="[{ plus: filteredValues.length - maxLength + 1 >= 10 }]">+</span
+            >{{ filteredValues.length - maxLength + 1 }}
           </p>
         </div>
       </div>
       <template #panel>
         <template v-if="!showMultiple">
-          <LxRow :label="texts.name"
+          <LxRow :label="texts.name" v-if="name"
             ><p class="lx-data">{{ name }}</p></LxRow
           >
-          <LxRow :label="texts.description" v-if="description !== '—'"
+          <LxRow :label="texts.description" v-if="description && description !== '—'"
             ><p class="lx-data">{{ description }}</p></LxRow
           >
-          <LxRow :label="texts.role" v-if="role !== '—'"
+          <LxRow :label="texts.role" v-if="role && name"
             ><p class="lx-data">{{ role }}</p></LxRow
           >
-          <LxRow :label="texts.institution" v-if="institution !== '—'"
+          <LxRow :label="texts.institution" v-if="institution && name"
             ><p class="lx-data">{{ institution }}</p></LxRow
           >
         </template>
         <template v-else>
-          <LxRow v-for="i in tooltipItems" :key="i" :show-label="false"
-            ><p class="lx-data">{{ formatName(i) }}</p></LxRow
-          >
-          <LxRow v-if="value.length > 10">
-            <p class="lx-data">+ {{ value.length - tooltipItems.length }}</p>
+          <LxRow v-for="i in tooltipItems.slice(0, 10)" :key="i" :show-label="false">
+            <p class="lx-data">
+              {{ i.firstName && i.lastName ? formatName(i) : i.description }}
+            </p>
+          </LxRow>
+          <LxRow v-if="filteredValues.length > 10">
+            <p class="lx-data">+ {{ filteredValues.length - 10 }}</p>
           </LxRow>
         </template>
       </template>
