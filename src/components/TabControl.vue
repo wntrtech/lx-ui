@@ -103,14 +103,16 @@ defineExpose({ setActiveTab, isActiveTab });
           :disabled="isActiveTab(value[value.length - 1].id)"
         />
       </div>
+
+      <div class="lx-dropdown-container">
+        <LxDropDown
+          :items="props.value"
+          :modelValue="activeItemCode"
+          @update:modelValue="setActiveTab"
+        />
+      </div>
     </header>
-    <div class="lx-dropdown-container">
-      <LxDropDown
-        :items="props.value"
-        :modelValue="activeItemCode"
-        @update:modelValue="setActiveTab"
-      />
-    </div>
+
     <article class="lx-tab-body">
       <transition name="nav">
         <slot name="body" />
