@@ -1,7 +1,8 @@
 {
   "recommendations": [
+    "lokalise.i18n-ally",
     "dbaeumer.vscode-eslint",
-    "streetsidesoftware.code-spell-checker",
-    "vue.volar"
+    "Vue.vscode-typescript-vue-plugin",
+    "streetsidesoftware.code-spell-checker"
   ]
 }
