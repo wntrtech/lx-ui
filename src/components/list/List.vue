@@ -1132,7 +1132,11 @@ defineExpose({ validate, cancelSelection, selectRows });
         :mode="mode"
         :texts="texts"
         @loadChildren="loadChildren"
-      />
+      >
+        <template #customItem="items">
+          <slot name="customItem" v-bind="items"></slot>
+        </template>
+      </LxTreeList>
     </div>
     <div
       v-else-if="kind === 'treelist' && queryRaw?.length > 0 && searchSide === 'client'"

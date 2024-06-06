@@ -167,8 +167,13 @@ function hasSelectedChildren(id) {
         :category="item[categoryAttribute]"
         :disabled="states?.[item[idAttribute]]?.disabled"
         :busy="states?.[item[idAttribute]]?.busy"
+        :value="item"
         @action-click="actionClicked"
-      />
+      >
+        <template #customItem="item" v-if="$slots.customItem">
+          <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+        </template>
+      </LxListItem>
       <div class="selecting-block" v-if="hasSelecting">
         <LxRadioButton
           v-if="selectingKind === 'single'"
@@ -223,6 +228,10 @@ function hasSelectedChildren(id) {
       @loadChildren="loadChildren"
       :parents="updateParents(item)"
       :children="children"
-    />
+    >
+      <template #customItem="slotProps">
+        <slot name="customItem" v-bind="slotProps"></slot>
+      </template>
+    </LxTreeItem>
   </div>
 </template>

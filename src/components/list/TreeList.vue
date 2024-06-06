@@ -186,7 +186,11 @@ const childMap = computed(() => {
         :texts="texts"
         @loadChildren="loadChildren"
         :children="childMap"
-      />
+      >
+        <template #customItem="items">
+          <slot name="customItem" v-bind="items"></slot>
+        </template>
+      </LxTreeItem>
     </div>
     <div class="tree-list tree-list-small">
       <div v-if="level > 0" class="tree-item-small tree-item-small-parent">
@@ -209,7 +213,12 @@ const childMap = computed(() => {
           :category="parent[categoryAttribute]"
           :disabled="states?.[parent[idAttribute]]?.disabled"
           :busy="states?.[parent[idAttribute]]?.busy"
-        />
+          :value="parent"
+        >
+          <template #customItem="item" v-if="$slots.customItem">
+            <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+          </template>
+        </LxListItem>
         <div class="selecting-block" v-if="hasSelecting">
           <LxRadioButton
             v-if="selectingKind === 'single'"
@@ -265,7 +274,12 @@ const childMap = computed(() => {
           :category="item[categoryAttribute]"
           :disabled="states?.[item[idAttribute]]?.disabled"
           :busy="states?.[item[idAttribute]]?.busy"
-        />
+          :value="item"
+        >
+          <template #customItem="item" v-if="$slots.customItem">
+            <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+          </template>
+        </LxListItem>
         <div class="selecting-block" v-if="hasSelecting">
           <LxRadioButton
             v-if="selectingKind === 'single'"
