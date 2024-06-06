@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 
 import LxButton from '@/components/Button.vue';
@@ -77,6 +77,14 @@ const props = defineProps({
       metaAdditionalInfoFileCountLabelSingle: 'datne',
       metaAdditionalInfoFileCountLabelMulti: 'datnes',
       metaAdditionalInfoProtectedArchive: 'Arhīvs aizargāts ar paroli',
+      metaAdditionalInfoPageCountTitle: 'Lappušu skaits',
+      metaAdditionalInfoSlideCountTitle: 'Slaidu skaits',
+      metaAdditionalInfoPageCountLabelSingle: 'lappuse',
+      metaAdditionalInfoPageCountLabelMulti: 'lappuses',
+      metaAdditionalInfoSlideCountLabelSingle: 'slaids',
+      metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
+      metaMainTitle: 'Virsraksts',
+      metaMainDescription: 'Apraksts',
     }),
   },
 });
@@ -206,6 +214,16 @@ function provideDefaultIcon(id) {
       return 'image';
     case fileUploaderUtils.acceptedMimeArchive(advancedFile.meta?.name):
       return 'file-archive';
+    case fileUploaderUtils.acceptedMimeOffice(advancedFile.meta?.name) &&
+      advancedFile.meta?.type?.endsWith('.presentation'):
+      return 'file-slides';
+    case fileUploaderUtils.acceptedMimeOffice(advancedFile.meta?.name) &&
+      advancedFile.meta?.type?.endsWith('.sheet'):
+      return 'file-spreadsheet';
+    case fileUploaderUtils.acceptedMimeOffice(advancedFile.meta?.name) &&
+      advancedFile.meta?.type?.endsWith('.document'):
+      return 'file-rich-text';
+
     default:
       return 'file';
   }

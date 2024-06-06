@@ -32,6 +32,12 @@ const props = defineProps({
       metaAdditionalInfoFileCountLabelSingle: 'datne',
       metaAdditionalInfoFileCountLabelMulti: 'datnes',
       metaAdditionalInfoProtectedArchive: 'Arhīvs aizargāts ar paroli',
+      metaAdditionalInfoPageCountTitle: 'Lappušu skaits',
+      metaAdditionalInfoSlideCountTitle: 'Slaidu skaits',
+      metaAdditionalInfoPageCountLabelSingle: 'lappuse',
+      metaAdditionalInfoPageCountLabelMulti: 'lappuses',
+      metaAdditionalInfoSlideCountLabelSingle: 'slaids',
+      metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
     }),
   },
 });
@@ -71,6 +77,12 @@ const additionalInfoTitle = computed(() => {
   }
   if (props.customItem.meta?.type?.endsWith('/zip')) {
     return props.texts.metaAdditionalInfoFileCountTitle;
+  }
+  if (props.customItem.meta?.type?.endsWith('.document')) {
+    return props.texts.metaAdditionalInfoPageCountTitle;
+  }
+  if (props.customItem.meta?.type?.endsWith('.presentation')) {
+    return props.texts.metaAdditionalInfoSlideCountTitle;
   }
   return '';
 });
@@ -197,7 +209,7 @@ const additionalInfoTitle = computed(() => {
                 :variant="infoButtonVariant"
                 :title="props.texts.infoButton"
                 @click="openModal(props.customItem.id)"
-              ></LxButton>
+              />
             </div>
           </div>
         </div>
@@ -232,7 +244,7 @@ const additionalInfoTitle = computed(() => {
               :variant="infoButtonVariant"
               :title="props.texts.infoButton"
               @click="openModal(props.customItem.id)"
-            ></LxButton>
+            />
           </div>
         </div>
       </div>

@@ -101,8 +101,8 @@ const additionalData = ref(props.value?.additionalData || null);
       { id: 'metaPreview', expanded: true },
       { id: 'metaArchiveContent', expanded: true },
       { id: 'metaMain', expanded: true },
-      { id: 'metaLocation', expanded: true },
-      { id: 'metaImage', expanded: true },
+      { id: 'metaLocation', expanded: false },
+      { id: 'metaImage', expanded: false },
       { id: 'metaAdditional', expanded: false },
     ]"
   >
@@ -122,10 +122,14 @@ const additionalData = ref(props.value?.additionalData || null);
 
       <LxSection id="metaMain" :label="props.texts?.metaMainLabel" :column-count="3">
         <LxRow :label="props.texts?.metaMainAuthor">
-          <LxPersonDisplay
-            v-if="props.value.mainData?.author?.value"
-            :value="props.value.mainData.author.value"
-          />
+          <div v-if="props.value.mainData?.author?.value">
+            <LxPersonDisplay
+              v-for="item in props.value.mainData?.author?.value"
+              :key="item"
+              :value="item"
+            />
+          </div>
+
           <p v-else class="lx-data">—</p>
         </LxRow>
         <LxRow v-for="(item, key) in mainDataWithoutAuthor" :key="key" :label="item.label">
