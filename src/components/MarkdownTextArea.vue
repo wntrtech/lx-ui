@@ -15,8 +15,6 @@ import { Color } from '@tiptap/extension-color';
 import { Markdown } from 'tiptap-markdown';
 import { isUrl, generateUUID } from '@/utils/stringUtils';
 import { checkArrayObjectProperty } from '@/utils/arrayUtils';
-import { lxDevUtils } from '@/utils';
-import useLx from '@/hooks/useLx';
 import { useElementSize } from '@vueuse/core';
 
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
@@ -50,9 +48,6 @@ const props = defineProps({
   tooltip: { type: String, default: null },
   showPlaceholderPicker: { type: Boolean, default: false },
   showImagePicker: { type: Boolean, default: false },
-  imageAllowInline: { type: Boolean, default: false },
-  imageAllowBase64: { type: Boolean, default: true },
-  imageResizable: { type: Boolean, default: false },
   imageMaxSize: { type: Number, default: 3000000 }, // 3MB
   dictionary: { type: Object, default: null },
   texts: {
@@ -461,7 +456,7 @@ function postPlaceholder(content) {
 }
 
 function onError(id, error) {
-  lxDevUtils.log(`Error on file: ${id} - ${error}`, useLx().getGlobals()?.environment, 'error');
+  emitNotification(error);
 }
 
 const imageModalInputType = ref('url');
