@@ -288,8 +288,8 @@
 }
 
 .lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container,
-.lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container>.lx-dropdown-toggler>.lx-toolbar,
-.lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container>.lx-dropdown-toggler>.lx-toolbar>button {
+.lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container .lx-dropdown-toggler>.lx-toolbar,
+.lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container .lx-dropdown-toggler>.lx-toolbar>button {
   width: 4rem;
   height: 4rem;
 }
