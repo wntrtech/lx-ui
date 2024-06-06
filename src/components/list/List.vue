@@ -56,6 +56,7 @@ const props = defineProps({
   hasSelecting: { type: Boolean, default: false },
   selectingKind: { type: String, default: 'single' }, // single, multiple
   selectionActionDefinitions: { type: Array, default: () => [] },
+  includeUnspecifiedGroups: { type: Boolean, default: false },
   itemsStates: { type: Object, default: () => {} },
   mode: { type: String, default: 'client' }, // client, server
   texts: {
@@ -257,12 +258,17 @@ function fillItemsArray() {
     return acc;
   }, {});
 
-  // Need to ungrouped items in itemsArray
-  const noGroupItems = props.items.filter((item) => !item.group);
-  array.lx_list_nullable_group = noGroupItems;
+  const nullGroupItems = !props.includeUnspecifiedGroups
+    ? props.items.filter((item) => !item.group)
+    : props.items.filter(
+        (item) =>
+          !props.groupDefinitions.find((group) => item.group?.toString() === group.id?.toString())
+      );
+  array.lx_list_nullable_group = nullGroupItems;
 
   return array;
 }
+
 function convertItemsArray() {
   if (!props.groupDefinitions) return props.items;
   const array = Object.keys(itemsArray.value).reduce((acc, key) => {
@@ -386,6 +392,13 @@ function triggerItemsArray() {
 watch(props.items, () => {
   triggerItemsArray();
 });
+
+watch(
+  () => props.includeUnspecifiedGroups,
+  () => {
+    triggerItemsArray();
+  }
+);
 
 function onMoveItem() {
   if (props.groupDefinitions) {
