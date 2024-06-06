@@ -136,6 +136,7 @@ function hasSelectedChildren(id) {
   });
   return res;
 }
+const allNotExpandable = computed(() => props.items.every((item) => !isExpandable(item)));
 </script>
 <template>
   <div class="tree-item" v-for="item in items" :key="item[idAttribute]">
@@ -143,7 +144,8 @@ function hasSelectedChildren(id) {
       class="tree-item-body"
       :class="[
         {
-          'not-expandable': !isExpandable(item),
+          'not-expandable':
+            !isExpandable(item) && (parents.length === 0 ? !allNotExpandable : true),
         },
         { 'selected-children': hasSelectedChildren(item[idAttribute]) },
       ]"

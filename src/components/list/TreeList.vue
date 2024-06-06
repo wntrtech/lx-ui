@@ -157,6 +157,7 @@ const childMap = computed(() => {
   });
   return map;
 });
+const allNotExpandable = computed(() => props.items.every((item) => !isExpandable(item)));
 </script>
 <template>
   <div class="tree-list-wrapper">
@@ -252,7 +253,7 @@ const childMap = computed(() => {
         :key="item[idAttribute]"
         class="tree-item-small"
         :class="{
-          'not-expandable': !isExpandable(item),
+          'not-expandable': !isExpandable(item) && (level === 0 ? !allNotExpandable : true),
         }"
       >
         <LxButton
