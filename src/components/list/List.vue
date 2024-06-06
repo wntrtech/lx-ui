@@ -259,7 +259,7 @@ function fillItemsArray() {
   }, {});
 
   const nullGroupItems = !props.includeUnspecifiedGroups
-    ? props.items.filter((item) => !item.group)
+    ? props.items.filter((item) => !item[props.groupAttribute])
     : props.items.filter(
         (item) =>
           !props.groupDefinitions.find((group) => item.group?.toString() === group.id?.toString())
