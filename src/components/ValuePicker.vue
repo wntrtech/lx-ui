@@ -4,6 +4,7 @@ import { computed, watch, onMounted } from 'vue';
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import LxValuePickerDropDown from '@/components/valuePickers/Dropdown.vue';
 import LxValuePickerTileTag from '@/components/valuePickers/TileTag.vue';
+import LxValuePickerRotator from '@/components/valuePickers/Rotator.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -13,7 +14,7 @@ const props = defineProps({
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
-  variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'
+  variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'rotator' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'|| 'rotator-custom'
   kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   placeholder: { type: String, default: null },
@@ -70,7 +71,11 @@ watch(
   () => model.value,
   (newValue) => {
     if (newValue && (newValue === 'notSelected' || newValue[0] === 'notSelected')) {
-      emits('update:modelValue', null);
+      if (props.alwaysAsArray) {
+        emits('update:modelValue', []);
+      } else {
+        emits('update:modelValue', null);
+      }
     }
   }
 );
@@ -180,5 +185,32 @@ onMounted(() => {
         <slot name="customItem" v-bind="slotData" />
       </template>
     </LxValuePickerTileTag>
+    <LxValuePickerRotator
+      v-if="variant === 'rotator' || variant === 'rotator-custom'"
+      v-model="model"
+      :items="items"
+      :idAttribute="idAttribute"
+      :nameAttribute="nameAttribute"
+      :descriptionAttribute="descriptionAttribute"
+      :groupId="groupId"
+      :variant="variant"
+      kind="single"
+      :disabled="disabled"
+      :invalid="invalid"
+      :invalidation-message="invalidationMessage"
+      :texts="texts"
+      :placeholder="placeholder"
+      :tooltip="tooltip"
+      :always-as-array="alwaysAsArray"
+      :has-search="hasSearch"
+      :nullable="nullable"
+      :readOnly="readOnly"
+      :readOnlyRenderType="readOnlyRenderType"
+      :search-attributes="searchAttributes"
+    >
+      <template v-slot:customItem="slotData" v-if="$slots.customItem">
+        <slot name="customItem" v-bind="slotData" />
+      </template>
+    </LxValuePickerRotator>
   </div>
 </template>

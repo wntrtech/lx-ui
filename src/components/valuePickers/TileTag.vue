@@ -72,7 +72,7 @@ const notSelectedId = 'notSelected';
 
 function activate() {
   // First set all items as not selected
-  itemsDisplay.value.forEach((item) => {
+  itemsDisplay.value?.forEach((item) => {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
 
@@ -401,7 +401,7 @@ function selectAll() {
     </div>
     <div
       class="lx-value-picker-tile-wrapper"
-      :class="[{ 'lx-invalid': invalid }]"
+      :class="[{ 'lx-invalid': invalid }, {'lx-tile-custom': variant === 'tiles-custom'}]"
       v-if="variant === 'tiles' || variant === 'tiles-custom'"
       role="radiogroup"
       :title="tooltip"
@@ -452,9 +452,7 @@ function selectAll() {
             </div>
           </template>
           <div class="lx-value-picker-tile-header" v-else-if="variant === 'tiles-custom'">
-            <div>
               <slot name="customItem" v-bind="item"></slot>
-            </div>
             <div class="lx-value-picker-icon">
               <LxIcon
                 v-if="
@@ -501,9 +499,7 @@ function selectAll() {
           </template>
           <template v-else-if="variant === 'tiles-custom'">
             <div class="lx-value-picker-tile-header">
-              <div>
                 <slot name="customItem" v-bind="item"></slot>
-              </div>
               <div class="lx-value-picker-icon">
                 <LxIcon v-if="itemsModel[item[idAttribute]]" value="selected" />
                 <LxIcon v-else value="unselected" />
@@ -519,7 +515,7 @@ function selectAll() {
       v-if="variant === 'tags' || variant === 'tags-custom'"
       :title="tooltip"
     >
-      <ul class="lx-tag-set" v-if="kind === 'single'">
+      <ul class="lx-tag-set" v-if="kind === 'single'" :class="[{'lx-tag-custom': variant === 'tags-custom'}]">
         <li
           v-for="item in itemsDisplay"
           :key="item[idAttribute]"
@@ -550,13 +546,11 @@ function selectAll() {
             <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
           </template>
           <template v-else-if="variant === 'tags-custom'">
-            <div>
               <slot name="customItem" v-bind="item"></slot>
-            </div>
           </template>
         </li>
       </ul>
-      <ul class="lx-tag-set" v-if="kind === 'multiple'">
+      <ul class="lx-tag-set" v-if="kind === 'multiple'" :class="[{'lx-tag-custom': variant === 'tags-custom'}]">
         <li
           v-for="item in itemsDisplay"
           v-on:focus="onFocus"
@@ -580,9 +574,7 @@ function selectAll() {
             <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
           </template>
           <template v-else-if="variant === 'tags-custom'">
-            <div>
               <slot name="customItem" v-bind="item"></slot>
-            </div>
           </template>
         </li>
       </ul>
