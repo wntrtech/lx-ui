@@ -28,13 +28,15 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
+  hasSelectAll: { type: Boolean, default: false },
   texts: {
     type: Object,
     default: () => ({
       clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas atlasītās vērtības',
+      clearChosen: 'Notīrīt visas izvēlētās vērtības',
       notSelected: 'Nav izvēlēts',
       searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+      selectAll: 'Izvēlēties visu'
     }),
   },
 });
@@ -313,24 +315,73 @@ function checkNull(value) {
 const columnReadOnly = computed(() => {
   return selectedItems.value?.map((item) => item[props.nameAttribute]);
 });
+
+const areSomeSelected = computed(() => {
+  let res = false;
+  props.items.forEach((item) => {
+    if (Array.isArray(model.value) && model.value?.includes(item[props.idAttribute])) res = true;
+    return true;
+  });
+  return res;
+});
+
+const areAllSelected = computed(() => {
+  let res = props.items?.length > 0;
+  props.items.forEach((item) => {
+    if (Array.isArray(model.value)) {
+      if (!model.value.includes(item[props.idAttribute])) {
+        res = false;
+      }
+    }
+  });
+  return res;
+});
+
+function selectAll() {
+  if (areAllSelected.value) {
+    model.value = [];
+  } else if (areSomeSelected.value) {
+    model.value = [];
+  } else {
+    props.items.forEach((item) => {
+      selectMultiple(item[props.idAttribute]);
+    });
+  }
+}
+
 </script>
 
 <template>
   <span v-if="readOnly">
     <p v-if="readOnlyRenderType === 'row'" class="lx-data">
-      {{ getName(false) }} 
+      {{ getName(false) }}
     </p>
     <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
-        <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
+      <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
     </ul>
-    <span v-if="model === null || model === undefined || model?.length < 1" >—</span>
+    <span v-if="model === null || model === undefined || model?.length < 1">—</span>
   </span>
   <template v-else>
     <div
       class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
-      v-if="hasSearch"
+      :class="[{ 'select-all': hasSelectAll && kind === 'multiple' }]"
     >
+      <LxButton
+        kind="ghost"
+        :icon="
+          areSomeSelected
+            ? areAllSelected
+              ? 'checkbox-filled'
+              : 'checkbox-indeterminate'
+            : 'checkbox'
+        "
+        v-if="hasSelectAll && kind === 'multiple'"
+        @click="selectAll"
+        :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
+        :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+      />
       <lx-text-input
+        v-if="hasSearch"
         :disabled="disabled"
         ref="queryInput"
         v-model="query"
@@ -339,7 +390,7 @@ const columnReadOnly = computed(() => {
         role="search"
       />
       <lx-button
-        v-if="query"
+        v-if="query && hasSearch"
         icon="clear"
         kind="ghost"
         variant="icon-only"
@@ -350,7 +401,7 @@ const columnReadOnly = computed(() => {
     </div>
     <div
       class="lx-value-picker-tile-wrapper"
-      :class="[{'lx-invalid': invalid}]"
+      :class="[{ 'lx-invalid': invalid }]"
       v-if="variant === 'tiles' || variant === 'tiles-custom'"
       role="radiogroup"
       :title="tooltip"
@@ -372,32 +423,34 @@ const columnReadOnly = computed(() => {
           :disabled="disabled"
           @click="disabled ? null : selectSingle(item[idAttribute])"
           role="radio"
-          :aria-checked="itemsModel[item[idAttribute]] ||
+          :aria-checked="
+            itemsModel[item[idAttribute]] ||
               (!alwaysAsArray && item[idAttribute] === model) ||
-              item[idAttribute] === checkNull(model)"
+              item[idAttribute] === checkNull(model)
+          "
           @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
         >
-        <template  v-if="variant === 'tiles'">
-          <div class="lx-value-picker-tile-header">
-            <div class="lx-value-picker-tile-name">
-              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+          <template v-if="variant === 'tiles'">
+            <div class="lx-value-picker-tile-header">
+              <div class="lx-value-picker-tile-name">
+                <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+              </div>
+              <div class="lx-value-picker-icon">
+                <LxIcon
+                  v-if="
+                    itemsModel[item[idAttribute]] ||
+                      (!alwaysAsArray && item[idAttribute] === model) ||
+                    item[idAttribute] === checkNull(model)
+                  "
+                  value="selected"
+                />
+                <LxIcon v-else value="unselected" />
+              </div>
             </div>
-            <div class="lx-value-picker-icon">
-              <LxIcon
-                v-if="
-                  itemsModel[item[idAttribute]] ||
-                  (!alwaysAsArray && item[idAttribute] === model) ||
-                  item[idAttribute] === checkNull(model)
-                "
-                value="selected"
-              />
-              <LxIcon v-else value="unselected" />
-            </div>
-          </div>
-          <div class="lx-value-picker-description">
+            <div class="lx-value-picker-description">
               <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
             </div>
-        </template>
+          </template>
           <div class="lx-value-picker-tile-header" v-else-if="variant === 'tiles-custom'">
             <div>
               <slot name="customItem" v-bind="item"></slot>
@@ -460,7 +513,12 @@ const columnReadOnly = computed(() => {
         </div>
       </div>
     </div>
-    <div class="lx-value-picker-tags" :class="[{'lx-invalid': invalid}]" v-if="variant === 'tags' || variant === 'tags-custom'" :title="tooltip">
+    <div
+      class="lx-value-picker-tags"
+      :class="[{ 'lx-invalid': invalid }]"
+      v-if="variant === 'tags' || variant === 'tags-custom'"
+      :title="tooltip"
+    >
       <ul class="lx-tag-set" v-if="kind === 'single'">
         <li
           v-for="item in itemsDisplay"
@@ -481,9 +539,11 @@ const columnReadOnly = computed(() => {
           tabindex="0"
           @click="disabled ? null : selectSingle(item[idAttribute])"
           role="radio"
-          :aria-checked="itemsModel[item[idAttribute]] ||
+          :aria-checked="
+            itemsModel[item[idAttribute]] ||
               (!alwaysAsArray && item[idAttribute] === model) ||
-              item[idAttribute] === checkNull(model)"
+              item[idAttribute] === checkNull(model)
+          "
           @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
         >
           <template v-if="variant === 'tags'">

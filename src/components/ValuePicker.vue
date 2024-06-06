@@ -26,13 +26,15 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
+  hasSelectAll: { type: Boolean, default: false },
   texts: {
     type: Object,
     default: () => ({
       clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas atlasītās vērtības',
+      clearChosen: 'Notīrīt visas izvēlētās vērtības',
       notSelected: 'Nav izvēlēts',
       searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+      selectAll: 'Izvēlēties visu',
     }),
   },
 });
@@ -111,6 +113,7 @@ onMounted(() => {
       :readOnlyRenderType="readOnlyRenderType"
       :variant="variant"
       :search-attributes="searchAttributes"
+      :hasSelectAll="hasSelectAll"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />
@@ -138,6 +141,7 @@ onMounted(() => {
       :readOnlyRenderType="readOnlyRenderType"
       :variant="variant"
       :search-attributes="searchAttributes"
+      :hasSelectAll="hasSelectAll"
     >
       <template v-slot:customItemDropdown="slotData">
         <slot name="customItem" v-bind="slotData" />
@@ -170,6 +174,7 @@ onMounted(() => {
       :readOnly="readOnly"
       :readOnlyRenderType="readOnlyRenderType"
       :search-attributes="searchAttributes"
+      :hasSelectAll="hasSelectAll"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />

@@ -31,13 +31,15 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
+  hasSelectAll: { type: Boolean, default: false },
   texts: {
     type: Object,
     default: () => ({
       clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas atlasītās vērtības',
+      clearChosen: 'Notīrīt visas izvēlētās vērtības',
       notSelected: 'Nav izvēlēts',
       searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+      selectAll: 'Izvēlēties visu',
     }),
   },
 });
@@ -313,10 +315,48 @@ function isElementHidden(item) {
 const columnReadOnly = computed(() => {
   return selectedItems.value?.map((item) => item[props.nameAttribute]);
 });
-</script>
 
+const areSomeSelected = computed(() => {
+  let res = false;
+  props.items.forEach((item) => {
+    if (Array.isArray(model.value) && model.value?.includes(item[props.idAttribute])) res = true;
+    return true;
+  });
+  return res;
+});
+
+const areAllSelected = computed(() => {
+  let res = props.items?.length > 0;
+  props.items.forEach((item) => {
+    if (Array.isArray(model.value)) {
+      if (!model.value.includes(item[props.idAttribute])) {
+        res = false;
+      }
+    }
+  });
+  return res;
+});
+
+function selectAll() {
+  if (areAllSelected.value) {
+    model.value = [];
+  } else if (areSomeSelected.value) {
+    model.value = [];
+  } else {
+    props.items.forEach((item) => {
+      selectMultiple(item[props.idAttribute]);
+    });
+  }
+}
+
+</script>
 <template>
-  <div class="lx-value-picker-default-wrapper" :class="[{'lx-invalid': invalid}]" role="radiogroup" :title="tooltip">
+  <div
+    class="lx-value-picker-default-wrapper"
+    :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && kind === 'multiple' }]"
+    role="radiogroup"
+    :title="tooltip"
+  >
     <span v-if="readOnly">
       <p v-if="readOnlyRenderType === 'row'" class="lx-data">
         {{ getName(false) }}
@@ -328,11 +368,23 @@ const columnReadOnly = computed(() => {
     </span>
 
     <template v-else>
-      <div
-        class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
-        v-if="hasSearch && !readOnly"
-      >
+      <div class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search">
+        <LxButton
+          kind="ghost"
+          :icon="
+            areSomeSelected
+              ? areAllSelected
+                ? 'checkbox-filled'
+                : 'checkbox-indeterminate'
+              : 'checkbox'
+          "
+          v-if="hasSelectAll && kind === 'multiple'"
+          @click="selectAll"
+          :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
+          :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+        />
         <lx-text-input
+          v-if="hasSearch"
           :disabled="disabled"
           ref="queryInput"
           v-model="query"
@@ -341,7 +393,7 @@ const columnReadOnly = computed(() => {
           :placeholder="texts.searchPlaceholder"
         />
         <lx-button
-          v-if="query"
+          v-if="query && hasSearch"
           icon="clear"
           kind="ghost"
           variant="icon-only"

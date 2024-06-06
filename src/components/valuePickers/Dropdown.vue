@@ -32,13 +32,15 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
+  hasSelectAll: { type: Boolean, default: false },
   texts: {
     type: Object,
     default: () => ({
       clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas atlasītās vērtības',
+      clearChosen: 'Notīrīt visas izvēlētās vērtības',
       notSelected: 'Nav izvēlēts',
       searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+      selectAll: 'Izvēlēties visu'
     }),
   },
 });
@@ -445,6 +447,38 @@ function focusOnDropDown() {
   }
 }
 
+const areSomeSelected = computed(() => {
+  let res = false;
+  props.items.forEach((item) => {
+    if (Array.isArray(model.value) && model.value?.includes(item[props.idAttribute])) res = true;
+    return true;
+  });
+  return res;
+});
+
+const areAllSelected = computed(() => {
+  let res = props.items?.length > 0;
+  props.items.forEach((item) => {
+    if (Array.isArray(model.value)) {
+      if (!model.value.includes(item[props.idAttribute])) {
+        res = false;
+      }
+    }
+  });
+  return res;
+});
+
+function selectAll() {
+  if (areAllSelected.value) {
+    model.value = [];
+  } else if (areSomeSelected.value) {
+    model.value = [];
+  } else {
+    props.items.forEach((item) => {
+      selectMultiple(item[props.idAttribute]);
+    });
+  }
+}
 
 onMounted(() => {
   if (props.id) {
@@ -612,6 +646,10 @@ const columnReadOnly = computed(() => {
           <template #content>
             <div class="lx-dropdown-default-content" :style="{ width: panelWidth + 'px' }">
               <slot name="panel" @click="closeDropDownDefault()">
+                <div v-if="hasSelectAll" class="lx-value-picker-item select-all" tabindex="-1" role="option" @click="selectAll" :title="areSomeSelected ? texts.clearChosen : texts.selectAll ">
+                  <LxIcon :value="areSomeSelected ? areAllSelected ? 'checkbox-filled' : 'checkbox-indeterminate' : 'checkbox'" />
+                  <span>{{ areSomeSelected ? texts.clearChosen : texts.selectAll }}</span> 
+                </div>
                 <template v-for="item in filteredItems" :key="item[idAttribute]">
                   <div
                     @click="selectMultiple(item[idAttribute])"
