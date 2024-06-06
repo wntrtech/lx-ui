@@ -1,12 +1,16 @@
 {
   "name": "@wntr/lx-ui",
-  "description": "LX UI",
+  "description": "LX/UI",
   "prettier": "@zzdats/prettier-config",
   "files": [
     "dist",
     "dist/lx-fonts/*.woff",
     "dist/lx-fonts/*.ttf"
   ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/wntrtech/lx-ui/issues"
+  },
   "main": "./dist/wntr-lx-ui.umd.js",
   "typings": "./dist/wntr-lx-ui.d.ts",
   "module": "./dist/wntr-lx-ui.esm.js",
