@@ -236,11 +236,8 @@ export function getContent(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
       const base64Content = e.target.result;
-      const newFile = new File([e.target.result], file.name, {
-        type: file.type,
-        lastModified: file.lastModified,
-      });
-      resolve({ base64Content, newFile });
+      const originalFile = file;
+      resolve({ base64Content, originalFile });
     };
     reader.onerror = (error) => reject(error);
     reader.readAsDataURL(file);

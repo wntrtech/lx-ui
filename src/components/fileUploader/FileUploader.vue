@@ -142,30 +142,14 @@ function onError(id, errorType) {
 }
 
 async function updateModel() {
-  if (props.dataType === 'meta') {
-    const files = advancedFilesData.value.map((file) => ({
-      id: file.id,
-      name: file.name,
-      meta: file.meta,
-      content: new File([file.content], file.name, {
-        type: file.meta.type,
-        lastModified: file.meta.lastModified,
-      }),
-    }));
+  const fileData = advancedFilesData.value.map((file) => ({
+    id: file.id,
+    name: file.name,
+    meta: file.meta,
+    content: file.content,
+  }));
 
-    emits('update:modelValue', files);
-  }
-
-  if (props.dataType === 'content') {
-    const fileData = advancedFilesData.value.map((file) => ({
-      id: file.id,
-      name: file.name,
-      meta: file.meta,
-      content: file.content,
-    }));
-
-    emits('update:modelValue', fileData);
-  }
+  emits('update:modelValue', fileData);
 }
 
 function filladvancedFilesData() {
@@ -324,7 +308,7 @@ async function processFiles(files) {
         if (props.dataType === 'content') {
           tempFileDataContent.content = fileContent.base64Content;
         } else {
-          tempFileDataContent.content = fileContent.newFile;
+          tempFileDataContent.content = fileContent.originalFile;
         }
         storedBase64Strings.value.push({
           id: fileId,
@@ -396,6 +380,7 @@ function removeFile(id) {
     advancedFilesData.value.findIndex((file) => file.id === id),
     1
   );
+  storedBase64Strings.value = storedBase64Strings.value.filter((file) => file.id !== id);
   updateModel();
   fileInput.value.value = null;
 }
