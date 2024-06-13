@@ -188,8 +188,8 @@ const allNotExpandable = computed(() => props.items.every((item) => !isExpandabl
         @loadChildren="loadChildren"
         :children="childMap"
       >
-        <template #customItem="items">
-          <slot name="customItem" v-bind="items"></slot>
+        <template #customItem="items" v-if="$slots.customItem">
+          <slot name="customItem" v-bind="items" />
         </template>
       </LxTreeItem>
     </div>
@@ -217,7 +217,7 @@ const allNotExpandable = computed(() => props.items.every((item) => !isExpandabl
           :value="parent"
         >
           <template #customItem="item" v-if="$slots.customItem">
-            <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+            <slot name="customItem" v-bind="item" />
           </template>
         </LxListItem>
         <div class="selecting-block" v-if="hasSelecting">
@@ -278,7 +278,7 @@ const allNotExpandable = computed(() => props.items.every((item) => !isExpandabl
           :value="item"
         >
           <template #customItem="item" v-if="$slots.customItem">
-            <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+            <slot name="customItem" v-bind="item" />
           </template>
         </LxListItem>
         <div class="selecting-block" v-if="hasSelecting">

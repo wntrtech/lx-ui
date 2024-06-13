@@ -1133,8 +1133,8 @@ defineExpose({ validate, cancelSelection, selectRows });
         :texts="texts"
         @loadChildren="loadChildren"
       >
-        <template #customItem="items">
-          <slot name="customItem" v-bind="items"></slot>
+        <template #customItem="items" v-if="$slots.customItem">
+          <slot name="customItem" v-bind="items" />
         </template>
       </LxTreeList>
     </div>
