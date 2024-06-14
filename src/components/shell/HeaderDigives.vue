@@ -16,7 +16,7 @@ const props = defineProps({
   contextPersonsInfo: { type: Array, default: null },
   kind: { type: String, default: 'default' }, // 'default', 'public'
   navItems: { type: Array, default: null },
-  navBarHidden: { type: Boolean, default: true },
+  navBarSwitch: { type: Boolean, default: true },
   hideNavBar: { type: Boolean, default: false },
   showBackButton: { type: Boolean, default: false },
   backLabel: { type: String, required: false, default: null },
@@ -55,7 +55,7 @@ const props = defineProps({
       helpTitle: 'Palīdzība',
       alertsTitle: 'Paziņojumi',
       languagesTitle: 'Valodu izvēle',
-      contextPersonTitle: 'Saistīto personu dati',
+      contextPersonTitle: 'Saistītā persona',
     }),
   },
 });
@@ -79,6 +79,7 @@ const emits = defineEmits([
   'alternativeProfileChanged',
   'update:selected-alternative-profile',
   'log-out',
+  'update:nav-bar-switch',
 ]);
 
 function logOut() {
@@ -92,8 +93,17 @@ const fullName = computed(() => {
   return '';
 });
 
+const navBarSwitchModel = computed({
+  get() {
+    return props.navBarSwitch;
+  },
+  set(value) {
+    emits('update:nav-bar-switch', value);
+  },
+});
+
 const navToggle = () => {
-  emits('nav-toggle', !props.navBarHidden);
+  navBarSwitchModel.value = !navBarSwitchModel.value;
 };
 
 const selectedContextPersonModel = computed({
@@ -109,7 +119,7 @@ const selectedContextPersonModel = computed({
     emits('update:selected-context-person', res);
   },
 });
-const dropDownModel = ref(selectedContextPersonModel.value?.name);
+const dropDownModel = ref(selectedContextPersonModel.value?.id);
 watch(dropDownModel, (newValue) => {
   selectedContextPersonModel.value = newValue;
 });
@@ -133,7 +143,7 @@ const selectedAlternativeProfileModel = computed({
     emits('update:selected-alternative-profile', res);
   },
 });
-const dropDownModelAlternatives = ref(selectedAlternativeProfileModel.value?.name);
+const dropDownModelAlternatives = ref(selectedAlternativeProfileModel.value?.id);
 watch(dropDownModelAlternatives, (newValue) => {
   selectedAlternativeProfileModel.value = newValue;
 });
@@ -182,7 +192,7 @@ const contextPersonComputed = computed(() => {
     >
       <div class="header-profile-section">
         <span class="border-span">
-          <div class="header-label">Profils:</div>
+          <div class="header-label">Lietotājs</div>
           <template v-if="!alternativeProfilesInfo">
             <div class="header-profile-name">
               {{ fullName }}
@@ -192,11 +202,16 @@ const contextPersonComputed = computed(() => {
             </div>
           </template>
           <div class="header-profile-name" v-if="alternativeProfilesInfo">
-            <LxDropDown :items="alternativeProfilesComputed" v-model="dropDownModelAlternatives" />
+            <LxDropDown
+              :items="alternativeProfilesComputed"
+              v-model="dropDownModelAlternatives"
+              placeholder="Izvēlēties lietotāju"
+            />
           </div>
         </span>
       </div>
     </div>
+    <div v-else class="lx-upper-row"></div>
     <div
       class="lx-upper-row person-data-section"
       v-if="contextPersonsInfo && contextPersonsInfo.length > 0"
@@ -215,13 +230,20 @@ const contextPersonComputed = computed(() => {
           :items="contextPersonComputed"
           v-model="dropDownModel"
           v-if="contextPersonsInfo.length > 1"
+          placeholder="Izvēlēties personu"
         />
       </div>
     </div>
     <div class="lx-lower-row">
       <div class="defined-buttons">
         <div class="lower-button" v-if="!hideNavBar">
-          <LxButton icon="menu" label="Izvēlne" @click="navToggle" kind="ghost" />
+          <LxButton
+            icon="menu"
+            label="Izvēlne"
+            @click="navToggle"
+            kind="ghost"
+            iconVariant="gradient-brand"
+          />
         </div>
         <div class="lower-button" v-for="items in navItemsUserMenu" :key="items.label">
           <LxButton

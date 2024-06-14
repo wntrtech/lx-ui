@@ -148,7 +148,7 @@
 .lx-header-digives .lx-lower-row .lower-button > button,
 .lx-header-digives .lx-lower-row .lower-button > a {
   flex-direction: row;
-  text-decoration: underline;
+  /* text-decoration: underline; */
   color: var(--color-data);
   height: calc(var(--row-size) - 4px);
 }
@@ -213,7 +213,7 @@
   .lx-nav-panel.lx-responsive
   > .lx-nav-group:last-child
   .lx-button {
-  text-decoration: underline;
+  /* text-decoration: underline; */
   background-color: var(--color-background);
 }
 
@@ -307,6 +307,62 @@
 
 .lx .lx-layout-default.lx-layout-digives .lx-nav-panel ul li .lx-button svg {
   margin-right: 1rem;
+}
+
+.lx-header-digives>.lx-lower-row .e-veseliba-button> .lx-button{
+  color: var(--color-brand);
+}
+
+.lx-layout.lx-layout-default.lx-layout-digives>nav {
+  top: calc(3* var(--nav-row-size));
+}
+
+.lx-layout.lx-layout-default.lx-layout-digives>.lx-main{
+  padding-top: calc(2 * var(--nav-row-size))
+}
+
+.lx-main > .lx-digives-alert-list {
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.lx-main > .lx-digives-alert-list > .lx-digives-alert{
+  padding: 1rem;
+  min-height: 4rem;
+  background-color: var(--color-region);
+  border: 2px solid transparent;
+  border-left: 4px solid var(--color-highlight);
+}
+
+.lx-main > .lx-digives-alert-list > .lx-digives-alert > .lx-primary{
+  font-weight: var(--font-weight-bold);
+}
+
+.lx-main > .lx-digives-alert-list > .lx-digives-alert.lx-alert-success{
+  background-color: var(--color-green-20);
+  border-left: 4px solid var(--color-green);
+}
+
+.lx-main > .lx-digives-alert-list > .lx-digives-alert.lx-alert-warning{
+  background-color: var(--color-yellow-20);
+  border-left: 4px solid var(--color-yellow);
+}
+
+.lx-main > .lx-digives-alert-list > .lx-digives-alert.lx-alert-error{
+  background-color: var(--color-red-20);
+  border-left: 4px solid var(--color-red);
+}
+
+.lx-main > .lx-digives-alert-list > .lx-digives-alert.lx-clickable:hover{
+  border: 2px solid var(--color-brand);
+}
+
+.lx-layout.lx-layout-default.lx-layout-digives > footer{
+  background-color: var(--color-region);
+  color: var(--color-data);
+  display: block;
 }
 
 @media (max-width: 1200px) {

@@ -56,6 +56,7 @@ const emits = defineEmits([
   'idleModalSecondary',
   'confirmModalClosed',
   'update:theme',
+  'update:nav-bar-switch',
 ]);
 
 const props = defineProps({
@@ -124,6 +125,8 @@ const props = defineProps({
   confirmSecondaryButtonBusy: { type: Boolean, default: false },
   confirmPrimaryButtonDestructive: { type: Boolean, default: false },
   confirmClosesOnPrimary: { type: Boolean, default: true },
+
+  navBarSwitch: { type: Boolean, default: true },
 
   texts: {
     type: Object,
@@ -265,7 +268,7 @@ const selectedContextPersonModel = computed({
   },
   set(value) {
     if (!props.selectedContextPerson) {
-      emits('context-person-changed', value);
+      emits('contextPersonChanged', value);
     }
     if (!value || props.contextPersonsInfo.find((item) => item.id === value.id)) {
       emits('update:selected-context-person', value);
@@ -289,7 +292,7 @@ const selectedAlternativeProfileModel = computed({
   },
   set(value) {
     if (!props.selectedAlternativeProfile) {
-      emits('alternative-profile-changed', value);
+      emits('alternativeProfileChanged', value);
     }
     if (props.alternativeProfilesInfo.find((item) => item.id === value.id)) {
       emits('update:selected-alternative-profile', value);
@@ -340,13 +343,24 @@ watch(
   }
 );
 
-const navBarSwitch = shallowRef(true);
+const navBarSwitchModel = computed({
+  get() {
+    return props.navBarSwitch;
+  },
+  set(value) {
+    emits('update:nav-bar-switch', value);
+  },
+});
+
+const navBarSwitchBasic = shallowRef(true);
 
 function navToggle(value) {
-  navBarSwitch.value = value;
+  if (props.mode === 'digives') navBarSwitchModel.value = value;
+  else navBarSwitchBasic.value = value;
 }
 function navToggleButton() {
-  navBarSwitch.value = !navBarSwitch.value;
+  if (props.mode === 'digives') navBarSwitchModel.value = !navBarSwitchModel.value;
+  else navBarSwitchBasic.value = !navBarSwitchBasic.value;
 }
 function goBack(route) {
   emits('goBack', route);
@@ -367,7 +381,7 @@ function alternativeProfileChanged(alternativeProfile) {
   emits('alternativeProfileChanged', alternativeProfile);
 }
 function alertItemClicked(alert) {
-  emits('alertItemClick', alert);
+  if (alert.clickable) emits('alertItemClick', alert);
 }
 function alertsClicked() {
   emits('alertsClick');
@@ -537,7 +551,7 @@ onMounted(() => {
           :mode="mode"
           :userInfo="userInfo"
           :nav-items="navItems"
-          :nav-bar-switch="navBarSwitch"
+          :nav-bar-switch="navBarSwitchBasic"
           :hideNavBar="hideNavBar"
           :systemNameShort="systemNameShort"
           :systemSubheader="systemSubheader"
@@ -620,7 +634,7 @@ onMounted(() => {
     <div
       v-else-if="mode === 'digives'"
       class="lx-layout lx-layout-default lx-layout-digives"
-      :class="[{ 'lx-collapsed': navBarSwitch }, { 'lx-hide-nav-bar': hideNavBar }]"
+      :class="[{ 'lx-collapsed': navBarSwitchModel }, { 'lx-hide-nav-bar': hideNavBar }]"
     >
       <header>
         <LxMainHeaderDigives
@@ -628,7 +642,7 @@ onMounted(() => {
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
           :nav-items="navItems"
-          :nav-bar-switch="navBarSwitch"
+          v-model:nav-bar-switch="navBarSwitchModel"
           :hide-nav-bar="hideNavBar"
           :systemNameShort="systemNameShort"
           :systemSubheader="systemSubheader"
@@ -669,7 +683,7 @@ onMounted(() => {
       </header>
       <div class="small-nav-bar-button">
         <LxButton
-          :icon="navBarSwitch ? 'menu' : 'close'"
+          :icon="navBarSwitchModel ? 'menu' : 'close'"
           variant="icon-only"
           kind="ghost"
           @click="navToggleButton()"
@@ -678,7 +692,7 @@ onMounted(() => {
       <nav aria-label="navigation panel">
         <LxNavBarDigives
           :nav-items="navItems"
-          :nav-bar-switch="navBarSwitch"
+          v-model:nav-bar-switch="navBarSwitchModel"
           @nav-toggle="navToggle"
           :selectedNavItems="navItemsSelected"
           v-model:selectedContextPerson="selectedContextPersonModel"
@@ -692,6 +706,24 @@ onMounted(() => {
       </nav>
 
       <main class="lx-main">
+        <div class="lx-digives-alert-list" v-if="alerts?.length > 0">
+          <div
+            v-for="alert in alerts"
+            :key="alert.id"
+            class="lx-digives-alert"
+            :class="[
+              { 'lx-alert-success': alert?.level === 'success' },
+              { 'lx-alert-warning': alert?.level === 'warning' },
+              { 'lx-alert-error': alert?.level === 'error' },
+              { 'lx-clickable': alert?.clickable },
+            ]"
+            @click="alertItemClicked(alert)"
+            @keydown.space="alertItemClicked(alert)"
+          >
+            <p class="lx-primary">{{ alert?.name }}</p>
+            <p class="lx-secondary" v-if="alert?.description">{{ alert?.description }}</p>
+          </div>
+        </div>
         <LxPageHeader
           v-if="pageHeaderVisible"
           :label="pageTitle"
@@ -708,14 +740,16 @@ onMounted(() => {
         </transition>
       </main>
       <footer>
-        <div></div>
         <div>
           <slot name="footer" />
         </div>
-        <div></div>
       </footer>
     </div>
-    <div v-else class="lx-layout lx-layout-default" :class="[{ 'lx-collapsed': navBarSwitch }]">
+    <div
+      v-else
+      class="lx-layout lx-layout-default"
+      :class="[{ 'lx-collapsed': navBarSwitchBasic }]"
+    >
       <header>
         <LxMainHeader
           :mode="mode"
@@ -726,7 +760,7 @@ onMounted(() => {
           :userInfo="userInfo"
           :has-avatar="hasAvatar"
           :nav-items="navItems"
-          :nav-bar-switch="navBarSwitch"
+          :nav-bar-switch="navBarSwitchBasic"
           :hideNavBar="hideNavBar"
           :systemNameShort="systemNameShort"
           :page-label="pageTitle"

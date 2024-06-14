@@ -60,7 +60,7 @@ const selectedContextPersonModel = computed({
   },
 });
 
-const dropDownModel = ref(selectedContextPersonModel.value?.name);
+const dropDownModel = ref(selectedContextPersonModel.value?.id);
 watch(dropDownModel, (newValue) => {
   selectedContextPersonModel.value = newValue;
 });
@@ -85,7 +85,7 @@ const selectedAlternativeProfileModel = computed({
   },
 });
 
-const dropDownModelAlternatives = ref(selectedAlternativeProfileModel.value?.name);
+const dropDownModelAlternatives = ref(selectedAlternativeProfileModel.value?.id);
 watch(dropDownModelAlternatives, (newValue) => {
   selectedAlternativeProfileModel.value = newValue;
 });
@@ -131,14 +131,14 @@ const contextPersonComputed = computed(() => {
   <div class="lx-nav-panel lx-responsive">
     <ul class="lx-nav-group">
       <div v-if="alternativeProfilesInfo" class="nav-bar-user-info nav-bar-profile">
-        <p>Profils:</p>
+        <p>Lietotājs</p>
         <li>
           <LxDropDown :items="alternativeProfilesComputed" v-model="dropDownModelAlternatives" />
         </li>
         <div class="color-border"></div>
       </div>
       <div v-else-if="!alternativeProfilesInfo" class="nav-bar-user-info nav-bar-profile">
-        <p>Profils:</p>
+        <p>Lietotājs</p>
         <li>
           <p>{{ fullName }}</p>
           <p>Roles</p>
@@ -146,7 +146,7 @@ const contextPersonComputed = computed(() => {
         <div class="color-border"></div>
       </div>
       <div v-if="contextPersonsInfo && contextPersonsInfo.length > 0" class="nav-bar-user-info">
-        <p>Saistīto personu dati:</p>
+        <p>Saistīto personu dati</p>
         <template v-if="contextPersonsInfo.length === 1">
           <li>
             <div class="header-profile-name">
