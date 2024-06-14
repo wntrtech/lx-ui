@@ -96,7 +96,14 @@
 .lx-modal .lx-appendable-list .lx-appendable-list-item .lx-date-time-picker:not(:disabled),
 .lx-modal .lx-appendable-list .lx-appendable-list-item .lx-dropdown:not(:disabled),
 .lx-modal .lx-appendable-list-item .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area,
-.lx-modal .lx-appendable-list .lx-appendable-list-item .lx-form-grid .lx-form-section .lx-dropdown-default-panel {
+.lx-modal .lx-appendable-list .lx-appendable-list-item .lx-form-grid .lx-form-section .lx-dropdown-default-panel,
+.lx-form-grid .lx-appendable-list .lx-form-grid .lx-text-input:not(:disabled),
+.lx-form-grid .lx-appendable-list .lx-form-grid .lx-text-area:not(:disabled),
+.lx-form-grid .lx-appendable-list .lx-form-grid .lx-date-time-picker:not(:disabled),
+.lx-form-grid .lx-appendable-list .lx-form-grid .lx-dropdown:not(:disabled),
+.lx-form-grid .lx-appendable-list .lx-form-grid .lx-autocomplete-default:not(:disabled),
+.lx-form-grid .lx-appendable-list .lx-form-grid .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area,
+.lx-form-grid .lx-appendable-list .lx-form-grid .lx-appendable-list .lx-appendable-list-item .lx-form-grid .lx-form-section .lx-dropdown-default-panel {
   font-size: 1rem;
   font-weight: 400;
   letter-spacing: var(--letter-spacing-1);
