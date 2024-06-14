@@ -109,6 +109,14 @@ const props = defineProps({
 
 const sortedColumns = ref({});
 
+function isValueEmpty(value) {
+  return value === null || value === undefined || value === '';
+}
+
+function isObject(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
 const isDisabled = computed(() => props.loading || props.busy);
 
 const columnsComputed = computed(() => {
@@ -698,7 +706,8 @@ function emptyStateActionClicked(actionName) {
                   col.type !== 'array' &&
                   col.type !== 'flag' &&
                   col.type !== 'country' &&
-                  col.type !== 'person'
+                  col.type !== 'person' &&
+                  col.type !== 'icon'
                 "
               >
                 {{ formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) }}
@@ -715,6 +724,26 @@ function emptyStateActionClicked(actionName) {
                 mode="read"
                 v-model="row[col.attributeName]"
               />
+              <template v-if="col.type === 'icon'">
+                <LxIcon
+                  v-if="
+                    isObject(row?.[col?.attributeName]) && !isValueEmpty(row?.[col?.attributeName])
+                  "
+                  :value="row?.[col?.attributeName]?.icon"
+                  :icon-set="row?.[col?.attributeName]?.iconSet"
+                  :title="row?.[col?.attributeName]?.label"
+                  :customClass="`lx-grid-column-icon ${row?.[col?.attributeName]?.category}`"
+                ></LxIcon>
+                <LxIcon
+                  v-else-if="
+                    !isObject(row?.[col?.attributeName]) && !isValueEmpty(row?.[col?.attributeName])
+                  "
+                  :value="row?.[col?.attributeName]"
+                  customClass="lx-grid-column-icon"
+                ></LxIcon>
+                <span v-else>—</span>
+              </template>
+
               <LxFlag
                 v-if="
                   (col.type === 'flag' || col.type === 'country') &&
@@ -900,7 +929,8 @@ function emptyStateActionClicked(actionName) {
               col.type !== 'array' &&
               col.type !== 'flag' &&
               col.type !== 'country' &&
-              col.type !== 'person'
+              col.type !== 'person' &&
+              col.type !== 'icon'
             "
             :tabindex="col.kind === 'clickable' ? 0 : -1"
             @click="
@@ -928,6 +958,25 @@ function emptyStateActionClicked(actionName) {
             mode="read"
             v-model="item[col.attributeName]"
           />
+          <template v-else-if="col.type === 'icon'">
+            <LxIcon
+              v-if="
+                isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
+              "
+              :value="item?.[col?.attributeName]?.icon"
+              :icon-set="item?.[col?.attributeName]?.iconSet"
+              :title="item?.[col?.attributeName]?.label"
+              :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
+            ></LxIcon>
+            <LxIcon
+              v-else-if="
+                !isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
+              "
+              :value="item?.[col?.attributeName]"
+              customClass="lx-grid-column-icon"
+            ></LxIcon>
+            <span v-else>—</span>
+          </template>
           <LxFlag
             v-else-if="
               (col.type === 'flag' || col.type === 'country') &&

@@ -785,3 +785,64 @@
 .lx-justified-toolbar .lx-group {
   display: flex;
 }
+
+.lx-data-grid svg.lx-grid-column-icon.draft,
+.lx-data-grid svg.lx-grid-column-icon.new {
+  fill: var(--color-state-new);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.draft,
+.lx-data-grid svg.lx-grid-column-icon.edited {
+  fill: var(--color-state-edited);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.disabling,
+.lx-data-grid svg.lx-grid-column-icon.inactive {
+  fill: var(--color-state-deleted);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.finishing,
+.lx-data-grid svg.lx-grid-column-icon.finished {
+  fill: var(--color-state-finished);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.deleting {
+  fill: var(--color-state-error);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.red {
+  fill: var(--color-red);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.green {
+  fill: var(--color-green);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.blue {
+  fill: var(--color-blue);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.black {
+  fill: var(--color-data);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.purple {
+  fill: var(--color-purple);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.orange {
+  fill: var(--color-orange);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.yellow {
+  fill: var(--color-yellow);
+}
+
+.lx .lx-data-grid-wrapper .lx-data-grid .lx-cell svg.lx-grid-column-icon,
+.lx .lx-data-grid-wrapper .lx-appendable-list-item .lx-data-block-content .lx-row svg.lx-grid-column-icon {
+  height: 1rem;
+}
+
+.lx .lx-data-grid-wrapper .lx-appendable-list-item .lx-data-block-content .lx-row svg.lx-grid-column-icon {
+  margin-top: 0.5rem;
+}

@@ -9,6 +9,7 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // 'default', 'gradient-brand', 'gradient-brand-vertical'
   customClass: { type: String, default: '' },
   animation: { type: String, default: 'default' }, // 'default', 'spin'
+  title: { type: String, default: '' },
 });
 
 const iconPath = shallowRef(null);
@@ -74,6 +75,7 @@ const gradientComputed = computed(() => {
     :viewBox="viewBoxType"
     :style="gradientComputed"
   >
+    <title>{{ props.title }}</title>
     <defs v-if="variant !== 'default'">
       <linearGradient id="gradient">
         <stop offset="0%" stop-color="var(--color-brand)" />
