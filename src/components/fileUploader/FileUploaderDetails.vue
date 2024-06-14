@@ -89,6 +89,12 @@ const objDefinitions = ref([
 ]);
 
 const additionalData = ref(props.value?.additionalData || null);
+
+const normalizedAuthors = computed(() => {
+  const authorValue = props.value.mainData?.author?.value;
+  if (!authorValue) return null;
+  return Array.isArray(authorValue) ? authorValue : [authorValue];
+});
 </script>
 <template>
   <LxForm
@@ -122,14 +128,9 @@ const additionalData = ref(props.value?.additionalData || null);
 
       <LxSection id="metaMain" :label="props.texts?.metaMainLabel" :column-count="3">
         <LxRow :label="props.texts?.metaMainAuthor">
-          <div v-if="props.value.mainData?.author?.value">
-            <LxPersonDisplay
-              v-for="item in props.value.mainData?.author?.value"
-              :key="item"
-              :value="item"
-            />
-          </div>
-
+          <template v-if="normalizedAuthors">
+            <LxPersonDisplay v-for="item in normalizedAuthors" :key="item" :value="item" />
+          </template>
           <p v-else class="lx-data">—</p>
         </LxRow>
         <LxRow v-for="(item, key) in mainDataWithoutAuthor" :key="key" :label="item.label">
