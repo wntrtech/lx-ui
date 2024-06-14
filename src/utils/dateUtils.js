@@ -1,9 +1,8 @@
 import { parse, parseJSON, format, formatRFC3339, isDate } from 'date-fns';
+import useLx from '@/hooks/useLx';
 
 export function parseDate(date) {
-  if (!date) {
-    return null;
-  }
+  if (!date) return null;
   if (date.length === 10) {
     return parse(date, 'yyyy-MM-dd', new Date());
   }
@@ -11,9 +10,7 @@ export function parseDate(date) {
 }
 
 export function formatJSON(date) {
-  if (!date) {
-    return null;
-  }
+  if (!date) return null;
   let d = date;
   if (typeof d === 'string') {
     if (d.length === 10) {
@@ -35,9 +32,7 @@ export function isDateValid(date) {
 }
 
 export function formatDateJSON(date) {
-  if (!date) {
-    return null;
-  }
+  if (!date) return null;
   let d = date;
   if (typeof d === 'string') {
     d = formatJSON(d);
@@ -47,9 +42,10 @@ export function formatDateJSON(date) {
 }
 
 export function formatDate(date, empty = '') {
-  if (!date) {
-    return empty;
-  }
+  const { dateFormat } = useLx().getGlobals();
+  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
+
+  if (!date) return empty;
   let d = date;
   if (typeof d === 'string') {
     if (d.length === 10) {
@@ -57,32 +53,31 @@ export function formatDate(date, empty = '') {
     }
     d = parseJSON(d);
   }
-
-  return format(d, 'dd.MM.yyyy');
+  return format(d, dateFormatToUse);
 }
 
 export function formatDateTime(date, empty = '') {
-  if (!date) {
-    return empty;
-  }
+  const { dateTimeFormat } = useLx().getGlobals();
+  const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
+
+  if (!date) return empty;
   let d = date;
   if (typeof d === 'string') {
     d = parseJSON(date);
   }
-
-  return format(d, 'dd.MM.yyyy HH:mm');
+  return format(d, dateTimeFormatToUse);
 }
 
 export function formatFull(date, empty = '') {
-  if (!date) {
-    return empty;
-  }
+  const { dateTimeFullFormat } = useLx().getGlobals();
+  const dateTimeFullFormatToUse = dateTimeFullFormat || 'dd.MM.yyyy. HH:mm:ss';
+
+  if (!date) return empty;
   let d = date;
   if (typeof d === 'string') {
     d = parseJSON(date);
   }
-
-  return format(d, 'dd.MM.yyyy HH:mm:ss');
+  return format(d, dateTimeFullFormatToUse);
 }
 
 export function isLeapYear(year) {

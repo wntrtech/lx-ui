@@ -1,10 +1,10 @@
+import { setGlobalProperties } from '@/utils/global';
+
 function install(Vue, options) {
   // Don't install more than once
   if (install.installed) return;
   install.installed = true;
-
-  // eslint-disable-next-line no-param-reassign
-  Vue.config.globalProperties.$lx = options;
+  setGlobalProperties(options);
 }
 
 // Create module definition for Vue.use()

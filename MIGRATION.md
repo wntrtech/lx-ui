@@ -2,9 +2,23 @@
 
 ## 1.3 → 1.5
 
+### Namespace
+
 Starting 1.5 we're using different namespace for LX/UI library.
 
 We'll be using **`@wntr/lx-ui`** instead of ~~`@zzdats/lx-ui`~~ from now on (make sure to update your css and font imports, which are probably in your `main.js` and `vite.config.js`). Other than that - no breaking changes.
+
+### Date format
+
+We've also have changed default date format from "dd.MM.yyyy" to "dd.MM.yyyy." (in accordance to [Latvian law](https://likumi.lv/ta/id/301436#p15)). If, for any reason, you want to change it back, you can always use LX globals (most likely, in your `main.js`), like so:
+
+```js
+myApp.use(createLx, {
+  dateFormat: 'dd.MM.yyyy',
+  dateTimeFormat: 'dd.MM.yyyy HH:mm',
+  dateTimeFullFormat: 'dd.MM.yyyy HH:mm:ss',
+});
+```
 
 ## 1.2 → 1.3
 
