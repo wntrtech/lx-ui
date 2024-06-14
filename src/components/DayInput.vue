@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDown from '@/components/Dropdown.vue';
@@ -7,7 +7,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
 
 const props = defineProps({
-  modelValue: { type: Number, default: null },
+  modelValue: { type: [Number, Object], default: null },
   disabled: { type: Boolean, default: false },
   readOnly: { type: Boolean, default: false },
   kind: { type: String, default: 'label' }, // result kind: label, icon
@@ -36,7 +36,7 @@ const unitOptionTypes = ref([
   { id: 'years', name: 'Gadi' },
 ]);
 
-const inputValue = ref(props.modelValue);
+const inputValue = ref();
 const selectedUnit = ref('days');
 const result = ref('');
 const inputPlaceholder = ref('');
@@ -76,8 +76,8 @@ function updatePlaceholder(unit) {
 function calculateResult() {
   let value = Number(inputValue.value);
 
-  const daysInYear = 365.25;
-  const daysInMonth = 30.44;
+  const daysInYear = 365;
+  const daysInMonth = 30;
   const monthsInYear = 12;
 
   let years = 0;
@@ -114,7 +114,17 @@ function calculateResult() {
   const dayString = days !== 0 ? `${days} ${days === 1 ? 'diena' : 'dienas'}` : '';
 
   result.value = [yearString, monthString, dayString].filter(Boolean).join(', ');
-  emits('update:modelValue', daysResult);
+
+  if (props.modelValue === null && inputValue.value) {
+    emits('update:modelValue', daysResult);
+  } else if (typeof props.modelValue === 'number') {
+    emits('update:modelValue', daysResult);
+  } else if (typeof props.modelValue === 'object') {
+    emits('update:modelValue', {
+      value: inputValue.value,
+      unit: selectedUnit.value,
+    });
+  }
 }
 
 watch(
@@ -132,6 +142,18 @@ watch(
   },
   { deep: true, immediate: true }
 );
+
+onMounted(() => {
+  if (props.modelValue) {
+    if (typeof props.modelValue === 'number') {
+      inputValue.value = props.modelValue;
+    }
+    if (typeof props.modelValue === 'object') {
+      inputValue.value = props.modelValue.value;
+      selectedUnit.value = props.modelValue.unit;
+    }
+  }
+});
 </script>
 
 <template>
