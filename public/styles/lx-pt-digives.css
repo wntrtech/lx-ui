@@ -18,7 +18,7 @@
   --color-focus-background: #9f1853;
   --color-destructive: #ba1b23;
 
-  --font-family: 'Poppins', 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --font-family: 'PoppinsLX', 'IBM Plex Sans', sans-serif !important;
   --font-family-mono: 'Poppins', 'IBM Plex Mono', monospace;
   --font-weight-data: 600;
   --font-weight-bold: 600;
