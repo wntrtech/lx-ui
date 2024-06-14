@@ -42,6 +42,7 @@ const props = defineProps({
   categoryAttribute: { type: String, default: 'category' },
   childrenAttribute: { type: String, default: 'children' },
   hasChildrenAttribute: { type: String, default: 'hasChildren' },
+  selectableAttribute: { type: String, default: 'selectable' },
   orderAttribute: { type: String, default: 'order' },
   actionDefinitions: { type: Array, default: null },
   emptyStateActionDefinitions: { type: Array, default: null },
@@ -58,7 +59,8 @@ const props = defineProps({
   selectionActionDefinitions: { type: Array, default: () => [] },
   includeUnspecifiedGroups: { type: Boolean, default: false },
   itemsStates: { type: Object, default: () => {} },
-  mode: { type: String, default: 'client' }, // client, server
+  mode: { type: String, default: 'client' }, // client, server,
+
   texts: {
     type: Object,
     default: () => ({
@@ -515,19 +517,31 @@ function arrayToObject(arr) {
   return ret;
 }
 
+const isSelectable = (item) => {
+  const attribute = props.selectableAttribute;
+  if (item[attribute] === false) return false;
+  return item[attribute] !== false;
+};
+
 function selectRows(arr = null) {
+  function filterSelectable(items) {
+    return items.filter(isSelectable);
+  }
+
   if (arr === null) {
-    if (props.kind !== 'treelist')
+    if (props.kind !== 'treelist') {
       selectedItemsRaw.value = arrayToObject(
-        props.items?.map((x) => x[props.idAttribute].toString())
+        filterSelectable(props.items)?.map((x) => x[props.idAttribute].toString())
       );
-    else {
+    } else {
       selectedItemsRaw.value = arrayToObject(
-        treeItems.value?.map((x) => x[props.idAttribute].toString())
+        filterSelectable(treeItems.value)?.map((x) => x[props.idAttribute].toString())
       );
     }
   } else {
-    selectedItemsRaw.value = arrayToObject(arr.map((x) => x[props.idAttribute].toString()));
+    selectedItemsRaw.value = arrayToObject(
+      filterSelectable(arr)?.map((x) => x[props.idAttribute].toString())
+    );
   }
 }
 
@@ -536,26 +550,34 @@ function cancelSelection() {
 }
 
 const selectedLabel = computed(() => {
-  const num = selectedItems.value?.length;
-  const numDisplay = num?.toString();
+  const selectableCount = props.items?.length?.toString();
+  const selectableTreeItems = treeItems.value?.length?.toString();
+  const selectedCount = selectedItems.value?.length;
+  const selectedCountDisplay = selectedCount?.toString();
+
   let label = props.texts?.items?.plural;
   let labelStart = props.texts?.selected?.plural;
-  let ret = numDisplay;
+  let ret = selectedCountDisplay;
 
-  if (num === 1) {
+  if (selectedCount === 1) {
     label = props.texts?.items?.singular;
     labelStart = props.texts?.selected?.singular;
-  } else if (num > 20 && (num % 10 === 2 || num % 10 === 3 || num % 10 === 4)) {
+  } else if (
+    selectedCount > 20 &&
+    (selectedCount % 10 === 2 || selectedCount % 10 === 3 || selectedCount % 10 === 4)
+  ) {
     label = props.texts?.items?.endingWith234;
     labelStart = props.texts?.selected?.endingWith234;
-  } else if (num > 11 && num % 10 === 1) {
+  } else if (selectedCount > 11 && selectedCount % 10 === 1) {
     label = props.texts?.items?.endingWith1;
     labelStart = props.texts?.selected?.endingWith1;
   }
-  if (props.kind !== 'treelist')
-    ret = `${labelStart} ${numDisplay} ${label} ${props.texts?.of} ${props.items?.length}`;
-  else ret = `${labelStart} ${numDisplay} ${label} ${props.texts?.of} ${treeItems.value?.length}`;
 
+  if (props.kind !== 'treelist') {
+    ret = `${labelStart} ${selectedCountDisplay} ${label} ${props.texts?.of} ${selectableCount}`;
+  } else {
+    ret = `${labelStart} ${selectedCountDisplay} ${label} ${props.texts?.of} ${selectableTreeItems}`;
+  }
   return ret;
 });
 
@@ -789,21 +811,24 @@ defineExpose({ validate, cancelSelection, selectRows });
               </template>
             </LxListItem>
             <div class="selecting-block" v-if="hasSelecting">
-              <LxRadioButton
-                v-if="selectingKind === 'single'"
-                :id="`select-${id}-${item[idAttribute]}`"
-                v-model="selectedItemsRaw[item[idAttribute]]"
-                :value="item[idAttribute]"
-                @click="selectRow(item[idAttribute])"
-                :disabled="loading || busy"
-              />
-              <LxCheckbox
-                v-else
-                :id="`select-${id}-${item[idAttribute]}`"
-                v-model="selectedItemsRaw[item[idAttribute]]"
-                :value="item[idAttribute]"
-                :disabled="loading || busy"
-              />
+              <template v-if="isSelectable(item)">
+                <LxRadioButton
+                  v-if="selectingKind === 'single'"
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  @click="selectRow(item[idAttribute])"
+                  :disabled="loading || busy"
+                />
+                <LxCheckbox
+                  v-else
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  :disabled="loading || busy"
+                />
+              </template>
+              <p v-else class="lx-checkbox-placeholder"></p>
             </div>
           </li>
         </template>
@@ -932,21 +957,24 @@ defineExpose({ validate, cancelSelection, selectRows });
                 </template>
               </lx-list-item>
               <div class="selecting-block" v-if="hasSelecting">
-                <LxRadioButton
-                  v-if="selectingKind === 'single'"
-                  :id="`select-${id}-${item[idAttribute]}`"
-                  v-model="selectedItemsRaw[item[idAttribute]]"
-                  :value="item[idAttribute]"
-                  @click="selectRow(item[idAttribute])"
-                  :disabled="loading || busy"
-                />
-                <LxCheckbox
-                  v-else
-                  :id="`select-${id}-${item[idAttribute]}`"
-                  v-model="selectedItemsRaw[item[idAttribute]]"
-                  :value="item[idAttribute]"
-                  :disabled="loading || busy"
-                />
+                <template v-if="isSelectable(item)">
+                  <LxRadioButton
+                    v-if="selectingKind === 'single'"
+                    :id="`select-${id}-${item[idAttribute]}`"
+                    v-model="selectedItemsRaw[item[idAttribute]]"
+                    :value="item[idAttribute]"
+                    @click="selectRow(item[idAttribute])"
+                    :disabled="loading || busy"
+                  />
+                  <LxCheckbox
+                    v-else
+                    :id="`select-${id}-${item[idAttribute]}`"
+                    v-model="selectedItemsRaw[item[idAttribute]]"
+                    :value="item[idAttribute]"
+                    :disabled="loading || busy"
+                  />
+                </template>
+                <p v-else class="lx-checkbox-placeholder"></p>
               </div>
             </li>
           </ul>
@@ -983,21 +1011,24 @@ defineExpose({ validate, cancelSelection, selectRows });
             </template>
           </LxListItem>
           <div class="selecting-block" v-if="hasSelecting">
-            <LxRadioButton
-              v-if="selectingKind === 'single'"
-              :id="`select-${id}-${item[idAttribute]}`"
-              v-model="selectedItemsRaw[item[idAttribute]]"
-              :value="item[idAttribute]"
-              @click="selectRow(item[idAttribute])"
-              :disabled="loading || busy"
-            />
-            <LxCheckbox
-              v-else
-              :id="`select-${id}-${item[idAttribute]}`"
-              v-model="selectedItemsRaw[item[idAttribute]]"
-              :value="item[idAttribute]"
-              :disabled="loading || busy"
-            />
+            <template v-if="isSelectable(item)">
+              <LxRadioButton
+                v-if="selectingKind === 'single'"
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedItemsRaw[item[idAttribute]]"
+                :value="item[idAttribute]"
+                @click="selectRow(item[idAttribute])"
+                :disabled="loading || busy"
+              />
+              <LxCheckbox
+                v-else
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedItemsRaw[item[idAttribute]]"
+                :value="item[idAttribute]"
+                :disabled="loading || busy"
+              />
+            </template>
+            <p v-else class="lx-checkbox-placeholder"></p>
           </div>
         </li>
       </template>
@@ -1171,6 +1202,7 @@ defineExpose({ validate, cancelSelection, selectRows });
         :iconSetAttribute="iconSetAttribute"
         :tooltipAttribute="tooltipAttribute"
         :categoryAttribute="categoryAttribute"
+        :selectable-attribute="selectableAttribute"
         :action-definitions="actionDefinitions"
         :icon="icon"
         :iconSet="iconSet"
@@ -1215,21 +1247,24 @@ defineExpose({ validate, cancelSelection, selectRows });
           @action-click="actionClicked"
         />
         <div class="selecting-block" v-if="hasSelecting">
-          <LxRadioButton
-            v-if="selectingKind === 'single'"
-            :id="`select-${id}-${element[idAttribute]}`"
-            v-model="selectedItemsRaw[element[idAttribute]]"
-            :value="element[idAttribute]"
-            @click="selectRow(element[idAttribute])"
-            :disabled="loading || busy"
-          />
-          <LxCheckbox
-            v-else
-            :id="`select-${id}-${element[idAttribute]}`"
-            v-model="selectedItemsRaw[element[idAttribute]]"
-            :value="element[idAttribute]"
-            :disabled="loading || busy"
-          />
+          <template v-if="isSelectable(element)">
+            <LxRadioButton
+              v-if="selectingKind === 'single'"
+              :id="`select-${id}-${element[idAttribute]}`"
+              v-model="selectedItemsRaw[element[idAttribute]]"
+              :value="element[idAttribute]"
+              @click="selectRow(element[idAttribute])"
+              :disabled="loading || busy"
+            />
+            <LxCheckbox
+              v-else
+              :id="`select-${id}-${element[idAttribute]}`"
+              v-model="selectedItemsRaw[element[idAttribute]]"
+              :value="element[idAttribute]"
+              :disabled="loading || busy"
+            />
+          </template>
+          <p v-else class="lx-checkbox-placeholder"></p>
         </div>
       </div>
     </div>

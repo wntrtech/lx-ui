@@ -24,6 +24,7 @@ const props = defineProps({
   iconSetAttribute: { type: String, default: 'iconSet' },
   tooltipAttribute: { type: String, default: 'tooltip' },
   categoryAttribute: { type: String, default: 'category' },
+  selectableAttribute: { type: String, default: 'selectable' },
   hasSearch: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: null },
   icon: { type: String, default: 'open' },
@@ -137,6 +138,12 @@ function hasSelectedChildren(id) {
   return res;
 }
 const allNotExpandable = computed(() => props.items.every((item) => !isExpandable(item)));
+
+const isSelectable = (item) => {
+  const attribute = props.selectableAttribute;
+  if (item[attribute] === false) return false;
+  return item[attribute] !== false;
+};
 </script>
 <template>
   <div class="tree-item" v-for="item in items" :key="item[idAttribute]">
@@ -177,19 +184,22 @@ const allNotExpandable = computed(() => props.items.every((item) => !isExpandabl
         </template>
       </LxListItem>
       <div class="selecting-block" v-if="hasSelecting">
-        <LxRadioButton
-          v-if="selectingKind === 'single'"
-          :id="`select-${id}-${item[idAttribute]}`"
-          v-model="selected[item[idAttribute]]"
-          :value="item[idAttribute]"
-          @click="selectRow(item[idAttribute])"
-        />
-        <LxCheckbox
-          v-else
-          :id="`select-${id}-${item[idAttribute]}`"
-          v-model="selected[item[idAttribute]]"
-          :value="item[idAttribute]"
-        />
+        <template v-if="isSelectable(item)">
+          <LxRadioButton
+            v-if="selectingKind === 'single'"
+            :id="`select-${id}-${item[idAttribute]}`"
+            v-model="selected[item[idAttribute]]"
+            :value="item[idAttribute]"
+            @click="selectRow(item[idAttribute])"
+          />
+          <LxCheckbox
+            v-else
+            :id="`select-${id}-${item[idAttribute]}`"
+            v-model="selected[item[idAttribute]]"
+            :value="item[idAttribute]"
+          />
+        </template>
+        <p v-else class="lx-checkbox-placeholder"></p>
       </div>
     </div>
     <div class="tree-item-invalid" v-if="states?.[item[idAttribute]]?.invalid">
@@ -218,6 +228,7 @@ const allNotExpandable = computed(() => props.items.every((item) => !isExpandabl
       :iconSetAttribute="iconSetAttribute"
       :tooltipAttribute="tooltipAttribute"
       :categoryAttribute="categoryAttribute"
+      :selectable-attribute="selectableAttribute"
       :action-definitions="actionDefinitions"
       :icon="icon"
       :iconSet="iconSet"

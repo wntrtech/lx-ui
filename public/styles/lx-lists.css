@@ -424,6 +424,10 @@ li .lx-category-orange {
   background-color: var(--color-region-2);
 }
 
+.lx-list>li>.selecting-block>.lx-checkbox-placeholder {
+  padding: 0.5rem 1.5rem 0 0.5rem;
+}
+
 .lx-list>li>.selecting-block>.lx-checkbox-wrapper .lx-checkbox-appearance,
 .lx-list>li>.selecting-block>.lx-radio-button-wrapper .lx-radio-button-appearance {
   margin-left: 0.5rem;
