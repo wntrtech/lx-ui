@@ -91,10 +91,13 @@ const props = defineProps({
       of: 'no',
       clearSelected: 'Attīrīt izvēles',
       selectAllRows: 'Izvēlēties visu',
+      selectWholeGroup: 'Izvēlēties visu grupu',
       loadingError: 'Notika ielādes kļūda',
       reload: 'Ielādēt atkārtoti',
       collapse: 'Sakļaut elementu',
       expand: 'Izvērst elementu',
+      openSearch: 'Atvērt meklētāju',
+      closeSearch: 'Aizvērt meklētāju',
     }),
   },
 });
@@ -578,138 +581,180 @@ function loadChildren(id) {
   emits('loadChildren', id);
 }
 
+const groupSelectionStatuses = computed(() => {
+  const res = {};
+  props.groupDefinitions?.forEach((group) => {
+    const groupItems = props.items?.filter(
+      (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
+    );
+    const groupItemsIds = groupItems?.map((o) => o[props.idAttribute]);
+    const selectedGroupItems = groupItemsIds.filter((id) => selectedItemsRaw.value[id]);
+    if (selectedGroupItems?.length === 0) {
+      res[group.id] = 'none';
+    } else if (selectedGroupItems?.length === groupItemsIds?.length) {
+      res[group.id] = 'all';
+    } else {
+      res[group.id] = 'some';
+    }
+  });
+  return res;
+});
+
+function selectSection(group) {
+  const groupItems = props.items.filter(
+    (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
+  );
+  const groupItemsIds = groupItems.map((o) => o[props.idAttribute]);
+  if (groupSelectionStatuses.value?.[group.id] === 'none') {
+    groupItemsIds.forEach((id) => {
+      selectedItemsRaw.value[id] = true;
+    });
+  } else {
+    groupItemsIds.forEach((id) => {
+      selectedItemsRaw.value[id] = false;
+    });
+  }
+}
+
+const queryInput = ref();
+const searchField = ref(false);
+
+function toggleSearch() {
+  searchField.value = !searchField.value;
+  nextTick(() => {
+    if (searchField.value) queryInput.value.focus();
+  });
+}
+
 defineExpose({ validate, cancelSelection, selectRows });
 </script>
 <template>
   <div class="lx-list-wrapper">
-    <LxToolbar class="lx-search-toolbar lx-list-toolbar" :no-borders="true">
-      <template #leftArea>
-        <LxButton
-          icon="checkbox"
-          kind="ghost"
-          v-if="
-            selectedItems.length === 0 &&
-            hasSelecting &&
-            selectingKind === 'multiple' &&
-            kind === 'default'
-          "
-          @click="selectRows()"
-          :disabled="loading || busy || queryRaw?.length > 0"
-          :title="texts.selectAllRows"
-        />
+    <div
+      class="lx-list-toolbar"
+      :class="[{ 'toolbar-selecting': hasSelecting && selectedItems?.length > 0 }]"
+    >
+      <div class="first-row">
+        <p v-if="hasSelecting && selectedItems?.length > 0">{{ selectedLabel }}</p>
 
-        <template v-if="selectedItems.length === 0 || kind === 'draggable'">
-          <lx-text-input
-            v-if="hasSearch"
-            ref="queryInput"
-            v-model="queryRaw"
-            :kind="searchSide === 'server' ? 'default' : 'search'"
+        <div class="right-area" v-if="selectedItems?.length === 0">
+          <slot name="toolbar" />
+          <div class="toolbar-search-button" :class="[{ 'is-expanded': searchField }]">
+            <LxButton
+              kind="ghost"
+              :icon="searchField ? 'close' : 'search'"
+              :title="searchField ? texts.closeSearch : texts.openSearch"
+              @click="toggleSearch"
+              v-if="hasSearch"
+            />
+          </div>
+          <LxButton
+            icon="checkbox"
+            kind="ghost"
+            v-if="
+              selectedItems.length === 0 &&
+              hasSelecting &&
+              selectingKind === 'multiple' &&
+              kind !== 'draggable'
+            "
+            @click="selectRows()"
             :disabled="loading || busy"
-            :placeholder="props.texts.placeholder"
-            role="search"
-            @keydown.enter="serverSideSearch()"
+            :title="texts.selectAllRows"
           />
-          <div class="lx-group lx-slot-wrapper">
-            <lx-button
-              v-if="searchSide === 'server' && hasSearch"
-              icon="search"
-              kind="ghost"
-              :busy="busy"
-              :disabled="loading"
-              :title="texts.search"
-              @click="serverSideSearch()"
-            />
-            <lx-button
-              v-if="query || queryRaw"
-              icon="clear"
-              kind="ghost"
-              variant="icon-only"
-              :title="texts.clear"
-              :disabled="loading || busy"
-              @click="clear()"
-            />
-          </div>
-        </template>
-        <div
-          class="lx-selection-toolbar"
-          v-if="hasSelecting && selectedItems.length > 0 && kind !== 'draggable'"
-        >
-          <div class="selection-action-text" v-if="kind !== 'treelist'">
-            <LxButton
-              :icon="
-                selectedItems?.length === items?.length
-                  ? 'checkbox-filled'
-                  : selectingKind === 'multiple'
-                  ? 'checkbox-indeterminate'
-                  : 'radiobutton-filled'
-              "
-              :title="texts.clearSelected"
-              @click="cancelSelection()"
-            />
-            <p>{{ selectedLabel }}</p>
-          </div>
-          <div class="selection-action-buttons">
-            <LxButton
-              v-for="selectAction in selectionActionDefinitions"
-              :key="selectAction.id"
-              :icon="selectAction.icon"
-              :label="selectAction.name"
-              :title="selectAction.name"
-              :destructive="selectAction.destructive"
-              :disabled="selectAction.disabled"
-              @click="selectionActionClick(selectAction.id, selectedItems)"
-            />
-          </div>
-          <div class="selection-action-buttons-small">
-            <LxDropDownMenu>
-              <LxButton icon="menu" />
-              <template #panel>
-                <LxButton
-                  v-for="selectAction in selectionActionDefinitions"
-                  :key="selectAction.id"
-                  :icon="selectAction.icon"
-                  :label="selectAction.name"
-                  :title="selectAction.name"
-                  :destructive="selectAction.destructive"
-                  :disabled="selectAction.disabled"
-                  @click="selectionActionClick(selectAction.id, selectedItems)"
-                />
-              </template>
-            </LxDropDownMenu>
-          </div>
-          <div class="selection-action-text" v-if="kind === 'treelist'">
-            <p>{{ selectedLabel }}</p>
-            <LxButton
-              :icon="
-                selectedItems?.length === items?.length
-                  ? 'checkbox-filled'
-                  : selectingKind === 'multiple'
-                  ? 'checkbox-indeterminate'
-                  : 'radiobutton-filled'
-              "
-              :title="texts.clearSelected"
-              @click="cancelSelection()"
-            />
-          </div>
         </div>
-      </template>
-      <template #rightArea v-if="selectedItems.length === 0 || kind === 'draggable'">
-        <slot name="toolbar" />
-        <LxButton
-          icon="checkbox"
-          kind="ghost"
-          v-if="
-            selectedItems.length === 0 &&
-            hasSelecting &&
-            selectingKind === 'multiple' &&
-            kind === 'treelist'
-          "
-          @click="selectRows()"
-          :disabled="loading || busy || queryRaw?.length > 0"
-          :title="texts.selectAllRows"
+        <div class="right-area" v-else-if="selectedItems?.length > 0">
+          <div class="lx-selection-toolbar" v-if="hasSelecting">
+            <div class="selection-action-buttons">
+              <LxButton
+                v-for="selectAction in selectionActionDefinitions"
+                :key="selectAction.id"
+                :icon="selectAction.icon"
+                :label="selectAction.name"
+                :title="selectAction.name"
+                :destructive="selectAction.destructive"
+                :disabled="selectAction.disabled"
+                @click="selectionActionClick(selectAction.id, selectedItems)"
+              />
+            </div>
+            <div class="selection-action-buttons-small">
+              <LxDropDownMenu>
+                <LxButton icon="menu" />
+                <template #panel>
+                  <LxButton
+                    v-for="selectAction in selectionActionDefinitions"
+                    :key="selectAction.id"
+                    :icon="selectAction.icon"
+                    :label="selectAction.name"
+                    :title="selectAction.name"
+                    :destructive="selectAction.destructive"
+                    :disabled="selectAction.disabled"
+                    @click="selectionActionClick(selectAction.id, selectedItems)"
+                  />
+                </template>
+              </LxDropDownMenu>
+            </div>
+          </div>
+          <div class="toolbar-search-button" :class="[{ 'is-expanded': searchField }]">
+            <LxButton
+              class="toolbar-search-button"
+              :class="[{ 'is-expanded': searchField }]"
+              kind="ghost"
+              :icon="searchField ? 'close' : 'search'"
+              @click="toggleSearch"
+              v-if="hasSearch"
+            />
+          </div>
+          <LxButton
+            v-if="hasSelecting && selectedItems.length > 0 && kind !== 'draggable'"
+            :icon="
+              selectedItems?.length === items?.length
+                ? 'checkbox-filled'
+                : selectingKind === 'multiple'
+                ? 'checkbox-indeterminate'
+                : 'radiobutton-filled'
+            "
+            :title="texts.clearSelected"
+            @click="cancelSelection()"
+          />
+        </div>
+      </div>
+      <div
+        class="second-row"
+        v-if="hasSearch && searchField"
+        :class="[{ 'second-row-selecting': hasSelecting }]"
+      >
+        <lx-text-input
+          v-if="hasSearch"
+          ref="queryInput"
+          v-model="queryRaw"
+          :kind="searchSide === 'server' ? 'default' : 'search'"
+          :disabled="loading || busy"
+          :placeholder="props.texts.placeholder"
+          role="search"
+          @keydown.enter="serverSideSearch()"
         />
-      </template>
-    </LxToolbar>
+        <div class="lx-group lx-slot-wrapper">
+          <lx-button
+            v-if="searchSide === 'server' && hasSearch"
+            icon="search"
+            kind="ghost"
+            :busy="busy"
+            :disabled="loading"
+            :title="texts.search"
+            @click="serverSideSearch()"
+          />
+          <lx-button
+            v-if="query || queryRaw"
+            icon="clear"
+            kind="ghost"
+            variant="icon-only"
+            :title="texts.clear"
+            :disabled="loading || busy"
+            @click="clear()"
+          />
+        </div>
+      </div>
+    </div>
     <div v-if="groupDefinitions">
       <ul
         :id="id"
@@ -722,23 +767,6 @@ defineExpose({ validate, cancelSelection, selectRows });
             v-for="item in itemsArray[prepareCode('lx_list_nullable_group')]"
             :key="item[idAttribute]"
           >
-            <div class="selecting-block" v-if="hasSelecting">
-              <LxRadioButton
-                v-if="selectingKind === 'single'"
-                :id="`select-${id}-${item[idAttribute]}`"
-                v-model="selectedItemsRaw[item[idAttribute]]"
-                :value="item[idAttribute]"
-                @click="selectRow(item[idAttribute])"
-                :disabled="loading || busy || queryRaw?.length > 0"
-              />
-              <LxCheckbox
-                v-else
-                :id="`select-${id}-${item[idAttribute]}`"
-                v-model="selectedItemsRaw[item[idAttribute]]"
-                :value="item[idAttribute]"
-                :disabled="loading || busy || queryRaw?.length > 0"
-              />
-            </div>
             <LxListItem
               :id="item[idAttribute]"
               :label="item[primaryAttribute]"
@@ -760,6 +788,23 @@ defineExpose({ validate, cancelSelection, selectRows });
                 <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
               </template>
             </LxListItem>
+            <div class="selecting-block" v-if="hasSelecting">
+              <LxRadioButton
+                v-if="selectingKind === 'single'"
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedItemsRaw[item[idAttribute]]"
+                :value="item[idAttribute]"
+                @click="selectRow(item[idAttribute])"
+                :disabled="loading || busy"
+              />
+              <LxCheckbox
+                v-else
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedItemsRaw[item[idAttribute]]"
+                :value="item[idAttribute]"
+                :disabled="loading || busy"
+              />
+            </div>
           </li>
         </template>
         <template v-if="kind === 'draggable'">
@@ -846,6 +891,11 @@ defineExpose({ validate, cancelSelection, selectRows });
           "
           :badge-type="group?.badgeType"
           :label="group.name"
+          :id="group.id"
+          :has-select-button="hasSelecting && selectingKind === 'multiple'"
+          :select-status="groupSelectionStatuses?.[group.id]"
+          :texts="{ selectWholeGroup: texts.selectWholeGroup, clearSelected: texts.clearSelected }"
+          @select-all="selectSection(group)"
         >
           <ul
             :id="id"
@@ -860,23 +910,6 @@ defineExpose({ validate, cancelSelection, selectRows });
               v-for="item in filteredGroupedItems[prepareCode(group.id)]"
               :key="item[idAttribute]"
             >
-              <div class="selecting-block" v-if="hasSelecting">
-                <LxRadioButton
-                  v-if="selectingKind === 'single'"
-                  :id="`select-${id}-${item[idAttribute]}`"
-                  v-model="selectedItemsRaw[item[idAttribute]]"
-                  :value="item[idAttribute]"
-                  @click="selectRow(item[idAttribute])"
-                  :disabled="loading || busy || queryRaw?.length > 0"
-                />
-                <LxCheckbox
-                  v-else
-                  :id="`select-${id}-${item[idAttribute]}`"
-                  v-model="selectedItemsRaw[item[idAttribute]]"
-                  :value="item[idAttribute]"
-                  :disabled="loading || busy || queryRaw?.length > 0"
-                />
-              </div>
               <lx-list-item
                 :id="item[idAttribute]"
                 :label="item[primaryAttribute]"
@@ -898,6 +931,23 @@ defineExpose({ validate, cancelSelection, selectRows });
                   <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                 </template>
               </lx-list-item>
+              <div class="selecting-block" v-if="hasSelecting">
+                <LxRadioButton
+                  v-if="selectingKind === 'single'"
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  @click="selectRow(item[idAttribute])"
+                  :disabled="loading || busy"
+                />
+                <LxCheckbox
+                  v-else
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  :disabled="loading || busy"
+                />
+              </div>
             </li>
           </ul>
         </lx-expander>
@@ -911,23 +961,6 @@ defineExpose({ validate, cancelSelection, selectRows });
     >
       <template v-if="kind === 'default'">
         <li v-for="item in filteredItems" :key="item[idAttribute]">
-          <div class="selecting-block" v-if="hasSelecting">
-            <LxRadioButton
-              v-if="selectingKind === 'single'"
-              :id="`select-${id}-${item[idAttribute]}`"
-              v-model="selectedItemsRaw[item[idAttribute]]"
-              :value="item[idAttribute]"
-              @click="selectRow(item[idAttribute])"
-              :disabled="loading || busy || queryRaw?.length > 0"
-            />
-            <LxCheckbox
-              v-else
-              :id="`select-${id}-${item[idAttribute]}`"
-              v-model="selectedItemsRaw[item[idAttribute]]"
-              :value="item[idAttribute]"
-              :disabled="loading || busy || queryRaw?.length > 0"
-            />
-          </div>
           <LxListItem
             :id="item[idAttribute]"
             :label="item[primaryAttribute]"
@@ -949,6 +982,23 @@ defineExpose({ validate, cancelSelection, selectRows });
               <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
             </template>
           </LxListItem>
+          <div class="selecting-block" v-if="hasSelecting">
+            <LxRadioButton
+              v-if="selectingKind === 'single'"
+              :id="`select-${id}-${item[idAttribute]}`"
+              v-model="selectedItemsRaw[item[idAttribute]]"
+              :value="item[idAttribute]"
+              @click="selectRow(item[idAttribute])"
+              :disabled="loading || busy"
+            />
+            <LxCheckbox
+              v-else
+              :id="`select-${id}-${item[idAttribute]}`"
+              v-model="selectedItemsRaw[item[idAttribute]]"
+              :value="item[idAttribute]"
+              :disabled="loading || busy"
+            />
+          </div>
         </li>
       </template>
       <draggable
@@ -1142,25 +1192,46 @@ defineExpose({ validate, cancelSelection, selectRows });
       v-else-if="kind === 'treelist' && queryRaw?.length > 0 && searchSide === 'client'"
       class="tree-list-search"
     >
-      <LxListItem
+      <div
         v-for="element in filteredTreeItems"
         :key="element?.[idAttribute]"
-        :id="element[idAttribute]"
-        :label="element[primaryAttribute]"
-        :description="element[secondaryAttribute]"
-        :value="element"
-        :href="element[hrefAttribute]"
-        :actionDefinitions="actionDefinitions"
-        :icon="element[iconAttribute] ? element[iconAttribute] : icon"
-        :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
-        :tooltip="element[tooltipAttribute]"
-        :searchString="query"
-        :clickable="element[clickableAttribute]"
-        :category="element[categoryAttribute]"
-        :disabled="loading || busy"
-        @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
-        @action-click="actionClicked"
-      />
+        class="tree-list-search-item"
+      >
+        <LxListItem
+          :id="element[idAttribute]"
+          :label="element[primaryAttribute]"
+          :description="element[secondaryAttribute]"
+          :value="element"
+          :href="element[hrefAttribute]"
+          :actionDefinitions="actionDefinitions"
+          :icon="element[iconAttribute] ? element[iconAttribute] : icon"
+          :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
+          :tooltip="element[tooltipAttribute]"
+          :searchString="query"
+          :clickable="element[clickableAttribute]"
+          :category="element[categoryAttribute]"
+          :disabled="loading || busy"
+          @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
+          @action-click="actionClicked"
+        />
+        <div class="selecting-block" v-if="hasSelecting">
+          <LxRadioButton
+            v-if="selectingKind === 'single'"
+            :id="`select-${id}-${element[idAttribute]}`"
+            v-model="selectedItemsRaw[element[idAttribute]]"
+            :value="element[idAttribute]"
+            @click="selectRow(element[idAttribute])"
+            :disabled="loading || busy"
+          />
+          <LxCheckbox
+            v-else
+            :id="`select-${id}-${element[idAttribute]}`"
+            v-model="selectedItemsRaw[element[idAttribute]]"
+            :value="element[idAttribute]"
+            :disabled="loading || busy"
+          />
+        </div>
+      </div>
     </div>
     <LxEmptyState
       v-if="items?.length === 0 && !(loading || busy)"

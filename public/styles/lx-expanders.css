@@ -56,15 +56,13 @@
 
 .lx-expander .lx-chevron-icon {
   fill: var(--color-foreground);
-  position: absolute;
-  top: 50%;
-  right: 1rem;
-  -webkit-transform: translateY(-50%);
-  transform: translateY(-50%);
-  height: 1rem;
-  width: 1rem;
+  width: var(--row-size);
+  height: var(--row-size);
   z-index: 1;
   pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lx-expander[data-disabled]>.lx-head>.lx-chevron-icon,
@@ -498,4 +496,17 @@
 .lx-expander>header .lx-group {
   display: flex;
   align-items: center;
+}
+
+.lx-list-expander{
+  display: flex;
+}
+
+.lx-expander .lx-head{
+  padding-right: 0;
+}
+
+.lx-expander .lx-chevron-icon svg{
+  height: 1rem;
+  width: 1rem;
 }

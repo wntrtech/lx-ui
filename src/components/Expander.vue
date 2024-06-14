@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { shallowRef, watch, computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
+import LxButton from '@/components/Button.vue';
 import useLx from '@/hooks/useLx';
 
 const props = defineProps({
@@ -22,9 +23,18 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // 'default' or 'highlighted'
   badge: { type: String, default: '' },
   badgeType: { type: String, default: 'default' }, // default, good, info, warning, important},
+  hasSelectButton: { type: Boolean, default: false },
+  selectStatus: { type: String, default: 'none' }, // none, some, all
+  texts: {
+    type: Object,
+    default: () => ({
+      selectWholeGroup: 'Izvēlēties visu',
+      clearSelected: 'Attīrīt izvēles',
+    }),
+  },
 });
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'selectAll']);
 
 const isExpandedRaw = shallowRef(props.modelValue);
 
@@ -54,6 +64,11 @@ const selectedIcon = computed(() => {
   }
   return 'chevron-down';
 });
+
+function selectExpander(event, id) {
+  event.stopPropagation();
+  emits('selectAll', id);
+}
 </script>
 
 <template>
@@ -114,6 +129,19 @@ const selectedIcon = computed(() => {
         <div class="lx-chevron-icon">
           <lx-icon :value="selectedIcon" />
         </div>
+        <LxButton
+          v-if="hasSelectButton"
+          kind="ghost"
+          :icon="
+            selectStatus === 'all'
+              ? 'checkbox-filled'
+              : selectStatus === 'some'
+              ? 'checkbox-indeterminate'
+              : 'checkbox'
+          "
+          :title="selectStatus === 'none' ? texts.selectWholeGroup : texts.clearSelected"
+          @click="selectExpander($event, id)"
+        />
       </template>
     </header>
     <transition name="expander-transition">
