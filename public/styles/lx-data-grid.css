@@ -595,8 +595,12 @@
   cursor: help;
 }
 
-.lx-info-wrapper:hover {
+.lx:not(.lx-theme-contrast) .lx-info-wrapper:hover {
   background-color: var(--color-grid-hover-background);
+}
+
+.lx.lx-theme-contrast .lx-expander header.lx-head:hover .lx-header-data .lx-description {
+  color: var(--color-region-hover-foreground);
 }
 
 .lx .lx-info-wrapper-panel .lx-row>.lx-label {

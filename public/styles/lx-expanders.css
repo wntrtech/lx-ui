@@ -445,7 +445,7 @@
   width: 100%;
 }
 
-.lx .lx-expander header.lx-head .lx-group div {
+.lx .lx-expander header.lx-head .lx-group .lx-header-data {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -498,15 +498,32 @@
   align-items: center;
 }
 
-.lx-list-expander{
+.lx-list-expander {
   display: flex;
 }
 
-.lx-expander .lx-head{
+.lx-expander .lx-head {
   padding-right: 0;
 }
 
-.lx-expander .lx-chevron-icon svg{
+.lx-expander .lx-chevron-icon svg {
   height: 1rem;
   width: 1rem;
+}
+
+.lx-expander-additional-info {
+  display: flex;
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  margin-left: 0.5rem;
+}
+
+.lx-expander-additional-info>.lx-info-wrapper {
+  width: inherit;
+  height: inherit;
+}
+
+.lx-expander-additional-info svg.lx-info-icon {
+  fill: var(--color-label);
 }

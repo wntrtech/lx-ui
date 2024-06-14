@@ -869,7 +869,7 @@ code {
   position: inherit;
 }
 
-.lx-info-wrapper:hover {
+.lx:not(.lx-theme-contrast) .lx-info-wrapper:hover {
   background-color: var(--color-grid-hover-background);
 }
 

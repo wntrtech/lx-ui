@@ -2,6 +2,7 @@
 import { shallowRef, watch, computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import useLx from '@/hooks/useLx';
 
 const props = defineProps({
@@ -107,9 +108,17 @@ function selectExpander(event, id) {
             <lx-icon customClass="lx-modifier-icon" :value="icon" :icon-set="iconSet" />
             <div class="lx-indicator"></div>
           </template>
-          <div>
+          <div class="lx-header-data">
             <h4 v-if="label">{{ label }}</h4>
             <p v-if="description" class="lx-description">{{ description }}</p>
+          </div>
+          <div class="lx-expander-additional-info" v-if="$slots.additionalInfo">
+            <LxInfoWrapper :disabled="disabled">
+              <LxIcon value="info" :icon-set="iconSet" customClass="lx-info-icon" />
+              <template #panel>
+                <slot name="additionalInfo"> </slot>
+              </template>
+            </LxInfoWrapper>
           </div>
         </div>
         <p
