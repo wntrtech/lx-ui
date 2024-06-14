@@ -363,6 +363,7 @@ function selectAll() {
   </span>
   <template v-else>
     <div
+      v-if="hasSearch"
       class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
       :class="[{ 'select-all': hasSelectAll && kind === 'multiple' }]"
     >

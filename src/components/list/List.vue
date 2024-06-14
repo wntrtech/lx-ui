@@ -650,9 +650,11 @@ function toggleSearch() {
 
 defineExpose({ validate, cancelSelection, selectRows });
 </script>
+
 <template>
   <div class="lx-list-wrapper">
     <div
+      v-if="$slots.toolbar || hasSelecting || hasSearch"
       class="lx-list-toolbar"
       :class="[{ 'toolbar-selecting': hasSelecting && selectedItems?.length > 0 }]"
     >

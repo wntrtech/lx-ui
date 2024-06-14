@@ -368,7 +368,7 @@ function selectAll() {
     </span>
 
     <template v-else>
-      <div class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search">
+      <div v-if="hasSearch" class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search">
         <LxButton
           kind="ghost"
           :icon="

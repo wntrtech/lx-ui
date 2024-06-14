@@ -9,7 +9,7 @@
 }
 
 .lx-list-wrapper .lx-list-toolbar {
-  margin-bottom: var(--gap);
+  margin-bottom: var(--gap-buttons);
 }
 
 .lx-lists-container h2 {
