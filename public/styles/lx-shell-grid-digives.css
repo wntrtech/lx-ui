@@ -365,6 +365,26 @@
   display: block;
 }
 
+.lx-layout-digives .person-data-section .lx-dropdown-default .popper .lx-value-picker-item,
+.lx-layout-digives nav .nav-bar-user-info .lx-dropdown-default .popper .lx-value-picker-item {
+  flex-direction: column;
+  align-items: start;
+}
+
+.lx-layout-digives .person-data-section .lx-dropdown-default .popper .lx-value-picker-item>.lx-description,
+.lx-layout-digives nav .nav-bar-user-info .lx-dropdown-default .popper .lx-value-picker-item>.lx-description{
+  font-weight: 200;
+  font-size: 0.8em;
+}
+
+.lx-header-digives .lx-upper-row .lx-field-wrapper .lx-dropdown-default-panel{
+  background-color: var(--color-region-2);
+}
+
+.lx-layout.lx-layout-default.lx-layout-digives > nav .lx-nav-panel.lx-responsive {
+  display: none;
+}
+
 @media (max-width: 1200px) {
   .lx {
     --nav-row-size: 6rem;
@@ -433,5 +453,9 @@
 
   .lx-layout.lx-collapsed > nav {
     z-index: 300;
+  }
+
+  .lx-layout.lx-layout-default.lx-layout-digives > nav .lx-nav-panel.lx-responsive {
+    display: flex;
   }
 }

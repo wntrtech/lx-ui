@@ -3,6 +3,7 @@ import { computed, ref, watch } from 'vue';
 
 import LxButton from '@/components/Button.vue';
 import LxDropDown from '@/components/Dropdown.vue';
+import LxValuePicker from '@/components/ValuePicker.vue';
 
 const props = defineProps({
   navItems: {
@@ -22,6 +23,22 @@ const props = defineProps({
   contextPersonsInfo: { type: Array, default: null },
   selectedContextPerson: { type: Object, default: null },
   selectedAlternativeProfile: { type: Object, default: null },
+  texts: {
+    type: Object,
+    required: false,
+    default: () => ({
+      defaultBack: 'Atpakaļ',
+      logOut: 'Iziet',
+      openAlerts: 'Atvērt sarakstu',
+      helpTitle: 'Palīdzība',
+      alertsTitle: 'Paziņojumi',
+      languagesTitle: 'Valodu izvēle',
+      contextPersonTitle: 'Saistītā persona',
+      userTitle: 'Lietotājs',
+      contextPersonsLabel: 'Izvēlieties personu',
+      alternativeProfilesLabel: 'Izvēlieties saistīto personu',
+    }),
+  },
 });
 
 const navItemsPrimary = computed(() =>
@@ -131,36 +148,49 @@ const contextPersonComputed = computed(() => {
   <div class="lx-nav-panel lx-responsive">
     <ul class="lx-nav-group">
       <div v-if="alternativeProfilesInfo" class="nav-bar-user-info nav-bar-profile">
-        <p>Lietotājs</p>
+        <p>{{ texts?.userTitle }}</p>
         <li>
           <LxDropDown :items="alternativeProfilesComputed" v-model="dropDownModelAlternatives" />
         </li>
         <div class="color-border"></div>
       </div>
-      <div v-else-if="!alternativeProfilesInfo" class="nav-bar-user-info nav-bar-profile">
-        <p>Lietotājs</p>
+      <div
+        v-else-if="!alternativeProfilesInfo && userInfo"
+        class="nav-bar-user-info nav-bar-profile"
+      >
+        <p>{{ texts?.userTitle }}</p>
         <li>
           <p>{{ fullName }}</p>
-          <p>Roles</p>
+          <p>{{ userInfo?.description }}</p>
         </li>
         <div class="color-border"></div>
       </div>
       <div v-if="contextPersonsInfo && contextPersonsInfo.length > 0" class="nav-bar-user-info">
-        <p>Saistīto personu dati</p>
+        <p>{{ texts?.contextPersonTitle }}</p>
         <template v-if="contextPersonsInfo.length === 1">
           <li>
             <div class="header-profile-name">
               {{ contextPersonsInfo[0]?.name }}
             </div>
             <div class="header-profile-role">
-              {{ contextPersonsInfo[0]?.role }}
+              {{ contextPersonsInfo[0]?.description }}
             </div>
           </li>
           <li></li
         ></template>
 
         <li v-if="contextPersonsInfo.length > 1">
-          <LxDropDown :items="contextPersonComputed" v-model="dropDownModel" />
+          <LxValuePicker
+            variant="dropdown-custom"
+            :items="contextPersonComputed"
+            v-model="dropDownModel"
+            :placeholder="texts?.contextPersonsLabel"
+          >
+            <template #customItem="{ name, description }">
+              <div>{{ name }}</div>
+              <div class="lx-description">{{ description }}</div>
+            </template>
+          </LxValuePicker>
         </li>
       </div>
       <li

@@ -1,9 +1,11 @@
 <script setup>
-import { computed, watch, ref } from 'vue';
+import { computed, watch, ref, onMounted } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDown from '@/components/Dropdown.vue';
+import LxValuePicker from '@/components/ValuePicker.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
+import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
   systemNameShort: { type: String, default: null },
@@ -56,11 +58,16 @@ const props = defineProps({
       alertsTitle: 'Paziņojumi',
       languagesTitle: 'Valodu izvēle',
       contextPersonTitle: 'Saistītā persona',
+      userTitle: 'Lietotājs',
+      contextPersonsLabel: 'Izvēlieties personu',
+      alternativeProfilesLabel: 'Izvēlieties saistīto personu',
+      menu: 'Izvēlne',
     }),
   },
 });
 
 const vCleanHtml = buildVueDompurifyHTMLDirective();
+const windowSize = useWindowSize();
 
 const navItemsUserMenu = computed(() =>
   props.navItems?.filter((item) => item.type === 'buttons' || item.type === 'helper')
@@ -165,6 +172,14 @@ const contextPersonComputed = computed(() => {
   if (!props.contextPersonsInfo) return '';
   return props.contextPersonsInfo;
 });
+
+onMounted(() => {
+  if (windowSize.width.value < 1200 && !props.navBarSwitch) {
+    emits('update:nav-bar-switch', true);
+  } else if (props.navBarSwitch && windowSize.width.value >= 1200) {
+    emits('update:nav-bar-switch', false);
+  }
+});
 </script>
 <template>
   <div
@@ -192,20 +207,20 @@ const contextPersonComputed = computed(() => {
     >
       <div class="header-profile-section">
         <span class="border-span">
-          <div class="header-label">Lietotājs</div>
+          <div class="header-label">{{ texts.userTitle }}</div>
           <template v-if="!alternativeProfilesInfo">
             <div class="header-profile-name">
               {{ fullName }}
             </div>
             <div class="header-profile-role">
-              {{ userInfo?.role }}
+              {{ userInfo?.description }}
             </div>
           </template>
           <div class="header-profile-name" v-if="alternativeProfilesInfo">
             <LxDropDown
               :items="alternativeProfilesComputed"
               v-model="dropDownModelAlternatives"
-              placeholder="Izvēlēties lietotāju"
+              :placeholder="texts?.alternativeProfilesLabel"
             />
           </div>
         </span>
@@ -223,15 +238,21 @@ const contextPersonComputed = computed(() => {
             {{ contextPersonsInfo[0]?.name }}
           </div>
           <div class="header-profile-role">
-            {{ contextPersonsInfo[0]?.role }}
+            {{ contextPersonsInfo[0]?.description }}
           </div>
         </template>
-        <LxDropDown
+        <LxValuePicker
+          variant="dropdown-custom"
           :items="contextPersonComputed"
           v-model="dropDownModel"
           v-if="contextPersonsInfo.length > 1"
-          placeholder="Izvēlēties personu"
-        />
+          :placeholder="texts?.contextPersonsLabel"
+        >
+          <template #customItem="{ name, description }">
+            <div>{{ name }}</div>
+            <div class="lx-description">{{ description }}</div>
+          </template>
+        </LxValuePicker>
       </div>
     </div>
     <div class="lx-lower-row">
@@ -239,7 +260,7 @@ const contextPersonComputed = computed(() => {
         <div class="lower-button" v-if="!hideNavBar">
           <LxButton
             icon="menu"
-            label="Izvēlne"
+            :label="texts?.menu"
             @click="navToggle"
             kind="ghost"
             iconVariant="gradient-brand"

@@ -159,6 +159,8 @@ const props = defineProps({
       confirmModalPrimaryDefaultLabel: 'Jā',
       previousAlertTitle: 'Iepriekšējais paziņojums',
       nextAlertTitle: 'Nākamais paziņojums',
+      userTitle: 'Lietotājs',
+      menu: 'Izvēlne',
     }),
   },
 });
@@ -700,6 +702,7 @@ onMounted(() => {
           :userInfo="userInfo"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
+          :texts="texts"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
         />
