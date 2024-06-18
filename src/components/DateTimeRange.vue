@@ -49,6 +49,8 @@ const calendarValue = ref({ start: null, end: null });
 const disableMinMax = ref(false);
 const dropDownMenu = ref();
 
+const { dateFormat, dateTimeFormat } = useLx().getGlobals();
+
 function updateEndValue(endValue) {
   if (props.kind === 'date') {
     if (typeof endValue !== 'string') {
@@ -95,25 +97,27 @@ const model = computed({
 });
 
 function formatToLocale(string) {
-  let res = props.locale?.masks?.input || 'DD.MM.YYYY';
+  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
+  let res = props.locale?.masks?.input || dateFormatToUse;
   const date = new Date(string);
   const year = date?.getFullYear();
   let month = date?.getMonth();
   if (month || month === 0) month += 1;
   const day = date?.getDate();
   res = res
-    .replace('YYYY', year)
+    .replace('yyyy', year)
     .replace('MM', month > 9 ? month : `0${month}`)
-    .replace('DD', day > 9 ? day : `0${day}`);
+    .replace('dd', day > 9 ? day : `0${day}`);
   if (day && month && year) return res;
   return null;
 }
 
 function formatFromLocale(string) {
-  const res = props.locale?.masks?.input || 'DD.MM.YYYY';
-  const day = string?.substr(res?.indexOf('DD'), 2);
+  const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
+  const res = props.locale?.masks?.input || dateTimeFormatToUse;
+  const day = string?.substr(res?.indexOf('dd'), 2);
   const month = string?.substr(res?.indexOf('MM'), 2);
-  const year = string?.substr(res?.indexOf('YYYY'), 4);
+  const year = string?.substr(res?.indexOf('yyyy'), 4);
   if (isDateValid(`${year}-${month}-${day}`)) {
     return `${year}-${month}-${day}`;
   }
@@ -195,7 +199,8 @@ watch(
 );
 
 function getModelConfigMask() {
-  if (props.kind === 'date') return 'DD.MM.YYYY';
+  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
+  if (props.kind === 'date') return dateFormatToUse;
   return null;
 }
 
@@ -206,10 +211,8 @@ const modelConfig = computed(() => ({
 }));
 
 const placeholderComputed = computed(() => {
-  if (props.placeholder !== null) {
-    return props.placeholder;
-  }
-  if (props.kind === 'date') return 'dd.mm.gggg';
+  if (props.placeholder !== null) return props.placeholder;
+  if (props.kind === 'date') return 'dd.mm.gggg.';
   return null;
 });
 
@@ -241,11 +244,14 @@ const localeComputed = computed(() => (props.locale?.locale ? props.locale?.loca
 const localeFirstDay = computed(() =>
   props.locale?.firstDayOfTheWeek ? props.locale?.firstDayOfTheWeek : 2
 );
-const localeMasks = computed(() =>
-  props.locale?.masks
+const localeMasks = computed(() => {
+  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
+  const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
+
+  return props.locale?.masks
     ? props?.locale?.masks
-    : { inputDateTime24hr: ['DD.MM.YYYY HH:mm', 'DD.MM.YYYY'] }
-);
+    : { inputDateTime24hr: [dateTimeFormatToUse, dateFormatToUse] };
+});
 
 function getNameStart() {
   if (props.startDate && props.kind === 'date') return formatDate(new Date(props.startDate));
@@ -755,14 +761,14 @@ defineExpose({ focus });
                 @change="changeEnd()"
                 @keydown.tab="openDropDownMenu()"
               />
-              <lx-icon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
-              <lx-icon
+              <LxIcon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
+              <LxIcon
                 v-show="!invalid && kind !== 'time'"
                 customClass="lx-date-time-icon"
                 value="calendar"
               />
-              <lx-icon v-show="invalid" customClass="lx-invalidation-icon-end" value="invalid" />
-              <lx-icon
+              <LxIcon v-show="invalid" customClass="lx-invalidation-icon-end" value="invalid" />
+              <LxIcon
                 v-show="!invalid && kind !== 'time'"
                 customClass="lx-date-time-icon-end"
                 value="calendar"
@@ -770,7 +776,7 @@ defineExpose({ focus });
             </div>
           </div>
           <template #clickSafePanel>
-            <date-picker
+            <DatePicker
               ref="dp"
               v-model.range="calendarValue"
               :model-config="modelConfig"
@@ -819,7 +825,7 @@ defineExpose({ focus });
                   />
                 </div>
               </template>
-            </date-picker>
+            </DatePicker>
           </template>
         </LxDropDownMenu>
       </div>

@@ -120,7 +120,7 @@ test('LxDateTimePicker modelValue', async () => {
     },
   });
   await wrapper.trigger('');
-  expect(wrapper.find('input').element.value).toBe('18.02.2002');
+  expect(wrapper.find('input').element.value).toBe('18.02.2002.');
 });
 
 test('LxDateTimePicker texts.todayButton', () => {
@@ -248,15 +248,15 @@ test('LxDateTimePicker max/min', async () => {
   });
 
   await wrapper.setProps({ modelValue: '2002-02-20' });
-  expect(wrapper.find('input').element.value).toBe('20.02.2002');
+  expect(wrapper.find('input').element.value).toBe('20.02.2002.');
 
   //   Set prop higher than maxDate
   wrapper.setProps({ modelValue: '2002-03-20' });
-  expect(wrapper.find('input').element.value).toBe('20.02.2002');
+  expect(wrapper.find('input').element.value).toBe('20.02.2002.');
 
   //   Set prop below than minDate
   wrapper.setProps({ modelValue: '2002-01-20' });
-  expect(wrapper.find('input').element.value).toBe('20.02.2002');
+  expect(wrapper.find('input').element.value).toBe('20.02.2002.');
 });
 
 // TODO: tests for kind time, (probably need to fix component first)
@@ -347,10 +347,10 @@ test('LxDateTimePicker modelValue change', async () => {
     },
   });
   await wrapper.trigger('');
-  expect(wrapper.find('input').element.value).toBe('18.02.2002');
+  expect(wrapper.find('input').element.value).toBe('18.02.2002.');
   await wrapper.setProps({ modelValue: '2002-02-19' });
   await wrapper.trigger('');
-  expect(wrapper.find('input').element.value).toBe('19.02.2002');
+  expect(wrapper.find('input').element.value).toBe('19.02.2002.');
 });
 
 test('LxDateTimePicker modelValue change to null', async () => {
@@ -404,7 +404,7 @@ test('LxDateTimePicker modelValue change to undefined and back to date', async (
   await wrapper.setProps({ modelValue: undefined });
   expect(wrapper.find('input').element.value).toBe('');
   await wrapper.setProps({ modelValue: '2002-02-18' });
-  expect(wrapper.find('input').element.value).toBe('18.02.2002');
+  expect(wrapper.find('input').element.value).toBe('18.02.2002.');
 });
 
 test('LxDateTimePicker modelValue change to null and back to date', async () => {
@@ -419,7 +419,7 @@ test('LxDateTimePicker modelValue change to null and back to date', async () => 
   await wrapper.setProps({ modelValue: null });
   expect(wrapper.find('input').element.value).toBe('');
   await wrapper.setProps({ modelValue: '2002-02-18' });
-  expect(wrapper.find('input').element.value).toBe('18.02.2002');
+  expect(wrapper.find('input').element.value).toBe('18.02.2002.');
 });
 
 test('LxDateTimePicker modelValue change to empty string and back to empty string', async () => {

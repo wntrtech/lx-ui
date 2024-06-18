@@ -44,6 +44,8 @@ const valueText = ref(new Date());
 const inputRaw = ref();
 const dateNow = new Date();
 
+const { dateFormat, dateTimeFormat } = useLx().getGlobals();
+
 function activate() {
   if (props.kind === 'time') {
     if (props.modelValue?.length === 5) {
@@ -61,14 +63,17 @@ activate();
 const emits = defineEmits(['update:modelValue']);
 
 function getModelConfigMask() {
+  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
+  const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
+
   switch (props.kind) {
     case 'date':
-      return 'DD.MM.YYYY';
+      return dateFormatToUse;
     case 'time':
       return 'HH:mm';
     case 'dateTime':
     case 'date-time':
-      return 'DD.MM.YYYY HH:mm';
+      return dateTimeFormatToUse;
     default:
       return null;
   }
@@ -78,11 +83,14 @@ const localeComputed = computed(() => (props.locale?.locale ? props.locale?.loca
 const localeFirstDay = computed(() =>
   props.locale?.firstDayOfTheWeek ? props.locale?.firstDayOfTheWeek : 2
 );
-const localeMasks = computed(() =>
-  props.locale?.masks
+const localeMasks = computed(() => {
+  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
+  const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
+
+  return props.locale?.masks
     ? props?.locale?.masks
-    : { inputDateTime24hr: ['DD.MM.YYYY HH:mm', 'DD.MM.YYYY'] }
-);
+    : { inputDateTime24hr: [dateFormatToUse, dateTimeFormatToUse] };
+});
 
 const modelConfig = computed(() => ({
   type: 'string',
@@ -97,12 +105,12 @@ const placeholderComputed = computed(() => {
 
   switch (props.kind) {
     case 'date':
-      return 'dd.mm.gggg';
+      return 'dd.mm.gggg.';
     case 'time':
       return 'st:mi';
     case 'dateTime':
     case 'date-time':
-      return 'dd.mm.gggg st:mi';
+      return 'dd.mm.gggg. st:mi';
     default:
       return null;
   }
@@ -112,9 +120,9 @@ function validateIfExact() {
   if (props.kind === 'date') {
     if (props.clearIfNotExact) {
       const date = inputRaw.value;
-      const day = date?.substr(props.locale?.masks?.input?.indexOf('DD'), 2);
+      const day = date?.substr(props.locale?.masks?.input?.indexOf('dd'), 2);
       const month = date?.substr(props.locale?.masks?.input?.indexOf('MM'), 2);
-      const year = date?.substr(props.locale?.masks?.input?.indexOf('YYYY'), 4);
+      const year = date?.substr(props.locale?.masks?.input?.indexOf('yyyy'), 4);
       if (!isDateValid(`${year}-${month}-${day}`)) {
         valueText.value = null;
         inputRaw.value = null;
@@ -136,9 +144,9 @@ function validateIfExact() {
   if (props.kind === 'dateTime' || props.kind === 'date-time') {
     if (props.clearIfNotExact) {
       const date = inputRaw.value;
-      const day = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('DD'), 2);
+      const day = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('dd'), 2);
       const month = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('MM'), 2);
-      const year = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('YYYY'), 4);
+      const year = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('yyyy'), 4);
       const hours = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('HH'), 2);
       const minutes = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('mm'), 2);
       if (
@@ -379,20 +387,22 @@ function checkMinMaxTimeLimits() {
 }
 
 function setInputRawDate(newValue) {
-  let res = props.locale?.masks?.input || 'DD.MM.YYYY';
+  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
+  let res = props.locale?.masks?.input || dateFormatToUse;
   const year = newValue?.getFullYear();
   let month = newValue?.getMonth();
   if (month || month === 0) month += 1;
   const day = newValue?.getDate();
   res = res
-    .replace('YYYY', year)
+    .replace('yyyy', year)
     .replace('MM', month > 9 ? month : `0${month}`)
-    .replace('DD', day > 9 ? day : `0${day}`);
+    .replace('dd', day > 9 ? day : `0${day}`);
   if (day && month && year) inputRaw.value = res;
 }
 
 function setInputRawDateTime(newValue) {
-  let res = props.locale?.masks?.inputDateTime24hr || 'DD.MM.YYYY HH:mm';
+  const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
+  let res = props.locale?.masks?.inputDateTime24hr || dateTimeFormatToUse;
   const year = newValue?.getFullYear();
   let month = newValue?.getMonth();
   if (month || month === 0) month += 1;
@@ -400,9 +410,9 @@ function setInputRawDateTime(newValue) {
   const hours = newValue?.getHours();
   const minutes = newValue?.getMinutes();
   res = res
-    .replace('YYYY', year)
+    .replace('yyyy', year)
     .replace('MM', month > 9 ? month : `0${month}`)
-    .replace('DD', day > 9 ? day : `0${day}`)
+    .replace('dd', day > 9 ? day : `0${day}`)
     .replace('HH', hours > 9 ? hours : `0${hours}`)
     .replace('mm', minutes > 9 ? minutes : `0${minutes}`);
   inputRaw.value = res;
@@ -734,17 +744,17 @@ const canSelectToday = computed(() => canSelectDate(dateNow) && !props.disabled)
         :title="tooltip"
         v-if="isNotDropdown"
       >
-        <lx-icon
+        <LxIcon
           v-show="invalid && variant === 'default'"
           customClass="lx-invalidation-icon"
           value="invalid"
         />
-        <lx-icon
+        <LxIcon
           v-show="!invalid && kind !== 'time' && variant === 'default'"
           customClass="lx-date-time-icon"
           value="calendar"
         />
-        <lx-icon
+        <LxIcon
           v-show="!invalid && kind === 'time' && variant === 'default'"
           customClass="lx-date-time-icon"
           value="time"
@@ -753,7 +763,7 @@ const canSelectToday = computed(() => canSelectDate(dateNow) && !props.disabled)
           v-if="kind === 'time' && valueText && !disabled && variant === 'default'"
           class="lx-clear"
         >
-          <lx-button
+          <LxButton
             :title="texts.clear"
             kind="ghost"
             icon="remove"
@@ -762,7 +772,7 @@ const canSelectToday = computed(() => canSelectDate(dateNow) && !props.disabled)
             @click="clear"
           />
         </div>
-        <date-picker
+        <DatePicker
           ref="calendar"
           v-model="valueText"
           :model-config="modelConfig"
@@ -783,6 +793,7 @@ const canSelectToday = computed(() => canSelectDate(dateNow) && !props.disabled)
           @click="setTimeOnInput"
         >
           <template v-slot="{ inputValue, inputEvents }" v-if="variant === 'default'">
+            <label class="lx-visually-hidden" :for="id"></label>
             <input
               ref="input"
               :id="id"
@@ -800,7 +811,7 @@ const canSelectToday = computed(() => canSelectDate(dateNow) && !props.disabled)
           </template>
           <template #footer>
             <div class="footer-buttons">
-              <lx-button
+              <LxButton
                 :disabled="!canSelectToday"
                 :title="props.texts.todayButton"
                 kind="ghost"
@@ -808,7 +819,7 @@ const canSelectToday = computed(() => canSelectDate(dateNow) && !props.disabled)
                 variant="icon-only"
                 @click="emits('update:modelValue', formatJSON(dateNow))"
               />
-              <lx-button
+              <LxButton
                 :title="props.texts.clearButton"
                 kind="ghost"
                 icon="close"
@@ -818,16 +829,17 @@ const canSelectToday = computed(() => canSelectDate(dateNow) && !props.disabled)
               />
             </div>
           </template>
-        </date-picker>
+        </DatePicker>
+
         <div class="time-footer-slot" v-if="variant !== 'default' && kind === 'time'">
-          <lx-button
+          <LxButton
             :title="props.texts.todayButton"
             kind="ghost"
             icon="undo"
             variant="icon-only"
             @click="emits('update:modelValue', currentDate())"
           />
-          <lx-button
+          <LxButton
             :title="texts.clear"
             kind="ghost"
             icon="remove"
