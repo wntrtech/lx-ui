@@ -660,7 +660,7 @@
   display: none;
 }
 
-.lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-data-block-header,
+.lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-data-block .lx-data-block-header,
 .lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-data-block .additional-buttons,
 .lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-data-block-content {
   background-color: var(--color-region-2);

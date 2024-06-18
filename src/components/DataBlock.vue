@@ -142,27 +142,27 @@ const selected = computed({
         <div v-if="!expandable"></div>
       </header>
       <div class="additional-buttons" v-if="Number(actionDefinitionsLength) !== 0">
-        <lx-button
-          v-if="actionDefinitions.length === 1"
-          v-for="action in actionDefinitions"
-          :key="action.id"
-          :label="action.name"
-          kind="ghost"
-          variant="default"
-          tabindex="0"
-          :icon="action.icon"
-          :title="action.title ? action.title : action.name"
-          :destructive="action.destructive"
-          :disabled="isDisabled || action.disabled"
-          @click="actionClicked(action.id, props.id)"
-        />
+        <template v-if="actionDefinitions.length === 1">
+          <LxButton
+            v-for="action in actionDefinitions"
+            :key="action.id"
+            kind="ghost"
+            variant="default"
+            tabindex="0"
+            :icon="action.icon"
+            :title="action.title ? action.title : action.name"
+            :destructive="action.destructive"
+            :disabled="isDisabled || action.disabled"
+            @click="actionClicked(action.id, props.id)"
+          />
+        </template>
         <LxDropDownMenu>
           <div class="lx-toolbar" v-if="actionDefinitions.length >= 2">
-            <lx-button icon="overflow-menu" kind="ghost" :disabled="isDisabled" />
+            <LxButton icon="overflow-menu" kind="ghost" :disabled="isDisabled" />
           </div>
           <template #panel>
             <div class="lx-button-set">
-              <lx-button
+              <LxButton
                 v-for="action in actionDefinitions"
                 :key="action.id"
                 :icon="action.icon"

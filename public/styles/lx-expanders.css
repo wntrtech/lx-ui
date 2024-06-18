@@ -250,6 +250,11 @@
   justify-content: center;
 }
 
+.lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-button {
+  width: 4rem;
+  height: 4rem;
+}
+
 .lx-data-block-header>.lx-icons>svg {
   height: 2rem;
 }
@@ -285,7 +290,6 @@
   height: 1rem;
 }
 
-.lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container,
 .lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container .lx-dropdown-toggler>.lx-toolbar,
 .lx-data-block-wrapper-l>.lx-data-block>.additional-buttons>.lx-context-container .lx-dropdown-toggler>.lx-toolbar>button {
   width: 4rem;
@@ -366,12 +370,13 @@
   text-transform: uppercase;
 }
 
-.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-indications>svg {
-  fill: var(--color-disabled-background);
+.lx-data-block-wrapper.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-indications>svg,
+.lx-data-block-wrapper.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-icons>.lx-icon {
+  fill: var(--color-disabled-foreground);
 }
 
-.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-content>p {
-  color: var(--color-disabled-background);
+.lx-data-block-wrapper.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-content>p {
+  color: var(--color-disabled-foreground);
 }
 
 .lx .lx-data-block-wrapper .lx-button-set.lx-justified-toolbar {
