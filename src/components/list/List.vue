@@ -60,6 +60,7 @@ const props = defineProps({
   includeUnspecifiedGroups: { type: Boolean, default: false },
   itemsStates: { type: Object, default: () => {} },
   mode: { type: String, default: 'client' }, // client, server,
+  searchMode: { type: String, default: 'default' }, // default, compact
 
   texts: {
     type: Object,
@@ -638,17 +639,32 @@ function selectSection(group) {
   }
 }
 
-const queryInput = ref();
+const queryInputCompact = ref();
+const queryInputDefault = ref();
 const searchField = ref(false);
+
+const autoSearchMode = computed(() => {
+  if (props.searchMode === 'compact') {
+    return 'compact';
+  }
+  if (props.searchMode === 'default' && !props.hasSelecting) {
+    return 'default';
+  }
+  return 'compact';
+});
 
 function toggleSearch() {
   searchField.value = !searchField.value;
   nextTick(() => {
-    if (searchField.value) queryInput.value.focus();
+    if (searchField.value && autoSearchMode.value === 'default') {
+      queryInputDefault.value.focus();
+    } else if (searchField.value && autoSearchMode.value === 'compact') {
+      queryInputCompact.value.focus();
+    }
   });
 }
 
-defineExpose({ validate, cancelSelection, selectRows });
+defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
 </script>
 
 <template>
@@ -659,11 +675,47 @@ defineExpose({ validate, cancelSelection, selectRows });
       :class="[{ 'toolbar-selecting': hasSelecting && selectedItems?.length > 0 }]"
     >
       <div class="first-row">
-        <p v-if="hasSelecting && selectedItems?.length > 0">{{ selectedLabel }}</p>
+        <template v-if="autoSearchMode === 'default' && selectedItems?.length === 0">
+          <lx-text-input
+            v-if="hasSearch"
+            ref="queryInputDefault"
+            v-model="queryRaw"
+            :kind="searchSide === 'server' ? 'default' : 'search'"
+            :disabled="loading || busy"
+            :placeholder="props.texts.placeholder"
+            role="search"
+            @keydown.enter="serverSideSearch()"
+          />
+          <lx-button
+            v-if="searchSide === 'server' && hasSearch"
+            icon="search"
+            kind="ghost"
+            :busy="busy"
+            :disabled="loading"
+            :title="texts.search"
+            @click="serverSideSearch()"
+          />
+          <lx-button
+            v-if="query || queryRaw"
+            icon="clear"
+            kind="ghost"
+            variant="icon-only"
+            :title="texts.clear"
+            :disabled="loading || busy"
+            @click="clear()"
+          />
+        </template>
+        <p v-if="hasSelecting && selectedItems?.length > 0">
+          {{ selectedLabel }}
+        </p>
 
         <div class="right-area" v-if="selectedItems?.length === 0">
           <slot name="toolbar" />
-          <div class="toolbar-search-button" :class="[{ 'is-expanded': searchField }]">
+          <div
+            class="toolbar-search-button"
+            :class="[{ 'is-expanded': searchField }]"
+            v-if="autoSearchMode === 'compact'"
+          >
             <LxButton
               kind="ghost"
               :icon="searchField ? 'close' : 'search'"
@@ -718,7 +770,11 @@ defineExpose({ validate, cancelSelection, selectRows });
               </LxDropDownMenu>
             </div>
           </div>
-          <div class="toolbar-search-button" :class="[{ 'is-expanded': searchField }]">
+          <div
+            class="toolbar-search-button"
+            :class="[{ 'is-expanded': searchField }]"
+            v-if="autoSearchMode === 'compact'"
+          >
             <LxButton
               class="toolbar-search-button"
               :class="[{ 'is-expanded': searchField }]"
@@ -744,12 +800,12 @@ defineExpose({ validate, cancelSelection, selectRows });
       </div>
       <div
         class="second-row"
-        v-if="hasSearch && searchField"
+        v-if="hasSearch && searchField && autoSearchMode === 'compact'"
         :class="[{ 'second-row-selecting': hasSelecting }]"
       >
         <lx-text-input
           v-if="hasSearch"
-          ref="queryInput"
+          ref="queryInputCompact"
           v-model="queryRaw"
           :kind="searchSide === 'server' ? 'default' : 'search'"
           :disabled="loading || busy"
