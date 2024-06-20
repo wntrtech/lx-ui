@@ -70,10 +70,6 @@
     background-color: var(--color-region);
 }
 
-.lx-list-wrapper .tree-list .tree-item .selecting-block .lx-radio-button-appearance {
-    margin-left: 0.5rem;
-}
-
 .tree-item-small {
     display: flex;
 }
