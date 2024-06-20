@@ -6,10 +6,6 @@
   border: var(--region-border);
 }
 
-.lx-form-grid>.lx-main {
-  overflow-x: hidden;
-}
-
 .lx-form-grid>header {
   min-height: var(--row-size);
   border-bottom: 1pt solid var(--color-chrome);
