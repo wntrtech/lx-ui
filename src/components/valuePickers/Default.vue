@@ -357,15 +357,15 @@ function selectAll() {
     role="radiogroup"
     :title="tooltip"
   >
-    <span v-if="readOnly">
+    <template v-if="readOnly">
       <p v-if="readOnlyRenderType === 'row'" class="lx-data">
         {{ getName(false) }}
+        <template v-if="model === null || model === undefined || model?.length < 1">—</template>
       </p>
       <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
         <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
       </ul>
-      <span v-if="model === null || model === undefined || model?.length < 1">—</span>
-    </span>
+    </template>
 
     <template v-else>
       <div v-if="hasSearch" class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search">
