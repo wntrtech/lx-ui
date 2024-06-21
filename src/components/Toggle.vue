@@ -13,6 +13,13 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
   tooltip: { type: String, default: null },
+  texts: {
+    type: Object,
+    default: () => ({
+      valueYes: 'Jā',
+      valueNo: 'Nē',
+    }),
+  },
 });
 
 const slots = useSlots();
@@ -40,11 +47,18 @@ function checkModelState() {
   }
 }
 
+const booleanTexts = computed(() => ({
+  yes: props.texts.valueYes,
+  no: props.texts.valueNo,
+}));
+
 const tooltipValue = computed(() => {
   let res = '';
-  if (!props.tooltip && (!slots.on || !slots.off)) res = formatValueBool(model.value);
+
+  if (!props.tooltip && (!slots.on || !slots.off))
+    res = formatValueBool(model.value, booleanTexts.value);
   else if (props.tooltip && (!slots.on || !slots.off))
-    res = `${props.tooltip}: ${formatValueBool(model.value)}`;
+    res = `${props.tooltip}: ${formatValueBool(model.value, booleanTexts.value)}`;
   else if (props.tooltip) {
     res = props.tooltip;
   }
@@ -109,11 +123,11 @@ onMounted(() => {
           <span
             class="lx-toggle-text"
             v-if="!$slots.on && !$slots.off && !$slots.indeterminate && !$slots.default"
-            ><p class="lx-data">{{ formatValueBool(modelValue) }}</p></span
+            ><p class="lx-data">{{ formatValueBool(modelValue, booleanTexts) }}</p></span
           >
           <span class="lx-toggle-text" v-else>
             <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate">
-              <p class="lx-data"><slot></slot>: {{ formatValueBool(modelValue) }}</p>
+              <p class="lx-data"><slot></slot>: {{ formatValueBool(modelValue, booleanTexts) }}</p>
             </span>
             <span v-show="model === null">
               <slot name="indeterminate"></slot>
