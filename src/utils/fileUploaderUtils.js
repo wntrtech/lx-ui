@@ -317,17 +317,18 @@ export function getExtraParameter(meta, texts) {
 }
 
 export function getFileExtension(name) {
-  const mimeType = mime.getType(name);
+  if (name.includes('.')) {
+    const mimeType = mime.getType(name);
 
-  if (mimeType) {
-    const extension = mime.getExtension(mimeType);
-    if (extension) {
-      return extension.toUpperCase();
+    if (mimeType) {
+      const extension = mime.getExtension(mimeType);
+      if (extension) {
+        return extension.toUpperCase();
+      }
     }
   }
-
   const parts = name.split('.');
-  if (parts.length === 1) {
+  if (parts.length === 1 || parts[0] === '') {
     return lxDevUtils.log(
       `Cannot determine extension for file: ${name}`,
       useLx().getGlobals()?.environment,
@@ -609,6 +610,61 @@ function getDefaultMainData(advancedFile, texts) {
     },
   };
   return mainData;
+}
+
+function getIconForExtension(extension) {
+  switch (extension) {
+    case 'DOC':
+    case 'DOCX':
+      return 'file-rich-text';
+    case 'XLS':
+    case 'XLSX':
+      return 'file-spreadsheet';
+    case 'ZIP':
+    case 'RAR':
+    case '7Z':
+      return 'file-archive';
+    case 'PNG':
+    case 'JPG':
+    case 'JPEG':
+    case 'GIF':
+    case 'SVG':
+    case 'WEBP':
+      return 'file-image';
+    case 'PPTX':
+      return 'file-slides';
+    default:
+      return 'file';
+  }
+}
+
+export function provideDefaultIcon(advancedFile) {
+  if (!advancedFile) return 'file';
+
+  if (typeof advancedFile === 'string') {
+    const extension = getFileExtension(advancedFile);
+    return getIconForExtension(extension);
+  }
+  if (typeof advancedFile === 'object') {
+    switch (true) {
+      case acceptedMimeImage(advancedFile.meta?.name):
+        return 'file-image';
+      case acceptedMimeArchive(advancedFile.meta?.name):
+        return 'file-archive';
+      case acceptedMimeOffice(advancedFile.meta?.name) &&
+        advancedFile.meta?.type?.endsWith('.presentation'):
+        return 'file-slides';
+      case acceptedMimeOffice(advancedFile.meta?.name) &&
+        advancedFile.meta?.type?.endsWith('.sheet'):
+        return 'file-spreadsheet';
+      case acceptedMimeOffice(advancedFile.meta?.name) &&
+        advancedFile.meta?.type?.endsWith('.document'):
+        return 'file-rich-text';
+      default:
+        return 'file';
+    }
+  }
+  return 'file';
 }
 
 export function getDetails(advancedFile, base64String, texts) {

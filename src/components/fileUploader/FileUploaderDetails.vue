@@ -8,6 +8,8 @@ import LxSection from '@/components/forms/Section.vue';
 import LxFormBuilder from '@/components/forms/FormBuilder.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxList from '@/components/list/List.vue';
+import LxIcon from '@/components/Icon.vue';
+import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 
 const props = defineProps({
   value: {
@@ -95,6 +97,10 @@ const normalizedAuthors = computed(() => {
   if (!authorValue) return null;
   return Array.isArray(authorValue) ? authorValue : [authorValue];
 });
+
+function isFolder(name, size) {
+  return size === 0 && !fileUploaderUtils.getFileExtension(name);
+}
 </script>
 <template>
   <LxForm
@@ -199,7 +205,34 @@ const normalizedAuthors = computed(() => {
         v-if="props.value?.archiveContentData && props.value?.archiveContentData?.length !== 0"
       >
         <LxRow :column-span="2">
-          <LxList kind="treelist" list-type="1" :items="props.value?.archiveContentData" />
+          <LxList
+            class="lx-archive-content"
+            kind="treelist"
+            list-type="1"
+            :items="props.value?.archiveContentData"
+          >
+            <template #customItem="{ name, description, size }">
+              <div class="lx-archive-content-icon">
+                <LxIcon
+                  :class="[{ 'lx-folder-icon': isFolder(name, size) }]"
+                  :value="
+                    !isFolder(name, size) ? fileUploaderUtils.provideDefaultIcon(name) : 'folder'
+                  "
+                />
+              </div>
+              <div class="lx-archive-content-text">
+                <p
+                  class="lx-primary"
+                  :class="{
+                    'lx-folder-name': isFolder(name, size),
+                  }"
+                >
+                  {{ name }}
+                </p>
+                <p v-if="description" class="lx-secondary">{{ description }}</p>
+              </div>
+            </template>
+          </LxList>
         </LxRow>
       </LxSection>
     </template>

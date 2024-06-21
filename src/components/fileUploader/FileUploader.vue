@@ -189,29 +189,6 @@ function findImagePreview(id) {
 
   return null;
 }
-function provideDefaultIcon(id) {
-  const advancedFile = advancedFilesData.value.find((file) => file.id === id);
-  if (!advancedFile) return 'file';
-
-  switch (true) {
-    case fileUploaderUtils.acceptedMimeImage(advancedFile.meta?.name):
-      return 'image';
-    case fileUploaderUtils.acceptedMimeArchive(advancedFile.meta?.name):
-      return 'file-archive';
-    case fileUploaderUtils.acceptedMimeOffice(advancedFile.meta?.name) &&
-      advancedFile.meta?.type?.endsWith('.presentation'):
-      return 'file-slides';
-    case fileUploaderUtils.acceptedMimeOffice(advancedFile.meta?.name) &&
-      advancedFile.meta?.type?.endsWith('.sheet'):
-      return 'file-spreadsheet';
-    case fileUploaderUtils.acceptedMimeOffice(advancedFile.meta?.name) &&
-      advancedFile.meta?.type?.endsWith('.document'):
-      return 'file-rich-text';
-
-    default:
-      return 'file';
-  }
-}
 
 function provideAdditionalIcon(id) {
   const advancedFile = advancedFilesData.value.find((file) => file.id === id);
@@ -487,7 +464,9 @@ function openModal(id) {
           :read-only="props.readOnly"
           :texts="props.texts"
           :isUploading="isUploading"
-          :defaultIcon="provideDefaultIcon(id)"
+          :defaultIcon="
+            fileUploaderUtils.provideDefaultIcon(advancedFilesData.find((file) => file.id === id))
+          "
           :additionalBagdeIcon="provideAdditionalIcon(id)"
           :additionalBagdeType="provideAdditionalBadgeType(id)"
           :imagePreview="findImagePreview(id)?.base64String"

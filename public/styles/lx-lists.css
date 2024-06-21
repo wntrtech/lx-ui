@@ -55,6 +55,7 @@
   flex-grow: 1;
   align-items: flex-start;
   justify-content: space-between;
+  width: 100%;
 }
 
 .lx-list .lx-draggable-group-list-item {
@@ -102,6 +103,47 @@
   min-height: var(--icon-size);
   margin-top: 0.1rem;
   width: 100%;
+}
+
+.lx-archive-content header {
+  flex-direction: row;
+  justify-content: left;
+  max-width: 90%;
+}
+
+.lx-archive-content .lx-folder-name {
+  margin-top: 0.5rem
+}
+
+.lx-archive-content .lx-list-item {
+  padding-left: 0.7rem;
+}
+
+.lx-list-item .lx-archive-content-icon {
+  display: flex;
+  width: calc(var(--icon-size) + 0.3rem);
+  height: var(--icon-size);
+  flex-shrink: 0;
+}
+
+.lx-list-item .lx-archive-content-icon svg {
+  margin-top: 0;
+  align-self: center;
+}
+
+.lx-list-item svg.lx-folder-icon {
+  fill: var(--color-label);
+}
+
+.lx-archive-content .tree-list-wrapper .tree-list,
+.lx-archive-content-text {
+  overflow-x: hidden;
+}
+
+.lx-list-item .lx-archive-content-text p {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .lx-list-item p.lx-primary {
