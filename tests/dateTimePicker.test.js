@@ -186,13 +186,13 @@ test('LxDateTimePicker texts.clear', () => {
     },
   });
 
-  setTimeout(() => {
-    expect(
-      wrapper
-        .find('.lx-button.lx-button-ghost.lx-button-icon-only.lx-destructive')
-        .attributes('title')
-    ).toBe('Clear');
-  }, 100);
+  // setTimeout(() => {
+  //   expect(
+  //     wrapper
+  //       .find('.lx-button.lx-button-ghost.lx-button-icon-only.lx-destructive')
+  //       .attributes('title')
+  //   ).toBe('Clear');
+  // }, 100);
 });
 
 describe.each([

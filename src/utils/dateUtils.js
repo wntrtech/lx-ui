@@ -31,6 +31,10 @@ export function isDateValid(date) {
   return parseDate(date) instanceof Date && !Number.isNaN(Number(parseDate(date)));
 }
 
+export function isTimeValid(value) {
+  return /^\d{2}:\d{2}$/.test(value);
+}
+
 export function formatDateJSON(date) {
   if (!date) return null;
   let d = date;

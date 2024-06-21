@@ -8,6 +8,7 @@ import {
   formatDate,
   formatDateTime,
   isDateValid,
+  isTimeValid,
 } from '@/utils/dateUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
@@ -17,7 +18,7 @@ import LxValuePicker from '@/components/ValuePicker.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
-  modelValue: { type: String, default: null },
+  modelValue: { type: [String, Date], default: null },
   kind: { type: String, default: 'date' }, // 'date' or 'time' or 'date-time'
   placeholder: { type: String, default: null },
   tooltip: { type: String, default: null },
@@ -40,17 +41,25 @@ const props = defineProps({
   },
 });
 
-const valueText = ref(new Date());
+const emits = defineEmits(['update:modelValue']);
+const { dateFormat, dateTimeFormat, environment } = useLx().getGlobals();
+
+const valueText = ref(null);
 const inputRaw = ref();
 const dateNow = new Date();
 
-const { dateFormat, dateTimeFormat } = useLx().getGlobals();
+function extractTime(datetimeStr) {
+  const timeRegex = /(\d{2}:\d{2}(:\d{2})?(\s?[APMapm]{2})?)/;
+  const match = datetimeStr.match(timeRegex);
+  if (match) return match[0];
+  return null;
+}
 
 function activate() {
   if (props.kind === 'time') {
     if (props.modelValue?.length === 5) {
-      valueText.value.setHours(Number(props.modelValue?.slice(0, 2)));
-      valueText.value.setMinutes(Number(props.modelValue?.slice(3, 5)));
+      valueText.value?.setHours(Number(props.modelValue?.slice(0, 2)));
+      valueText.value?.setMinutes(Number(props.modelValue?.slice(3, 5)));
     } else {
       valueText.value = props.modelValue;
     }
@@ -59,8 +68,6 @@ function activate() {
   }
 }
 activate();
-
-const emits = defineEmits(['update:modelValue']);
 
 function getModelConfigMask() {
   const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
@@ -83,13 +90,37 @@ const localeComputed = computed(() => (props.locale?.locale ? props.locale?.loca
 const localeFirstDay = computed(() =>
   props.locale?.firstDayOfTheWeek ? props.locale?.firstDayOfTheWeek : 2
 );
-const localeMasks = computed(() => {
-  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
-  const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
 
-  return props.locale?.masks
-    ? props?.locale?.masks
-    : { inputDateTime24hr: [dateFormatToUse, dateTimeFormatToUse] };
+function convertDatePartToUpperCase(format) {
+  if (!format) return format;
+  const parts = format.split(' ');
+  if (parts.length > 0) {
+    parts[0] = parts[0].toUpperCase();
+  }
+  return parts.join(' ');
+}
+
+function processMasks(masks) {
+  const processedMasks = {
+    inputDateTime24hr: convertDatePartToUpperCase(masks.inputDateTime24hr),
+    input: convertDatePartToUpperCase(masks.input),
+    inputTime24hr: masks.inputTime24hr,
+  };
+
+  return processedMasks;
+}
+
+const localeMasks = computed(() => {
+  const dateFormatToUse = convertDatePartToUpperCase(dateFormat) || 'DD.MM.YYYY.';
+  const dateTimeFormatToUse = convertDatePartToUpperCase(dateTimeFormat) || 'DD.MM.YYYY. HH:mm';
+
+  const defaultMasks = {
+    inputDateTime24hr: dateTimeFormatToUse,
+    input: dateFormatToUse,
+    inputTime24hr: 'HH:mm',
+  };
+
+  return props.locale?.masks ? processMasks(props.locale.masks) : defaultMasks;
 });
 
 const modelConfig = computed(() => ({
@@ -120,9 +151,17 @@ function validateIfExact() {
   if (props.kind === 'date') {
     if (props.clearIfNotExact) {
       const date = inputRaw.value;
-      const day = date?.substr(props.locale?.masks?.input?.indexOf('dd'), 2);
-      const month = date?.substr(props.locale?.masks?.input?.indexOf('MM'), 2);
-      const year = date?.substr(props.locale?.masks?.input?.indexOf('yyyy'), 4);
+      const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
+      const inputMask = props.locale?.masks?.input || dateFormatToUse;
+
+      const dayIndex = inputMask?.indexOf('dd');
+      const monthIndex = inputMask?.indexOf('MM');
+      const yearIndex = inputMask?.indexOf('yyyy');
+
+      const day = date?.substring(dayIndex, dayIndex + 2);
+      const month = date?.substring(monthIndex, monthIndex + 2);
+      const year = date?.substring(yearIndex, yearIndex + 4);
+
       if (!isDateValid(`${year}-${month}-${day}`)) {
         valueText.value = null;
         inputRaw.value = null;
@@ -135,20 +174,38 @@ function validateIfExact() {
       });
     }
   }
+
   if (props.clearIfNotExact && props.kind === 'time') {
     const date = inputRaw.value;
-    const hours = date?.substr(props.locale?.masks?.inputTime24hr?.indexOf('HH'), 2);
-    const minutes = date?.substr(props.locale?.masks?.inputTime24hr?.indexOf('mm'), 2);
+    const inputTime24hrMask = props.locale?.masks?.inputTime24hr || 'HH:mm';
+
+    const hoursIndex = inputTime24hrMask?.indexOf('HH');
+    const minutesIndex = inputTime24hrMask?.indexOf('mm');
+
+    const hours = date?.substring(hoursIndex, hoursIndex + 2);
+    const minutes = date?.substring(minutesIndex, minutesIndex + 2);
+
     if (hours > 23 || hours < 0 || minutes > 59 || minutes < 0) valueText.value = null;
   }
+
   if (props.kind === 'dateTime' || props.kind === 'date-time') {
     if (props.clearIfNotExact) {
       const date = inputRaw.value;
-      const day = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('dd'), 2);
-      const month = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('MM'), 2);
-      const year = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('yyyy'), 4);
-      const hours = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('HH'), 2);
-      const minutes = date?.substr(props.locale?.masks?.inputDateTime24hr?.indexOf('mm'), 2);
+      const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
+      const inputDateTime24hrMask = props.locale?.masks?.inputTime24hr || dateTimeFormatToUse;
+
+      const dayIndex = inputDateTime24hrMask?.indexOf('dd');
+      const monthIndex = inputDateTime24hrMask?.indexOf('MM');
+      const yearIndex = inputDateTime24hrMask?.indexOf('yyyy');
+      const hoursIndex = inputDateTime24hrMask?.indexOf('HH');
+      const minutesIndex = inputDateTime24hrMask?.indexOf('mm');
+
+      const day = date?.substring(dayIndex, dayIndex + 2);
+      const month = date?.substring(monthIndex, monthIndex + 2);
+      const year = date?.substring(yearIndex, yearIndex + 4);
+      const hours = date?.substring(hoursIndex, hoursIndex + 2);
+      const minutes = date?.substring(minutesIndex, minutesIndex + 2);
+
       if (
         !isDateValid(`${year}-${month}-${day}`) ||
         hours > 23 ||
@@ -176,6 +233,7 @@ function validateIfExact() {
     }
   }
 }
+
 const calendar = ref();
 
 function setTimeOnInput() {
@@ -207,19 +265,23 @@ function clear() {
 }
 
 function isSameDay(min, max) {
-  if (min?.length === 5 || max?.length === 5 || !min || !max) return false;
+  if (!min || !max) return false;
+  if (min.length === 5 || max.length === 5) return false;
+
   return (
     min?.getFullYear() === max?.getFullYear() &&
     min?.getMonth() === max?.getMonth() &&
     min?.getDate() === max?.getDate()
   );
 }
+
 function isSameHour(min, max) {
   if (isSameDay(min, max)) {
     if (min?.getHours() === max?.getHours()) return true;
   }
   return false;
 }
+
 const isNotDropdown = computed(
   () =>
     props.kind === 'date' ||
@@ -228,34 +290,38 @@ const isNotDropdown = computed(
     props.kind === 'date-time'
 );
 
-const globalEnvironment = useLx().getGlobals()?.environment;
-
 watch(
   () => props.modelValue,
   (newValue, oldValue) => {
+    const formattedMinDate = props.kind === 'date' ? formatDateJSON(props.minDate) : props.minDate;
+    const formattedMaxDate = props.kind === 'date' ? formatDateJSON(props.maxDate) : props.maxDate;
+
     if (isNotDropdown.value) {
-      // we don't want to update the valueText if the seconds or milliseconds changed, because it seems that with slower calculations, this event keeps firing a lot
+      // we don't want to update the valueText if the seconds or milliseconds changed,
+      // because it seems that with slower calculations, this event keeps firing a lot
       const oldMs = parseDate(oldValue)?.setSeconds(0, 0);
       const newMs = parseDate(newValue)?.setSeconds(0, 0);
+
       if (props.kind === 'time') {
         let temp = newValue;
-
         if (props.modelValue?.length === 5) {
           temp = new Date();
-
           temp.setHours(newValue.substring(0, 2));
           temp.setMinutes(newValue.substring(3, 5));
         }
-
         valueText.value = temp;
-      } else if (newValue > props.maxDate || newValue < props.minDate) {
-        if (oldValue > props.maxDate || oldValue < props.minDate) emits('update:modelValue', null);
-        else emits('update:modelValue', oldValue);
-        lxDevUtils.log('Piešķirtā vērtībā ir ārpus min-max robežām!', globalEnvironment, 'warn');
+      } else if (newValue > formattedMaxDate || newValue < formattedMinDate) {
+        if (oldValue > formattedMaxDate || oldValue < formattedMinDate) {
+          emits('update:modelValue', null);
+        } else {
+          emits('update:modelValue', oldValue);
+        }
+        lxDevUtils.log('Piešķirtā vērtībā ir ārpus min-max robežām!', environment, 'warn');
       } else if (isDateValid(newValue) && oldMs !== newMs) {
         valueText.value = parseDate(newValue);
       } else if (newValue === null) {
         valueText.value = null;
+        inputRaw.value = '';
       } else if (props.kind === 'date' && typeof newValue === 'string' && oldMs !== newMs) {
         valueText.value = newValue;
       }
@@ -265,21 +331,41 @@ watch(
 
 function getName() {
   if (props.modelValue === '') return null;
+
   switch (props.kind) {
     case 'date':
-      if (typeof props.modelValue !== 'string') return formatDate(props.modelValue);
-      return formatDate(new Date(props.modelValue));
+      if (isDateValid(props.modelValue)) {
+        return formatDate(new Date(props.modelValue));
+      }
+      if (typeof props.modelValue !== 'string') {
+        return formatDate(props.modelValue);
+      }
+      break;
+
     case 'time':
-      if (typeof props.modelValue !== 'string')
-        return formatDateTime(props.modelValue)?.slice(11, 16);
-      return props.modelValue;
+      if (isTimeValid(props.modelValue)) {
+        return props.modelValue;
+      }
+      if (typeof props.modelValue !== 'string') {
+        return extractTime(formatDateTime(props.modelValue));
+      }
+      break;
+
     case 'dateTime':
     case 'date-time':
-      if (typeof props.modelValue !== 'string') return formatDateTime(props.modelValue);
-      return formatDateTime(new Date(props.modelValue));
+      if (isDateValid(props.modelValue)) {
+        return formatDateTime(new Date(props.modelValue));
+      }
+      if (typeof props.modelValue !== 'string') {
+        return formatDateTime(props.modelValue);
+      }
+      break;
+
     default:
       return props.modelValue;
   }
+
+  return null;
 }
 
 function fillArray(max) {
@@ -333,9 +419,11 @@ function getAvailableTime(min, max, now) {
     availableMinutes,
   };
 }
-const allowedHours = ref([]);
 
+const allowedHours = ref([]);
 const allowedMinutes = ref([]);
+const minDat = ref(parseDate(props.minDate));
+const maxDat = ref(parseDate(props.maxDate));
 
 function allowedHoursFunction(min, max, now) {
   if (!min && !max) {
@@ -362,8 +450,6 @@ function allowedMinutesFunction(min, max, now) {
   }
   return getAvailableTime(min, max, now).availableMinutes;
 }
-const minDat = ref(parseDate(props.minDate));
-const maxDat = ref(parseDate(props.maxDate));
 
 allowedHours.value = allowedHoursFunction(minDat.value, maxDat.value, valueText.value);
 allowedMinutes.value = allowedMinutesFunction(minDat.value, maxDat.value, valueText.value);
@@ -387,6 +473,7 @@ function checkMinMaxTimeLimits() {
 }
 
 function setInputRawDate(newValue) {
+  if (!newValue) return;
   const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
   let res = props.locale?.masks?.input || dateFormatToUse;
   const year = newValue?.getFullYear();
@@ -401,6 +488,7 @@ function setInputRawDate(newValue) {
 }
 
 function setInputRawDateTime(newValue) {
+  if (!newValue) return;
   const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
   let res = props.locale?.masks?.inputDateTime24hr || dateTimeFormatToUse;
   const year = newValue?.getFullYear();
@@ -419,9 +507,8 @@ function setInputRawDateTime(newValue) {
 }
 
 watch(valueText, (newValue, oldValue) => {
-  if (newValue === oldValue) {
-    return;
-  }
+  if (newValue === oldValue) return;
+
   if (newValue && oldValue) {
     allowedHours.value = allowedHoursFunction(minDat.value, maxDat.value, newValue);
     allowedMinutes.value = allowedMinutesFunction(minDat.value, maxDat.value, newValue);
@@ -431,7 +518,8 @@ watch(valueText, (newValue, oldValue) => {
   }
 
   if (props.kind === 'time') {
-    const nv = formatDateTime(newValue).slice(11, 16);
+    const nv = extractTime(formatDateTime(newValue));
+
     if (newValue) {
       let res = props.locale?.masks?.inputTime24hr || 'HH:mm';
       res = res
@@ -448,21 +536,27 @@ watch(valueText, (newValue, oldValue) => {
     emits('update:modelValue', nv);
   } else if (props.kind === 'date') {
     const nv = formatDateJSON(newValue);
+
     if (nv === props.modelValue) {
       setInputRawDate(newValue);
       return;
     }
+
     if (newValue) {
       setInputRawDate(newValue);
     } else {
       inputRaw.value = '';
     }
+
     emits('update:modelValue', nv);
   } else if (props.kind === 'dateTime' || props.kind === 'date-time') {
     const nv = formatJSON(newValue);
+
     if (nv === props.modelValue) {
+      setInputRawDateTime(newValue);
       return;
     }
+
     if (newValue) {
       setInputRawDateTime(newValue);
     } else {
@@ -472,25 +566,27 @@ watch(valueText, (newValue, oldValue) => {
     emits('update:modelValue', nv);
   } else {
     const nv = formatJSON(newValue);
-    if (nv === props.modelValue) {
-      return;
-    }
-
+    if (nv === props.modelValue) return;
     emits('update:modelValue', nv);
   }
 });
 
 watch(
   () => props.kind,
-  (newVal) => {
+  (newValue) => {
     if (
-      (newVal === 'date' || newVal === 'time' || newVal === 'dateTime' || newVal === 'date-time') &&
+      (newValue === 'date' ||
+        newValue === 'time' ||
+        newValue === 'dateTime' ||
+        newValue === 'date-time') &&
       props.variant === 'default'
     ) {
-      const res = valueText.value;
-      valueText.value = null;
       nextTick(() => {
-        valueText.value = res;
+        const res = valueText.value;
+        valueText.value = null;
+        nextTick(() => {
+          valueText.value = res;
+        });
       });
     }
   },
@@ -498,6 +594,7 @@ watch(
 );
 
 const requiredSet = shallowRef(false);
+
 function clearButton() {
   if (props.required) {
     requiredSet.value = true;
@@ -505,7 +602,9 @@ function clearButton() {
     setTimeout(() => {
       requiredSet.value = false;
     }, 50);
-  } else valueText.value = null;
+  } else {
+    valueText.value = null;
+  }
 }
 
 const rules = ref({
@@ -519,9 +618,11 @@ const modelValueIso = computed(() => {
     ((props.kind === 'date' || props.kind === 'dateTime' || props.kind === 'date-time') &&
       props.modelValue?.length !== 5) ||
     (props.modelValue?.length !== 5 && props.kind === 'time')
-  )
+  ) {
     res = lxDateUtils.formatJSON(lxDateUtils.parseDate(props.modelValue));
-  else if (props.kind === 'time') res = lxDateUtils.formatJSON(props.modelValue);
+  } else if (props.kind === 'time') {
+    res = lxDateUtils.formatJSON(props.modelValue);
+  }
   return res;
 });
 
@@ -529,6 +630,7 @@ const rowsComputed = computed(() => {
   if (props.variant === 'full-rows' || props.variant === 'full') return 2;
   return 1;
 });
+
 const columnsComputed = computed(() => {
   if (props.variant === 'full-columns' || props.variant === 'full') return 2;
   return 1;
@@ -726,11 +828,15 @@ const canSelectToday = computed(() => canSelectDate(dateNow) && !props.disabled)
 
 <template>
   <div class="lx-field-wrapper">
-    <p v-if="readOnly" class="lx-data">
-      <time :datetime="modelValueIso">
-        {{ getName() }}<span v-if="valueText === null || valueText === undefined">—</span>
-      </time>
-    </p>
+    <template v-if="readOnly">
+      <p class="lx-data">
+        <time :datetime="modelValueIso">
+          {{ getName() }}
+          <span v-if="valueText === null || valueText === undefined">—</span>
+        </time>
+      </p>
+    </template>
+
     <template v-else>
       <div
         class="lx-date-time-picker-wrapper"
