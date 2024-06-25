@@ -621,6 +621,12 @@
   transition: transform 0s;
 }
 
+.lx:not(.lx-no-animations) .rotator-enter-active,
+.lx:not(.lx-no-animations) .rotator-leave-active,
+.lx:not(.lx-no-animations) .rotator-move {
+  transition: all 0.4s ease-out;
+}
+
 /* FileUploader skeleton */
 
 .lx:not(.lx-no-animations) .lx-skeleton-file-preview::before {

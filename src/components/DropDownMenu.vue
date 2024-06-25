@@ -6,6 +6,7 @@ const props = defineProps({
   placement: { type: String, default: 'bottom' },
   customClass: { type: String, default: '' },
   disabled: { type: Boolean, default: false },
+  triggerClick: { type: String, default: 'left' },
 });
 
 const menuOpen = ref(false);
@@ -42,14 +43,19 @@ defineExpose({ closeMenu, openMenu, preventClose });
       offset-distance="0"
       :show="menuOpen"
     >
-      <div @click="openMenu" class="lx-dropdown-toggler">
+      <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+      <div
+        @click="props.triggerClick === 'left' ? openMenu() : null"
+        @contextmenu.prevent="props.triggerClick === 'right' ? openMenu() : null"
+        class="lx-dropdown-toggler"
+      >
         <slot />
       </div>
       <template #content>
         <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel">
           <slot name="clickSafePanel"> </slot>
         </div>
-
+        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
         <div v-if="$slots.panel" @click="closeMenu" class="lx-dropdown-panel">
           <slot name="panel"> </slot>
         </div>

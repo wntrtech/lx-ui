@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxButton from '@/components/Button.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -54,7 +56,10 @@ const rotatorItemsArray = computed(() => {
     return props.items;
   }
   return [
-    { [props.idAttribute]: notSelectedId, [props.nameAttribute]: props.texts.notSelected },
+    {
+      [props.idAttribute]: notSelectedId,
+      [props.nameAttribute]: props.texts.notSelected,
+    },
     ...props.items,
   ];
 });
@@ -172,16 +177,18 @@ function getName(returnPlaceholder = true) {
   return text;
 }
 
-function getItemId(id) {
-  return `${id}---${generateUUID()}`;
-}
-
 function selectSingle(id) {
-  const selectedIndex = rotatorItemsArray.value?.findIndex(
-    (item) => item[props.idAttribute] === id
-  );
-  currentIndex.value = (selectedIndex + 1) % rotatorItemsArray.value.length;
-  model.value = [rotatorItemsArray.value[currentIndex.value][props.idAttribute]];
+  if (!props.disabled) {
+    if (id) {
+      const selectedIndex = rotatorItemsArray.value?.findIndex(
+        (item) => item[props.idAttribute] === id
+      );
+      currentIndex.value = selectedIndex % rotatorItemsArray.value.length;
+    } else {
+      currentIndex.value = (currentIndex.value + 1) % rotatorItemsArray.value.length;
+    }
+    model.value = [rotatorItemsArray.value[currentIndex.value][props.idAttribute]];
+  }
 }
 
 const columnReadOnly = computed(() =>
@@ -199,49 +206,86 @@ onMounted(() => {
   );
   currentIndex.value = initialIndex >= 0 ? initialIndex : 0;
 });
+
+const keyedItemsArray = computed(() => {
+  let items = rotatorItemsArray.value;
+
+  while (items.length < 3) {
+    items = items.concat(rotatorItemsArray.value);
+  }
+
+  // Add a unique key to each item (need for normal transition between items)
+  return items.map((item) => ({
+    ...item,
+    key: generateUUID(),
+  }));
+});
+
+const queueItems = computed(() => {
+  const itemsLength = keyedItemsArray.value.length;
+
+  const last = (currentIndex.value - 1 + itemsLength) % itemsLength;
+  const current = currentIndex.value;
+  const next = (currentIndex.value + 1) % itemsLength;
+
+  const elements = [
+    keyedItemsArray.value[last],
+    keyedItemsArray.value[current],
+    keyedItemsArray.value[next],
+  ];
+
+  return elements;
+});
+
+// TODO: fix transition bug when there is 3 items, fix also transition bugs with nullable
+// better refactor rotation logic for smarter solution
 </script>
 
 <template>
-  <span v-if="readOnly">
+  <template v-if="readOnly">
     <p v-if="readOnlyRenderType === 'row'" class="lx-data">
       {{ getName(false) }}
+      <template v-if="model === null || model === undefined || model?.length < 1">—</template>
     </p>
     <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
       <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
     </ul>
-    <span v-if="model === null || model === undefined || model?.length < 1">—</span>
-  </span>
+  </template>
   <template v-else>
     <div
-      v-if="rotatorItemsArray && rotatorItemsArray.length > 1"
+      v-if="rotatorItemsArray"
       class="lx-value-picker-tags"
       :class="[{ 'lx-invalid': invalid }]"
       :title="tooltip"
     >
-      <ul class="lx-tag-set" :class="[{ 'lx-rotator-custom': variant === 'rotator-custom' }]">
-        <li
-          v-for="item in [rotatorItemsArray[currentIndex]]"
-          :key="item[idAttribute]"
-          v-on:focus="onFocus"
-          class="lx-tag lx-tags-tile-selected"
-          :title="item[descriptionAttribute]"
-          :id="getItemId(item[idAttribute])"
-          :group-id="groupId"
-          :disabled="disabled"
+      <LxDropDownMenu triggerClick="right">
+        <TransitionGroup
+          name="rotator"
+          tag="ul"
+          class="lx-rotator-set"
+          :class="[{ 'lx-rotator-set-custom': variant === 'rotator-custom' }]"
           tabindex="0"
-          @click="disabled ? null : selectSingle(item[idAttribute])"
-          role="radio"
-          :aria-checked="item[idAttribute] === (model?.[0] || '')"
-          @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
+          @keydown.space.prevent="selectSingle(null)"
+          @click="selectSingle(null)"
         >
-          <template v-if="variant === 'rotator'">
-            <div class="lx-data">{{ item[nameAttribute] }}</div>
-          </template>
-          <template v-else-if="variant === 'rotator-custom'">
-            <slot name="customItem" v-bind="item"></slot>
-          </template>
-        </li>
-      </ul>
+          <li v-for="item in queueItems" :key="item.key" class="lx-rotator-tag">
+            <p v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
+            <template v-if="variant === 'rotator-custom'">
+              <slot name="customItem" v-bind="item"></slot>
+            </template>
+          </li>
+        </TransitionGroup>
+        <template #panel>
+          <LxButton
+            v-for="item in rotatorItemsArray"
+            :key="item?.id"
+            :label="item?.name"
+            kind="ghost"
+            :active="model === item?.id ? true : false"
+            @click="selectSingle(item?.id)"
+          />
+        </template>
+      </LxDropDownMenu>
     </div>
     <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
   </template>

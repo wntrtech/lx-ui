@@ -3517,6 +3517,52 @@ input[type='range']:hover::-moz-range-thumb {
   width: 100%;
 }
 
+.lx-rotator-set {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  padding: 0;
+  width: auto;
+  height: 3rem;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+}
+
+.lx-rotator-tag {
+  height: 2rem;
+  width: auto;
+  background-color: var(--color-content-switcher-foreground) !important;
+  border: 2px solid var(--color-region-2);
+  padding: 0.25rem 1rem;
+}
+
+.lx-rotator-tag>p {
+  color: var(--color-region);
+}
+
+.lx-rotator-set:focus {
+  outline: 2px solid var(--color-focus-background);
+}
+
+.lx-rotator-set li:last-child,
+.lx-rotator-set li:first-child,
+.rotator-leave-active.rotator-move.rotator-leave-to {
+  visibility: hidden;
+}
+
+.rotator-leave-active {
+  position: absolute;
+}
+
+.rotator-leave-active.rotator-move.rotator-leave-to,
+.rotator-leave-to.rotator-leave-to {
+  display: none;
+}
+
 @media (max-width: 300px) {
   .lx .lx-uploaded-file-preview-wrapper {
     grid-template-columns: 1fr;
