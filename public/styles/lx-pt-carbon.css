@@ -54,6 +54,7 @@
   --margin-default: 0.25rem;
   --margin-button-icon: 0 -0.35rem 0 1rem;
   --margin-button-icon-reverse: 0 1rem 0 -0.33rem;
+  --tab-border: 4px solid transparent;
 
   --notification-border: 0px 0px 0px 4px;
 

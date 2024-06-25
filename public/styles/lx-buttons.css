@@ -156,7 +156,7 @@
 
 .lx .lx-button:hover,
 .lx button:hover,
-.lx .lx-cover>.lx-content>.lx-button-set .lx-button.lx-button-secondary:hover,
+.lx .lx-cover > .lx-content > .lx-button-set .lx-button.lx-button-secondary:hover,
 .lx .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover {
   background-color: var(--color-interactive-hover-background);
   color: var(--color-interactive-hover-foreground);
@@ -165,7 +165,7 @@
 
 .lx .lx-button:active,
 .lx button:active,
-.lx .lx-cover>.lx-content>.lx-button-set .lx-button.lx-button-secondary:active {
+.lx .lx-cover > .lx-content > .lx-button-set .lx-button.lx-button-secondary:active {
   background-color: var(--color-interactive-active-background);
   color: var(--color-interactive-active-foreground);
   border-color: var(--color-interactive-active-background);
@@ -201,11 +201,11 @@
 .lx .lx-button[disabled],
 .lx a.lx-button[disabled],
 .lx button[disabled],
-.lx .lx-cover>.lx-content>.lx-button-set .lx-button.lx-button-secondary[disabled],
+.lx .lx-cover > .lx-content > .lx-button-set .lx-button.lx-button-secondary[disabled],
 .lx .lx-button:disabled,
 .lx a.lx-button:disabled,
 .lx button:disabled,
-.lx .lx-cover>.lx-content>.lx-button-set .lx-button.lx-button-secondary:disabled,
+.lx .lx-cover > .lx-content > .lx-button-set .lx-button.lx-button-secondary:disabled,
 .lx a.lx-button.lx-disabled {
   background-color: var(--color-disabled-background);
   color: var(--color-disabled-foreground);
@@ -331,34 +331,34 @@
   fill: var(--color-nav-hover-foreground);
 }
 
-.lx .lx-cover>.lx-content>.lx-button-set {
+.lx .lx-cover > .lx-content > .lx-button-set {
   flex-direction: column;
   gap: 8px;
   flex-grow: 0;
   align-items: flex-start;
 }
 
-.lx .lx-cover>.lx-content>.lx-button-set .lx-button {
+.lx .lx-cover > .lx-content > .lx-button-set .lx-button {
   width: 20rem;
   box-shadow: var(--shadow-1);
   cursor: pointer;
 }
 
-.lx .lx-cover>.lx-content>.lx-button-set .lx-button.lx-button-secondary {
+.lx .lx-cover > .lx-content > .lx-button-set .lx-button.lx-button-secondary {
   background-color: var(--color-region);
   border-color: var(--color-region);
   color: var(--color-interactive-background);
 }
 
-.lx .lx-cover>.lx-content>.lx-button-set .lx-button.lx-button-secondary svg {
+.lx .lx-cover > .lx-content > .lx-button-set .lx-button.lx-button-secondary svg {
   fill: var(--color-interactive-background);
 }
 
-.lx .lx-cover>.lx-content>.lx-button-set .lx-button.lx-button-secondary:hover svg {
+.lx .lx-cover > .lx-content > .lx-button-set .lx-button.lx-button-secondary:hover svg {
   fill: var(--color-interactive-hover-foreground);
 }
 
-.lx .lx-cover>.lx-content>.lx-button-set .lx-button.lx-button-secondary:active svg {
+.lx .lx-cover > .lx-content > .lx-button-set .lx-button.lx-button-secondary:active svg {
   fill: var(--color-interactive-active-foreground);
 }
 
@@ -370,6 +370,7 @@
   color: var(--color-navbar-button-foreground);
   justify-content: flex-start;
   border: 0 none;
+  border-radius: 0;
 }
 
 .lx-layout-default .lx-nav-panel ul li .lx-button:not(.lx-button-icon-only):hover {
@@ -427,7 +428,7 @@
   display: none;
 }
 
-#sidePanelToggler+.lx-divider {
+#sidePanelToggler + .lx-divider {
   display: none;
 }
 
@@ -561,7 +562,6 @@
   background-color: var(--color-dropdown-button-background);
   border-color: var(--color-dropdown-button-background);
   color: var(--color-dropdown-button-foreground);
-  justify-content: space-between;
   flex-direction: var(--button-flex-direction);
 }
 
@@ -574,7 +574,6 @@
   background-color: var(--color-region-hover);
   border-color: var(--color-region-hover);
   color: var(--color-data);
-  justify-content: space-between;
 }
 
 .lx .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:disabled:hover {
@@ -583,11 +582,21 @@
   color: var(--color-disabled-foreground);
 }
 
-.lx .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover:not(.lx-destructive) svg {
+.lx
+  .lx-context-container
+  .lx-dropdown-panel
+  .lx-button-set
+  .lx-button:hover:not(.lx-destructive)
+  svg {
   fill: var(--color-region-hover-foreground);
 }
 
-.lx .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover:not(.lx-destructive) .lx-button-content {
+.lx
+  .lx-context-container
+  .lx-dropdown-panel
+  .lx-button-set
+  .lx-button:hover:not(.lx-destructive)
+  .lx-button-content {
   color: var(--color-region-hover-foreground);
 }
 
@@ -621,7 +630,7 @@
   display: flex;
 }
 
-.lx-dropdown-panel .lx-button-set .lx-button>svg {
+.lx-dropdown-panel .lx-button-set .lx-button > svg {
   margin-left: 0;
   margin-right: 1rem;
 }
@@ -657,7 +666,7 @@
   opacity: 1;
 }
 
-.lx-button-set>.lx-error-action-definitions {
+.lx-button-set > .lx-error-action-definitions {
   display: flex;
   gap: 0.5rem;
 }
@@ -667,7 +676,7 @@
     display: inherit;
   }
 
-  #sidePanelToggler+.lx-divider {
+  #sidePanelToggler + .lx-divider {
     display: inherit;
   }
 
@@ -723,7 +732,7 @@
 }
 
 @media (max-width: 500px) {
-  .lx .lx-cover>.lx-content>.lx-button-set .lx-button {
+  .lx .lx-cover > .lx-content > .lx-button-set .lx-button {
     width: 100%;
   }
 }

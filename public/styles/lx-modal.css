@@ -76,6 +76,7 @@
   flex-shrink: 0;
   justify-content: flex-start;
   flex-direction: row;
+  border-radius: 0;
 }
 
 .lx-modal > footer.lx-button-set.lx-two-buttons .lx-button {
