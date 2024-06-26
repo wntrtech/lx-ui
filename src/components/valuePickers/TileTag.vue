@@ -89,19 +89,20 @@ function activate() {
       [props.idAttribute]: notSelectedId,
       [props.nameAttribute]: props.texts.notSelected,
     });
-
     itemsModel.value[notSelectedId] = model.value?.length === 0 || !model.value;
   }
 
   // Then set items from model as selected
-  if (Array.isArray(model.value)) {
-    model.value?.forEach((id) => {
-      if (id) {
-        itemsModel.value[id?.toString()] = true;
-      }
-    });
-  } else {
-    itemsModel.value[model.value?.toString()] = true;
+  if (model.value) {
+    if (Array.isArray(model.value)) {
+      model.value?.forEach((id) => {
+        if (id) {
+          itemsModel.value[id?.toString()] = true;
+        }
+      });
+    } else {
+      itemsModel.value[model.value?.toString()] = true;
+    }
   }
 }
 activate();
@@ -115,6 +116,7 @@ function deactivate() {
 watch(
   () => props.nullable,
   (newValue) => {
+    if (props.kind !== "single") return
     if (newValue) activate();
     else if (!newValue) deactivate();
   }
@@ -128,6 +130,7 @@ watch(
   },
   ({ value, length }) => {
     activate();
+
     if (Array.isArray(value) && length === 0) {
       itemsModel.value.notSelected = true;
     }
@@ -153,6 +156,7 @@ const selectedItems = computed(() => {
 
 function getName(returnPlaceholder = true) {
   let text = '';
+
   if (model.value && !Array.isArray(model.value)) {
     return selectedItems.value[0].name;
   } else if (model.value && model.value.length > 0) {
@@ -168,52 +172,44 @@ function getItemId(id) {
   return `${id}---${generateUUID()}`;
 }
 function selectSingle(id) {
-  let prevId = null;
-  if (model.value) {
-    prevId = model.value[0]?.toString();
+  if (props.disabled) return;
+
+  // Deselect previously selected item
+  if (model.value && !Array.isArray(model.value) && model.value !== notSelectedId) {
+    itemsModel.value[model.value.toString()] = false;
+  } else if (Array.isArray(model.value) && model.value.length > 0) {
+    itemsModel.value[model.value[0].toString()] = false;
   }
 
-  if (!Array.isArray(model.value)) {
-    prevId = model.value;
-  }
-
-  if (prevId === id) {
-    // Same radio button selected
-    return;
-  }
-  if (!prevId) {
-    // Model was empty
-    if (props.nullable) {
-      itemsModel.value[notSelectedId] = false;
-    }
-  } else {
-    itemsModel.value[prevId] = false;
-  }
-
-  itemsModel.value[id] = true;
-
+  // Select the new item
   if (id === notSelectedId) {
-    model.value = [];
+    model.value = null;
     itemsModel.value.notSelected = true;
   } else {
     model.value = [id];
+    itemsModel.value[id] = true;
   }
 }
 
 watch(
   () => props.kind,
   (newKind) => {
+    activate();
+    itemsModel.value = {};
+        
     if (newKind === 'multiple') {
+         model.value = [];
       if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
-      model.value = [];
-      itemsModel.value = [];
     } else if (newKind === 'single') {
-      if (props.nullable) {
+     if (props.nullable) {
         selectSingle(notSelectedId);
+      } else {
+        selectSingle(itemsDisplay.value[0][props.idAttribute]);
       }
     }
   }
 );
+
 function selectMultiple(id) {
   if (props.disabled) {
     return;
@@ -249,7 +245,6 @@ function selectMultiple(id) {
       model.value?.splice(index, 1);
     }
   }
-  activate();
 }
 const query = ref();
 
@@ -290,12 +285,14 @@ watch(
     });
   }
 );
+
 watch(
   () => props.hasSearch,
   () => {
     query.value = '';
   }
 );
+
 function isElementHidden(item) {
   if (query.value?.length > 0) {
     return hiddenValues.value.some(
@@ -348,7 +345,6 @@ function selectAll() {
     });
   }
 }
-
 </script>
 
 <template>

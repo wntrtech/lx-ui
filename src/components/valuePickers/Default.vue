@@ -95,20 +95,21 @@ function activate() {
       [props.idAttribute]: notSelectedId,
       [props.nameAttribute]: props.texts.notSelected,
     });
-
     itemsModel.value[notSelectedId] = model.value?.length === 0 || !model.value;
   }
 
   // Then set items from model as selected
-  if (Array.isArray(model.value)) {
-    model.value?.forEach((id) => {
-      if (id) {
-        itemsModel.value[id?.toString()] = true;
-      }
-    });
-  } else {
-    itemsModel.value[model.value?.toString()] = true;
-  }
+ if (model.value) {
+   if (Array.isArray(model.value)) {
+     model.value?.forEach((id) => {
+       if (id) {
+         itemsModel.value[id?.toString()] = true;
+       }
+     });
+   } else {
+     itemsModel.value[model.value?.toString()] = true;
+   }
+ }
 }
 activate();
 
@@ -117,11 +118,13 @@ function deactivate() {
     if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
   }
 }
+
 watch(
   () => props.nullable,
   (newValue) => {
-    if (newValue) activate();
-    else if (!newValue) deactivate();
+    if (props.kind !== "single") return
+    if (newValue) activate()
+    else if (!newValue) deactivate()    
   }
 );
 
@@ -132,9 +135,10 @@ watch(
     return { value, length };
   },
   ({ value, length }) => {
+    if (!value) return
     activate();
 
-    if (Array.isArray(value) && value.length === 0) {
+    if (Array.isArray(value) && length === 0) {
       itemsModel.value.notSelected = true;
     }
   }
@@ -183,15 +187,14 @@ function selectSingle(id) {
   } else if (Array.isArray(model.value) && model.value.length > 0) {
     itemsModel.value[model.value[0].toString()] = false;
   }
-  
-  // Select the new item
-  itemsModel.value[id] = true;
 
+  // Select the new item
   if (id === notSelectedId) {
-    model.value = [];
+    model.value = null;
     itemsModel.value.notSelected = true;
   } else {
     model.value = [id];
+    itemsModel.value[id] = true;
   }
 }
 
@@ -199,26 +202,25 @@ watch(
   () => props.kind,
   (newValue) => {
     activate();
-    model.value = [];
-    itemsModel.value = [];
-
+    itemsModel.value = {};
+  
     if (newValue === 'multiple') {
+      model.value = [];
       if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
     } else if (newValue === 'single') {
       if (props.nullable) {
         selectSingle(notSelectedId);
+      } else {
+        selectSingle(itemsDisplay.value[0][props.idAttribute]);
       }
     }
   }
 );
 
 function selectMultiple(id) {
-  if (props.disabled) {
-    return;
-  }
+  if (props.disabled) return;
 
   const idModel = ref(itemsModel.value[id]);
-
   idModel.value = !idModel.value;
 
   if (idModel.value) {

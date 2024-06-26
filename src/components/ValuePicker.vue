@@ -51,7 +51,7 @@ const model = computed({
       !props.alwaysAsArray &&
       !(props.variant === 'dropdown' || props.variant === 'dropdown-custom')
     ) {
-      emits('update:modelValue', props.kind === 'single' ? value[0] : value);
+      emits('update:modelValue', props.kind === 'single' && value ? value[0] : value);
     } else if (
       props.alwaysAsArray &&
       (props.variant === 'dropdown' || props.variant === 'dropdown-custom')
@@ -81,14 +81,27 @@ watch(
 );
 
 onMounted(() => {
-  if (
-    model.value &&
-    !Array.isArray(model.value) &&
-    (props.alwaysAsArray || props.kind === 'multiple')
-  ) {
-    emits('update:modelValue', [model.value]);
-  } else if (!model.value) {
-    emits('update:modelValue', []);
+  const updateModelValue = (value) => emits('update:modelValue', value);
+
+  if (model.value) {
+    if (!Array.isArray(model.value) && (props.alwaysAsArray || props.kind === 'multiple')) {
+      updateModelValue([model.value]);
+    }
+  } else if (props.kind === 'multiple') {
+    if (
+      props.variant === 'default' ||
+      props.variant === 'default-custom' ||
+      props.variant === 'tiles' ||
+      props.variant === 'tags' ||
+      props.variant === 'tiles-custom' ||
+      props.variant === 'tags-custom'
+    ) {
+      updateModelValue(null);
+    } else {
+      updateModelValue([]);
+    }
+  } else if (props.kind === 'single') {
+    updateModelValue(null);
   }
 });
 </script>
@@ -96,8 +109,8 @@ onMounted(() => {
 <template>
   <div class="lx-field-wrapper" ref="refRoot">
     <LxValuePickerDefault
-      :role="kind === 'single' ? 'radiogroup' : 'group'"
       v-if="variant === 'default' || variant === 'default-custom'"
+      :role="kind === 'single' ? 'radiogroup' : 'group'"
       v-model="model"
       :items="items"
       :idAttribute="idAttribute"
@@ -124,6 +137,7 @@ onMounted(() => {
         <slot name="customItem" v-bind="slotData" />
       </template>
     </LxValuePickerDefault>
+
     <LxValuePickerDropDown
       v-if="variant === 'dropdown' || variant === 'dropdown-custom'"
       v-model="model"
@@ -152,6 +166,7 @@ onMounted(() => {
         <slot name="customItem" v-bind="slotData" />
       </template>
     </LxValuePickerDropDown>
+
     <LxValuePickerTileTag
       v-if="
         variant === 'tiles' ||
@@ -185,6 +200,7 @@ onMounted(() => {
         <slot name="customItem" v-bind="slotData" />
       </template>
     </LxValuePickerTileTag>
+
     <LxValuePickerRotator
       v-if="variant === 'rotator' || variant === 'rotator-custom'"
       v-model="model"

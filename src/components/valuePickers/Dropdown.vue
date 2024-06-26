@@ -108,19 +108,20 @@ function activate() {
       [props.idAttribute]: notSelectedId,
       [props.nameAttribute]: props.texts.notSelected,
     });
-
     itemsModel.value[notSelectedId] = model.value?.length === 0 || !model.value;
   }
 
   // Then set items from model as selected
-  if (Array.isArray(model.value)) {
-    model.value?.forEach((id) => {
-      if (id) {
-        itemsModel.value[id?.toString()] = true;
-      }
-    });
-  } else {
-    itemsModel.value[model.value?.toString()] = true;
+  if (model.value) {
+    if (Array.isArray(model.value)) {
+      model.value?.forEach((id) => {
+        if (id) {
+          itemsModel.value[id?.toString()] = true;
+        }
+      });
+    } else {
+      itemsModel.value[model.value?.toString()] = true;
+    }
   }
 }
 activate();
@@ -130,21 +131,25 @@ function deactivate() {
     if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
   }
 }
+
 watch(
   () => props.nullable,
   (newValue) => {
+    if (props.kind !== "single") return
     if (newValue) activate();
     else if (!newValue) deactivate();
   }
 );
-function clear(e) {
+
+function clear(e = { stopPropagation: () => {} }) {
   e?.stopPropagation();
 
   itemsDisplay.value.forEach((item) => {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
+
   if (!Array.isArray(model.value)) {
-    model.value = [];
+    model.value = null;
   } else {
     model.value?.splice(0, model.value?.length);
   }
@@ -157,17 +162,18 @@ watch(
     return { value, length };
   },
   ({ value, length }) => {
+    if (!value) return
     activate();
     // TODO need normal solution to avoid v-model = [[]] (v-model = null, variant = dropdown, kind = multiple, alwaysAsArray = true), maybe rework emits
     if (Array.isArray(value) && Array.isArray(value[0])) {
       clear();
     }
-    
   }
 );
 
 const menuOpen = ref(false);
 const container = ref();
+
 const selectedItems = computed(() => {
   const ret = [];
   let temp = model.value;
@@ -193,6 +199,8 @@ function getName(returnPlaceholder = true) {
   } else if (returnPlaceholder) {
     text = props.placeholder;
   }
+
+  console.log('text', text)
   
   return text;
 }
@@ -200,57 +208,49 @@ function getName(returnPlaceholder = true) {
 function getItemId(id) {
   return `${id}---${generateUUID()}`;
 }
+
 function selectSingle(id) {
-  let prevId = null;
-  if (model.value) {
-    prevId = model.value[0]?.toString();
+  if (props.disabled) return;
+  
+  // Deselect previously selected item
+  if (model.value && !Array.isArray(model.value) && model.value !== notSelectedId) {
+    itemsModel.value[model.value.toString()] = false;
+  } else if (Array.isArray(model.value) && model.value.length > 0) {
+    itemsModel.value[model.value[0].toString()] = false;
   }
 
-  if (!Array.isArray(model.value)) {
-    prevId = model.value;
-  }
-
-  if (prevId === id) {
-    // Same radio button selected
-    return;
-  }
-  if (!prevId) {
-    // Model was empty
-    if (props.nullable) {
-      itemsModel.value[notSelectedId] = false;
-    }
-  } else {
-    itemsModel.value[prevId] = false;
-  }
-
-  itemsModel.value[id] = true;
-
+  // Select the new item
   if (id === notSelectedId) {
-    model.value = [];
+    model.value = null;
     itemsModel.value.notSelected = true;
   } else {
-    model.value = [id];
+    model.value = id;
+    itemsModel.value[id] = true;
   }
 }
 
 watch(
   () => props.kind,
   (newKind) => {
+    activate();
+    itemsModel.value = {};
+
     if (newKind === 'multiple') {
-      if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
       model.value = [];
-      itemsModel.value = [];
+      if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
     } else if (newKind === 'single') {
-      if (props.nullable) {
+     if (props.nullable) {
         selectSingle(notSelectedId);
+      } else {
+        selectSingle(itemsDisplay.value[0][props.idAttribute]);
       }
     }
-  }
+  },
 );
+
 function selectMultiple(id) {
-  if (props.disabled) {
-    return;
-  }
+  if (props.disabled) return;
+  
   if (!model.value) {
     model.value = [];
   }
@@ -289,6 +289,7 @@ function selectMultiple(id) {
     }
   }
 }
+
 const query = ref();
 
 const hiddenValues = ref([]);
@@ -315,12 +316,14 @@ watch(
     });
   }
 );
+
 watch(
   () => props.hasSearch,
   () => {
     query.value = '';
   }
 );
+
 const filteredItems = computed(() => {
   if (Array.isArray(props.items) && query.value?.length > 0) {
     if (Array.isArray(props.searchAttributes) && props.searchAttributes?.length > 0) {
@@ -352,7 +355,9 @@ function openDropDownDefault() {
       }, 150);
   }
 }
+
 const refRoot = ref();
+
 onClickOutside(refRoot, closeDropDownDefault);
 
 function onEnter() {
@@ -387,8 +392,6 @@ function onDown() {
     }
   }
 }
-
-
 
 function focusNextInputElement() {
   onDown();
@@ -432,6 +435,7 @@ const variantDropdown = computed(() => {
   if (props.variant === 'dropdown-custom') res = 'custom';
   return res;
 });
+
 const variantAutoComplete = computed(() => {
   let res = 'default';
   if (props.variant === 'dropdown-custom') res = 'custom';
@@ -605,6 +609,7 @@ const columnReadOnly = computed(() => {
                   />
                 </div>
               </div>
+              
               <div
                 class="lx-dropdown-default-data dropdown-multiple"
                 :class="[{ emptyModel: model?.length === 0 }]"
@@ -644,6 +649,7 @@ const columnReadOnly = computed(() => {
               />
             </slot>
           </div>
+
           <template #content>
             <div class="lx-dropdown-default-content" :style="{ width: panelWidth + 'px' }">
               <slot name="panel" @click="closeDropDownDefault()">
