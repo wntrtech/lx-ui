@@ -11,6 +11,8 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   readOnly: { type: Boolean, default: false },
   kind: { type: String, default: 'label' }, // result kind: label, icon
+  invalid: { type: Boolean, default: false },
+  invalidationMessage: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -172,6 +174,8 @@ onMounted(() => {
         :disabled="disabled"
         :placeholder="inputPlaceholder"
         :tooltip="texts.inputTooltip"
+        :invalid="invalid"
+        :invalidationMessage="invalidationMessage"
         @update:modelValue="calculateResult"
       />
 
@@ -181,6 +185,7 @@ onMounted(() => {
         :placeholder="texts.dropdownPlaceholder"
         :tooltip="texts.dropdownTooltip"
         :disabled="disabled"
+        :invalid="invalid"
         @update:modelValue="calculateResult"
       ></LxDropDown>
     </template>
