@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxButton from '@/components/Button.vue';
+import LxIcon from '@/components/Icon.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -254,27 +255,30 @@ const queueItems = computed(() => {
   <template v-else>
     <div
       v-if="rotatorItemsArray"
-      class="lx-value-picker-tags"
+      class="lx-value-picker-tags lx-rotator"
       :class="[{ 'lx-invalid': invalid }]"
       :title="tooltip"
     >
       <LxDropDownMenu triggerClick="right">
-        <TransitionGroup
-          name="rotator"
-          tag="ul"
-          class="lx-rotator-set"
-          :class="[{ 'lx-rotator-set-custom': variant === 'rotator-custom' }]"
-          tabindex="0"
-          @keydown.space.prevent="selectSingle(null)"
-          @click="selectSingle(null)"
-        >
-          <li v-for="item in queueItems" :key="item.key" class="lx-rotator-tag">
-            <p v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
-            <template v-if="variant === 'rotator-custom'">
-              <slot name="customItem" v-bind="item"></slot>
-            </template>
-          </li>
-        </TransitionGroup>
+        <div class="lx-rotator-dropdown-wrapper">
+          <TransitionGroup
+            name="rotator"
+            tag="ul"
+            class="lx-rotator-set"
+            :class="[{ 'lx-rotator-set-custom': variant === 'rotator-custom' }]"
+            tabindex="0"
+            @keydown.space.prevent="selectSingle(null)"
+            @click="selectSingle(null)"
+          >
+            <li v-for="item in queueItems" :key="item.key" class="lx-rotator-tag">
+              <p v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
+              <template v-if="variant === 'rotator-custom'">
+                <slot name="customItem" v-bind="item"></slot>
+              </template>
+            </li>
+          </TransitionGroup>
+          <LxIcon value="rotator" class="thumb" />
+        </div>
         <template #panel>
           <LxButton
             v-for="item in rotatorItemsArray"
