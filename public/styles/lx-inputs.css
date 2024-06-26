@@ -3449,23 +3449,40 @@ input[type='range']:hover::-moz-range-thumb {
   width: fit-content;
 }
 
+.lx-visual-picker-wrapper{
+  padding: var(--gap);
+}
+
 .lx-visual-picker-wrapper .list-country-item {
   display: flex;
   align-items: center;
   gap: var(--gap);
 }
 
-.lx-visual-picker-wrapper:not(.read-only) path:hover,
-.lx-visual-picker-wrapper:not(.read-only) g:hover>path,
-.lx-visual-picker-wrapper:not(.read-only) circle:hover {
-  fill: var(--color-interactive-hover-background) !important;
+.lx-visual-picker-wrapper:not(.read-only) .europe-map path:not([id^="rect"]):not([id$="_lx_safearea"]):hover,
+.lx-visual-picker-wrapper:not(.read-only) .europe-map g:not(#EUROPE_VP1):hover,
+.lx-visual-picker-wrapper:not(.read-only) #skeleton_spine g:hover,
+.lx-visual-picker-wrapper:not(.read-only) #Skeleton_Full g:hover,
+.lx-visual-picker-wrapper:not(.read-only) #Skeleton_Arms g:hover,
+.lx-visual-picker-wrapper:not(.read-only) #Skeleton_LeftHand g:hover,
+.lx-visual-picker-wrapper:not(.read-only) #Skeleton_RightHand g:hover,
+.lx-visual-picker-wrapper:not(.read-only) #Skeleton g:hover>path,
+.lx-visual-picker-wrapper:not(.read-only) #LV_Region g:hover,
+.lx-visual-picker-wrapper:not(.read-only) #LV_Region>path:hover,
+.lx-visual-picker-wrapper:not(.read-only) .europe-map svg circle:hover {
+  fill: var(--color-interactive-hover-background);
   cursor: pointer;
 }
 
-.lx-visual-picker-wrapper svg .selected-country,
-.lx-visual-picker-wrapper svg g.selected-country path,
-.lx-visual-picker-wrapper svg g.selected-country circle {
-  fill: var(--color-interactive-background) !important;
+.lx-visual-picker-wrapper .europe-map svg .selected-visual,
+.lx-visual-picker-wrapper svg #skeleton_spine g.selected-visual,
+.lx-visual-picker-wrapper svg #Skeleton_Full g.selected-visual,
+.lx-visual-picker-wrapper svg #LV_Region>g.selected-visual path:not([id$="_lx_safearea"]),
+.lx-visual-picker-wrapper svg #LV_Region>path.selected-visual,
+.lx-visual-picker-wrapper svg #Skeleton_Arms g.selected-visual,
+.lx-visual-picker-wrapper svg #Skeleton_RightHand g.selected-visual,
+.lx-visual-picker-wrapper svg #Skeleton_LeftHand g.selected-visual{
+  fill: var(--color-content-switcher-foreground);
 }
 
 .lx-visual-picker-wrapper .lx-list .lx-list-item {
@@ -3495,7 +3512,7 @@ input[type='range']:hover::-moz-range-thumb {
   display: flex;
 }
 
-.lx-visual-picker-wrapper .europe-map {
+.lx-visual-picker-wrapper .visual-select {
   display: flex;
   flex-direction: column;
 }
@@ -3512,9 +3529,15 @@ input[type='range']:hover::-moz-range-thumb {
   background-color: var(--color-region);
 }
 
-.lx-visual-picker-wrapper .europe-map>svg {
+.lx-visual-picker-wrapper .visual-select-picture>svg {
   height: 100%;
   width: 100%;
+  fill: var(--color-region);
+}
+
+.lx-region .lx-visual-picker-wrapper .visual-select-picture>svg,
+.lx-modal .lx-visual-picker-wrapper .visual-select-picture>svg{
+  fill: var(--color-region-2);
 }
 
 .lx-rotator-set {
