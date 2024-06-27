@@ -97,10 +97,6 @@ const normalizedAuthors = computed(() => {
   if (!authorValue) return null;
   return Array.isArray(authorValue) ? authorValue : [authorValue];
 });
-
-function isFolder(name, size) {
-  return size === 0 && !fileUploaderUtils.getFileExtension(name);
-}
 </script>
 <template>
   <LxForm
@@ -211,20 +207,18 @@ function isFolder(name, size) {
             list-type="1"
             :items="props.value?.archiveContentData"
           >
-            <template #customItem="{ name, description, size }">
+            <template #customItem="{ name, description, children }">
               <div class="lx-archive-content-icon">
                 <LxIcon
-                  :class="[{ 'lx-folder-icon': isFolder(name, size) }]"
-                  :value="
-                    !isFolder(name, size) ? fileUploaderUtils.provideDefaultIcon(name) : 'folder'
-                  "
+                  :class="[{ 'lx-folder-icon': children }]"
+                  :value="!children ? fileUploaderUtils.provideDefaultIcon(name) : 'folder'"
                 />
               </div>
               <div class="lx-archive-content-text">
                 <p
                   class="lx-primary"
                   :class="{
-                    'lx-folder-name': isFolder(name, size),
+                    'lx-folder-name': children,
                   }"
                 >
                   {{ name }}
