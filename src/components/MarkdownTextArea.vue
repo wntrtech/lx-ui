@@ -103,6 +103,7 @@ const isNotLink = ref(false);
 const isNotImage = ref(false);
 
 const outputHtmlText = ref();
+
 const model = computed({
   get() {
     return props.modelValue;
@@ -124,12 +125,14 @@ const characterCount = computed(
 );
 
 const isModalOpen = ref(false);
+
 function focus() {
   if (!editor.value || isModalOpen.value) {
     return;
   }
   editor.value.commands.focus();
 }
+
 function getHTML() {
   return editor.value.getHTML();
 }
@@ -149,13 +152,20 @@ watch(model, (newText) => {
     maxlengthExceeded.value = remainingCount < 0;
   }
   if (props.readOnly) {
-    updateHtml();
+    nextTick(() => {
+      updateHtml();
+    });
   }
 });
+
 watch(
   () => props.readOnly,
   (newValue) => {
-    if (newValue) updateHtml();
+    if (newValue) {
+      nextTick(() => {
+        updateHtml();
+      });
+    }
   }
 );
 
@@ -358,6 +368,11 @@ function setImage() {
 
 onMounted(() => {
   createEditorExtensions();
+  nextTick(() => {
+    if (props.readOnly) {
+      updateHtml();
+    }
+  });
 });
 
 onBeforeUnmount(() => {
