@@ -34,7 +34,7 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-height: 1.1em;
-  max-height: 2.2em;
+  max-height: var(--row-size);
   overflow: hidden;
   text-overflow: ellipsis;
   height: auto;
@@ -381,7 +381,7 @@
 .lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper .additional-buttons,
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-form-section .lx-data-block-wrapper,
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block,
-.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block-header, 
+.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block-header,
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-form-section .lx-data-block-wrapper .additional-buttons {
   background-color: var(--color-region-2);
   color: var(--color-data);
@@ -389,7 +389,7 @@
 }
 
 .lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block-header:hover,
-.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block-header:hover  {
+.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block-header:hover {
   background-color: var(--color-region-hover);
   cursor: pointer;
 }
@@ -1017,6 +1017,16 @@ p .lx-person-display-wrapper {
   }
 }
 
+.lx-form-grid>header .lx-toolbar-chip .lx-dropdown-default {
+  margin: 2px 2px 2px 0;
+}
+
+@media(min-width: 800px) {
+  .lx-form-grid>header .lx-toolbar-chip .lx-field-wrapper {
+    min-width: 10rem;
+  }
+}
+
 @media (max-width: 800px) {
 
   .lx-form-grid>header>.pre-header-group,
@@ -1051,10 +1061,16 @@ p .lx-person-display-wrapper {
 
   .lx-form-grid>header>.lx-group.lx-primary .lx-toolbar-chip {
     justify-content: left;
+    margin-right: 0;
+    padding-right: 0;
   }
 
   .lx-form-grid>header {
     grid-template-columns: 1fr auto auto;
+  }
+
+  .lx-form-grid>header .lx-toolbar-chip .lx-dropdown-default .lx-dropdown-default-data {
+    padding-left: 0;
   }
 
   .responsive-default-index-button {
@@ -1142,6 +1158,7 @@ p .lx-person-display-wrapper {
 }
 
 @media (min-width: 700px) {
+
   .lx-tab-control header.lx-toolbar .lx-tab-container,
   .lx-tab-control header.lx-toolbar .lx-group,
   .lx-tab-control header.lx-toolbar {
