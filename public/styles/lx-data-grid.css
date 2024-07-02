@@ -255,8 +255,10 @@
 
 .lx .lx-data-grid .lx-cell-secondary,
 .lx .lx-data-grid .lx-cell-secondary .lx-person-display-name,
+.lx .lx-data-grid .lx-cell-secondary .lx-grid-icon-text,
 .lx .lx-data-grid .lx-cell-extra,
-.lx .lx-data-grid .lx-cell-extra .lx-person-display-name {
+.lx .lx-data-grid .lx-cell-extra .lx-person-display-name,
+.lx .lx-data-grid .lx-cell-extra .lx-grid-icon-text {
   color: var(--color-label);
 }
 
@@ -844,9 +846,22 @@
 
 .lx .lx-data-grid-wrapper .lx-data-grid .lx-cell svg.lx-grid-column-icon,
 .lx .lx-data-grid-wrapper .lx-appendable-list-item .lx-data-block-content .lx-row svg.lx-grid-column-icon {
-  height: 1rem;
+  height: 1.5rem;
 }
 
-.lx .lx-data-grid-wrapper .lx-appendable-list-item .lx-data-block-content .lx-row svg.lx-grid-column-icon {
-  margin-top: 0.5rem;
+.lx-grid-icon-wrapper {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 0.75ch;
+  align-items: center;
+}
+
+.lx-grid-icon-text {
+  padding-top: 2px;
+}
+
+.lx-data-grid .lx-grid-icon-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

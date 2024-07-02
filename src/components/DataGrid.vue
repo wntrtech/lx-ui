@@ -725,22 +725,32 @@ function emptyStateActionClicked(actionName) {
                 v-model="row[col.attributeName]"
               />
               <template v-if="col.type === 'icon'">
-                <LxIcon
+                <template
                   v-if="
                     isObject(row?.[col?.attributeName]) && !isValueEmpty(row?.[col?.attributeName])
                   "
-                  :value="row?.[col?.attributeName]?.icon"
-                  :icon-set="row?.[col?.attributeName]?.iconSet"
-                  :title="row?.[col?.attributeName]?.label"
-                  :customClass="`lx-grid-column-icon ${row?.[col?.attributeName]?.category}`"
-                ></LxIcon>
-                <LxIcon
+                >
+                  <div class="lx-grid-icon-wrapper">
+                    <LxIcon
+                      :value="row?.[col?.attributeName]?.icon"
+                      :icon-set="row?.[col?.attributeName]?.iconSet"
+                      :title="row?.[col?.attributeName]?.label"
+                      :customClass="`lx-grid-column-icon ${row?.[col?.attributeName]?.category}`"
+                    />
+                    <p v-if="['s', 'm', 'l', 'xl'].includes(col.size)" class="lx-grid-icon-text">
+                      {{ row?.[col?.attributeName].label }}
+                    </p>
+                  </div>
+                </template>
+                <template
                   v-else-if="
                     !isObject(row?.[col?.attributeName]) && !isValueEmpty(row?.[col?.attributeName])
                   "
-                  :value="row?.[col?.attributeName]"
-                  customClass="lx-grid-column-icon"
-                ></LxIcon>
+                >
+                  <div class="lx-grid-icon-wrapper">
+                    <LxIcon :value="row?.[col?.attributeName]" customClass="lx-grid-column-icon" />
+                  </div>
+                </template>
                 <span v-else>—</span>
               </template>
 
@@ -959,22 +969,32 @@ function emptyStateActionClicked(actionName) {
             v-model="item[col.attributeName]"
           />
           <template v-else-if="col.type === 'icon'">
-            <LxIcon
+            <template
               v-if="
                 isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
               "
-              :value="item?.[col?.attributeName]?.icon"
-              :icon-set="item?.[col?.attributeName]?.iconSet"
-              :title="item?.[col?.attributeName]?.label"
-              :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
-            ></LxIcon>
-            <LxIcon
+            >
+              <div class="lx-grid-icon-wrapper">
+                <LxIcon
+                  :value="item?.[col?.attributeName]?.icon"
+                  :icon-set="item?.[col?.attributeName]?.iconSet"
+                  :title="item?.[col?.attributeName]?.label"
+                  :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
+                />
+                <p v-if="['s', 'm', 'l', 'xl'].includes(col.size)" class="lx-grid-icon-text">
+                  {{ item?.[col?.attributeName].label }}
+                </p>
+              </div>
+            </template>
+            <template
               v-else-if="
                 !isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
               "
-              :value="item?.[col?.attributeName]"
-              customClass="lx-grid-column-icon"
-            ></LxIcon>
+            >
+              <div class="lx-grid-icon-wrapper">
+                <LxIcon :value="item?.[col?.attributeName]" customClass="lx-grid-column-icon" />
+              </div>
+            </template>
             <span v-else>—</span>
           </template>
           <LxFlag
