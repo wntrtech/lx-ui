@@ -1929,13 +1929,37 @@ h2.lx-section-header+p.lx-invalidation-message {
 
 .lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel {
   background-color: var(--color-region);
+  width: auto;
+}
+
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel:has(.lx-color-list) {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  width: auto;
   min-width: calc(9 * var(--row-size) + 1rem);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel:has(.lx-button-set) .lx-button .lx-button-content label {
+  font-weight: bold;
+}
+
+.lx .lx-markdown-text-area-wrapper .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active {
+  background-color: var(--color-interactive-background);
+  border-color:  var(--color-interactive-background);
+  color: var(--color-interactive-foreground);
+}
+
+.lx .lx-markdown-text-area-wrapper .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active:hover {
+  background-color: var(--color-interactive-hover-background);
+  border-color:  var(--color-interactive-hover-background);
+  color: var(--color-interactive-hover-foreground);
+}
+
+.lx .lx-markdown-text-area-wrapper .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active:hover .lx-button-content {
+  color: var(--color-interactive-hover-foreground);
+}
+
+
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list {
   list-style: none;
   padding-left: 0;
   display: flex;
@@ -1945,7 +1969,7 @@ h2.lx-section-header+p.lx-invalidation-message {
   margin-bottom: 0;
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item {
   height: var(--row-size);
   width: var(--row-size);
   justify-content: center;
@@ -1955,11 +1979,11 @@ h2.lx-section-header+p.lx-invalidation-message {
   flex-shrink: 0;
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item:hover {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item:hover {
   background-color: var(--color-grid-hover-background);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item div {
   border: 2px solid var(--color-chrome);
   height: 2rem;
   width: 2rem;
@@ -1967,44 +1991,44 @@ h2.lx-section-header+p.lx-invalidation-message {
   background-color: var(--color-background);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.red div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.red div {
   background-color: var(--color-red);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.green div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.green div {
   background-color: var(--color-green);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.teal div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.teal div {
   background-color: var(--color-teal);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.blue div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.blue div {
   background-color: var(--color-blue);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar.lx-context-container .lx-dropdown-panel ul .lx-color-item.purple div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar.lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.purple div {
   background-color: var(--color-purple);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.orange div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.orange div {
   background-color: var(--color-orange);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.yellow div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.yellow div {
   background-color: var(--color-yellow);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.label div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.label div {
   background-color: var(--color-label);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.lx-selected {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.lx-selected {
   background-color: var(--color-focus-background);
   border-radius: 50%;
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.lx-selected div {
+.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel .lx-color-list .lx-color-item.lx-selected div {
   border-color: var(--color-region);
 }
 
@@ -2066,70 +2090,9 @@ h2.lx-section-header+p.lx-invalidation-message {
   background-color: var(--color-label-20);
 }
 
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel {
-  background-color: var(--color-region);
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  width: auto;
-  max-width: calc(9 * var(--row-size) + 1rem);
-}
-
 .lx-markdown-text-area-wrapper .lx-component-toolbar .left-area>.lx-group {
   border-right: none;
 }
-
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel {
-  background-color: var(--color-region);
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  width: auto;
-  max-width: calc(9 * var(--row-size) + 1rem);
-}
-
-/* .lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel {
-  min-width: calc(9 * var(--row-size) + 1rem);
-}
-
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul {
-  list-style: none;
-  padding-left: 0;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item {
-  height: var(--row-size);
-  width: var(--row-size);
-  justify-content: center;
-  align-items: center;
-  display: flex;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item div {
-  border: 2px solid var(--color-chrome);
-  height: 2rem;
-  width: 2rem;
-  border-radius: 50%;
-  background-color: var(--color-background);
-}
-
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.red div {
-  background-color: var(--color-red);
-}
-
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.lx-selected div {
-  border-color: var(--color-region);
-}
-
-.lx-markdown-text-area-wrapper>.lx-component-toolbar .lx-context-container .lx-dropdown-panel ul .lx-color-item.lx-selected {
-  background-color: var(--color-focus-background);
-  border-radius: 50%;
-} */
 
 .lx .lx-markdown-text-area img.ProseMirror-selectednode {
   outline: 2px solid var(--color-focus-background);

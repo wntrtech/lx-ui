@@ -48,6 +48,7 @@ const props = defineProps({
   tooltip: { type: String, default: null },
   showPlaceholderPicker: { type: Boolean, default: false },
   showImagePicker: { type: Boolean, default: false },
+  showHeadingPicker: { type: Boolean, default: false },
   imageMaxSize: { type: Number, default: 3000000 }, // 3MB
   dictionary: { type: Object, default: null },
   texts: {
@@ -60,6 +61,13 @@ const props = defineProps({
       strikethrough: 'Pārsvītrojums',
       color: 'Krāsas izvēle',
       clear: 'Notīrīt krāsu',
+      heading: 'Virsraksta izmēra izvēle',
+      headingH1: 'Virsraksts 1',
+      headingH2: 'Virsraksts 2',
+      headingH3: 'Virsraksts 3',
+      headingH4: 'Virsraksts 4',
+      headingH5: 'Virsraksts 5',
+      headingH6: 'Virsraksts 6',
       bulleted: 'Saraksts bez numerācijas',
       numbered: 'Saraksts ar numerāciju',
       link: 'Saite',
@@ -103,6 +111,39 @@ const isNotLink = ref(false);
 const isNotImage = ref(false);
 
 const outputHtmlText = ref();
+
+const actionDefinitions = ref([
+  {
+    id: 'Heading1',
+    label: props.texts.headingH1,
+    level: 1,
+  },
+  {
+    id: 'Heading2',
+    label: props.texts.headingH2,
+    level: 2,
+  },
+  {
+    id: 'Heading3',
+    label: props.texts.headingH3,
+    level: 3,
+  },
+  {
+    id: 'Heading4',
+    label: props.texts.headingH4,
+    level: 4,
+  },
+  {
+    id: 'Heading5',
+    label: props.texts.headingH5,
+    level: 5,
+  },
+  {
+    id: 'Heading6',
+    label: props.texts.headingH6,
+    level: 6,
+  },
+]);
 
 const model = computed({
   get() {
@@ -512,6 +553,7 @@ const imageInputTypes = [
               :disabled="!editor.can().redo() || isDisabled"
             />
           </LxToolbarGroup>
+
           <LxToolbarGroup class="left-group">
             <lx-button
               icon="text-bold"
@@ -540,6 +582,7 @@ const imageInputTypes = [
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('strike')"
             />
+
             <LxDropDownMenu v-if="showColorPicker">
               <lx-button
                 icon="color"
@@ -550,7 +593,7 @@ const imageInputTypes = [
                 :active="editor.isActive('textStyle')"
               />
               <template #panel>
-                <ul>
+                <ul class="lx-color-list">
                   <li
                     class="lx-color-item red"
                     :class="[
@@ -660,7 +703,39 @@ const imageInputTypes = [
               </template>
             </LxDropDownMenu>
           </LxToolbarGroup>
+
           <LxToolbarGroup class="left-group">
+            <LxDropDownMenu v-if="showHeadingPicker">
+              <lx-button
+                icon="text-heading"
+                kind="ghost"
+                variant="icon-only"
+                :title="texts.heading"
+                :disabled="isSelectionEmpty || isDisabled"
+                :active="editor.isActive('heading')"
+              />
+              <template #panel>
+                <div class="lx-button-set">
+                  <LxButton
+                    v-for="action in actionDefinitions"
+                    :key="action.id"
+                    :label="action.label"
+                    :title="action.label"
+                    tabindex="0"
+                    :active="editor.isActive('heading', { level: action.level })"
+                    @click="
+                      editor
+                        .chain()
+                        .focus()
+                        .unsetLink()
+                        .toggleHeading({ level: action.level })
+                        .run()
+                    "
+                  />
+                </div>
+              </template>
+            </LxDropDownMenu>
+
             <lx-button
               icon="list-bulleted"
               kind="ghost"

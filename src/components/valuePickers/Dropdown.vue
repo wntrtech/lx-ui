@@ -199,9 +199,6 @@ function getName(returnPlaceholder = true) {
   } else if (returnPlaceholder) {
     text = props.placeholder;
   }
-
-  console.log('text', text)
-  
   return text;
 }
 
