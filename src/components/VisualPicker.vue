@@ -19,6 +19,7 @@ const props = defineProps({
   kind: { type: String, default: 'europe' }, // europe, skeleton, spine, arms, left-hand, right-hand, latvia
   modelValue: { type: Array, default: () => [] },
   readOnly: { type: Boolean, default: false },
+  mode: { type: String, default: 'default' }, // default, compact
   texts: {
     type: Object,
     default: () => ({
@@ -438,7 +439,7 @@ defineExpose({ addTitles });
       :items="contentSwitcherItems"
       v-model="contentSwitcherModel"
       kind="combo"
-      v-if="isImageVisible"
+      v-if="isImageVisible && mode === 'default'"
     />
     <div
       class="visual-select"
@@ -455,7 +456,11 @@ defineExpose({ addTitles });
         <Latvia @click="spineClick($event)" v-if="kind === 'latvia'" />
       </div>
 
-      <div class="lx-tag-set" v-show="contentSwitcherModel === 'visual'" v-if="selectedItems">
+      <div
+        class="lx-tag-set"
+        v-show="contentSwitcherModel === 'visual'"
+        v-if="selectedItems && mode === 'default'"
+      >
         <div v-for="item in selectedItems" :key="item?.id" class="lx-tag">
           <div class="tag-text">
             <LxFlag :value="item?.id" size="small" v-if="kind === 'europe'" />
@@ -474,7 +479,7 @@ defineExpose({ addTitles });
     <div class="visual-select" v-show="contentSwitcherModel === 'list' || !isImageVisible">
       <LxList
         ref="listRef"
-        :items="items"
+        :items="!readOnly ? items : selectedItems"
         :hasSelecting="!readOnly"
         selectingKind="multiple"
         listType="1"
