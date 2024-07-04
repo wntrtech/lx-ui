@@ -93,7 +93,7 @@ const selectOffset = computed(() => {
       <div class="lx-info-wrapper-content" ref="elementToMonitor" @mouseenter="handleMouseEnter">
         <slot />
       </div>
-      <template #content>
+      <template #content v-if="$slots.panel">
         <div class="lx-info-wrapper-panel">
           <slot name="panel" />
         </div>
