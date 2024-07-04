@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -73,6 +73,20 @@ function loadChildren(id) {
 }
 
 const smallItems = ref(props.items);
+
+watch(
+  () => props.items,
+  (newValue, oldValue) => {
+    if (
+      Array.isArray(oldValue) &&
+      oldValue?.length === 0 &&
+      Array.isArray(newValue) &&
+      newValue?.length > 0
+    )
+      smallItems.value = props.items;
+  },
+  { immediate: true }
+);
 
 function selectRow(id) {
   selected.value = {};
