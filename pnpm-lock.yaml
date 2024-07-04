@@ -25,6 +25,9 @@ dependencies:
   '@tiptap/extension-text-style':
     specifier: ^2.1.16
     version: 2.1.16(@tiptap/core@2.1.12)
+  '@tiptap/extension-underline':
+    specifier: ^2.4.0
+    version: 2.4.0(@tiptap/core@2.1.12)
   '@tiptap/pm':
     specifier: 2.1.12
     version: 2.1.12
@@ -1624,6 +1627,14 @@ packages:
 
   /@tiptap/extension-text@2.1.16(@tiptap/core@2.1.12):
     resolution: {integrity: sha512-XzSJmAj32uYpaL/9FX3tRSU52DwZ9w+3yEffIcSN9MSwioqLsSolXOz7TuJfW6lSTar1ml9UPlRqX4dpayUTDQ==}
+    peerDependencies:
+      '@tiptap/core': ^2.0.0
+    dependencies:
+      '@tiptap/core': 2.1.12(@tiptap/pm@2.1.12)
+    dev: false
+
+  /@tiptap/extension-underline@2.4.0(@tiptap/core@2.1.12):
+    resolution: {integrity: sha512-guWojb7JxUwLz4OKzwNExJwOkhZjgw/ttkXCMBT0PVe55k998MMYe1nvN0m2SeTW9IxurEPtScH4kYJ0XuSm8Q==}
     peerDependencies:
       '@tiptap/core': ^2.0.0
     dependencies:

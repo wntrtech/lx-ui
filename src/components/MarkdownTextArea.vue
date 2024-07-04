@@ -4,6 +4,7 @@ import { Editor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
+import Underline from '@tiptap/extension-underline';
 
 import CharacterCount from '@tiptap/extension-character-count';
 import PlaceholderData from '@/components/markdownExtensions/PlaceholderData';
@@ -48,6 +49,7 @@ const props = defineProps({
   tooltip: { type: String, default: null },
   showPlaceholderPicker: { type: Boolean, default: false },
   showImagePicker: { type: Boolean, default: false },
+  showUnderlineToggle: { type: Boolean, default: false },
   showHeadingPicker: { type: Boolean, default: false },
   imageMaxSize: { type: Number, default: 3000000 }, // 3MB
   dictionary: { type: Object, default: null },
@@ -58,6 +60,7 @@ const props = defineProps({
       redo: 'Atgriezt atcelto darbību',
       bold: 'Treknrakts',
       italic: 'Slīpraksts',
+      underline: 'Pasvītrojums',
       strikethrough: 'Pārsvītrojums',
       color: 'Krāsas izvēle',
       clear: 'Notīrīt krāsu',
@@ -228,6 +231,7 @@ function createEditorExtensions() {
     Color,
     ImageComponent,
     HiddenIdNode,
+    Underline,
     Link.configure({
       autolink: false,
       validate: (href) => /^https?:\/\//.test(href),
@@ -572,6 +576,16 @@ const imageInputTypes = [
               @click="editor.chain().focus().toggleItalic().run()"
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('italic')"
+            />
+            <lx-button
+              v-if="showUnderlineToggle"
+              icon="text-underline"
+              kind="ghost"
+              variant="icon-only"
+              :title="texts.underline"
+              @click="editor.chain().focus().toggleUnderline().run()"
+              :disabled="isSelectionEmpty || isDisabled"
+              :active="editor.isActive('underline')"
             />
             <lx-button
               icon="text-strikethrough"
