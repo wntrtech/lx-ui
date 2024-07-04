@@ -361,8 +361,10 @@ function navToggle(value) {
   else navBarSwitchBasic.value = value;
 }
 function navToggleButton() {
-  if (props.mode === 'digives') navBarSwitchModel.value = !navBarSwitchModel.value;
-  else navBarSwitchBasic.value = !navBarSwitchBasic.value;
+  if (props.mode === 'digives') {
+    if (navBarSwitchModel.value === null) navBarSwitchModel.value = false;
+    else navBarSwitchModel.value = !navBarSwitchModel.value;
+  } else navBarSwitchBasic.value = !navBarSwitchBasic.value;
 }
 function goBack(route) {
   emits('goBack', route);
@@ -636,7 +638,11 @@ onMounted(() => {
     <div
       v-else-if="mode === 'digives'"
       class="lx-layout lx-layout-default lx-layout-digives"
-      :class="[{ 'lx-collapsed': navBarSwitchModel }, { 'lx-hide-nav-bar': hideNavBar }]"
+      :class="[
+        { 'lx-collapsed': navBarSwitchModel },
+        { 'lx-hide-nav-bar': hideNavBar },
+        { 'lx-collapsed-null': navBarSwitchModel === null },
+      ]"
     >
       <header>
         <LxMainHeaderDigives
@@ -685,7 +691,7 @@ onMounted(() => {
       </header>
       <div class="small-nav-bar-button">
         <LxButton
-          :icon="navBarSwitchModel ? 'menu' : 'close'"
+          :icon="navBarSwitchModel === null ? 'menu' : navBarSwitchModel ? 'menu' : 'close'"
           variant="icon-only"
           kind="ghost"
           @click="navToggleButton()"
@@ -741,6 +747,11 @@ onMounted(() => {
         <transition name="nav">
           <slot />
         </transition>
+        <div class="lx-loader-screen" v-if="navigating">
+          <div class="spinner">
+            <LxLoader :loading="true" />
+          </div>
+        </div>
       </main>
       <footer>
         <div>

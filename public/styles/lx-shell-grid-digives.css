@@ -385,6 +385,10 @@
   display: none;
 }
 
+.lx-layout.lx-layout-default.layout-digives.lx-collapsed-null > nav .lx-nav-panel {
+  display: block;
+}
+
 @media (max-width: 1200px) {
   .lx {
     --nav-row-size: 6rem;
@@ -457,5 +461,9 @@
 
   .lx-layout.lx-layout-default.lx-layout-digives > nav .lx-nav-panel.lx-responsive {
     display: flex;
+  }
+
+  .lx-layout.lx-layout-default.lx-layout-digives.lx-collapsed-null nav{
+    display: none;
   }
 }
