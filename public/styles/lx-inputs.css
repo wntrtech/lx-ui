@@ -3508,8 +3508,27 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-region .lx-visual-picker-wrapper .visual-select-picture>svg,
-.lx-modal .lx-visual-picker-wrapper .visual-select-picture>svg{
+.lx-modal .lx-visual-picker-wrapper .visual-select-picture>svg,
+.lx-form-grid .lx-visual-picker-wrapper .visual-select-picture>svg {
   fill: var(--color-region-2);
+}
+
+.lx-visual-picker-wrapper .lx-visual-picker-loader,
+.lx-visual-picker-wrapper .lx-empty-state-wrapper{
+  height: 31.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+}
+
+.lx-visual-picker-wrapper .lx-visual-picker-error > .error-state{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.lx-visual-picker-wrapper .lx-empty-state-wrapper  svg{
+  fill: var(--color-red);
 }
 
 .lx-rotator-set {
