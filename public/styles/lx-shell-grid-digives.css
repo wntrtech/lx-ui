@@ -389,6 +389,103 @@
   display: block;
 }
 
+.custom-context-menu .selected-person-display:hover {
+  background: var(--color-grid-hover-background);
+  cursor: pointer;
+}
+.custom-context-menu .selected-person-display {
+  display: flex;
+  align-items: center;
+  background: var(--color-background);
+  width: 18rem;
+  display: grid;
+  grid-template-columns: 1fr 2rem;
+  padding: 0.25rem 0.5rem 0.25rem 1rem;
+  border-bottom: 1px solid var(--color-data);
+  height: var(--row-size);
+}
+.custom-context-menu .selected-person-display svg {
+  fill: var(--color-label);
+  margin-left: 1rem;
+}
+.custom-context-menu .selected-person-display p.lx-primary {
+  font-weight: var(--font-weight-bold);
+  line-height: 1rem;
+}
+.custom-context-menu .selected-person-display p.lx-description {
+  font-size: var(--small-font-size);
+  line-height: 1rem;
+  color: var(--color-label);
+}
+.custom-context-menu .selected-person-display .placeholder {
+  font-style: italic;
+  color: var(--color-label);
+}
+
+.lx-layout-digives nav .custom-context-menu .lx-context-container{
+  align-items: start;
+}
+
+.lx-layout-digives nav .custom-context-menu .lx-context-container .selected-person-display,
+
+.lx-layout-digives nav .custom-context-menu .lx-context-container .inline-block{
+  width: 100%;
+  background-color: var(--color-region);
+}
+
+.lx-layout-digives nav .custom-context-menu .lx-context-container .popper{
+  width: 100%;
+  padding: 0 1rem ;
+}
+
+.lx-layout-digives nav .custom-context-menu .lx-context-container .lx-dropdown-panel{
+  width: 100%;
+}
+
+.lx-layout-digives nav .lx-nav-group .nav-bar-user-info>li>p,
+.lx-layout-digives nav .lx-nav-group .nav-bar-user-info>li>.header-profile-name,
+.lx-layout-digives nav .lx-nav-group .nav-bar-user-info>li>.header-profile-role{
+  padding-left: 1rem;
+}
+
+
+.lx-layout-digives nav .default-buttons{
+  flex-direction: column;
+}
+
+.lx-layout-digives nav .default-buttons .lx-button{
+  width: 100%;
+  flex-direction: row;
+  justify-content: start;
+}
+
+.lx-layout-digives nav .default-buttons .lx-button>svg{
+  margin: var(--margin-button-icon-reverse);
+}
+
+.lx-layout.lx-layout-default > nav .lx-nav-panel.lx-responsive > .lx-nav-group:last-child .default-buttons .lx-button:hover {
+  background-color: var(--color-interactive-hover-background);
+  border-color: transparent;
+  color: var(--color-interactive-hover-foreground);
+}
+
+.lx-layout.lx-layout-default > nav .lx-nav-panel.lx-responsive > .lx-nav-group:last-child .default-buttons .lx-button:hover > svg{
+  fill: var(--color-interactive-hover-foreground);
+}
+
+.lx-layout-digives nav .default-buttons .lower-button-last .lx-button {
+  color: var(--color-navbar-button-foreground);
+}
+
+.lx-layout.lx-layout-digives nav{
+  z-index: 1000;
+}
+
+.custom-context-menu .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active {
+  background-color: var(--color-interactive-hover-background);
+  color: var(--color-interactive-hover-foreground);
+}
+
 @media (max-width: 1200px) {
   .lx {
     --nav-row-size: 6rem;
@@ -421,7 +518,7 @@
     display: block;
     position: fixed;
     align-items: center;
-    z-index: 1000;
+    z-index: 1001;
     right: 1rem;
     top: 1.5rem;
   }

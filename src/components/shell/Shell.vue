@@ -139,7 +139,8 @@ const props = defineProps({
       languagesTitle: 'Valodu izvēle',
       contextPersonTitle: 'Saistīto personu dati',
       close: 'Aizvērt',
-      contextPersonsLabel: 'Izvēlieties konteksta personu',
+      contextPersonsLabel: 'Izvēlēties personu',
+      contextPersonsOwnData: 'Skatīt manus datus',
       alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
       contextPersonsButtonLabel: 'Konteksta personas',
       alternativeProfilesButtonLabel: 'Alternatīvie profili',
@@ -255,30 +256,13 @@ watch(
 
 const selectedContextPersonModel = computed({
   get() {
-    if (
-      !props.contextPersonsInfo ||
-      !props.selectedContextPerson ||
-      !Object.keys(props.selectedContextPerson).length > 0
-    ) {
-      return null;
-    }
-
-    if (!props.contextPersonsInfo.find((item) => item.id === props.selectedContextPerson.id)) {
-      return props.contextPersonsInfo[0];
-    }
     return props.selectedContextPerson;
   },
   set(value) {
-    if (!props.selectedContextPerson) {
-      emits('contextPersonChanged', value);
-    }
-    if (!value || props.contextPersonsInfo.find((item) => item.id === value.id)) {
-      emits('update:selected-context-person', value);
-    } else {
-      lxDevUtils.log('Context person does not exist', useLx().getGlobals()?.environment, 'info');
-    }
+    emits('update:selected-context-person', value);
   },
 });
+
 const selectedAlternativeProfileModel = computed({
   get() {
     if (!props.alternativeProfilesInfo) {
@@ -711,6 +695,7 @@ onMounted(() => {
           :texts="texts"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
+          @log-out="logOut"
         />
       </nav>
 

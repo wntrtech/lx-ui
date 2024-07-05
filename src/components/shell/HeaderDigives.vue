@@ -3,7 +3,7 @@ import { computed, watch, ref } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDown from '@/components/Dropdown.vue';
-import LxValuePicker from '@/components/ValuePicker.vue';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 
 const props = defineProps({
@@ -58,7 +58,8 @@ const props = defineProps({
       languagesTitle: 'Valodu izvēle',
       contextPersonTitle: 'Saistītā persona',
       userTitle: 'Lietotājs',
-      contextPersonsLabel: 'Izvēlieties personu',
+      contextPersonsLabel: 'Izvēlēties personu',
+      contextPersonsOwnData: 'Skatīt manus datus',
       alternativeProfilesLabel: 'Izvēlieties saistīto personu',
       menu: 'Izvēlne',
     }),
@@ -113,28 +114,12 @@ const navToggle = () => {
 
 const selectedContextPersonModel = computed({
   get() {
-    if (!props.selectedContextPerson && props.contextPersonsInfo) {
-      return props.contextPersonsInfo[0];
-    }
-
     return props.selectedContextPerson;
   },
   set(value) {
-    const res = { id: value, name: value };
-    emits('update:selected-context-person', res);
+    emits('update:selected-context-person', value);
   },
 });
-const dropDownModel = ref(selectedContextPersonModel.value?.id);
-watch(dropDownModel, (newValue) => {
-  selectedContextPersonModel.value = newValue;
-});
-watch(
-  () => props.selectedContextPerson,
-  (newValue) => {
-    if (newValue !== props.selectedContextPerson) emits('contextPersonChanged', newValue);
-    if (dropDownModel.value !== newValue) dropDownModel.value = newValue?.name;
-  }
-);
 
 const selectedAlternativeProfileModel = computed({
   get() {
@@ -166,10 +151,17 @@ const alternativeProfilesComputed = computed(() => {
   return props.alternativeProfilesInfo;
 });
 
-const contextPersonComputed = computed(() => {
-  if (!props.contextPersonsInfo) return '';
-  return props.contextPersonsInfo;
-});
+function changePerson(item) {
+  if (!item) {
+    emits('contextPersonChanged', null);
+    return;
+  }
+  selectedContextPersonModel.value = {
+    code: item?.code,
+    name: item?.name,
+    description: item?.description,
+  };
+}
 </script>
 <template>
   <div
@@ -231,18 +223,48 @@ const contextPersonComputed = computed(() => {
             {{ contextPersonsInfo[0]?.description }}
           </div>
         </template>
-        <LxValuePicker
-          variant="dropdown-custom"
-          :items="contextPersonComputed"
-          v-model="dropDownModel"
-          v-if="contextPersonsInfo.length > 1"
-          :placeholder="texts?.contextPersonsLabel"
-        >
-          <template #customItem="{ name, description }">
-            <div>{{ name }}</div>
-            <div class="lx-description">{{ description }}</div>
-          </template>
-        </LxValuePicker>
+        <div class="custom-context-menu" v-if="contextPersonsInfo?.length > 1">
+          <LxDropDownMenu ref="contextMenu">
+            <div class="selected-person-display">
+              <div v-if="selectedContextPerson?.code !== userInfo?.code">
+                <p class="lx-primary">{{ selectedContextPerson?.name }}</p>
+                <p class="lx-description">
+                  {{ selectedContextPerson?.description }}
+                </p>
+              </div>
+              <div v-else>
+                <p class="placeholder">{{ texts?.contextPersonsLabel }}</p>
+              </div>
+              <LxIcon value="chevron-down" />
+            </div>
+            <template v-slot:panel>
+              <div class="lx-button-set">
+                <div
+                  class="lx-button"
+                  v-for="item in contextPersonsInfo"
+                  :key="item"
+                  :class="[{ 'lx-active': selectedContextPersonModel?.code === item?.code }]"
+                  @click="changePerson(item)"
+                  @keydown.enter="changePerson(item)"
+                >
+                  <div class="person-custom-button">
+                    <label>{{ item?.name }}</label>
+                    <div class="lx-description">
+                      {{ item?.description }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="lx-button-set addition-button">
+                <LxButton
+                  :label="texts?.contextPersonsOwnData"
+                  _active="selectedContextPersonModel === item.code"
+                  @click="changePerson()"
+                />
+              </div>
+            </template>
+          </LxDropDownMenu>
+        </div>
       </div>
     </div>
     <div class="lx-lower-row">
