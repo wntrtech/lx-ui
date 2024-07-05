@@ -33,7 +33,16 @@ import LxToolbar from '@/components/Toolbar.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 
-const vCleanHtml = buildVueDompurifyHTMLDirective();
+const vCleanHtml = buildVueDompurifyHTMLDirective({
+  hooks: {
+    afterSanitizeAttributes: (node) => {
+      if (node.tagName === 'A') {
+        node.setAttribute('target', '_blank');
+      }
+    },
+  },
+});
+
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
@@ -771,6 +780,7 @@ const imageInputTypes = [
           </LxToolbarGroup>
           <LxToolbarGroup v-if="props.showLinkEditor || props.showImagePicker" class="left-group">
             <lx-button
+              v-if="props.showLinkEditor"
               icon="link"
               kind="ghost"
               variant="icon-only"
