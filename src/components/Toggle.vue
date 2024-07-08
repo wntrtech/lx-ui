@@ -103,7 +103,11 @@ onMounted(() => {
         role="switch"
         :disabled="disabled"
       />
-      <label :for="idValue" class="lx-toggle-label-wrapper">
+      <label
+        :for="idValue"
+        class="lx-toggle-label-wrapper"
+        :class="{ 'lx-toggle-read-only': readOnly }"
+      >
         <template v-if="!readOnly">
           <span class="lx-toggle-appearance"></span>
           <span class="lx-toggle-text" v-if="size !== 's'">

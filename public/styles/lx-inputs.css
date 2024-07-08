@@ -508,6 +508,10 @@ h2.lx-section-header+p.lx-invalidation-message {
   cursor: pointer;
 }
 
+.lx-toggle-label-wrapper.lx-toggle-read-only {
+  cursor: default;
+}
+
 .lx-radio-button-label-wrapper,
 .lx-checkbox-label-wrapper {
   justify-content: center;
@@ -1944,13 +1948,13 @@ h2.lx-section-header+p.lx-invalidation-message {
 
 .lx .lx-markdown-text-area-wrapper .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active {
   background-color: var(--color-interactive-background);
-  border-color:  var(--color-interactive-background);
+  border-color: var(--color-interactive-background);
   color: var(--color-interactive-foreground);
 }
 
 .lx .lx-markdown-text-area-wrapper .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active:hover {
   background-color: var(--color-interactive-hover-background);
-  border-color:  var(--color-interactive-hover-background);
+  border-color: var(--color-interactive-hover-background);
   color: var(--color-interactive-hover-foreground);
 }
 
@@ -3422,7 +3426,7 @@ input[type='range']:hover::-moz-range-thumb {
   width: fit-content;
 }
 
-.lx-visual-picker-wrapper{
+.lx-visual-picker-wrapper {
   padding: var(--gap);
 }
 
@@ -3454,7 +3458,7 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-visual-picker-wrapper svg #LV_Region>path.selected-visual,
 .lx-visual-picker-wrapper svg #Skeleton_Arms g.selected-visual,
 .lx-visual-picker-wrapper svg #Skeleton_RightHand g.selected-visual,
-.lx-visual-picker-wrapper svg #Skeleton_LeftHand g.selected-visual{
+.lx-visual-picker-wrapper svg #Skeleton_LeftHand g.selected-visual {
   fill: var(--color-content-switcher-foreground);
 }
 
@@ -3514,20 +3518,21 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-visual-picker-wrapper .lx-visual-picker-loader,
-.lx-visual-picker-wrapper .lx-empty-state-wrapper{
+.lx-visual-picker-wrapper .lx-empty-state-wrapper {
   height: 31.25rem;
   display: flex;
   justify-content: center;
-  align-items: center; 
+  align-items: center;
 }
 
-.lx-visual-picker-wrapper .lx-visual-picker-error > .error-state{
+.lx-visual-picker-wrapper .lx-visual-picker-error>.error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
 }
-.lx-visual-picker-wrapper .lx-empty-state-wrapper  svg{
+
+.lx-visual-picker-wrapper .lx-empty-state-wrapper svg {
   fill: var(--color-red);
 }
 
