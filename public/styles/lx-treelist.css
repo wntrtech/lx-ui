@@ -162,15 +162,9 @@
     padding-top: 0rem;
 }
 
-.tree-list .tree-item>.tree-item-body>.selecting-block .lx-checkbox-appearance,
-.tree-list-small .tree-item-small>.selecting-block .lx-checkbox-appearance {
-    margin-right: 0.125rem;
-}
-
 .lx-list-wrapper .lx-list-toolbar .lx-selection-toolbar .selection-action-text>p {
     padding: 0 0.5rem;
 }
-
 
 @media (max-width: 800px) {
 
