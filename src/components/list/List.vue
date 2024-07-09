@@ -654,6 +654,9 @@ const autoSearchMode = computed(() => {
 });
 
 function toggleSearch() {
+  query.value = '';
+  queryRaw.value = '';
+
   searchField.value = !searchField.value;
   nextTick(() => {
     if (searchField.value && autoSearchMode.value === 'default') {
