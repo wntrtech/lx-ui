@@ -1256,6 +1256,7 @@ a.lx-tile:hover {
 .lx-expander .lx-badge {
   position: static;
   font-family: var(--font-family-mono);
+  font-feature-settings: var(--font-features-mono);
   font-size: var(--small-font-size);
   color: var(--color-badge-foreground);
   border: var(--region-border);

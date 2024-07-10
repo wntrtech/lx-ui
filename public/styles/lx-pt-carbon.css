@@ -3,6 +3,7 @@
   --font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
   --font-family-mono: 'IBM Plex Mono', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono',
     Courier, monospace;
+  --font-features-mono: 'ss04';
   --font-smoothing-moz: grayscale;
   --font-smoothing-wk: antialiased;
   --text-rendering: optimizeLegibility;
