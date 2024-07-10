@@ -134,6 +134,7 @@ const props = defineProps({
       defaultBack: 'Atpakaļ',
       logOut: 'Iziet',
       openAlerts: 'Atvērt sarakstu',
+      openNavbar: 'Atvērt izvēlni',
       helpTitle: 'Palīdzība',
       alertsTitle: 'Paziņojumi',
       languagesTitle: 'Valodu izvēle',
@@ -533,7 +534,11 @@ onMounted(() => {
         <div></div>
       </footer>
     </div>
-    <div v-if="mode === 'public'" class="lx-layout lx-layout-public">
+    <div
+      v-if="mode === 'public'"
+      class="lx-layout lx-layout-public"
+      :class="[{ 'lx-collapsed': navBarSwitchBasic }, { 'lx-hide-nav-bar': hideNavBar }]"
+    >
       <header>
         <LxMainHeader
           :mode="mode"
@@ -590,6 +595,20 @@ onMounted(() => {
           <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
         </LxMainHeader>
       </header>
+      <nav aria-label="navigation panel" v-if="!hideNavBar">
+        <LxNavBar
+          :nav-items="navItems"
+          :has-theme-picker="hasThemePicker"
+          :available-themes="availableThemes"
+          :has-language-picker="hasLanguagePicker"
+          :languages="languages"
+          v-model:theme="themeModel"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:hasAnimations="animationsModel"
+          @nav-toggle="navToggle"
+          :selectedNavItems="navItemsSelected"
+        />
+      </nav>
       <main class="lx-main">
         <LxPageHeader
           v-if="pageHeaderVisible"

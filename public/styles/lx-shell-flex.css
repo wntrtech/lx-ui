@@ -71,7 +71,6 @@
 
 .lx-layout-default>main {
   display: flex;
-
   margin-top: var(--nav-row-size);
   flex-grow: 1;
 }

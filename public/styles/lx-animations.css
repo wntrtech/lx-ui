@@ -519,7 +519,8 @@
 
 /* lx-shell-flex */
 
-.lx:not(.lx-no-animations) .lx-layout-default .lx-nav-panel {
+.lx:not(.lx-no-animations) .lx-layout-default .lx-nav-panel,
+.lx:not(.lx-no-animations) .lx-layout-public .lx-nav-panel {
   transition: 0.1s ease-in-out width, 0.1s ease-in-out box-shadow;
 }
 

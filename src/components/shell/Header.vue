@@ -63,6 +63,7 @@ const props = defineProps({
       defaultBack: 'Atpakaļ',
       logOut: 'Iziet',
       openAlerts: 'Atvērt sarakstu',
+      openNavbar: 'Atvērt izvēlni',
       helpTitle: 'Palīdzība',
       alertsTitle: 'Paziņojumi',
       languagesTitle: 'Valodu izvēle',
@@ -324,9 +325,10 @@ onMounted(() => {
   <div class="lx-header">
     <div class="lx-group">
       <LxButton
-        v-if="!hideNavBar"
+        v-if="!hideNavBar && kind !== 'public'"
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
+        :title="navBarSwitch ? texts.openNavbar : texts.close"
         kind="ghost"
         @click="navToggle"
       />
@@ -385,7 +387,50 @@ onMounted(() => {
     </div>
     <div v-else></div>
 
+    <div class="lx-group lx-right-group" v-if="kind === 'public'">
+      <LxHeaderButtons
+        :mode="mode"
+        :userInfo="userInfo"
+        :nav-items="navItems"
+        :has-language-picker="hasLanguagePicker"
+        :languages="languages"
+        :has-theme-picker="hasThemePicker"
+        :available-themes="availableThemes"
+        :has-alerts="hasAlerts"
+        :alerts-kind="alertsKind"
+        :clickSafeAlerts="clickSafeAlerts"
+        :alerts="alerts"
+        :alert-count="alertCount"
+        :alert-level="alertLevel"
+        :has-help="hasHelp"
+        :headerNavDisable="headerNavDisable"
+        :has-avatar="hasAvatar"
+        :alternative-profiles-info="alternativeProfilesInfo"
+        :context-persons-info="contextPersonsInfo"
+        v-model:selectedLanguage="selectedLanguageModel"
+        v-model:theme="themeModel"
+        v-model:hasAnimations="animationsModel"
+        v-model:selectedContextPerson="selectedContextPersonModel"
+        @open-alternative-profiles-modal="openAlternativeProfilesModal"
+        @open-context-person-modal="openContextPersonModal"
+        @language-changed="languageChanged"
+        @alert-item-click="alertItemClicked"
+        @alerts-click="alertsClicked"
+        @help-click="helpClicked"
+        @log-out="logOut"
+        :texts="texts"
+      />
+      <LxButton
+        v-if="!hideNavBar"
+        id="nav-toggle"
+        :icon="navBarSwitch ? 'menu' : 'close'"
+        :title="navBarSwitch ? texts.openNavbar : texts.close"
+        kind="ghost"
+        @click="navToggle"
+      />
+    </div>
     <LxHeaderButtons
+      v-else
       :mode="mode"
       :userInfo="userInfo"
       :nav-items="navItems"
