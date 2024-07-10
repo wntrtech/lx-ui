@@ -25,13 +25,13 @@
 }
 
 .lx-date-time-picker-wrapper {
-  width: 10rem;
+  width: var(--date-size);
 }
 
 .lx-date-time-picker-wrapper.lx-date-time,
 .lx-date-dropdowns .lx-field-wrapper,
 .lx-date-picker-dropdown .lx-field-wrapper {
-  width: 14rem;
+  width: var(--date-time-size);
 }
 
 .lx-date-time-picker-wrapper.lx-time .vc-popover-content-wrapper .vc-time-date {
