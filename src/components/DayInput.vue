@@ -154,6 +154,7 @@ onMounted(() => {
       inputValue.value = props.modelValue.value;
       selectedUnit.value = props.modelValue.unit;
     }
+    calculateResult();
   }
 });
 </script>
