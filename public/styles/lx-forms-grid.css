@@ -2,7 +2,6 @@
   display: grid;
   background-color: var(--color-region);
   grid-template-columns: minmax(0, 1fr);
-  position: relative;
   border: var(--region-border);
 }
 
@@ -509,6 +508,15 @@
 
 .lx-appendable-list-item {
   background-color: var(--color-region);
+}
+
+.lx-appendable-list-item:has(.appendable-list-remove-button-wrapper) {
+  display: flex; 
+  justify-content: space-between;
+}
+
+.appendable-list-remove-button-wrapper {
+  transform: translateZ(0);
 }
 
 .lx-form-grid .lx-appendable-list-item {

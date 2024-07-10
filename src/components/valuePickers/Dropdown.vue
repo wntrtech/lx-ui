@@ -13,7 +13,7 @@ import Popper from 'vue3-popper';
 
 const props = defineProps({
   id: { type: String, default: null },
-  modelValue: { type: [Array, String], default: () => [] },
+  modelValue: { type: [Array, String, Number], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
@@ -668,7 +668,7 @@ const columnReadOnly = computed(() => {
                         },
                       ]"
                   >
-                    <lx-checkbox
+                    <LxCheckbox
                       v-if="kind === 'multiple'"
                       :id="getItemId(item[idAttribute])"
                       :group-id="groupId"
@@ -677,12 +677,15 @@ const columnReadOnly = computed(() => {
                       :value="item[idAttribute]?.toString()"
                       @click="selectMultiple(item[idAttribute])"
                     />
+
                     <label :for="item.id">
-                    <LxSearchableText
-                      :value="item[nameAttribute]"
-                      :search-string="query"
-                      v-if="variant === 'dropdown'"
-                    /></label>
+                      <LxSearchableText
+                        :value="item[nameAttribute]"
+                        :search-string="query"
+                        v-if="variant === 'dropdown'"
+                      />
+                    </label>
+
                     <div v-if="variant === 'dropdown-custom'">
                       <slot name="customItemDropdown" v-bind="item"></slot>
                     </div>

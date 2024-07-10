@@ -173,37 +173,45 @@ defineExpose({ clearModel });
       :key="item._lx_appendableKey"
       class="lx-appendable-list-item"
     >
-      <LxDataBlock
-        v-if="expandable"
-        :id="item[idAttribute]"
-        :name="item[nameAttribute]"
-        :expandable="true"
-        v-model="expanded[item?.[idAttribute]]"
-        :actionDefinitions="changeActions(allActions, item)"
-        :hasSelecting="hasSelecting"
-        :selectingKind="selectingKind"
-        @actionClick="(val) => actionClick(val, item._lx_appendableKey, item[idAttribute])"
-        @selectingClick="changeSelecting"
-        v-model:selected="selectedValues[item?.[idAttribute]]"
-      >
+      <template v-if="expandable">
+        <LxDataBlock
+          :id="item[idAttribute]"
+          :name="item[nameAttribute]"
+          :expandable="true"
+          v-model="expanded[item?.[idAttribute]]"
+          :actionDefinitions="changeActions(allActions, item)"
+          :hasSelecting="hasSelecting"
+          :selectingKind="selectingKind"
+          @actionClick="(val) => actionClick(val, item._lx_appendableKey, item[idAttribute])"
+          @selectingClick="changeSelecting"
+          v-model:selected="selectedValues[item?.[idAttribute]]"
+        >
+          <LxForm kind="stripped" :columnCount="columnCount" :required-mode="props.requiredMode">
+            <slot name="customItem" v-bind="{ item }" />
+          </LxForm>
+        </LxDataBlock>
+      </template>
+
+      <template v-else>
         <LxForm kind="stripped" :columnCount="columnCount" :required-mode="props.requiredMode">
-          <slot name="customItem" v-bind="{ item }" />
+          <slot name="customItem" v-bind="{ item, index }" />
         </LxForm>
-      </LxDataBlock>
-      <LxForm v-else kind="stripped" :columnCount="columnCount" :required-mode="props.requiredMode">
-        <div class="appendable-list-remove">
-          <LxButton
-            icon="remove-item"
-            :title="texts.removeItem"
-            v-if="!readOnly"
-            :destructive="true"
-            kind="ghost"
-            @click="removeItem(item._lx_appendableKey)"
-          />
+
+        <div class="appendable-list-remove-button-wrapper">
+          <div class="appendable-list-remove">
+            <LxButton
+              v-if="!readOnly"
+              icon="remove-item"
+              :title="texts.removeItem"
+              :destructive="true"
+              kind="ghost"
+              @click="removeItem(item._lx_appendableKey)"
+            />
+          </div>
         </div>
-        <slot name="customItem" v-bind="{ item, index }" />
-      </LxForm>
+      </template>
     </div>
+
     <div>
       <LxButton
         kind="tertiary"

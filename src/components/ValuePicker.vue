@@ -8,7 +8,7 @@ import LxValuePickerRotator from '@/components/valuePickers/Rotator.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
-  modelValue: { type: [Array, String], default: () => [] },
+  modelValue: { type: [Array, String, Number], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },

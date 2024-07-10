@@ -477,6 +477,7 @@ h2.lx-section-header+p.lx-invalidation-message {
 .lx-checkbox,
 .lx-toggle {
   position: absolute;
+  top: 0;
   overflow: hidden;
   width: 1px;
   height: 1px;
