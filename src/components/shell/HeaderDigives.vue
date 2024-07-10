@@ -19,6 +19,7 @@ const props = defineProps({
   navItems: { type: Array, default: null },
   navBarSwitch: { type: Boolean, default: true },
   hideNavBar: { type: Boolean, default: false },
+  headerNavDisable: { type: Boolean, default: false },
   showBackButton: { type: Boolean, default: false },
   backLabel: { type: String, required: false, default: null },
   backPath: { type: [Object, String], required: false, default: null },
@@ -203,6 +204,7 @@ function changePerson(item) {
               :items="alternativeProfilesComputed"
               v-model="dropDownModelAlternatives"
               :placeholder="texts?.alternativeProfilesLabel"
+              :disabled="headerNavDisable"
             />
           </div>
         </span>
@@ -223,8 +225,12 @@ function changePerson(item) {
             {{ contextPersonsInfo[0]?.description }}
           </div>
         </template>
-        <div class="custom-context-menu" v-if="contextPersonsInfo?.length > 1">
-          <LxDropDownMenu ref="contextMenu">
+        <div
+          class="custom-context-menu"
+          v-if="contextPersonsInfo?.length > 1"
+          :class="[{ 'lx-disabled': headerNavDisable }]"
+        >
+          <LxDropDownMenu ref="contextMenu" :disabled="headerNavDisable">
             <div class="selected-person-display">
               <div v-if="selectedContextPerson?.code !== userInfo?.code">
                 <p class="lx-primary">{{ selectedContextPerson?.name }}</p>
