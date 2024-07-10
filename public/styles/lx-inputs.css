@@ -3555,9 +3555,13 @@ input[type='range']:hover::-moz-range-thumb {
   fill: var(--color-region-2);
 }
 
+.lx-visual-picker-wrapper .lx-visual-view-content {
+  min-height: 38rem;
+}
+
 .lx-visual-picker-wrapper .lx-visual-picker-loader,
 .lx-visual-picker-wrapper .lx-empty-state-wrapper {
-  height: 31.25rem;
+  height: 38rem;
   display: flex;
   justify-content: center;
   align-items: center;

@@ -309,58 +309,59 @@ defineExpose({ addTitles });
       :disabled="loading || errorState"
       v-if="isImageVisible && mode === 'default'"
     />
-    <LxLoader :loading="loading" class="lx-visual-picker-loader" v-if="loading" />
-    <LxEmptyState
-      :label="texts?.errorLabel || fallBackTexts?.errorLabel"
-      icon="invalid"
-      v-if="errorState"
-    />
     <div
-      class="visual-select"
+      class="lx-visual-view-content"
       v-show="contentSwitcherModel === 'visual' && isImageVisible"
-      :class="[{ 'europe-map': kind === 'europe' }]"
     >
-      <div class="visual-select-picture">
-        <imagePath @click="imageClick($event)" />
-      </div>
+      <LxLoader :loading="loading" class="lx-visual-picker-loader" v-if="loading" />
+      <LxEmptyState
+        :label="texts?.errorLabel || fallBackTexts?.errorLabel"
+        icon="invalid"
+        v-if="errorState"
+      />
+      <div class="visual-select" :class="[{ 'europe-map': kind === 'europe' }]">
+        <div class="visual-select-picture">
+          <imagePath @click="imageClick($event)" />
+        </div>
 
-      <div
-        class="lx-tag-set"
-        v-show="contentSwitcherModel === 'visual'"
-        v-if="selectedItems && mode === 'default'"
-      >
-        <div v-for="item in selectedItems" :key="item?.id" class="lx-tag">
-          <div class="tag-text">
-            <LxFlag :value="item?.id" size="small" v-if="kind === 'europe'" />
-            {{ item?.name }}
+        <div
+          class="lx-tag-set"
+          v-show="contentSwitcherModel === 'visual'"
+          v-if="selectedItems && mode === 'default'"
+        >
+          <div v-for="item in selectedItems" :key="item?.id" class="lx-tag">
+            <div class="tag-text">
+              <LxFlag :value="item?.id" size="small" v-if="kind === 'europe'" />
+              {{ item?.name }}
+            </div>
+            <LxButton
+              v-if="!readOnly"
+              icon="close"
+              kind="ghost"
+              @click="removeItem(item?.id)"
+              :title="texts.removeCountry"
+            />
           </div>
-          <LxButton
-            v-if="!readOnly"
-            icon="close"
-            kind="ghost"
-            @click="removeItem(item?.id)"
-            :title="texts.removeCountry"
-          />
         </div>
       </div>
     </div>
-    <div
-      class="visual-select"
-      v-show="(contentSwitcherModel === 'list' || !isImageVisible) && !loading && !errorState"
-    >
-      <LxList
-        ref="listRef"
-        :items="!readOnly ? items : selectedItems"
-        :hasSelecting="!readOnly"
-        selectingKind="multiple"
-        listType="1"
-        :has-search="true"
-        @selectionChanged="selectionChanged"
-      >
-        <template #customItem="{ id, name }" v-if="kind === 'europe'">
-          <div class="list-country-item"><LxFlag :value="id" />{{ name }}</div>
-        </template>
-      </LxList>
+    <div class="lx-list-view-content" v-show="contentSwitcherModel === 'list' || !isImageVisible">
+      <LxLoader :loading="loading" class="lx-visual-picker-loader" v-if="loading" />
+      <div class="visual-select" v-show="!loading && !errorState">
+        <LxList
+          ref="listRef"
+          :items="!readOnly ? items : selectedItems"
+          :hasSelecting="!readOnly"
+          selectingKind="multiple"
+          listType="1"
+          :has-search="true"
+          @selectionChanged="selectionChanged"
+        >
+          <template #customItem="{ id, name }" v-if="kind === 'europe'">
+            <div class="list-country-item"><LxFlag :value="id" />{{ name }}</div>
+          </template>
+        </LxList>
+      </div>
     </div>
   </div>
 </template>
