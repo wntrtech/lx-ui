@@ -766,10 +766,6 @@ p .lx-person-display-wrapper {
   padding-right: 0;
 }
 
-.lx-form-section.lx-form-section-1 .lx-placeholder {
-  display: none;
-}
-
 .lx-form-grid .lx-form-section .lx-row .lx-data-block-wrapper.form-builder-data-block .lx-data-block-content>.lx-main {
   padding: 0;
 }

@@ -904,8 +904,7 @@ h2.lx-section-header+p.lx-invalidation-message {
   width: auto;
 }
 
-.lx-value-picker-item:hover,
-.lx-form-grid>.lx-main .lx-autocomplete-default:hover {
+.lx-value-picker-item:hover,{
   background-color: var(--color-region-hover);
   color: var(--color-region-hover-foreground);
 }
@@ -922,8 +921,8 @@ h2.lx-section-header+p.lx-invalidation-message {
   height: 100%;
 }
 
-.lx-value-picker-item .lx-radio-button-wrapper label,
-.lx-value-picker-item .lx-checkbox-wrapper label {
+.lx-value-picker-item .lx-radio-button-wrapper .lx-radio-button-label-wrapper,
+.lx-value-picker-item .lx-checkbox-wrapper .lx-checkbox-label-wrapper {
   align-items: center;
   padding-left: 1rem;
   height: 100%;
@@ -956,14 +955,16 @@ h2.lx-section-header+p.lx-invalidation-message {
   height: 100%;
 }
 
-.lx-value-picker-dropdown-wrapper .lx-dropdown-default-content .lx-value-picker-item {
+.lx-value-picker-dropdown-wrapper .lx-dropdown-default-content .lx-value-picker-item,
+.lx-autocomplete-default .lx-dropdown-default-content .lx-value-picker-item.autocomplete-multiple {
   line-height: 1rem;
   height: auto;
   padding: 0;
   min-height: 2.5rem;
 }
 
-.lx-value-picker-dropdown-wrapper .lx-tag {
+.lx-value-picker-dropdown-wrapper .lx-tag,
+.lx-autocomplete-input-icon-container .lx-tag {
   z-index: 1;
   margin-left: 1rem;
   display: flex;
@@ -980,15 +981,18 @@ h2.lx-section-header+p.lx-invalidation-message {
   margin-right: 0.25rem;
 }
 
-.lx-value-picker-dropdown-wrapper .lx-tag-label {
+.lx-value-picker-dropdown-wrapper .lx-tag-label,
+.lx-autocomplete-input-icon-container .lx-tag-label {
   margin-left: 0.5rem;
 }
 
-.lx-value-picker-dropdown-wrapper .lx-tag-button {
+.lx-value-picker-dropdown-wrapper .lx-tag-button,
+.lx-autocomplete-input-icon-container .lx-tag-button {
   margin-left: 0.25rem;
 }
 
-.lx-value-picker-dropdown-wrapper .lx-tag-button .lx-button {
+.lx-value-picker-dropdown-wrapper .lx-tag-button .lx-button,
+.lx-autocomplete-input-icon-container .lx-tag-button .lx-button {
   min-width: unset;
   width: 1.5rem;
   height: 1.5rem;
@@ -996,14 +1000,20 @@ h2.lx-section-header+p.lx-invalidation-message {
   border-radius: 50%;
 }
 
-.lx-value-picker-dropdown-wrapper .lx-tag-button .lx-button svg {
+.lx-value-picker-dropdown-wrapper .lx-tag-button .lx-button svg,
+.lx-autocomplete-input-icon-container .lx-tag-button .lx-button svg {
   width: 1rem;
   height: 1rem;
   fill: var(--color-interactive-secondary-foreground);
 }
 
-.lx-value-picker-dropdown-wrapper:not([data-disabled]) .lx-tag-button .lx-button:hover {
+.lx-value-picker-dropdown-wrapper:not([data-disabled]) .lx-tag-button .lx-button:hover,
+.lx-autocomplete-default:not(.lx-disabled) .lx-autocomplete-input-icon-container .lx-autocomplete .lx-autocomplete-default-panel .lx-tag .lx-tag-button .lx-button:hover {
   background-color: var(--color-interactive-secondary-hover-background);
+}
+
+.lx:not(.lx-theme-contrast) .lx-info-wrapper:has(.lx-autocomplete-default):hover {
+  background-color: transparent
 }
 
 .lx-value-picker-dropdown-wrapper .lx-dropdown-default-panel::before {
@@ -1040,9 +1050,17 @@ h2.lx-section-header+p.lx-invalidation-message {
   padding-left: 5rem;
 }
 
+.lx-autocomplete-default-data .lx-text-input-wrapper .lx-value-picker-placeholder {
+  padding-left: 4.9rem;
+}
+
 .lx-value-picker-dropdown-wrapper .lx-dropdown-default-data.emptyModel .lx-text-input.lx-search-input,
 .lx-dropdown-default-data.emptyModel>.lx-value-picker-placeholder {
   padding-left: 1.5rem;
+}
+
+.lx-autocomplete-default-data.emptyModel .lx-text-input-wrapper .lx-value-picker-placeholder {
+  padding-left: 1rem;
 }
 
 .lx-value-picker-dropdown-wrapper>.lx-dropdown-default {
@@ -2306,6 +2324,21 @@ input[type='range']:hover::-moz-range-thumb {
   border: none;
 }
 
+.lx-autocomplete-default-data {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.lx .lx-info-wrapper .lx-autocomplete-default .popper {
+  background-color: inherit;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  padding: 0;
+  color: inherit;
+  margin-top: initial;
+}
+
 .lx-dropdown-default:active,
 .lx-dropdown-default:focus,
 .lx-autocomplete:focus {
@@ -2360,14 +2393,18 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-autocomplete-default-panel {
+  position: relative;
   height: 2.5em;
   display: flex;
   align-items: center;
 }
 
 .lx-autocomplete-default .inline-block div .lx-icons .lx-button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
   min-width: 2.5rem;
-  height: 2.5rem;
+  height: 2.4rem;
 }
 
 .lx-autocomplete-default {

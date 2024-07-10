@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
+import { onClickOutside, useDebounceFn } from '@vueuse/core';
+import Popper from 'vue3-popper';
+
 import { generateUUID, textSearch } from '@/utils/stringUtils';
+
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxStateDisplay from '@/components/StateDisplay.vue';
 import LxFlagItemDisplay from '@/components/itemDisplay/FlagItemDisplay.vue';
-import { onClickOutside, useDebounceFn } from '@vueuse/core';
-import Popper from 'vue3-popper';
+import LxCheckbox from '@/components/Checkbox.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import LxModal from '@/components/Modal.vue';
+import LxList from '@/components/list/List.vue';
+import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -28,6 +35,8 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   loading: { type: Boolean, default: false },
   hasDetails: { type: Boolean, default: false },
+  selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
+  detailMode: { type: String, default: 'simple' }, // 'simple' or 'detailed'
   variant: { type: String, default: 'default' }, // default, country, state, custom
   // used for preloading items if items is a function and there is need to show items before user starts typing
   preloadedItems: { type: Array, default: null },
@@ -38,10 +47,18 @@ const props = defineProps({
       empty: 'Nav atrasti rezultāti, kas saturētu tekstu',
       tryEndingWith1: 'Lai sāktu meklēšanu, ievadiet vismaz {0} simbolu',
       try: 'Lai sāktu meklēšanu, ievadiet vismaz {0} simbolus',
+      tooltipDisplayTextSingle: 'cits',
+      tooltipDisplayTextMulti: 'citi',
+      detailsSwitchAdvancedSearch: 'Izvērstā meklēšana',
+      detailsSwitchSelectedItems: 'Izvēlētās vērtības',
+      detailsButton: 'Skatīt detaļas',
+      detailsModalLabel: 'Izvērstais skats',
     }),
   },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
 });
+
+const emit = defineEmits(['update:modelValue', 'filter', 'openDetails']);
 
 const menuOpen = ref(false);
 const refContainer = ref();
@@ -51,25 +68,27 @@ const refQuery = ref();
 const refRoot = ref();
 const query = ref();
 const activeQuery = ref();
-const emit = defineEmits(['update:modelValue', 'filter', 'openDetails']);
 const loadingState = ref(false);
 const allItems = ref([]);
+const itemsModel = ref({});
+const detailedModeModal = ref();
+const detailsSwitchType = ref('advanced-search');
+const panelWidth = ref();
 
-const selectedIdValue = computed({
+const convertBooleanToString = (value) => (typeof value === 'boolean' ? value.toString() : value);
+
+const model = computed({
   get: () => {
     if (Array.isArray(props.idAttribute)) {
       return props.modelValue;
     }
     if (props.modelValue !== undefined && props.modelValue !== null) {
-      const value =
-        // @ts-ignore
-        typeof props.modelValue === 'boolean' ? props.modelValue.toString() : props.modelValue;
-      return value;
+      return convertBooleanToString(props.modelValue);
     }
     return null;
   },
   set: (value) => {
-    if (Array.isArray(props.idAttribute) && value) {
+    if (Array.isArray(props.idAttribute) && props.selectingKind === 'single' && value) {
       emit('update:modelValue', JSON.parse(value));
     } else {
       emit('update:modelValue', value);
@@ -116,40 +135,77 @@ const getIdAttributeString = (item) => {
 
 // store if latest results doesn't contain previously selected item
 const selectedItemStored = ref(null);
+const selectedItemsStored = ref([]);
 
 const selectedItem = ref(null);
+const selectedItems = ref([]);
+const listRef = ref();
+const idValue = ref('');
 
-watch(
-  () => [selectedIdValue.value, allItems.value],
-  (watchVals) => {
-    const selectedId = watchVals[0];
-    // ToDo: add more checks - if item is already correctly selected (and just allItems changed) don't do anything
-    if (selectedId) {
-      let selected = null;
-      if (Array.isArray(props.idAttribute)) {
-        selected = allItems.value?.find(
-          (item) => getIdAttributeString(selectedId) === getIdAttributeString(item)
-        );
-      } else {
-        selected = allItems.value?.find((item) => selectedId === getIdAttributeString(item));
-      }
-      if (selected) {
-        selectedItemStored.value = selected;
-        selectedItem.value = selected;
+const findItemById = (id, items) => {
+  if (Array.isArray(props.idAttribute)) {
+    return items?.find((item) => getIdAttributeString(id) === getIdAttributeString(item));
+  } else {
+    return items?.find((item) => id === getIdAttributeString(item));
+  }
+};
+
+const mergeItems = (newItems, storedItems) => {
+  const mergedItems = [...storedItems];
+  newItems.forEach((item) => {
+    if (
+      !storedItems.some(
+        (storedItem) => getIdAttributeString(storedItem) === getIdAttributeString(item)
+      )
+    ) {
+      mergedItems.push(item);
+    }
+  });
+  return mergedItems;
+};
+
+watch([model, () => allItems.value], ([newModelValue]) => {
+  // Update selected item or items based on the new model value
+  if (newModelValue) {
+    if (
+      Array.isArray(newModelValue) &&
+      newModelValue.length > 0 &&
+      props.selectingKind === 'multiple'
+    ) {
+      activate();
+      const selectedArray = newModelValue
+        .map((id) => findItemById(id, allItems.value))
+        .filter(Boolean);
+
+      if (selectedArray.length > 0) {
+        selectedItemsStored.value = mergeItems(selectedArray, selectedItemsStored.value);
+        selectedItem.value = null;
+        selectedItems.value = mergeItems(selectedArray, selectedItemsStored.value);
       } else if (
         !menuOpen.value &&
-        props.preloadedItems?.find((item) => selectedId === getIdAttributeString(item))
+        props.preloadedItems?.some((item) => newModelValue.includes(getIdAttributeString(item)))
+      ) {
+        // if items are not in allItems, but are in preloadedItems, take them from preloadedItems
+        allItems.value = props.preloadedItems;
+      }
+    } else {
+      let selected = findItemById(newModelValue, allItems.value);
+      if (selected) {
+        selectedItem.value = selected;
+        selectedItems.value = [];
+      } else if (
+        !menuOpen.value &&
+        props.preloadedItems?.find((item) => newModelValue === getIdAttributeString(item))
       ) {
         // if item is not in allItems, but is in preloadedItems, take it from preloadedItems
         allItems.value = props.preloadedItems;
-      } else {
-        selectedItem.value = selectedItemStored.value;
       }
-    } else {
-      selectedItem.value = null;
     }
+  } else {
+    selectedItem.value = null;
+    selectedItems.value = [];
   }
-);
+});
 
 function attributesSearch(item) {
   for (let i = 0; i < props.searchAttributes.length; i += 1) {
@@ -167,7 +223,7 @@ const filteredItems = computed(() => {
     if (Array.isArray(props.searchAttributes) && props.searchAttributes?.length > 0) {
       return allItems.value.filter(attributesSearch);
     }
-    
+
     return allItems.value.filter((item) => {
       const name = item[props.nameAttribute];
       return textSearch(query.value, name);
@@ -181,12 +237,14 @@ watch(
   (newValue, oldValue) => {
     const [items, preloadedItems] = newValue;
     const [oldItems, oldPreloadedItems] = oldValue || [[], null];
+
     const shouldSetItems =
       Array.isArray(items) && JSON.stringify(items) !== JSON.stringify(oldItems);
     if (shouldSetItems) {
       allItems.value = JSON.parse(JSON.stringify(items));
       return;
     }
+
     const shouldSetPreloadedItems =
       Array.isArray(preloadedItems) &&
       JSON.stringify(preloadedItems) !== JSON.stringify(oldPreloadedItems);
@@ -197,6 +255,10 @@ watch(
   { immediate: true }
 );
 
+const queryDebounceValue = computed(() =>
+  typeof props.queryDebounce === 'string' ? Number(props.queryDebounce) : props.queryDebounce
+);
+
 const debouncedSearchReq = useDebounceFn(async (val) => {
   if (typeof props.items === 'function') {
     loadingState.value = true;
@@ -205,7 +267,7 @@ const debouncedSearchReq = useDebounceFn(async (val) => {
     allItems.value = items;
     loadingState.value = activeQuery.value !== val;
   }
-}, props.queryDebounce);
+}, queryDebounceValue);
 
 watch(
   query,
@@ -224,32 +286,33 @@ watch(
   { immediate: true }
 );
 
-const idValue = ref('');
-onMounted(() => {
-  
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
-  idValue.value = idValue.value.replace(idValue.value.charAt(0), 'c');
-});
-
 function getName(returnPlaceholder = true) {
-  if (Array.isArray(selectedIdValue.value)) {
-    selectedItem.value = filteredItems?.value.find(
-      (obj) => obj[props.idAttribute] === selectedIdValue.value[0]
-    );
-  }
-  if (selectedItem.value) {
-    return selectedItem.value[props.nameAttribute];
-  }
+  let result = returnPlaceholder ? props.placeholder : null;
 
-  return returnPlaceholder ? props.placeholder : null;
+  if (Array.isArray(model.value) && model.value.length > 0) {
+    const multipleItems = selectedItems.value?.filter((obj) =>
+      model.value.includes(getIdAttributeString(obj))
+    );
+    if (multipleItems) {
+      result = multipleItems.map((item) => item[props.nameAttribute]).join(', ');
+    }
+  } else if (model.value) {
+    // When model is a single value (not an array)
+    const selectedItem = filteredItems?.value.find(
+      (obj) => getIdAttributeString(obj) === model.value
+    );
+    if (selectedItem) {
+      result = selectedItem[props.nameAttribute];
+    }
+  }
+  return result;
 }
 
-
-const hasValue = computed(() => selectedItem.value && Object.keys(selectedItem.value).length > 0);
+const hasValue = computed(() => {
+  if (selectedItem.value && Object.keys(selectedItem.value).length > 0) return true;
+  if (selectedItems.value && selectedItems.value.length > 0) return true;
+  return false;
+});
 
 function getItemId(id) {
   return `${id}---${generateUUID()}`;
@@ -260,11 +323,9 @@ function initSearchInput() {
   if (refQuery.value) refQuery.value.focus();
 }
 
-const panelWidth = ref();
 function openMenu() {
   if (!props.disabled && menuOpen.value === false) {
     if (!menuOpen.value) {
-
       panelWidth.value = refContainer.value?.offsetWidth;
     }
     menuOpen.value = true;
@@ -273,6 +334,7 @@ function openMenu() {
     });
   }
 }
+
 const highlightedItemId = ref(null);
 
 function closeMenu() {
@@ -282,16 +344,25 @@ function closeMenu() {
   highlightedItemId.value = null;
   if (refQuery.value) refQuery.value.focus();
 }
+
 onClickOutside(refRoot, closeMenu);
 
-function clear(e) {
-  e.stopPropagation();
-  selectedIdValue.value = null;
+function clear() {
+  itemsModel.value = {};
+
+  if (!Array.isArray(model.value)) {
+    model.value = null;
+    selectedItem.value = null;
+    selectedItemStored.value = null;
+  } else {
+    model.value = [];
+    selectedItems.value = [];
+  }
 }
 
 function selectSingle(item) {
   try {
-    selectedIdValue.value = getIdAttributeString(item);
+    model.value = getIdAttributeString(item);
   } finally {
     closeMenu();
   }
@@ -342,11 +413,57 @@ function onEnter() {
     openMenu();
     return;
   }
+
   if (highlightedItemId.value) {
     try {
-      selectedIdValue.value = highlightedItemId.value;
+      if (props.selectingKind === 'multiple') {
+        const selectedValue = highlightedItemId.value;
+
+        const idModel = ref(itemsModel.value[selectedValue]);
+        idModel.value = !idModel.value;
+
+        if (Array.isArray(model.value)) {
+          if (idModel.value) {
+            // Check if item already exists in model
+            const index = model.value.indexOf(selectedValue);
+            if (index === -1) {
+              // Add item to model
+              model.value = [...model.value, selectedValue];
+              itemsModel.value[selectedValue] = true;
+            } else {
+              // Remove item from model
+              const updatedModel = model.value.filter((id) => id !== selectedValue);
+              model.value = [...updatedModel];
+            }
+          } else {
+            itemsModel.value[selectedValue] = false;
+            const index = model.value.indexOf(selectedValue);
+            if (index > -1) {
+              // Remove item from model
+              const updatedModel = model.value.filter((id) => id !== selectedValue);
+              model.value = [...updatedModel];
+            }
+          }
+          // Sort model according to order of items
+          model.value.sort(
+            (a, b) =>
+              Object.keys(itemsModel.value).indexOf(a.toString()) -
+              Object.keys(itemsModel.value).indexOf(b.toString())
+          );
+        } else {
+          // Initialize model.value as an array if it's not already
+          model.value = [selectedValue];
+          itemsModel.value[selectedValue] = true;
+        }
+      } else {
+        model.value = highlightedItemId.value;
+        closeMenu();
+      }
     } finally {
-      closeMenu();
+      // In case of 'single' selection, close the menu after selection
+      if (props.selectingKind === 'single') {
+        closeMenu();
+      }
     }
   }
 }
@@ -373,21 +490,36 @@ function openDetails() {
     !(loadingState.value || props.loading) &&
     !props.disabled &&
     !props.readOnly &&
-    !hasValue.value &&
     props.hasDetails
   ) {
-    emit('openDetails', props.id);
+    if (props.detailMode === 'simple') {
+      if (props.selectingKind === 'single') {
+        emit('openDetails', props.id);
+      } else if (props.selectingKind === 'multiple') {
+        emit('openDetails', props.id);
+      }
+    } else if (props.detailMode === 'detailed') {
+      if (props.selectingKind === 'single') {
+        detailedModeModal.value.open();
+      } else if (props.selectingKind === 'multiple') {
+        detailedModeModal.value.open();
+      }
+    }
   }
 }
+
 function focusNextInputElement() {
   onDown();
   nextTick(() => {
+    // @ts-ignore
     document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
   });
 }
+
 function focusPreviousInputElement() {
   onUp();
   nextTick(() => {
+    // @ts-ignore
     document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
   });
 }
@@ -400,268 +532,635 @@ function focusOnDropDown() {
     });
   }
 }
+
+function activate() {
+  allItems.value.forEach((item) => {
+    itemsModel.value[getIdAttributeString(item).toString()] = false;
+  });
+
+  if (model.value) {
+    if (Array.isArray(model.value)) {
+      model.value?.forEach((id) => {
+        if (id) {
+          itemsModel.value[id?.toString()] = true;
+        }
+      });
+    } else {
+      itemsModel.value[model.value?.toString()] = true;
+    }
+  }
+}
+
+function selectMultiple(item) {
+  const idModel = ref(itemsModel.value[item.id]);
+  idModel.value = !idModel.value;
+
+  if (Array.isArray(model.value)) {
+    if (idModel.value) {
+      // Check if item already exists in model
+      const index = model.value.indexOf(item.id);
+      if (index === -1) {
+        // Add item to model
+        model.value = [...model.value, item.id];
+        itemsModel.value[item.id] = true;
+      } else {
+        // Remove item from model
+        const updatedModel = model.value.filter((id) => id !== item.id);
+        model.value = [...updatedModel];
+      }
+    } else {
+      itemsModel.value[item.id] = false;
+      const index = model.value.indexOf(item.id);
+      if (index > -1) {
+        // Remove item from model
+        const updatedModel = model.value.filter((id) => id !== item.id);
+        model.value = [...updatedModel];
+      }
+    }
+    // Sort model according to order of items
+    model.value.sort(
+      (a, b) =>
+        Object.keys(itemsModel.value).indexOf(a.toString()) -
+        Object.keys(itemsModel.value).indexOf(b.toString())
+    );
+  } else {
+    // Initialize model.value as an array if it's not already
+    model.value = [item.id];
+    itemsModel.value[item.id] = true;
+  }
+}
+
+const displayTooltipItems = computed(() => {
+  if (!model.value) return [];
+
+  const multipleItems = selectedItems.value?.filter((obj) =>
+    model.value.includes(getIdAttributeString(obj))
+  );
+  if (!multipleItems) return [];
+
+  const itemCount = multipleItems.length;
+  if (itemCount === 0) return [];
+
+  const displayedItems = multipleItems.slice(0, 10);
+  const remainingCount = itemCount - 10;
+
+  const itemCountSingle =
+    remainingCount === 1 && props.texts.tooltipDisplayTextSingle
+      ? `+ ${remainingCount} ${props.texts.tooltipDisplayTextSingle}`
+      : '';
+  const itemCountMulti =
+    remainingCount > 1 && props.texts.tooltipDisplayTextMulti
+      ? `+ ${remainingCount} ${props.texts.tooltipDisplayTextMulti}`
+      : '';
+
+  const displayText = [itemCountSingle, itemCountMulti].filter(Boolean).join(', ');
+
+  if (remainingCount > 0) {
+    displayedItems.push({
+      id: generateUUID(),
+      name: displayText,
+    });
+  }
+
+  return displayedItems;
+});
+
+const displaySelectedItems = computed(() => {
+  if (!model.value) return [];
+  const multipleItems = selectedItems?.value.filter((obj) =>
+    model.value.includes(getIdAttributeString(obj))
+  );
+  if (!multipleItems) return [];
+  listRef.value?.selectRows(multipleItems);
+  return multipleItems;
+});
+
+const shouldShowIcon = computed(() => {
+  if (props.selectingKind === 'single') {
+    return (
+      !hasValue.value &&
+      !props.hasDetails &&
+      !props.invalid &&
+      !(loadingState.value || props.loading)
+    );
+  }
+  if (props.selectingKind === 'multiple') {
+    if (props.detailMode === 'simple') {
+      return (
+        !props.hasDetails &&
+        (!hasValue.value || hasValue.value) &&
+        !props.invalid &&
+        !(loadingState.value || props.loading)
+      );
+    }
+    if (props.detailMode === 'detailed') {
+      return (
+        !props.hasDetails &&
+        (!hasValue.value || hasValue.value) &&
+        !props.invalid &&
+        !(loadingState.value || props.loading)
+      );
+    }
+  }
+  return false;
+});
+
+const shouldShowDetailsBtn = computed(() => {
+  return (
+    ((props.selectingKind === 'single' && !hasValue.value) ||
+      (props.selectingKind === 'multiple' &&
+        ((props.detailMode === 'simple' && (!hasValue.value || hasValue.value)) ||
+          (props.detailMode === 'detailed' && (!hasValue.value || hasValue.value))))) &&
+    props.hasDetails &&
+    !(loadingState.value || props.loading)
+  );
+});
+
+const detailsSwitchTypes = computed(() => [
+  {
+    id: 'advanced-search',
+    name: props.texts.detailsSwitchAdvancedSearch || '',
+    icon: 'search',
+  },
+  {
+    id: 'selected-items',
+    name: `${props.texts.detailsSwitchSelectedItems || ''} (${
+      displaySelectedItems.value?.length || 0
+    })`,
+    icon: 'list-bulleted',
+  },
+]);
+
+let selectionTimeout = null;
+
+function selectionChanged(selectedValue) {
+  if (selectionTimeout) {
+    clearTimeout(selectionTimeout);
+  }
+
+  selectionTimeout = setTimeout(() => {
+    if (JSON.stringify(selectedValue) !== JSON.stringify(model.value)) {
+      // Update selectedItems.value with new values
+      const updatedItems = selectedItems.value?.filter((obj) => selectedValue.includes(obj.id));
+      selectedItems.value = updatedItems;
+
+      // Update model.value with new values
+      model.value = [...selectedValue];
+
+      // Update itemsModel to reflect the new selection state
+      Object.keys(itemsModel.value).forEach((key) => {
+        itemsModel.value[key] = selectedValue.includes(key);
+      });
+    }
+  }, 150);
+}
+
+const displayReadOnlyPlaceholder = computed(() => {
+  if (
+    (props.selectingKind === 'single' &&
+      (selectedItem.value === null || selectedItem.value === undefined)) ||
+    (props.selectingKind === 'multiple' &&
+      (selectedItems.value === null ||
+        selectedItems.value === undefined ||
+        selectedItems.value?.length === 0))
+  ) {
+    return true;
+  }
+  return false;
+});
+
+const showListOptions = computed(() => {
+  return displaySelectedItems.value.length > 0;
+});
+
+watch(
+  () => props.selectingKind,
+  (newValue) => {
+    activate();
+    selectedItem.value = null;
+    selectedItems.value = null;
+    itemsModel.value = {};
+
+    if (newValue === 'multiple') {
+      model.value = [];
+    } else if (newValue === 'single') {
+      model.value = null;
+    }
+  }
+);
+
+onMounted(() => {
+  activate();
+  if (props.id) {
+    idValue.value = props.id;
+  } else {
+    idValue.value = generateUUID();
+  }
+  idValue.value = idValue.value.replace(idValue.value.charAt(0), 'c');
+});
 </script>
 
 <template>
   <div class="lx-field-wrapper" ref="refRoot">
-
     <p v-if="readOnly" class="lx-data">
-      <template v-if="variant === 'country'">
-        <span v-if="selectedItem === null || selectedItem === undefined">—</span>
-        <LxFlagItemDisplay
-        v-else
-          :value="selectedItem"
-          :id-attribute="idAttribute"
-          :name-attribute="nameAttribute"
-        />
+      <template v-if="variant === 'default'">
+        <span v-if="displayReadOnlyPlaceholder">—</span>
+        <template v-else>
+          {{ getName(false) }}
+        </template>
       </template>
-      <template v-if="variant === 'state'">
-        <span v-if="selectedItem === null || selectedItem === undefined">—</span>
-        <LxStateDisplay
-        v-else
-          :value="selectedItem?.id"
-          :dictionary="[
-            {
-              value: selectedItem?.id,
-              displayName: selectedItem?.name,
-              displayType: props.dictionary?.displayType,
-              displayShape: props.dictionary?.displayShape,
-            },
-          ]"
-        />
-      </template>
-      <template v-if="variant === 'default'">{{ getName(false) }} <span v-if="selectedItem === null || selectedItem === undefined">—</span></template>
-    </p>
-    <template v-else>
-      <div
-        ref="refContainer"
-        :id="idValue"
-        class="lx-autocomplete-default"
-        :class="[{ 'lx-opened': menuOpen }, { 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
-        :data-invalid="invalid ? '' : null"
-        :data-disabled="disabled ? '' : null"
-        role="combobox"
-        tabindex="-1"
-      >
-        <Popper
-          placement="bottom"
-          offset-distance="0,9"
-          :hover="false"
-          :arrow="false"
-          :disabled="props.disabled"
-          :show="menuOpen"
-          open-delay="0"
-          close-delay="0"
-        >
-          <slot>
-            <div class="lx-autocomplete-input-icon-container">
-              <div
-              ref="refAutocomplete"
-                class="lx-autocomplete"
-                :title="tooltip"
-                @click="openMenu"
-                @keydown.esc.prevent="closeMenu"
-                @keydown.enter.prevent="onEnter"
-                @keydown.down.prevent="focusNextInputElement"
-                @keydown.up.prevent="focusPreviousInputElement"
-                @keydown.tab="focusOnDropDown"
-                @keydown.f3.prevent="openDetails"
-                tabindex="0"
-              >
-                <div class="lx-autocomplete-default-panel" @click="openMenu" :title="tooltip">
-                  <div v-show="!menuOpen && hasValue" class="lx-value" :title="getName()">
-                    <template v-if="variant === 'country'">
-                      <LxFlagItemDisplay
-                        :value="selectedItem"
-                        :id-attribute="idAttribute"
-                        :name-attribute="nameAttribute"
-                      />
-                    </template>
-                    <template v-if="variant === 'state'">
-                      <LxStateDisplay
-                        :value="selectedItem?.id"
-                        :dictionary="[
-                          {
-                            value: selectedItem?.id,
-                            displayName: selectedItem?.name,
-                            displayType: props.dictionary?.displayType,
-                            displayShape: props.dictionary?.displayShape,
-                          },
-                        ]"
-                      />
-                    </template>
-                    <template v-if="variant === 'default' || variant === 'custom'">
-                      {{ getName() }}
-                    </template>
-                  </div>
-                  <div v-show="!menuOpen && !hasValue" class="lx-placeholder">{{ getName() }}</div>
-                  <div
-                    v-show="menuOpen"
-                    class="lx-text-input-wrapper"
-                    :data-invalid="invalid ? '' : null"
-                  >
-                    <input
-                      ref="refQuery"
-                      :placeholder="getName()"
-                      v-model="query"
-                      class="lx-text-input lx-value-picker-placeholder"
-                      role="search"
-                      tabindex="-1"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="lx-icons">
-                <LxIcon
-                  v-show="invalid && !(loadingState || loading)"
-                  customClass="lx-modifier-icon lx-invalidation-icon"
-                  value="invalid"
-                />
-                <div v-show="!invalid && !hasValue && !hasDetails && !(loadingState || loading)">
-                  <LxIcon customClass="lx-modifier-icon" :value="icon" />
-                </div>
-                <div v-show="!invalid && hasValue && !(loadingState || loading)">
-                  <LxButton :disabled="disabled" icon="close" kind="ghost" @click="clear" title="Clear" />
-                </div>
-                <div
-                  class="lx-invalid-true"
-                  v-show="invalid && hasValue && !(loadingState || loading)"
-                  
-                > 
-                  <LxButton :disabled="disabled" icon="close" kind="ghost" @click="clear" title="Clear" />
-                </div>
-                <div
-                  class="lx-primary"
-                  v-if="hasDetails && !hasValue && !(loadingState || loading)"
-                >
-                  <LxButton
-                    :disabled="disabled"
-                    icon="search-details"
-                    kind="ghost"
-                    @click="openDetails"
-                  />
-                </div>
-                <div class="lx-autocomplete-loader" v-show="loadingState || loading">
-                  <LxLoader loading size="s" />
-                </div>
-              </div>
-            </div>
-          </slot>
 
-          <template #content>
-            <div class="lx-dropdown-default-content" :style="{ width: panelWidth + 'px' }">
-              <slot name="panel" @click="closeMenu()">
-                <transition name="appear-down">
-                  <div
-                    v-show="menuOpen && !loading"
-                    :class="`lx-dropdown-panel`"
-                    tabindex="-1"
-                    role="listbox"
-                    @keydown.esc.prevent="closeMenu"
-                    @keydown.enter.prevent="onEnter"
-                    @keydown.space.prevent="onEnter"
-                    @keydown.up.prevent="focusPreviousInputElement"
-                    @keydown.down.prevent="focusNextInputElement"
-                    @keydown.tab="focusOnDropDown"
-                  >
-                    <template v-if="filteredItems?.length">
-                      <template v-for="item in filteredItems" :key="item[idAttribute]">
-                        <div
-                          @click="selectSingle(item)"
-                          class="lx-value-picker-item"
-                          :class="[
+      <template v-if="variant === 'country'">
+        <span v-if="displayReadOnlyPlaceholder">—</span>
+        <template v-else>
+          <LxFlagItemDisplay
+            v-if="selectingKind === 'single'"
+            :value="selectedItem"
+            :id-attribute="idAttribute"
+            :name-attribute="nameAttribute"
+          />
+          <template v-else>
+            {{ getName(false) }}
+          </template>
+        </template>
+      </template>
+
+      <template v-if="variant === 'state'">
+        <span v-if="displayReadOnlyPlaceholder">—</span>
+        <template v-else>
+          <LxStateDisplay
+            v-if="selectingKind === 'single'"
+            :value="selectedItem?.id"
+            :dictionary="[
+              {
+                value: selectedItem?.id,
+                displayName: selectedItem?.name,
+                displayType: props.dictionary?.displayType,
+                displayShape: props.dictionary?.displayShape,
+              },
+            ]"
+          />
+          <template v-else>
+            {{ getName(false) }}
+          </template>
+        </template>
+      </template>
+    </p>
+
+    <template v-else>
+      <LxInfoWrapper
+        :placement="'auto'"
+        :disabled="
+          selectingKind === 'single' ||
+          (selectingKind === 'multiple' && (!model || !model?.length || menuOpen))
+        "
+      >
+        <div
+          class="lx-autocomplete-default"
+          ref="refContainer"
+          :id="idValue"
+          :class="[
+            { 'lx-opened': menuOpen },
+            { 'lx-invalid': invalid },
+            { 'lx-disabled': disabled },
+          ]"
+          :data-invalid="invalid ? '' : null"
+          :data-disabled="disabled ? '' : null"
+          role="combobox"
+          tabindex="-1"
+        >
+          <Popper
+            placement="bottom"
+            offset-distance="0,9"
+            :hover="false"
+            :arrow="false"
+            :disabled="disabled"
+            :show="menuOpen"
+            open-delay="0"
+            close-delay="0"
+          >
+            <slot>
+              <div class="lx-autocomplete-input-icon-container">
+                <div
+                  ref="refAutocomplete"
+                  class="lx-autocomplete"
+                  :title="tooltip"
+                  @click="openMenu"
+                  @keydown.esc.prevent="closeMenu"
+                  @keydown.enter.prevent="onEnter"
+                  @keydown.down.prevent="focusNextInputElement"
+                  @keydown.up.prevent="focusPreviousInputElement"
+                  @keydown.tab="focusOnDropDown"
+                  @keydown.f3.prevent="openDetails"
+                  tabindex="0"
+                >
+                  <div class="lx-autocomplete-default-panel" @click="openMenu" :title="tooltip">
+                    <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag">
+                      <div class="lx-tag-label">{{ model?.length }}</div>
+                      <div class="lx-tag-button">
+                        <LxButton
+                          id="clearButton"
+                          :title="texts.clear"
+                          :disabled="disabled"
+                          kind="secondary"
+                          variant="icon-only"
+                          icon="remove"
+                          @click.stop="clear"
+                        />
+                      </div>
+                    </div>
+                    <div
+                      v-if="!menuOpen && hasValue"
+                      class="lx-value"
+                      :title="selectingKind === 'single' ? getName(false) : ''"
+                    >
+                      <template v-if="variant === 'country' && selectingKind === 'single'">
+                        <LxFlagItemDisplay
+                          :value="selectedItem"
+                          :id-attribute="idAttribute"
+                          :name-attribute="nameAttribute"
+                        />
+                      </template>
+                      <template v-if="variant === 'state' && selectingKind === 'single'">
+                        <LxStateDisplay
+                          :value="selectedItem?.id"
+                          :dictionary="[
                             {
-                              'lx-selected': isItemSelected(item),
-                              'lx-highlighted-item':
-                                highlightedItemId &&
-                                highlightedItemId === getIdAttributeString(item),
+                              value: selectedItem?.id,
+                              displayName: selectedItem?.name,
+                              displayType: props.dictionary?.displayType,
+                              displayShape: props.dictionary?.displayShape,
                             },
                           ]"
-                          tabindex="0"
-                          role="option"
-                        >
+                        />
+                      </template>
+                      <template
+                        v-if="
+                          variant === 'default' ||
+                          variant === 'custom' ||
+                          (variant === 'country' && selectingKind === 'multiple') ||
+                          (variant === 'state' && selectingKind === 'multiple')
+                        "
+                      >
+                        {{ getName() }}
+                      </template>
+                    </div>
+                    <div v-if="!menuOpen && !hasValue" class="lx-placeholder">
+                      {{ getName() }}
+                    </div>
+                    <div
+                      class="lx-autocomplete-default-data"
+                      :class="[
+                        { emptyModel: model?.length === 0 || !model || selectingKind === 'single' },
+                      ]"
+                    >
+                      <div
+                        v-show="menuOpen"
+                        class="lx-text-input-wrapper"
+                        :data-invalid="invalid ? '' : null"
+                      >
+                        <input
+                          ref="refQuery"
+                          :placeholder="getName()"
+                          v-model="query"
+                          class="lx-text-input lx-value-picker-placeholder"
+                          role="search"
+                          tabindex="-1"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="lx-icons">
+                  <LxIcon
+                    v-show="invalid && !(loadingState || loading)"
+                    customClass="lx-modifier-icon lx-invalidation-icon"
+                    value="invalid"
+                  />
+                  <div v-show="shouldShowIcon">
+                    <LxIcon customClass="lx-modifier-icon" :value="icon" />
+                  </div>
+                  <div
+                    v-show="
+                      selectingKind === 'single' &&
+                      !invalid &&
+                      hasValue &&
+                      !(loadingState || loading)
+                    "
+                  >
+                    <LxButton
+                      :disabled="disabled"
+                      icon="close"
+                      kind="ghost"
+                      @click="clear"
+                      :title="texts.clear"
+                    />
+                  </div>
+                  <div
+                    class="lx-invalid-true"
+                    v-show="
+                      selectingKind === 'single' &&
+                      invalid &&
+                      hasValue &&
+                      !(loadingState || loading)
+                    "
+                  >
+                    <LxButton
+                      :disabled="disabled"
+                      icon="close"
+                      kind="ghost"
+                      :title="texts.clear"
+                      @click="clear"
+                    />
+                  </div>
+                  <div class="lx-primary" v-if="shouldShowDetailsBtn">
+                    <LxButton
+                      :disabled="disabled"
+                      icon="search-details"
+                      kind="ghost"
+                      :title="texts.detailsButton"
+                      @click="openDetails"
+                    />
+                  </div>
+                  <div class="lx-autocomplete-loader" v-show="loadingState || loading">
+                    <LxLoader loading size="s" />
+                  </div>
+                </div>
+              </div>
+            </slot>
+
+            <template #content>
+              <div class="lx-dropdown-default-content" :style="{ width: panelWidth + 'px' }">
+                <slot name="panel" @click="closeMenu()">
+                  <transition name="appear-down">
+                    <div
+                      v-show="menuOpen && !loading"
+                      :class="`lx-dropdown-panel`"
+                      tabindex="-1"
+                      role="listbox"
+                      @keydown.esc.prevent="closeMenu"
+                      @keydown.enter.prevent="onEnter"
+                      @keydown.space.prevent="onEnter"
+                      @keydown.up.prevent="focusPreviousInputElement"
+                      @keydown.down.prevent="focusNextInputElement"
+                      @keydown.tab="focusOnDropDown"
+                    >
+                      <template v-if="filteredItems?.length">
+                        <template v-for="item in filteredItems" :key="item[idAttribute]">
                           <div
+                            @click.prevent="
+                              props.selectingKind === 'single'
+                                ? selectSingle(item)
+                                : selectMultiple(item)
+                            "
+                            tabindex="0"
+                            role="option"
+                            class="lx-value-picker-item"
+                            :class="[
+                              {
+                                'lx-selected': isItemSelected(item) && selectingKind === 'single',
+                                'lx-highlighted-item':
+                                  highlightedItemId &&
+                                  highlightedItemId === getIdAttributeString(item),
+                                'autocomplete-multiple': selectingKind === 'multiple',
+                              },
+                            ]"
                             :id="getItemId(getIdAttributeString(item))"
                             :group-id="groupId"
                             :label="item[nameAttribute]"
                             :disabled="loading"
                           >
-                            <template v-if="variant === 'country'">
-                              <LxFlagItemDisplay
-                                :value="item"
-                                :id-attribute="idAttribute"
-                                :name-attribute="nameAttribute"
-                              />
-                            </template>
-                            <template v-if="variant === 'state'">
-                              <LxStateDisplay
-                                :value="item.id"
-                                :dictionary="[
-                                  {
-                                    value: item.id,
-                                    displayName: item.name,
-                                    displayType: props.dictionary?.displayType,
-                                    displayShape: props.dictionary?.displayShape,
-                                  },
-                                ]"
-                              />
-                            </template>
-                            <template v-if="variant === 'default'">
-                              <LxSearchableText
-                                :value="item[nameAttribute]"
-                                :search-string="query"
-                              />
-                            </template>
-                            <template v-if="variant === 'custom'">
-                              <slot name="customItem" v-bind="item"></slot>
-                            </template>
+                            <LxCheckbox
+                              v-if="selectingKind === 'multiple'"
+                              :id="getItemId(item.id)"
+                              :group-id="groupId"
+                              v-model="itemsModel[item[idAttribute]]"
+                              :disabled="disabled"
+                              :value="item.id"
+                              @click="selectMultiple(item)"
+                            />
+                            <label :for="item.id">
+                              <template v-if="variant === 'country'">
+                                <LxFlagItemDisplay
+                                  :value="item"
+                                  :id-attribute="idAttribute"
+                                  :name-attribute="nameAttribute"
+                                />
+                              </template>
+
+                              <template v-if="variant === 'state'">
+                                <LxStateDisplay
+                                  :value="item.id"
+                                  :dictionary="[
+                                    {
+                                      value: item.id,
+                                      displayName: item.name,
+                                      displayType: props.dictionary?.displayType,
+                                      displayShape: props.dictionary?.displayShape,
+                                    },
+                                  ]"
+                                />
+                              </template>
+
+                              <template v-if="variant === 'default'">
+                                <LxSearchableText
+                                  :value="item[nameAttribute]"
+                                  :search-string="query"
+                                />
+                              </template>
+
+                              <template v-if="variant === 'custom'">
+                                <slot name="customItem" v-bind="item"></slot>
+                              </template>
+                            </label>
                           </div>
+                        </template>
+                      </template>
+                      <template
+                        v-if="
+                          query &&
+                          query.length >= props.queryMinLength &&
+                          !filteredItems?.length &&
+                          !loadingState
+                        "
+                      >
+                        <div class="lx-empty">
+                          <LxIcon value="info" />
+                          <p>
+                            {{ props.texts.empty }} "<span class="lx-highlighted-item">{{
+                              query.toLowerCase()
+                            }}</span
+                            >"
+                          </p>
                         </div>
                       </template>
-                    </template>
-                    <template
-                      v-if="
-                        query &&
-                        query.length >= props.queryMinLength &&
-                        !filteredItems?.length &&
-                        !loadingState
-                      "
-                    >
-                      <div class="lx-empty">
-                        <LxIcon value="info" />
-                        <p>
-                          {{ props.texts.empty }} "<span class="lx-highlighted-item">{{
-                            query.toLowerCase()
-                          }}</span
-                          >"
-                        </p>
-                      </div>
-                    </template>
-                    <template
-                      v-if="
-                        queryMinLength !== 0 &&
-                        (!query || query.length < queryMinLength) &&
-                        (!filteredItems || filteredItems?.length === 0)
-                      "
-                    >
-                      <div class="lx-empty">
-                        <LxIcon value="info" />
-                        <p>
-                          {{
-                            props.queryMinLength % 10 === 1 && props.queryMinLength !== 11
-                              ? props.texts.tryEndingWith1?.replace('{0}', props.queryMinLength)
-                              : props.texts.try?.replace('{0}', props.queryMinLength)
-                          }}
-                        </p>
-                      </div>
-                    </template>
-                  </div>
-                </transition>
-              </slot>
+                      <template
+                        v-if="
+                          queryMinLength !== 0 &&
+                          (!query || query.length < queryMinLength) &&
+                          (!filteredItems || filteredItems?.length === 0)
+                        "
+                      >
+                        <div class="lx-empty">
+                          <LxIcon value="info" />
+                          <p>
+                            {{
+                              props.queryMinLength % 10 === 1 && props.queryMinLength !== 11
+                                ? props.texts.tryEndingWith1?.replace('{0}', props.queryMinLength)
+                                : props.texts.try?.replace('{0}', props.queryMinLength)
+                            }}
+                          </p>
+                        </div>
+                      </template>
+                    </div>
+                  </transition>
+                </slot>
               </div>
-          </template>
-        </Popper>
-      </div>
+            </template>
+          </Popper>
+        </div>
+
+        <template #panel>
+          <ul class="lx-list">
+            <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
+              <div class="lx-row">
+                <p class="lx-data">{{ item[nameAttribute] }}</p>
+              </div>
+            </li>
+          </ul>
+        </template>
+      </LxInfoWrapper>
+
+      <LxModal ref="detailedModeModal" :label="texts.detailsModalLabel" size="m">
+        <template v-if="$slots.details && selectingKind === 'multiple'">
+          <LxContentSwitcher :items="detailsSwitchTypes" v-model="detailsSwitchType" kind="combo" />
+        </template>
+
+        <template
+          v-if="
+            $slots.details && detailMode === 'detailed' && detailsSwitchType === 'advanced-search'
+          "
+        >
+          <slot name="details"></slot>
+        </template>
+
+        <template
+          v-if="
+            (!$slots.details && selectingKind === 'multiple') ||
+            ($slots.details && detailsSwitchType === 'selected-items')
+          "
+        >
+          <LxList
+            ref="listRef"
+            :items="displaySelectedItems"
+            :hasSelecting="showListOptions"
+            :has-search="showListOptions"
+            selectingKind="multiple"
+            list-type="1"
+            @selectionChanged="selectionChanged"
+          />
+        </template>
+      </LxModal>
 
       <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
     </template>
