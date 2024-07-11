@@ -904,7 +904,7 @@ h2.lx-section-header+p.lx-invalidation-message {
   width: auto;
 }
 
-.lx-value-picker-item:hover,{
+.lx-value-picker-item:hover {
   background-color: var(--color-region-hover);
   color: var(--color-region-hover-foreground);
 }
@@ -1668,6 +1668,14 @@ h2.lx-section-header+p.lx-invalidation-message {
   margin-top: 0.1rem;
 }
 
+.lx-autocomplete .lx-autocomplete-default-panel .lx-text-input-wrapper .lx-text-input::placeholder {
+  line-height: 1.5rem;
+  font-size: var(--font-size);
+  font-family: var(--font-family);
+  font-weight: var(--font-weight);
+  letter-spacing: 0;
+}
+
 .lx-text-input.lx-uppercase {
   text-transform: uppercase;
 }
@@ -2389,7 +2397,7 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-autocomplete .lx-autocomplete-default-panel .lx-value,
 .lx-autocomplete .lx-autocomplete-default-panel .lx-placeholder {
   padding-right: 2.5rem !important;
-  padding-left: 1rem;
+  padding-left: calc(1rem + 1px);
 }
 
 .lx-autocomplete-default-panel {
