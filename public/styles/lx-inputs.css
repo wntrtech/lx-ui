@@ -277,6 +277,10 @@
   outline-color: var(--color-focus-background);
 }
 
+.lx-autocomplete .lx-text-input:focus:not(:disabled) {
+  outline: none;
+} 
+
 .lx-text-input:disabled,
 .lx-text-area:disabled,
 .lx-date-time-picker:disabled,
@@ -1665,7 +1669,7 @@ h2.lx-section-header+p.lx-invalidation-message {
 }
 
 .lx-autocomplete .lx-autocomplete-default-panel .lx-text-input-wrapper .lx-text-input {
-  margin-top: 0.1rem;
+  margin-top: 0.4rem;
 }
 
 .lx-autocomplete .lx-autocomplete-default-panel .lx-text-input-wrapper .lx-text-input::placeholder {
@@ -2349,7 +2353,8 @@ input[type='range']:hover::-moz-range-thumb {
 
 .lx-dropdown-default:active,
 .lx-dropdown-default:focus,
-.lx-autocomplete:focus {
+.lx-autocomplete:focus,
+.lx-autocomplete:focus-within {
   outline: 2px solid var(--color-focus-background);
 }
 

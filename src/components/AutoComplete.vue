@@ -342,7 +342,7 @@ function closeMenu() {
     menuOpen.value = false;
   }
   highlightedItemId.value = null;
-  if (refQuery.value) refQuery.value.focus();
+  // if (refQuery.value) refQuery.value.focus();
 }
 
 onClickOutside(refRoot, closeMenu);
@@ -850,7 +850,7 @@ onMounted(() => {
                   @keydown.enter.prevent="onEnter"
                   @keydown.down.prevent="focusNextInputElement"
                   @keydown.up.prevent="focusPreviousInputElement"
-                  @keydown.tab="focusOnDropDown"
+                  @keydown.tab.prevent="focusOnDropDown"
                   @keydown.f3.prevent="openDetails"
                   tabindex="0"
                 >
@@ -1003,7 +1003,7 @@ onMounted(() => {
                       @keydown.space.prevent="onEnter"
                       @keydown.up.prevent="focusPreviousInputElement"
                       @keydown.down.prevent="focusNextInputElement"
-                      @keydown.tab="focusOnDropDown"
+                      @keydown.tab.prevent="focusOnDropDown"
                     >
                       <template v-if="filteredItems?.length">
                         <template v-for="item in filteredItems" :key="item[idAttribute]">
