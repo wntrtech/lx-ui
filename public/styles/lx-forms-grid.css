@@ -53,6 +53,14 @@
   cursor: help;
 }
 
+.lx-form-grid>header>.lx-group .lx-toolbar-chip .lx-info-wrapper .lx-info-wrapper-content {
+  display: flex;
+}
+
+.lx-form-grid>header>.lx-group .lx-toolbar-chip .lx-info-wrapper svg {
+  min-width: var(--icon-size);
+}
+
 .lx-form-grid h2 {
   margin-top: var(--row-size);
   margin-bottom: var(--gap);
