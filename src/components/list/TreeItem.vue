@@ -169,6 +169,7 @@ const isSelectable = (item) => {
         :label="item[primaryAttribute]"
         :description="item[secondaryAttribute]"
         :href="item[hrefAttribute]"
+        :clickable="item[clickableAttribute]"
         :actionDefinitions="actionDefinitions"
         :icon="item[iconAttribute] ? item[iconAttribute] : icon"
         :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
@@ -178,6 +179,7 @@ const isSelectable = (item) => {
         :busy="states?.[item[idAttribute]]?.busy"
         :value="item"
         @action-click="actionClicked"
+        @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
       >
         <template #customItem="item" v-if="$slots.customItem">
           <slot name="customItem" v-bind="item" />

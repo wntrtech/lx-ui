@@ -230,6 +230,7 @@ const isSelectable = (item) => {
           :label="parent[primaryAttribute]"
           :description="parent[secondaryAttribute]"
           :href="parent[hrefAttribute]"
+          :clickable="parent[clickableAttribute]"
           :actionDefinitions="actionDefinitions"
           :icon="parent[iconAttribute] ? parent[iconAttribute] : icon"
           :iconSet="parent[iconSetAttribute] ? parent[iconSetAttribute] : iconSet"
@@ -238,6 +239,8 @@ const isSelectable = (item) => {
           :disabled="states?.[parent[idAttribute]]?.disabled"
           :busy="states?.[parent[idAttribute]]?.busy"
           :value="parent"
+          @action-click="actionClicked"
+          @click="parent[hrefAttribute] ? null : actionClicked('click', parent[idAttribute])"
         >
           <template #customItem="item" v-if="$slots.customItem">
             <slot name="customItem" v-bind="item" />
@@ -294,6 +297,7 @@ const isSelectable = (item) => {
           :label="item[primaryAttribute]"
           :description="item[secondaryAttribute]"
           :href="item[hrefAttribute]"
+          :clickable="item[clickableAttribute]"
           :actionDefinitions="actionDefinitions"
           :icon="item[iconAttribute] ? item[iconAttribute] : icon"
           :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
@@ -302,6 +306,8 @@ const isSelectable = (item) => {
           :disabled="states?.[item[idAttribute]]?.disabled"
           :busy="states?.[item[idAttribute]]?.busy"
           :value="item"
+          @action-click="actionClicked"
+          @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
         >
           <template #customItem="item" v-if="$slots.customItem">
             <slot name="customItem" v-bind="item" />
