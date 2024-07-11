@@ -371,6 +371,7 @@
 .lx-layout-public .lx-nav-panel ul li .lx-button {
   background-color: transparent;
   border-color: transparent;
+  border-radius: 0;
   color: var(--color-nav-foreground);
   flex-direction: row;
   justify-content: center;

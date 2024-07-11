@@ -1,5 +1,11 @@
 # LX/UI Migration Guide
 
+## 1.5 → 1.6
+
+### Breaking changes
+
+A navbar has been added for `public` layout mode. To hide it, make sure to add `hideNavBar="true"` to `LxShell`.
+
 ## 1.3 → 1.5
 
 ### Namespace

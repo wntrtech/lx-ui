@@ -2,12 +2,13 @@
   --color-brand: #217391;
   --color-interactive-background: #287674;
   --color-interactive-hover-background: #217391;
-  --color-nav-selected-background: #577f8a33;
+  --color-nav-selected-background: #dde5e8;
   --color-background: #f4f2ed;
   --color-layout-background: #1b3c47;
   --color-interactive-secondary-background: #1b3c47;
   --color-data: #111;
 }
+
 .lx.lx-theme-dark {
   --color-brand: #52918f;
   --color-interactive-background: #52918f;
