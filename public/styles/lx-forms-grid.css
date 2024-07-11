@@ -5,6 +5,10 @@
   border: var(--region-border);
 }
 
+.lx-form-grid>.lx-main {
+  overflow-x: hidden;
+}
+
 .lx-form-grid>header {
   min-height: var(--row-size);
   border-bottom: 1pt solid var(--color-chrome);
@@ -770,8 +774,8 @@ p .lx-person-display-wrapper {
 }
 
 .lx-filter>.lx-body>.lx-form-region>.lx-form-grid>.lx-compact-sections>.lx-form-section {
-  padding-left: 0;
-  padding-right: 0;
+  padding-left: 2px;
+  padding-right: 2px;
 }
 
 .lx-form-grid .lx-form-section .lx-row .lx-data-block-wrapper.form-builder-data-block .lx-data-block-content>.lx-main {
