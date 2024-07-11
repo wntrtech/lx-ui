@@ -624,6 +624,10 @@
   color: var(--color-region-hover-foreground);
 }
 
+.lx .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:disabled:hover .lx-button-content {
+  color: var(--color-disabled-foreground);
+}
+
 .lx .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:disabled:hover svg {
   fill: var(--color-disabled-foreground);
 }

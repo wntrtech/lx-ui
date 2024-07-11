@@ -136,7 +136,11 @@ function secureURL(url) {
         :title="action.name"
         :destructive="action.destructive"
         :disabled="
-          action.disabled || action.enableByAttribute ? !value[action.enableByAttribute] : false
+          action.disabled != null
+            ? action.disabled
+            : action.enableByAttribute
+            ? !value[action.enableByAttribute]
+            : false
         "
         @click="actionClicked(action.id, id)"
       />
@@ -161,7 +165,9 @@ function secureURL(url) {
               :tabindex="0"
               :destructive="action.destructive"
               :disabled="
-                action.disabled || action.enableByAttribute
+                action.disabled != null
+                  ? action.disabled
+                  : action.enableByAttribute
                   ? !value[action.enableByAttribute]
                   : false
               "
