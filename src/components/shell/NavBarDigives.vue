@@ -23,6 +23,8 @@ const props = defineProps({
   contextPersonsInfo: { type: Array, default: null },
   selectedContextPerson: { type: Object, default: null },
   selectedAlternativeProfile: { type: Object, default: null },
+  headerNavDisable: { type: Boolean, default: false },
+  headerNavReadOnly: { type: Boolean, default: false },
   texts: {
     type: Object,
     required: false,
@@ -155,7 +157,11 @@ function logOut() {
       <div v-if="alternativeProfilesInfo" class="nav-bar-user-info nav-bar-profile">
         <p>{{ texts?.userTitle }}</p>
         <li>
-          <LxDropDown :items="alternativeProfilesComputed" v-model="dropDownModelAlternatives" />
+          <LxDropDown
+            :items="alternativeProfilesComputed"
+            v-model="dropDownModelAlternatives"
+            :disabled="headerNavDisable"
+          />
         </li>
         <div class="color-border"></div>
       </div>
@@ -172,20 +178,24 @@ function logOut() {
       </div>
       <div v-if="contextPersonsInfo && contextPersonsInfo.length > 0" class="nav-bar-user-info">
         <p>{{ texts?.contextPersonTitle }}</p>
-        <template v-if="contextPersonsInfo.length === 1">
+        <template v-if="headerNavReadOnly">
           <li>
             <div class="header-profile-name">
-              {{ contextPersonsInfo[0]?.name }}
+              {{ selectedContextPerson?.name }}
             </div>
             <div class="header-profile-role">
-              {{ contextPersonsInfo[0]?.description }}
+              {{ selectedContextPerson?.description }}
             </div>
           </li>
           <li></li
         ></template>
 
-        <li v-if="contextPersonsInfo?.length > 1" class="custom-context-menu">
-          <LxDropDownMenu ref="contextMenu">
+        <li
+          v-if="!headerNavReadOnly"
+          class="custom-context-menu"
+          :class="[{ 'lx-disabled': headerNavDisable }]"
+        >
+          <LxDropDownMenu ref="contextMenu" :disabled="headerNavDisable">
             <div class="selected-person-display">
               <div v-if="selectedContextPerson?.code !== userInfo?.code">
                 <p class="lx-primary">{{ selectedContextPerson?.name }}</p>

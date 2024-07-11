@@ -392,10 +392,12 @@
   cursor: pointer;
 }
 
-.custom-context-menu.lx-disabled .selected-person-display{
+.custom-context-menu.lx-disabled  .selected-person-display,
+.custom-context-menu.lx-disabled .selected-person-display:hover{
   background-color: var(--color-region);
   cursor: not-allowed;
 }
+
 
 .custom-context-menu .selected-person-display {
   display: flex;

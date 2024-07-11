@@ -20,6 +20,7 @@ const props = defineProps({
   navBarSwitch: { type: Boolean, default: true },
   hideNavBar: { type: Boolean, default: false },
   headerNavDisable: { type: Boolean, default: false },
+  headerNavReadOnly: { type: Boolean, default: false },
   showBackButton: { type: Boolean, default: false },
   backLabel: { type: String, required: false, default: null },
   backPath: { type: [Object, String], required: false, default: null },
@@ -217,17 +218,17 @@ function changePerson(item) {
     >
       <div class="section-border-left">
         <div class="header-label">{{ props.texts.contextPersonTitle }}</div>
-        <template v-if="contextPersonsInfo.length === 1">
+        <template v-if="headerNavReadOnly">
           <div class="header-profile-name">
-            {{ contextPersonsInfo[0]?.name }}
+            {{ selectedContextPerson?.name }}
           </div>
           <div class="header-profile-role">
-            {{ contextPersonsInfo[0]?.description }}
+            {{ selectedContextPerson?.description }}
           </div>
         </template>
         <div
           class="custom-context-menu"
-          v-if="contextPersonsInfo?.length > 1"
+          v-if="!headerNavReadOnly"
           :class="[{ 'lx-disabled': headerNavDisable }]"
         >
           <LxDropDownMenu ref="contextMenu" :disabled="headerNavDisable">

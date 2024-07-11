@@ -114,6 +114,7 @@ const props = defineProps({
   hasCoverLogo: { type: Boolean, default: true },
   environment: { type: Object, default: () => {} },
   headerNavDisable: { type: Boolean, default: false },
+  headerNavReadOnly: { type: Boolean, default: false },
   navigating: { type: Boolean, default: false },
   hideHeaderText: { type: Boolean, default: false },
 
@@ -676,6 +677,7 @@ onMounted(() => {
           :environment="environment"
           kind="public"
           :headerNavDisable="headerNavDisable"
+          :headerNavReadOnly="headerNavReadOnly"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
@@ -712,6 +714,8 @@ onMounted(() => {
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
           :texts="texts"
+          :headerNavDisable="headerNavDisable"
+          :headerNavReadOnly="headerNavReadOnly"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @log-out="logOut"
