@@ -2,9 +2,9 @@
 
 ## 1.5 → 1.6
 
-### Breaking changes
+### Navbar for public LxShell
 
-A navbar has been added for `public` layout mode. To hide it, make sure to add `hideNavBar="true"` to `LxShell`.
+LxShell `public` mode has a navbar enabled by default. If you want to go back to it being hidden, make sure to add `:hideNavBar="true"` to `LxShell`.
 
 ## 1.3 → 1.5
 
@@ -16,7 +16,7 @@ We'll be using **`@wntr/lx-ui`** instead of ~~`@zzdats/lx-ui`~~ from now on (mak
 
 ### Date format
 
-We've also have changed default date format from "dd.MM.yyyy" to "dd.MM.yyyy." (in accordance to [Latvian law](https://likumi.lv/ta/id/301436#p15)). If, for any reason, you want to change it back, you can always use LX globals (most likely, in your `main.js`), like so:
+We've also changed default date format from "dd.MM.yyyy" to "dd.MM.yyyy." (in accordance to [Latvian law](https://likumi.lv/ta/id/301436#p15)). If, for any reason, you want to change it back, you can always use LX globals (most likely, in your `main.js`), like so:
 
 ```js
 myApp.use(createLx, {
