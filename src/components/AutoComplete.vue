@@ -552,28 +552,28 @@ function activate() {
 }
 
 function selectMultiple(item) {
-  const idModel = ref(itemsModel.value[item.id]);
+  const idModel = ref(itemsModel.value[getIdAttributeString(item)]);
   idModel.value = !idModel.value;
 
   if (Array.isArray(model.value)) {
     if (idModel.value) {
       // Check if item already exists in model
-      const index = model.value.indexOf(item.id);
+      const index = model.value.indexOf(getIdAttributeString(item));
       if (index === -1) {
         // Add item to model
-        model.value = [...model.value, item.id];
-        itemsModel.value[item.id] = true;
+        model.value = [...model.value, getIdAttributeString(item)];
+        itemsModel.value[getIdAttributeString(item)] = true;
       } else {
         // Remove item from model
-        const updatedModel = model.value.filter((id) => id !== item.id);
+        const updatedModel = model.value.filter((id) => id !== getIdAttributeString(item));
         model.value = [...updatedModel];
       }
     } else {
-      itemsModel.value[item.id] = false;
-      const index = model.value.indexOf(item.id);
+      itemsModel.value[getIdAttributeString(item)] = false;
+      const index = model.value.indexOf(getIdAttributeString(item));
       if (index > -1) {
         // Remove item from model
-        const updatedModel = model.value.filter((id) => id !== item.id);
+        const updatedModel = model.value.filter((id) => id !== getIdAttributeString(item));
         model.value = [...updatedModel];
       }
     }
@@ -585,8 +585,8 @@ function selectMultiple(item) {
     );
   } else {
     // Initialize model.value as an array if it's not already
-    model.value = [item.id];
-    itemsModel.value[item.id] = true;
+    model.value = [getIdAttributeString(item)];
+    itemsModel.value[getIdAttributeString(item)] = true;
   }
 }
 
