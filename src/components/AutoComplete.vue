@@ -202,7 +202,6 @@ watch([model, () => allItems.value], ([newModelValue]) => {
       }
     }
   } else {
-    itemsModel.value = {};
     selectedItem.value = null;
     selectedItems.value = [];
   }
