@@ -53,6 +53,10 @@ onMounted(() => {
   >
     <div v-for="(item, index) in model" :key="index" class="lx-appendable-list-item">
       <LxForm kind="stripped" :columnCount="columnCount" :required-mode="props.requiredMode">
+        <slot name="customItem" v-bind="{ item, index }" />
+      </LxForm>
+
+      <div class="appendable-list-remove-button-wrapper">
         <div class="appendable-list-remove">
           <LxButton
             icon="remove-item"
@@ -63,8 +67,7 @@ onMounted(() => {
             @click="removeItem(index)"
           />
         </div>
-        <slot name="customItem" v-bind="{ item, index }" />
-      </LxForm>
+      </div>
     </div>
     <div>
       <LxButton
