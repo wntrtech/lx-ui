@@ -71,6 +71,7 @@
   border-bottom: 1px solid var(--color-chrome);
   outline-color: var(--color-focus-background);
   color: var(--color-data);
+  fill: var(--color-data);
 }
 
 .lx .lx-data-grid .lx-grid-row.lx-selected .lx-cell-selector {
@@ -256,22 +257,39 @@
 .lx .lx-data-grid .lx-cell-secondary,
 .lx .lx-data-grid .lx-cell-secondary .lx-person-display-name,
 .lx .lx-data-grid .lx-cell-secondary .lx-grid-icon-text,
+.lx .lx-data-grid .lx-cell-secondary .flag-column p,
 .lx .lx-data-grid .lx-cell-extra,
 .lx .lx-data-grid .lx-cell-extra .lx-person-display-name,
-.lx .lx-data-grid .lx-cell-extra .lx-grid-icon-text {
+.lx .lx-data-grid .lx-cell-extra .lx-grid-icon-text,
+.lx .lx-data-grid .lx-cell-extra .flag-column p {
   color: var(--color-label);
 }
 
 .lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-secondary,
 .lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-secondary .lx-person-display-name,
+.lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-secondary .lx-grid-icon-text,
+.lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-secondary .flag-column p,
 .lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-extra,
-.lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-extra .lx-person-display-name {
+.lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-extra .lx-person-display-name,
+.lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-extra .lx-grid-icon-text,
+.lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-extra .flag-column p {
   color: inherit;
+}
+
+.lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-extra .lx-grid-column-icon,
+.lx .lx-data-grid table:not(.lx-skeleton) tr:hover .lx-cell-secondary .lx-grid-column-icon {
+  fill: inherit;
 }
 
 .lx .lx-data-grid .lx-cell-secondary .lx-person-display-name,
 .lx .lx-data-grid .lx-cell-extra .lx-person-display-name {
   font-weight: normal;
+}
+
+.lx .lx-data-grid .lx-person-display-wrapper,
+.lx .lx-data-grid .lx-grid-icon-wrapper {
+  margin-top: -5px;
+  margin-bottom: -5px;
 }
 
 .lx .lx-data-grid .lx-cell-action {
