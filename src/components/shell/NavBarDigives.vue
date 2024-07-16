@@ -176,7 +176,13 @@ function logOut() {
         </li>
         <div class="color-border"></div>
       </div>
-      <div v-if="contextPersonsInfo && contextPersonsInfo.length > 0" class="nav-bar-user-info">
+      <div
+        v-if="
+          (contextPersonsInfo && contextPersonsInfo.length > 0) ||
+          (selectedContextPerson && headerNavReadOnly)
+        "
+        class="nav-bar-user-info"
+      >
         <p>{{ texts?.contextPersonTitle }}</p>
         <template v-if="headerNavReadOnly">
           <li>

@@ -214,7 +214,10 @@ function changePerson(item) {
     <div v-else class="lx-upper-row"></div>
     <div
       class="lx-upper-row person-data-section"
-      v-if="contextPersonsInfo && contextPersonsInfo.length > 0"
+      v-if="
+        (contextPersonsInfo && contextPersonsInfo.length > 0) ||
+        (selectedContextPerson && headerNavReadOnly)
+      "
     >
       <div class="section-border-left">
         <div class="header-label">{{ props.texts.contextPersonTitle }}</div>
