@@ -4,13 +4,14 @@ import { computed, ref, watch } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
   navItems: {
     type: Array,
     default: null,
   },
-  navBarHidden: {
+  navBarSwitch: {
     type: Boolean,
     default: true,
   },
@@ -58,6 +59,8 @@ const navItemsUserMenuRight = computed(() =>
 const navItemsUserMenuEves = computed(() =>
   props.navItems?.filter((item) => item.type === 'eveseliba')
 );
+
+const windowSize = useWindowSize();
 
 const emits = defineEmits([
   'nav-toggle',
@@ -130,9 +133,20 @@ const alternativeProfilesComputed = computed(() => {
 function logOut() {
   emits('log-out');
 }
+
+function toggleNavBar(event) {
+  if (
+    !props.navBarSwitch &&
+    windowSize.width.value < 1800 &&
+    windowSize.width.value > 1200 &&
+    event?.target?.parentNode?.id !== 'lx_nav-toggle' &&
+    event?.target?.id !== 'lx_nav-toggle'
+  )
+    emits('nav-toggle', true);
+}
 </script>
 <template>
-  <div class="lx-nav-panel" :class="{ shown: !navBarHidden }">
+  <div class="lx-nav-panel" :class="{ shown: !navBarSwitch }" v-click-away="toggleNavBar">
     <ul class="lx-nav-group">
       <li
         v-for="item in navItemsPrimary"

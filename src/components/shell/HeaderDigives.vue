@@ -281,6 +281,7 @@ function changePerson(item) {
       <div class="defined-buttons">
         <div class="lower-button" v-if="!hideNavBar">
           <LxButton
+            id="lx_nav-toggle"
             icon="menu"
             :label="texts?.menu"
             @click="navToggle"
