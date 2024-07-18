@@ -26,6 +26,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   timeAdjust: { type: String, default: null },
   locale: { type: Object, default: () => useLx().getGlobals()?.locale },
+  rangeMonth: { type: String, default: 'next' }, // next, previous
   texts: {
     type: Object,
     default: () => ({
@@ -223,7 +224,10 @@ function onInputClick() {
   } else if ((!props.startDate || !props.endDate) && currentDate < props.minDate) {
     dp.value.move(new Date(props.minDate));
   } else if (!props.startDate || !props.endDate) {
-    dp.value.move(new Date());
+    if (props.rangeMonth === 'previous') {
+      const today = new Date();
+      dp.value.move(today.setMonth(today.getMonth() - 1));
+    } else dp.value.move(new Date());
   }
 }
 
@@ -668,7 +672,13 @@ function moveTo() {
   if (model.value?.start) {
     dp.value.move(calendarValue.value?.start);
   } else if (model.value?.end) {
-    dp.value.move(calendarValue.value?.end);
+    const endDate = new Date(calendarValue.value?.end);
+    if (props.rangeMonth === 'previous') {
+      dp.value.move(endDate.setMonth(endDate.getMonth() - 1));
+    } else dp.value.move(calendarValue.value?.end);
+  } else if (props.rangeMonth === 'previous') {
+    const today = new Date();
+    dp.value.move(today.setMonth(today.getMonth() - 1));
   } else dp.value.move(new Date());
 }
 
