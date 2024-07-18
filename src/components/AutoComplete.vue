@@ -536,7 +536,7 @@ function focusOnDropDown() {
 
 function activate() {
   allItems.value.forEach((item) => {
-    itemsModel.value[getIdAttributeString(item).toString()] = false;
+    itemsModel.value[getIdAttributeString(item)?.toString()] = false;
   });
 
   if (model.value) {
