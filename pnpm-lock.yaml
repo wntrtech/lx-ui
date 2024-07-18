@@ -73,6 +73,9 @@ dependencies:
   glob:
     specifier: ^10.3.10
     version: 10.3.10
+  jsrsasign:
+    specifier: ^11.1.0
+    version: 11.1.0
   jszip:
     specifier: ^3.10.1
     version: 3.10.1
@@ -4722,6 +4725,10 @@ packages:
     optionalDependencies:
       graceful-fs: 4.2.11
     dev: true
+
+  /jsrsasign@11.1.0:
+    resolution: {integrity: sha512-Ov74K9GihaK9/9WncTe1mPmvrO7Py665TUfUKvraXBpu+xcTWitrtuOwcjf4KMU9maPaYn0OuaWy0HOzy/GBXg==}
+    dev: false
 
   /jsx-ast-utils@3.3.5:
     resolution: {integrity: sha512-ZZow9HBI5O6EPgSJLUb8n2NKgmVWTwCvHGwFuJlMjvLFqlGG6pjirPhtdsseaLZjSibD8eegzmYpUZwoIlj2cQ==}

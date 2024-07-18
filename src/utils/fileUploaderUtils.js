@@ -1,10 +1,18 @@
 import mime from 'mime';
 import ExifReader from 'exifreader';
 import JSZip from 'jszip';
-import { lxDateUtils, lxDevUtils } from '@/utils';
+
 import useLx from '@/hooks/useLx';
+import { lxDateUtils, lxDevUtils } from '@/utils';
+import { getTexts } from '@/utils/visualPickerUtils';
 
 const DASH = '—';
+
+// Function to dynamically import X509 from jsrsasign
+async function getX509() {
+  const { X509 } = await import('jsrsasign');
+  return X509;
+}
 
 export function acceptedMimeImage(name) {
   const mimeType = mime.getType(name);
@@ -28,14 +36,12 @@ export function acceptedMimeImage(name) {
     'image/photoshop',
     'image/thumbnail',
   ];
-
   return validMimeTypes.includes(mimeType);
 }
 
 export function acceptedMimeArchive(name) {
   const mimeType = mime.getType(name);
   const validMimeTypes = ['application/zip'];
-
   return validMimeTypes.includes(mimeType);
 }
 
@@ -46,8 +52,13 @@ export function acceptedMimeOffice(name) {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   ];
-
   return validMimeTypes.includes(mimeType);
+}
+
+export function acceptedESignedDocument(name) {
+  const fileExtension = name.split('.').pop();
+  const validMimeTypes = ['edoc', 'asice'];
+  return validMimeTypes.includes(fileExtension);
 }
 
 function isMacOsMetaFile(filename) {
@@ -58,11 +69,8 @@ function isMacOsMetaFile(filename) {
 export function checkExtension(extension, allowedExtensions) {
   const mimeType = mime.getType(extension);
 
-  if (!mimeType) {
-    return false;
-  }
   // mime library cannot determine image/*, so we need to check it manually
-  if (mimeType.startsWith('image/') && allowedExtensions.includes('image/*')) {
+  if (mimeType && mimeType.startsWith('image/') && allowedExtensions.includes('image/*')) {
     return true;
   }
 
@@ -127,6 +135,22 @@ function getArchiveContentData(archive) {
   });
 }
 
+function getEDocContentData(files) {
+  const countries = getTexts('europe');
+
+  return files.map((file) => ({
+    id: file.signatureId,
+    nameAndSurname: file.signerInfo?.nameAndSurname,
+    country: {
+      name: countries[file.signerInfo?.countryName],
+      code: file.signerInfo?.countryName,
+    },
+    personalCode: file.signerInfo?.personalCode,
+    eSignIssuer: file.signerInfo?.eSignIssuer,
+    eSignDate: file.signerInfo?.eSignDate,
+  }));
+}
+
 function parseXML(xmlString) {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
@@ -145,7 +169,47 @@ function extractAllMetadata(xmlDoc) {
   return meta;
 }
 
-export async function getMeta(file) {
+function extractCertData(certString) {
+  const map = {};
+  const array = certString
+    .slice(1)
+    .split('/')
+    .map((attr) => attr.split('='));
+
+  array.forEach(([key, value]) => {
+    map[key] = value;
+  });
+  return map;
+}
+
+// Helper function to extract signer information from X.509 certificate
+async function extractSignerInfoFromCertificate(base64Cert, signingTimeValue) {
+  const pemCert = `-----BEGIN CERTIFICATE-----\n${base64Cert}\n-----END CERTIFICATE-----`;
+  const X509 = await getX509();
+  const c = new X509();
+
+  c.readCertPEM(pemCert);
+
+  const subjectString = c.getSubjectString();
+  const subjectObj = extractCertData(subjectString);
+  const issuerString = c.getIssuerString();
+  const issuerObj = extractCertData(issuerString);
+
+  const cleanedPersonalCode = subjectObj.serialNumber.split('PNOLV-').join('');
+
+  const signerInfo = {
+    nameAndSurname: subjectObj.CN || DASH,
+    name: subjectObj.GN || DASH,
+    surname: subjectObj.SN || DASH,
+    countryName: subjectObj.C || DASH,
+    personalCode: cleanedPersonalCode || DASH,
+    eSignIssuer: issuerObj.O || DASH,
+    eSignDate: lxDateUtils.formatFull(signingTimeValue) || DASH,
+  };
+  return signerInfo;
+}
+
+export async function getMeta(file, texts) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
@@ -194,7 +258,7 @@ export async function getMeta(file) {
           const appXmlFile = zip.file('docProps/app.xml');
 
           const promises = [];
-          meta.officeMeta = { exifData: [] };
+          meta.officeMeta = {};
 
           if (coreXmlFile) {
             const coreXmlContentPromise = coreXmlFile.async('string').then((coreXmlContent) => {
@@ -214,6 +278,67 @@ export async function getMeta(file) {
           await Promise.all(promises);
         }
 
+        // Handle eSign files (edoc, asice)
+        if (acceptedESignedDocument(file.name)) {
+          const zip = await JSZip.loadAsync(arrayBuffer);
+
+          const promises = [];
+          meta.eSignMeta = {};
+          meta.eSigned = true;
+          meta.eSignArchive = [];
+          meta.additionalInfo = texts.metaAdditionalInfoeSigned;
+
+          const allSignerInfos = [];
+
+          zip.forEach((relativePath, zipEntry) => {
+            if (
+              relativePath.startsWith('META-INF/edoc-signatures-S') &&
+              relativePath.endsWith('.xml')
+            ) {
+              const edicSignatureXmlContentPromise = zipEntry
+                .async('string')
+                .then(async (edicSignatureXmlContent) => {
+                  const edicSignatureXml = parseXML(edicSignatureXmlContent);
+
+                  const signatureId = relativePath.split('/').pop().replace('.xml', '');
+                  meta.eSignMeta[signatureId] = {};
+
+                  // Extract signer information from X.509 certificates
+                  const x509CertElement =
+                    edicSignatureXml.getElementsByTagName('ds:X509Certificate');
+                  const base64Cert = x509CertElement[0].textContent;
+
+                  // Extract sign time information from XAdES SigningTime element
+                  const SigningTime = edicSignatureXml.getElementsByTagName('xades:SigningTime');
+                  const signingTimeValue = SigningTime[0].textContent;
+
+                  const signerInfo = await extractSignerInfoFromCertificate(
+                    base64Cert,
+                    signingTimeValue
+                  );
+
+                  allSignerInfos.push({
+                    signatureId,
+                    signerInfo,
+                  });
+                });
+
+              promises.push(edicSignatureXmlContentPromise);
+            } else if (!zipEntry.dir && !isMacOsMetaFile(zipEntry.name)) {
+              const filePromise = zipEntry.async('arraybuffer').then((data) => {
+                if (relativePath !== 'META-INF/manifest.xml' && relativePath !== 'mimetype') {
+                  addFileToArchive(meta.eSignArchive, zipEntry, data.byteLength);
+                }
+              });
+
+              promises.push(filePromise);
+            }
+          });
+
+          await Promise.all(promises);
+          meta.eSignMeta = allSignerInfos;
+          meta.eSignArchive = getArchiveContentData(meta.eSignArchive);
+        }
         // Add new meta... types here
 
         resolve(meta);
@@ -633,6 +758,8 @@ function getIconForExtension(extension) {
       return 'file-image';
     case 'PPTX':
       return 'file-slides';
+    case 'EDOC':
+      return 'file-edoc';
     default:
       return 'file';
   }
@@ -660,6 +787,8 @@ export function provideDefaultIcon(advancedFile) {
       case acceptedMimeOffice(advancedFile.meta?.name) &&
         advancedFile.meta?.type?.endsWith('.document'):
         return 'file-rich-text';
+      case acceptedESignedDocument(advancedFile.meta?.name):
+        return 'file-edoc';
       default:
         return 'file';
     }
@@ -699,6 +828,14 @@ export function getDetails(advancedFile, base64String, texts) {
     case Object.prototype.hasOwnProperty.call(advancedFile.meta, 'officeMeta'): {
       details.mainData = getOfficeFileMainData(advancedFile, texts);
       details.additionalData = getAdditionalData(advancedFile);
+      return details;
+    }
+
+    // If it's a Edoc file
+    case Object.prototype.hasOwnProperty.call(advancedFile.meta, 'eSignMeta'): {
+      details.mainData = getDefaultMainData(advancedFile, texts);
+      details.edocContentData = getEDocContentData(advancedFile.meta.eSignMeta);
+      details.archiveContentData = getArchiveContentData(advancedFile.meta.eSignArchive);
       return details;
     }
 

@@ -28,6 +28,10 @@
   transform: none;
 }
 
+.lx-expander .lx-head .lx-icon-wrapper {
+  display: flex;
+}
+
 .lx-expander:not([data-disabled]) .lx-head:hover {
   background-color: var(--color-region-hover);
 }
@@ -493,7 +497,7 @@
   border: 2px solid var(--color-grid-hover-background);
 }
 
-.lx-expander.lx-expander-highlighted>header .lx-modifier-icon+.lx-indicator {
+.lx-expander.lx-expander-highlighted>header .lx-icon-wrapper .lx-modifier-icon+.lx-indicator {
   opacity: 1;
   transform: scale(1, 1);
 }

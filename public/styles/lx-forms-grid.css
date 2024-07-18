@@ -129,6 +129,77 @@
   align-items: baseline;
 }
 
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section {
+  grid-template-columns: 1fr
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper {
+  align-items: center;
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-avatar-wrapper {
+  padding: 0 0.5rem 0 0;
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-avatar-wrapper .lx-avatar-display .lx-avatar-display-l,
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-list-item svg {
+  margin: 0
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-list-item {
+  padding: 0.25rem 0.5rem 0.25rem 0.3rem;
+  margin: 0
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper header {
+  flex-direction: row;
+  justify-content: left;
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper header .lx-secondary {
+  display: flex;
+  line-height: 1.2em;
+  height: 0.9rem
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper header .lx-secondary .lx-flag .small-flag {
+  border: none;
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper header .lx-primary .lx-edoc-description-code {
+  font-weight: normal;
+  color: var(--color-label);
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.edocBadgeIcon > .lx-head > .lx-group > .lx-icon-wrapper {
+  position: static;
+  font-family: var(--font-family-mono);
+  font-feature-settings: var(--font-features-mono);
+  font-size: var(--small-font-size);
+  background: var(--color-blue);
+  color: var(--color-data);
+  border: var(--region-border);
+  font-weight: bold;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 1em;
+  text-align: center;
+  margin-top: 0;
+  margin-right: 0.5rem;
+  opacity: 1;
+}
+
+.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.edocBadgeIcon > .lx-head > .lx-group > .lx-icon-wrapper svg {
+  margin: 0;
+  padding: 0;
+  fill: var(--color-interactive-foreground);
+  height: 1rem;
+}
+
 .lx-form-grid>.lx-main>.lx-form-section:first-of-type,
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main>.lx-form-section:first-of-type,
 .lx-data-block-content>.lx-main>.lx-form-section:first-of-type,

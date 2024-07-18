@@ -73,6 +73,40 @@ const props = defineProps({
    */
   requiredMode: { type: String, default: 'none' }, // none || required || required-asterisk || optional
   /**
+   * The icon at start of section header.
+   * @type {String}
+   * @default null
+   * @since 1.6.0-beta.5
+   */
+  icon: { type: String, default: null },
+  /**
+   * The icon set for icon at start of section header.
+   * @type {String}
+   * @default
+   * @since 1.6.0-beta.5
+   */
+  iconSet: {
+    type: String,
+    default: () => useLx().getGlobals()?.iconSet,
+  },
+  /**
+   * The custom css class for expander.
+   * @type {String}
+   * @default 'default'
+   * @since 1.6.0-beta.5
+   */
+  customClass: {
+    type: String,
+    default: '',
+  },
+  /**
+   * The badge for header section.
+   * @type {String}
+   * @default
+   * @since 1.6.0-beta.5
+   */
+  badge: { type: String, default: '' },
+  /**
    * The object containing text translations for the section.
    * @type {Object}
    * @since 1.2.3
@@ -147,6 +181,12 @@ provide('sectionColumnCount', props.columnCount);
     v-model="expandedValue"
     :invalid="exactIndex?.invalid"
     :invalidationMessage="exactIndex?.invalidationMessage"
+    :icon="icon"
+    :iconSet="iconSet"
+    :iconType="iconType"
+    :iconBadgeType="iconBadgeType"
+    :badge="badge"
+    :customClass="customClass"
   >
     <section
       :id="id"

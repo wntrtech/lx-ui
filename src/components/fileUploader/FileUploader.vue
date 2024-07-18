@@ -83,8 +83,11 @@ const props = defineProps({
       metaAdditionalInfoPageCountLabelMulti: 'lappuses',
       metaAdditionalInfoSlideCountLabelSingle: 'slaids',
       metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
+      metaAdditionalInfoeSigned: 'Dokuments parakstīts ar drošu elektronisko parakstu',
       metaMainTitle: 'Virsraksts',
       metaMainDescription: 'Apraksts',
+      metaEDocContentLabel: 'Paraksti',
+      metaEdocArchiveContentLabel: 'Saturs',
     }),
   },
 });
@@ -197,6 +200,8 @@ function provideAdditionalIcon(id) {
   switch (true) {
     case advancedFile.meta?.passwordProtected:
       return 'lock';
+    case advancedFile.meta?.eSigned:
+      return 'sign';
 
     default:
       return '';
@@ -210,6 +215,8 @@ function provideAdditionalBadgeType(id) {
   switch (true) {
     case advancedFile.meta?.passwordProtected:
       return 'warning';
+    case advancedFile.meta?.eSigned:
+      return 'info';
 
     default:
       return '';
@@ -269,7 +276,7 @@ async function processFiles(files) {
 
     try {
       if (!props.maxSizeForMeta || file.size <= props.maxSizeForMeta) {
-        const fileMeta = await fileUploaderUtils.getMeta(file);
+        const fileMeta = await fileUploaderUtils.getMeta(file, props.texts);
 
         const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
 

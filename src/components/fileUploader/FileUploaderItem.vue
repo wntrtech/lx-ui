@@ -38,6 +38,7 @@ const props = defineProps({
       metaAdditionalInfoPageCountLabelMulti: 'lappuses',
       metaAdditionalInfoSlideCountLabelSingle: 'slaids',
       metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
+      metaAdditionalInfoeSigned: 'Dokuments parakstīts ar drošu elektronisko parakstu',
     }),
   },
 });
@@ -83,6 +84,16 @@ const additionalInfoTitle = computed(() => {
   }
   if (props.customItem.meta?.type?.endsWith('.presentation')) {
     return props.texts.metaAdditionalInfoSlideCountTitle;
+  }
+  return '';
+});
+
+const badgeTitle = computed(() => {
+  if (props.customItem.meta.eSigned && props.texts.metaAdditionalInfoeSigned) {
+    return props.texts.metaAdditionalInfoeSigned;
+  }
+  if (props.texts.metaAdditionalInfoProtectedArchive) {
+    return props.texts.metaAdditionalInfoProtectedArchive;
   }
   return '';
 });
@@ -180,7 +191,6 @@ const additionalInfoTitle = computed(() => {
             <LxIcon v-if="!props.imagePreview" customClass="lx-icon" :value="props.defaultIcon" />
 
             <p
-              :title="texts.metaAdditionalInfoProtectedArchive"
               v-if="props.additionalBagdeIcon && props.additionalBagdeType"
               class="lx-badge"
               :class="[
@@ -191,7 +201,11 @@ const additionalInfoTitle = computed(() => {
                 { 'lx-badge-warning': additionalBagdeType === 'warning' },
               ]"
             >
-              <LxIcon customClass="lx-icon" :value="props.additionalBagdeIcon" />
+              <LxIcon
+                :title="badgeTitle"
+                customClass="lx-icon"
+                :value="props.additionalBagdeIcon"
+              />
             </p>
 
             <img v-if="props.imagePreview" :src="props.imagePreview" alt="Image Preview" />
@@ -277,18 +291,22 @@ const additionalInfoTitle = computed(() => {
               <div class="lx-file-name-wrapper">
                 <p class="lx-file-name">{{ props.customItem.name }}</p>
                 <p
-                  :title="texts.metaAdditionalInfoProtectedArchive"
                   v-if="props.additionalBagdeIcon && props.additionalBagdeType"
-                  class="lx-badge"
+                  class="lx-badge lx-compact-badge"
                   :class="[
                     {
                       'lx-badge-info':
                         additionalBagdeType === 'default' || additionalBagdeType === 'info',
                     },
                     { 'lx-badge-warning': additionalBagdeType === 'warning' },
+                    { 'lx-badge-info': additionalBagdeType === 'info' },
                   ]"
                 >
-                  <LxIcon customClass="lx-icon" :value="props.additionalBagdeIcon" />
+                  <LxIcon
+                    :title="badgeTitle"
+                    customClass="lx-icon"
+                    :value="props.additionalBagdeIcon"
+                  />
                 </p>
               </div>
 

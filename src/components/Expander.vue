@@ -23,9 +23,10 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   variant: { type: String, default: 'default' }, // 'default' or 'highlighted'
   badge: { type: String, default: '' },
-  badgeType: { type: String, default: 'default' }, // default, good, info, warning, important},
+  badgeType: { type: String, default: 'default' }, // default, good, info, warning, important,
   hasSelectButton: { type: Boolean, default: false },
   selectStatus: { type: String, default: 'none' }, // none, some, all
+  customClass: { type: String, default: '' },
   texts: {
     type: Object,
     default: () => ({
@@ -83,6 +84,7 @@ function selectExpander(event, id) {
       { 'lx-expander-highlighted': variant === 'highlighted' },
       { 'lx-region': region },
       { 'lx-invalid': invalid },
+      customClass,
     ]"
     :data-disabled="disabled ? '' : null"
   >
@@ -105,8 +107,10 @@ function selectExpander(event, id) {
       <template v-else>
         <div class="lx-group">
           <template v-if="icon">
-            <lx-icon customClass="lx-modifier-icon" :value="icon" :icon-set="iconSet" />
-            <div class="lx-indicator"></div>
+            <div class="lx-icon-wrapper">
+              <LxIcon customClass="lx-modifier-icon" :value="icon" :icon-set="iconSet" />
+              <div class="lx-indicator"></div>
+            </div>
           </template>
           <div class="lx-header-data">
             <h4 v-if="label">{{ label }}</h4>

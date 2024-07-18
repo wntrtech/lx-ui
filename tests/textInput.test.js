@@ -86,7 +86,6 @@ test('LxTextInput mask: default', () => {
 //   });
 
 //   const inputElement = wrapper.find('.lx-text-input').element;
-//   // console.log(inputElement);
 //   expect(inputElement.value).toBe('11');
 // });
 test('LxTextInput mask: time', () => {

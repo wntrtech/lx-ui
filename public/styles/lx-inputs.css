@@ -3452,6 +3452,11 @@ input[type='range']:hover::-moz-range-thumb {
   margin: 0;
 }
 
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge svg {
+  width: 0.9rem;
+  height: 1.4rem;
+}
+
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-badge-info,
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-badge-info {
   background: var(--color-blue);

@@ -1,6 +1,9 @@
 <script setup>
 import { computed, ref } from 'vue';
 
+import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
+import { safeString } from '@/utils/stringUtils';
+
 import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxMap from '@/components/Map.vue';
@@ -9,7 +12,8 @@ import LxFormBuilder from '@/components/forms/FormBuilder.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxList from '@/components/list/List.vue';
 import LxIcon from '@/components/Icon.vue';
-import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
+import LxAvatar from '@/components/Avatar.vue';
+import LxFlag from '@/components/Flag.vue';
 
 const props = defineProps({
   value: {
@@ -58,6 +62,8 @@ const props = defineProps({
       metaColorSpace: 'Color space',
       metaDateTime: 'Datums un laiks',
       metaArchiveContentLabel: 'Arhīva saturs',
+      metaEdocArchiveContentLabel: 'Saturs',
+      metaEDocContentLabel: 'Paraksti',
     }),
   },
 });
@@ -67,6 +73,7 @@ const mainDataWithoutAuthor = computed(() => {
     return {};
   }
   const { author, ...rest } = props.value.mainData;
+
   return rest;
 });
 
@@ -97,6 +104,13 @@ const normalizedAuthors = computed(() => {
   if (!authorValue) return null;
   return Array.isArray(authorValue) ? authorValue : [authorValue];
 });
+
+const archiveContentSectionlabel = computed(() => {
+  if (props.value?.edocContentData && props.value?.edocContentData.length > 0) {
+    return props.texts?.metaEdocArchiveContentLabel;
+  }
+  return props.texts?.metaArchiveContentLabel;
+});
 </script>
 <template>
   <LxForm
@@ -112,6 +126,7 @@ const normalizedAuthors = computed(() => {
       { id: 'metaLocation', expanded: false },
       { id: 'metaImage', expanded: false },
       { id: 'metaAdditional', expanded: false },
+      { id: 'metaEDocContent', expanded: true },
     ]"
   >
     <template #sections>
@@ -195,8 +210,42 @@ const normalizedAuthors = computed(() => {
       </LxSection>
 
       <LxSection
+        v-if="props.value?.edocContentData && props.value?.edocContentData?.length !== 0"
+        id="metaEDocContent"
+        class="lx-edoc-signs-list-section"
+        icon="sign"
+        customClass="edocBadgeIcon"
+        :label="props.texts?.metaEDocContentLabel"
+        :badge="props.value?.edocContentData.length"
+      >
+        <LxRow :column-span="1">
+          <LxList list-type="1" :items="props.value?.edocContentData">
+            <template
+              #customItem="{ nameAndSurname, personalCode, eSignDate, eSignIssuer, country }"
+            >
+              <div class="lx-avatar-wrapper">
+                <LxAvatar :value="safeString(nameAndSurname)" size="m" />
+              </div>
+              <div class="lx-edoc-description-wrapper">
+                <p class="lx-primary">
+                  {{ nameAndSurname }}
+                  <span class="lx-edoc-description-code">
+                    {{ `(${personalCode})` }}
+                  </span>
+                </p>
+                <p class="lx-secondary">
+                  {{ `${eSignDate}; ${eSignIssuer};` }}
+                  <LxFlag size="small" :value="country.code" />{{ country.name }}
+                </p>
+              </div>
+            </template>
+          </LxList>
+        </LxRow>
+      </LxSection>
+
+      <LxSection
         id="metaArchiveContent"
-        :label="props.texts?.metaArchiveContentLabel"
+        :label="archiveContentSectionlabel"
         :column-count="2"
         v-if="props.value?.archiveContentData && props.value?.archiveContentData?.length !== 0"
       >

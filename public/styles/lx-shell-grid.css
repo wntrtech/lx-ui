@@ -1276,6 +1276,11 @@ a.lx-tile:hover {
   opacity: 1;
 }
 
+.lx-expander .lx-badge.lx-icon-badge {
+  margin-right: 0.5rem;
+  padding: 0;
+}
+
 .lx-expander .lx-badge.lx-badge-info {
   background: var(--color-region);
   color: var(--color-data);

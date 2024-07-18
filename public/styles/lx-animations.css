@@ -380,7 +380,7 @@
 .lx:not(.lx-no-animations)
   .lx-expander.lx-expander-highlighted
   > header
-  .lx-modifier-icon
+  .lx-icon-wrapper .lx-modifier-icon
   + .lx-indicator {
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
