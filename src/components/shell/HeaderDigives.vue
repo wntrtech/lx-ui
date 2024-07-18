@@ -236,7 +236,10 @@ function changePerson(item) {
         >
           <LxDropDownMenu ref="contextMenu" :disabled="headerNavDisable">
             <div class="selected-person-display">
-              <div v-if="selectedContextPerson?.code !== userInfo?.code">
+              <div
+                v-if="selectedContextPerson?.code !== userInfo?.code"
+                :title="`${selectedContextPerson?.name}\r\n${selectedContextPerson?.description}`"
+              >
                 <p class="lx-primary">{{ selectedContextPerson?.name }}</p>
                 <p class="lx-description">
                   {{ selectedContextPerson?.description }}

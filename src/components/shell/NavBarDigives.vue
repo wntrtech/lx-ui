@@ -4,6 +4,7 @@ import { computed, ref, watch } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxIcon from '@/components/Icon.vue';
 import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
@@ -217,7 +218,10 @@ function toggleNavBar(event) {
         >
           <LxDropDownMenu ref="contextMenu" :disabled="headerNavDisable">
             <div class="selected-person-display">
-              <div v-if="selectedContextPerson?.code !== userInfo?.code">
+              <div
+                v-if="selectedContextPerson?.code !== userInfo?.code"
+                :title="`${selectedContextPerson?.name}\r\n${selectedContextPerson?.description}`"
+              >
                 <p class="lx-primary">{{ selectedContextPerson?.name }}</p>
                 <p class="lx-description">
                   {{ selectedContextPerson?.description }}

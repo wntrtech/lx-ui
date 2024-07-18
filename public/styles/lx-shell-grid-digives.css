@@ -492,6 +492,46 @@
   color: var(--color-interactive-hover-foreground);
 }
 
+.lx-header-digives > .person-data-section .custom-context-menu .lx-context-container .popper .lx-button-set .lx-button:has(.person-custom-button),
+.lx-layout-digives .lx-nav-panel .nav-bar-user-info .custom-context-menu .lx-context-container .popper .lx-button-set .lx-button:has(.person-custom-button){
+  height: auto;
+  min-height: var(--row-size);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  line-height: 1.1em;
+}
+
+.lx-header-digives > .person-data-section .custom-context-menu .selected-person-display .lx-primary,
+.lx-layout-digives .lx-nav-panel .nav-bar-user-info .custom-context-menu .selected-person-display .lx-primary{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  max-height: 2em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: auto;
+}
+
+.lx-header-digives > .person-data-section .custom-context-menu .selected-person-display .lx-description{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 14.5rem;
+}
+
+.lx-layout-digives .lx-nav-panel .nav-bar-user-info .custom-context-menu .selected-person-display .lx-description{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: calc(100vw - 7rem);
+}
+
+.lx-header-digives > .person-data-section .custom-context-menu .selected-person-display,
+.lx-layout-digives .lx-nav-panel .nav-bar-user-info .custom-context-menu .selected-person-display{
+  height: auto;
+  min-height: var(--row-size);
+}
+
 @media (max-width: 1200px) {
   .lx {
     --nav-row-size: 6rem;
