@@ -12,36 +12,25 @@
   align-items: center;
 }
 
-.lx-curtain
-  .lx-modal
-  > header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(
-    .lx-filter header.lx-head
-  ) {
+.lx-curtain .lx-modal>header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(.lx-filter header.lx-head) {
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: auto;
 }
 
-.lx-curtain
-  .lx-modal
-  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-head):not(
-    .lx-list-item header
-  ):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky)
-  .lx-primary {
+.lx-curtain .lx-modal header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-head):not(.lx-list-item header):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky) .lx-primary {
   margin-left: 2rem;
   font-size: var(--h2-font-size);
   font-weight: var(--h2-font-weight);
   color: var(--color-data);
   padding-top: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.lx-curtain
-  .lx-modal
-  header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(
-    .lx-filter header.lx-head
-  )
-  .lx-button {
+.lx-curtain .lx-modal header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-list-item header):not(.lx-filter header.lx-head) .lx-button {
   align-self: flex-start;
   min-width: var(--row-size);
 }
@@ -55,20 +44,20 @@
   box-shadow: var(--shadow-modal);
 }
 
-.lx-modal > .lx-main {
+.lx-modal>.lx-main {
   padding: var(--padding-modal);
   overflow-y: auto;
   max-height: 80vh;
   max-height: calc(100vh - 10rem);
 }
 
-.lx-modal > footer.lx-button-set {
+.lx-modal>footer.lx-button-set {
   justify-content: stretch;
   flex-direction: row-reverse;
   gap: 0;
 }
 
-.lx-modal > footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) {
+.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) {
   flex-grow: 1;
   height: auto;
   padding-top: 1rem;
@@ -79,7 +68,7 @@
   border-radius: 0;
 }
 
-.lx-modal > footer.lx-button-set.lx-two-buttons .lx-button {
+.lx-modal>footer.lx-button-set.lx-two-buttons .lx-button {
   max-width: 50%;
 }
 
@@ -127,7 +116,7 @@ dialog.lx-modal::backdrop {
   background-color: var(--color-cover-background);
 }
 
-dialog.lx-modal > header > .lx-primary {
+dialog.lx-modal>header>.lx-primary {
   margin-left: 2rem;
   font-size: var(--h2-font-size);
   font-weight: var(--h2-font-weight);
@@ -137,11 +126,11 @@ dialog.lx-modal > header > .lx-primary {
   padding-right: 3rem;
 }
 
-dialog.lx-modal > .lx-button-set > .lx-button {
+dialog.lx-modal>.lx-button-set>.lx-button {
   font-weight: var(--font-weight-interactive);
 }
 
-dialog.lx-modal > header > .lx-button {
+dialog.lx-modal>header>.lx-button {
   border-color: transparent;
   margin: 0;
   position: absolute;
@@ -153,23 +142,23 @@ dialog {
   outline: none;
 }
 
-.lx-modal > header > label {
+.lx-modal>header>label {
   overflow-wrap: break-word;
   padding-right: 1rem;
 }
 
-.lx-modal.lx-modal-s > header > label {
+.lx-modal.lx-modal-s>header>label {
   max-width: calc(40rem - var(--row-size) - 2rem);
 }
 
-.lx-modal.lx-modal-m > header > label {
+.lx-modal.lx-modal-m>header>label {
   max-width: calc(60rem - var(--row-size) - 2rem);
 }
 
-.lx-modal.lx-modal-l > header > label {
+.lx-modal.lx-modal-l>header>label {
   max-width: calc(var(--body-column-size) - var(--row-size) - 2rem);
 }
 
-.lx-modal.lx-modal-xl > header > label {
+.lx-modal.lx-modal-xl>header>label {
   max-width: calc(100% - var(--row-size) - 2rem);
 }

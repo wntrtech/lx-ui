@@ -8,7 +8,7 @@ const props = defineProps({
     type: String,
     default: () => generateUUID(),
   },
-  label: { type: String },
+  label: { type: String, default: '' },
   size: { type: String, default: 'default' },
   buttonPrimaryVisible: { default: false, type: Boolean },
   buttonPrimaryLoading: { default: false, type: Boolean },
@@ -102,7 +102,7 @@ defineExpose({ open, close });
           ]"
         >
           <header>
-            <p class="lx-primary">{{ label }}</p>
+            <p class="lx-primary" :title="label">{{ label }}</p>
             <Button icon="close" kind="ghost" @click="close()" v-if="!disableClosing"></Button>
           </header>
           <article class="lx-main">
