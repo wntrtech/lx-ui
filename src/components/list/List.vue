@@ -1,6 +1,12 @@
 <script setup lang="ts">
-import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
+import { useDebounceFn } from '@vueuse/core';
+import draggable from 'vuedraggable/src/vuedraggable';
+
+import { generateUUID, foldToAscii } from '@/utils/stringUtils';
+import { lxDevUtils } from '@/utils';
+import useLx from '@/hooks/useLx';
+
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxExpander from '@/components/Expander.vue';
@@ -8,16 +14,10 @@ import LxIcon from '@/components/Icon.vue';
 import LxListItem from '@/components/list/ListItem.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxLoader from '@/components/Loader.vue';
-import { useDebounceFn } from '@vueuse/core';
-import useLx from '@/hooks/useLx';
-import { lxDevUtils } from '@/utils';
-import LxToolbar from '@/components/Toolbar.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxTreeList from '@/components/list/TreeList.vue';
-
-import draggable from 'vuedraggable/src/vuedraggable';
 
 const props = defineProps({
   id: { type: String, default: generateUUID() },
@@ -117,9 +117,19 @@ const emits = defineEmits([
   'update:itemsStates',
   'loadChildren',
 ]);
-function prepareCode(value) {
-  return value?.toString();
-}
+
+const responsiveGroupDefinitions = ref(props.groupDefinitions);
+const query = ref(props.searchString);
+const queryRaw = ref(props.searchString);
+const itemsArray = ref([]);
+const ungroupedItemsArray = ref();
+const selectedItemsRaw = ref({});
+const draggableIsDisabled = ref(false);
+const dragging = ref(false);
+const statesNotDefined = ref({});
+const queryInputCompact = ref();
+const queryInputDefault = ref();
+const searchField = ref(false);
 
 const modelSearchString = computed({
   get() {
@@ -130,7 +140,17 @@ const modelSearchString = computed({
   },
 });
 
-const responsiveGroupDefinitions = ref(props.groupDefinitions);
+// Convert item id's to strings
+const itemsWithStringIds = computed(() =>
+  props.items.map((item) => ({
+    ...item,
+    [props.idAttribute]: String(item[props.idAttribute]),
+  }))
+);
+
+function prepareCode(value) {
+  return value?.toString();
+}
 
 watch(
   () => props.groupDefinitions,
@@ -139,8 +159,6 @@ watch(
   }
 );
 
-const query = ref(props.searchString);
-const queryRaw = ref(props.searchString);
 const debouncedSearchReq = useDebounceFn(async () => {
   if (props.searchSide === 'client') query.value = foldToAscii(queryRaw.value);
   nextTick(() => {
@@ -152,8 +170,6 @@ function serverSideSearch() {
   if (props.searchSide === 'server') emits('searched', foldToAscii(queryRaw.value));
 }
 
-const itemsArray = ref([]);
-
 watch(modelSearchString, (newValue, oldValue) => {
   if (newValue !== oldValue) queryRaw.value = modelSearchString.value;
 });
@@ -161,7 +177,7 @@ watch(modelSearchString, (newValue, oldValue) => {
 function validate() {
   let res = false;
   const mapUnique = new Map();
-  props.items?.forEach((x) => {
+  itemsWithStringIds.value?.forEach((x) => {
     if (!mapUnique.has(x[props.idAttribute])) mapUnique.set(x[props.idAttribute], 1);
     else {
       res = true;
@@ -170,6 +186,7 @@ function validate() {
   if (res) return 'Item codes are not unique!!!';
   return 0;
 }
+
 function isFiltered(value) {
   if (query.value && !value) return false;
   if (query.value && value) {
@@ -182,11 +199,9 @@ function actionClicked(actionName, rowCode) {
   emits('actionClick', actionName, rowCode);
 }
 
-const draggableIsDisabled = ref(false);
-
 const filteredItems = computed(() => {
-  if (props.items) {
-    return props.items.filter(
+  if (itemsWithStringIds.value) {
+    return itemsWithStringIds.value.filter(
       (o) => isFiltered(o[props.primaryAttribute]) || isFiltered(o[props.secondaryAttribute])
     );
   }
@@ -210,15 +225,15 @@ function findObjectById(array) {
 
 const filteredTreeItems = computed(() => {
   let res = [];
-  if (props.items) {
-    res = findObjectById(props.items);
+  if (itemsWithStringIds.value) {
+    res = findObjectById(itemsWithStringIds.value);
   }
   return res;
 });
 
 const treeItems = computed(() => {
   const res = [];
-  const queue = [...props.items];
+  const queue = [...itemsWithStringIds.value];
   while (queue.length > 0) {
     const obj = queue.shift();
     res.push(obj);
@@ -230,10 +245,10 @@ const treeItems = computed(() => {
 });
 
 const filteredGroupedItems = computed(() => {
-  if (props.items && props.groupDefinitions) {
+  if (itemsWithStringIds.value && props.groupDefinitions) {
     const ret = {};
     props.groupDefinitions?.forEach((group) => {
-      ret[prepareCode(group.id)] = props.items.filter(
+      ret[prepareCode(group.id)] = itemsWithStringIds.value.filter(
         (o) =>
           prepareCode(o[props.groupAttribute]) === prepareCode(group.id) &&
           (isFiltered(o[props.primaryAttribute]) || isFiltered(o[props.secondaryAttribute]))
@@ -255,9 +270,10 @@ function clear() {
 }
 
 function fillItemsArray() {
-  if (!props.groupDefinitions) return props.items;
+  if (!props.groupDefinitions) return itemsWithStringIds.value;
+
   const array = props.groupDefinitions.reduce((acc, group) => {
-    const groupItems = props.items
+    const groupItems = itemsWithStringIds.value
       .filter((item) => item.group?.toString() === group.id?.toString())
       .sort((a, b) => a[props.orderAttribute] - b[props.orderAttribute]);
     acc[group.id.toString()] = groupItems;
@@ -265,8 +281,8 @@ function fillItemsArray() {
   }, {});
 
   const nullGroupItems = !props.includeUnspecifiedGroups
-    ? props.items.filter((item) => !item[props.groupAttribute])
-    : props.items.filter(
+    ? itemsWithStringIds.value.filter((item) => !item[props.groupAttribute])
+    : itemsWithStringIds.value.filter(
         (item) =>
           !props.groupDefinitions.find((group) => item.group?.toString() === group.id?.toString())
       );
@@ -276,10 +292,11 @@ function fillItemsArray() {
 }
 
 function convertItemsArray() {
-  if (!props.groupDefinitions) return props.items;
+  if (!props.groupDefinitions) return itemsWithStringIds.value;
+
   const array = Object.keys(itemsArray.value).reduce((acc, key) => {
     const items = itemsArray.value[key].map((item) => {
-      const originalItem = props.items.find(
+      const originalItem = itemsWithStringIds.value.find(
         (original) => original[props.idAttribute] === item[props.idAttribute]
       );
       if (originalItem && props.orderAttribute in originalItem) {
@@ -295,13 +312,13 @@ function convertItemsArray() {
 
   return array;
 }
-const ungroupedItemsArray = ref();
 
 function setByOrders(array) {
   if (!props.groupDefinitions) return array;
   const ret = array.sort((a, b) => a[props.orderAttribute] - b[props.orderAttribute]);
   return ret;
 }
+
 onMounted(() => {
   const val = validate();
   if (val) {
@@ -348,8 +365,6 @@ function emptyStateActionClicked(actionName) {
   emits('emptyStateActionClick', actionName);
 }
 
-const dragging = ref(false);
-
 function setGroupedListOrders() {
   Object.keys(itemsArray.value).forEach((key) => {
     if (Array.isArray(itemsArray.value[key])) {
@@ -371,15 +386,17 @@ function setGroupedListOrders() {
     }
   });
 }
+
 function setListOrders() {
   ungroupedItemsArray.value = ungroupedItemsArray.value.map((element, index) => ({
     ...element,
     [props.orderAttribute]: index + 1,
   }));
 }
+
 function prepareUnGroupedItemsArray() {
   return ungroupedItemsArray.value.map((item) => {
-    const originalItem = props.items.find(
+    const originalItem = itemsWithStringIds.value.find(
       (propsItem) => propsItem[props.idAttribute] === item[props.idAttribute]
     );
 
@@ -395,6 +412,7 @@ function prepareUnGroupedItemsArray() {
 function triggerItemsArray() {
   itemsArray.value = fillItemsArray();
 }
+
 watch(props.items, () => {
   triggerItemsArray();
 });
@@ -475,6 +493,7 @@ async function moveGroupedItem(element, direction) {
 
   focusHandle(element);
 }
+
 const dragOptions = computed(() => ({
   animation: 200,
   group: 'list',
@@ -487,8 +506,6 @@ const filteredUngroupedItems = filteredItems.value.filter((item) =>
     (group) => !group.some((groupedItem) => groupedItem.id === item.id)
   )
 );
-
-const selectedItemsRaw = ref({});
 
 const selectedItems = computed(() => {
   const ret = [];
@@ -532,7 +549,7 @@ function selectRows(arr = null) {
   if (arr === null) {
     if (props.kind !== 'treelist') {
       selectedItemsRaw.value = arrayToObject(
-        filterSelectable(props.items)?.map((x) => x[props.idAttribute].toString())
+        filterSelectable(itemsWithStringIds.value)?.map((x) => x[props.idAttribute].toString())
       );
     } else {
       selectedItemsRaw.value = arrayToObject(
@@ -551,7 +568,7 @@ function cancelSelection() {
 }
 
 const selectedLabel = computed(() => {
-  const selectableCount = props.items?.length?.toString();
+  const selectableCount = itemsWithStringIds.value?.length?.toString();
   const selectableTreeItems = treeItems.value?.length?.toString();
   const selectedCount = selectedItems.value?.length;
   const selectedCountDisplay = selectedCount?.toString();
@@ -586,8 +603,6 @@ function selectionActionClick(actinoId, selectedItemsIds) {
   emits('selectionActionClick', actinoId, selectedItemsIds);
 }
 
-const statesNotDefined = ref({});
-
 const states = computed({
   get() {
     // Šis vajadzīgs, jo, ja nav definēts, tad nez kāpēc props.itemsStates ir null, nevis {}
@@ -607,7 +622,7 @@ function loadChildren(id) {
 const groupSelectionStatuses = computed(() => {
   const res = {};
   props.groupDefinitions?.forEach((group) => {
-    const groupItems = props.items?.filter(
+    const groupItems = itemsWithStringIds.value?.filter(
       (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
     );
     const groupItemsIds = groupItems?.map((o) => o[props.idAttribute]);
@@ -624,7 +639,7 @@ const groupSelectionStatuses = computed(() => {
 });
 
 function selectSection(group) {
-  const groupItems = props.items.filter(
+  const groupItems = itemsWithStringIds.value.filter(
     (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
   );
   const groupItemsIds = groupItems.map((o) => o[props.idAttribute]);
@@ -638,10 +653,6 @@ function selectSection(group) {
     });
   }
 }
-
-const queryInputCompact = ref();
-const queryInputDefault = ref();
-const searchField = ref(false);
 
 const autoSearchMode = computed(() => {
   if (props.searchMode === 'compact') {
