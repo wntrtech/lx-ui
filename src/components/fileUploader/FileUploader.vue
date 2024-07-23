@@ -452,41 +452,46 @@ function openModal(id) {
         <p>{{ props.texts.draggablePlaceholder }}</p>
       </div>
     </template>
-    <LxList
-      v-if="!(advancedFilesData.length === 0 && props.kind === 'single')"
-      id="FilesList"
-      :items="advancedFilesData"
-      :has-search="props.hasSearch && props.kind === 'multiple'"
-      listType="1"
-      :texts="props.texts"
-    >
-      <template #customItem="{ id, name, meta, state, description, invalidDescription }">
-        <FileUploaderItem
-          :customItem="{ id, name, meta, state, description, invalidDescription }"
-          :mode="props.mode"
-          :hasDownloadButton="props.hasDownloadButton"
-          :disabled="props.disabled"
-          :loading="props.loading"
-          :showMeta="props.showMeta"
-          :read-only="props.readOnly"
-          :texts="props.texts"
-          :isUploading="isUploading"
-          :defaultIcon="
-            fileUploaderUtils.provideDefaultIcon(advancedFilesData.find((file) => file.id === id))
-          "
-          :additionalBagdeIcon="provideAdditionalIcon(id)"
-          :additionalBagdeType="provideAdditionalBadgeType(id)"
-          :imagePreview="findImagePreview(id)?.base64String"
-          @downloadFile="downloadFile"
-          @removeFile="removeFile"
-          @openModal="openModal"
-        />
-      </template>
-    </LxList>
+
+    <div class="lx-uploaded-file-list-wrapper">
+      <LxList
+        v-if="!(advancedFilesData.length === 0 && props.kind === 'single')"
+        id="FilesList"
+        :items="advancedFilesData"
+        :has-search="props.hasSearch && props.kind === 'multiple'"
+        listType="1"
+        :texts="props.texts"
+      >
+        <template #customItem="{ id, name, meta, state, description, invalidDescription }">
+          <FileUploaderItem
+            :customItem="{ id, name, meta, state, description, invalidDescription }"
+            :mode="props.mode"
+            :hasDownloadButton="props.hasDownloadButton"
+            :disabled="props.disabled"
+            :loading="props.loading"
+            :showMeta="props.showMeta"
+            :read-only="props.readOnly"
+            :texts="props.texts"
+            :isUploading="isUploading"
+            :defaultIcon="
+              fileUploaderUtils.provideDefaultIcon(advancedFilesData.find((file) => file.id === id))
+            "
+            :additionalBagdeIcon="provideAdditionalIcon(id)"
+            :additionalBagdeType="provideAdditionalBadgeType(id)"
+            :imagePreview="findImagePreview(id)?.base64String"
+            @downloadFile="downloadFile"
+            @removeFile="removeFile"
+            @openModal="openModal"
+          />
+        </template>
+      </LxList>
+    </div>
   </div>
+
   <div v-if="props.mode === 'default' && props.texts.uploaderDescription" class="lx-description">
     {{ props.texts.uploaderDescription }}
   </div>
+
   <LxModal
     ref="infoModal"
     :label="openedItem?.name"

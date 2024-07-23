@@ -3018,14 +3018,13 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-file-main-part .lx-file-name {
-  padding-left: 1rem;
   align-self: center;
   color: var(--color-data);
   font-weight: bold;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 0.5rem;
+  margin-right: 0.5rem;
 }
 
 .lx-file-main-part .lx-file-indicators {
@@ -3123,6 +3122,10 @@ input[type='range']:hover::-moz-range-thumb {
   text-decoration: none;
 }
 
+.lx-uploaded-file-list-wrapper {
+  margin-top: 0.5rem;
+}
+
 .lx-file-meta .lx-skeleton-placeholder {
   width: 100%;
   height: 1rem;
@@ -3186,7 +3189,6 @@ input[type='range']:hover::-moz-range-thumb {
   display: grid;
   grid-template-rows: 2fr 1fr;
   align-items: center;
-  position: relative;
 }
 
 .lx .lx-file-upload-wrapper.default .lx-file-wrapper .lx-file-name-main-data-wrapper {
@@ -3412,13 +3414,8 @@ input[type='range']:hover::-moz-range-thumb {
   margin-top: -0.1rem;
 }
 
-.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge,
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge {
+.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge {
   position: absolute;
-  font-family: var(--font-family-mono);
-  font-size: var(--small-font-size);
-  color: var(--color-badge-foreground);
-  font-weight: bold;
   background: var(--color-data);
   min-width: 1.5rem;
   min-height: 1.5rem;
@@ -3440,8 +3437,19 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge {
-  top: -0.1rem;
-  right: -1.6rem;
+  background: var(--color-data);
+  max-width: 1.6rem;
+  max-height: 1.6rem;
+  border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 0.25rem 0 0.25rem;
+  line-height: 1em;
+  border: 2px solid var(--color-background);
+  text-align: center;
+  margin-top: 0;
+  opacity: 1;
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge svg,
@@ -3478,8 +3486,12 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-file-name-wrapper {
-  position: relative;
-  width: fit-content;
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+  padding-right: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .lx-visual-picker-wrapper {

@@ -117,18 +117,9 @@ const badgeTitle = computed(() => {
         @click="downloadFile(props.customItem.id)"
       >
         <div class="lx-file-name-main-data-wrapper">
-          <p class="lx-file-name">{{ props.customItem.name }}</p>
-          <p v-if="props.mode === 'compact'" class="lx-file-main-additional-info lx-secondary">
-            {{
-              [
-                fileUploaderUtils.convertBytesToFormattedString(props.customItem.meta?.size),
-                fileUploaderUtils.getFileExtension(props.customItem.name),
-                fileUploaderUtils.getExtraParameter(props.customItem.meta),
-              ]
-                .filter(Boolean)
-                .join('; ')
-            }}
-          </p>
+          <div class="lx-file-name-wrapper">
+            <p class="lx-file-name">{{ props.customItem.name }}</p>
+          </div>
         </div>
 
         <div class="lx-download-icon" v-if="props.hasDownloadButton">
