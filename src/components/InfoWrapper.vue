@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, ref, computed } from 'vue';
+import { computed, ref } from 'vue';
 import Popper from 'vue3-popper';
 import { useWindowSize } from '@vueuse/core';
 
@@ -20,22 +20,9 @@ const props = defineProps({
 });
 
 const width = ref(useWindowSize().width);
-
-const contentLeave = ref(null);
+const showPopper = ref(false);
 const container = ref();
-const elementToMonitor = ref();
-function popperClose() {
-  contentLeave.value = false;
-  nextTick(() => {
-    contentLeave.value = null;
-  });
-}
-const handleMouseLeave = () => {
-  popperClose();
-};
-
 const posX = ref(0);
-
 const baseOffset = ref('0');
 
 function determineSide() {
@@ -54,17 +41,12 @@ function determineSide() {
   }
   baseOffset.value = '0';
 }
+
 function calculateOffset() {
   posX.value =
     container.value.getBoundingClientRect().x + container.value.getBoundingClientRect().width / 2;
   determineSide();
 }
-const handleMouseEnter = () => {
-  if (elementToMonitor.value) {
-    elementToMonitor.value?.addEventListener('mouseleave', handleMouseLeave);
-  }
-  calculateOffset();
-};
 
 const selectOffset = computed(() => {
   if (!props.offsetSkid) {
@@ -72,6 +54,15 @@ const selectOffset = computed(() => {
   }
   return props.offsetSkid;
 });
+
+const handleMouseLeave = () => {
+  showPopper.value = false;
+};
+
+const handleMouseEnter = () => {
+  calculateOffset();
+  showPopper.value = true;
+};
 </script>
 <template>
   <div class="lx-info-wrapper" ref="container">
@@ -87,10 +78,16 @@ const selectOffset = computed(() => {
       :close-delay="props.closeDelay"
       :interactive="props.interactive"
       :content="props.content"
-      :show="contentLeave"
+      :show="showPopper"
       :locked="props.locked"
     >
-      <div class="lx-info-wrapper-content" ref="elementToMonitor" @mouseenter="handleMouseEnter">
+      <div
+        class="lx-info-wrapper-content"
+        @mouseenter="handleMouseEnter"
+        @mouseleave="handleMouseLeave"
+        @focusin="handleMouseEnter"
+        @focusout="handleMouseLeave"
+      >
         <slot />
       </div>
       <template #content v-if="$slots.panel">
