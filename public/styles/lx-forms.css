@@ -155,7 +155,9 @@
 }
 
 .lx .lx-tag-set .lx-tag:focus,
-.lx .lx-tag-set .lx-tag:focus-visible {
+.lx .lx-tag-set .lx-tag:focus-visible,
+.lx-context-container .inline-block .lx-dropdown-toggler .lx-handle:focus-visible,
+.lx-context-container .inline-block .lx-dropdown-toggler .lx-handle:focus {
   outline: 2px solid var(--color-focus-background);
 }
 

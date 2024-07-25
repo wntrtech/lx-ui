@@ -56,6 +56,7 @@
   align-items: flex-start;
   justify-content: space-between;
   width: 100%;
+  gap: 0.5rem;
 }
 
 .lx-list .lx-draggable-group-list-item {
@@ -84,6 +85,7 @@
 }
 
 .lx-list-item-wrapper {
+  width: 100%;
   display: flex;
 }
 
@@ -289,8 +291,12 @@ li .lx-category-orange {
   background-color: var(--color-background);
 }
 
+.lx .lx-modal .lx-draggable-group-list-item {
+  background-color: var(--color-region-2);
+}
+
 .lx-modal .lx-list-item {
-  background-color: var(--color-background);
+  background-color: var(--color-region-2);
 }
 
 .lx .lx-toolbar.lx-search-toolbar.lx-list-toolbar {
@@ -361,11 +367,11 @@ li .lx-category-orange {
 }
 
 .lx-handle:not(.handle-disabled):hover .lx-icon {
-  fill: var(--color-grid-hover-foreground);
+  fill: var(--color-region-hover-foreground);
 }
 
 .lx-handle:not(.handle-disabled):hover {
-  background-color: var(--color-grid-hover-background);
+  background-color: var(--color-region-hover);
 }
 
 .lx-handle .lx-icon {
@@ -407,16 +413,28 @@ li .lx-category-orange {
   outline: 2px dashed var(--color-focus-background);
 }
 
+.lx .lx-list-wrapper .lx-list .draggable-list-item-wrapper {
+  background-color: transparent;
+}
+
 .lx-list.lx-list-3 .lx-draggable-group-list-item {
   grid-template-columns: inherit;
 }
 
 .lx-list .lx-draggable-group-list-item {
   display: flex;
+  height: 100%;
 }
 
 .lx .lx-draggable-group-list-item {
   background-color: var(--color-region);
+}
+
+.lx-draggable-group-list-item>.lx-context-container>.inline-block,
+.lx-draggable-group-list-item>.lx-context-container>.inline-block>div,
+.lx-draggable-group-list-item>.lx-context-container>.inline-block>div>.lx-dropdown-toggler,
+.lx-draggable-group-list-item>.lx-context-container>.inline-block>div>.lx-dropdown-toggler>.lx-handle {
+  height: 100%;
 }
 
 .lx .lx-region .lx-draggable-group-list-item {
@@ -463,7 +481,8 @@ li .lx-category-orange {
 
 .lx-list>li>.selecting-block {
   padding: 0.5rem 0.5rem 0 0.5rem;
-  background-color: var(--color-region-2);
+  background-color: var(--color-region);
+  margin-left: 2px;
 }
 
 .lx-list>li>.selecting-block>.lx-checkbox-placeholder {
@@ -648,6 +667,14 @@ li .lx-category-orange {
 .lx-list-wrapper .tree-list-search>.tree-list-search-item>.selecting-block {
   background-color: var(--color-region-2);
   padding: .5rem .5rem 0;
+}
+
+.lx-transition-layer {
+  width: 100%;
+}
+
+.lx .list-draggable-area {
+  padding-left: 0;
 }
 
 @media (max-width: 1900px) {

@@ -188,7 +188,7 @@
 }
 
 .lx:not(.lx-no-animations) .lx-button,
-.lx:not(.lx-no-animations) .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-badge {
+.lx:not(.lx-no-animations) .lx-alert-menu .lx-button:not(#userMenuButton)>.lx-badge {
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
 
@@ -352,12 +352,7 @@
   animation: expand-collapse-column 0.1s ease-out;
 }
 
-.lx:not(.lx-no-animations)
-  .lx-data-block-wrapper
-  > .lx-data-block
-  > .lx-data-block-header
-  > .lx-content
-  > .lx-secondary {
+.lx:not(.lx-no-animations) .lx-data-block-wrapper>.lx-data-block>.lx-data-block-header>.lx-content>.lx-secondary {
   transition: opacity ease-out 0.2s, padding-top ease-out 0.2s, height ease-out 0.2s;
 }
 
@@ -373,15 +368,11 @@
   transition: font-size ease-out 0.1s;
 }
 
-.lx:not(.lx-no-animations) .lx-expander > header .lx-modifier-icon + .lx-indicator {
+.lx:not(.lx-no-animations) .lx-expander>header .lx-modifier-icon+.lx-indicator {
   transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
 }
 
-.lx:not(.lx-no-animations)
-  .lx-expander.lx-expander-highlighted
-  > header
-  .lx-icon-wrapper .lx-modifier-icon
-  + .lx-indicator {
+.lx:not(.lx-no-animations) .lx-expander.lx-expander-highlighted>header .lx-icon-wrapper .lx-modifier-icon+.lx-indicator {
   transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
@@ -464,18 +455,9 @@
     border-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
 }
 
-.lx:not(.lx-no-animations)
-  .lx-radio-button:checked
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance::before,
-.lx:not(.lx-no-animations)
-  .lx-checkbox:checked
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance::before,
-.lx:not(.lx-no-animations)
-  .lx-checkbox:indeterminate
-  + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance::before {
+.lx:not(.lx-no-animations) .lx-radio-button:checked+.lx-radio-button-label-wrapper .lx-radio-button-appearance::before,
+.lx:not(.lx-no-animations) .lx-checkbox:checked+.lx-checkbox-label-wrapper .lx-checkbox-appearance::before,
+.lx:not(.lx-no-animations) .lx-checkbox:indeterminate+.lx-checkbox-label-wrapper .lx-checkbox-appearance::before {
   -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
     border-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
   transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
@@ -487,11 +469,7 @@
   transition: 70ms cubic-bezier(0.2, 0, 1, 0.9) all;
 }
 
-.lx:not(.lx-no-animations)
-  .lx-toggle-wrapper.lx-small
-  .lx-toggle:checked
-  + .lx-toggle-label-wrapper
-  .lx-toggle-appearance::after {
+.lx:not(.lx-no-animations) .lx-toggle-wrapper.lx-small .lx-toggle:checked+.lx-toggle-label-wrapper .lx-toggle-appearance::after {
   -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
   transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
 }
@@ -624,19 +602,19 @@
   }
 }
 
-.lx:not(.lx-no-animations) .lx-qr-scanner-wrapper .lx-qr-center > svg {
+.lx:not(.lx-no-animations) .lx-qr-scanner-wrapper .lx-qr-center>svg {
   animation: pulse-scale 1s alternate-reverse ease-in-out infinite;
 }
 
-.lx .lx-handle {
+.lx:not(.lx-no-animations) .lx .lx-handle {
   transition: background-color 0.1s ease-in;
 }
 
-.lx .lx-handle:hover .lx-icon {
+.lx:not(.lx-no-animations) .lx-handle:hover .lx-icon {
   transition: fill 0.1s ease-in;
 }
 
-.flip-list-move {
+.lx:not(.lx-no-animations) .flip-list-move {
   transition: transform 0.5s;
 }
 

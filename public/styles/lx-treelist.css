@@ -58,6 +58,7 @@
 .lx-list-wrapper .tree-item-small>.selecting-block {
     min-width: var(--row-size);
     padding: 0.5rem 0.5rem 0 0.5rem;
+    padding-left: 2px;
 }
 
 .lx-region .lx-list-wrapper .tree-list .tree-item .selecting-block,

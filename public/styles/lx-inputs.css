@@ -193,6 +193,10 @@
 .lx-form-grid>.lx-main .lx-autocomplete-default:not(:disabled),
 .lx-form-grid>.lx-main .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area,
 .lx-form-grid>.lx-main .lx-markdown-text-area .lx-modal .lx-file-upload:not(:disabled),
+.lx-form-grid>.lx-main ul.lx-list li,
+.lx-form-grid>.lx-main ul.lx-list>li>.selecting-block,
+.lx-form-grid>.lx-main .lx-list-item-wrapper>.lx-list-item,
+.lx-form-grid>.lx-main .lx-list .lx-dropdown-toggler,
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-text-input:not(:disabled),
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-text-area:not(:disabled),
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-date-time-picker:not(:disabled),
@@ -202,8 +206,14 @@
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-file-upload:not(:disabled),
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-autocomplete-wrapper .lx-autocomplete:not(:disabled),
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-markdown-text-area-wrapper .lx-markdown-text-area:not(:disabled),
-.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-markdown-text-area .lx-modal .lx-file-upload:not(:disabled) {
+.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-markdown-text-area .lx-modal .lx-file-upload:not(:disabled),
+.lx-region .lx-list-wrapper .lx-list li,
+.lx-region .lx-list-wrapper .lx-list>li>.selecting-block {
   background-color: var(--color-region-2);
+}
+
+.lx-list-wrapper .lx-list li {
+  background-color: var(--color-region);
 }
 
 .lx-dropdown-default-panel:not(.lx-dropdown-default[disabled='true'] .lx-dropdown-default-panel),
@@ -279,7 +289,7 @@
 
 .lx-autocomplete .lx-text-input:focus:not(:disabled) {
   outline: none;
-} 
+}
 
 .lx-text-input:disabled,
 .lx-text-area:disabled,

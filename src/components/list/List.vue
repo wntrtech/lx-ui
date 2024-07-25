@@ -124,7 +124,7 @@ const queryRaw = ref(props.searchString);
 const itemsArray = ref([]);
 const ungroupedItemsArray = ref();
 const selectedItemsRaw = ref({});
-const draggableIsDisabled = ref(false);
+const draggableIsDisabledByQuery = ref(false);
 const dragging = ref(false);
 const statesNotDefined = ref({});
 const queryInputCompact = ref();
@@ -158,6 +158,8 @@ watch(
     responsiveGroupDefinitions.value = newValue;
   }
 );
+
+const UNSPECIFIED_GROUP_CODE = 'lx_list_nullable_group';
 
 const debouncedSearchReq = useDebounceFn(async () => {
   if (props.searchSide === 'client') query.value = foldToAscii(queryRaw.value);
@@ -280,13 +282,13 @@ function fillItemsArray() {
     return acc;
   }, {});
 
-  const nullGroupItems = !props.includeUnspecifiedGroups
-    ? itemsWithStringIds.value.filter((item) => !item[props.groupAttribute])
-    : itemsWithStringIds.value.filter(
-        (item) =>
-          !props.groupDefinitions.find((group) => item.group?.toString() === group.id?.toString())
-      );
-  array.lx_list_nullable_group = nullGroupItems;
+  if (props.includeUnspecifiedGroups) {
+    const nullGroupItems = itemsWithStringIds.value.filter(
+      (item) =>
+        !props.groupDefinitions.find((group) => item.group?.toString() === group.id?.toString())
+    );
+    array[UNSPECIFIED_GROUP_CODE] = nullGroupItems;
+  }
 
   return array;
 }
@@ -353,9 +355,9 @@ watch(
     searchInItemsArray();
     ungroupedItemsArray.value = filteredItems.value;
     if (queryRaw.value === '') {
-      draggableIsDisabled.value = false;
+      draggableIsDisabledByQuery.value = false;
     } else {
-      draggableIsDisabled.value = true;
+      draggableIsDisabledByQuery.value = true;
     }
   },
   { immediate: true }
@@ -374,7 +376,7 @@ function setGroupedListOrders() {
           [props.orderAttribute]: index + 1,
         };
 
-        if (key !== 'lx_list_nullable_group') {
+        if (key !== UNSPECIFIED_GROUP_CODE) {
           newElement[props.groupAttribute] =
             element[props.groupAttribute] === key ? element[props.groupAttribute] : key;
         } else {
@@ -442,36 +444,85 @@ function changeDragging() {
 
 function focusHandle(element) {
   nextTick(() => {
-    document.getElementById(`handleId-${element[props.idAttribute]}`).focus();
+    document.getElementById(`handleId-${element[props.idAttribute]}`)?.focus();
   });
   onMoveItem();
 }
 
 async function moveUngroupedItem(element, direction) {
+  if (props.loading || props.busy || draggableIsDisabledByQuery.value) {
+    return;
+  }
   const index = ungroupedItemsArray.value.findIndex(
     (obj) => obj[props.idAttribute] === element[props.idAttribute]
   );
-  if (
-    (direction === 'forward' && index > 0) ||
-    (direction === 'backward' && index < ungroupedItemsArray.value.length - 1)
-  ) {
+
+  if (direction === 'forward' && index > 0) {
+    // Move one position forward
     ungroupedItemsArray.value.splice(index, 1);
-    ungroupedItemsArray.value.splice(direction === 'forward' ? index - 1 : index + 1, 0, element);
-    focusHandle(element);
+    ungroupedItemsArray.value.splice(index - 1, 0, element);
+  } else if (direction === 'backward' && index < ungroupedItemsArray.value.length - 1) {
+    // Move one position backward
+    ungroupedItemsArray.value.splice(index, 1);
+    ungroupedItemsArray.value.splice(index + 1, 0, element);
+  } else if (direction === 'move-first' && index > 0) {
+    // Move to the first position
+    ungroupedItemsArray.value.splice(index, 1);
+    ungroupedItemsArray.value.unshift(element);
+  } else if (direction === 'move-last' && index < ungroupedItemsArray.value.length - 1) {
+    // Move to the last position
+    ungroupedItemsArray.value.splice(index, 1);
+    ungroupedItemsArray.value.push(element);
   }
+
+  focusHandle(element);
 }
 async function moveGroupedItem(element, direction) {
-  const groupCode = prepareCode(element[props.groupAttribute]);
+  if (props.loading || props.busy || draggableIsDisabledByQuery.value) {
+    return;
+  }
+  // Adjust groupCode assignment to handle unspecified groups
+  let groupCode;
+  if (element[props.groupAttribute]) {
+    groupCode = prepareCode(element[props.groupAttribute]);
+  } else if (props.includeUnspecifiedGroups) {
+    groupCode = UNSPECIFIED_GROUP_CODE;
+  } else {
+    groupCode = null;
+    return;
+  }
+
   const groupKeys = Object.keys(itemsArray.value);
+  // Ensure the unspecified group exists in itemsArray.value if includeUnspecifiedGroups is true
+  if (props.includeUnspecifiedGroups && !itemsArray.value[UNSPECIFIED_GROUP_CODE]) {
+    itemsArray.value[UNSPECIFIED_GROUP_CODE] = [];
+  }
   const groupIndex = groupKeys.indexOf(groupCode);
   const itemIndex = itemsArray.value[groupCode].findIndex(
     (obj) => obj[props.idAttribute] === element[props.idAttribute]
   );
 
+  const isLastItemInLastGroup =
+    groupIndex === groupKeys.length - 1 && itemIndex === itemsArray.value[groupCode].length - 1;
+  const isFirstItemInFirstGroup = groupIndex === 0 && itemIndex === 0;
+
+  // Loop items moving (from last to first from first to last)
+  if (isLastItemInLastGroup && direction === 'backward') {
+    itemsArray.value[groupCode].splice(itemIndex, 1);
+    const newGroupCode = groupKeys[0];
+    itemsArray.value[newGroupCode].push(element);
+  }
+  if (isFirstItemInFirstGroup && direction === 'forward') {
+    itemsArray.value[groupCode].splice(itemIndex, 1);
+    const newGroupCode = groupKeys[groupKeys.length - 1];
+    itemsArray.value[newGroupCode].unshift(element);
+  }
+
   if (
     (direction === 'forward' && itemIndex > 0) ||
     (direction === 'backward' && itemIndex < itemsArray.value[groupCode].length - 1)
   ) {
+    // Move within the same group
     itemsArray.value[groupCode].splice(itemIndex, 1);
     itemsArray.value[groupCode].splice(
       direction === 'forward' ? itemIndex - 1 : itemIndex + 1,
@@ -482,12 +533,26 @@ async function moveGroupedItem(element, direction) {
     (direction === 'forward' && groupIndex > 0) ||
     (direction === 'backward' && groupIndex < groupKeys.length - 1)
   ) {
+    // Move to a different group
     itemsArray.value[groupCode].splice(itemIndex, 1);
     const newGroupCode = groupKeys[direction === 'forward' ? groupIndex - 1 : groupIndex + 1];
     itemsArray.value[newGroupCode].push(element);
 
+    // Automatically expand the target group
     if (responsiveGroupDefinitions.value[groupKeys.indexOf(newGroupCode)]) {
       responsiveGroupDefinitions.value[groupKeys.indexOf(newGroupCode)].expanded = true;
+    }
+  } else if (direction === 'move-first') {
+    // Move to the first position in the current or first group
+    if (itemIndex !== 0) {
+      itemsArray.value[groupCode].splice(itemIndex, 1);
+      itemsArray.value[groupCode].unshift(element);
+    }
+  } else if (direction === 'move-last') {
+    // Move to the last position in the current or last group
+    if (itemIndex !== itemsArray.value[groupCode].length - 1) {
+      itemsArray.value[groupCode].splice(itemIndex, 1);
+      itemsArray.value[groupCode].push(element);
     }
   }
 
@@ -501,9 +566,11 @@ const dragOptions = computed(() => ({
   ghostClass: 'ghost',
 }));
 
-const filteredUngroupedItems = filteredItems.value.filter((item) =>
-  Object.values(filteredGroupedItems.value).every(
-    (group) => !group.some((groupedItem) => groupedItem.id === item.id)
+const filteredUngroupedItems = computed(() =>
+  filteredItems.value.filter((item) =>
+    Object.values(filteredGroupedItems.value).every(
+      (group) => !group?.some((groupedItem) => groupedItem.id === item.id)
+    )
   )
 );
 
@@ -679,6 +746,71 @@ function toggleSearch() {
 }
 
 defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
+
+const draggableButtons = ref([
+  {
+    id: 'move-first',
+    icon: 'move-first',
+    title: 'Pārvietot sākumā',
+    disabled: false,
+  },
+  {
+    id: 'move-up',
+    icon: 'move-up',
+    title: 'Pārvietot uz augšu',
+    disabled: false,
+  },
+  {
+    id: 'move-down',
+    icon: 'move-down',
+    title: 'Pārvietot uz leju',
+    disabled: false,
+  },
+  {
+    id: 'move-last',
+    icon: 'move-last',
+    title: 'Pārvietot beigās',
+    disabled: false,
+  },
+]);
+
+function moveDraggableItem(direction, element, groupType) {
+  if (props.loading || props.busy || draggableIsDisabledByQuery.value) {
+    return;
+  }
+  switch (direction) {
+    case 'move-first':
+      if (groupType === 'grouped') {
+        moveGroupedItem(element, 'move-first');
+      } else {
+        moveUngroupedItem(element, 'move-first');
+      }
+      break;
+    case 'move-up':
+      if (groupType === 'grouped') {
+        moveGroupedItem(element, 'forward');
+      } else {
+        moveUngroupedItem(element, 'forward');
+      }
+      break;
+    case 'move-down':
+      if (groupType === 'grouped') {
+        moveGroupedItem(element, 'backward');
+      } else {
+        moveUngroupedItem(element, 'backward');
+      }
+      break;
+    case 'move-last':
+      if (groupType === 'grouped') {
+        moveGroupedItem(element, 'move-last');
+      } else {
+        moveUngroupedItem(element, 'move-last');
+      }
+      break;
+    default:
+      break;
+  }
+}
 </script>
 
 <template>
@@ -849,101 +981,126 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         </div>
       </div>
     </div>
-    <div v-if="groupDefinitions">
+    <div v-if="groupDefinitions && filteredUngroupedItems && filteredUngroupedItems.length > 0">
       <ul
         :id="id"
         class="lx-list"
         :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
-        v-if="filteredUngroupedItems && filteredUngroupedItems.length > 0"
+        v-if="kind === 'default'"
       >
-        <template v-if="kind === 'default'">
-          <li
-            v-for="item in itemsArray[prepareCode('lx_list_nullable_group')]"
-            :key="item[idAttribute]"
+        <li
+          v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
+          :key="item[idAttribute]"
+        >
+          <LxListItem
+            :id="item[idAttribute]"
+            :label="item[primaryAttribute]"
+            :description="item[secondaryAttribute]"
+            :value="item"
+            :href="item[hrefAttribute]"
+            :actionDefinitions="actionDefinitions"
+            :icon="item[iconAttribute] ? item[iconAttribute] : icon"
+            :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
+            :tooltip="item[tooltipAttribute]"
+            :searchString="query"
+            :clickable="item[clickableAttribute]"
+            :category="item[categoryAttribute]"
+            :disabled="loading || busy"
+            @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+            @action-click="actionClicked"
           >
-            <LxListItem
-              :id="item[idAttribute]"
-              :label="item[primaryAttribute]"
-              :description="item[secondaryAttribute]"
-              :value="item"
-              :href="item[hrefAttribute]"
-              :actionDefinitions="actionDefinitions"
-              :icon="item[iconAttribute] ? item[iconAttribute] : icon"
-              :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
-              :tooltip="item[tooltipAttribute]"
-              :searchString="query"
-              :clickable="item[clickableAttribute]"
-              :category="item[categoryAttribute]"
-              :disabled="loading || busy"
-              @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-              @action-click="actionClicked"
+            <template #customItem="item" v-if="$slots.customItem">
+              <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+            </template>
+          </LxListItem>
+          <div class="selecting-block" v-if="hasSelecting">
+            <template v-if="isSelectable(item)">
+              <LxRadioButton
+                v-if="selectingKind === 'single'"
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedItemsRaw[item[idAttribute]]"
+                :value="item[idAttribute]"
+                @click="selectRow(item[idAttribute])"
+                :disabled="loading || busy"
+              />
+              <LxCheckbox
+                v-else
+                :id="`select-${id}-${item[idAttribute]}`"
+                v-model="selectedItemsRaw[item[idAttribute]]"
+                :value="item[idAttribute]"
+                :disabled="loading || busy"
+              />
+            </template>
+            <p v-else class="lx-checkbox-placeholder"></p>
+          </div>
+        </li>
+      </ul>
+      <div
+        :id="id"
+        class="lx-list"
+        :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+        v-if="kind === 'draggable'"
+      >
+        <draggable
+          v-if="kind === 'draggable'"
+          :id="`draggable-list-${id}`"
+          class="list-draggable-area"
+          v-model="itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
+          handle=".lx-handle"
+          drag-class="drag"
+          v-bind="dragOptions"
+          :item-key="idAttribute"
+          group="list"
+          tag="ul"
+          @start="changeDragging"
+          @end="changeDragging"
+          @change="onMoveItem"
+          :disabled="loading || busy || draggableIsDisabledByQuery"
+        >
+          <template #item="{ element }">
+            <TransitionGroup
+              class="draggable-list-item-wrapper"
+              type="transition"
+              :name="!dragging ? 'flip-list' : null"
+              tag="li"
             >
-              <template #customItem="item" v-if="$slots.customItem">
-                <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-              </template>
-            </LxListItem>
-            <div class="selecting-block" v-if="hasSelecting">
-              <template v-if="isSelectable(item)">
-                <LxRadioButton
-                  v-if="selectingKind === 'single'"
-                  :id="`select-${id}-${item[idAttribute]}`"
-                  v-model="selectedItemsRaw[item[idAttribute]]"
-                  :value="item[idAttribute]"
-                  @click="selectRow(item[idAttribute])"
-                  :disabled="loading || busy"
-                />
-                <LxCheckbox
-                  v-else
-                  :id="`select-${id}-${item[idAttribute]}`"
-                  v-model="selectedItemsRaw[item[idAttribute]]"
-                  :value="item[idAttribute]"
-                  :disabled="loading || busy"
-                />
-              </template>
-              <p v-else class="lx-checkbox-placeholder"></p>
-            </div>
-          </li>
-        </template>
-        <template v-if="kind === 'draggable'">
-          <draggable
-            v-if="kind === 'draggable'"
-            :id="`draggable-list-${id}`"
-            class="list-draggable-area"
-            v-model="itemsArray[prepareCode('lx_list_nullable_group')]"
-            handle=".lx-handle"
-            drag-class="drag"
-            v-bind="dragOptions"
-            :item-key="idAttribute"
-            group="list"
-            @start="changeDragging"
-            @end="changeDragging"
-            @change="onMoveItem"
-            :disabled="loading || busy || draggableIsDisabled"
-          >
-            <template #item="{ element }">
-              <TransitionGroup
-                class="draggable-list-item-wrapper"
-                type="transition"
-                :name="!dragging ? 'flip-list' : null"
-                tag="div"
-              >
-                <li v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                  <div
-                    class="lx-handle"
-                    :id="`handleId-${element[props.idAttribute]}`"
-                    tabindex="0"
-                    @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
-                    @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
-                    @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
-                    @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
-                    :class="[
-                      {
-                        'handle-disabled': draggableIsDisabled || loading || busy,
-                      },
-                    ]"
+              <div class="lx-transition-layer" :key="element[idAttribute]">
+                <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
+                  <LxDropDownMenu
+                    triggerClick="right"
+                    :disabled="loading || busy || draggableIsDisabledByQuery"
                   >
-                    <LxIcon class="lx-icon" value="drag"></LxIcon>
-                  </div>
+                    <div
+                      class="lx-handle"
+                      :id="`handleId-${element[props.idAttribute]}`"
+                      tabindex="0"
+                      @keydown.up.prevent="moveGroupedItem(element, 'forward')"
+                      @keydown.down.prevent="moveGroupedItem(element, 'backward')"
+                      @keydown.right.prevent="moveGroupedItem(element, 'backward')"
+                      @keydown.left.prevent="moveGroupedItem(element, 'forward')"
+                      :class="[
+                        {
+                          'handle-disabled': draggableIsDisabledByQuery || loading || busy,
+                        },
+                      ]"
+                    >
+                      <LxIcon class="lx-icon" value="drag"></LxIcon>
+                    </div>
+                    <template #panel>
+                      <div class="lx-button-set">
+                        <LxButton
+                          v-for="button in draggableButtons"
+                          :key="button.id"
+                          :icon="button.icon"
+                          :label="button.title"
+                          :title="button.title"
+                          :disabled="button.disabled"
+                          @click="moveDraggableItem(button.id, element, 'grouped')"
+                        />
+                      </div>
+                    </template>
+                  </LxDropDownMenu>
+
                   <lx-list-item
                     :id="element[idAttribute]"
                     :label="element[primaryAttribute]"
@@ -967,12 +1124,12 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                       <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                     </template>
                   </lx-list-item>
-                </li>
-              </TransitionGroup>
-            </template>
-          </draggable>
-        </template>
-      </ul>
+                </div>
+              </div>
+            </TransitionGroup>
+          </template>
+        </draggable>
+      </div>
     </div>
     <div v-if="groupDefinitions && kind === 'default'">
       <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
@@ -1053,13 +1210,13 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
         </lx-expander>
       </template>
     </div>
-    <ul
-      :id="id"
-      class="lx-list"
-      :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
-      v-if="!groupDefinitions && filteredItems && filteredItems.length > 0"
-    >
-      <template v-if="kind === 'default'">
+    <template v-if="!groupDefinitions && filteredItems && filteredItems.length > 0">
+      <ul
+        v-if="kind === 'default'"
+        :id="id"
+        class="lx-list"
+        :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+      >
         <li v-for="item in filteredItems" :key="item[idAttribute]">
           <LxListItem
             :id="item[idAttribute]"
@@ -1103,133 +1260,72 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
             <p v-else class="lx-checkbox-placeholder"></p>
           </div>
         </li>
-      </template>
-      <draggable
+      </ul>
+      <div
         v-if="kind === 'draggable'"
-        :id="`draggable-list-${id}`"
-        class="list-draggable-area"
-        v-model="ungroupedItemsArray"
-        handle=".lx-handle"
-        drag-class="drag"
-        v-bind="dragOptions"
-        :item-key="idAttribute"
-        group="list"
-        @start="changeDragging"
-        @end="changeDragging"
-        @change="onMoveItem"
-        :disabled="loading || busy || draggableIsDisabled"
+        :id="id"
+        class="lx-list"
+        :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
       >
-        <template #item="{ element }">
-          <TransitionGroup
-            class="draggable-list-item-wrapper"
-            type="transition"
-            :name="!dragging ? 'flip-list' : null"
-            tag="div"
-          >
-            <li v-if="!element.placeholder" class="lx-draggable-group-list-item">
-              <div
-                class="lx-handle"
-                :id="`handleId-${element[props.idAttribute]}`"
-                tabindex="0"
-                @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
-                @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
-                @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
-                @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
-                :class="[
-                  {
-                    'handle-disabled': draggableIsDisabled || loading || busy,
-                  },
-                ]"
-              >
-                <LxIcon class="lx-icon" value="drag"></LxIcon>
-              </div>
-              <lx-list-item
-                :id="element[idAttribute]"
-                :label="element[primaryAttribute]"
-                :description="element[secondaryAttribute]"
-                :value="element"
-                :href="element[hrefAttribute]"
-                :actionDefinitions="actionDefinitions"
-                :icon="element[iconAttribute] ? element[iconAttribute] : icon"
-                :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
-                :tooltip="element[tooltipAttribute]"
-                :searchString="query"
-                :clickable="element[clickableAttribute]"
-                :category="element[categoryAttribute]"
-                :disabled="loading || busy"
-                @click="
-                  element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
-                "
-                @action-click="actionClicked"
-              >
-                <template #customItem="item" v-if="$slots.customItem">
-                  <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-                </template>
-              </lx-list-item>
-            </li>
-          </TransitionGroup>
-        </template>
-      </draggable>
-    </ul>
-
-    <template v-for="group in responsiveGroupDefinitions" :key="prepareCode(group.id)">
-      <lx-expander
-        v-if="
-          kind === 'draggable' &&
-          ((hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
-            !hideFilteredItems)
-        "
-        v-model="group.expanded"
-        :disabled="loading || busy"
-        :badge="
-          group?.badge ? group?.badge : `${filteredGroupedItems[prepareCode(group.id)]?.length}`
-        "
-        :badge-type="group?.badgeType"
-        :label="group.name"
-      >
-        <ul
-          :id="id"
-          class="lx-list"
-          :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+        <draggable
+          :id="`draggable-list-${id}`"
+          class="list-draggable-area"
+          v-model="ungroupedItemsArray"
+          handle=".lx-handle"
+          tag="ul"
+          drag-class="drag"
+          v-bind="dragOptions"
+          :item-key="idAttribute"
+          group="list"
+          @start="changeDragging"
+          @end="changeDragging"
+          @change="onMoveItem"
+          :disabled="loading || busy || draggableIsDisabledByQuery"
         >
-          <draggable
-            class="list-draggable-area"
-            :id="`draggable-list-${id}`"
-            v-model="itemsArray[prepareCode(group.id)]"
-            handle=".lx-handle"
-            drag-class="drag"
-            v-bind="dragOptions"
-            :item-key="idAttribute"
-            group="list"
-            @start="changeDragging"
-            @end="changeDragging"
-            @change="onMoveItem"
-            :disabled="loading || busy || draggableIsDisabled"
-          >
-            <template #item="{ element }">
-              <TransitionGroup
-                class="draggable-list-item-wrapper"
-                type="transition"
-                :name="!dragging ? 'flip-list' : null"
-                tag="div"
-              >
-                <li v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                  <div
-                    class="lx-handle"
-                    :id="`handleId-${element[props.idAttribute]}`"
-                    tabindex="0"
-                    @keydown.up.prevent="moveGroupedItem(element, 'forward')"
-                    @keydown.down.prevent="moveGroupedItem(element, 'backward')"
-                    @keydown.right.prevent="moveGroupedItem(element, 'backward')"
-                    @keydown.left.prevent="moveGroupedItem(element, 'forward')"
-                    :class="[
-                      {
-                        'handle-disabled': draggableIsDisabled || loading || busy,
-                      },
-                    ]"
+          <template #item="{ element }">
+            <TransitionGroup
+              class="draggable-list-item-wrapper"
+              type="transition"
+              :name="!dragging ? 'flip-list' : null"
+              tag="li"
+            >
+              <div class="lx-transition-layer" :key="element[idAttribute]">
+                <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
+                  <LxDropDownMenu
+                    triggerClick="right"
+                    :disabled="loading || busy || draggableIsDisabledByQuery"
                   >
-                    <LxIcon class="lx-icon" value="drag"></LxIcon>
-                  </div>
+                    <div
+                      class="lx-handle"
+                      :id="`handleId-${element[props.idAttribute]}`"
+                      tabindex="0"
+                      @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
+                      @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
+                      @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
+                      @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
+                      :class="[
+                        {
+                          'handle-disabled': draggableIsDisabledByQuery || loading || busy,
+                        },
+                      ]"
+                    >
+                      <LxIcon class="lx-icon" value="drag"></LxIcon>
+                    </div>
+                    <template #panel>
+                      <div class="lx-button-set">
+                        <LxButton
+                          v-for="button in draggableButtons"
+                          :key="button.id"
+                          :icon="button.icon"
+                          :label="button.title"
+                          :title="button.title"
+                          :disabled="button.disabled"
+                          @click="moveDraggableItem(button.id, element, 'ungrouped')"
+                        />
+                      </div>
+                    </template>
+                  </LxDropDownMenu>
+
                   <lx-list-item
                     :id="element[idAttribute]"
                     :label="element[primaryAttribute]"
@@ -1253,11 +1349,121 @@ defineExpose({ validate, cancelSelection, selectRows, toggleSearch });
                       <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                     </template>
                   </lx-list-item>
-                </li>
+                </div>
+              </div>
+            </TransitionGroup>
+          </template>
+        </draggable>
+      </div>
+    </template>
+    <template v-for="group in responsiveGroupDefinitions" :key="prepareCode(group.id)">
+      <lx-expander
+        v-if="
+          kind === 'draggable' &&
+          ((hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
+            !hideFilteredItems)
+        "
+        v-model="group.expanded"
+        :disabled="loading || busy"
+        :badge="
+          group?.badge ? group?.badge : `${filteredGroupedItems[prepareCode(group.id)]?.length}`
+        "
+        :badge-type="group?.badgeType"
+        :label="group.name"
+      >
+        <div
+          :id="id"
+          class="lx-list"
+          :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+        >
+          <draggable
+            class="list-draggable-area"
+            :id="`draggable-list-${id}`"
+            v-model="itemsArray[prepareCode(group.id)]"
+            handle=".lx-handle"
+            drag-class="drag"
+            v-bind="dragOptions"
+            :item-key="idAttribute"
+            group="list"
+            tag="ul"
+            @start="changeDragging"
+            @end="changeDragging"
+            @change="onMoveItem"
+            :disabled="loading || busy || draggableIsDisabledByQuery"
+          >
+            <template #item="{ element }">
+              <TransitionGroup
+                class="draggable-list-item-wrapper"
+                type="transition"
+                :name="!dragging ? 'flip-list' : null"
+                tag="li"
+              >
+                <div class="lx-transition-layer" :key="element[idAttribute]">
+                  <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
+                    <LxDropDownMenu
+                      triggerClick="right"
+                      :disabled="loading || busy || draggableIsDisabledByQuery"
+                    >
+                      <div
+                        class="lx-handle"
+                        :id="`handleId-${element[props.idAttribute]}`"
+                        tabindex="0"
+                        @keydown.up.prevent="moveGroupedItem(element, 'forward')"
+                        @keydown.down.prevent="moveGroupedItem(element, 'backward')"
+                        @keydown.right.prevent="moveGroupedItem(element, 'backward')"
+                        @keydown.left.prevent="moveGroupedItem(element, 'forward')"
+                        :class="[
+                          {
+                            'handle-disabled': draggableIsDisabledByQuery || loading || busy,
+                          },
+                        ]"
+                      >
+                        <LxIcon class="lx-icon" value="drag"></LxIcon>
+                      </div>
+                      <template #panel>
+                        <div class="lx-button-set">
+                          <LxButton
+                            v-for="button in draggableButtons"
+                            :key="button.id"
+                            :icon="button.icon"
+                            :label="button.title"
+                            :title="button.title"
+                            :disabled="button.disabled"
+                            @click="moveDraggableItem(button.id, element, 'grouped')"
+                          />
+                        </div>
+                      </template>
+                    </LxDropDownMenu>
+
+                    <lx-list-item
+                      :id="element[idAttribute]"
+                      :label="element[primaryAttribute]"
+                      :description="element[secondaryAttribute]"
+                      :value="element"
+                      :href="element[hrefAttribute]"
+                      :actionDefinitions="actionDefinitions"
+                      :icon="element[iconAttribute] ? element[iconAttribute] : icon"
+                      :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
+                      :tooltip="element[tooltipAttribute]"
+                      :searchString="query"
+                      :clickable="element[clickableAttribute]"
+                      :category="element[categoryAttribute]"
+                      :disabled="loading || busy"
+                      @click="
+                        element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
+                      "
+                      @action-click="actionClicked"
+                    >
+                      <template #customItem="item" v-if="$slots.customItem">
+                        <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                      </template>
+                    </lx-list-item>
+                  </div>
+                </div>
               </TransitionGroup>
             </template>
           </draggable>
-        </ul>
+        </div>
       </lx-expander>
     </template>
     <div v-if="kind === 'treelist' && (queryRaw?.length === 0 || searchSide === 'server')">
