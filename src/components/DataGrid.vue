@@ -335,17 +335,14 @@ function isItemEmpty(item, value, label) {
   return true;
 }
 
-function compareNameOnlyFlags(nameA, nameB, hasNameOnlyA, hasNameOnlyB, ascending) {
+function compareFlagNames(nameA, nameB, hasNameOnlyA, hasNameOnlyB, ascending) {
   if (hasNameOnlyA && !hasNameOnlyB) {
     return ascending ? -1 : 1;
   }
   if (!hasNameOnlyA && hasNameOnlyB) {
     return ascending ? 1 : -1;
   }
-  if (hasNameOnlyA && hasNameOnlyB) {
-    return new Intl.Collator('lv').compare(nameA, nameB);
-  }
-  return 0;
+  return new Intl.Collator('lv').compare(nameA, nameB);
 }
 
 function compareFlags(a, b, colCode, ascending) {
@@ -376,7 +373,7 @@ function compareFlags(a, b, colCode, ascending) {
   if (flagExistanceComparison !== 0) return flagExistanceComparison;
 
   // flags with only a name stay right below flags with names
-  const nameOnlyComparison = compareNameOnlyFlags(
+  const nameOnlyComparison = compareFlagNames(
     flagNameA,
     flagNameB,
     hasNameOnlyA,
@@ -545,6 +542,19 @@ function compareBoolean(a, b, colCode) {
   return 0;
 }
 
+function defaultComparison(a, b, colCode) {
+  if (props.sortingMode === 'default') {
+    return new Intl.Collator('lv').compare(
+      a[colCode]?.toString().toLowerCase(),
+      b[colCode]?.toString().toLowerCase()
+    );
+  }
+  if (props.sortingMode === 'strip') {
+    return compareStrip(a, b, colCode);
+  }
+  return 0;
+}
+
 function compare(ascending) {
   return function (a, b) {
     let ret = 0;
@@ -559,39 +569,32 @@ function compare(ascending) {
       }
     }
 
-    if (colDefinition && colDefinition.type === 'person') {
-      ret = comparePersons(a, b, colCode, ascending);
-    } else if (colDefinition && colDefinition.type === 'icon') {
-      ret = compareIcons(a, b, colCode, ascending);
-    } else if (
-      colDefinition &&
-      (colDefinition.type === 'number' ||
-        colDefinition.type === 'decimal' ||
-        colDefinition.type === 'float')
-    ) {
-      ret = compareNumber(a, b, colCode);
-    } else if (
-      colDefinition &&
-      (colDefinition.type === 'flag' || colDefinition.type === 'country')
-    ) {
-      ret = compareFlags(a, b, colCode, ascending);
-    } else if (
-      (colDefinition && colDefinition.type === 'bool') ||
-      colDefinition.type === 'boolean'
-    ) {
-      ret = compareBoolean(a, b, colCode);
-    } else if (props.sortingMode === 'default') {
-      ret = new Intl.Collator('lv').compare(
-        a[colCode]?.toString().toLowerCase(),
-        b[colCode]?.toString().toLowerCase()
-      );
-    } else if (props.sortingMode === 'strip') {
-      ret = compareStrip(a, b, colCode);
+    switch (colDefinition.type) {
+      case 'person':
+        ret = comparePersons(a, b, colCode, ascending);
+        break;
+      case 'icon':
+        ret = compareIcons(a, b, colCode, ascending);
+        break;
+      case 'number':
+      case 'decimal':
+      case 'float':
+        ret = compareNumber(a, b, colCode);
+        break;
+      case 'flag':
+      case 'country':
+        ret = compareFlags(a, b, colCode, ascending);
+        break;
+      case 'bool':
+      case 'boolean':
+        ret = compareBoolean(a, b, colCode);
+        break;
+      default:
+        ret = defaultComparison(a, b, colCode);
+        break;
     }
-    if (!ascending) {
-      ret = -ret;
-    }
-    return ret;
+
+    return ascending ? ret : -ret;
   };
 }
 
