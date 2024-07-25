@@ -146,6 +146,7 @@ function checkIfHihlighted(id) {
         <LxIcon
           :value="item['icon'] || icon"
           :iconSet="item['iconSet'] ? item['iconSet'] : iconSet"
+          :title="item[props.nameAttribute]"
           v-if="(showIconsMode && item['icon']) || (icon && showIconsMode)"
         />
 

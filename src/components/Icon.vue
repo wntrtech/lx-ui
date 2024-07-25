@@ -9,7 +9,15 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // 'default', 'gradient-brand', 'gradient-brand-vertical'
   customClass: { type: String, default: '' },
   animation: { type: String, default: 'default' }, // 'default', 'spin'
+  meaningful: { type: Boolean, default: false }, // If true, icon will be announced by screen reader
   title: { type: String, default: '' },
+  desc: { type: String, default: '' },
+  texts: {
+    type: Object,
+    default: () => ({
+      iconLabel: 'Piktogramma',
+    }),
+  },
 });
 
 const iconPath = shallowRef(null);
@@ -74,8 +82,11 @@ const gradientComputed = computed(() => {
     xmlns="http://www.w3.org/2000/svg"
     :viewBox="viewBoxType"
     :style="gradientComputed"
+    :aria-hidden="!meaningful"
+    focusable="false"
   >
     <title>{{ props.title }}</title>
+    <desc>{{ props.desc ? props.desc : `${texts.iconLabel} "${icon}"` }}</desc>
     <defs v-if="variant !== 'default'">
       <linearGradient id="gradient">
         <stop offset="0%" stop-color="var(--color-brand)" />

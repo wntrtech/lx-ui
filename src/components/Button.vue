@@ -105,12 +105,19 @@ const showIcon = computed(() => {
   return ret;
 });
 
-const tooltipComputed = computed(() => (props.title ? props.title : props.label));
-
 const click = (e) => {
   if (props.openInNewTab) emits('click', e, true);
   else emits('click', e);
 };
+
+const isIconOnly = computed(() =>
+  Boolean(props.variant === 'icon-only' || (!props.label && props.icon))
+);
+
+const accessibleTitle = computed(() => {
+  const tooltip = props.title ? props.title : props.label;
+  return props.badge ? `${tooltip} (${props.badge})` : tooltip;
+});
 </script>
 <template>
   <button
@@ -124,20 +131,27 @@ const click = (e) => {
       { 'lx-button-ghost': kind === 'ghost' },
       { 'lx-button-main': kind === 'main' },
       { 'lx-busy': busy },
-      { 'lx-button-icon-only': variant === 'icon-only' || (!label && icon) },
+      { 'lx-button-icon-only': isIconOnly },
       { 'lx-destructive': destructive },
       { 'lx-active': active },
       customClass,
     ]"
     @click="click"
-    :title="tooltipComputed"
+    :title="accessibleTitle"
     :disabled="isDisabled"
     :aria-disabled="isDisabled"
     :tabindex="tabindex"
   >
     <slot />
     <template v-if="showIcon">
-      <lx-icon v-show="!busy" :value="icon" :icon-set="iconSet" :variant="iconVariant" />
+      <lx-icon
+        v-show="!busy"
+        :value="icon"
+        :icon-set="iconSet"
+        :variant="iconVariant"
+        :title="accessibleTitle"
+        :meaningful="isIconOnly"
+      />
       <div class="lx-loader-container" v-show="busy">
         <lx-loader :loading="true" size="s" />
       </div>
@@ -177,13 +191,20 @@ const click = (e) => {
       { 'lx-disabled': isDisabled },
       customClass,
     ]"
-    :title="tooltipComputed"
+    :title="accessibleTitle"
     :tabindex="tabindex"
     :target="openInNewTab ? '_blank' : null"
   >
     <slot />
     <template v-if="showIcon">
-      <lx-icon v-show="!busy" :value="icon" :icon-set="iconSet" :variant="iconVariant" />
+      <lx-icon
+        v-show="!busy"
+        :value="icon"
+        :icon-set="iconSet"
+        :variant="iconVariant"
+        :title="accessibleTitle"
+        :meaningful="isIconOnly"
+      />
       <div class="lx-loader-container" v-show="busy">
         <lx-loader :loading="true" size="s" />
       </div>

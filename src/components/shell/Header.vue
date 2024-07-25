@@ -343,7 +343,14 @@ onMounted(() => {
         <div v-if="!systemIcon" class="lx-logo">
           <slot name="logo"></slot>
         </div>
-        <LxIcon customClass="lx-logo" v-if="systemIcon" :value="systemIcon" icon-set="brand" />
+        <LxIcon
+          customClass="lx-logo"
+          v-if="systemIcon"
+          :value="systemIcon"
+          icon-set="brand"
+          :title="systemNameShort"
+          :desc="systemSubheader"
+        />
         <div class="lx-project-name">
           <p class="lx-primary">{{ systemNameShort }}</p>
           <p class="lx-description">{{ systemSubheader }}</p>

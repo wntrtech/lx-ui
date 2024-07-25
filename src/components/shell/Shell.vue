@@ -489,7 +489,13 @@ onMounted(() => {
           <template v-if="!systemIcon" #logo>
             <slot name="logoSmall" />
           </template>
-          <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
+          <LxIcon
+            v-if="systemIcon"
+            :value="systemIcon"
+            icon-set="brand"
+            :title="`${systemName} logo`"
+            :desc="`${systemName}: ${systemSubheader}`"
+          />
         </LxMainHeader>
       </header>
       <main class="lx-main">
@@ -502,7 +508,12 @@ onMounted(() => {
                 <slot v-else name="logo" />
               </template>
               <template v-else>
-                <LxIcon :value="systemIcon" icon-set="brand" />
+                <LxIcon
+                  :value="systemIcon"
+                  icon-set="brand"
+                  :title="`${systemName} logo`"
+                  :desc="`${systemName}: ${systemSubheader}`"
+                />
               </template>
             </div>
             <div>

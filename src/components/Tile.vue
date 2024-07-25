@@ -69,7 +69,13 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
     :title="tooltipComputed"
   >
     <header>
-      <Icon :value="icon" :icon-set="iconSet" customClass="lx-icon" />
+      <Icon
+        :value="icon"
+        :icon-set="iconSet"
+        customClass="lx-icon"
+        :title="label"
+        :desc="description"
+      />
       <p class="lx-primary">{{ label }}</p>
       <p class="lx-description">{{ description }}</p>
     </header>
