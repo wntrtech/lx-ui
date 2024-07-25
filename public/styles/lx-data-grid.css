@@ -286,10 +286,22 @@
   font-weight: normal;
 }
 
+.lx .lx-data-grid .flag-column:has(.lx-flag),
 .lx .lx-data-grid .lx-person-display-wrapper,
-.lx .lx-data-grid .lx-grid-icon-wrapper {
+.lx .lx-data-grid .lx-grid-icon-wrapper:has(.lx-grid-column-icon) {
   margin-top: -5px;
   margin-bottom: -5px;
+}
+
+.lx .lx-data-grid .empty-person-value {
+  padding-top: 5px;
+}
+
+.lx .lx-data-grid .flag-column:not(:has(.lx-flag)) p.lx-data,
+.lx .lx-data-grid .empty-person-value,
+.lx .lx-data-grid .empty-icon-value,
+.lx .lx-data-grid .empty-flag-value {
+  margin-left: 0.25rem;
 }
 
 .lx .lx-data-grid .lx-cell-action {
@@ -803,7 +815,12 @@
 }
 
 .lx .lx-data-grid .lx-item-display>.lx-flag {
-  margin-right: 0.5rem;
+  margin-right: 0.75ch;
+  margin-top: 0.1rem;
+}
+
+.lx .lx-data-grid .flag-column p.lx-data {
+  align-self: center;
 }
 
 .lx-justified-toolbar .lx-group {

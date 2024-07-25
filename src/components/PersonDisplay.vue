@@ -183,7 +183,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
             <LxIcon value="user" />
           </template>
           <template v-else>
-            {{ '—' }}
+            <span class="empty-person-value">—</span>
           </template>
         </template>
 

@@ -288,31 +288,104 @@ function cancelSelection() {
   selectedRowsRaw.value = {};
 }
 
-function compareFlags(a, b, colCode) {
-  let preparedA = '';
-  let preparedB = '';
+function compareOrder(a, b, ascending, getOrder) {
+  const orderA = getOrder(a);
+  const orderB = getOrder(b);
 
-  if (typeof a[colCode] === 'object' && props.sortingMode === 'default') {
-    preparedA = a[colCode].name?.toLowerCase();
-  } else if (typeof a[colCode] === 'object' && props.sortingMode === 'strip') {
-    preparedA = foldToAscii(a[colCode].name?.toLowerCase());
-  } else {
-    preparedA = foldToAscii(a[colCode]?.toString().toLowerCase());
+  if (orderA && !orderB) {
+    return ascending ? -1 : 1;
   }
-
-  if (typeof b[colCode] === 'object' && props.sortingMode === 'default') {
-    preparedB = b[colCode].name?.toLowerCase();
-  } else if (typeof b[colCode] === 'object' && props.sortingMode === 'strip') {
-    preparedB = foldToAscii(b[colCode].name?.toLowerCase());
-  } else {
-    preparedB = foldToAscii(b[colCode]?.toString().toLowerCase());
+  if (!orderA && orderB) {
+    return ascending ? 1 : -1;
   }
-
-  if (props.sortingMode === 'default') {
-    return Intl.Collator('lv').compare(preparedA, preparedB);
+  if (orderA && orderB) {
+    return orderA - orderB;
   }
+  return 0;
+}
 
-  return +(preparedA > preparedB) || -(preparedA < preparedB);
+function getLowercaseString(value) {
+  return value?.trim().toLowerCase() || '';
+}
+
+function isValidString(value) {
+  return value && value.trim() !== '';
+}
+
+function compareExistance(aExists, bExists, ascending) {
+  if (aExists && !bExists) {
+    return ascending ? -1 : 1;
+  }
+  if (!aExists && bExists) {
+    return ascending ? 1 : -1;
+  }
+  return 0;
+}
+
+function isItemEmpty(item, value, label) {
+  if (typeof item === 'string') {
+    return isValidString(item);
+  }
+  if (typeof item === 'object') {
+    return (
+      (isValidString(value) && isValidString(label)) ||
+      (isValidString(value) && !isValidString(label))
+    );
+  }
+  return true;
+}
+
+function compareNameOnlyFlags(nameA, nameB, hasNameOnlyA, hasNameOnlyB, ascending) {
+  if (hasNameOnlyA && !hasNameOnlyB) {
+    return ascending ? -1 : 1;
+  }
+  if (!hasNameOnlyA && hasNameOnlyB) {
+    return ascending ? 1 : -1;
+  }
+  if (hasNameOnlyA && hasNameOnlyB) {
+    return new Intl.Collator('lv').compare(nameA, nameB);
+  }
+  return 0;
+}
+
+function compareFlags(a, b, colCode, ascending) {
+  const flagA = a[colCode];
+  const flagB = b[colCode];
+
+  const flagIdA = typeof flagA === 'string' ? flagA : flagA.id;
+  const flagIdB = typeof flagB === 'string' ? flagB : flagB.id;
+
+  const flagNameA = flagA.name;
+  const flagNameB = flagB.name;
+
+  const hasNameOnlyA = isValidString(flagNameA) && !isValidString(flagIdA);
+  const hasNameOnlyB = isValidString(flagNameB) && !isValidString(flagIdA);
+
+  const isFlagAEmpty = isItemEmpty(flagA, flagIdA, flagNameA);
+  const isFlagBEmpty = isItemEmpty(flagB, flagIdB, flagNameB);
+
+  const orderComparison = compareOrder(flagA, flagB, ascending, (i) => i.order);
+  if (orderComparison !== 0) return orderComparison;
+
+  // flags with names stay on top by default
+  const nameComparison = compareExistance(flagNameA, flagNameB, ascending);
+  if (nameComparison !== 0) return nameComparison;
+
+  // icons that don't appear defined are at the bottom with icons that are ACTUALLY not defined
+  const flagExistanceComparison = compareExistance(isFlagAEmpty, isFlagBEmpty, ascending);
+  if (flagExistanceComparison !== 0) return flagExistanceComparison;
+
+  // flags with only a name stay right below flags with names
+  const nameOnlyComparison = compareNameOnlyFlags(
+    flagNameA,
+    flagNameB,
+    hasNameOnlyA,
+    hasNameOnlyB,
+    ascending
+  );
+  if (nameOnlyComparison !== 0) return nameOnlyComparison;
+
+  return new Intl.Collator('lv').compare(flagIdA, flagIdB);
 }
 
 function compareNumber(a, b, colCode) {
@@ -320,10 +393,156 @@ function compareNumber(a, b, colCode) {
   const preparedB = b[colCode] || 0;
   return preparedA - preparedB;
 }
+
 function compareStrip(a, b, colCode) {
   const preparedA = foldToAscii(a[colCode]?.toString().toLowerCase()) || '';
   const preparedB = foldToAscii(b[colCode]?.toString().toLowerCase()) || '';
   return +(preparedA > preparedB) || -(preparedA < preparedB);
+}
+
+function getFullName(person) {
+  return isValidString(person.firstName) && isValidString(person.lastName)
+    ? (getLowercaseString(person.firstName) + getLowercaseString(person.lastName)).replace(
+        /\s/g,
+        ''
+      )
+    : '';
+}
+
+function compareStructures(personA, personB, ascending) {
+  if (Array.isArray(personA) && !Array.isArray(personB)) {
+    return ascending ? -1 : 1;
+  }
+  if (!Array.isArray(personA) && Array.isArray(personB)) {
+    return ascending ? 1 : -1;
+  }
+  return 0;
+}
+
+// compare persons, who are partially defined i.e. ones that don't have a full name, yet have a description,
+// and persons, who have neither and appear undefined, but may have other attributes
+function comparePartialExistance(nameA, descriptionA, nameB, descriptionB, ascending) {
+  if (!nameA && descriptionA && !nameB && !descriptionB) {
+    return ascending ? -1 : 1;
+  }
+  if (!nameA && !descriptionA && !nameB && descriptionB) {
+    return ascending ? 1 : -1;
+  }
+  if (!nameA && !descriptionA && !nameB && !descriptionB) {
+    return 0;
+  }
+  return 0;
+}
+
+function comparePersonsColumn(personA, personB, ascending) {
+  const fullNameA = getFullName(personA);
+  const fullNameB = getFullName(personB);
+
+  const hasFullNameA = isValidString(fullNameA);
+  const hasFullNameB = isValidString(fullNameB);
+
+  const hasDescriptionA = isValidString(personA.description);
+  const hasDescriptionB = isValidString(personB.description);
+
+  // persons with full name are on top by default
+  const fullNameComparison = compareExistance(hasFullNameA, hasFullNameB, ascending);
+  if (fullNameComparison !== 0) return fullNameComparison;
+
+  // person object arrays stay right below regular person objects
+  const structureComparison = compareStructures(personA, personB, ascending);
+  if (structureComparison !== 0) return structureComparison;
+
+  // persons with descriptions, yet no name, stay above persons who don't appear defined
+  const existanceComparison = comparePartialExistance(
+    hasFullNameA,
+    hasDescriptionA,
+    hasFullNameB,
+    hasDescriptionB,
+    ascending
+  );
+  if (existanceComparison !== 0) return existanceComparison;
+
+  const orderComparison = compareOrder(personA, personB, ascending, (p) => p.order);
+  if (orderComparison !== 0) return orderComparison;
+
+  if (hasFullNameA && hasFullNameB) {
+    return new Intl.Collator('lv').compare(fullNameA, fullNameB);
+  }
+  return 0;
+}
+
+function sortPersonsArray(personsArray, ascending) {
+  return personsArray.sort((a, b) => {
+    const result = comparePersonsColumn(a, b, ascending);
+    return ascending ? result : -result;
+  });
+}
+
+function comparePersons(a, b, colCode, ascending) {
+  const personA = a[colCode];
+  const personB = b[colCode];
+
+  if (Array.isArray(personA) && Array.isArray(personB)) {
+    const sortedA = sortPersonsArray(personA, ascending);
+    const sortedB = sortPersonsArray(personB, ascending);
+
+    return comparePersonsColumn(sortedA[0], sortedB[0]);
+  }
+  return comparePersonsColumn(personA, personB, ascending);
+}
+
+function compareIconLabels(labelA, labelB, ascending) {
+  if (labelA && !labelB) {
+    return ascending ? -1 : 1;
+  }
+  if (!labelA && labelB) {
+    return ascending ? 1 : -1;
+  }
+  if (labelA && labelB) {
+    return new Intl.Collator('lv').compare(labelA.toLowerCase(), labelB.toLowerCase());
+  }
+  return 0;
+}
+
+function compareIcons(a, b, colCode, ascending) {
+  const iconA = a[colCode];
+  const iconB = b[colCode];
+
+  const iconNameA = typeof iconA === 'string' ? iconA : iconA.icon;
+  const iconNameB = typeof iconB === 'string' ? iconB : iconB.icon;
+
+  const labelA = iconA.label;
+  const labelB = iconB.label;
+
+  const isIconAEmpty = isItemEmpty(iconA, iconNameA, labelA);
+  const isIconBEmpty = isItemEmpty(iconB, iconNameB, labelB);
+
+  const orderComparison = compareOrder(iconA, iconB, ascending, (i) => i.order);
+  if (orderComparison !== 0) return orderComparison;
+
+  // icons with labels show on top by default
+  const labelComparison = compareIconLabels(labelA, labelB, ascending);
+  if (labelComparison !== 0) return labelComparison;
+
+  // icons that don't appear defined are at the bottom with icons that are ACTUALLY not defined
+  const iconExistanceComparison = compareExistance(isIconAEmpty, isIconBEmpty, ascending);
+  if (iconExistanceComparison !== 0) return iconExistanceComparison;
+
+  const valueA = (typeof iconA === 'object' ? iconA.icon : iconA) || '';
+  const valueB = (typeof iconB === 'object' ? iconB.icon : iconB) || '';
+  return new Intl.Collator('lv').compare(valueA, valueB);
+}
+function compareBoolean(a, b, colCode) {
+  const aBool = a[colCode];
+  const bBool = b[colCode];
+
+  if (aBool && !bBool) {
+    return -1;
+  }
+  if (!aBool && bBool) {
+    return 1;
+  }
+  return 0;
 }
 
 function compare(ascending) {
@@ -331,19 +550,36 @@ function compare(ascending) {
     let ret = 0;
     const colCode = Object.keys(sortedColumns.value)[0];
     const colDefinition = columnsComputed.value.find((item) => item.id === colCode);
-    if (!a[colCode] && props.sortingIgnoreEmpty) {
-      return 1;
+    if (colDefinition.type !== 'bool' && colDefinition.type !== 'boolean') {
+      if (!a[colCode] && props.sortingIgnoreEmpty) {
+        return 1;
+      }
+      if (!b[colCode] && props.sortingIgnoreEmpty) {
+        return -1;
+      }
     }
-    if (!b[colCode] && props.sortingIgnoreEmpty) {
-      return -1;
-    }
-    if (
+
+    if (colDefinition && colDefinition.type === 'person') {
+      ret = comparePersons(a, b, colCode, ascending);
+    } else if (colDefinition && colDefinition.type === 'icon') {
+      ret = compareIcons(a, b, colCode, ascending);
+    } else if (
       colDefinition &&
       (colDefinition.type === 'number' ||
         colDefinition.type === 'decimal' ||
         colDefinition.type === 'float')
     ) {
       ret = compareNumber(a, b, colCode);
+    } else if (
+      colDefinition &&
+      (colDefinition.type === 'flag' || colDefinition.type === 'country')
+    ) {
+      ret = compareFlags(a, b, colCode, ascending);
+    } else if (
+      (colDefinition && colDefinition.type === 'bool') ||
+      colDefinition.type === 'boolean'
+    ) {
+      ret = compareBoolean(a, b, colCode);
     } else if (props.sortingMode === 'default') {
       ret = new Intl.Collator('lv').compare(
         a[colCode]?.toString().toLowerCase(),
@@ -351,9 +587,6 @@ function compare(ascending) {
       );
     } else if (props.sortingMode === 'strip') {
       ret = compareStrip(a, b, colCode);
-    }
-    if (colDefinition && (colDefinition.type === 'flag' || colDefinition.type === 'country')) {
-      ret = compareFlags(a, b, colCode);
     }
     if (!ascending) {
       ret = -ret;
@@ -364,7 +597,8 @@ function compare(ascending) {
 
 const rows = computed(() => {
   if (props.items) {
-    let ret = [...props.items];
+    let ret = JSON.parse(JSON.stringify([...props.items]));
+
     const colCode = Object.keys(sortedColumns.value)[0];
     if (sortedColumns.value[colCode] && props.sortingSide === 'client') {
       if (sortedColumns.value[colCode] === 'asc') {
@@ -731,15 +965,33 @@ function emptyStateActionClicked(actionName) {
                   "
                 >
                   <div class="lx-grid-icon-wrapper">
-                    <LxIcon
-                      :value="row?.[col?.attributeName]?.icon"
-                      :icon-set="row?.[col?.attributeName]?.iconSet"
-                      :title="row?.[col?.attributeName]?.label"
-                      :customClass="`lx-grid-column-icon ${row?.[col?.attributeName]?.category}`"
-                    />
-                    <p v-if="['s', 'm', 'l', 'xl'].includes(col.size)" class="lx-grid-icon-text">
-                      {{ row?.[col?.attributeName].label }}
-                    </p>
+                    <template
+                      v-if="
+                        isValidString(row?.[col?.attributeName]?.icon) ||
+                        isValidString(row?.[col?.attributeName]?.label)
+                      "
+                    >
+                      <LxIcon
+                        :value="
+                          isValidString(row?.[col?.attributeName]?.icon)
+                            ? row?.[col?.attributeName]?.icon
+                            : 'default'
+                        "
+                        :icon-set="row?.[col?.attributeName]?.iconSet"
+                        :title="row?.[col?.attributeName]?.label"
+                        :customClass="`lx-grid-column-icon ${row?.[col?.attributeName]?.category}`"
+                      />
+                      <p
+                        v-if="
+                          ['s', 'm', 'l', 'xl'].includes(col.size) &&
+                          isValidString(row?.[col?.attributeName]?.label)
+                        "
+                        class="lx-grid-icon-text"
+                      >
+                        {{ row?.[col?.attributeName].label }}
+                      </p>
+                    </template>
+                    <span class="empty-icon-value" v-else>—</span>
                   </div>
                 </template>
                 <template
@@ -751,30 +1003,29 @@ function emptyStateActionClicked(actionName) {
                     <LxIcon :value="row?.[col?.attributeName]" customClass="lx-grid-column-icon" />
                   </div>
                 </template>
-                <span v-else>—</span>
+                <span class="empty-icon-value" v-else>—</span>
               </template>
 
-              <LxFlag
-                v-if="
-                  (col.type === 'flag' || col.type === 'country') &&
-                  typeof row[col.attributeName] === 'string'
-                "
-                size="small"
-                :value="row[col.attributeName]"
-              />
-              <div
-                class="flag-column"
-                v-if="
-                  (col.type === 'flag' || col.type === 'country') &&
-                  typeof row[col.attributeName] === 'object'
-                "
-              >
-                <LxFlagItemDisplay
-                  :value="row[col.attributeName]"
-                  nameAttribute="name"
-                  idAttribute="id"
-                />
-              </div>
+              <template v-if="col.type === 'flag' || col.type === 'country'">
+                <div
+                  class="flag-column"
+                  v-if="
+                    typeof row[col.attributeName] === 'string' &&
+                    isValidString(row[col.attributeName])
+                  "
+                >
+                  <LxFlag size="small" :value="row[col.attributeName]" />
+                </div>
+                <div class="flag-column" v-else-if="typeof row[col.attributeName] === 'object'">
+                  <LxFlagItemDisplay
+                    :value="row[col.attributeName]"
+                    nameAttribute="name"
+                    idAttribute="id"
+                  />
+                </div>
+                <span class="empty-flag-value" v-else>—</span>
+              </template>
+
               <LxPersonDisplay
                 v-if="col.type === 'person'"
                 :value="row[col.attributeName]"
@@ -962,12 +1213,14 @@ function emptyStateActionClicked(actionName) {
             :value="item[col?.attributeName]"
             :dictionary="col?.dictionary ? col?.dictionary : col?.options"
           />
+
           <LxRating
             v-else-if="col.type === 'rating'"
             :disabled="props.busy"
             mode="read"
             v-model="item[col.attributeName]"
           />
+
           <template v-else-if="col.type === 'icon'">
             <template
               v-if="
@@ -995,29 +1248,28 @@ function emptyStateActionClicked(actionName) {
                 <LxIcon :value="item?.[col?.attributeName]" customClass="lx-grid-column-icon" />
               </div>
             </template>
-            <span v-else>—</span>
+            <span class="empty-icon-value" v-else>—</span>
           </template>
-          <LxFlag
-            v-else-if="
-              (col.type === 'flag' || col.type === 'country') &&
-              typeof item[col.attributeName] === 'string'
-            "
-            size="small"
-            :value="item[col.attributeName]"
-          />
-          <div
-            class="flag-column"
-            v-else-if="
-              (col.type === 'flag' || col.type === 'country') &&
-              typeof item[col.attributeName] === 'object'
-            "
-          >
-            <LxFlagItemDisplay
-              :value="item[col.attributeName]"
-              nameAttribute="name"
-              idAttribute="id"
-            />
-          </div>
+
+          <template v-if="col.type === 'flag' || col.type === 'country'">
+            <div
+              class="flag-column"
+              v-if="
+                typeof col[col.attributeName] === 'string' && col[col.attributeName].trim() !== ''
+              "
+            >
+              <LxFlag size="small" :value="col[col.attributeName]" />
+            </div>
+            <div class="flag-column" v-else-if="typeof col[col.attributeName] === 'object'">
+              <LxFlagItemDisplay
+                :value="col[col.attributeName]"
+                nameAttribute="name"
+                idAttribute="id"
+              />
+            </div>
+            <span class="empty-flag-value" v-else>—</span>
+          </template>
+
           <LxPersonDisplay
             v-else-if="col.type === 'person'"
             :value="item[col.attributeName]"
