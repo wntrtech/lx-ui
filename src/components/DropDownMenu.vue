@@ -45,8 +45,16 @@ defineExpose({ closeMenu, openMenu, preventClose });
     >
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
       <div
+        v-if="props.triggerClick === 'right'"
+        @contextmenu.prevent="openMenu"
+        class="lx-dropdown-toggler"
+      >
+        <slot />
+      </div>
+      <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+      <div
         @click="props.triggerClick === 'left' ? openMenu() : null"
-        @contextmenu.prevent="props.triggerClick === 'right' ? openMenu() : null"
+        v-else
         class="lx-dropdown-toggler"
       >
         <slot />
