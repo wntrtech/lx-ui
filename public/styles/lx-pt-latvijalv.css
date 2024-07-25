@@ -18,7 +18,7 @@
   --color-chrome: #e6e7ee;
   --color-grid-hover-background: #f6f6f6;
   --color-focus-background: #bf4e2c;
-  --color-destructive: #e7231f;
+  --color-destructive: #ff0000;
   --color-nav-background: #d9710d;
   --color-nav-foreground: #fff;
   --color-nav-hover-background: #bf4e2c;
@@ -50,6 +50,48 @@
 
   --color-cover-title: var(--color-brand);
 }
+
+.lx.lx-theme-dark {
+  --color-brand: #d04632;
+  --color-brand-secondary: #b35d0b;
+  --color-interactive-background: #d04632;
+  --color-interactive-foreground: #ffffff;
+  --color-interactive-hover-background: #c20e19;
+  --color-interactive-secondary-background: #d0d5dc;
+  --color-interactive-secondary-foreground: #565656;
+  --color-interactive-secondary-hover-background: #c9ced3;
+  --color-nav-selected-background: #f6f6f6;
+  --color-nav-selected-foreground: #bf4e2c;
+  --color-highlight: #8b4101;
+  --color-bad: #d04632;
+  --color-region: #202020;
+  --color-region-2: #101010;
+  --color-background: #121212;
+  --color-label: #cccccc;
+  --color-data: #dddddd;
+  --color-chrome: #0c0c0c;
+  --color-grid-hover-background: var(--color-region-hover);
+  --color-region-hover-background: var(--color-region-hover);
+
+  --color-focus-background: #bf4e2c;
+  --color-destructive: #ff0000;
+  --color-nav-background: #b35d0b;
+  --color-nav-foreground: #fff;
+  --color-nav-hover-background: #bf4e2c;
+  --color-nav-chrome: transparent;
+  --color-nav-selected-foreground: var(--color-label);
+  --color-nav-selected-background: var(--color-background);
+  --tab-border: 4px solid transparent;
+  --region-border: 1px solid var(--color-chrome);
+  --list-item-border: 1px solid var(--color-chrome);
+  --input-border: 1px solid var(--color-chrome);
+  --color-toggle-background-false: #d0d5dc;
+  --color-toggle-border-false: #d0d5dc;
+  --color-toggle-foreground-false: #6e7681;
+  --color-content-switcher-foreground: #aaaaaa;
+  --color-disabled-foreground: #333333;
+}
+
 .lx .lx-notifications-list .lx-notification p.lx-title {
   font-weight: var(--font-weight-data) !important;
 }
