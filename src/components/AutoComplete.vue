@@ -4,6 +4,8 @@ import { onClickOutside, useDebounceFn } from '@vueuse/core';
 import Popper from 'vue3-popper';
 
 import { generateUUID, textSearch } from '@/utils/stringUtils';
+import { logWarn } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
 
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -75,6 +77,7 @@ const detailedModeModal = ref();
 const detailsSwitchType = ref('advanced-search');
 const panelWidth = ref();
 
+const globalEnvironment = useLx().getGlobals()?.environment;
 const convertBooleanToString = (value) => (typeof value === 'boolean' ? value.toString() : value);
 
 const model = computed({
@@ -273,14 +276,24 @@ const debouncedSearchReq = useDebounceFn(async (val) => {
 watch(
   query,
   async (newValue, oldValue) => {
-    if ((newValue?.length || 0) < props.queryMinLength) {
-      const destroyResults = newValue?.length > oldValue?.length;
-      if (destroyResults) {
-        allItems.value = [];
-      }
+    // If props.items is not a function and queryMinLength is provided, warn developer
+    if (typeof props.items !== 'function' && props.queryMinLength > 0) {
+      logWarn(
+        "To take effect, props 'queryMinLength' and 'queryDebounce' must be used with an async items function!",
+        globalEnvironment
+      );
       return;
     }
+
+    // Proceed with search if props.items is a function
     if (typeof props.items === 'function') {
+      if ((newValue?.length || 0) < props.queryMinLength) {
+        const destroyResults = newValue?.length > oldValue?.length;
+        if (destroyResults) {
+          allItems.value = [];
+        }
+        return;
+      }
       await debouncedSearchReq(newValue);
     }
   },
