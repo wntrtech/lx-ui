@@ -375,6 +375,7 @@
   color: var(--color-nav-foreground);
   flex-direction: row;
   justify-content: center;
+  height: calc(var(--row-size) - 1.5px);
 }
 
 .lx-layout-public .lx-nav-panel ul li .lx-button:hover {
@@ -382,7 +383,7 @@
   color: var(--color-nav-hover-foreground);
 }
 
-.lx-layout-public .lx-nav-panel ul li .lx-button:hover svg {
+.lx .lx-layout-public .lx-nav-panel ul li .lx-button:hover svg {
   fill: var(--color-nav-hover-foreground);
 }
 
@@ -744,6 +745,10 @@
 
   .lx-layout-public .lx-nav-panel ul li:first-of-type .lx-button .lx-button-content {
     display: block;
+  }
+
+  .lx-layout-public .lx-nav-panel ul li .lx-button {
+    height: var(--row-size);
   }
 }
 

@@ -26,6 +26,7 @@ const props = defineProps({
   hasLanguagePicker: { type: Boolean, default: false },
   languages: { type: Array, default: () => [] },
   selectedLanguage: { type: Object, default: null },
+  layoutMode: { type: String, default: 'default' },
   texts: {
     type: Object,
     required: false,
@@ -51,6 +52,7 @@ const navItemsPrimary = computed(() =>
 const navItemsSecondary = computed(() =>
   props.navItems.filter((item) => item.type === 'secondary')
 );
+const allNavItems = computed(() => [...navItemsPrimary.value, ...navItemsSecondary.value]);
 
 const emits = defineEmits([
   'nav-toggle',
@@ -98,7 +100,9 @@ const animationsModel = computed({
   <div class="lx-nav-panel" v-on-click-outside="navToggle">
     <ul class="lx-nav-group">
       <li
-        v-for="item in navItemsPrimary"
+        v-for="item in props.layoutMode === 'public' && width >= 900
+          ? allNavItems
+          : navItemsPrimary"
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
@@ -120,7 +124,7 @@ const animationsModel = computed({
       />
     </ul>
 
-    <ul class="lx-nav-group">
+    <ul v-if="props.layoutMode !== 'public' || width < 900" class="lx-nav-group">
       <li
         v-for="item in navItemsSecondary"
         :key="item.label"

@@ -598,6 +598,7 @@ onMounted(() => {
       </header>
       <nav aria-label="navigation panel" v-if="!hideNavBar">
         <LxNavBar
+          layoutMode="public"
           :nav-items="navItems"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"

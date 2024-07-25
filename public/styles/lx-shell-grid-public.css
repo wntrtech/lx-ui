@@ -251,6 +251,7 @@
   z-index: 150;
   width: 100%;
   height: var(--row-size);
+  border-bottom: 2px solid var(--color-chrome);
   background-color: var(--color-nav-background);
   grid-template-columns: 1fr var(--body-column-size) 1fr;
 }
@@ -429,6 +430,7 @@
   .lx-layout.lx-layout-public>header {
     grid-template-columns: 1fr 100% 1fr;
     border-bottom: 0;
+    z-index: 1001;
   }
 
   .lx-layout.lx-layout-public>header>.lx-header {
@@ -494,6 +496,7 @@
   .lx .lx-layout.lx-layout-public .lx-nav-panel {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     background-color: var(--color-nav-background);
     width: 100%;
     position: fixed;
