@@ -129,49 +129,49 @@
   align-items: baseline;
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section {
   grid-template-columns: 1fr
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section .lx-list .lx-list-item-wrapper {
   align-items: center;
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-avatar-wrapper {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section .lx-list .lx-list-item-wrapper .lx-avatar-wrapper {
   padding: 0 0.5rem 0 0;
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-avatar-wrapper .lx-avatar-display .lx-avatar-display-l,
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-list-item svg {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section .lx-list .lx-list-item-wrapper .lx-avatar-wrapper .lx-avatar-display .lx-avatar-display-l,
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section .lx-list .lx-list-item-wrapper .lx-list-item svg {
   margin: 0
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-list-item {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section .lx-list .lx-list-item-wrapper .lx-list-item {
   padding: 0.25rem 0.5rem 0.25rem 0.3rem;
   margin: 0
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper header {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section .lx-list .lx-list-item-wrapper header {
   flex-direction: row;
   justify-content: left;
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper header .lx-secondary {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section .lx-list .lx-list-item-wrapper header .lx-secondary {
   display: flex;
   line-height: 1.2em;
   height: 0.9rem
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper header .lx-secondary .lx-flag .small-flag {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section .lx-list .lx-list-item-wrapper header .lx-secondary .lx-flag .small-flag {
   border: none;
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper header .lx-primary .lx-edoc-description-code {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section>.lx-body>.lx-form-section .lx-list .lx-list-item-wrapper header .lx-primary .lx-edoc-description-code {
   font-weight: normal;
   color: var(--color-label);
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.edocBadgeIcon > .lx-head > .lx-group > .lx-icon-wrapper {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section.edocBadgeIcon>.lx-head>.lx-group>.lx-icon-wrapper {
   position: static;
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
@@ -193,7 +193,7 @@
   opacity: 1;
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.edocBadgeIcon > .lx-head > .lx-group > .lx-icon-wrapper svg {
+.lx-form-grid>.lx-main>.lx-expander.lx-edoc-signs-list-section.edocBadgeIcon>.lx-head>.lx-group>.lx-icon-wrapper svg {
   margin: 0;
   padding: 0;
   fill: var(--color-interactive-foreground);
@@ -268,6 +268,9 @@
   transition: background-color 0.5s ease;
 }
 
+
+.lx-form.lx-form-2 .lx-row>label,
+.lx-form.lx-form-3 .lx-row>label,
 .lx-form-grid>.lx-main .lx-row>label,
 .lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main .lx-row>label,
 .lx-form-grid>.lx-main .lx-row>.lx-row-header>label,
@@ -593,7 +596,7 @@
 }
 
 .lx-appendable-list-item:has(.appendable-list-remove-button-wrapper) {
-  display: flex; 
+  display: flex;
   justify-content: space-between;
 }
 
