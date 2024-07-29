@@ -654,7 +654,6 @@ const shouldShowIcon = computed(() => {
     return (
       !hasValue.value &&
       !props.hasDetails &&
-      !props.invalid &&
       !(loadingState.value || props.loading)
     );
   }
@@ -663,7 +662,6 @@ const shouldShowIcon = computed(() => {
       return (
         !props.hasDetails &&
         (!hasValue.value || hasValue.value) &&
-        !props.invalid &&
         !(loadingState.value || props.loading)
       );
     }
@@ -671,7 +669,6 @@ const shouldShowIcon = computed(() => {
       return (
         !props.hasDetails &&
         (!hasValue.value || hasValue.value) &&
-        !props.invalid &&
         !(loadingState.value || props.loading)
       );
     }

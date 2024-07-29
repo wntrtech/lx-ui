@@ -531,6 +531,28 @@ const columnReadOnly = computed(() => {
       </template>
     </LxAutoComplete>
 
+    <LxAutoComplete
+      v-if="kind === 'multiple' && hasSearch"
+      v-model="model"
+      selecting-kind="multiple"
+      :items="itemsDisplay"
+      :id-attribute="idAttribute"
+      :name-attribute="nameAttribute"
+      :placeholder="placeholder"
+      :tooltip="tooltip"
+      :readOnly="readOnly"
+      :disabled="disabled"
+      :variant="variantAutoComplete"
+      :invalid="invalid"
+      :invalidation-message="invalidationMessage"
+      :texts="texts"
+      :search-attributes="searchAttributes"
+    >
+      <template v-slot:customItem="slotData">
+        <slot name="customItemDropdown" v-bind="slotData" />
+      </template>
+    </LxAutoComplete>
+
     <LxDropDown
       v-if="kind === 'single' && !hasSearch"
       id="dropdown-component"
@@ -552,7 +574,7 @@ const columnReadOnly = computed(() => {
       </template>
     </LxDropDown>
 
-    <div class="lx-value-picker-dropdown-wrapper" v-if="kind === 'multiple'" ref="refRoot">
+    <div class="lx-value-picker-dropdown-wrapper" v-if="kind === 'multiple' && !hasSearch" ref="refRoot">
       <div
         class="lx-dropdown-default"
         :id="idValue"
@@ -585,7 +607,7 @@ const columnReadOnly = computed(() => {
             @click="openDropDownDefault"
             :class="[
               { 'lx-invalid': invalid && !hasSearch },
-              { 'lx-disabled': invalid },
+              { 'lx-disabled': disabled },
               { 'without-border': hasSearch },
             ]"
             :title="tooltip"
@@ -612,16 +634,6 @@ const columnReadOnly = computed(() => {
                 :class="[{ emptyModel: model?.length === 0 }]"
                 :title="tooltip"
               >
-                <lx-text-input
-                  v-if="hasSearch"
-                  ref="queryInput"
-                  :disabled="disabled"
-                  :invalid="invalid"
-                  v-model="query"
-                  kind="search"
-                  role='search'
-                  :placeholder="model ? getName() : texts.searchPlaceholder"
-                />
                 <lx-button
                   v-if="query"
                   :disabled="disabled"
@@ -632,7 +644,6 @@ const columnReadOnly = computed(() => {
                   @click="query = ''"
                 />
                 <div
-                  v-if="!hasSearch"
                   class="lx-value-picker-placeholder"
                   :class="[{ emptyModel: model?.length === 0 }]"
                 >
