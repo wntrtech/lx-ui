@@ -650,7 +650,6 @@
   .lx-data-block-wrapper
   .lx-data-block-header:hover {
   background-color: var(--color-region-hover);
-  cursor: pointer;
 }
 
 .lx-form-grid .lx-row > label span.lx-required,
