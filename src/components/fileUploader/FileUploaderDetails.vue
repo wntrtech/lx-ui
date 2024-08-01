@@ -68,12 +68,9 @@ const props = defineProps({
   },
 });
 
-const mainDataWithoutAuthor = computed(() => {
-  if (!props.value.mainData) {
-    return {};
-  }
-  const { author, ...rest } = props.value.mainData;
-
+const mainDataWithoutAuthorAndIcon = computed(() => {
+  if (!props.value.mainData) return {};
+  const { author, additionalIconAndType, ...rest } = props.value.mainData;
   return rest;
 });
 
@@ -110,6 +107,26 @@ const archiveContentSectionlabel = computed(() => {
     return props.texts?.metaEdocArchiveContentLabel;
   }
   return props.texts?.metaArchiveContentLabel;
+});
+
+const customEsignSectionClass = computed(() => {
+  if (props.value?.edocContentData && props.value?.edocContentData?.length !== 0) {
+    if (props.value?.edocContentData[0].eSignType === 'edoc') {
+      return 'edocBadgeIcon';
+    }
+    if (props.value?.edocContentData[0].eSignType === 'c2pa') {
+      return 'c2paBadgeIcon';
+    }
+  }
+  return '';
+});
+
+const nomalizedIconAndType = computed(() => {
+  const iconsArr = props.value.mainData?.additionalIconAndType?.filter(
+    (item) => item.type !== 'c2pa-sign'
+  );
+  if (!iconsArr) return null;
+  return iconsArr;
 });
 </script>
 <template>
@@ -150,8 +167,64 @@ const archiveContentSectionlabel = computed(() => {
           </template>
           <p v-else class="lx-data">—</p>
         </LxRow>
-        <LxRow v-for="(item, key) in mainDataWithoutAuthor" :key="key" :label="item.label">
+        <LxRow v-for="(item, key) in mainDataWithoutAuthorAndIcon" :key="key" :label="item.label">
           <p class="lx-data">{{ item.value }}</p>
+        </LxRow>
+
+        <template v-if="nomalizedIconAndType">
+          <LxRow class="lx-main-data-icon-row" v-for="item in nomalizedIconAndType" :key="item.id">
+            <p
+              class="lx-badge lx-main-data-badge"
+              :class="[
+                { 'lx-pass-protected-badge': item.type === 'pass-protected' },
+                { 'lx-esign-badge': item.type === 'esign' },
+                { 'lx-c2pa-sign-badge': item.type === 'c2pa-sign' },
+                { 'lx-created-using-ai-badge': item.type === 'created-using-ai' },
+              ]"
+            >
+              <LxIcon customClass="lx-icon" :value="item.icon" />
+            </p>
+            <p class="lx-data">{{ item.title }}</p>
+          </LxRow>
+        </template>
+      </LxSection>
+
+      <LxSection
+        v-if="props.value?.edocContentData && props.value?.edocContentData?.length !== 0"
+        id="metaEDocContent"
+        class="lx-edoc-signs-list-section"
+        icon="sign"
+        :customClass="customEsignSectionClass"
+        :label="props.texts?.metaEDocContentLabel"
+        :badge="props.value?.edocContentData.length"
+      >
+        <LxRow :column-span="1">
+          <LxList list-type="1" :items="props.value?.edocContentData">
+            <template
+              #customItem="{ nameAndSurname, personalCode, eSignDate, eSignIssuer, country }"
+            >
+              <div v-if="nameAndSurname" class="lx-avatar-wrapper">
+                <LxAvatar :value="safeString(nameAndSurname)" size="m" />
+              </div>
+              <div v-else class="lx-default-icon-wrapper">
+                <LxIcon value="user" />
+              </div>
+
+              <div class="lx-edoc-description-wrapper">
+                <p class="lx-primary">
+                  {{ nameAndSurname || '—' }}
+                  <span v-if="personalCode" class="lx-edoc-description-code">
+                    {{ `(${personalCode})` }}
+                  </span>
+                </p>
+                <p class="lx-secondary">
+                  {{ eSignDate ? `${eSignDate}; ` : ''
+                  }}{{ eSignIssuer ? `${eSignIssuer}; ` : '' }}
+                  <LxFlag size="small" :value="country.code" />{{ country.name }}
+                </p>
+              </div>
+            </template>
+          </LxList>
         </LxRow>
       </LxSection>
 
@@ -207,40 +280,6 @@ const archiveContentSectionlabel = computed(() => {
         v-if="props.value?.additionalData"
       >
         <LxFormBuilder v-model="additionalData" mode="mixed" :readOnly="true"></LxFormBuilder>
-      </LxSection>
-
-      <LxSection
-        v-if="props.value?.edocContentData && props.value?.edocContentData?.length !== 0"
-        id="metaEDocContent"
-        class="lx-edoc-signs-list-section"
-        icon="sign"
-        customClass="edocBadgeIcon"
-        :label="props.texts?.metaEDocContentLabel"
-        :badge="props.value?.edocContentData.length"
-      >
-        <LxRow :column-span="1">
-          <LxList list-type="1" :items="props.value?.edocContentData">
-            <template
-              #customItem="{ nameAndSurname, personalCode, eSignDate, eSignIssuer, country }"
-            >
-              <div class="lx-avatar-wrapper">
-                <LxAvatar :value="safeString(nameAndSurname)" size="m" />
-              </div>
-              <div class="lx-edoc-description-wrapper">
-                <p class="lx-primary">
-                  {{ nameAndSurname }}
-                  <span class="lx-edoc-description-code">
-                    {{ `(${personalCode})` }}
-                  </span>
-                </p>
-                <p class="lx-secondary">
-                  {{ `${eSignDate}; ${eSignIssuer};` }}
-                  <LxFlag size="small" :value="country.code" />{{ country.name }}
-                </p>
-              </div>
-            </template>
-          </LxList>
-        </LxRow>
       </LxSection>
 
       <LxSection
