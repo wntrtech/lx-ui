@@ -933,7 +933,7 @@ function moveDraggableItem(direction, element, groupType) {
           <LxButton
             v-if="hasSelecting && selectedItems.length > 0 && kind !== 'draggable'"
             :icon="
-              selectedItems?.length === items?.length
+              selectedItems?.length === items?.length && selectingKind !== 'single'
                 ? 'checkbox-filled'
                 : selectingKind === 'multiple'
                 ? 'checkbox-indeterminate'
