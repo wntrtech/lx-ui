@@ -2,12 +2,12 @@
 import { ref, computed } from 'vue';
 import { useElementSize } from '@vueuse/core';
 
+import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
+
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
-
-import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 
 const props = defineProps({
   customItem: { type: Object, default: () => ({}) },
@@ -18,8 +18,7 @@ const props = defineProps({
   hasDownloadButton: { type: Boolean, default: false },
   showMeta: { type: Boolean, default: true },
   defaultIcon: { type: String, default: 'file' },
-  additionalBagdeIcon: { type: String, default: '' },
-  additionalBagdeType: { type: String, default: 'default' },
+  additionalIconAndType: { type: Array, default: null },
   imagePreview: { type: String, default: null },
   isUploading: { type: Boolean, default: false },
   texts: {
@@ -31,14 +30,12 @@ const props = defineProps({
       metaAdditionalInfoFileCountTitle: 'Datņu skaits',
       metaAdditionalInfoFileCountLabelSingle: 'datne',
       metaAdditionalInfoFileCountLabelMulti: 'datnes',
-      metaAdditionalInfoProtectedArchive: 'Arhīvs aizargāts ar paroli',
       metaAdditionalInfoPageCountTitle: 'Lappušu skaits',
       metaAdditionalInfoSlideCountTitle: 'Slaidu skaits',
       metaAdditionalInfoPageCountLabelSingle: 'lappuse',
       metaAdditionalInfoPageCountLabelMulti: 'lappuses',
       metaAdditionalInfoSlideCountLabelSingle: 'slaids',
       metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
-      metaAdditionalInfoeSigned: 'Dokuments parakstīts ar drošu elektronisko parakstu',
     }),
   },
 });
@@ -84,16 +81,6 @@ const additionalInfoTitle = computed(() => {
   }
   if (props.customItem.meta?.type?.endsWith('.presentation')) {
     return props.texts.metaAdditionalInfoSlideCountTitle;
-  }
-  return '';
-});
-
-const badgeTitle = computed(() => {
-  if (props.customItem.meta.eSigned && props.texts.metaAdditionalInfoeSigned) {
-    return props.texts.metaAdditionalInfoeSigned;
-  }
-  if (props.texts.metaAdditionalInfoProtectedArchive) {
-    return props.texts.metaAdditionalInfoProtectedArchive;
   }
   return '';
 });
@@ -181,23 +168,23 @@ const badgeTitle = computed(() => {
           <div class="lx-file-preview" v-else>
             <LxIcon v-if="!props.imagePreview" customClass="lx-icon" :value="props.defaultIcon" />
 
-            <p
-              v-if="props.additionalBagdeIcon && props.additionalBagdeType"
-              class="lx-badge"
-              :class="[
-                {
-                  'lx-badge-info':
-                    additionalBagdeType === 'default' || additionalBagdeType === 'info',
-                },
-                { 'lx-badge-warning': additionalBagdeType === 'warning' },
-              ]"
-            >
-              <LxIcon
-                :title="badgeTitle"
-                customClass="lx-icon"
-                :value="props.additionalBagdeIcon"
-              />
-            </p>
+            <template v-if="props.additionalIconAndType && props.additionalIconAndType.length > 0">
+              <p
+                v-for="(item, index) in additionalIconAndType"
+                :key="item.id"
+                class="lx-badge"
+                :class="[
+                  { 'lx-second-badge': index === 1 },
+                  { 'lx-third-badge': index === 2 },
+                  { 'lx-pass-protected-badge': item.type === 'pass-protected' },
+                  { 'lx-esign-badge': item.type === 'esign' },
+                  { 'lx-c2pa-sign-badge': item.type === 'c2pa-sign' },
+                  { 'lx-created-using-ai-badge': item.type === 'created-using-ai' },
+                ]"
+              >
+                <LxIcon :title="item.title" customClass="lx-icon" :value="item.icon" />
+              </p>
+            </template>
 
             <img v-if="props.imagePreview" :src="props.imagePreview" alt="Image Preview" />
             <div
@@ -281,24 +268,26 @@ const badgeTitle = computed(() => {
             <div class="lx-file-name-main-data-wrapper">
               <div class="lx-file-name-wrapper">
                 <p class="lx-file-name">{{ props.customItem.name }}</p>
-                <p
-                  v-if="props.additionalBagdeIcon && props.additionalBagdeType"
-                  class="lx-badge lx-compact-badge"
-                  :class="[
-                    {
-                      'lx-badge-info':
-                        additionalBagdeType === 'default' || additionalBagdeType === 'info',
-                    },
-                    { 'lx-badge-warning': additionalBagdeType === 'warning' },
-                    { 'lx-badge-info': additionalBagdeType === 'info' },
-                  ]"
+
+                <template
+                  v-if="props.additionalIconAndType && props.additionalIconAndType.length > 0"
                 >
-                  <LxIcon
-                    :title="badgeTitle"
-                    customClass="lx-icon"
-                    :value="props.additionalBagdeIcon"
-                  />
-                </p>
+                  <p
+                    v-for="(item, index) in additionalIconAndType"
+                    :key="item.id"
+                    class="lx-badge lx-compact-badge"
+                    :class="[
+                      { 'lx-second-badge': index === 1 },
+                      { 'lx-third-badge': index === 2 },
+                      { 'lx-pass-protected-badge': item.type === 'pass-protected' },
+                      { 'lx-esign-badge': item.type === 'esign' },
+                      { 'lx-c2pa-sign-badge': item.type === 'c2pa-sign' },
+                      { 'lx-created-using-ai-badge': item.type === 'created-using-ai' },
+                    ]"
+                  >
+                    <LxIcon :title="item.title" customClass="lx-icon" :value="item.icon" />
+                  </p>
+                </template>
               </div>
 
               <p class="lx-file-main-additional-info lx-secondary">

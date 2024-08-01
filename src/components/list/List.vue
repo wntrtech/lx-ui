@@ -933,7 +933,7 @@ function moveDraggableItem(direction, element, groupType) {
           <LxButton
             v-if="hasSelecting && selectedItems.length > 0 && kind !== 'draggable'"
             :icon="
-              selectedItems?.length === items?.length
+              selectedItems?.length === items?.length && selectingKind !== 'single'
                 ? 'checkbox-filled'
                 : selectingKind === 'multiple'
                 ? 'checkbox-indeterminate'
@@ -1152,7 +1152,7 @@ function moveDraggableItem(direction, element, groupType) {
           @select-all="selectSection(group)"
         >
           <ul
-            :id="id"
+            :id="`${id}-${prepareCode(group.id)}`"
             class="lx-list"
             :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
             v-if="
@@ -1372,7 +1372,7 @@ function moveDraggableItem(direction, element, groupType) {
         :label="group.name"
       >
         <div
-          :id="id"
+          :id="`${id}-${prepareCode(group.id)}`"
           class="lx-list"
           :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
         >

@@ -68,6 +68,7 @@ const refAutocomplete = ref();
 
 const refQuery = ref();
 const refRoot = ref();
+const refListbox = ref();
 const query = ref();
 const activeQuery = ref();
 const loadingState = ref(false);
@@ -76,6 +77,7 @@ const itemsModel = ref({});
 const detailedModeModal = ref();
 const detailsSwitchType = ref('advanced-search');
 const panelWidth = ref();
+const isInputFocused = ref(false);
 
 const globalEnvironment = useLx().getGlobals()?.environment;
 const convertBooleanToString = (value) => (typeof value === 'boolean' ? value.toString() : value);
@@ -168,13 +170,8 @@ const mergeItems = (newItems, storedItems) => {
 };
 
 watch([model, () => allItems.value], ([newModelValue]) => {
-  // Update selected item or items based on the new model value
-  if (newModelValue) {
-    if (
-      Array.isArray(newModelValue) &&
-      newModelValue.length > 0 &&
-      props.selectingKind === 'multiple'
-    ) {
+  if (newModelValue && newModelValue.length > 0) {
+    if (Array.isArray(newModelValue) && props.selectingKind === 'multiple') {
       activate();
       const selectedArray = newModelValue
         .map((id) => findItemById(id, allItems.value))
@@ -205,6 +202,7 @@ watch([model, () => allItems.value], ([newModelValue]) => {
       }
     }
   } else {
+    // Reset everything if newModelValue is empty
     itemsModel.value = {};
     selectedItem.value = null;
     selectedItems.value = [];
@@ -311,12 +309,8 @@ function getName(returnPlaceholder = true) {
       result = multipleItems.map((item) => item[props.nameAttribute]).join(', ');
     }
   } else if (model.value) {
-    // When model is a single value (not an array)
-    const selectedItem = filteredItems?.value.find(
-      (obj) => getIdAttributeString(obj) === model.value
-    );
-    if (selectedItem) {
-      result = selectedItem[props.nameAttribute];
+    if (selectedItem.value) {
+      result = selectedItem.value[props.nameAttribute];
     }
   }
   return result;
@@ -337,6 +331,23 @@ function initSearchInput() {
   if (refQuery.value) refQuery.value.focus();
 }
 
+function initInputFocus() {
+  highlightedItemId.value = null;
+  refQuery.value.focus();
+}
+
+function handleMenuKeydown(e) {
+  const isPrintableChar = e.key.length === 1 && e.key.match(/\S/);
+  if (isPrintableChar) {
+    if (!menuOpen.value) {
+      query.value = null
+      menuOpen.value = true;
+    }
+    highlightedItemId.value = null;
+    initInputFocus();
+  }
+}
+
 function openMenu() {
   if (!props.disabled && menuOpen.value === false) {
     if (!menuOpen.value) {
@@ -351,15 +362,24 @@ function openMenu() {
 
 const highlightedItemId = ref(null);
 
+function closeOnClickOutside() {
+  if (menuOpen.value) {
+    menuOpen.value = false;
+  }
+  highlightedItemId.value = null;
+}
+
 function closeMenu() {
   if (menuOpen.value) {
     menuOpen.value = false;
   }
   highlightedItemId.value = null;
-  // if (refQuery.value) refQuery.value.focus();
+  nextTick(() => {
+    refQuery.value.focus();
+  });
 }
 
-onClickOutside(refRoot, closeMenu);
+onClickOutside(refRoot, closeOnClickOutside);
 
 function clear() {
   itemsModel.value = {};
@@ -372,6 +392,11 @@ function clear() {
     model.value = [];
     selectedItems.value = [];
   }
+
+  if (!menuOpen.value) {
+    openMenu();
+    return;
+  }
 }
 
 function selectSingle(item) {
@@ -381,6 +406,47 @@ function selectSingle(item) {
     closeMenu();
   }
 }
+
+function focusOnDropDown(e = { target: { id: null }, shiftKey: false, key: '' }) {
+  if (e.shiftKey && e.key === 'Tab') {
+    if (!menuOpen.value && e.target && e.target.id !== 'clearButton') {
+      menuOpen.value = true;
+      nextTick(() => {
+        initSearchInput();
+      });
+    }
+    return;
+  }
+
+  if (e.key === 'Tab') {
+    if (menuOpen.value && e.target && e.target.id !== 'clearButton') {
+      closeMenu();
+      nextTick(() => {
+        refQuery.value.focus();
+      });
+    } else if (!menuOpen.value && e.target && e.target.id !== 'clearButton') {
+      nextTick(() => {
+        openMenu();
+      });
+    }
+  }
+}
+
+const handleFocusOut = (e) => {
+  isInputFocused.value = false;
+  if (!refListbox.value.contains(e.relatedTarget)) {
+    menuOpen.value = false;
+  }
+};
+
+const handleInputFocus = () => {
+  isInputFocused.value = true;
+};
+
+const shouldHideInput = computed(() => {
+  if (!menuOpen.value && hasValue) return true;
+  return false;
+});
 
 function onDown() {
   if (!menuOpen.value) {
@@ -423,62 +489,71 @@ function onUp() {
 }
 
 function onEnter() {
+  if (document.activeElement?.id === 'clearButton') {
+    clear();
+    closeMenu();
+    openMenu();
+    return;
+  }
+
   if (!menuOpen.value) {
     openMenu();
     return;
   }
 
+  let selectedValue;
+
   if (highlightedItemId.value) {
-    try {
-      if (props.selectingKind === 'multiple') {
-        const selectedValue = highlightedItemId.value;
+    selectedValue = highlightedItemId.value;
+  } else if (filteredItems.value.length > 0 && query.value && query.value.trim() !== '') {
+    selectedValue = filteredItems.value[0][props.idAttribute];
+  }
 
-        const idModel = ref(itemsModel.value[selectedValue]);
-        idModel.value = !idModel.value;
+  if (selectedValue) {
+    if (props.selectingKind === 'multiple') {
+      const idModel = ref(itemsModel.value[selectedValue]);
+      idModel.value = !idModel.value;
 
-        if (Array.isArray(model.value)) {
-          if (idModel.value) {
-            // Check if item already exists in model
-            const index = model.value.indexOf(selectedValue);
-            if (index === -1) {
-              // Add item to model
-              model.value = [...model.value, selectedValue];
-              itemsModel.value[selectedValue] = true;
-            } else {
-              // Remove item from model
-              const updatedModel = model.value.filter((id) => id !== selectedValue);
-              model.value = [...updatedModel];
-            }
+      if (Array.isArray(model.value)) {
+        if (idModel.value) {
+          // Check if item already exists in model
+          const index = model.value.indexOf(selectedValue);
+          if (index === -1) {
+            // Add item to model
+            model.value = [...model.value, selectedValue];
+            itemsModel.value[selectedValue] = true;
           } else {
-            itemsModel.value[selectedValue] = false;
-            const index = model.value.indexOf(selectedValue);
-            if (index > -1) {
-              // Remove item from model
-              const updatedModel = model.value.filter((id) => id !== selectedValue);
-              model.value = [...updatedModel];
-            }
+            // Remove item from model
+            const updatedModel = model.value.filter((id) => id !== selectedValue);
+            model.value = [...updatedModel];
           }
-          // Sort model according to order of items
-          model.value.sort(
-            (a, b) =>
-              Object.keys(itemsModel.value).indexOf(a.toString()) -
-              Object.keys(itemsModel.value).indexOf(b.toString())
-          );
         } else {
-          // Initialize model.value as an array if it's not already
-          model.value = [selectedValue];
-          itemsModel.value[selectedValue] = true;
+          itemsModel.value[selectedValue] = false;
+          const index = model.value.indexOf(selectedValue);
+          if (index > -1) {
+            // Remove item from model
+            const updatedModel = model.value.filter((id) => id !== selectedValue);
+            model.value = [...updatedModel];
+          }
         }
+
+        // Sort model according to order of items
+        model.value.sort(
+          (a, b) =>
+            Object.keys(itemsModel.value).indexOf(a.toString()) -
+            Object.keys(itemsModel.value).indexOf(b.toString())
+        );
       } else {
-        model.value = highlightedItemId.value;
-        closeMenu();
+        // Initialize model.value as an array if it's not already
+        model.value = [selectedValue];
+        itemsModel.value[selectedValue] = true;
       }
-    } finally {
-      // In case of 'single' selection, close the menu after selection
-      if (props.selectingKind === 'single') {
-        closeMenu();
-      }
+    } else {
+      model.value = selectedValue;
+      closeMenu();
     }
+  } else {
+    focusOnDropDown();
   }
 }
 
@@ -536,15 +611,6 @@ function focusPreviousInputElement() {
     // @ts-ignore
     document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
   });
-}
-
-function focusOnDropDown() {
-  if (menuOpen.value) {
-    closeMenu();
-    nextTick(() => {
-      refAutocomplete.value.focus();
-    });
-  }
 }
 
 function activate() {
@@ -651,11 +717,7 @@ const displaySelectedItems = computed(() => {
 
 const shouldShowIcon = computed(() => {
   if (props.selectingKind === 'single') {
-    return (
-      !hasValue.value &&
-      !props.hasDetails &&
-      !(loadingState.value || props.loading)
-    );
+    return !hasValue.value && !props.hasDetails && !(loadingState.value || props.loading);
   }
   if (props.selectingKind === 'multiple') {
     if (props.detailMode === 'simple') {
@@ -820,7 +882,7 @@ onMounted(() => {
 
     <template v-else>
       <LxInfoWrapper
-        :placement="'auto'"
+        placement="auto"
         :disabled="
           selectingKind === 'single' ||
           (selectingKind === 'multiple' && (!model || !model?.length || menuOpen))
@@ -842,7 +904,7 @@ onMounted(() => {
         >
           <Popper
             placement="bottom"
-            offset-distance="0,9"
+            offset-distance="0"
             :hover="false"
             :arrow="false"
             :disabled="disabled"
@@ -856,16 +918,43 @@ onMounted(() => {
                   ref="refAutocomplete"
                   class="lx-autocomplete"
                   :title="tooltip"
+                  tabindex="-1"
                   @click="openMenu"
                   @keydown.esc.prevent="closeMenu"
                   @keydown.enter.prevent="onEnter"
                   @keydown.down.prevent="focusNextInputElement"
                   @keydown.up.prevent="focusPreviousInputElement"
-                  @keydown.tab.prevent="focusOnDropDown"
                   @keydown.f3.prevent="openDetails"
-                  tabindex="0"
+                  @keyup.tab.prevent="focusOnDropDown"
                 >
-                  <div class="lx-autocomplete-default-panel" @click="openMenu" :title="tooltip">
+                  <div
+                    class="lx-autocomplete-default-panel"
+                    :class="[{ multiselect: selectingKind === 'multiple' }]"
+                    :title="tooltip"
+                  >
+                    <div
+                      class="lx-autocomplete-default-data"
+                      :class="[
+                        { emptyModel: model?.length === 0 || !model || selectingKind === 'single' },
+                      ]"
+                    >
+                      <div class="lx-text-input-wrapper" :data-invalid="invalid ? '' : null">
+                        <input
+                          :class="[{ 'lx-hidden-value': shouldHideInput }]"
+                          ref="refQuery"
+                          :placeholder="!shouldHideInput ? getName() : null"
+                          v-model="query"
+                          class="lx-text-input lx-value-picker-placeholder"
+                          role="search"
+                          tabindex="0"
+                          :readonly="shouldHideInput"
+                          @focusout="handleFocusOut"
+                          @focus="handleInputFocus"
+                          @keydown="handleMenuKeydown"
+                        />
+                      </div>
+                    </div>
+
                     <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag">
                       <div class="lx-tag-label">{{ model?.length }}</div>
                       <div class="lx-tag-button">
@@ -880,66 +969,50 @@ onMounted(() => {
                         />
                       </div>
                     </div>
-                    <div
-                      v-if="!menuOpen && hasValue"
-                      class="lx-value"
-                      :title="selectingKind === 'single' ? getName(false) : ''"
-                    >
-                      <template v-if="variant === 'country' && selectingKind === 'single'">
-                        <LxFlagItemDisplay
-                          :value="selectedItem"
-                          :id-attribute="idAttribute"
-                          :name-attribute="nameAttribute"
-                        />
-                      </template>
-                      <template v-if="variant === 'state' && selectingKind === 'single'">
-                        <LxStateDisplay
-                          :value="selectedItem?.id"
-                          :dictionary="[
-                            {
-                              value: selectedItem?.id,
-                              displayName: selectedItem?.name,
-                              displayType: props.dictionary?.displayType,
-                              displayShape: props.dictionary?.displayShape,
-                            },
-                          ]"
-                        />
-                      </template>
-                      <template
-                        v-if="
-                          variant === 'default' ||
-                          variant === 'custom' ||
-                          (variant === 'country' && selectingKind === 'multiple') ||
-                          (variant === 'state' && selectingKind === 'multiple')
-                        "
-                      >
-                        {{ getName() }}
-                      </template>
-                    </div>
-                    <div v-if="!menuOpen && !hasValue" class="lx-placeholder">
-                      {{ getName() }}
-                    </div>
-                    <div
-                      class="lx-autocomplete-default-data"
-                      :class="[
-                        { emptyModel: model?.length === 0 || !model || selectingKind === 'single' },
-                      ]"
-                    >
+
+                    <template v-if="!menuOpen && hasValue">
                       <div
-                        v-show="menuOpen"
-                        class="lx-text-input-wrapper"
-                        :data-invalid="invalid ? '' : null"
+                        class="lx-value"
+                        :title="selectingKind === 'single' ? getName(false) : ''"
                       >
-                        <input
-                          ref="refQuery"
-                          :placeholder="getName()"
-                          v-model="query"
-                          class="lx-text-input lx-value-picker-placeholder"
-                          role="search"
-                          tabindex="-1"
-                        />
+                        <template v-if="variant === 'country' && selectingKind === 'single'">
+                          <LxFlagItemDisplay
+                            :value="selectedItem"
+                            :id-attribute="idAttribute"
+                            :name-attribute="nameAttribute"
+                          />
+                        </template>
+                        <template v-if="variant === 'state' && selectingKind === 'single'">
+                          <LxStateDisplay
+                            :value="selectedItem?.id"
+                            :dictionary="[
+                              {
+                                value: selectedItem?.id,
+                                displayName: selectedItem?.name,
+                                displayType: props.dictionary?.displayType,
+                                displayShape: props.dictionary?.displayShape,
+                              },
+                            ]"
+                          />
+                        </template>
+                        <template
+                          v-if="
+                            variant === 'default' ||
+                            variant === 'custom' ||
+                            (variant === 'country' && selectingKind === 'multiple') ||
+                            (variant === 'state' && selectingKind === 'multiple')
+                          "
+                        >
+                          {{ getName() }}
+                        </template>
                       </div>
-                    </div>
+                    </template>
+
+                    <template v-if="!menuOpen && !hasValue">
+                      <div class="lx-placeholder">
+                        {{ getName() }}
+                      </div>
+                    </template>
                   </div>
                 </div>
                 <div class="lx-icons">
@@ -948,9 +1021,9 @@ onMounted(() => {
                     customClass="lx-modifier-icon lx-invalidation-icon"
                     value="invalid"
                   />
-                  <div v-show="shouldShowIcon">
-                    <LxIcon customClass="lx-modifier-icon" :value="icon" />
-                  </div>
+
+                  <LxIcon v-show="shouldShowIcon" customClass="lx-modifier-icon" :value="icon" />
+
                   <div
                     v-show="
                       selectingKind === 'single' &&
@@ -960,11 +1033,12 @@ onMounted(() => {
                     "
                   >
                     <LxButton
+                      id="clearButton"
                       :disabled="disabled"
                       icon="close"
                       kind="ghost"
-                      @click="clear"
                       :title="texts.clear"
+                      @click="clear"
                     />
                   </div>
                   <div
@@ -977,6 +1051,7 @@ onMounted(() => {
                     "
                   >
                     <LxButton
+                      id="clearButton"
                       :disabled="disabled"
                       icon="close"
                       kind="ghost"
@@ -991,6 +1066,9 @@ onMounted(() => {
                       kind="ghost"
                       :title="texts.detailsButton"
                       @click="openDetails"
+                      @keydown.enter="openDetails"
+                      @keydown.tab="focusOnDropDown"
+                      @keydown.f3.prevent="openDetails"
                     />
                   </div>
                   <div class="lx-autocomplete-loader" v-show="loadingState || loading">
@@ -1006,15 +1084,18 @@ onMounted(() => {
                   <transition name="appear-down">
                     <div
                       v-show="menuOpen && !loading"
-                      :class="`lx-dropdown-panel`"
+                      ref="refListbox"
+                      class="lx-dropdown-panel"
                       tabindex="-1"
                       role="listbox"
                       @keydown.esc.prevent="closeMenu"
-                      @keydown.enter.prevent="onEnter"
-                      @keydown.space.prevent="onEnter"
+                      @keydown.enter="onEnter"
                       @keydown.up.prevent="focusPreviousInputElement"
                       @keydown.down.prevent="focusNextInputElement"
-                      @keydown.tab.prevent="focusOnDropDown"
+                      @keydown.f3.prevent="openDetails"
+                      @keydown.tab="closeMenu"
+                      @keydown.backspace="initInputFocus"
+                      @keydown="handleMenuKeydown"
                     >
                       <template v-if="filteredItems?.length">
                         <template v-for="item in filteredItems" :key="item[idAttribute]">
@@ -1024,7 +1105,8 @@ onMounted(() => {
                                 ? selectSingle(item)
                                 : selectMultiple(item)
                             "
-                            tabindex="0"
+                            @keydown.tab="closeMenu"
+                            tabindex="-1"
                             role="option"
                             class="lx-value-picker-item"
                             :class="[
@@ -1040,17 +1122,19 @@ onMounted(() => {
                             :group-id="groupId"
                             :label="item[nameAttribute]"
                             :disabled="loading"
+                            :title="item[nameAttribute]"
                           >
                             <LxCheckbox
                               v-if="selectingKind === 'multiple'"
-                              :id="getItemId(item.id)"
+                              :id="getItemId(item[idAttribute])"
                               :group-id="groupId"
                               v-model="itemsModel[item[idAttribute]]"
                               :disabled="disabled"
-                              :value="item.id"
+                              :value="item[idAttribute]"
+                              tabindex="-1"
                               @click="selectMultiple(item)"
                             />
-                            <label :for="item.id">
+                            <label :for="item[idAttribute]">
                               <template v-if="variant === 'country'">
                                 <LxFlagItemDisplay
                                   :value="item"
@@ -1061,11 +1145,11 @@ onMounted(() => {
 
                               <template v-if="variant === 'state'">
                                 <LxStateDisplay
-                                  :value="item.id"
+                                  :value="item[idAttribute]"
                                   :dictionary="[
                                     {
-                                      value: item.id,
-                                      displayName: item.name,
+                                      value: item[idAttribute],
+                                      displayName: item[nameAttribute],
                                       displayType: props.dictionary?.displayType,
                                       displayShape: props.dictionary?.displayShape,
                                     },
