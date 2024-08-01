@@ -3,6 +3,11 @@
   background-color: var(--color-region);
   grid-template-columns: minmax(0, 1fr);
   border: var(--region-border);
+  position: relative;
+}
+
+.lx-appendable-list-item .lx-form-grid {
+  position: unset;
 }
 
 .lx-data-block .lx-form-grid,
