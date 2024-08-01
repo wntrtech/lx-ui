@@ -30,6 +30,10 @@
 
 .lx-expander .lx-head .lx-icon-wrapper {
   display: flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
 }
 
 .lx-expander:not([data-disabled]) .lx-head:hover {

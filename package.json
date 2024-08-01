@@ -45,6 +45,7 @@
     "@vueuse/core": "^10.7.2",
     "avvvatars-vue": "^1.0.2",
     "axios": "^1.6.5",
+    "c2pa": "^0.22.3",
     "cyrillic-to-translit-js": "^3.2.1",
     "date-fns": "^3.3.1",
     "exifreader": "^4.22.1",

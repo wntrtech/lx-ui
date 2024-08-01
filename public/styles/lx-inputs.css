@@ -3459,7 +3459,7 @@ input[type='range']:hover::-moz-range-thumb {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 0.25rem 0 0.25rem;
+  padding: 0.25rem;
   line-height: 1em;
   border: 2px solid var(--color-background);
   text-align: center;
@@ -3472,15 +3472,23 @@ input[type='range']:hover::-moz-range-thumb {
   right: 0.4rem;
 }
 
+.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-second-badge {
+  right: 2.5rem;
+}
+
+.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-third-badge {
+  right: 4.5rem;
+}
+
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge {
   background: var(--color-data);
   max-width: 1.6rem;
-  max-height: 1.6rem;
+  max-height: 2rem;
   border-radius: 1rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 0.25rem 0 0.25rem;
+  padding: 0 0.25rem;
   line-height: 1em;
   border: 2px solid var(--color-background);
   text-align: center;
@@ -3491,34 +3499,57 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge svg,
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge svg {
   width: 1rem;
-  height: 1.5rem;
+  height: 1rem;
   fill: var(--color-interactive-foreground);
   margin: 0;
 }
 
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge svg {
-  width: 0.9rem;
-  height: 1.4rem;
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge {
+  margin-right: 0.3rem;
+  padding: 0;
+  border: none;
 }
 
-.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-badge-info,
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-badge-info {
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge.lx-pass-protected-badge {
+  border: 2px solid var(--color-orange);
+}
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge.lx-esign-badge {
+  border: 2px solid var(--color-blue);
+}
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge.lx-created-using-ai-badge {
+  border: 2px solid var(--color-purple);
+}
+
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge svg {
+  width: 0.9rem;
+  height: 0.9rem;
+  margin: 0.2rem
+}
+
+.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-esign-badge,
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-esign-badge {
   background: var(--color-blue);
 }
 
-.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-badge-warning,
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-badge-warning {
+.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-pass-protected-badge,
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-pass-protected-badge {
   background: var(--color-orange);
 }
 
-.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-badge-good,
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-badge-good {
-  background: var(--color-green);
+.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-c2pa-sign-badge,
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-c2pa-sign-badge {
+  background: var(--color-region);
+  border: 2px solid var(--color-blue);
 }
 
-.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-badge-important,
-.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-badge-important {
-  background: var(--color-red);
+.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-created-using-ai-badge,
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-created-using-ai-badge {
+  background: var(--color-purple);
+}
+
+.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-c2pa-sign-badge svg,
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-c2pa-sign-badge svg {
+  fill: var(--color-blue);
 }
 
 .lx-file-name-wrapper {

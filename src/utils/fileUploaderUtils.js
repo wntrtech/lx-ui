@@ -1,17 +1,36 @@
 import mime from 'mime';
-import ExifReader from 'exifreader';
-import JSZip from 'jszip';
-
 import useLx from '@/hooks/useLx';
 import { lxDateUtils, lxDevUtils } from '@/utils';
 import { getTexts } from '@/utils/visualPickerUtils';
 
 const DASH = '—';
 
-// Function to dynamically import X509 from jsrsasign
-async function getX509() {
+// Functions to dynamically load packages
+async function loadX509() {
   const { X509 } = await import('jsrsasign');
   return X509;
+}
+
+async function loadExifReader() {
+  const ExifReader = await import('exifreader');
+  return ExifReader;
+}
+
+async function loadJSZip() {
+  const JSZip = await import('jszip');
+  return JSZip;
+}
+
+async function loadC2paComponents() {
+  const { createC2pa } = await import('c2pa');
+  const { selectProducer } = await import('c2pa');
+
+  // eslint-disable-next-line import/no-unresolved
+  const { default: wasmSrc } = await import('c2pa/dist/assets/wasm/toolkit_bg.wasm?url');
+  // eslint-disable-next-line import/no-unresolved, import/extensions
+  const { default: workerSrc } = await import('c2pa/dist/c2pa.worker.js?url');
+
+  return { createC2pa, selectProducer, wasmSrc, workerSrc };
 }
 
 export function acceptedMimeImage(name) {
@@ -136,6 +155,7 @@ function getArchiveContentData(archive) {
 }
 
 function getEDocContentData(files) {
+  if (!files) return [];
   const countries = getTexts('europe');
 
   return files.map((file) => ({
@@ -148,6 +168,8 @@ function getEDocContentData(files) {
     personalCode: file.signerInfo?.personalCode,
     eSignIssuer: file.signerInfo?.eSignIssuer,
     eSignDate: file.signerInfo?.eSignDate,
+    isAIGenerated: file.isAIGenerated || null,
+    eSignType: file.signerInfo.eSignType,
   }));
 }
 
@@ -182,10 +204,9 @@ function extractCertData(certString) {
   return map;
 }
 
-// Helper function to extract signer information from X.509 certificate
 async function extractSignerInfoFromCertificate(base64Cert, signingTimeValue) {
   const pemCert = `-----BEGIN CERTIFICATE-----\n${base64Cert}\n-----END CERTIFICATE-----`;
-  const X509 = await getX509();
+  const X509 = await loadX509();
   const c = new X509();
 
   c.readCertPEM(pemCert);
@@ -205,8 +226,66 @@ async function extractSignerInfoFromCertificate(base64Cert, signingTimeValue) {
     personalCode: cleanedPersonalCode || DASH,
     eSignIssuer: issuerObj.O || DASH,
     eSignDate: lxDateUtils.formatFull(signingTimeValue) || DASH,
+    eSignType: 'edoc',
   };
   return signerInfo;
+}
+
+export async function extractC2paMetadata(arrayBuffer, fileType) {
+  const aiToolList = [
+    'Adobe Firefly',
+    'DALL-E',
+    'MidJourney',
+    'Stable Diffusion',
+    'RunwayML',
+    'Bing Image Creator',
+    'ChatGPT',
+  ];
+
+  const { createC2pa, selectProducer, wasmSrc, workerSrc } = await loadC2paComponents();
+
+  const c2pa = await createC2pa({
+    wasmSrc,
+    workerSrc,
+  });
+
+  const c2paBlob = new Blob([arrayBuffer], { type: fileType });
+
+  try {
+    const { manifestStore } = await c2pa.read(c2paBlob);
+    const activeManifest = manifestStore?.activeManifest;
+    const assertionDataActions = activeManifest.assertions.get('c2pa.actions');
+
+    let softwareAgent = null;
+
+    if (assertionDataActions && assertionDataActions?.length > 0) {
+      const { actions } = assertionDataActions[0].data;
+      const softwareAgentAction = actions.find((action) => action.softwareAgent);
+      if (softwareAgentAction) {
+        softwareAgent = softwareAgentAction.softwareAgent;
+      }
+    }
+
+    // Check if softwareAgent or if its not present claimGenerator name matches any AI tool name in the list
+    const isAIGenerated =
+      aiToolList.some((aiTool) => softwareAgent?.includes(aiTool)) ||
+      aiToolList.some((aiTool) => activeManifest.claimGenerator.includes(aiTool));
+
+    return {
+      signatureId: activeManifest.signatureInfo?.cert_serial_number,
+      isAIGenerated,
+      signerInfo: {
+        eSignType: 'c2pa',
+        nameAndSurname: selectProducer(activeManifest)?.name, // producer
+        eSignIssuer: activeManifest.signatureInfo?.issuer, // signatureIssuer
+        eSignDate: activeManifest.signatureInfo?.time // signatureDate
+          ? lxDateUtils.formatFull(activeManifest.signatureInfo?.time)
+          : '',
+      },
+    };
+  } catch (error) {
+    return null;
+  }
 }
 
 export async function getMeta(file, texts) {
@@ -223,20 +302,35 @@ export async function getMeta(file, texts) {
     reader.onload = async (e) => {
       try {
         const arrayBuffer = e.target.result;
+        const acceptedImageTypes = acceptedMimeImage(file.name);
+        const acceptedArchiveTypes = acceptedMimeArchive(file.name);
+        const acceptedOfficeTypes = acceptedMimeOffice(file.name);
+        const acceptedESginedDocs = acceptedESignedDocument(file.name);
 
         // Handle image files with ExifReader
-        if (acceptedMimeImage(file.name)) {
+        if (acceptedImageTypes) {
+          const ExifReader = await loadExifReader();
           const exif = ExifReader.load(arrayBuffer);
           meta.exif = exif;
+
+          // Extract c2pa metadata
+          const c2paMeta = await extractC2paMetadata(arrayBuffer, file.type);
+
+          if (c2paMeta) {
+            meta.eSignMeta = [c2paMeta];
+            meta.c2paSigned = c2paMeta.signatureId;
+            meta.createdUsingAi = c2paMeta.isAIGenerated;
+          }
         }
 
         // Handle zip archive files
-        if (acceptedMimeArchive(file.name)) {
+        if (acceptedArchiveTypes) {
+          const JSZip = await loadJSZip();
           const zip = await JSZip.loadAsync(arrayBuffer);
 
           const promises = [];
           meta.archive = [];
-          zip.forEach((relativePath, zipEntry) => {
+          zip.forEach((_, zipEntry) => {
             if (!zipEntry.dir && !isMacOsMetaFile(zipEntry.name)) {
               promises.push(
                 zipEntry.async('arraybuffer').then((data) => {
@@ -251,7 +345,8 @@ export async function getMeta(file, texts) {
         }
 
         // Handle Office files (docx, pptx, xlsx)
-        if (acceptedMimeOffice(file.name)) {
+        if (acceptedOfficeTypes) {
+          const JSZip = await loadJSZip();
           const zip = await JSZip.loadAsync(arrayBuffer);
 
           const coreXmlFile = zip.file('docProps/core.xml');
@@ -279,7 +374,8 @@ export async function getMeta(file, texts) {
         }
 
         // Handle eSign files (edoc, asice)
-        if (acceptedESignedDocument(file.name)) {
+        if (acceptedESginedDocs) {
+          const JSZip = await loadJSZip();
           const zip = await JSZip.loadAsync(arrayBuffer);
 
           const promises = [];
@@ -475,7 +571,7 @@ function stringToDate(dateString) {
   return date.toLocaleString();
 }
 
-function getImageMainData(advancedFile, texts) {
+function getImageMainData(advancedFile, texts, additionalIconAndType) {
   const author =
     advancedFile.meta.exif?.Artist?.description ||
     advancedFile.meta.exif?.XPAuthor?.description ||
@@ -513,6 +609,7 @@ function getImageMainData(advancedFile, texts) {
       label: texts.metaMainLastModified,
       value: lastChanges,
     },
+    additionalIconAndType,
   };
 
   return mainData;
@@ -773,21 +870,23 @@ export function provideDefaultIcon(advancedFile) {
     return getIconForExtension(extension);
   }
   if (typeof advancedFile === 'object') {
+    const acceptedImageTypes = acceptedMimeImage(advancedFile.meta?.name);
+    const acceptedArchiveTypes = acceptedMimeArchive(advancedFile.meta?.name);
+    const acceptedOfficeTypes = acceptedMimeOffice(advancedFile.meta?.name);
+    const acceptedESginedDocs = acceptedESignedDocument(advancedFile.meta?.name);
+
     switch (true) {
-      case acceptedMimeImage(advancedFile.meta?.name):
+      case acceptedImageTypes:
         return 'file-image';
-      case acceptedMimeArchive(advancedFile.meta?.name):
+      case acceptedArchiveTypes:
         return 'file-archive';
-      case acceptedMimeOffice(advancedFile.meta?.name) &&
-        advancedFile.meta?.type?.endsWith('.presentation'):
+      case acceptedOfficeTypes && advancedFile.meta?.type?.endsWith('.presentation'):
         return 'file-slides';
-      case acceptedMimeOffice(advancedFile.meta?.name) &&
-        advancedFile.meta?.type?.endsWith('.sheet'):
+      case acceptedOfficeTypes && advancedFile.meta?.type?.endsWith('.sheet'):
         return 'file-spreadsheet';
-      case acceptedMimeOffice(advancedFile.meta?.name) &&
-        advancedFile.meta?.type?.endsWith('.document'):
+      case acceptedOfficeTypes && advancedFile.meta?.type?.endsWith('.document'):
         return 'file-rich-text';
-      case acceptedESignedDocument(advancedFile.meta?.name):
+      case acceptedESginedDocs:
         return 'file-edoc';
       default:
         return 'file';
@@ -796,7 +895,7 @@ export function provideDefaultIcon(advancedFile) {
   return 'file';
 }
 
-export function getDetails(advancedFile, base64String, texts) {
+export function getDetails(advancedFile, base64String, texts, additionalIconAndType) {
   if (!advancedFile || !advancedFile.meta) {
     return getDefaultMainData(advancedFile, texts);
   }
@@ -809,7 +908,8 @@ export function getDetails(advancedFile, base64String, texts) {
       if (acceptedMimeImage(advancedFile.name)) {
         details.preview = base64String;
       }
-      details.mainData = getImageMainData(advancedFile, texts);
+      details.mainData = getImageMainData(advancedFile, texts, additionalIconAndType);
+      details.edocContentData = getEDocContentData(advancedFile.meta.eSignMeta);
       details.imageData = getImageData(advancedFile.meta.exif, texts);
       if (advancedFile.meta.exif.GPSLatitude && advancedFile.meta.exif.GPSLongitude) {
         details.locationData = getImageLocationData(advancedFile, texts);
