@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 
-import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
-import { generateUUID } from '@/utils/stringUtils';
-
 import LxButton from '@/components/Button.vue';
 import LxList from '@/components/list/List.vue';
 import LxModal from '@/components/Modal.vue';
+
+import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
+import { generateUUID } from '@/utils/stringUtils';
+
 import FileUploaderDetails from '@/components/fileUploader/FileUploaderDetails.vue';
 import FileUploaderItem from '@/components/fileUploader/FileUploaderItem.vue';
 
@@ -83,8 +84,6 @@ const props = defineProps({
       metaAdditionalInfoSlideCountLabelSingle: 'slaids',
       metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
       metaAdditionalInfoeSigned: 'Dokuments parakstīts ar drošu elektronisko parakstu',
-      metaAdditionalInfoc2paSigned: 'Datne parakstīta ar c2pa elektronisko parakstu',
-      metaAdditionalInfoAiCreated: 'Veidots izmantojot mākslīgo intelektu',
       metaMainTitle: 'Virsraksts',
       metaMainDescription: 'Apraksts',
       metaEDocContentLabel: 'Paraksti',
@@ -194,45 +193,34 @@ function findImagePreview(id) {
   return null;
 }
 
-function provideAdditionalIconAndType(id) {
+function provideAdditionalIcon(id) {
   const advancedFile = advancedFilesData.value.find((file) => file.id === id);
-  if (!advancedFile) return [];
+  if (!advancedFile) return '';
 
-  const returnArr = [];
+  switch (true) {
+    case advancedFile.meta?.passwordProtected:
+      return 'lock';
+    case advancedFile.meta?.eSigned:
+      return 'sign';
 
-  if (advancedFile.meta?.eSigned) {
-    returnArr.push({
-      id,
-      icon: 'sign',
-      type: 'esign',
-      title: props.texts.metaAdditionalInfoeSigned,
-    });
+    default:
+      return '';
   }
-  if (advancedFile.meta?.c2paSigned) {
-    returnArr.push({
-      id,
-      icon: 'sign',
-      type: 'c2pa-sign',
-      title: props.texts.metaAdditionalInfoc2paSigned,
-    });
+}
+
+function provideAdditionalBadgeType(id) {
+  const advancedFile = advancedFilesData.value.find((file) => file.id === id);
+  if (!advancedFile) return '';
+
+  switch (true) {
+    case advancedFile.meta?.passwordProtected:
+      return 'warning';
+    case advancedFile.meta?.eSigned:
+      return 'info';
+
+    default:
+      return '';
   }
-  if (advancedFile.meta?.createdUsingAi) {
-    returnArr.push({
-      id,
-      icon: 'ai',
-      type: 'created-using-ai',
-      title: props.texts.metaAdditionalInfoAiCreated,
-    });
-  }
-  if (advancedFile.meta?.passwordProtected) {
-    returnArr.push({
-      id,
-      icon: 'lock',
-      type: 'pass-protected',
-      title: props.texts.metaAdditionalInfoProtectedArchive,
-    });
-  }
-  return returnArr;
 }
 
 const triggerFileUpload = () => {
@@ -464,6 +452,7 @@ function openModal(id) {
         <p>{{ props.texts.draggablePlaceholder }}</p>
       </div>
     </template>
+
     <div class="lx-uploaded-file-list-wrapper">
       <LxList
         v-if="!(advancedFilesData.length === 0 && props.kind === 'single')"
@@ -487,7 +476,8 @@ function openModal(id) {
             :defaultIcon="
               fileUploaderUtils.provideDefaultIcon(advancedFilesData.find((file) => file.id === id))
             "
-            :additionalIconAndType="provideAdditionalIconAndType(id)"
+            :additionalBagdeIcon="provideAdditionalIcon(id)"
+            :additionalBagdeType="provideAdditionalBadgeType(id)"
             :imagePreview="findImagePreview(id)?.base64String"
             @downloadFile="downloadFile"
             @removeFile="removeFile"
@@ -516,8 +506,7 @@ function openModal(id) {
         fileUploaderUtils.getDetails(
           openedItem,
           storedBase64Strings.find((file) => file.id === openedItem.id)?.base64String || null,
-          props.texts,
-          provideAdditionalIconAndType(openedItem.id)
+          props.texts
         )
       "
     ></FileUploaderDetails>

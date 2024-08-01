@@ -10,7 +10,6 @@ const props = defineProps({
   label: { type: String, default: null },
   disabled: { type: Boolean, default: false },
   value: { type: String, default: 'none' },
-  tabindex: { type: String, default: '0' },
 });
 
 const emits = defineEmits(['update:modelValue', 'click']);
@@ -51,7 +50,6 @@ const click = (e) => {
       :aria-checked="model"
       :disabled="disabled"
       :value="value"
-      :tabindex="tabindex"
       @click="click"
     />
     <label :for="idValue" class="lx-checkbox-label-wrapper">

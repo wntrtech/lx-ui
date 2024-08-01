@@ -53,8 +53,6 @@ export { default as LxTextArea } from '@/components/TextArea.vue';
 export { default as LxTextInput } from '@/components/TextInput.vue';
 export { default as LxTile } from '@/components/Tile.vue';
 export { default as LxToggle } from '@/components/Toggle.vue';
-export { default as LxToolbar } from '@/components/Toolbar.vue';
-export { default as LxToolbarGroup } from '@/components/ToolbarGroup.vue';
 export { default as LxValuePicker } from '@/components/ValuePicker.vue';
 export { default as LxVisualPicker } from '@/components/VisualPicker.vue';
 export { default as LxWidget } from '@/components/Widget.vue';

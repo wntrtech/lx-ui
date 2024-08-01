@@ -532,12 +532,6 @@
   min-height: var(--row-size);
 }
 
-@media (max-width: 1800px) {
-  .lx-layout.lx-layout-default.lx-layout-digives.lx-collapsed-null nav{
-    display: none;
-  }
-}
-
 @media (max-width: 1200px) {
   .lx {
     --nav-row-size: 6rem;
@@ -610,5 +604,9 @@
 
   .lx-layout.lx-layout-default.lx-layout-digives > nav .lx-nav-panel.lx-responsive {
     display: flex;
+  }
+
+  .lx-layout.lx-layout-default.lx-layout-digives.lx-collapsed-null nav{
+    display: none;
   }
 }
