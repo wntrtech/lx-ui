@@ -103,7 +103,9 @@
 
 .lx-layout.lx-layout-default>header .lx-header .lx-main-button:focus,
 .lx-layout.lx-layout-default>header .lx-header .lx-user-button:focus {
-  border-color: var(--color-focus-background);
+  outline: 2px solid var(--color-focus-background);
+  outline-offset: -2px;
+  z-index: 1;
 }
 
 .lx-layout.lx-layout-default>header .lx-header .lx-main-button::after,
@@ -695,7 +697,8 @@ a.lx-tile:hover {
 
 .lx-layout-default .lx-nav-panel ul li .lx-button:focus,
 .lx-layout-default .lx-nav-panel ul li.lx-selected .lx-button:focus {
-  border: 2px solid var(--color-focus-background);
+  outline: 2px solid var(--color-focus-background);
+  outline-offset: -2px;
 }
 
 .lx-layout.lx-layout-cover {
@@ -1183,18 +1186,6 @@ a.lx-tile:hover {
   color: var(--color-data);
   padding: 0;
   margin: 0;
-}
-
-.lx-layout.lx-layout-public>header>.lx-header .lx-main-button {
-  display: grid;
-  gap: var(--gap);
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  padding: 0.25rem;
-  height: var(--nav-row-size);
-  padding-right: var(--gap);
-  outline: none;
-  border: 2px solid transparent;
 }
 
 .lx-layout.lx-layout-default>header .lx-header .lx-main-button {

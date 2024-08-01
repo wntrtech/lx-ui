@@ -70,12 +70,12 @@
   padding: 0.25rem;
   height: var(--nav-row-size);
   padding-right: var(--gap);
-  outline: none;
-  border: 2px solid transparent;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-main-button:focus {
-  border-color: var(--color-focus-background);
+  outline-color: var(--color-focus-background);
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-main-button:hover {
@@ -163,7 +163,8 @@
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-button.lx-button-secondary:focus {
-  border-color: var(--color-focus-background);
+  outline: 2px solid var(--color-focus-background);
+  outline-offset: -2px;
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button {
@@ -188,7 +189,8 @@
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button:focus {
-  border-color: var(--color-focus-background);
+  outline: 2px solid var(--color-focus-background);
+  outline-offset: -2px;
 }
 
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info p:not(.lx-secondary) {

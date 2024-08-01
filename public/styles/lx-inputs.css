@@ -66,7 +66,7 @@
   background: none;
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
-  top: 35%;
+  top: 34%;
   pointer-events: none;
 }
 
@@ -83,17 +83,20 @@
 .lx-form-grid .lx-appendable-list-item .lx-text-area:not(:disabled),
 .lx-form-grid .lx-appendable-list-item .lx-date-time-picker:not(:disabled),
 .lx-form-grid .lx-appendable-list-item .lx-dropdown:not(:disabled),
+.lx-form-grid .lx-appendable-list-item .lx-autocomplete-default:not(:disabled),
 .lx-form-grid .lx-appendable-list-item .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area,
 .lx-form-grid .lx-appendable-list .lx-appendable-list-item .lx-form-grid .lx-form-section .lx-dropdown-default-panel,
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-text-input:not(:disabled),
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-text-area:not(:disabled),
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-date-time-picker:not(:disabled),
+.lx-region .lx-appendable-list .lx-appendable-list-item .lx-autocomplete-default:not(:disabled),
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-dropdown:not(:disabled),
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area,
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-form-grid .lx-form-section .lx-dropdown-default-panel,
 .lx-modal .lx-appendable-list .lx-appendable-list-item .lx-text-input:not(:disabled),
 .lx-modal .lx-appendable-list .lx-appendable-list-item .lx-text-area:not(:disabled),
 .lx-modal .lx-appendable-list .lx-appendable-list-item .lx-date-time-picker:not(:disabled),
+.lx-modal .lx-appendable-list .lx-appendable-list-item .lx-autocomplete-default:not(:disabled),
 .lx-modal .lx-appendable-list .lx-appendable-list-item .lx-dropdown:not(:disabled),
 .lx-modal .lx-appendable-list-item .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area,
 .lx-modal .lx-appendable-list .lx-appendable-list-item .lx-form-grid .lx-form-section .lx-dropdown-default-panel,
@@ -114,6 +117,20 @@
   border-bottom: 1px solid var(--color-label);
   background-color: var(--color-region);
   color: var(--color-data);
+}
+
+.lx-form-grid .lx-appendable-list-item .lx-autocomplete-default,
+.lx-region .lx-appendable-list .lx-appendable-list-item .lx-autocomplete-default,
+.lx-modal .lx-appendable-list .lx-appendable-list-item .lx-autocomplete-default {
+  margin: 0;
+}
+
+.lx-form-grid .lx-appendable-list-item .lx-input-wrapper>.lx-text-input.lx-invalid:not(:disabled):not(:focus):not(:focus-within):not(:active),
+.lx-region .lx-appendable-list .lx-appendable-list-item .lx-input-wrapper>.lx-text-input.lx-invalid:not(:disabled):not(:focus):not(:focus-within):not(:active),
+.lx-modal .lx-appendable-list .lx-appendable-list-item .lx-input-wrapper>.lx-text-input.lx-invalid:not(:disabled):not(:focus):not(:focus-within):not(:active),
+.lx-form-grid .lx-appendable-list .lx-form-grid .lx-input-wrapper>.lx-text-input.lx-invalid:not(:disabled):not(:focus):not(:focus-within):not(:active) {
+  outline-color: var(--color-bad);
+  border-bottom-color: transparent;
 }
 
 .lx-text-input:disabled,
@@ -273,22 +290,19 @@
   background-color: var(--color-region-hover) !important;
 }
 
-.lx-text-input:active:not(:disabled),
-.lx-text-input:focus:not(:disabled),
 .lx-text-area:active:not(:disabled),
 .lx-text-area:focus:not(:disabled),
 .lx-date-time-picker:active:not(:disabled),
 .lx-date-time-picker:focus:not(:disabled),
+.lx-input-wrapper>.lx-text-input:active:not(:disabled),
+.lx-input-wrapper>.lx-text-input:focus:not(:disabled),
 .lx-dropdown-wrapper:not([data-disabled]) .lx-dropdown:active,
 .lx-dropdown-wrapper:not([data-disabled]) .lx-dropdown:focus,
 .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area:active,
 .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area:focus,
 .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area:focus-within {
-  outline-color: var(--color-focus-background);
-}
-
-.lx-autocomplete .lx-text-input:focus:not(:disabled) {
-  outline: none;
+  outline-color: var(--color-focus-background) !important;
+  border-color: transparent;
 }
 
 .lx-text-input:disabled,
@@ -345,8 +359,8 @@
   height: 1.25rem;
   width: 1.25rem;
   position: absolute;
-  top: 50%;
-  right: 0.65rem;
+  top: 53%;
+  right: 0.55rem;
   -webkit-transform: translateY(-50%);
   transform: translateY(-50%);
   fill: var(--color-label);
@@ -410,9 +424,8 @@
   fill: var(--color-disabled-foreground);
 }
 
-.lx-autocomplete-default.lx-invalid,
 .lx-dropdown-default[disabled='true'] .lx-dropdown-default-panel.lx-invalid {
-  border: 2px solid var(--color-bad);
+  outline-color: var(--color-bad);
 }
 
 .lx .lx-autocomplete-default.lx-invalid .lx-text-input {
@@ -868,7 +881,7 @@ h2.lx-section-header+p.lx-invalidation-message {
   position: absolute;
   top: 2.5rem;
   outline: 1px solid var(--color-focus-background);
-  outline-offset: -1px;
+  outline-offset: -2px;
   background-color: var(--color-region);
   width: 100%;
   height: auto;
@@ -1002,7 +1015,7 @@ h2.lx-section-header+p.lx-invalidation-message {
 }
 
 .lx-autocomplete-default.lx-opened .lx-autocomplete-input-icon-container .lx-tag {
-  margin-top: 0.3rem;
+  margin-top: 0.1rem;
 }
 
 .lx-value-picker-dropdown-wrapper .lx-tag-label,
@@ -1103,7 +1116,7 @@ h2.lx-section-header+p.lx-invalidation-message {
 }
 
 .lx-value-picker-dropdown-wrapper>.lx-dropdown-default {
-  height: 2.5rem;
+  height: var(--input-size);
 }
 
 .lx-value-picker-dropdown-wrapper .lx-dropdown-default-data>.lx-field-wrapper {
@@ -1697,6 +1710,10 @@ h2.lx-section-header+p.lx-invalidation-message {
   border-bottom: 1px var(--color-data) solid;
 }
 
+.lx-autocomplete {
+  outline: 2px solid transparent;
+}
+
 .lx-autocomplete-wrapper .lx-autocomplete .lx-text-input-wrapper {
   margin-left: -1rem;
   margin-right: -1rem;
@@ -2285,8 +2302,16 @@ input[type='range']:hover::-moz-range-thumb {
   position: static;
   background-color: var(--color-background);
   cursor: pointer;
-  height: 2.5rem;
+  height: var(--input-size);
   color: var(--color-data);
+}
+
+.lx-info-wrapper:has(.lx-autocomplete-default)~.lx-invalidation-message {
+  margin-top: -3px;
+}
+
+.lx-dropdown-default~.lx-invalidation-message {
+  margin-top: 3px;
 }
 
 .lx-dropdown-default>.inline-block,
@@ -2305,6 +2330,8 @@ input[type='range']:hover::-moz-range-thumb {
   flex-grow: 1;
   align-items: center;
   border-bottom: 1px solid var(--color-label);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
 }
 
 .lx-dropdown-default-panel>.placeholder {
@@ -2312,10 +2339,28 @@ input[type='range']:hover::-moz-range-thumb {
   color: var(--color-placeholder);
 }
 
-.lx-dropdown-default-panel.lx-invalid,
-.lx-autocomplete-default.lx-invalid,
-.lx-rotator.lx-invalid {
-  border: 2px solid var(--color-bad) !important;
+.lx-autocomplete-default.lx-invalid .lx-autocomplete:not(:focus):not(:focus-within) {
+  outline-color: var(--color-bad);
+}
+
+.lx-value-picker-dropdown-wrapper .lx-dropdown-default-panel:focus {
+  outline-color: var(--color-focus-background);
+}
+
+.lx-autocomplete-default:has(.lx-autocomplete .lx-autocomplete-default-data input:focus),
+.lx-autocomplete-default:has(.lx-autocomplete:focus),
+.lx-autocomplete-default.lx-invalid {
+  border-bottom: transparent !important;
+}
+
+.lx-dropdown-default:not(:focus):not(:focus-within):not(:active) .lx-dropdown-default-panel.lx-invalid,
+.lx-rotator.lx-invalid .lx-context-container {
+  outline-color: var(--color-bad);
+}
+
+.lx-dropdown-default:focus .lx-dropdown-default-panel.lx-invalid,
+.lx-dropdown-default:focus-within .lx-dropdown-default-panel.lx-invalid {
+  outline-color: var(--color-focus-background);
 }
 
 .lx-value-picker-default-wrapper.lx-invalid>.lx-value-picker-default-item .lx-radio-button-appearance,
@@ -2359,6 +2404,7 @@ input[type='range']:hover::-moz-range-thumb {
   width: 1.15rem;
   fill: var(--color-bad);
   margin-right: 2.35rem;
+  margin-top: -1px;
 }
 
 .lx-dropdown-default-data {
@@ -2387,11 +2433,17 @@ input[type='range']:hover::-moz-range-thumb {
   margin-top: initial;
 }
 
-.lx-dropdown-default:active,
-.lx-dropdown-default:focus,
+.lx-dropdown-default:active .lx-dropdown-default-panel,
+.lx-dropdown-default:focus .lx-dropdown-default-panel,
 .lx-autocomplete:focus,
 .lx-autocomplete:focus-within {
-  outline: 2px solid var(--color-focus-background);
+  outline-color: var(--color-focus-background);
+}
+
+.lx .lx-dropdown-default:focus .lx-dropdown-default-panel,
+.lx .lx-dropdown-default:active .lx-dropdown-default-panel,
+.lx .lx-dropdown-default .lx-dropdown-default-panel.lx-invalid {
+  border-color: transparent;
 }
 
 .lx-dropdown-default:active .lx-dropdown-default-panel,
@@ -2422,7 +2474,7 @@ input[type='range']:hover::-moz-range-thumb {
   position: relative;
   grid-column: 2/3;
   grid-row: 1/2;
-  height: 2.4rem;
+  height: 2.3rem;
 }
 
 .lx-autocomplete-default .inline-block div .lx-autocomplete {
@@ -2436,35 +2488,45 @@ input[type='range']:hover::-moz-range-thumb {
   padding-right: var(--row-size);
 }
 
-.lx-autocomplete .lx-autocomplete-default-panel .lx-value,
-.lx-autocomplete .lx-autocomplete-default-panel .lx-placeholder {
-  padding-right: 2.5rem !important;
-  padding-left: 1rem;
+.lx-autocomplete-default .lx-autocomplete-default-panel .lx-value,
+.lx-autocomplete-default .lx-autocomplete-default-panel .lx-placeholder {
+  padding-right: 3rem !important;
+  padding-left: calc(1rem + 1px);
 }
 
-.lx-autocomplete .lx-autocomplete-default-panel .lx-tag+.lx-value,
-.lx-autocomplete-default.lx-invalid .lx-autocomplete-default-panel .lx-tag+.lx-value {
-  padding-left: 0.8rem;
+.lx-autocomplete-default .lx-autocomplete-default-panel.multiselect .lx-value,
+.lx-autocomplete-default.lx-invalid .lx-autocomplete-default-panel.multiselect .lx-value {
+  padding-right: 3rem !important;
+  padding-left: calc(5rem + 1px);
+}
+
+.lx-autocomplete .lx-autocomplete-default-panel .lx-autocomplete-default-data .lx-text-input-wrapper .lx-hidden-value {
+  color: transparent;
 }
 
 .lx-autocomplete-default-panel {
   position: relative;
-  height: 2.5em;
+  height: 2.3rem;
   display: flex;
   align-items: center;
 }
 
 .lx-autocomplete-default .inline-block div .lx-icons .lx-button {
   position: absolute;
-  bottom: 0;
   right: 0;
-  min-width: 2.5rem;
+  min-width: 2.3rem;
   height: 2.4rem;
+  width: 2.4rem;
+}
+
+.lx-autocomplete-default.lx-invalid .inline-block div .lx-icons .lx-button,
+.lx-autocomplete-default:has(.lx-autocomplete:focus-within) .inline-block div .lx-icons .lx-button,
+.lx-autocomplete-default:has(.lx-autocomplete:focus) .inline-block div .lx-icons .lx-button {
+  height: 2.3rem;
 }
 
 .lx-autocomplete-default.lx-invalid .inline-block div .lx-icons .lx-button {
   position: relative;
-  height: 2.5rem;
 }
 
 .lx-autocomplete-default {
@@ -2473,7 +2535,9 @@ input[type='range']:hover::-moz-range-thumb {
   cursor: pointer;
   border-bottom: 1px solid var(--color-label);
   height: var(--input-size);
-  margin: 2px 0;
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  margin-bottom: 5px;
 }
 
 .lx-icons .lx-autocomplete-loader {
@@ -2482,20 +2546,18 @@ input[type='range']:hover::-moz-range-thumb {
   margin-left: 0.7rem;
 }
 
-.lx-autocomplete-input-icon-container .lx-autocomplete.lx-invalid {
-  border: 2px solid var(--color-bad) !important;
-}
-
 .lx-autocomplete-input-icon-container .lx-icons .lx-modifier-icon.lx-invalidation-icon {
   height: 1.15rem;
   width: 1.15rem;
   fill: var(--color-bad);
   margin-right: 2.35rem;
+  margin-top: -1px;
 }
 
 .lx-autocomplete-default-panel .lx-value,
 .lx-autocomplete-default-panel .lx-placeholder {
   height: 100%;
+  width: 100%;
   padding-top: 0.45rem;
   flex: 1;
   line-height: 1.5rem;
@@ -2503,13 +2565,6 @@ input[type='range']:hover::-moz-range-thumb {
 
 .lx-autocomplete-default.lx-invalid {
   box-sizing: content-box !important;
-}
-
-.lx-autocomplete-default.lx-invalid .lx-autocomplete-default-panel .lx-value,
-.lx-autocomplete-default.lx-invalid .lx-autocomplete-default-panel .lx-placeholder {
-  padding-right: 5.5rem !important;
-  padding-left: 1rem;
-  padding-top: 0.5rem;
 }
 
 .lx-autocomplete-default.lx-disabled {
@@ -3494,6 +3549,24 @@ input[type='range']:hover::-moz-range-thumb {
   height: 1.5rem;
   fill: var(--color-interactive-foreground);
   margin: 0;
+}
+
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge {
+  margin-right: 0.3rem;
+  padding: 0;
+  border: none;
+}
+
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge.lx-pass-protected-badge {
+  border: 2px solid var(--color-orange);
+}
+
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge.lx-esign-badge {
+  border: 2px solid var(--color-blue);
+}
+
+.lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge.lx-created-using-ai-badge {
+  border: 2px solid var(--color-purple);
 }
 
 .lx-file-wrapper .lx-file-name-main-data-wrapper .lx-badge.lx-compact-badge svg {
