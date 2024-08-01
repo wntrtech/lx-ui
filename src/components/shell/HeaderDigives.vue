@@ -5,7 +5,6 @@ import LxIcon from '@/components/Icon.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
-import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
   systemNameShort: { type: String, default: null },
@@ -70,7 +69,6 @@ const props = defineProps({
 });
 
 const vCleanHtml = buildVueDompurifyHTMLDirective();
-const windowSize = useWindowSize();
 
 const navItemsUserMenu = computed(() =>
   props.navItems?.filter((item) => item.type === 'buttons' || item.type === 'helper')
@@ -113,9 +111,7 @@ const navBarSwitchModel = computed({
 });
 
 const navToggle = () => {
-  if (navBarSwitchModel.value === null && windowSize.width.value < 1800)
-    navBarSwitchModel.value = false;
-  else navBarSwitchModel.value = !navBarSwitchModel.value;
+  navBarSwitchModel.value = !navBarSwitchModel.value;
 };
 
 const selectedContextPersonModel = computed({

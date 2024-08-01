@@ -211,19 +211,6 @@ function openContextPersonModal() {
   contextPersonModal.value.open();
 }
 
-const selectedContextPersonModel = computed({
-  get() {
-    return props.selectedContextPerson;
-  },
-  set(value) {
-    const res = {
-      id: value,
-      name: value,
-    };
-    emits('update:selected-context-person', res);
-  },
-});
-
 const contextPersonComputed = computed(() => {
   if (props.contextPersonsInfo) {
     const defaultUser = {
@@ -241,13 +228,25 @@ const contextPersonComputed = computed(() => {
       ...props.contextPersonsInfo.map((item) => ({
         ...item,
         clickable: true,
-        category: item?.id === selectedContextPersonModel.value?.id ? 'blue' : '',
-        icon: item?.id === selectedContextPersonModel.value?.id ? 'selected' : '',
+        category: '',
       })),
     ];
     return temp;
   }
   return [];
+});
+
+const selectedContextPersonModel = computed({
+  get() {
+    return props.selectedContextPerson;
+  },
+  set(value) {
+    const res = {
+      id: value,
+      name: value,
+    };
+    emits('update:selected-context-person', res);
+  },
 });
 
 const selectedAlternativeProfileModel = computed({
@@ -268,6 +267,13 @@ const selectedAlternativeProfileModel = computed({
 });
 
 watch(selectedContextPersonModel, (newValue) => {
+  if (newValue && props.contextPersonsInfo) {
+    contextPersonComputed.value.find((item) => item.id === newValue.id).category = 'blue';
+    contextPersonComputed.value.find((item) => item.id === newValue.id).icon = 'selected';
+  } else if (props.contextPersonsInfo) {
+    contextPersonComputed.value[0].category = 'blue';
+    contextPersonComputed.value[0].icon = 'selected';
+  }
   emits('contextPersonChanged', newValue);
 });
 
@@ -287,7 +293,7 @@ function switchAlternativeProfile(_, rowId) {
 }
 function switchContextPerson(_, rowId) {
   tempSelectedContextPersonModel.value = props.contextPersonsInfo?.find(
-    (item) => item?.id?.toString() === rowId
+    (item) => item.id === rowId
   );
   emits('update:selected-context-person', tempSelectedContextPersonModel.value);
   contextPersonModal.value.close();
@@ -299,6 +305,20 @@ const alternativeProfilesComputed = computed(() => {
     ...item,
     clickable: true,
   }));
+});
+
+onMounted(() => {
+  if (selectedContextPersonModel.value && props.contextPersonsInfo) {
+    contextPersonComputed.value.find(
+      (item) => item.id === selectedContextPersonModel.value.id
+    ).category = 'blue';
+    contextPersonComputed.value.find(
+      (item) => item.id === selectedContextPersonModel.value.id
+    ).icon = 'selected';
+  } else if (props.contextPersonsInfo) {
+    contextPersonComputed.value[0].category = 'blue';
+    contextPersonComputed.value[0].icon = 'selected';
+  }
 });
 </script>
 <template>

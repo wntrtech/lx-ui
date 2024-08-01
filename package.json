@@ -87,9 +87,9 @@
     "jsdom": "^23.2.0",
     "prettier": "^2.8.8",
     "regenerator-runtime": "^0.14.1",
-    "vite": "5.0.12",
+    "vite": "5.0.13",
     "vite-plugin-dts": "3.7.1",
-    "vitest": "^1.2.0",
+    "vitest": "^2.0.4",
     "vue": "^3.4.15"
   },
   "overrides": {

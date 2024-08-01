@@ -3,11 +3,6 @@
   background-color: var(--color-region);
   grid-template-columns: minmax(0, 1fr);
   border: var(--region-border);
-  position: relative;
-}
-
-.lx-appendable-list-item .lx-form-grid {
-  position: unset;
 }
 
 .lx-data-block .lx-form-grid,
@@ -174,14 +169,26 @@
   padding: 0 0.5rem 0 0;
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-default-icon-wrapper {
-  height: 1.9rem;
-  padding: 0.3rem 0.5rem 0 0;
-}
-
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-avatar-wrapper .lx-avatar-display .lx-avatar-display-l,
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-list-item svg {
-  margin: 0
+.lx-form-grid
+  > .lx-main
+  > .lx-expander.lx-edoc-signs-list-section
+  > .lx-body
+  > .lx-form-section
+  .lx-list
+  .lx-list-item-wrapper
+  .lx-avatar-wrapper
+  .lx-avatar-display
+  .lx-avatar-display-l,
+.lx-form-grid
+  > .lx-main
+  > .lx-expander.lx-edoc-signs-list-section
+  > .lx-body
+  > .lx-form-section
+  .lx-list
+  .lx-list-item-wrapper
+  .lx-list-item
+  svg {
+  margin: 0;
 }
 
 .lx-form-grid
@@ -261,15 +268,20 @@
   font-feature-settings: var(--font-features-mono);
   font-size: var(--small-font-size);
   background: var(--color-blue);
+  color: var(--color-data);
+  border: var(--region-border);
+  font-weight: bold;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
   border-radius: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 1em;
+  text-align: center;
+  margin-top: 0;
   margin-right: 0.5rem;
-}
-
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.c2paBadgeIcon > .lx-head > .lx-group > .lx-icon-wrapper {
-  background: var(--color-region);
-  border-radius: 1rem;
-  margin-right: 0.5rem;
-  border: 2px solid var(--color-blue);
+  opacity: 1;
 }
 
 .lx-form-grid
@@ -285,44 +297,10 @@
   height: 1rem;
 }
 
-.lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section.c2paBadgeIcon > .lx-head > .lx-group > .lx-icon-wrapper svg {
-  margin: 0;
-  padding: 0;
-  fill: var(--color-blue);
-  height: 1rem;
-}
-
-.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row.lx-main-data-icon-row .lx-vertical {
-  display: flex;
-  align-items: center;
-}
-
-.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge {
-  padding-right: 0;
-  padding-left: 0;
-  margin-right: 0.5rem;
-}
-
-.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge svg {
-  height: 1rem
-}
-
-.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge.lx-pass-protected-badge {
-  background: var(--color-orange);
-}
-
-.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge.lx-created-using-ai-badge {
-  background: var(--color-purple);
-}
-
-.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge svg {
-  fill: var(--color-interactive-foreground);
-}
-
-.lx-form-grid>.lx-main>.lx-form-section:first-of-type,
-.lx-form-grid>.lx-tab-control>.lx-tab-body>.lx-main>.lx-form-section:first-of-type,
-.lx-data-block-content>.lx-main>.lx-form-section:first-of-type,
-.lx-form-grid>.lx-main>.lx-expander>.lx-body>.lx-form-section:first-of-type {
+.lx-form-grid > .lx-main > .lx-form-section:first-of-type,
+.lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section:first-of-type,
+.lx-data-block-content > .lx-main > .lx-form-section:first-of-type,
+.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section:first-of-type {
   border-top: none;
 }
 
@@ -672,6 +650,7 @@
   .lx-data-block-wrapper
   .lx-data-block-header:hover {
   background-color: var(--color-region-hover);
+  cursor: pointer;
 }
 
 .lx-form-grid .lx-row > label span.lx-required,

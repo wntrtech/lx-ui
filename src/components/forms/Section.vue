@@ -183,6 +183,8 @@ provide('sectionColumnCount', props.columnCount);
     :invalidationMessage="exactIndex?.invalidationMessage"
     :icon="icon"
     :iconSet="iconSet"
+    :iconType="iconType"
+    :iconBadgeType="iconBadgeType"
     :badge="badge"
     :customClass="customClass"
   >
