@@ -1133,7 +1133,7 @@ function moveDraggableItem(direction, element, groupType) {
     </div>
     <div v-if="groupDefinitions && kind === 'default'">
       <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
-        <lx-expander
+        <LxExpander
           v-if="
             (hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
             !hideFilteredItems
@@ -1151,6 +1151,10 @@ function moveDraggableItem(direction, element, groupType) {
           :texts="{ selectWholeGroup: texts.selectWholeGroup, clearSelected: texts.clearSelected }"
           @select-all="selectSection(group)"
         >
+          <template #customHeader v-if="$slots.customExpanderHeader">
+            <slot name="customExpanderHeader" v-bind="group" />
+          </template>
+
           <ul
             :id="`${id}-${prepareCode(group.id)}`"
             class="lx-list"
@@ -1207,7 +1211,7 @@ function moveDraggableItem(direction, element, groupType) {
               </div>
             </li>
           </ul>
-        </lx-expander>
+        </LxExpander>
       </template>
     </div>
     <template v-if="!groupDefinitions && filteredItems && filteredItems.length > 0">
@@ -1357,7 +1361,7 @@ function moveDraggableItem(direction, element, groupType) {
       </div>
     </template>
     <template v-for="group in responsiveGroupDefinitions" :key="prepareCode(group.id)">
-      <lx-expander
+      <LxExpander
         v-if="
           kind === 'draggable' &&
           ((hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
@@ -1371,6 +1375,10 @@ function moveDraggableItem(direction, element, groupType) {
         :badge-type="group?.badgeType"
         :label="group.name"
       >
+        <template #customHeader v-if="$slots.customExpanderHeader">
+          <slot name="customExpanderHeader" v-bind="group"></slot>
+        </template>
+
         <div
           :id="`${id}-${prepareCode(group.id)}`"
           class="lx-list"
@@ -1464,7 +1472,7 @@ function moveDraggableItem(direction, element, groupType) {
             </template>
           </draggable>
         </div>
-      </lx-expander>
+      </LxExpander>
     </template>
     <div v-if="kind === 'treelist' && (queryRaw?.length === 0 || searchSide === 'server')">
       <LxTreeList
