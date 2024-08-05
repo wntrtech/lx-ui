@@ -19,10 +19,13 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "dev": "vite --host",
-    "build": "vite build",
-    "preview": "vite preview",
+    "build:lib": "pnpm vite build --mode lib",
+    "build:css": "pnpm vite build --mode css",
+    "build:bundles": "pnpm vite build --mode bundles",
+    "build": "pnpm build:lib && pnpm build:css && pnpm build:bundles",
+    "preview": "pnpm vite preview --mode lib",
     "lint": "eslint .",
-    "test": "vitest"
+    "test": "pnpm vitest --mode lib"
   },
   "dependencies": {
     "@braintree/sanitize-url": "^7.0.0",
