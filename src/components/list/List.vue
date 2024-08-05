@@ -578,10 +578,19 @@ const selectedItems = computed(() => {
   const ret = [];
   Object.keys(selectedItemsRaw.value).forEach((key) => {
     if (selectedItemsRaw.value[key]) {
-      if (props.selectingKind === 'multiple') {
-        ret.push(key);
-      } else if (props.selectingKind === 'single') {
-        ret[0] = key;
+      let isKeyValid;
+      if (props.kind === 'treelist') {
+        isKeyValid = treeItems.value.some((item) => item.id === key);
+      } else {
+        isKeyValid = itemsWithStringIds.value.some((item) => item.id === key);
+      }
+
+      if (isKeyValid) {
+        if (props.selectingKind === 'multiple') {
+          ret.push(key);
+        } else if (props.selectingKind === 'single') {
+          ret[0] = key;
+        }
       }
     }
   });
@@ -607,6 +616,34 @@ const isSelectable = (item) => {
   if (item[attribute] === false) return false;
   return item[attribute] !== false;
 };
+
+const selectableItems = computed(() => itemsWithStringIds.value.filter(isSelectable));
+const selectableTreeItems = computed(() => treeItems.value.filter((item) => isSelectable(item)));
+
+const hasSelectableItemsInGroup = computed(() => {
+  const selectableItemsMap = {};
+
+  props.groupDefinitions?.forEach((group) => {
+    const groupItems = itemsWithStringIds.value?.filter(
+      (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
+    );
+    selectableItemsMap[group.id] = groupItems?.some(isSelectable) || false;
+  });
+
+  return selectableItemsMap;
+});
+
+const selectIcon = computed(() => {
+  const items = props.kind === 'treelist' ? selectableTreeItems.value : selectableItems.value;
+
+  if (selectedItems.value.length === items.length && props.selectingKind === 'multiple') {
+    return 'checkbox-filled';
+  }
+  if (props.selectingKind === 'multiple') {
+    return 'checkbox-indeterminate';
+  }
+  return 'radiobutton-filled';
+});
 
 function selectRows(arr = null) {
   function filterSelectable(items) {
@@ -636,7 +673,7 @@ function cancelSelection() {
 
 const selectedLabel = computed(() => {
   const selectableCount = itemsWithStringIds.value?.length?.toString();
-  const selectableTreeItems = treeItems.value?.length?.toString();
+  const selectableTreeListItems = treeItems.value?.length?.toString();
   const selectedCount = selectedItems.value?.length;
   const selectedCountDisplay = selectedCount?.toString();
 
@@ -661,7 +698,7 @@ const selectedLabel = computed(() => {
   if (props.kind !== 'treelist') {
     ret = `${labelStart} ${selectedCountDisplay} ${label} ${props.texts?.of} ${selectableCount}`;
   } else {
-    ret = `${labelStart} ${selectedCountDisplay} ${label} ${props.texts?.of} ${selectableTreeItems}`;
+    ret = `${labelStart} ${selectedCountDisplay} ${label} ${props.texts?.of} ${selectableTreeListItems}`;
   }
   return ret;
 });
@@ -694,9 +731,11 @@ const groupSelectionStatuses = computed(() => {
     );
     const groupItemsIds = groupItems?.map((o) => o[props.idAttribute]);
     const selectedGroupItems = groupItemsIds.filter((id) => selectedItemsRaw.value[id]);
+    const selectableGroupItems = groupItems?.filter((o) => isSelectable(o));
+
     if (selectedGroupItems?.length === 0) {
       res[group.id] = 'none';
-    } else if (selectedGroupItems?.length === groupItemsIds?.length) {
+    } else if (selectedGroupItems?.length === selectableGroupItems?.length) {
       res[group.id] = 'all';
     } else {
       res[group.id] = 'some';
@@ -712,7 +751,10 @@ function selectSection(group) {
   const groupItemsIds = groupItems.map((o) => o[props.idAttribute]);
   if (groupSelectionStatuses.value?.[group.id] === 'none') {
     groupItemsIds.forEach((id) => {
-      selectedItemsRaw.value[id] = true;
+      const item = groupItems.find((o) => o[props.idAttribute] === id);
+      if (isSelectable(item)) {
+        selectedItemsRaw.value[id] = true;
+      }
     });
   } else {
     groupItemsIds.forEach((id) => {
@@ -821,7 +863,7 @@ function moveDraggableItem(direction, element, groupType) {
       :class="[{ 'toolbar-selecting': hasSelecting && selectedItems?.length > 0 }]"
     >
       <div class="first-row">
-        <template v-if="autoSearchMode === 'default' && selectedItems?.length === 0">
+        <template v-if="autoSearchMode === 'default' && !hasSelecting">
           <lx-text-input
             v-if="hasSearch"
             ref="queryInputDefault"
@@ -855,93 +897,92 @@ function moveDraggableItem(direction, element, groupType) {
           {{ selectedLabel }}
         </p>
 
-        <div class="right-area" v-if="selectedItems?.length === 0">
-          <slot name="toolbar" />
-          <div
-            class="toolbar-search-button"
-            :class="[{ 'is-expanded': searchField }]"
-            v-if="autoSearchMode === 'compact'"
-          >
-            <LxButton
-              kind="ghost"
-              :icon="searchField ? 'close' : 'search'"
-              :title="searchField ? texts.closeSearch : texts.openSearch"
-              @click="toggleSearch"
-              v-if="hasSearch"
-            />
-          </div>
-          <LxButton
-            icon="checkbox"
-            kind="ghost"
-            v-if="
-              selectedItems.length === 0 &&
-              hasSelecting &&
-              selectingKind === 'multiple' &&
-              kind !== 'draggable'
-            "
-            @click="selectRows()"
-            :disabled="loading || busy"
-            :title="texts.selectAllRows"
+        <div class="right-area">
+          <slot
+            v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
+            name="toolbar"
           />
-        </div>
-        <div class="right-area" v-else-if="selectedItems?.length > 0">
-          <div class="lx-selection-toolbar" v-if="hasSelecting">
-            <div class="selection-action-buttons">
-              <LxButton
-                v-for="selectAction in selectionActionDefinitions"
-                :key="selectAction.id"
-                :icon="selectAction.icon"
-                :label="selectAction.name"
-                :title="selectAction.name"
-                :destructive="selectAction.destructive"
-                :disabled="selectAction.disabled"
-                @click="selectionActionClick(selectAction.id, selectedItems)"
-              />
-            </div>
-            <div class="selection-action-buttons-small">
-              <LxDropDownMenu>
-                <LxButton icon="menu" />
-                <template #panel>
-                  <LxButton
-                    v-for="selectAction in selectionActionDefinitions"
-                    :key="selectAction.id"
-                    :icon="selectAction.icon"
-                    :label="selectAction.name"
-                    :title="selectAction.name"
-                    :destructive="selectAction.destructive"
-                    :disabled="selectAction.disabled"
-                    @click="selectionActionClick(selectAction.id, selectedItems)"
-                  />
-                </template>
-              </LxDropDownMenu>
-            </div>
-          </div>
-          <div
-            class="toolbar-search-button"
-            :class="[{ 'is-expanded': searchField }]"
-            v-if="autoSearchMode === 'compact'"
-          >
-            <LxButton
+          <template v-if="selectedItems?.length === 0">
+            <div
               class="toolbar-search-button"
               :class="[{ 'is-expanded': searchField }]"
+              v-if="autoSearchMode === 'compact'"
+            >
+              <LxButton
+                kind="ghost"
+                :icon="searchField ? 'close' : 'search'"
+                :title="searchField ? texts.closeSearch : texts.openSearch"
+                @click="toggleSearch"
+                v-if="hasSearch"
+              />
+            </div>
+            <LxButton
+              icon="checkbox"
               kind="ghost"
-              :icon="searchField ? 'close' : 'search'"
-              @click="toggleSearch"
-              v-if="hasSearch"
+              v-if="
+                selectableItems?.length !== 0 &&
+                hasSelecting &&
+                selectingKind === 'multiple' &&
+                kind !== 'draggable'
+              "
+              @click="selectRows()"
+              :disabled="loading || busy"
+              :title="texts.selectAllRows"
             />
-          </div>
-          <LxButton
-            v-if="hasSelecting && selectedItems.length > 0 && kind !== 'draggable'"
-            :icon="
-              selectedItems?.length === items?.length && selectingKind !== 'single'
-                ? 'checkbox-filled'
-                : selectingKind === 'multiple'
-                ? 'checkbox-indeterminate'
-                : 'radiobutton-filled'
-            "
-            :title="texts.clearSelected"
-            @click="cancelSelection()"
-          />
+          </template>
+          <template v-if="selectedItems?.length > 0">
+            <div class="lx-selection-toolbar" v-if="hasSelecting">
+              <div class="selection-action-buttons">
+                <LxButton
+                  v-for="selectAction in selectionActionDefinitions"
+                  :key="selectAction.id"
+                  :icon="selectAction.icon"
+                  :label="selectAction.name"
+                  :title="selectAction.name"
+                  :destructive="selectAction.destructive"
+                  :disabled="selectAction.disabled"
+                  @click="selectionActionClick(selectAction.id, selectedItems)"
+                />
+              </div>
+              <div class="selection-action-buttons-small">
+                <LxDropDownMenu>
+                  <LxButton icon="menu" />
+                  <template #panel>
+                    <LxButton
+                      v-for="selectAction in selectionActionDefinitions"
+                      :key="selectAction.id"
+                      :icon="selectAction.icon"
+                      :label="selectAction.name"
+                      :title="selectAction.name"
+                      :destructive="selectAction.destructive"
+                      :disabled="selectAction.disabled"
+                      @click="selectionActionClick(selectAction.id, selectedItems)"
+                    />
+                  </template>
+                </LxDropDownMenu>
+              </div>
+            </div>
+            <div
+              class="toolbar-search-button"
+              :class="[{ 'is-expanded': searchField }]"
+              v-if="autoSearchMode === 'compact'"
+            >
+              <LxButton
+                class="toolbar-search-button"
+                :class="[{ 'is-expanded': searchField }]"
+                kind="ghost"
+                :icon="searchField ? 'close' : 'search'"
+                @click="toggleSearch"
+                v-if="hasSearch"
+              />
+            </div>
+            <LxButton
+              v-if="hasSelecting && kind !== 'draggable'"
+              :icon="selectIcon"
+              :title="texts.clearSelected"
+              @click="cancelSelection()"
+            />
+          </template>
         </div>
       </div>
       <div
@@ -1013,7 +1054,7 @@ function moveDraggableItem(direction, element, groupType) {
               <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
             </template>
           </LxListItem>
-          <div class="selecting-block" v-if="hasSelecting">
+          <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
             <template v-if="isSelectable(item)">
               <LxRadioButton
                 v-if="selectingKind === 'single'"
@@ -1146,7 +1187,11 @@ function moveDraggableItem(direction, element, groupType) {
           :badge-type="group?.badgeType"
           :label="group.name"
           :id="group.id"
-          :has-select-button="hasSelecting && selectingKind === 'multiple'"
+          :has-select-button="
+            hasSelecting &&
+            hasSelectableItemsInGroup[prepareCode(group.id)] &&
+            selectingKind === 'multiple'
+          "
           :select-status="groupSelectionStatuses?.[group.id]"
           :texts="{ selectWholeGroup: texts.selectWholeGroup, clearSelected: texts.clearSelected }"
           @select-all="selectSection(group)"
@@ -1189,7 +1234,7 @@ function moveDraggableItem(direction, element, groupType) {
                   <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                 </template>
               </lx-list-item>
-              <div class="selecting-block" v-if="hasSelecting">
+              <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
                 <template v-if="isSelectable(item)">
                   <LxRadioButton
                     v-if="selectingKind === 'single'"
@@ -1243,7 +1288,7 @@ function moveDraggableItem(direction, element, groupType) {
               <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
             </template>
           </LxListItem>
-          <div class="selecting-block" v-if="hasSelecting">
+          <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
             <template v-if="isSelectable(item)">
               <LxRadioButton
                 v-if="selectingKind === 'single'"
@@ -1532,7 +1577,7 @@ function moveDraggableItem(direction, element, groupType) {
           @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
           @action-click="actionClicked"
         />
-        <div class="selecting-block" v-if="hasSelecting">
+        <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
           <template v-if="isSelectable(element)">
             <LxRadioButton
               v-if="selectingKind === 'single'"
