@@ -37,9 +37,14 @@ const props = defineProps({
             'newborn-id',
             'currency',
             'email',
+            'custom',
           ].includes(value)
         : true;
     },
+  },
+  customMaskValue: {
+    type: RegExp,
+    default: /./,
   },
   scale: { type: [Number, String], default: 2 },
   signed: { type: Boolean, default: false },
@@ -128,6 +133,10 @@ const inputMask = computed(() => {
     case 'email':
       return {
         mask: /^\S*@?\S*$/,
+      };
+    case 'custom':
+      return {
+        mask: props.customMaskValue,
       };
     default:
       return {
