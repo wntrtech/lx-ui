@@ -23,9 +23,10 @@ import { kebabToCamel, getTexts } from '@/utils/visualPickerUtils';
 const props = defineProps({
   id: { type: String, default: generateUUID() },
   kind: { type: String, default: 'europe' }, // europe, skeleton, spine, arms, left-hand, right-hand, latvia
-  modelValue: { type: Array, default: () => [] },
+  modelValue: { type: [Array, String], default: () => [] },
   readOnly: { type: Boolean, default: false },
   mode: { type: String, default: 'default' }, // default, compact
+  selectingKind: { type: String, default: 'multiple' }, // single, multiple
   texts: {
     type: Object,
     default: () => ({
@@ -157,8 +158,14 @@ watch(
   () => model.value,
   (newValue, oldValue) => {
     if (JSON?.stringify(newValue) !== JSON?.stringify(oldValue)) {
-      const res = newValue.map((x) => items.value?.find((item) => item?.id === x));
-      listRef.value?.selectRows(res);
+      if (typeof newValue === 'string' || newValue === null) {
+        const res = items.value?.find((item) => item?.id === newValue);
+        if (res && res?.id) listRef.value?.selectRows([res]);
+        if (res === undefined) listRef.value?.cancelSelection();
+      } else {
+        const res = newValue.map((x) => items.value?.find((item) => item?.id === x));
+        listRef.value?.selectRows(res);
+      }
     }
   }
 );
@@ -171,13 +178,16 @@ function mapClick(event) {
     }
     if (countryId?.includes('_')) countryId = countryId?.split('_')[0];
     if (countryId) {
-      const res = [...model.value];
+      if (props.selectingKind === 'multiple') {
+        const res = [...model.value];
 
-      const index = res.findIndex((selectedItem) => selectedItem === countryId);
-      if (index !== -1) res.splice(index, 1);
-      else res.push(countryId);
+        const index = res.findIndex((selectedItem) => selectedItem === countryId);
+        if (index !== -1) res.splice(index, 1);
+        else res.push(countryId);
 
-      model.value = res;
+        model.value = res;
+      } else if (model.value === countryId) model.value = null;
+      else model.value = countryId;
     }
   }
 }
@@ -189,23 +199,33 @@ function spineClick(event) {
     if (boneId?.includes('_')) boneId = boneId?.split('_')[0];
 
     if (boneId && props.kind === 'spine') {
-      boneId = boneId?.split('_')[0];
-      const res = [...model.value];
-      const index = res.findIndex((selectedItem) => selectedItem === boneId);
-      if (boneId !== 'skeleton') {
-        if (index !== -1) res.splice(index, 1);
-        else res.push(boneId);
+      if (props.selectingKind === 'multiple') {
+        boneId = boneId?.split('_')[0];
+        const res = [...model.value];
+        const index = res.findIndex((selectedItem) => selectedItem === boneId);
+        if (boneId !== 'skeleton') {
+          if (index !== -1) res.splice(index, 1);
+          else res.push(boneId);
 
-        model.value = res;
+          model.value = res;
+        }
+      } else if (boneId !== 'skeleton') {
+        if (model.value === boneId) model.value = null;
+        else model.value = boneId;
       }
     } else if (boneId && props.kind !== 'spine') {
-      const res = [...model.value];
-      const index = res.findIndex((selectedItem) => selectedItem === boneId);
-      if (boneId !== 'skeleton' && boneId !== 'LV') {
-        if (index !== -1) res.splice(index, 1);
-        else res.push(boneId);
+      if (props.selectingKind === 'multiple') {
+        const res = [...model.value];
+        const index = res.findIndex((selectedItem) => selectedItem === boneId);
+        if (boneId !== 'skeleton' && boneId !== 'LV') {
+          if (index !== -1) res.splice(index, 1);
+          else res.push(boneId);
 
-        model.value = res;
+          model.value = res;
+        }
+      } else if (boneId !== 'skeleton' && boneId !== 'LV') {
+        if (model.value === boneId) model.value = null;
+        else model.value = boneId;
       }
     }
   }
@@ -238,8 +258,16 @@ watch(
       loading.value = false;
       nextTick(() => {
         if (!errorState.value) {
-          const tempModel = [...model.value];
-          model.value = [];
+          let tempModel;
+          if (props.selectingKind === 'single') {
+            if (model.value?.length === 0) {
+              tempModel = null;
+            } else tempModel = model.value;
+            model.value = null;
+          } else {
+            tempModel = [...model.value];
+            model.value = [];
+          }
           nextTick(() => {
             model.value = tempModel;
           });
@@ -250,9 +278,12 @@ watch(
   { immediate: true }
 );
 
-const selectedItems = computed(() =>
-  model.value?.map((item) => items.value.find((x) => x?.id === item))
-);
+const selectedItems = computed(() => {
+  let res = null;
+  if (typeof model.value === 'string') res = [items.value.find((x) => x?.id === model.value)];
+  else res = model.value?.map((item) => items.value.find((x) => x?.id === item));
+  return res;
+});
 
 function removeItem(id) {
   const res = [...model.value];
@@ -272,8 +303,9 @@ function selectionChanged(selectedValue) {
       document.getElementById(`${element}_lx_front`)?.classList.add('selected-visual');
     } else document.getElementById(element)?.classList.add('selected-visual');
   });
-
-  model.value = selectedValue;
+  if (props.selectingKind === 'single') {
+    [model.value] = selectedValue;
+  } else model.value = selectedValue;
 }
 
 const contentSwitcherItems = computed(() => [
@@ -283,7 +315,7 @@ const contentSwitcherItems = computed(() => [
 
 const contentSwitcherModel = ref('visual');
 
-const onMountedModel = ref([]);
+const onMountedModel = ref();
 
 onMounted(() => {
   model.value = onMountedModel.value;
@@ -352,7 +384,7 @@ defineExpose({ addTitles });
           ref="listRef"
           :items="!readOnly ? items : selectedItems"
           :hasSelecting="!readOnly"
-          selectingKind="multiple"
+          :selectingKind="selectingKind"
           listType="1"
           :has-search="true"
           @selectionChanged="selectionChanged"

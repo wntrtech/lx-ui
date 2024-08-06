@@ -613,8 +613,8 @@ function arrayToObject(arr) {
 
 const isSelectable = (item) => {
   const attribute = props.selectableAttribute;
-  if (item[attribute] === false) return false;
-  return item[attribute] !== false;
+  if (item?.[attribute] === false) return false;
+  return item?.[attribute] !== false;
 };
 
 const selectableItems = computed(() => itemsWithStringIds.value.filter(isSelectable));
@@ -662,7 +662,7 @@ function selectRows(arr = null) {
     }
   } else {
     selectedItemsRaw.value = arrayToObject(
-      filterSelectable(arr)?.map((x) => x[props.idAttribute].toString())
+      filterSelectable(arr)?.map((x) => x?.[props.idAttribute].toString())
     );
   }
 }
