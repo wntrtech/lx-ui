@@ -243,6 +243,7 @@ const isSelectable = (item) => {
       @loadChildren="loadChildren"
       :parents="updateParents(item)"
       :children="children"
+      @action-click="actionClicked"
     >
       <template #customItem="customItem" v-if="$slots.customItem">
         <slot name="customItem" v-bind="customItem" />
