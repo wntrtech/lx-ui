@@ -88,7 +88,7 @@
   --color-blue: #2684ff;
   --color-teal: #00b8d9;
   --color-yellow: #f1c21b;
-  --color-grey: rgba(0, 0, 0, 0.15);
+  --color-grey: var(--color-label);
   --color-green-20: rgb(25, 128, 5, 0.2);
   --color-red-20: rgb(218, 30, 40, 0.2);
   --color-orange-20: rgb(255, 131, 43, 0.2);
@@ -99,6 +99,18 @@
 
   --color-good: rgb(25, 128, 56);
   --color-bad: var(--color-red);
+  --color-new: var(--color-blue);
+  --color-draft: var(--color-blue);
+  --color-edited: var(--color-orange);
+  --color-ongoing: var(--color-orange);
+  --color-incomplete: var(--color-blue);
+  --color-waiting: var(--color-grey);
+  --color-inactive: var(--color-grey);
+  --color-finished: var(--color-green);
+  --color-signed: var(--color-purple);
+  --color-deleted: var(--color-grey);
+  --color-error: var(--color-red);
+
   --color-warning: var(--color-orange);
   --color-neutral: var(--color-grey);
   --color-destructive: var(--color-red);

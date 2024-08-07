@@ -27,7 +27,7 @@ Powerful and flexible **Vue.js 3** components and **vanilla CSS** styles library
 pnpm i -w '@wntr/lx-ui@latest'
 ```
 
-For migration tips refer to [Migration guide](MIGRATION.md)
+For migration tips refer to [Migration guide](https://github.com/wntrtech/lx-ui/blob/main/MIGRATION.md)
 
 ## Use
 
@@ -51,4 +51,4 @@ pnpm
 pnpm dev
 ```
 
-Read more about development in [Development manual](DEVELOPMENT.md)
+Read more about development in [Development manual](https://github.com/wntrtech/lx-ui/blob/main/DEVELOPMENT.md)
