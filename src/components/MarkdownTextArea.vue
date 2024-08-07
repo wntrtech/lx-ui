@@ -18,8 +18,6 @@ import { isUrl, generateUUID } from '@/utils/stringUtils';
 import { checkArrayObjectProperty } from '@/utils/arrayUtils';
 import { useElementSize } from '@vueuse/core';
 
-import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
-
 import LxButton from '@/components/Button.vue';
 import LxModal from '@/components/Modal.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -32,16 +30,7 @@ import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
-
-const vCleanHtml = buildVueDompurifyHTMLDirective({
-  hooks: {
-    afterSanitizeAttributes: (node) => {
-      if (node.tagName === 'A') {
-        node.setAttribute('target', '_blank');
-      }
-    },
-  },
-});
+import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -122,8 +111,6 @@ const markdownImageModal = ref();
 const isNotLink = ref(false);
 const isNotImage = ref(false);
 
-const outputHtmlText = ref();
-
 const actionDefinitions = ref([
   {
     id: 'Heading1',
@@ -186,14 +173,6 @@ function focus() {
   editor.value.commands.focus();
 }
 
-function getHTML() {
-  return editor.value.getHTML();
-}
-
-function updateHtml() {
-  outputHtmlText.value = getHTML();
-}
-
 watch(model, (newText) => {
   const textInEditor = editor.value.storage.markdown.getMarkdown();
   if (newText !== textInEditor) {
@@ -204,23 +183,7 @@ watch(model, (newText) => {
     const remainingCount = props.maxlength - (characterCount.value || 0);
     maxlengthExceeded.value = remainingCount < 0;
   }
-  if (props.readOnly) {
-    nextTick(() => {
-      updateHtml();
-    });
-  }
 });
-
-watch(
-  () => props.readOnly,
-  (newValue) => {
-    if (newValue) {
-      nextTick(() => {
-        updateHtml();
-      });
-    }
-  }
-);
 
 watch(isDisabled, (disabled) => {
   editor.value.setEditable(!disabled);
@@ -354,9 +317,6 @@ function repleaceImageLoader(src, id, alt, title) {
     })
     .run();
 }
-function setHTML(html) {
-  editor.value.commands.setContent(html);
-}
 function removeImageLoader(id) {
   editor.value.chain().focus().removeNode(id).run();
 }
@@ -368,7 +328,7 @@ function formatSize(size) {
   return Number(size?.replace('px', ''));
 }
 
-defineExpose({ getHTML, setHTML, removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
+defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
 
 function setImage() {
   let { src, alt, title, width, height } = getImageSource();
@@ -422,11 +382,6 @@ function setImage() {
 
 onMounted(() => {
   createEditorExtensions();
-  nextTick(() => {
-    if (props.readOnly) {
-      updateHtml();
-    }
-  });
 });
 
 onBeforeUnmount(() => {
@@ -923,7 +878,7 @@ const imageInputTypes = [
         {{ characterCount }}/{{ maxlength }}
       </div>
     </div>
-    <div v-if="readOnly" v-clean-html="outputHtmlText"></div>
+    <LxRichTextDisplay v-if="readOnly" :value="model" />
     <div class="lx-invalidation-message" v-if="readOnly === false">{{ invalidationMessage }}</div>
   </div>
 </template>
