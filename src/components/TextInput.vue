@@ -220,7 +220,7 @@ watch(
       newValue?.toString().length > Number(props.maxlength) + 1
     ) {
       model.value = oldValue;
-      valueRaw.value = oldValue.toString().replace('.', ',');
+      valueRaw.value = oldValue?.toString().replace('.', ',');
     } else if (
       props.mask === 'decimal' &&
       props.maxlength &&
@@ -229,13 +229,13 @@ watch(
       newValue?.toString().length > Number(props.maxlength)
     ) {
       model.value = oldValue;
-      valueRaw.value = oldValue.toString().replace('.', ',');
+      valueRaw.value = oldValue?.toString().replace('.', ',');
     }
     if (maxLengthValue.value && newValue?.toString().length > Number(maxLengthValue.value)) {
       model.value = oldValue;
     } else if (convertValue(newValue) !== convertValue(oldValue)) {
       if (props.mask === 'decimal') {
-        valueRaw.value = model.value.toString().replace('.', ',');
+        valueRaw.value = model.value?.toString().replace('.', ',');
       } else if (props.mask === 'time') {
         let res = '';
         if (newValue?.toString()?.length === 1) res = `${newValue}_:__`;
