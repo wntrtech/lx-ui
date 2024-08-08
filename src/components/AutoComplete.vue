@@ -78,6 +78,7 @@ const detailedModeModal = ref();
 const detailsSwitchType = ref('advanced-search');
 const panelWidth = ref();
 const isInputFocused = ref(false);
+const inputReadonly = ref(false);
 
 const globalEnvironment = useLx().getGlobals()?.environment;
 const convertBooleanToString = (value) => (typeof value === 'boolean' ? value.toString() : value);
@@ -299,7 +300,7 @@ watch(
 );
 
 function getName(returnPlaceholder = true) {
-  let result = returnPlaceholder ? props.placeholder : null;
+  let result;
 
   if (Array.isArray(model.value) && model.value.length > 0) {
     const multipleItems = selectedItems.value?.filter((obj) =>
@@ -313,7 +314,7 @@ function getName(returnPlaceholder = true) {
       result = selectedItem.value[props.nameAttribute];
     }
   }
-  return result;
+  return returnPlaceholder ? props.placeholder : result;
 }
 
 const hasValue = computed(() => {
@@ -336,13 +337,31 @@ function initInputFocus() {
   refQuery.value.focus();
 }
 
-function handleMenuKeydown(e) {
+function handleMenuAndInputKeydown(e) {
+  const inputElement = document.activeElement;
+
+  if (e.shiftKey) {
+    if (e.key === 'ArrowUp') {
+      handleShiftArrow(inputElement, 'up');
+      return;
+    }
+    if (e.key === 'ArrowDown') {
+      handleShiftArrow(inputElement, 'down');
+      return;
+    }
+  }
+
   const isPrintableChar = e.key.length === 1 && e.key.match(/\S/);
-  if (isPrintableChar) {
+  const isBackspaceKey = e.key === 'Backspace';
+  const isDeleteKey = e.key === 'Delete';
+
+  if (isPrintableChar || isBackspaceKey || isDeleteKey) {
     if (!menuOpen.value) {
-      query.value = null
+      query.value = null;
       menuOpen.value = true;
     }
+    if (model.value && props.selectingKind === 'single') clear();
+    inputReadonly.value = false;
     highlightedItemId.value = null;
     initInputFocus();
   }
@@ -366,6 +385,7 @@ function closeOnClickOutside() {
   if (menuOpen.value) {
     menuOpen.value = false;
   }
+  query.value = null;
   highlightedItemId.value = null;
 }
 
@@ -374,6 +394,9 @@ function closeMenu() {
     menuOpen.value = false;
   }
   highlightedItemId.value = null;
+  setTimeout(() => {
+    query.value = null;
+  }, 100);
   nextTick(() => {
     refQuery.value.focus();
   });
@@ -436,6 +459,9 @@ const handleFocusOut = (e) => {
   isInputFocused.value = false;
   if (!refListbox.value.contains(e.relatedTarget)) {
     menuOpen.value = false;
+    setTimeout(() => {
+      query.value = null;
+    }, 100);
   }
 };
 
@@ -448,6 +474,21 @@ const shouldHideInput = computed(() => {
   return false;
 });
 
+const shouldShowPlaceholder = computed(() => {
+  if (!hasValue.value && !query.value && !menuOpen.value) return true;
+  return false;
+});
+
+const shouldShowInputPlaceholder = computed(() => {
+  if (!hasValue.value && !query.value && menuOpen.value) return true;
+  return false;
+});
+
+const shouldShowValuePlaceholder = computed(() => {
+  if (hasValue.value && !query.value) return true;
+  return false;
+});
+
 function onDown() {
   if (!menuOpen.value) {
     openMenu();
@@ -455,7 +496,9 @@ function onDown() {
   }
   if (filteredItems.value.length > 0) {
     const index = filteredItems.value?.findIndex(
-      (x) => getIdAttributeString(x) === highlightedItemId.value
+      (x) =>
+        getIdAttributeString(x) ===
+        (highlightedItemId.value || selectedItem.value?.[props.idAttribute])
     );
     if (index === -1) {
       highlightedItemId.value = getIdAttributeString(filteredItems.value[0]);
@@ -473,17 +516,17 @@ function onUp() {
     return;
   }
   if (filteredItems.value.length > 0) {
-    const index = filteredItems.value?.findIndex(
-      (x) => getIdAttributeString(x) === highlightedItemId.value
+    const index = filteredItems.value.findIndex(
+      (x) =>
+        getIdAttributeString(x) ===
+        (highlightedItemId.value || selectedItem.value?.[props.idAttribute])
     );
-    if (index === -1) {
-      highlightedItemId.value = getIdAttributeString(filteredItems.value[0]);
-    } else if (index > 0) {
-      highlightedItemId.value = getIdAttributeString(filteredItems.value[index - 1]);
-    } else {
+    if (index === -1 || index === 0) {
       highlightedItemId.value = getIdAttributeString(
         filteredItems.value[filteredItems.value.length - 1]
       );
+    } else {
+      highlightedItemId.value = getIdAttributeString(filteredItems.value[index - 1]);
     }
   }
 }
@@ -597,7 +640,9 @@ function openDetails() {
   }
 }
 
-function focusNextInputElement() {
+function focusNextInputElement(e) {
+  if (e.shiftKey && e.key === 'ArrowDown') return;
+
   onDown();
   nextTick(() => {
     // @ts-ignore
@@ -605,12 +650,25 @@ function focusNextInputElement() {
   });
 }
 
-function focusPreviousInputElement() {
+function focusPreviousInputElement(e) {
+  if (e.shiftKey && e.key === 'ArrowUp') return;
+
   onUp();
   nextTick(() => {
     // @ts-ignore
     document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
   });
+}
+
+function handleShiftArrow(inputElement, direction) {
+  if (inputElement && inputElement.setSelectionRange) {
+    const textLength = inputElement.value.length;
+    if (direction === 'down') {
+      inputElement.setSelectionRange(textLength, textLength);
+    } else if (direction === 'up') {
+      inputElement.setSelectionRange(0, textLength);
+    }
+  }
 }
 
 function activate() {
@@ -774,7 +832,7 @@ function selectionChanged(selectedValue) {
   selectionTimeout = setTimeout(() => {
     if (JSON.stringify(selectedValue) !== JSON.stringify(model.value)) {
       // Update selectedItems.value with new values
-      const updatedItems = selectedItems.value?.filter((obj) => selectedValue.includes(obj.id));
+      const updatedItems = selectedItems.value?.filter((obj) => selectedValue.includes(obj[props.idAttribute]));
       selectedItems.value = updatedItems;
 
       // Update model.value with new values
@@ -822,6 +880,16 @@ watch(
   }
 );
 
+watch([hasValue, query, menuOpen], ([newHasValue, newQuery, newMenuOpen]) => {
+  if (newHasValue && !newQuery) {
+    inputReadonly.value = true;
+  } else if (!newHasValue && !newMenuOpen) {
+    inputReadonly.value = true;
+  } else {
+    inputReadonly.value = false;
+  }
+});
+
 onMounted(() => {
   activate();
   if (props.id) {
@@ -863,11 +931,11 @@ onMounted(() => {
         <template v-else>
           <LxStateDisplay
             v-if="selectingKind === 'single'"
-            :value="selectedItem?.id"
+            :value="selectedItem?.[idAttribute]"
             :dictionary="[
               {
-                value: selectedItem?.id,
-                displayName: selectedItem?.name,
+                value: selectedItem?.[idAttribute],
+                displayName: selectedItem?.[nameAttribute],
                 displayType: props.dictionary?.displayType,
                 displayShape: props.dictionary?.displayShape,
               },
@@ -903,6 +971,7 @@ onMounted(() => {
           tabindex="-1"
         >
           <Popper
+            id="popper-id"
             placement="bottom"
             offset-distance="0"
             :hover="false"
@@ -919,6 +988,8 @@ onMounted(() => {
                   class="lx-autocomplete"
                   :title="tooltip"
                   tabindex="-1"
+                  :aria-expanded="menuOpen"
+                  aria-controls="popper-id"
                   @click="openMenu"
                   @keydown.esc.prevent="closeMenu"
                   @keydown.enter.prevent="onEnter"
@@ -942,15 +1013,16 @@ onMounted(() => {
                         <input
                           :class="[{ 'lx-hidden-value': shouldHideInput }]"
                           ref="refQuery"
-                          :placeholder="!shouldHideInput ? getName() : null"
+                          :placeholder="shouldShowInputPlaceholder ? getName() : null"
                           v-model="query"
                           class="lx-text-input lx-value-picker-placeholder"
                           role="search"
+                          :aria-label="getName(false)"
                           tabindex="0"
-                          :readonly="shouldHideInput"
+                          :readonly="inputReadonly"
                           @focusout="handleFocusOut"
                           @focus="handleInputFocus"
-                          @keydown="handleMenuKeydown"
+                          @keydown="handleMenuAndInputKeydown"
                         />
                       </div>
                     </div>
@@ -970,7 +1042,7 @@ onMounted(() => {
                       </div>
                     </div>
 
-                    <template v-if="!menuOpen && hasValue">
+                    <template v-if="shouldShowValuePlaceholder">
                       <div
                         class="lx-value"
                         :title="selectingKind === 'single' ? getName(false) : ''"
@@ -984,11 +1056,11 @@ onMounted(() => {
                         </template>
                         <template v-if="variant === 'state' && selectingKind === 'single'">
                           <LxStateDisplay
-                            :value="selectedItem?.id"
+                            :value="selectedItem?.[idAttribute]"
                             :dictionary="[
                               {
-                                value: selectedItem?.id,
-                                displayName: selectedItem?.name,
+                                value: selectedItem?.[idAttribute],
+                                displayName: selectedItem[nameAttribute],
                                 displayType: props.dictionary?.displayType,
                                 displayShape: props.dictionary?.displayShape,
                               },
@@ -1003,12 +1075,12 @@ onMounted(() => {
                             (variant === 'state' && selectingKind === 'multiple')
                           "
                         >
-                          {{ getName() }}
+                          {{ getName(false) }}
                         </template>
                       </div>
                     </template>
 
-                    <template v-if="!menuOpen && !hasValue">
+                    <template v-if="shouldShowPlaceholder">
                       <div class="lx-placeholder">
                         {{ getName() }}
                       </div>
@@ -1095,7 +1167,7 @@ onMounted(() => {
                       @keydown.f3.prevent="openDetails"
                       @keydown.tab="closeMenu"
                       @keydown.backspace="initInputFocus"
-                      @keydown="handleMenuKeydown"
+                      @keydown="handleMenuAndInputKeydown"
                     >
                       <template v-if="filteredItems?.length">
                         <template v-for="item in filteredItems" :key="item[idAttribute]">
@@ -1108,6 +1180,7 @@ onMounted(() => {
                             @keydown.tab="closeMenu"
                             tabindex="-1"
                             role="option"
+                            :aria-selected="isItemSelected(item)"
                             class="lx-value-picker-item"
                             :class="[
                               {
