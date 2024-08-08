@@ -6,6 +6,11 @@
 
 LxShell `public` mode has a navbar enabled by default. If you want to go back to it being hidden, make sure to add `:hideNavBar="true"` to `LxShell`.
 
+### Layout changes
+
+Since we've updated styles for semantic HTML, if for some weird reason you were using `.lx-article` as your View's root element, styles will break. Please, use `.lx-article` only for text articles (like privacy policy, help or terms & conditions), not for interactive views.
+
+
 ## 1.3 → 1.5
 
 ### Namespace
