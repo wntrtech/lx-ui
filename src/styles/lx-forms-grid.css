@@ -395,6 +395,14 @@
   transition: background-color 0.5s ease;
 }
 
+.lx-form-grid > .lx-main .lx-row .lx-autocomplete .lx-value{
+  color: var(--color-data);
+}
+
+.lx-form-grid > .lx-main .popper .lx-row {
+  white-space: normal;
+}
+
 .lx-form.lx-form-2 .lx-row > label,
 .lx-form.lx-form-3 .lx-row > label,
 .lx-form-grid > .lx-main .lx-row > label,

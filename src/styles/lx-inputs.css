@@ -229,6 +229,10 @@
   background-color: var(--color-region-2);
 }
 
+.lx-form-grid>.lx-main .popper ul.lx-list li {
+  background-color: var(--color-tooltip-background);
+}
+
 .lx-list-wrapper .lx-list li {
   background-color: var(--color-region);
 }
@@ -2316,7 +2320,7 @@ input[type='range']:hover::-moz-range-thumb {
   height: var(--input-size);
 }
 
-.lx-info-wrapper:has(.lx-autocomplete-default)~.lx-invalidation-message  {
+.lx-info-wrapper:has(.lx-autocomplete-default)~.lx-invalidation-message {
   margin-top: 3px;
 }
 
