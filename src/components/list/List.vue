@@ -858,7 +858,12 @@ function moveDraggableItem(direction, element, groupType) {
 <template>
   <div class="lx-list-wrapper">
     <div
-      v-if="$slots.toolbar || hasSelecting || hasSearch"
+      v-if="
+        $slots.toolbar ||
+        (hasSelecting && selectingKind === 'multiple') ||
+        selectedItems?.length !== 0 ||
+        hasSearch
+      "
       class="lx-list-toolbar"
       :class="[{ 'toolbar-selecting': hasSelecting && selectedItems?.length > 0 }]"
     >

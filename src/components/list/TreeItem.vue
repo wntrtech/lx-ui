@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from 'vue';
+import { computed, defineAsyncComponent, watch } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxButton from '@/components/Button.vue';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -144,6 +144,20 @@ const isSelectable = (item) => {
   if (item[attribute] === false) return false;
   return item[attribute] !== false;
 };
+
+watch(
+  () => props.mode,
+  (newMode) => {
+    if (newMode === 'client') {
+      Object.keys(states.value).forEach((id) => {
+        states.value[id] = {
+          ...states.value[id],
+          busy: false,
+        };
+      });
+    }
+  }
+);
 </script>
 <template>
   <div class="tree-item" v-for="item in items" :key="item[idAttribute]">
