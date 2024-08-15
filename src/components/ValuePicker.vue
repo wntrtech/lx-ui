@@ -45,8 +45,24 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue']);
 
+const stringifiedItems = computed(() =>
+  props.items.map((item) => {
+    const id = item[props.idAttribute];
+    if (typeof id === 'number') {
+      return {
+        ...item,
+        [props.idAttribute]: String(id),
+      };
+    }
+    return item;
+  })
+);
+
 const model = computed({
   get() {
+    if (typeof props.modelValue === 'number') {
+      return String(props.modelValue);
+    }
     return props.modelValue;
   },
   set(value) {
@@ -116,7 +132,7 @@ onMounted(() => {
       v-if="variant === 'default' || variant === 'default-custom'"
       :role="kind === 'single' ? 'radiogroup' : 'group'"
       v-model="model"
-      :items="items"
+      :items="stringifiedItems"
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :descriptionAttribute="descriptionAttribute"
@@ -145,7 +161,7 @@ onMounted(() => {
     <LxValuePickerDropDown
       v-if="variant === 'dropdown' || variant === 'dropdown-custom'"
       v-model="model"
-      :items="items"
+      :items="stringifiedItems"
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :descriptionAttribute="descriptionAttribute"
@@ -179,7 +195,7 @@ onMounted(() => {
         variant === 'tags-custom'
       "
       v-model="model"
-      :items="items"
+      :items="stringifiedItems"
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :descriptionAttribute="descriptionAttribute"
@@ -208,7 +224,7 @@ onMounted(() => {
     <LxValuePickerRotator
       v-if="variant === 'rotator' || variant === 'rotator-custom'"
       v-model="model"
-      :items="items"
+      :items="stringifiedItems"
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :descriptionAttribute="descriptionAttribute"
