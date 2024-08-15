@@ -432,6 +432,10 @@
   outline-color: var(--color-bad);
 }
 
+.lx-dropdown-default[disabled='true'] .lx-dropdown-default-panel {
+  outline: none;
+}
+
 .lx .lx-autocomplete-default.lx-invalid .lx-text-input {
   outline: none;
 }
@@ -767,6 +771,9 @@ h2.lx-section-header+p.lx-invalidation-message {
 
 .lx-toggle+.lx-toggle-label-wrapper .lx-toggle-text {
   font-size: var(--small-font-size);
+}
+
+.lx-toggle+.lx-toggle-label-wrapper .lx-toggle-appearance~.lx-toggle-text {
   margin-left: 0.5rem;
 }
 
@@ -982,6 +989,7 @@ h2.lx-section-header+p.lx-invalidation-message {
 }
 
 .lx-value-picker-default-item.lx-value-hidden,
+.lx-indicator.lx-value-hidden,
 .lx-tag.lx-value-hidden {
   opacity: 0.25;
 }
@@ -1208,12 +1216,13 @@ h2.lx-section-header+p.lx-invalidation-message {
   margin-bottom: 1rem;
 }
 
-.lx-value-picker-tile[disabled='true'] {
+.lx .lx-value-picker-tile[disabled='true'] {
   background-color: var(--color-disabled-foreground);
   border: 2px solid var(--color-disabled-foreground);
   color: var(--color-disabled-foreground);
   opacity: 1;
   cursor: not-allowed;
+  outline: none;
 }
 
 .lx-value-picker-tile:hover[disabled='true'] {
@@ -1270,9 +1279,20 @@ h2.lx-section-header+p.lx-invalidation-message {
   cursor: pointer;
 }
 
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator {
+  border: 2px solid var(--color-data);
+  cursor: pointer;
+}
+
 .lx-value-picker-tags .lx-tag-set .lx-tag:hover,
 .lx-value-picker-tags .lx-tag-set .lx-tag.lx-tags-tile-highlighted {
   background-color: var(--color-tile-hover-background);
+  border: 2px solid var(--color-brand);
+  box-shadow: var(--shadow-1);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator[disabled='false'][readOnly='false']:hover {
+  background-color: var(--color-grid-hover-background);
   border: 2px solid var(--color-brand);
   box-shadow: var(--shadow-1);
 }
@@ -1281,29 +1301,116 @@ h2.lx-section-header+p.lx-invalidation-message {
   border: 2px solid var(--color-brand);
 }
 
-.lx-value-picker-tags .lx-tag-set .lx-tag[disabled='true'] {
+.lx .lx-value-picker-tags .lx-tag-set .lx-tag[disabled='true'],
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator[disabled='true'] {
   background-color: var(--color-disabled-foreground);
   border: 2px solid var(--color-disabled-foreground);
   color: var(--color-disabled-foreground);
   opacity: 1;
   cursor: not-allowed;
-}
-
-.lx-value-picker-tags .lx-tag-set .lx-tag:hover[disabled='true'] {
-  border: 2px solid var(--color-disabled-foreground);
-  background-color: var(--color-disabled-foreground);
+  outline: none;
   box-shadow: none;
 }
 
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator[disabled='true'],
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator[readOnly='true'] {
+  background-color: var(--color-region);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected[disabled='true'],
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected[readOnly='true'] {
+  border-color: var(--color-content-switcher-foreground);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator[disabled='true'] .lx-indicator-icon {
+  fill: var(--color-disabled-foreground);
+}
+
+.lx-value-picker-indicators .lx-indicator-set .lx-indicator[readOnly='true'] .lx-indicator-icon {
+  fill: var(--color-chrome);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator[readOnly='true'] {
+  border-color: var(--color-chrome);
+  box-shadow: none;
+  cursor: help;
+  outline: none;
+}
+
 .lx .lx-value-picker-tags .lx-tag.lx-tags-tile-selected,
+.lx .lx-value-picker-tags .lx-tag.lx-tags-tile-selected[disabled='true'],
+.lx .lx-value-picker-indicators .lx-indicator.lx-indicators-selected,
+.lx-form-grid>.lx-main .lx-row ul.lx-indicator-set .lx-indicator.lx-indicators-selected,
 .lx-form-grid>.lx-main .lx-row ul.lx-tag-set .lx-tag.lx-tags-tile-selected {
   background-color: var(--color-content-switcher-foreground) !important;
   color: var(--color-region);
 }
 
-.lx .lx-value-picker-tags .lx-tag.lx-tags-tile-selected:hover {
+.lx .lx-value-picker-indicators .lx-indicator.lx-indicators-selected {
+  border-color: var(--color-content-switcher-foreground);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-red,
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-red[disabled='true'] {
+  background-color: var(--color-red) !important;
+  border-color: var(--color-red);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-orange,
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-orange[disabled='true'] {
+  background-color: var(--color-orange) !important;
+  border-color: var(--color-orange);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-green,
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-green[disabled='true'] {
+  background-color: var(--color-green) !important;
+  border-color: var(--color-green);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-teal,
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-teal[disabled='true'] {
+  background-color: var(--color-teal) !important;
+  border-color: var(--color-teal);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-yellow,
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-yellow[disabled='true'] {
+  background-color: var(--color-yellow) !important;
+  border-color: var(--color-yellow);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-yellow .lx-indicator-icon,
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-yellow[disabled='true'] .lx-indicator-icon {
+  fill: var(--color-yellow-foreground);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-blue,
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-blue[disabled='true'] {
+  background-color: var(--color-blue) !important;
+  border-color: var(--color-blue);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-purple,
+.lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator.lx-indicators-selected.lx-indicator-purple[disabled='true'] {
+  background-color: var(--color-purple) !important;
+  border-color: var(--color-purple);
+}
+
+
+.lx .lx-value-picker-indicators .lx-indicator.lx-indicators-selected .lx-indicator-icon,
+.lx-form-grid>.lx-main .lx-row ul.lx-indicator-set .lx-indicator.lx-indicators-selected .lx-indicator-icon {
+  fill: var(--color-region);
+}
+
+.lx .lx-value-picker-tags .lx-tag[disabled='false'].lx-tags-tile-selected:hover,
+.lx .lx-value-picker-indicators .lx-indicator[disabled='false'][readOnly='false'].lx-indicators-selected:hover {
   background-color: var(--color-content-switcher-foreground);
   color: var(--color-grid-header-hover-background);
+}
+
+.lx .lx-value-picker-indicators .lx-indicator[disabled='false'][readOnly='false'].lx-indicators-selected:not(.lx-indicator-yellow):hover .lx-indicator-icon {
+  fill: var(--color-grid-header-hover-background);
 }
 
 .lx-value-picker-default-item-description {
@@ -2380,7 +2487,8 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-value-picker-default-wrapper.lx-invalid>.lx-value-picker-default-item .lx-radio-button-appearance,
 .lx-value-picker-default-wrapper.lx-invalid>.lx-value-picker-default-item .lx-checkbox-appearance,
 .lx-value-picker-tile-wrapper.lx-invalid .lx-value-picker-tile,
-.lx-value-picker-tags.lx-invalid>.lx-tag-set .lx-tag {
+.lx-value-picker-tags.lx-invalid>.lx-tag-set .lx-tag,
+.lx-value-picker-indicators.lx-invalid>.lx-indicator-set .lx-indicator {
   border-color: var(--color-bad);
 }
 
