@@ -521,6 +521,11 @@ h2.lx-section-header+p.lx-invalidation-message {
   margin: 0.4rem 0;
 }
 
+.lx-radio-button-wrapper,
+.lx-checkbox-wrapper  {
+  position: relative;
+}
+
 .lx-radio-button,
 .lx-checkbox,
 .lx-toggle {
