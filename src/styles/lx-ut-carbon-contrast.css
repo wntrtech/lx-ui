@@ -1,7 +1,6 @@
 .lx.lx-theme-contrast ::backdrop {
   --color-cover-background: rgba(0, 0, 0, 0.75);
 }
-
 .lx.lx-theme-contrast {
   --contrast-background: #000;
   --contrast-foreground: #ffff00;
@@ -82,7 +81,6 @@
   --color-label: var(--contrast-foreground);
   --color-data: var(--color-foreground);
   --color-disabled: var(--color-foreground);
-  --color-yellow-foreground: var(--color-region);
 
   --color-green: var(--contrast-foreground);
   --color-red: var(--contrast-foreground);

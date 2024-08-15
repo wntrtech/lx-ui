@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable import/prefer-default-export */
 export * as lxDateUtils from '@/utils/dateUtils';
 export * as lxStringUtils from '@/utils/stringUtils';
 export * as lxFormatUtils from '@/utils/formatUtils';

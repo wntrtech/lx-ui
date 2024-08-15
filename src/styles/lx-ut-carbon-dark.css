@@ -1,7 +1,6 @@
 .lx.lx-theme-dark ::backdrop {
   --color-cover-background: rgba(0, 0, 0, 0.75);
 }
-
 .lx.lx-theme-dark {
   --color-brand: #3e98e2;
   --color-interactive-background: #3e98e2;
@@ -80,7 +79,6 @@
   --color-label: #979797;
   --color-data: var(--color-foreground);
   --color-disabled: #888;
-  --color-yellow-foreground: var(--color-region);
 
   --color-green: #36b37e;
   --color-red: #ff5630;

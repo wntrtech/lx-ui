@@ -1,6 +1,5 @@
 # LX/UI Migration Guide
 
-
 ## 1.5 → 1.6
 
 ### Navbar for public LxShell
@@ -10,10 +9,6 @@ LxShell `public` mode has a navbar enabled by default. If you want to go back to
 ### Layout changes
 
 Since we've updated styles for semantic HTML, if for some weird reason you were using `.lx-article` as your View's root element, styles will break. Please, use `.lx-article` only for text articles (like privacy policy, help or terms & conditions), not for interactive views.
-
-### LxValuePicker
-
-Numerical values of `id` attributes in `items` are now represented as strings. Consider updating your implementation to handle IDs as strings rather than numbers.
 
 
 ## 1.3 → 1.5

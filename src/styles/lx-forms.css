@@ -132,8 +132,7 @@
   font-weight: var(--data-weight);
 }
 
-.lx .lx-tag-set,
-.lx .lx-indicator-set {
+.lx .lx-tag-set {
   display: flex;
   gap: 0.25rem;
   list-style: none;
@@ -141,29 +140,14 @@
   flex-wrap: wrap;
 }
 
-.lx .lx-tag-set .lx-tag,
-.lx .lx-indicator-set .lx-indicator {
+.lx .lx-tag-set .lx-tag {
   padding: 0.25rem 1rem;
   background-color: var(--color-region);
   display: flex;
   align-items: center;
-  justify-content: center;
 }
 
-.lx .lx-indicator-set .lx-indicator {
-  width: var(--indicator-size);
-  height: var(--indicator-size);
-  padding: 0;
-}
-
-.lx .lx-indicator-set .lx-indicator .lx-indicator-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  fill: var(--color-data);
-}
-
-.lx .lx-tag-set .lx-tag .lx-button,
-.lx .lx-indicator-set .lx-indicator .lx-button {
+.lx .lx-tag-set .lx-tag .lx-button {
   margin-left: 0.25rem;
   margin-right: -1rem;
   margin-top: -0.25rem;
@@ -172,16 +156,13 @@
 
 .lx .lx-tag-set .lx-tag:focus,
 .lx .lx-tag-set .lx-tag:focus-visible,
-.lx .lx-indicator-set .lx-indicator:focus,
-.lx .lx-indicator-set .lx-indicator:focus-visible,
 .lx-context-container .inline-block .lx-dropdown-toggler .lx-handle:focus-visible,
 .lx-context-container .inline-block .lx-dropdown-toggler .lx-handle:focus {
   outline: 2px solid var(--color-focus-background);
 }
 
 .lx .lx-region .lx-tag-set .lx-tag,
-.lx .lx-form-region .lx-tag-set .lx-tag,
-.lx .lx-form-region .lx-indicator-set .lx-indicator {
+.lx .lx-form-region .lx-tag-set .lx-tag {
   background-color: var(--color-region-2);
 }
 

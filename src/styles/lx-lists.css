@@ -87,7 +87,6 @@
 .lx-list-item-wrapper {
   width: 100%;
   display: flex;
-  background-color: var(--color-region);
 }
 
 .lx-list-item-actions {

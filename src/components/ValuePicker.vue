@@ -5,7 +5,6 @@ import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import LxValuePickerDropDown from '@/components/valuePickers/Dropdown.vue';
 import LxValuePickerTileTag from '@/components/valuePickers/TileTag.vue';
 import LxValuePickerRotator from '@/components/valuePickers/Rotator.vue';
-import LxValuePickerIndicator from '@/components/valuePickers/Indicator.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -13,11 +12,9 @@ const props = defineProps({
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
-  iconAttribute: { type: String, default: 'icon' },
-  categoryAttribute: { type: String, default: 'category' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
-  variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'rotator' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'|| 'rotator-custom' || 'indicator'
+  variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'rotator' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'|| 'rotator-custom'
   kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   placeholder: { type: String, default: null },
@@ -45,24 +42,8 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue']);
 
-const stringifiedItems = computed(() =>
-  props.items.map((item) => {
-    const id = item[props.idAttribute];
-    if (typeof id === 'number') {
-      return {
-        ...item,
-        [props.idAttribute]: String(id),
-      };
-    }
-    return item;
-  })
-);
-
 const model = computed({
   get() {
-    if (typeof props.modelValue === 'number') {
-      return String(props.modelValue);
-    }
     return props.modelValue;
   },
   set(value) {
@@ -113,8 +94,7 @@ onMounted(() => {
       props.variant === 'tiles' ||
       props.variant === 'tags' ||
       props.variant === 'tiles-custom' ||
-      props.variant === 'tags-custom' ||
-      props.variant === 'indicator'
+      props.variant === 'tags-custom'
     ) {
       updateModelValue(null);
     } else {
@@ -132,7 +112,7 @@ onMounted(() => {
       v-if="variant === 'default' || variant === 'default-custom'"
       :role="kind === 'single' ? 'radiogroup' : 'group'"
       v-model="model"
-      :items="stringifiedItems"
+      :items="items"
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :descriptionAttribute="descriptionAttribute"
@@ -161,7 +141,7 @@ onMounted(() => {
     <LxValuePickerDropDown
       v-if="variant === 'dropdown' || variant === 'dropdown-custom'"
       v-model="model"
-      :items="stringifiedItems"
+      :items="items"
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :descriptionAttribute="descriptionAttribute"
@@ -195,7 +175,7 @@ onMounted(() => {
         variant === 'tags-custom'
       "
       v-model="model"
-      :items="stringifiedItems"
+      :items="items"
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :descriptionAttribute="descriptionAttribute"
@@ -224,7 +204,7 @@ onMounted(() => {
     <LxValuePickerRotator
       v-if="variant === 'rotator' || variant === 'rotator-custom'"
       v-model="model"
-      :items="stringifiedItems"
+      :items="items"
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :descriptionAttribute="descriptionAttribute"
@@ -248,36 +228,5 @@ onMounted(() => {
         <slot name="customItem" v-bind="slotData" />
       </template>
     </LxValuePickerRotator>
-
-    <LxValuePickerIndicator
-      v-if="variant === 'indicator'"
-      v-model="model"
-      :items="items"
-      :idAttribute="idAttribute"
-      :nameAttribute="nameAttribute"
-      :iconAttribute="iconAttribute"
-      :categoryAttribute="categoryAttribute"
-      :descriptionAttribute="descriptionAttribute"
-      :groupId="groupId"
-      :variant="variant"
-      :kind="kind"
-      :disabled="disabled"
-      :invalid="invalid"
-      :invalidation-message="invalidationMessage"
-      :texts="texts"
-      :placeholder="placeholder"
-      :tooltip="tooltip"
-      :always-as-array="alwaysAsArray"
-      :has-search="hasSearch"
-      :nullable="nullable"
-      :readOnly="readOnly"
-      :readOnlyRenderType="readOnlyRenderType"
-      :search-attributes="searchAttributes"
-      :hasSelectAll="hasSelectAll"
-    >
-      <template v-slot:customItem="slotData" v-if="$slots.customItem">
-        <slot name="customItem" v-bind="slotData" />
-      </template>
-    </LxValuePickerIndicator>
   </div>
 </template>

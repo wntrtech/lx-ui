@@ -580,9 +580,9 @@ const selectedItems = computed(() => {
     if (selectedItemsRaw.value[key]) {
       let isKeyValid;
       if (props.kind === 'treelist') {
-        isKeyValid = treeItems.value.some((item) => item[props.idAttribute] === key);
+        isKeyValid = treeItems.value.some((item) => item.id === key);
       } else {
-        isKeyValid = itemsWithStringIds.value.some((item) => item[props.idAttribute] === key);
+        isKeyValid = itemsWithStringIds.value.some((item) => item.id === key);
       }
 
       if (isKeyValid) {

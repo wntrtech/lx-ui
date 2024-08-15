@@ -80,7 +80,6 @@
   --color-label: #6c6c6c;
   --color-data: var(--color-foreground);
   --color-disabled: #888;
-  --color-yellow-foreground: var(--color-data);
 
   --color-green: rgb(25, 128, 56);
   --color-red: rgb(218, 30, 40);
