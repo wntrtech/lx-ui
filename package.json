@@ -47,7 +47,7 @@
     "@vueuse/components": "^10.7.2",
     "@vueuse/core": "^10.7.2",
     "avvvatars-vue": "^1.0.2",
-    "axios": "^1.6.5",
+    "axios": "^1.7.4",
     "c2pa": "^0.22.3",
     "cyrillic-to-translit-js": "^3.2.1",
     "date-fns": "^3.3.1",

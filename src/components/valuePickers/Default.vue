@@ -135,7 +135,6 @@ watch(
     return { value, length };
   },
   ({ value, length }) => {
-    if (!value) return
     activate();
 
     if (Array.isArray(value) && length === 0) {
