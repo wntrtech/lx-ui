@@ -573,6 +573,21 @@ const imageInputTypes = [
               <template #panel>
                 <ul class="lx-color-list">
                   <li
+                    class="lx-color-item black"
+                    :class="[
+                      {
+                        'lx-selected': editor.isActive('textStyle', {
+                          color: 'var(--color-data)',
+                        }),
+                      },
+                    ]"
+                  >
+                    <div
+                      @click="editor.chain().focus().setColor('var(--color-data)').run()"
+                      @keydown.enter="editor.chain().focus().setColor('var(--color-data)').run()"
+                    ></div>
+                  </li>
+                  <li
                     class="lx-color-item red"
                     :class="[
                       {
@@ -580,7 +595,10 @@ const imageInputTypes = [
                       },
                     ]"
                   >
-                    <div @click="editor.chain().focus().setColor('var(--color-red)').run()"></div>
+                    <div
+                      @click="editor.chain().focus().setColor('var(--color-red)').run()"
+                      @keydown.enter="editor.chain().focus().setColor('var(--color-red)').run()"
+                    ></div>
                   </li>
                   <li
                     class="lx-color-item orange"
@@ -594,6 +612,7 @@ const imageInputTypes = [
                   >
                     <div
                       @click="editor.chain().focus().setColor('var(--color-orange)').run()"
+                      @keydown.enter="editor.chain().focus().setColor('var(--color-orange)').run()"
                     ></div>
                   </li>
                   <li
@@ -608,6 +627,7 @@ const imageInputTypes = [
                   >
                     <div
                       @click="editor.chain().focus().setColor('var(--color-yellow)').run()"
+                      @keydown.enter="editor.chain().focus().setColor('var(--color-yellow)').run()"
                     ></div>
                   </li>
                   <li
@@ -620,7 +640,10 @@ const imageInputTypes = [
                       },
                     ]"
                   >
-                    <div @click="editor.chain().focus().setColor('var(--color-green)').run()"></div>
+                    <div
+                      @click="editor.chain().focus().setColor('var(--color-green)').run()"
+                      @keydown.enter="editor.chain().focus().setColor('var(--color-green)').run()"
+                    ></div>
                   </li>
                   <li
                     class="lx-color-item teal"
@@ -630,7 +653,10 @@ const imageInputTypes = [
                       },
                     ]"
                   >
-                    <div @click="editor.chain().focus().setColor('var(--color-teal)').run()"></div>
+                    <div
+                      @click="editor.chain().focus().setColor('var(--color-teal)').run()"
+                      @keydown.enter="editor.chain().focus().setColor('var(--color-teal)').run()"
+                    ></div>
                   </li>
                   <li
                     class="lx-color-item blue"
@@ -640,7 +666,10 @@ const imageInputTypes = [
                       },
                     ]"
                   >
-                    <div @click="editor.chain().focus().setColor('var(--color-blue)').run()"></div>
+                    <div
+                      @click="editor.chain().focus().setColor('var(--color-blue)').run()"
+                      @keydown.enter="editor.chain().focus().setColor('var(--color-blue)').run()"
+                    ></div>
                   </li>
                   <li
                     class="lx-color-item purple"
@@ -654,6 +683,7 @@ const imageInputTypes = [
                   >
                     <div
                       @click="editor.chain().focus().setColor('var(--color-purple)').run()"
+                      @keydown.enter="editor.chain().focus().setColor('var(--color-purple)').run()"
                     ></div>
                   </li>
                   <li
@@ -666,16 +696,10 @@ const imageInputTypes = [
                       },
                     ]"
                   >
-                    <div @click="editor.chain().focus().setColor('var(--color-label)').run()"></div>
-                  </li>
-                  <li>
-                    <LxButton
-                      icon="clear"
-                      variant="icon-only"
-                      kind="ghost"
-                      :title="texts.clear"
-                      @click="editor.chain().focus().unsetColor().run()"
-                    />
+                    <div
+                      @click="editor.chain().focus().setColor('var(--color-label)').run()"
+                      @keydown.enter="editor.chain().focus().setColor('var(--color-label)').run()"
+                    ></div>
                   </li>
                 </ul>
               </template>
@@ -849,6 +873,7 @@ const imageInputTypes = [
                   :key="item.id"
                   :title="item?.description"
                   @click="postPlaceholder(item.value)"
+                  @keydown.enter="postPlaceholder(item.value)"
                 >
                   <p class="lx-data">{{ item?.name }}</p>
                   <div>

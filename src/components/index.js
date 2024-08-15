@@ -60,5 +60,6 @@ export { default as LxValuePicker } from '@/components/ValuePicker.vue';
 export { default as LxVisualPicker } from '@/components/VisualPicker.vue';
 export { default as LxWidget } from '@/components/Widget.vue';
 export { default as LxDayInput } from '@/components/DayInput.vue';
+export { default as LxDrawPad } from '@/components/DrawPad.vue';
 
 // Other components you plan to publish go here
