@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
-import useLx from '@/hooks/useLx';
-import { lxDevUtils } from '@/utils';
 
-import LxRadioButton from '@/components/RadioButton.vue';
-import LxCheckbox from '@/components/Checkbox.vue';
+import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
-import LxSearchableText from '@/components/SearchableText.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -16,17 +12,19 @@ const props = defineProps({
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
+  iconAttribute: { type: String, default: 'icon' },
+  categoryAttribute: { type: String, default: 'category' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
+  variant: { type: String, default: 'indicator' },
   kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
-  variant: { type: String, default: 'default' },
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
+  alwaysAsArray: { type: Boolean, default: false },
   tooltip: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
   readOnlyRenderType: { type: String, default: 'row' }, // 'row' || 'column'
-  alwaysAsArray: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
@@ -39,7 +37,7 @@ const props = defineProps({
       clearChosen: 'Notīrīt visas izvēlētās vērtības',
       notSelected: 'Nav izvēlēts',
       searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-      selectAll: 'Izvēlēties visu',
+      selectAll: 'Izvēlēties visu'
     }),
   },
 });
@@ -66,9 +64,6 @@ onMounted(() => {
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
   }
-  if (props.items.length === 0 && (model.value !== null && model.value !== undefined && model.value.length > 0)) {
-    lxDevUtils.log('Error: No items available but v-model value is set.', useLx().getGlobals()?.environment, 'error');
-  }
 });
 
 const itemsModel = ref({});
@@ -78,7 +73,7 @@ const notSelectedId = 'notSelected';
 
 function activate() {
   // First set all items as not selected
-  itemsDisplay.value.forEach((item) => {
+  itemsDisplay.value?.forEach((item) => {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
 
@@ -99,17 +94,17 @@ function activate() {
   }
 
   // Then set items from model as selected
- if (model.value) {
-   if (Array.isArray(model.value)) {
-     model.value?.forEach((id) => {
-       if (id) {
-         itemsModel.value[id?.toString()] = true;
-       }
-     });
-   } else {
-     itemsModel.value[model.value?.toString()] = true;
-   }
- }
+  if (model.value) {
+    if (Array.isArray(model.value)) {
+      model.value?.forEach((id) => {
+        if (id) {
+          itemsModel.value[id?.toString()] = true;
+        }
+      });
+    } else {
+      itemsModel.value[model.value?.toString()] = true;
+    }
+  }
 }
 activate();
 
@@ -123,8 +118,8 @@ watch(
   () => props.nullable,
   (newValue) => {
     if (props.kind !== "single") return
-    if (newValue) activate()
-    else if (!newValue) deactivate()    
+    if (newValue) activate();
+    else if (!newValue) deactivate();
   }
 );
 
@@ -140,6 +135,7 @@ watch(
     if (Array.isArray(value) && length === 0) {
       itemsModel.value.notSelected = true;
     }
+    
   }
 );
 
@@ -159,26 +155,19 @@ const selectedItems = computed(() => {
   return ret;
 });
 
-function getName(returnPlaceholder = true) {
-  let text = '';
-
-  if (model.value && !Array.isArray(model.value)) {
-    return selectedItems.value[0].name;
-  } else if (model.value && model.value.length > 0) {
-    text = selectedItems.value?.map((item) => item[props.nameAttribute])?.join(', ');
-  } else if (returnPlaceholder) {
-    text = props.placeholder;
+function getIcon(item, iconAttribute){
+  if (item[props.idAttribute] === notSelectedId) {
+    return 'none';
   }
-
-  return text;
+  const icon = item[iconAttribute];
+  return typeof icon === 'object' ? icon[iconAttribute] : icon;
 }
 
 function getItemId(id) {
   return `${id}---${generateUUID()}`;
 }
-
 function selectSingle(id) {
-  if (props.disabled) return;
+  if (props.disabled || props.readOnly) return;
 
   // Deselect previously selected item
   if (model.value && !Array.isArray(model.value) && model.value !== notSelectedId) {
@@ -199,15 +188,15 @@ function selectSingle(id) {
 
 watch(
   () => props.kind,
-  (newValue) => {
+  (newKind) => {
     activate();
     itemsModel.value = {};
-  
-    if (newValue === 'multiple') {
-      model.value = [];
+        
+    if (newKind === 'multiple') {
+         model.value = [];
       if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
-    } else if (newValue === 'single') {
-      if (props.nullable) {
+    } else if (newKind === 'single') {
+     if (props.nullable) {
         selectSingle(notSelectedId);
       } else {
         selectSingle(itemsDisplay.value[0][props.idAttribute]);
@@ -217,48 +206,42 @@ watch(
 );
 
 function selectMultiple(id) {
-  if (props.disabled) return;
+  if (props.disabled || props.readOnly) {
+    return;
+  }
 
   const idModel = ref(itemsModel.value[id]);
+
   idModel.value = !idModel.value;
 
   if (idModel.value) {
     // Check if item already exists in model
-    const index = model.value.indexOf(id);
+    const index = model.value?.indexOf(id);
     if (index === -1) {
       // Add item to model
-      model.value.push(id);
+      model.value?.push(id);
       itemsModel.value[id] = true;
     } else {
       // Remove item from model
-      model.value.splice(index, 1);
+      model.value?.splice(index, 1);
     }
 
     // Sort model according to order of items
-    model.value.sort(
+    model.value?.sort(
       (a, b) =>
-        Object.keys(itemsModel.value).indexOf(a?.toString()) -
-        Object.keys(itemsModel.value).indexOf(b?.toString())
+        Object.keys(itemsModel.value)?.indexOf(a?.toString()) -
+        Object.keys(itemsModel.value)?.indexOf(b?.toString())
     );
   } else {
     itemsModel.value[id] = false;
     // Remove item from model
-    const index = model.value.indexOf(id);
+    const index = model.value?.indexOf(id);
     if (index > -1 && Array.isArray(model.value)) {
-      model.value.splice(index, 1);
+      model.value?.splice(index, 1);
     }
   }
 }
-
 const query = ref();
-
-function defineSelector(item) {
-  if (props.kind === 'single') {
-    selectSingle(item);
-  } else if (props.kind === 'multiple') {
-    selectMultiple(item);
-  }
-}
 
 const hiddenValues = ref([]);
 
@@ -278,18 +261,21 @@ watch(
   () => {
     hiddenValues.value = [];
     itemsDisplay.value?.forEach((val) => {
-      if (props.searchAttributes) {
-        if (!attributesSearch(val) && query.value.length !== 0) {
-          hiddenValues.value.push(val);
-        }
-      } else {
+      if(props.searchAttributes){
         if (
-          !textSearch(query.value, val[props.nameAttribute]) &&
-          !textSearch(query.value, val[props.descriptionAttribute]) &&
-          query.value.length !== 0
-        ) {
-          hiddenValues.value.push(val);
-        }
+        !attributesSearch(val) &&
+        query.value.length !== 0
+      ) {
+        hiddenValues.value.push(val);
+      }
+      }else{
+      if (
+        !textSearch(query.value, val[props.nameAttribute]) &&
+        !textSearch(query.value, val[props.descriptionAttribute]) &&
+        query.value.length !== 0
+      ) {
+        hiddenValues.value.push(val);
+      }
       }
     });
   }
@@ -313,9 +299,10 @@ function isElementHidden(item) {
   return false;
 }
 
-const columnReadOnly = computed(() => {
-  return selectedItems.value?.map((item) => item[props.nameAttribute]);
-});
+function checkNull(value) {
+  if (!value) return 'notSelected';
+  return value;
+}
 
 const areSomeSelected = computed(() => {
   let res = false;
@@ -349,129 +336,134 @@ function selectAll() {
     });
   }
 }
+function isSelected(item) {
+  return (
+    itemsModel.value[item[props.idAttribute]] ||
+    (!props.alwaysAsArray && item[props.idAttribute] === model.value) ||
+    item[props.idAttribute] === checkNull(model.value)
+  );
+}
 
+const indicatorTooltips = computed(() => {
+  const tooltips = {};
+  itemsDisplay.value.forEach(item => {
+    tooltips[item[props.idAttribute]] = item[props.descriptionAttribute]
+      ? `${item[props.nameAttribute]} : ${item[props.descriptionAttribute]}`
+      : item[props.nameAttribute];
+  });
+  return tooltips;
+});
 </script>
+
 <template>
-  <div
-    class="lx-value-picker-default-wrapper"
-    :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && kind === 'multiple' }]"
-    role="radiogroup"
-    :title="tooltip"
-  >
-    <template v-if="readOnly">
-      <p v-if="readOnlyRenderType === 'row'" class="lx-data">
-        {{ getName(false) }}
-        <template v-if="model === null || model === undefined || model?.length < 1">—</template>
-      </p>
-      <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
-        <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
-      </ul>
-    </template>
-
-    <template v-else>
-      <div v-if="hasSearch" class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search">
-        <LxButton
-          kind="ghost"
-          :icon="
-            areSomeSelected
-              ? areAllSelected
-                ? 'checkbox-filled'
-                : 'checkbox-indeterminate'
-              : 'checkbox'
+    <div
+      v-if="hasSearch && !props.readOnly"
+      class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
+      :class="[{ 'select-all': hasSelectAll && kind === 'multiple' }]"
+    >
+      <LxButton
+        kind="ghost"
+        :icon="
+          areSomeSelected
+            ? areAllSelected
+              ? 'checkbox-filled'
+              : 'checkbox-indeterminate'
+            : 'checkbox'
+        "
+        v-if="hasSelectAll && kind === 'multiple'"
+        @click="selectAll"
+        :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
+        :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+      />
+      <lx-text-input
+        v-if="hasSearch"
+        :disabled="disabled"
+        ref="queryInput"
+        v-model="query"
+        kind="search"
+        :placeholder="texts.searchPlaceholder"
+        role="search"
+      />
+      <lx-button
+        v-if="query && hasSearch"
+        icon="clear"
+        kind="ghost"
+        variant="icon-only"
+        :title="texts.clearQuery"
+        :disabled="disabled"
+        @click="query = ''"
+      />
+    </div>
+    <div
+      class="lx-value-picker-indicators"
+      :class="[{ 'lx-invalid': invalid }]"
+      v-if="variant === 'indicator'"
+      :title="tooltip"
+    >
+      <ul class="lx-indicator-set" v-if="kind === 'single'">
+        <li
+          v-for="item in itemsDisplay"
+          :key="item[idAttribute]"
+          v-on:focus="onFocus"
+          class="lx-indicator"
+          :title="indicatorTooltips[item[idAttribute]]"
+          :id="getItemId(item[idAttribute])"
+          :group-id="groupId"
+          :class="{
+            'lx-indicators-selected': isSelected(item),
+            'lx-value-hidden': isElementHidden(item),
+            [`lx-indicator-${item[categoryAttribute]}`]: item[categoryAttribute] && isSelected(item),
+          }"
+          :disabled="disabled"
+          :readOnly="readOnly"
+          tabindex="0"
+          @click="disabled ? null : selectSingle(item[idAttribute])"
+          role="radio"
+          :aria-checked="
+            itemsModel[item[idAttribute]] ||
+              (!alwaysAsArray && item[idAttribute] === model) ||
+              item[idAttribute] === checkNull(model)
           "
-          v-if="hasSelectAll && kind === 'multiple'"
-          @click="selectAll"
-          :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
-          :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
-        />
-        <lx-text-input
-          v-if="hasSearch"
-          :disabled="disabled"
-          ref="queryInput"
-          v-model="query"
-          kind="search"
-          role="search"
-          :placeholder="texts.searchPlaceholder"
-        />
-        <lx-button
-          v-if="query && hasSearch"
-          icon="clear"
-          kind="ghost"
-          variant="icon-only"
-          :disabled="disabled"
-          :title="texts.clearQuery"
-          @click="query = ''"
-        />
-      </div>
-
-      <div
-        :id="idValue"
-        v-for="item in itemsDisplay"
-        v-if="!readOnly"
-        :key="item[idAttribute]"
-        class="lx-value-picker-default-item"
-        :class="[
-          { 'lx-value-hidden': isElementHidden(item) },
-          { 'lx-value-picker-item-disabled': disabled },
-        ]"
-        @click="defineSelector(item[idAttribute])"
-      >
-        <lx-radio-button
-          v-if="kind === 'single'"
-          :id="getItemId(item[idAttribute])"
-          :group-id="groupId"
-          v-model="itemsModel[item[idAttribute]]"
-          :disabled="disabled"
-          :value="item[idAttribute].toString()"
-          @click="selectSingle(item[idAttribute])"
+          @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
         >
-          <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
-            <div class="lx-value-picker-default-item-label">
-              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-            </div>
-            <div class="lx-value-picker-default-item-description">
-              <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
-            </div>
-          </div>
-          <div
-            class="lx-value-picker-default-item-container"
-            v-else-if="variant === 'default-custom'"
-          >
-            <div>
-              <slot name="customItem" v-bind="item"></slot>
-            </div>
-          </div>
-        </lx-radio-button>
-        <lx-checkbox
-          v-if="kind === 'multiple'"
+          <template v-if="variant === 'indicator'">
+            <LxIcon
+              :value="getIcon(item, iconAttribute)"
+              :title="indicatorTooltips[item[idAttribute]]"
+              class="lx-indicator-icon"/>
+          </template>
+        </li>
+      </ul>
+      <ul class="lx-indicator-set" v-if="kind === 'multiple'">
+        <li
+          v-for="item in itemsDisplay"
+          v-on:focus="onFocus"
+          :key="item[idAttribute]"
+          class="lx-indicator"
+          :title="indicatorTooltips[item[idAttribute]]"
           :id="getItemId(item[idAttribute])"
           :group-id="groupId"
-          v-model="itemsModel[item[idAttribute]]"
+          :class="{
+            'lx-indicators-selected': itemsModel[item[idAttribute]],
+            'lx-value-hidden': isElementHidden(item),
+            [`lx-indicator-${item[categoryAttribute]}`]: item[categoryAttribute] && itemsModel[item[idAttribute]],
+          }"
           :disabled="disabled"
-          :value="item[idAttribute]?.toString()"
+          :readOnly="readOnly"
+          tabindex="0"
           @click="selectMultiple(item[idAttribute])"
-          @keydown.space="selectMultiple(item[idAttribute])"
+          role="checkbox"
+          :aria-checked="itemsModel[item[idAttribute]]"
+          @keydown.space.prevent="selectMultiple(item[idAttribute])"
         >
-          <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
-            <div class="lx-value-picker-default-item-label">
-              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-            </div>
-            <div class="lx-value-picker-default-item-description">
-              <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
-            </div>
-          </div>
-          <div
-            class="lx-value-picker-default-item-container"
-            v-else-if="variant === 'default-custom'"
-          >
-            <div>
-              <slot name="customItem" v-bind="item"></slot>
-            </div>
-          </div>
-        </lx-checkbox>
-      </div>
-
-      <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
-    </template>
-  </div>
+          <template v-if="variant === 'indicator'">
+            <LxIcon 
+              :value="typeof item[props.iconAttribute] === 'object' ? item[props.iconAttribute][props.iconAttribute] : item[props.iconAttribute]" 
+              :title="indicatorTooltips[item[idAttribute]]"
+              class="lx-indicator-icon"/>
+          </template>
+        </li>
+      </ul>
+    </div>
+    <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
 </template>
