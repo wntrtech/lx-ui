@@ -993,13 +993,12 @@ h2.lx-section-header+p.lx-invalidation-message {
 }
 
 .lx-value-picker-default-item {
-  cursor: pointer;
   display: flex;
   align-items: center;
 }
 
-.lx-value-picker-default-item:hover .lx-radio-button-wrapper .lx-radio-button:not(:disabled)+.lx-radio-button-label-wrapper .lx-radio-button-appearance,
-.lx-value-picker-default-item:hover .lx-checkbox-wrapper .lx-checkbox:not(:disabled)+.lx-checkbox-label-wrapper .lx-checkbox-appearance {
+.lx-value-picker-default-item .lx-radio-button-wrapper:hover .lx-radio-button:not(:disabled)+.lx-radio-button-label-wrapper .lx-radio-button-appearance,
+.lx-value-picker-default-item .lx-checkbox-wrapper:hover .lx-checkbox:not(:disabled)+.lx-checkbox-label-wrapper .lx-checkbox-appearance {
   background-color: var(--color-interactive-hover-background) !important;
   border-color: transparent;
 }

@@ -600,12 +600,12 @@ test('LxValuePicker default modelValue', async () => {
     },
   });
 
-  const items = wrapper.findAll('.lx-value-picker-default-item');
-  expect(items[0].find('.lx-radio-button').attributes('aria-checked')).toBe('true');
-  expect(items[1].find('.lx-radio-button').attributes('aria-checked')).toBe('false');
+  const items = wrapper.findAll('.lx-radio-button');
+  expect(items[0].attributes('aria-checked')).toBe('true');
+  expect(items[1].attributes('aria-checked')).toBe('false');
   await items[1].trigger('click');
-  expect(items[0].find('.lx-radio-button').attributes('aria-checked')).toBe('false');
-  expect(items[1].find('.lx-radio-button').attributes('aria-checked')).toBe('true');
+  expect(items[0].attributes('aria-checked')).toBe('false');
+  expect(items[1].attributes('aria-checked')).toBe('true');
 });
 
 test('LxValuePicker default modelValue 2', async () => {
@@ -624,12 +624,12 @@ test('LxValuePicker default modelValue 2', async () => {
     },
   });
 
-  const items = wrapper.findAll('.lx-checkbox-wrapper');
-  expect(items[0].find('.lx-checkbox').attributes('aria-checked')).toBe('true');
-  expect(items[1].find('.lx-checkbox').attributes('aria-checked')).toBe('false');
+  const items = wrapper.findAll('.lx-checkbox');
+  expect(items[0].attributes('aria-checked')).toBe('true');
+  expect(items[1].attributes('aria-checked')).toBe('false');
   await items[1].trigger('click');
-  expect(items[0].find('.lx-checkbox').attributes('aria-checked')).toBe('true');
-  expect(items[1].find('.lx-checkbox').attributes('aria-checked')).toBe('true');
+  expect(items[0].attributes('aria-checked')).toBe('true');
+  expect(items[1].attributes('aria-checked')).toBe('true');
   expect(wrapper.props('modelValue')).toStrictEqual(['one', 'two']);
 });
 
@@ -648,13 +648,13 @@ test('LxValuePicker default modelValue 3', async () => {
     },
   });
 
-  const items = wrapper.findAll('.lx-checkbox-wrapper');
-  expect(items[0].find('.lx-checkbox').attributes('aria-checked')).toBe('true');
-  expect(items[1].find('.lx-checkbox').attributes('aria-checked')).toBe('false');
+  const items = wrapper.findAll('.lx-checkbox');
+  expect(items[0].attributes('aria-checked')).toBe('true');
+  expect(items[1].attributes('aria-checked')).toBe('false');
   await items[0].trigger('click');
   await items[1].trigger('click');
-  expect(items[0].find('.lx-checkbox').attributes('aria-checked')).toBe('false');
-  expect(items[1].find('.lx-checkbox').attributes('aria-checked')).toBe('true');
+  expect(items[0].attributes('aria-checked')).toBe('false');
+  expect(items[1].attributes('aria-checked')).toBe('true');
   expect(wrapper.props('modelValue')).toStrictEqual(['two']);
 });
 

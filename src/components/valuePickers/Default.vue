@@ -252,14 +252,6 @@ function selectMultiple(id) {
 
 const query = ref();
 
-function defineSelector(item) {
-  if (props.kind === 'single') {
-    selectSingle(item);
-  } else if (props.kind === 'multiple') {
-    selectMultiple(item);
-  }
-}
-
 const hiddenValues = ref([]);
 
 function attributesSearch(item) {
@@ -414,7 +406,6 @@ function selectAll() {
           { 'lx-value-hidden': isElementHidden(item) },
           { 'lx-value-picker-item-disabled': disabled },
         ]"
-        @click="defineSelector(item[idAttribute])"
       >
         <lx-radio-button
           v-if="kind === 'single'"

@@ -252,7 +252,7 @@ onMounted(() => {
     <LxValuePickerIndicator
       v-if="variant === 'indicator'"
       v-model="model"
-      :items="items"
+      :items="stringifiedItems"
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :iconAttribute="iconAttribute"
