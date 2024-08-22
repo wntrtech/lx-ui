@@ -142,7 +142,7 @@ const modelSearchString = computed({
 
 // Convert item id's to strings
 const itemsWithStringIds = computed(() =>
-  props.items.map((item) => ({
+  props.items?.map((item) => ({
     ...item,
     [props.idAttribute]: String(item[props.idAttribute]),
   }))
@@ -321,14 +321,9 @@ function setByOrders(array) {
   return ret;
 }
 
-onMounted(() => {
-  const val = validate();
-  if (val) {
-    lxDevUtils.log(val, useLx().getGlobals()?.environment, 'error');
-  }
+function triggerItemsArray() {
   itemsArray.value = fillItemsArray();
-  ungroupedItemsArray.value = setByOrders(filteredItems.value);
-});
+}
 
 function searchInItemsArray() {
   if (query.value !== '') {
@@ -410,14 +405,6 @@ function prepareUnGroupedItemsArray() {
     return item;
   });
 }
-
-function triggerItemsArray() {
-  itemsArray.value = fillItemsArray();
-}
-
-watch(props.items, () => {
-  triggerItemsArray();
-});
 
 watch(
   () => props.includeUnspecifiedGroups,
@@ -853,6 +840,26 @@ function moveDraggableItem(direction, element, groupType) {
       break;
   }
 }
+
+watch(
+  () => props.items,
+  (newVal) => {
+    triggerItemsArray();
+    if (!props.groupDefinitions && props.kind === 'draggable') {
+      ungroupedItemsArray.value = newVal;
+    }
+  },
+  { deep: true }
+);
+
+onMounted(() => {
+  const val = validate();
+  if (val) {
+    lxDevUtils.log(val, useLx().getGlobals()?.environment, 'error');
+  }
+  itemsArray.value = fillItemsArray();
+  ungroupedItemsArray.value = setByOrders(filteredItems.value);
+});
 </script>
 
 <template>
