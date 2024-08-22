@@ -200,7 +200,7 @@ function changePerson(item) {
             <div class="header-profile-name">
               {{ fullName }}
             </div>
-            <div class="header-profile-role">
+            <div class="header-profile-role" :title="userInfo?.description">
               {{ userInfo?.description }}
             </div>
           </template>
@@ -229,7 +229,7 @@ function changePerson(item) {
           <div class="header-profile-name">
             {{ selectedContextPerson?.name }}
           </div>
-          <div class="header-profile-role">
+          <div class="header-profile-role" :title="selectedContextPerson?.description">
             {{ selectedContextPerson?.description }}
           </div>
         </template>

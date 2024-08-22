@@ -204,7 +204,7 @@ function toggleNavBar(event) {
             <div class="header-profile-name">
               {{ selectedContextPerson?.name }}
             </div>
-            <div class="header-profile-role">
+            <div class="header-profile-role" :title="selectedContextPerson?.description">
               {{ selectedContextPerson?.description }}
             </div>
           </li>
