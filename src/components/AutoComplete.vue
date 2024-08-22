@@ -235,29 +235,6 @@ const filteredItems = computed(() => {
   return allItems.value;
 });
 
-watch(
-  () => [props.items, props.preloadedItems],
-  (newValue, oldValue) => {
-    const [items, preloadedItems] = newValue;
-    const [oldItems, oldPreloadedItems] = oldValue || [[], null];
-
-    const shouldSetItems =
-      Array.isArray(items) && JSON.stringify(items) !== JSON.stringify(oldItems);
-    if (shouldSetItems) {
-      allItems.value = JSON.parse(JSON.stringify(items));
-      return;
-    }
-
-    const shouldSetPreloadedItems =
-      Array.isArray(preloadedItems) &&
-      JSON.stringify(preloadedItems) !== JSON.stringify(oldPreloadedItems);
-    if (shouldSetPreloadedItems) {
-      allItems.value = preloadedItems;
-    }
-  },
-  { immediate: true }
-);
-
 const queryDebounceValue = computed(() =>
   typeof props.queryDebounce === 'string' ? Number(props.queryDebounce) : props.queryDebounce
 );
@@ -832,7 +809,9 @@ function selectionChanged(selectedValue) {
   selectionTimeout = setTimeout(() => {
     if (JSON.stringify(selectedValue) !== JSON.stringify(model.value)) {
       // Update selectedItems.value with new values
-      const updatedItems = selectedItems.value?.filter((obj) => selectedValue.includes(obj[props.idAttribute]));
+      const updatedItems = selectedItems.value?.filter((obj) =>
+        selectedValue.includes(obj[props.idAttribute])
+      );
       selectedItems.value = updatedItems;
 
       // Update model.value with new values
@@ -863,6 +842,30 @@ const displayReadOnlyPlaceholder = computed(() => {
 const showListOptions = computed(() => {
   return displaySelectedItems.value.length > 0;
 });
+
+watch(
+  () => [props.items, props.preloadedItems],
+  (newValue, oldValue) => {
+    activate();
+    const [items, preloadedItems] = newValue;
+    const [oldItems, oldPreloadedItems] = oldValue || [[], null];
+
+    const shouldSetItems =
+      Array.isArray(items) && JSON.stringify(items) !== JSON.stringify(oldItems);
+    if (shouldSetItems) {
+      allItems.value = JSON.parse(JSON.stringify(items));
+      return;
+    }
+
+    const shouldSetPreloadedItems =
+      Array.isArray(preloadedItems) &&
+      JSON.stringify(preloadedItems) !== JSON.stringify(oldPreloadedItems);
+    if (shouldSetPreloadedItems) {
+      allItems.value = preloadedItems;
+    }
+  },
+  { immediate: true }
+);
 
 watch(
   () => props.selectingKind,
@@ -1151,12 +1154,16 @@ onMounted(() => {
             </slot>
 
             <template #content>
-              <div class="lx-dropdown-default-content" :style="{ width: panelWidth + 'px' }">
+              <div
+                ref="refListbox"
+                class="lx-dropdown-default-content"
+                :style="{ width: panelWidth + 'px' }"
+                tabindex="-1"
+              >
                 <slot name="panel" @click="closeMenu()">
                   <transition name="appear-down">
                     <div
                       v-show="menuOpen && !loading"
-                      ref="refListbox"
                       class="lx-dropdown-panel"
                       tabindex="-1"
                       role="listbox"
