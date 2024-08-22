@@ -16,3 +16,21 @@
   --color-good: #0d382c;
   --color-data: #000;
 }
+
+.lx.lx-theme-dark {
+  --color-brand: #49ba51;
+  --color-interactive-background: #49ba51;
+  --color-interactive-hover-background: #0f8216;
+  --color-background: #181a18;
+  --color-region: #292b29;
+  --color-region-2: #181a18;
+  --color-highlight: #07291a;
+  --color-interactive-secondary-background: #001000;
+  --color-nav-selected-background: #07291a;
+  --color-layout-background: #051612;
+}
+
+.lx-layout.lx-layout-default > header .lx-header .lx-user-button p.lx-secondary {
+  color: var(--color-nav-foreground);
+  opacity: 0.5;
+}

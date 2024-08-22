@@ -210,7 +210,11 @@
 }
 
 .lx .lx-data-grid .lx-cell-primary,
-.lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-row.lx-cell-primary .lx-vertical {
+.lx-data-grid-wrapper
+  .lx-appendable-list
+  .lx-appendable-list-item
+  .lx-row.lx-cell-primary
+  .lx-vertical {
   font-weight: bold;
 }
 
@@ -223,14 +227,17 @@
   fill: var(--color-label);
 }
 
-.lx-grid-row:hover .lx-cell-secondary .lx-user-icon-display>svg,
-.lx-grid-row:hover .lx-cell-extra .lx-user-icon-display>svg {
+.lx-grid-row:hover .lx-cell-secondary .lx-user-icon-display > svg,
+.lx-grid-row:hover .lx-cell-extra .lx-user-icon-display > svg {
   fill: var(--color-data);
 }
 
-
 .lx .lx-data-grid .lx-cell-clickable,
-.lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-row.lx-cell-clickable .lx-vertical {
+.lx-data-grid-wrapper
+  .lx-appendable-list
+  .lx-appendable-list-item
+  .lx-row.lx-cell-clickable
+  .lx-vertical {
   font-weight: bold;
   text-decoration: underline;
   color: var(--color-interactive-background);
@@ -246,7 +253,10 @@
   display: none;
 }
 
-.lx-data-grid-wrapper .lx-appendable-list.lx-data-grid-full .lx-appendable-list-item .lx-row.lx-cell-extra {
+.lx-data-grid-wrapper
+  .lx-appendable-list.lx-data-grid-full
+  .lx-appendable-list-item
+  .lx-row.lx-cell-extra {
   display: block;
 }
 
@@ -312,7 +322,7 @@
   right: -1px;
 }
 
-.lx-cell+.lx-cell-action.show-cell-borders {
+.lx-cell + .lx-cell-action.show-cell-borders {
   margin-bottom: 1px;
   background-color: var(--color-region);
   box-shadow: -1px 0 0 0 var(--color-grid-header), 0 -1px 0 0 var(--color-grid-header),
@@ -349,11 +359,11 @@
   visibility: inherit;
 }
 
-.lx-data-grid>table>tbody>.lx-grid-row>.lx-cell-action .lx-button>svg {
+.lx-data-grid > table > tbody > .lx-grid-row > .lx-cell-action .lx-button > svg {
   fill: var(--color-data);
 }
 
-.lx-data-grid>table>tbody>.lx-grid-row>.lx-cell-action .lx-button:hover>svg {
+.lx-data-grid > table > tbody > .lx-grid-row > .lx-cell-action .lx-button:hover > svg {
   fill: var(--color-interactive-hover-foreground);
 }
 
@@ -386,7 +396,7 @@
   color: var(--color-interactive-foreground);
 }
 
-.lx-data-grid-wrapper .lx-grid-toolbar.lx-justified-toolbar>.lx-group {
+.lx-data-grid-wrapper .lx-grid-toolbar.lx-justified-toolbar > .lx-group {
   display: flex;
   align-items: center;
 }
@@ -426,10 +436,12 @@
   width: 80%;
   height: 1rem;
   background-color: var(--color-data);
+  opacity: 0.05;
 }
 
 .lx-data-grid .lx-skeleton th .lx-skeleton-placeholder {
   background-color: var(--color-data);
+  opacity: 0.05;
 }
 
 .lx-data-grid .lx-skeleton .lx-grid-row:nth-child(3n) .lx-skeleton-placeholder {
@@ -466,24 +478,24 @@
   font-size: var(--small-font-size);
 }
 
-.lx .lx-pseudo-grid>.lx-row,
-.lx .lx-form .lx-pseudo-grid>.lx-row {
+.lx .lx-pseudo-grid > .lx-row,
+.lx .lx-form .lx-pseudo-grid > .lx-row {
   display: flex;
   flex-direction: row;
   width: auto;
 }
 
-.lx .lx-pseudo-grid>.lx-row {
+.lx .lx-pseudo-grid > .lx-row {
   min-height: var(--row-size);
   border-bottom: 1px solid var(--color-chrome);
 }
 
-.lx .lx-pseudo-grid>.lx-row:last-of-type {
+.lx .lx-pseudo-grid > .lx-row:last-of-type {
   border-bottom: none;
 }
 
-.lx-pseudo-grid>.lx-row .lx-cell,
-.lx-pseudo-grid>.lx-labels .lx-cell {
+.lx-pseudo-grid > .lx-row .lx-cell,
+.lx-pseudo-grid > .lx-labels .lx-cell {
   width: auto;
   padding: 0.5rem 1rem;
   display: flex;
@@ -492,7 +504,7 @@
   justify-items: stretch;
 }
 
-.lx-pseudo-grid>.lx-row .lx-removed {
+.lx-pseudo-grid > .lx-row .lx-removed {
   color: var(--color-disabled);
   padding-left: 1rem;
   text-decoration: line-through;
@@ -500,35 +512,38 @@
   text-decoration-thickness: 0.2rem;
 }
 
-.lx-pseudo-grid>.lx-row .lx-value {
+.lx-pseudo-grid > .lx-row .lx-value {
   padding-left: 1rem;
 }
 
-.lx-pseudo-grid>.lx-row .lx-secondary {
+.lx-pseudo-grid > .lx-row .lx-secondary {
   font-size: var(--small-font-size);
   color: var(--color-label);
   padding-left: 1rem;
 }
 
-.lx-pseudo-grid>.lx-row .lx-value .lx-secondary {
+.lx-pseudo-grid > .lx-row .lx-value .lx-secondary {
   padding-left: 0;
 }
 
-.lx-pseudo-grid>.lx-row .lx-cell:first-child,
+.lx-pseudo-grid > .lx-row .lx-cell:first-child,
 .lx-pseudo-grid .lx-labels .lx-cell:first-child {
   padding-left: 0;
 }
 
-.lx-pseudo-grid>.lx-row .lx-cell>div {
+.lx-pseudo-grid > .lx-row .lx-cell > div {
   width: 100%;
 }
 
-.lx-pseudo-grid>.lx-row>.lx-button {
+.lx-pseudo-grid > .lx-row > .lx-button {
   width: 100%;
   max-width: 42rem;
 }
 
-.lx .lx-form .lx-pseudo-grid .lx-button-set:not(.lx-modal > .lx-button-set):not(.lx-dropdown-panel > .lx-button-set) {
+.lx
+  .lx-form
+  .lx-pseudo-grid
+  .lx-button-set:not(.lx-modal > .lx-button-set):not(.lx-dropdown-panel > .lx-button-set) {
   margin-top: 0;
   flex-grow: 1;
   width: 100%;
@@ -635,7 +650,7 @@
   color: var(--color-region-hover-foreground);
 }
 
-.lx .lx-info-wrapper-panel .lx-row>.lx-label {
+.lx .lx-info-wrapper-panel .lx-row > .lx-label {
   width: 100%;
 }
 
@@ -658,7 +673,11 @@
   fill: var(--color-focus-foreground);
 }
 
-.lx-data-grid-wrapper .lx-grid-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost .lx-button-content>label {
+.lx-data-grid-wrapper
+  .lx-grid-toolbar.lx-selection-toolbar
+  .lx-button.lx-button-ghost
+  .lx-button-content
+  > label {
   color: var(--color-focus-foreground);
 }
 
@@ -666,7 +685,7 @@
   flex-direction: row;
 }
 
-.lx-data-grid-wrapper .lx-grid-toolbar>.lx-group.lx-slot-wrapper {
+.lx-data-grid-wrapper .lx-grid-toolbar > .lx-group.lx-slot-wrapper {
   display: flex;
   flex-direction: row-reverse;
   flex-grow: 1;
@@ -683,7 +702,11 @@
 }
 
 .lx .lx-data-grid .lx-cell-clickable.lx-cell-link-disabled,
-.lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-row.lx-cell-clickable.lx-cell-link-disabled .lx-vertical {
+.lx-data-grid-wrapper
+  .lx-appendable-list
+  .lx-appendable-list-item
+  .lx-row.lx-cell-clickable.lx-cell-link-disabled
+  .lx-vertical {
   color: var(--color-disabled-foreground);
   cursor: not-allowed;
 }
@@ -692,8 +715,16 @@
   display: none;
 }
 
-.lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-data-block .lx-data-block-header,
-.lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-data-block .additional-buttons,
+.lx-data-grid-wrapper
+  .lx-appendable-list
+  .lx-appendable-list-item
+  .lx-data-block
+  .lx-data-block-header,
+.lx-data-grid-wrapper
+  .lx-appendable-list
+  .lx-appendable-list-item
+  .lx-data-block
+  .additional-buttons,
 .lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-data-block-content {
   background-color: var(--color-region-2);
 }
@@ -716,7 +747,11 @@
   fill: var(--color-focus-foreground);
 }
 
-.lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost .lx-button-content>label {
+.lx-data-grid-wrapper
+  .lx-component-toolbar.lx-selection-toolbar
+  .lx-button.lx-button-ghost
+  .lx-button-content
+  > label {
   color: var(--color-focus-foreground);
 }
 
@@ -725,7 +760,7 @@
   border: none;
 }
 
-.lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-group>p {
+.lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-group > p {
   color: var(--color-focus-foreground);
   padding-left: 1rem;
 }
@@ -781,7 +816,7 @@
     display: flex;
   }
 
-  .lx-data-grid-wrapper>.lx-data-grid {
+  .lx-data-grid-wrapper > .lx-data-grid {
     display: none;
   }
 }
@@ -805,16 +840,20 @@
   overflow: hidden;
 }
 
-.flag-column>p {
+.flag-column > p {
   margin-left: 0.25rem;
 }
 
 .lx .lx-data-grid .lx-item-display,
-.lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-row .flag-column.lx-item-display {
+.lx-data-grid-wrapper
+  .lx-appendable-list
+  .lx-appendable-list-item
+  .lx-row
+  .flag-column.lx-item-display {
   display: flex;
 }
 
-.lx .lx-data-grid .lx-item-display>.lx-flag {
+.lx .lx-data-grid .lx-item-display > .lx-flag {
   margin-right: 0.75ch;
   margin-top: 0.1rem;
 }
@@ -880,7 +919,12 @@
 }
 
 .lx .lx-data-grid-wrapper .lx-data-grid .lx-cell svg.lx-grid-column-icon,
-.lx .lx-data-grid-wrapper .lx-appendable-list-item .lx-data-block-content .lx-row svg.lx-grid-column-icon {
+.lx
+  .lx-data-grid-wrapper
+  .lx-appendable-list-item
+  .lx-data-block-content
+  .lx-row
+  svg.lx-grid-column-icon {
   height: 1.5rem;
 }
 
