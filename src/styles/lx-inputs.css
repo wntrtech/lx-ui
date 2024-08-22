@@ -2280,6 +2280,7 @@ h2.lx-section-header+p.lx-invalidation-message {
   border-bottom: 1px solid var(--color-data);
   cursor: crosshair;
   touch-action: none;
+  user-select: none;
 }
 
 .lx-drawpad-wrapper .lx-canvas-element.is-disabled {

@@ -328,10 +328,12 @@ onMounted(() => {
         :class="{ 'is-disabled': disabled }"
         :width="canvasWidth"
         :height="canvasHeight"
-        @pointerdown="startDrawing"
-        @pointermove="draw"
-        @pointerup="stopDrawing"
-        @pointerleave="stopDrawing"
+        @pointerdown.prevent="startDrawing"
+        @pointermove.prevent="draw"
+        @pointerup.prevent="stopDrawing"
+        @pointerleave.prevent="stopDrawing"
+        @pointercancel.prevent="stopDrawing"
+        @contextmenu.prevent
       >
       </canvas>
     </div>
