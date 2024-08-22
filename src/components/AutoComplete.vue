@@ -129,6 +129,7 @@ const getIdAttributeString = (item) => {
     return orderObject(item);
   }
   const attribute = item[props.idAttribute];
+
   if (attribute === undefined) {
     throw new Error(
       `Autocomplete: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(
@@ -171,7 +172,7 @@ const mergeItems = (newItems, storedItems) => {
 };
 
 watch([model, () => allItems.value], ([newModelValue]) => {
-  if (newModelValue && newModelValue.length > 0) {
+  if (newModelValue && (!Array.isArray(newModelValue) || newModelValue.length > 0)) {
     if (Array.isArray(newModelValue) && props.selectingKind === 'multiple') {
       activate();
       const selectedArray = newModelValue
@@ -191,6 +192,7 @@ watch([model, () => allItems.value], ([newModelValue]) => {
       }
     } else {
       let selected = findItemById(newModelValue, allItems.value);
+
       if (selected) {
         selectedItem.value = selected;
         selectedItems.value = [];
@@ -447,7 +449,7 @@ const handleInputFocus = () => {
 };
 
 const shouldHideInput = computed(() => {
-  if (!menuOpen.value && hasValue) return true;
+  if (!menuOpen.value && hasValue.value) return true;
   return false;
 });
 
