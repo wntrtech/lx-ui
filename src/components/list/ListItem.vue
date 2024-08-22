@@ -72,6 +72,20 @@ function secureURL(url) {
         { 'lx-category-green': category === 'green' },
         { 'lx-category-purple': category === 'purple' },
         { 'lx-category-orange': category === 'orange' },
+        { 'lx-category-bad': category === 'bad' },
+        { 'lx-category-new': category === 'new' },
+        { 'lx-category-good': category === 'good' },
+        { 'lx-category-draft': category === 'draft' },
+        { 'lx-category-error': category === 'error' },
+        { 'lx-category-edited': category === 'edited' },
+        { 'lx-category-signed': category === 'signed' },
+        { 'lx-category-ongoing': category === 'ongoing' },
+        { 'lx-category-waiting': category === 'waiting' },
+        { 'lx-category-deleted': category === 'deleted' },
+        { 'lx-category-disabled': category === 'disabled' },
+        { 'lx-category-inactive': category === 'inactive' },
+        { 'lx-category-finished': category === 'finished' },
+        { 'lx-category-incomplete': category === 'incomplete' },
       ]"
     >
       <header>
@@ -105,6 +119,20 @@ function secureURL(url) {
         { 'lx-category-green': category === 'green' },
         { 'lx-category-purple': category === 'purple' },
         { 'lx-category-orange': category === 'orange' },
+        { 'lx-category-bad': category === 'bad' },
+        { 'lx-category-new': category === 'new' },
+        { 'lx-category-good': category === 'good' },
+        { 'lx-category-draft': category === 'draft' },
+        { 'lx-category-error': category === 'error' },
+        { 'lx-category-edited': category === 'edited' },
+        { 'lx-category-signed': category === 'signed' },
+        { 'lx-category-ongoing': category === 'ongoing' },
+        { 'lx-category-waiting': category === 'waiting' },
+        { 'lx-category-deleted': category === 'deleted' },
+        { 'lx-category-disabled': category === 'disabled' },
+        { 'lx-category-inactive': category === 'inactive' },
+        { 'lx-category-finished': category === 'finished' },
+        { 'lx-category-incomplete': category === 'incomplete' },
       ]"
       :tabindex="href || clickable ? 0 : -1"
     >

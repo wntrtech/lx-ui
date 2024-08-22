@@ -196,9 +196,13 @@
   line-height: 1rem;
   background-color: var(--color-region);
   border-radius: 1rem;
-  padding-left: 0.2rem;
+  padding-left: 0.25rem;
   padding-right: 0.75rem;
   width: auto;
+}
+
+.lx-state.lx-tooltip-state {
+  cursor: help;
 }
 
 .lx-state .lx-state-indicator {
@@ -297,8 +301,234 @@
   color: var(--color-state-error);
 }
 
+.lx-state-default .lx-state-indicator {
+  background-color: var(--color-data);
+  border-color: var(--color-data);
+}
+
+.lx .lx-state-default .lx-primary {
+  color: var(--color-data);
+}
+
+.lx-state-error .lx-state-indicator {
+  background-color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.lx .lx-state-error .lx-primary {
+  color: var(--color-error);
+}
+
+.lx-state-signed .lx-state-indicator {
+  background-color: var(--color-signed);
+  border-color: var(--color-signed);
+}
+
+.lx .lx-state-signed .lx-primary {
+  color: var(--color-signed);
+}
+
+.lx-state-waiting .lx-state-indicator {
+  background-color: var(--color-waiting);
+  border-color: var(--color-waiting);
+}
+
+.lx .lx-state-waiting .lx-primary {
+  color: var(--color-waiting);
+}
+
+.lx-state-incomplete .lx-state-indicator {
+  background-color: var(--color-incomplete);
+  border-color: var(--color-incomplete);
+}
+
+.lx .lx-state-incomplete .lx-primary {
+  color: var(--color-incomplete);
+}
+
+.lx-state-ongoing .lx-state-indicator {
+  background-color: var(--color-ongoing);
+  border-color: var(--color-ongoing);
+}
+
+.lx .lx-state-ongoing .lx-primary {
+  color: var(--color-ongoing);
+}
+
+.lx-state-deleting .lx-state-indicator {
+  background-color: var(--color-region);
+  border-color: var(--color-deleted);
+}
+
+.lx-state-deleted .lx-state-indicator {
+  background-color: var(--color-deleted);
+  border-color: var(--color-deleted);
+}
+
+.lx .lx-state-deleting .lx-primary,
+.lx .lx-state-deleted .lx-primary {
+  color: var(--color-deleted);
+}
+
+.lx-state-disabled .lx-state-indicator {
+  background-color: var(--color-disabled);
+  border-color: var(--color-disabled);
+}
+
+.lx .lx-state-disabled .lx-primary {
+  color: var(--color-disabled);
+}
+
 .lx-state-icon {
   margin-right: 0.5rem;
+}
+
+.lx-state-shape-icon .lx-state-icon {
+  height: 1rem;
+  width: 1rem;
+  margin: 0 0.3rem 0 -0.15rem;
+}
+
+.lx-state-shape-icon.lx-state-red .lx-state-icon,
+.lx-state-shape-icon.lx-state-red-full .lx-state-icon {
+  fill: var(--color-red);
+}
+
+.lx-state-shape-icon.lx-state-blue .lx-state-icon,
+.lx-state-shape-icon.lx-state-blue-full .lx-state-icon {
+  fill: var(--color-blue);
+}
+
+.lx-state-shape-icon.lx-state-green .lx-state-icon,
+.lx-state-shape-icon.lx-state-green-full .lx-state-icon {
+  fill: var(--color-green);
+}
+
+.lx-state-shape-icon.lx-state-purple .lx-state-icon,
+.lx-state-shape-icon.lx-state-purple-full .lx-state-icon {
+  fill: var(--color-purple);
+}
+
+.lx-state-shape-icon.lx-state-orange .lx-state-icon,
+.lx-state-shape-icon.lx-state-orange-full .lx-state-icon {
+  fill: var(--color-orange);
+}
+
+.lx-state-shape-icon.lx-state-yellow .lx-state-icon,
+.lx-state-shape-icon.lx-state-yellow-full .lx-state-icon {
+  fill: var(--color-yellow);
+}
+
+.lx-state-shape-icon.lx-state-new .lx-state-icon {
+  fill: var(--color-new);
+}
+
+.lx-state-shape-icon.lx-state-new .lx-primary {
+  color: var(--color-new);
+}
+
+.lx-state-shape-icon.lx-state-draft .lx-state-icon {
+  fill: var(--color-draft);
+}
+
+.lx-state-shape-icon.lx-state-draft .lx-primary {
+  color: var(--color-draft);
+}
+
+.lx-state-shape-icon.lx-state-edited .lx-state-icon,
+.lx-state-shape-icon.lx-state-editing .lx-state-icon {
+  fill: var(--color-edited);
+}
+
+.lx-state-shape-icon.lx-state-edited .lx-primary,
+.lx-state-shape-icon.lx-state-editing .lx-primary {
+  color: var(--color-edited);
+}
+
+.lx-state-shape-icon.lx-state-ongoing .lx-state-icon {
+  fill: var(--color-ongoing);
+}
+
+.lx-state-shape-icon.lx-state-ongoing .lx-primary {
+  color: var(--color-ongoing);
+}
+
+.lx-state-shape-icon.lx-state-incomplete .lx-state-icon {
+  fill: var(--color-incomplete);
+}
+
+.lx-state-shape-icon.lx-state-incomplete .lx-primary {
+  color: var(--color-incomplete);
+}
+
+.lx-state-shape-icon.lx-state-waiting .lx-state-icon {
+  fill: var(--color-waiting);
+}
+
+.lx-state-shape-icon.lx-state-waiting .lx-primary {
+  color: var(--color-waiting);
+}
+
+.lx-state-shape-icon.lx-state-disabled .lx-state-icon,
+.lx-state-shape-icon.lx-state-disabling .lx-state-icon {
+  fill: var(--color-disabled);
+}
+
+.lx-state-shape-icon.lx-state-disabled .lx-primary,
+.lx-state-shape-icon.lx-state-disabling .lx-primary {
+  color: var(--color-disabled);
+}
+
+.lx-state-shape-icon.lx-state-inactive .lx-state-icon {
+  fill: var(--color-inactive);
+}
+
+.lx-state-shape-icon.lx-state-inactive .lx-primary {
+  color: var(--color-inactive);
+}
+
+.lx-state-shape-icon.lx-state-finished .lx-state-icon,
+.lx-state-shape-icon.lx-state-finishing .lx-state-icon {
+  fill: var(--color-finished);
+}
+
+.lx-state-shape-icon.lx-state-finished .lx-primary,
+.lx-state-shape-icon.lx-state-finishing .lx-primary {
+  color: var(--color-finished);
+}
+
+.lx-state-shape-icon.lx-state-signed .lx-state-icon {
+  fill: var(--color-signed);
+}
+
+.lx-state-shape-icon.lx-state-signed .lx-primary {
+  color: var(--color-signed);
+}
+
+.lx-state-shape-icon.lx-state-deleted .lx-state-icon,
+.lx-state-shape-icon.lx-state-deleting .lx-state-icon {
+  fill: var(--color-deleted);
+}
+
+.lx-state-shape-icon.lx-state-deleted .lx-primary,
+.lx-state-shape-icon.lx-state-deleting .lx-primary {
+  color: var(--color-deleted);
+}
+
+.lx-state-shape-icon.lx-state-error .lx-state-icon {
+  fill: var(--color-error);
+}
+
+.lx-state-shape-icon.lx-state-error .lx-primary {
+  color: var(--color-error);
+}
+
+.lx-state-shape-icon.lx-state-default .lx-state-icon {
+  fill: var(--color-data);
+}
+
+.lx-state-shape-icon.lx-state-default .lx-primary {
+  color: var(--color-data);
 }
 
 .lx-state-shape-diamond .lx-state-icon {
@@ -408,6 +638,7 @@
   border-color: var(--color-yellow);
 }
 
+/* The text shouldn't be yellow! */
 .lx .lx-state-yellow-full .lx-primary {
   color: var(--color-data);
 }
@@ -417,6 +648,7 @@
   border-color: var(--color-yellow);
 }
 
+/* The text shouldn't be yellow! */
 .lx .lx-state-yellow .lx-primary {
   color: var(--color-data);
 }

@@ -80,10 +80,11 @@ watch(
       >
         <div class="lx-main">
           <LxIcon :value="getIcon(notification.type)" />
-          <div>
+          <div class="lx-text-wrapper">
             <p class="lx-title">{{ notification.title }}</p>
             <p class="lx-subtitle" v-if="notification.subtitle">{{ notification.subtitle }}</p>
           </div>
+          <LxIcon class="lx-close-icon" value="close" />
         </div>
       </li>
     </transition-group>

@@ -284,6 +284,80 @@ li .lx-category-orange {
   border-left-color: var(--color-orange);
 }
 
+li .lx-category-bad {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-bad);
+}
+
+li .lx-category-new {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-new);
+}
+
+li .lx-category-good {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-good);
+}
+
+li .lx-category-draft {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-draft);
+}
+
+li .lx-category-error {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-error);
+}
+
+li .lx-category-edited,
+li .lx-category-editing {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-edited);
+}
+
+li .lx-category-signed {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-signed);
+}
+
+li .lx-category-ongoing {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-ongoing);
+}
+
+li .lx-category-waiting {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-waiting);
+}
+
+li .lx-category-deleted,
+li .lx-category-deleting {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-deleted);
+}
+
+li .lx-category-disabled,
+li .lx-category-disabling {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-disabled);
+}
+
+li .lx-category-inactive {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-inactive);
+}
+
+li .lx-category-finished,
+li .lx-category-finishing {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-finished);
+}
+
+li .lx-category-incomplete {
+  border-left-width: 0.2rem;
+  border-left-color: var(--color-incomplete);
+}
+
 .lx-modal .lx-accordion .lx-list {
   padding-bottom: 1rem;
 }

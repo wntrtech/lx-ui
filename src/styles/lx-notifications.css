@@ -33,7 +33,6 @@
 .lx .lx-notifications-list .lx-notification .lx-main {
   width: var(--notification-size);
   min-height: var(--row-size);
-
   padding: var(--padding);
   box-shadow: var(--shadow-dropdown);
   background-color: var(--color-region);
@@ -93,15 +92,29 @@
   color: var(--color-notification-error-foreground);
 }
 
+.lx .lx-notifications-list .lx-notification .lx-text-wrapper {
+  overflow: hidden;
+  margin-right: var(--padding);
+}
+
 .lx .lx-notifications-list .lx-notification p.lx-title,
 p.lx-subtitle {
   line-height: 1.1rem;
   margin-bottom: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .lx .lx-notifications-list .lx-notification p.lx-title {
   font-weight: 800;
   margin-top: 0.5rem;
+}
+
+.lx .lx-notifications-list .lx-notification .lx-close-icon {
+  margin-left: auto;
+  margin-right: 0;
+  width: 1rem;
+  height: 1rem;
 }
 
 @media (max-width: 800px) {
