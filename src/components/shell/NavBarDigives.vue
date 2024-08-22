@@ -208,8 +208,8 @@ function toggleNavBar(event) {
               {{ selectedContextPerson?.description }}
             </div>
           </li>
-          <li></li
-        ></template>
+          <li></li>
+        </template>
 
         <li
           v-if="!headerNavReadOnly"
@@ -295,7 +295,7 @@ function toggleNavBar(event) {
           v-for="items in navItemsUserMenuEves"
           :key="items.label"
         >
-          <LxButton :icon="items.icon" :label="items.label" kind="ghost" :href="items.to.name" />
+          <LxButton :icon="items.icon" :label="items.label" kind="ghost" :href="items.to" />
         </div>
         <div
           class="lower-button lower-button-last"

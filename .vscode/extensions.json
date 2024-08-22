@@ -2,7 +2,6 @@
   "recommendations": [
     "lokalise.i18n-ally",
     "dbaeumer.vscode-eslint",
-    "Vue.vscode-typescript-vue-plugin",
     "streetsidesoftware.code-spell-checker",
     "Vue.volar"
   ]

@@ -320,7 +320,7 @@ function changePerson(item) {
           v-for="items in navItemsUserMenuEves"
           :key="items.label"
         >
-          <LxButton :icon="items.icon" :label="items.label" kind="ghost" :href="items.to.name" />
+          <LxButton :icon="items.icon" :label="items.label" kind="ghost" :href="items.to" />
         </div>
         <div
           class="lower-button lower-button-last"
