@@ -31,6 +31,9 @@ const idValue = ref('');
 const container = ref();
 const menuOpen = ref(false);
 const allItems = ref(props.items);
+const panelWidth = ref();
+const highlightedItemId = ref(null);
+const activeDropdown = ref(null);
 
 const model = computed({
   get() {
@@ -108,20 +111,21 @@ function closeDropDownDefaultOnEsc() {
     container.value.focus();
   });
 }
-const panelWidth = ref();
-const highlightedItemId = ref(null);
 
 function openDropDownDefault() {
   if (!menuOpen.value) {
     menuOpen.value = true;
     panelWidth.value = container.value?.offsetWidth;
+    activeDropdown.value = container.value;
     nextTick(() => {
       const formElements = document.querySelectorAll(
         `#${idValue.value} div.lx-dropdown-default-content > div.lx-value-picker-item`
       );
       formElements[highlightedItemId.value - 1]?.focus();
     });
-  } else if (menuOpen.value) closeDropDownDefault();
+  } else if (menuOpen.value) {
+    closeDropDownDefault();
+  }
 }
 
 const isDisabled = computed(() => props.disabled);
@@ -217,14 +221,24 @@ function onUp() {
 function focusNextInputElement() {
   onDown();
   nextTick(() => {
-    document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
+    if (activeDropdown.value) {
+      const highlightedItems = activeDropdown.value.querySelectorAll(
+        '.lx-value-picker-item.lx-highlighted-item'
+      );
+      highlightedItems[0]?.focus();
+    }
   });
 }
 
 function focusPreviousInputElement() {
   onUp();
   nextTick(() => {
-    document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
+    if (activeDropdown.value) {
+      const highlightedItems = activeDropdown.value.querySelectorAll(
+        '.lx-value-picker-item.lx-highlighted-item'
+      );
+      highlightedItems[0]?.focus();
+    }
   });
 }
 function selectSingle(item) {

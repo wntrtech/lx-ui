@@ -47,6 +47,18 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue']);
 
+const idValue = ref('');
+const itemsModel = ref({});
+const notSelectedId = 'notSelected';
+const menuOpen = ref(false);
+const container = ref();
+const query = ref();
+const hiddenValues = ref([]);
+const highlightedItemId = ref(null);
+const panelWidth = ref();
+const refRoot = ref();
+const activeDropdown = ref(null);
+
 const model = computed({
   get() {
     return props.modelValue;
@@ -82,12 +94,7 @@ const getIdAttributeString = (item) => {
   return attribute;
 };
 
-const idValue = ref('');
-
-const itemsModel = ref({});
 const itemsDisplay = computed(() => JSON.parse(JSON.stringify(props.items)));
-
-const notSelectedId = 'notSelected';
 
 function activate() {
   // First set all items as not selected
@@ -171,8 +178,6 @@ watch(
   }
 );
 
-const menuOpen = ref(false);
-const container = ref();
 
 const selectedItems = computed(() => {
   const ret = [];
@@ -287,10 +292,6 @@ function selectMultiple(id) {
   }
 }
 
-const query = ref();
-
-const hiddenValues = ref([]);
-
 function attributesSearch(item) {
   let found = false;
   props.searchAttributes?.forEach((attrName) => {
@@ -334,9 +335,6 @@ const filteredItems = computed(() => {
   return itemsDisplay.value;
 });
 
-const highlightedItemId = ref(null);
-const panelWidth = ref();
-
 function closeDropDownDefault() {
   menuOpen.value = false;
 }
@@ -345,15 +343,15 @@ function openDropDownDefault() {
   if (!menuOpen.value) {
     menuOpen.value = true;
     panelWidth.value = container.value?.offsetWidth;
-    
+    activeDropdown.value = container.value;
     setTimeout(() => {
       const formElements = document.querySelectorAll(`#${idValue.value} input.lx-checkbox`);
       formElements[highlightedItemId.value - 1]?.focus()
       }, 150);
+  } else if (menuOpen.value) {
+    closeDropDownDefault();
   }
 }
-
-const refRoot = ref();
 
 onClickOutside(refRoot, closeDropDownDefault);
 
@@ -393,17 +391,25 @@ function onDown() {
 function focusNextInputElement() {
   onDown();
   nextTick(() => {
-    document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
+    if (activeDropdown.value) {
+      const highlightedItems = activeDropdown.value.querySelectorAll(
+        '.lx-value-picker-item.lx-highlighted-item'
+      );
+      highlightedItems[0]?.focus();
+    }
   });
-
 }
 
 function focusPreviousInputElement() {
   onUp();
   nextTick(() => {
-    document.getElementsByClassName('lx-value-picker-item lx-highlighted-item')[0]?.focus();
+    if (activeDropdown.value) {
+      const highlightedItems = activeDropdown.value.querySelectorAll(
+        '.lx-value-picker-item.lx-highlighted-item'
+      );
+      highlightedItems[0]?.focus();
+    }
   });
-
 }
 
 function onUp() {
