@@ -662,6 +662,7 @@
 .lx .lx-tile > header {
   display: grid;
   grid-template-columns: 1fr;
+  grid-template-rows: auto auto 1fr;
 }
 
 .lx-tile > header > .lx-icon {
@@ -680,13 +681,12 @@ a.lx-tile:hover {
 .lx-tile > header .lx-primary {
   color: var(--color-data);
   text-decoration: var(--text-decoration-button);
-
   font-weight: var(--font-weight-bold);
-  margin-top: 0.75rem;
+  margin-top: 1.45rem;
 }
 
 .lx-tile > header .lx-description {
-  margin-top: 0.5rem;
+  margin-top: 1.2rem;
   color: var(--color-label);
   font-size: var(--small-font-size);
   line-height: 1.1em;
