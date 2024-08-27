@@ -62,6 +62,7 @@ const emits = defineEmits([
   'help-click',
   'openAlternativeProfilesModal',
   'openContextPersonModal',
+  'update:selected-context-person',
   'update:selected-language',
   'update:theme',
   'update:hasAnimations',
@@ -84,6 +85,15 @@ watch(
     emits('language-changed', newValue);
   }
 );
+
+const selectedContextPersonModel = computed({
+  get() {
+    return props.selectedContextPerson;
+  },
+  set(value) {
+    emits('update:selected-context-person', value);
+  },
+});
 
 const selectedLanguageModel = computed({
   get() {
