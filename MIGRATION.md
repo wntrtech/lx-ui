@@ -15,12 +15,9 @@ Since we've updated styles for semantic HTML, if for some weird reason you were 
 
 Numerical values of `id` attributes in `items` are now represented as strings. Consider updating your implementation to handle IDs as strings rather than numbers.
 
-### Breaking changes
+### LxAutoComplete
 
-**LxAutoComplete:**
-
-- `idAttribute` supported type changes:
-  - `Array of Strings or String` changed to just `String`
+`idAttribute` attribute supported type changes: `Array of Strings` or `String` changed to just `String`.
 
 ## 1.3 → 1.5
 
