@@ -110,41 +110,46 @@ export function formatAddress(/** @type {Address} */ address, includeAtvk = fals
     streetLine = address.buildingNumber;
   }
 
-  if (streetLine && address.buildingNumberSuffix) {
-    streetLine += `/${address.buildingNumberSuffix}`;
-  }
+  // In case if has street details, add more details
+  if (streetLine) {
+    if (address.buildingNumberSuffix) {
+      streetLine += `/${address.buildingNumberSuffix}`;
+    }
 
-  if (streetLine && address.unitId) {
-    streetLine += `-${address.unitId}`;
+    if (address.unitId) {
+      streetLine += `-${address.unitId}`;
+    }
   }
 
   const addressParts = [];
   if (streetLine) {
     addressParts.push(streetLine);
+  }
 
-    if (address.city) {
-      addressParts.push(address.city);
-    } else {
-      if (address.atvkName4) {
-        addressParts.push(address.atvkName4);
-      }
-      if (address.atvkName3) {
-        addressParts.push(address.atvkName3);
-      }
-    }
-
-    if (address.postalCode) {
-      let { postalCode } = address;
-      if (!postalCode.startsWith('LV') && postalCode.length === 4) {
-        // Case when postal code includes only numbers.
-        postalCode = `LV-${postalCode}`;
-      } else if (postalCode.indexOf('-') === -1) {
-        // Case when postal code isn't formatted with '-'.
-        postalCode = `${postalCode.slice(0, 2)}-${postalCode.slice(2)}`;
-      }
-      addressParts.push(postalCode);
-    }
+  if (address.city) {
+    addressParts.push(address.city);
   } else {
+    if (address.atvkName4) {
+      addressParts.push(address.atvkName4);
+    }
+    if (address.atvkName3) {
+      addressParts.push(address.atvkName3);
+    }
+  }
+
+  if (address.postalCode) {
+    let { postalCode } = address;
+    if (!postalCode.startsWith('LV') && postalCode.length === 4) {
+      // Case when postal code includes only numbers.
+      postalCode = `LV-${postalCode}`;
+    } else if (postalCode.indexOf('-') === -1) {
+      // Case when postal code isn't formatted with '-'.
+      postalCode = `${postalCode.slice(0, 2)}-${postalCode.slice(2)}`;
+    }
+    addressParts.push(postalCode);
+  }
+
+  if (addressParts.length === 0) {
     addressParts.push(address.streetAddressLine);
   }
 

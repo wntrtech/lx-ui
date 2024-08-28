@@ -123,3 +123,25 @@ test('Format address with atvk', async () => {
   const addressLine = formatAddress(address, true);
   expect(addressLine).toBe('DUNTES IELA 28-82, RĪGA, LV-1005, LATVIJA (010096)');
 });
+
+test('Format address no street', async () => {
+  const address = {
+    country: 'LATVIJA',
+    city: 'RĪGA',
+    postalCode: 'LV1005',
+    atvkCode: '010096'
+  }
+
+  const addressLine = formatAddress(address, false);
+  expect(addressLine).toBe('RĪGA, LV-1005, LATVIJA');
+});
+
+test('Format address no city', async () => {
+  const address = {
+    country: 'LATVIJA',
+    atvkName3: 'LIMBAŽU NOVADS'
+  }
+
+  const addressLine = formatAddress(address, false);
+  expect(addressLine).toBe('LIMBAŽU NOVADS, LATVIJA');
+});
