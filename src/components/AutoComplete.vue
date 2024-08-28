@@ -23,7 +23,7 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: [String, Object], default: null },
   items: { type: [Array, Function], default: () => [] },
-  idAttribute: { type: [Array, String], default: 'id' },
+  idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   dictionary: { type: Object, default: null },
   groupId: { type: String, default: null },
@@ -85,49 +85,17 @@ const convertBooleanToString = (value) => (typeof value === 'boolean' ? value.to
 
 const model = computed({
   get: () => {
-    if (Array.isArray(props.idAttribute)) {
-      return props.modelValue;
-    }
     if (props.modelValue !== undefined && props.modelValue !== null) {
       return convertBooleanToString(props.modelValue);
     }
     return null;
   },
   set: (value) => {
-    if (Array.isArray(props.idAttribute) && props.selectingKind === 'single' && value) {
-      emit('update:modelValue', JSON.parse(value));
-    } else {
-      emit('update:modelValue', value);
-    }
+    emit('update:modelValue', value);
   },
 });
 
-const orderObject = (item) => {
-  const orderedIdAttributes = [...props.idAttribute].sort();
-  const isCurrentValEmpty = !orderedIdAttributes.some((idKey) => item[idKey]);
-  if (isCurrentValEmpty) {
-    return {};
-  }
-  return JSON.stringify(
-    orderedIdAttributes.reduce((result, idKey) => {
-      const resArr = { ...result };
-      resArr[idKey] = item[idKey];
-      if (!Object.prototype.hasOwnProperty.call(item, idKey)) {
-        throw new Error(
-          `Autocomplete: idAttribute (${
-            props.idAttribute
-          }) is not defined for item ${JSON.stringify(item)}`
-        );
-      }
-      return resArr;
-    }, {})
-  );
-};
-
 const getIdAttributeString = (item) => {
-  if (Array.isArray(props.idAttribute)) {
-    return orderObject(item);
-  }
   const attribute = item[props.idAttribute];
 
   if (attribute === undefined) {
@@ -150,11 +118,7 @@ const listRef = ref();
 const idValue = ref('');
 
 const findItemById = (id, items) => {
-  if (Array.isArray(props.idAttribute)) {
-    return items?.find((item) => getIdAttributeString(id) === getIdAttributeString(item));
-  } else {
-    return items?.find((item) => id === getIdAttributeString(item));
-  }
+  return items?.find((item) => id === getIdAttributeString(item));
 };
 
 const mergeItems = (newItems, storedItems) => {
