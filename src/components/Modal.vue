@@ -2,6 +2,7 @@
 import { ref, nextTick } from 'vue';
 import Button from '@/components/Button.vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 
 const props = defineProps({
   id: {
@@ -32,21 +33,21 @@ const nativeModal = ref();
 const isOpen = ref(false);
 const isOpenModal = ref(false);
 const modalRef = ref();
+const { activate, deactivate } = useFocusTrap(modalRef);
+
 function open() {
   if (props.kind === 'default') {
-    if (props.escEnabled) {
-      isOpen.value = true;
-      nextTick(() => {
-        modalRef.value?.focus();
-      });
-    } else {
-      isOpen.value = true;
-    }
+    isOpen.value = true;
   } else {
     isOpenModal.value = true;
     const dialogId = document.getElementById(props.id);
     dialogId.showModal();
+    modalRef.value = dialogId;
   }
+  nextTick(() => {
+    activate();
+    modalRef.value.focus();
+  });
 }
 function close(source = null) {
   if (props.kind === 'default') {
@@ -57,12 +58,14 @@ function close(source = null) {
     nativeModal.value.close();
     isOpenModal.value = false;
   }
+  deactivate();
   emits('closed');
 }
 function handleKeyDown(event) {
   if (event.key === 'Escape') {
     if (props.escEnabled) {
       isOpenModal.value = false;
+      deactivate();
     } else {
       event.preventDefault();
     }

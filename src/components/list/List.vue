@@ -1075,6 +1075,7 @@ onMounted(() => {
                 :value="item[idAttribute]"
                 @click="selectRow(item[idAttribute])"
                 :disabled="loading || busy"
+                :tabindex="item[clickableAttribute] || item[hrefAttribute] ? 0 : -1"
               />
               <LxCheckbox
                 v-else
@@ -1255,6 +1256,7 @@ onMounted(() => {
                     :value="item[idAttribute]"
                     @click="selectRow(item[idAttribute])"
                     :disabled="loading || busy"
+                    :tabindex="item[clickableAttribute] || item[hrefAttribute] ? 0 : -1"
                   />
                   <LxCheckbox
                     v-else
@@ -1309,6 +1311,7 @@ onMounted(() => {
                 :value="item[idAttribute]"
                 @click="selectRow(item[idAttribute])"
                 :disabled="loading || busy"
+                :tabindex="item[clickableAttribute] || item[hrefAttribute] ? 0 : -1"
               />
               <LxCheckbox
                 v-else
@@ -1598,6 +1601,7 @@ onMounted(() => {
               :value="element[idAttribute]"
               @click="selectRow(element[idAttribute])"
               :disabled="loading || busy"
+              :tabindex="element[clickableAttribute] || element[hrefAttribute] ? 0 : -1"
             />
             <LxCheckbox
               v-else

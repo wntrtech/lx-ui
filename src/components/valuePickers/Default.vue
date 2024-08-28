@@ -342,6 +342,16 @@ function selectAll() {
   }
 }
 
+function getTabIndex(id) {
+  const isFirstItem = itemsDisplay.value.length > 0 && itemsDisplay.value[0][props.idAttribute] === id;
+  const isValidModel = itemsDisplay.value.find(item => item[props.idAttribute] === model.value);
+  if (model.value === id || (isFirstItem && !(isValidModel))) {
+    return 0;
+  }
+  return -1;
+}
+
+
 </script>
 <template>
   <div
@@ -415,6 +425,7 @@ function selectAll() {
           :disabled="disabled"
           :value="item[idAttribute].toString()"
           @click="selectSingle(item[idAttribute])"
+          :tabindex="getTabIndex(item[idAttribute])"
         >
           <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
             <div class="lx-value-picker-default-item-label">
