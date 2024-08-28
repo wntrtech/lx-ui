@@ -642,6 +642,10 @@
   cursor: help;
 }
 
+.lx-info-wrapper .lx-info-wrapper-content .lx-data{
+  color: var(--color-data);
+}
+
 .lx:not(.lx-theme-contrast) .lx-info-wrapper:hover {
   background-color: var(--color-grid-hover-background);
 }

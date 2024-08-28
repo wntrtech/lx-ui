@@ -48,7 +48,7 @@
 }
 
 .lx-form-grid > header > .lx-group .lx-toolbar-chip {
-  padding: 0 1rem 0 1rem;
+  padding: 0.05rem 1rem;
   align-items: center;
   color: var(--color-label);
   display: -webkit-box;

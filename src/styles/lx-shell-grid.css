@@ -855,13 +855,6 @@ a.lx-tile:hover {
   width: inherit;
 }
 
-.popper .lx-info-wrapper-panel .lx-row {
-  display: flex;
-  flex-direction: column;
-  white-space: normal;
-  color: var(--color-tooltip-foreground);
-}
-
 .lx-toolbar.lx-sticky {
   position: sticky;
   top: var(--nav-row-size);
