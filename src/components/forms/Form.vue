@@ -332,13 +332,13 @@ const tertiaryButtons = computed(() =>
 const additionalButtons = computed(() =>
   props.actionDefinitions?.filter((x) => x.kind === 'additional')
 );
-
 const hasPreHeaderInfoSlot = computed(
   () => props.showPreHeaderInfo && slots['pre-header-info'] !== undefined
 );
 const hasPostHeaderInfoSlot = computed(
   () => props.showPostHeaderInfo && slots['post-header-info'] !== undefined
 );
+// TODO: computed for all button tooltips
 
 const sectionLocations = ref({});
 
@@ -608,7 +608,7 @@ defineExpose({ highlightRow, clearHighlights });
           :label="button.name"
           :destructive="button.destructive"
           :icon="button.icon"
-          :title="button.tooltip"
+          :title="button.title || button.tooltip"
           :loading="button.loading"
           :busy="button.busy"
           :active="button.active"
@@ -660,7 +660,7 @@ defineExpose({ highlightRow, clearHighlights });
               :disabled="button.disabled"
               :destructive="button.destructive"
               :icon="button.icon"
-              :title="button.tooltip"
+              :title="button.title || button.tooltip"
               :loading="button.loading"
               :busy="button.busy"
               :active="button.active"
@@ -765,7 +765,7 @@ defineExpose({ highlightRow, clearHighlights });
           :disabled="button.disabled"
           :destructive="button.destructive"
           :icon="button.icon"
-          :title="button.tooltip"
+          :title="button.title || button.tooltip"
           :loading="button.loading"
           :busy="button.busy"
           :active="button.active"
@@ -784,7 +784,7 @@ defineExpose({ highlightRow, clearHighlights });
               :disabled="button.disabled"
               :destructive="button.destructive"
               :icon="button.icon"
-              :title="button.tooltip"
+              :title="button.title || button.tooltip"
               :loading="button.loading"
               :busy="button.busy"
               :active="button.active"
@@ -800,7 +800,7 @@ defineExpose({ highlightRow, clearHighlights });
               :disabled="button.disabled"
               :destructive="button.destructive"
               :icon="button.icon"
-              :title="button.tooltip"
+              :title="button.title || button.tooltip"
               :loading="button.loading"
               :busy="button.busy"
               :active="button.active"
@@ -821,7 +821,7 @@ defineExpose({ highlightRow, clearHighlights });
           :disabled="button.disabled"
           :destructive="button.destructive"
           :icon="button.icon"
-          :title="button.tooltip"
+          :title="button.title || button.tooltip"
           :loading="button.loading"
           :busy="button.busy"
           :active="button.active"
@@ -843,7 +843,7 @@ defineExpose({ highlightRow, clearHighlights });
           :custom-class="
             notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
           "
-          :title="button.tooltip"
+          :title="button.title || button.tooltip"
           :loading="button.loading"
           :busy="button.busy"
           :active="button.active"
