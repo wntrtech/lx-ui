@@ -194,7 +194,7 @@ onMounted(async () => {
       />
       <LxButton
         v-if="camerasList?.length > 1 && cameraSwitcherMode === 'toggle'"
-        icon="camera"
+        icon="camera-switch"
         kind="ghost"
         :title="texts.changeCamera"
         @click="switchCamera()"

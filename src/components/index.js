@@ -13,6 +13,7 @@ export { default as LxForm } from '@/components/forms/Form.vue';
 export { default as LxAppendableList } from '@/components/forms/AppendableList.vue';
 export { default as LxAutoComplete } from '@/components/AutoComplete.vue';
 export { default as LxButton } from '@/components/Button.vue';
+export { default as LxCamera } from '@/components/Camera.vue';
 export { default as LxCheckbox } from '@/components/Checkbox.vue';
 export { default as LxContentSwitcher } from '@/components/ContentSwitcher.vue';
 export { default as LxDataBlock } from '@/components/DataBlock.vue';

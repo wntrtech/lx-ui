@@ -75,7 +75,7 @@ export function acceptedMimeOffice(name) {
 }
 
 export function acceptedESignedDocument(name) {
-  const fileExtension = name.split('.').pop();
+  const fileExtension = name?.split('.').pop();
   const validMimeTypes = ['edoc', 'asice'];
   return validMimeTypes.includes(fileExtension);
 }
