@@ -303,9 +303,11 @@ function selectionChanged(selectedValue) {
       document.getElementById(`${element}_lx_front`)?.classList.add('selected-visual');
     } else document.getElementById(element)?.classList.add('selected-visual');
   });
-  if (props.selectingKind === 'single') {
-    [model.value] = selectedValue;
-  } else model.value = selectedValue;
+  if (JSON.stringify(model.value) !== JSON.stringify(selectedValue)) {
+    if (props.selectingKind === 'single') {
+      [model.value] = selectedValue;
+    } else model.value = selectedValue;
+  }
 }
 
 const contentSwitcherItems = computed(() => [
