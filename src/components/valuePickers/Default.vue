@@ -66,8 +66,17 @@ onMounted(() => {
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
   }
-  if (props.items.length === 0 && (model.value !== null && model.value !== undefined && model.value.length > 0)) {
-    lxDevUtils.log('Error: No items available but v-model value is set.', useLx().getGlobals()?.environment, 'error');
+  if (
+    props.items.length === 0 &&
+    model.value !== null &&
+    model.value !== undefined &&
+    model.value.length > 0
+  ) {
+    lxDevUtils.log(
+      'Error: No items available but v-model value is set.',
+      useLx().getGlobals()?.environment,
+      'error'
+    );
   }
 });
 
@@ -99,17 +108,17 @@ function activate() {
   }
 
   // Then set items from model as selected
- if (model.value) {
-   if (Array.isArray(model.value)) {
-     model.value?.forEach((id) => {
-       if (id) {
-         itemsModel.value[id?.toString()] = true;
-       }
-     });
-   } else {
-     itemsModel.value[model.value?.toString()] = true;
-   }
- }
+  if (model.value) {
+    if (Array.isArray(model.value)) {
+      model.value?.forEach((id) => {
+        if (id) {
+          itemsModel.value[id?.toString()] = true;
+        }
+      });
+    } else {
+      itemsModel.value[model.value?.toString()] = true;
+    }
+  }
 }
 activate();
 
@@ -122,9 +131,9 @@ function deactivate() {
 watch(
   () => props.nullable,
   (newValue) => {
-    if (props.kind !== "single") return
-    if (newValue) activate()
-    else if (!newValue) deactivate()    
+    if (props.kind !== 'single') return;
+    if (newValue) activate();
+    else if (!newValue) deactivate();
   }
 );
 
@@ -202,7 +211,7 @@ watch(
   (newValue) => {
     activate();
     itemsModel.value = {};
-  
+
     if (newValue === 'multiple') {
       model.value = [];
       if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
@@ -371,7 +380,10 @@ function getTabIndex(id) {
     </template>
 
     <template v-else>
-      <div v-if="hasSearch" class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search">
+      <div
+        v-if="hasSearch"
+        class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
+      >
         <LxButton
           kind="ghost"
           :icon="
@@ -452,7 +464,7 @@ function getTabIndex(id) {
           :disabled="disabled"
           :value="item[idAttribute]?.toString()"
           @click="selectMultiple(item[idAttribute])"
-          @keydown.space="selectMultiple(item[idAttribute])"
+          @keydown.space.prevent="selectMultiple(item[idAttribute])"
         >
           <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
             <div class="lx-value-picker-default-item-label">
