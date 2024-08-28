@@ -7,12 +7,18 @@
     "source.fixAll.stylelint": "explicit"
   },
   "eslint.format.enable": true,
-  "eslint.validate": ["javascript"],
+  "eslint.validate": [
+    "vue",
+    "javascript"
+  ],
   "cSpell.dictionaryDefinitions": [
     {
       "name": "zzdats",
       "path": "${workspaceFolder}/.vscode/wordlist/zzdats.txt"
     }
   ],
-  "cSpell.dictionaries": ["zzdats"]
+  "cSpell.dictionaries": ["zzdats"],
+  "eslint.enable": true,
+  "eslint.codeActionsOnSave.mode": "all",
+  "eslint.run": "onSave"
 }
