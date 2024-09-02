@@ -1616,7 +1616,7 @@ onMounted(() => {
       </div>
     </div>
     <LxEmptyState
-      v-if="items?.length === 0 && !(loading || busy)"
+      v-if="items?.length === 0 && !(loading || busy) && !query"
       :label="texts?.noItems"
       :description="texts?.noItemsDescription"
       :icon="emptyStateIcon"

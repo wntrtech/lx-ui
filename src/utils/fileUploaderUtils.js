@@ -467,7 +467,7 @@ export function getContent(file) {
 
 function findExifHeightAndWidth(exif) {
   if (exif && exif['Image Height'] && exif['Image Width']) {
-    return `${exif['Image Height'].value} × ${exif['Image Width'].value} px`;
+    return `${exif['Image Width'].value} × ${exif['Image Height'].value} px`;
   }
   return '';
 }
