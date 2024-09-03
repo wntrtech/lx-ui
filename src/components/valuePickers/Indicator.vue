@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
 
+import useLx from '@/hooks/useLx';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
@@ -13,6 +14,7 @@ const props = defineProps({
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   iconAttribute: { type: String, default: 'icon' },
+  iconSetAttribute: { type: String, default: 'iconSet' },
   categoryAttribute: { type: String, default: 'category' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
@@ -156,11 +158,11 @@ const selectedItems = computed(() => {
 });
 
 function getIcon(item, iconAttribute){
-  if (item[props.idAttribute] === notSelectedId) {
-    return 'none';
-  }
-  const icon = item[iconAttribute];
-  return typeof icon === 'object' ? icon[iconAttribute] : icon;
+  return item[iconAttribute] ? item[iconAttribute] : 'none';
+}
+
+function getIconSet(item, iconSetAttribute) {
+  return item[iconSetAttribute] || (() => useLx().getGlobals()?.iconSet)();
 }
 
 function getItemId(id) {
@@ -430,6 +432,7 @@ const indicatorTooltips = computed(() => {
             <LxIcon
               :value="getIcon(item, iconAttribute)"
               :title="indicatorTooltips[item[idAttribute]]"
+              :iconSet="getIconSet(item, iconSetAttribute)"
               class="lx-indicator-icon"/>
           </template>
         </li>
@@ -458,8 +461,9 @@ const indicatorTooltips = computed(() => {
         >
           <template v-if="variant === 'indicator'">
             <LxIcon 
-              :value="typeof item[props.iconAttribute] === 'object' ? item[props.iconAttribute][props.iconAttribute] : item[props.iconAttribute]" 
+              :value="getIcon(item, iconAttribute)"
               :title="indicatorTooltips[item[idAttribute]]"
+              :iconSet="getIconSet(item, iconSetAttribute)"
               class="lx-indicator-icon"/>
           </template>
         </li>

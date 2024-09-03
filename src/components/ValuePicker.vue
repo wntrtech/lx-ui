@@ -14,6 +14,7 @@ const props = defineProps({
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   iconAttribute: { type: String, default: 'icon' },
+  iconSetAttribute: { type: String, default: 'iconSet' },
   categoryAttribute: { type: String, default: 'category' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
@@ -256,6 +257,7 @@ onMounted(() => {
       :idAttribute="idAttribute"
       :nameAttribute="nameAttribute"
       :iconAttribute="iconAttribute"
+      :iconSetAttribute="iconSetAttribute"
       :categoryAttribute="categoryAttribute"
       :descriptionAttribute="descriptionAttribute"
       :groupId="groupId"

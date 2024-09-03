@@ -75,6 +75,7 @@ function getStatusIcon(displayType) {
       class="lx-state-icon"
       :value="getStatusIcon(definition?.displayType)"
       :title="definition?.title"
+      :iconSet="definition?.iconSet"
     />
     <p class="lx-primary">{{ definition?.displayName }}</p>
   </div>
