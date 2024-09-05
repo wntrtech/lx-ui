@@ -1,5 +1,18 @@
 # LX/UI Migration Guide
 
+## 1.6 → 1.7
+
+### Breaking changes
+
+#### LxMasterDetail
+
+- `label` prop no longer supported.
+- `description` prop no longer supported.
+- `newLabel` prop no longer supported. Use `texts` prop's `add` attribute instead.
+- `placeHolder` prop no longer supported.
+- `level` prop no longer supported.
+- `dragAndDrop` prop no longer supported.
+- `invalidItems` prop no longer supported. Define invalid items using `modelValue` and `invalidAttribute` props.
 
 ## 1.5 → 1.6
 

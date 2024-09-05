@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { test, expect, describe, vi } from 'vitest';
+import { test, expect, describe } from 'vitest';
 import { mount } from '@vue/test-utils';
 import LxMasterDetail from '@/components/MasterDetail.vue';
 import 'regenerator-runtime/runtime';
@@ -24,18 +24,16 @@ describe('LxMasterDetail', () => {
       const props = wrapper.props();
 
       expect(props.modelValue).toEqual([]);
-      expect(props.label).toBe(null);
-      expect(props.description).toBe(null);
-      expect(props.newLabel).toBe('');
-      expect(props.placeHolder).toBe('');
       expect(props.mode).toBe('edit');
-      expect(props.level).toBe(1);
-      expect(props.dragAndDrop).toBe(false);
-      expect(props.invalidItems).toEqual([]);
       expect(props.idAttribute).toBe('id');
       expect(props.nameAttribute).toBe('name');
       expect(props.descriptionAttribute).toBe(null);
-      expect(props.texts.add).toBe('Pievienot');
+      expect(props.categoryAttribute).toBe('category');
+      expect(props.invalidAttribute).toBe('invalid');
+      expect(props.texts.add).toBe('Pievienot ierakstu');
+      expect(props.texts.noData).toBe('Nav datu');
+      expect(props.texts.noDataDescription).toBe('Izvēlieties ierakstu, lai apskatītu datus');
+      expect(props.texts.back).toBe('Atgriezties atpakaļ');
     });
 
     test('should accept provided values', () => {
@@ -43,7 +41,7 @@ describe('LxMasterDetail', () => {
         props: {
           modelValue: [
             {
-              id: 1,
+              id: '1',
               name: 'League of Legends',
               popularity: 153109020,
               description: null,
@@ -62,16 +60,9 @@ describe('LxMasterDetail', () => {
               },
             },
           ],
-          label: 'Custom label',
-          description: 'Custom description',
-          newLabel: 'Custom label',
-          placeHolder: 'Custom placeholder',
           mode: 'read',
-          level: 2,
-          dragAndDrop: true,
-          invalidItems: [1],
-          idAttribute: 'customId',
-          nameAttribute: 'customName',
+          idAttribute: 'group',
+          nameAttribute: 'name',
           descriptionAttribute: 'customDescription',
           texts: {
             add: 'Add',
@@ -89,7 +80,7 @@ describe('LxMasterDetail', () => {
 
       expect(props.modelValue).toEqual([
         {
-          id: 1,
+          id: '1',
           name: 'League of Legends',
           popularity: 153109020,
           description: null,
@@ -109,17 +100,9 @@ describe('LxMasterDetail', () => {
         },
       ]);
       expect(Array.isArray(props.modelValue)).toBe(true);
-      expect(props.label).toBe('Custom label').toBeTypeOf('string');
-      expect(props.description).toBe('Custom description').toBeTypeOf('string');
-      expect(props.newLabel).toBe('Custom label').toBeTypeOf('string');
-      expect(props.placeHolder).toBe('Custom placeholder').toBeTypeOf('string');
       expect(props.mode).toBe('read').toBeTypeOf('string');
-      expect(props.level).toBe(2).toBeTypeOf('number');
-      expect(props.dragAndDrop).toBe(true).toBeTypeOf('boolean');
-      expect(props.invalidItems).toEqual([1]);
-      expect(Array.isArray(props.invalidItems)).toBe(true);
-      expect(props.idAttribute).toBe('customId').toBeTypeOf('string');
-      expect(props.nameAttribute).toBe('customName').toBeTypeOf('string');
+      expect(props.idAttribute).toBe('group').toBeTypeOf('string');
+      expect(props.nameAttribute).toBe('name').toBeTypeOf('string');
       expect(props.descriptionAttribute).toBe('customDescription').toBeTypeOf('string');
       expect(props.texts.add).toBe('Add').toBeTypeOf('string');
     });
@@ -129,7 +112,7 @@ describe('LxMasterDetail', () => {
     test('model computed property should get and set modelValue correctly', async () => {
       const wrapper = mount(LxMasterDetail, {
         props: {
-          modelValue: [{ id: 1, name: 'Item 1' }],
+          modelValue: [{ id: '1', name: 'Item 1' }],
         },
         global: {
           stubs: ['router-link'],
@@ -140,19 +123,19 @@ describe('LxMasterDetail', () => {
       });
 
       const { model } = wrapper.vm;
-      expect(model).toEqual([{ id: 1, name: 'Item 1' }]);
+      expect(model).toEqual([{ id: '1', name: 'Item 1' }]);
 
-      await wrapper.setProps({ modelValue: [{ id: 2, name: 'Item 2' }] });
-      expect(wrapper.vm.model).toEqual([{ id: 2, name: 'Item 2' }]);
+      await wrapper.setProps({ modelValue: [{ id: '2', name: 'Item 2' }] });
+      expect(wrapper.vm.model).toEqual([{ id: '2', name: 'Item 2' }]);
 
-      wrapper.vm.model = [{ id: 3, name: 'Item 3' }];
-      expect(wrapper.emitted()['update:modelValue'][0]).toEqual([[{ id: 3, name: 'Item 3' }]]);
+      wrapper.vm.model = [{ id: '3', name: 'Item 3' }];
+      expect(wrapper.emitted()['update:modelValue'][0]).toEqual([[{ id: '3', name: 'Item 3' }]]);
     });
 
     test('selectItem method should update activeItemCode and emit selectionChanged', () => {
       const wrapper = mount(LxMasterDetail, {
         props: {
-          modelValue: [{ id: 1, name: 'Item 1' }],
+          modelValue: [{ id: '1', name: 'Item 1' }],
         },
         global: {
           stubs: ['router-link'],
@@ -184,14 +167,13 @@ describe('LxMasterDetail', () => {
       expect(wrapper.emitted().newItemAdded).toBeTruthy();
     });
 
-    test('isItemValid method should correctly validate items', () => {
+    test('invalid items test', () => {
       const wrapper = mount(LxMasterDetail, {
         props: {
           modelValue: [
-            { id: 1, name: 'Item 1' },
-            { id: 2, name: 'Item 2' },
+            { id: '1', name: 'Item 1', invalid: true },
+            { id: '2', name: 'Item 2' },
           ],
-          invalidItems: [1],
         },
         global: {
           stubs: ['router-link'],
@@ -201,18 +183,20 @@ describe('LxMasterDetail', () => {
         },
       });
 
-      expect(wrapper.vm.isItemValid({ id: 1 })).toBe(false);
-      expect(wrapper.vm.isItemValid({ id: 2 })).toBe(true);
+      const rows = wrapper.findAll('.lx-list-item');
+      expect(rows[0].classes()).toContain('lx-invalid');
+      expect(rows[1].classes()).not.toContain('lx-invalid');
     });
 
-    test('dragStart and dragEnd methods should handle drag and drop correctly', async () => {
+    test('item category test', () => {
       const wrapper = mount(LxMasterDetail, {
         props: {
+          categoryAttribute: 'type',
           modelValue: [
-            { id: 1, name: 'Item 1', order: 0 },
-            { id: 2, name: 'Item 2', order: 1 },
+            { id: '1', name: 'Item 1', type: 'red' },
+            { id: '2', name: 'Item 2', type: 'deleted' },
+            { id: '3', name: 'Item 3' },
           ],
-          dragAndDrop: true,
         },
         global: {
           stubs: ['router-link'],
@@ -222,27 +206,17 @@ describe('LxMasterDetail', () => {
         },
       });
 
-      const dragEvent = {
-        preventDefault: vi.fn(),
-        target: wrapper.find('[draggable="true"]').element,
-      };
-
-      wrapper.vm.dragStart(dragEvent);
-      expect(wrapper.vm.dragActive).toBe(true);
-
-      wrapper.vm.dragEnd(dragEvent);
-      expect(wrapper.vm.dragActive).toBe(false);
-      expect(wrapper.vm.dragTarget).toBe(null);
-
-      const updatedModel = wrapper.vm.model;
-      expect(updatedModel[0].order).toBe(0);
-      expect(updatedModel[1].order).toBe(1);
+      const rows = wrapper.findAll('.lx-list-item');
+      expect(rows[0].classes()).toContain('lx-category-red');
+      expect(rows[1].classes()).toContain('lx-category-deleted');
+      expect(rows[2].classes()).not.toContain('lx-category');
     });
 
-    test('nav and navClose methods should toggle and close the navbar correctly', () => {
+    test('mode prop test', async () => {
       const wrapper = mount(LxMasterDetail, {
         props: {
-          modelValue: [],
+          modelValue: [{ id: '1', name: 'Item 1' }],
+          mode: 'edit',
         },
         global: {
           stubs: ['router-link'],
@@ -252,15 +226,10 @@ describe('LxMasterDetail', () => {
         },
       });
 
-      wrapper.vm.nav();
-      expect(wrapper.vm.navbar).toBe(true);
-
-      wrapper.vm.navClose();
-      expect(wrapper.vm.navbar).toBe(false);
-
-      wrapper.vm.nav();
-      wrapper.vm.navClose();
-      expect(wrapper.vm.navbar).toBe(false);
+      const master = wrapper.find('.lx-master');
+      expect(master.html()).toContain('button');
+      await wrapper.setProps({ mode: 'read' });
+      expect(master.html()).not.toContain('button');
     });
   });
 });

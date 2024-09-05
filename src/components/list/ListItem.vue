@@ -26,6 +26,8 @@ const props = defineProps({
   selected: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
+  active: { type: Boolean, default: false },
+  invalid: { type: Boolean, default: false },
   searchString: { type: String, default: '' },
   tooltip: { type: String, default: '' },
   actionDefinitions: { type: Array, default: () => [] },
@@ -67,6 +69,7 @@ function secureURL(url) {
         { 'lx-selected': selected },
         { 'lx-inactive': kind === 'inactive' },
         { 'lx-list-item-tile': kind === 'tile' },
+        { 'lx-list-item-active': active },
         { 'lx-category-red': category === 'red' },
         { 'lx-category-blue': category === 'blue' },
         { 'lx-category-green': category === 'green' },
@@ -86,6 +89,7 @@ function secureURL(url) {
         { 'lx-category-inactive': category === 'inactive' },
         { 'lx-category-finished': category === 'finished' },
         { 'lx-category-incomplete': category === 'incomplete' },
+        { 'lx-invalid': invalid },
       ]"
     >
       <header>
@@ -99,7 +103,8 @@ function secureURL(url) {
         </template>
         <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>
       </header>
-      <lx-icon :value="icon" :iconSet="iconSet" v-if="href || clickable" />
+      <LxIcon value="invalid" v-if="invalid" customClass="invalid-icon" />
+      <lx-icon :value="icon" :iconSet="iconSet" v-if="clickable" />
     </div>
 
     <router-link
@@ -114,6 +119,7 @@ function secureURL(url) {
         { 'lx-selected': selected },
         { 'lx-inactive': kind === 'inactive' },
         { 'lx-list-item-tile': kind === 'tile' },
+        { 'lx-list-item-active': active },
         { 'lx-category-red': category === 'red' },
         { 'lx-category-blue': category === 'blue' },
         { 'lx-category-green': category === 'green' },
@@ -133,6 +139,7 @@ function secureURL(url) {
         { 'lx-category-inactive': category === 'inactive' },
         { 'lx-category-finished': category === 'finished' },
         { 'lx-category-incomplete': category === 'incomplete' },
+        { 'lx-invalid': invalid },
       ]"
       :tabindex="href || clickable ? 0 : -1"
     >
@@ -147,7 +154,8 @@ function secureURL(url) {
         </template>
         <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>
       </header>
-      <lx-icon :value="icon" :icon-set="iconSet" v-if="href || clickable" />
+      <LxIcon value="invalid" v-if="invalid" customClass="invalid-icon" />
+      <lx-icon :value="icon" :icon-set="iconSet" v-if="href" />
     </router-link>
     <div class="lx-list-item-loader" v-if="busy"><LxLoader :loading="true" size="s" /></div>
     <div

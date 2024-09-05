@@ -656,3 +656,22 @@
     transform: rotate(360deg);
   }
 }
+
+/*LxMasterDetail slide transition*/
+.lx:not(.lx-no-animations) .master-detail-slide-left-enter-from{
+  transform: translateX(-100%);
+}
+
+.lx:not(.lx-no-animations) .master-detail-slide-right-enter-from{
+  transform: translateX(100%);
+}
+
+.lx:not(.lx-no-animations) .master-detail-slide-left-enter-to,
+.lx:not(.lx-no-animations) .master-detail-slide-right-enter-to{
+  transform: translateX(0);
+}
+
+.lx:not(.lx-no-animations) .master-detail-slide-left-enter-active,
+.lx:not(.lx-no-animations) .master-detail-slide-right-enter-active{
+  transition: transform 0.2s ease-out;
+}
