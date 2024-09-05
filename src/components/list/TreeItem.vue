@@ -73,8 +73,7 @@ const states = computed({
 });
 
 function selectRow(id) {
-  selected.value = {};
-  selected.value[id] = true;
+  selected.value = { [id]: true };
 }
 
 function isExpanded(id) {

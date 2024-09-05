@@ -89,8 +89,7 @@ watch(
 );
 
 function selectRow(id) {
-  selected.value = {};
-  selected.value[id] = true;
+  selected.value = { [id]: true };
 }
 
 const level = ref(0);
