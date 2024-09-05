@@ -423,12 +423,12 @@ const shouldShowPlaceholder = computed(() => {
 });
 
 const shouldShowInputPlaceholder = computed(() => {
-  if (!hasValue.value && !query.value && menuOpen.value) return true;
+  if (!query.value && menuOpen.value) return true;
   return false;
 });
 
 const shouldShowValuePlaceholder = computed(() => {
-  if (hasValue.value && !query.value) return true;
+  if (hasValue.value && !menuOpen.value) return true;
   return false;
 });
 
@@ -850,9 +850,7 @@ watch(
 );
 
 watch([hasValue, query, menuOpen], ([newHasValue, newQuery, newMenuOpen]) => {
-  if (newHasValue && !newQuery) {
-    inputReadonly.value = true;
-  } else if (!newHasValue && !newMenuOpen) {
+  if (!newHasValue && !newMenuOpen) {
     inputReadonly.value = true;
   } else {
     inputReadonly.value = false;
