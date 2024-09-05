@@ -149,6 +149,22 @@
   align-items: baseline;
 }
 
+.lx-data-block-content .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section,
+.lx-modal .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section {
+  padding: 0;
+}
+
+.lx-data-block-content .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section-1,
+.lx-modal .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section-1 {
+  grid-template-columns: 1fr;
+}
+
+.lx-data-block-content .lx-form-grid.lx-form-grid-stripped,
+.lx-modal .lx-form-grid.lx-form-grid-stripped {
+  border-color: transparent;
+  position: static;
+}
+
 .lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section {
   grid-template-columns: 1fr;
 }
@@ -642,6 +658,7 @@
 .lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper,
 .lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block,
 .lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block-header,
+.lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper.lx-data-block-disabled .lx-data-block-header,
 .lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block-content,
 .lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper .additional-buttons,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-form-section .lx-data-block-wrapper,
@@ -650,35 +667,35 @@
   > .lx-tab-body
   > .lx-main
   .lx-form-section
-  .lx-data-block-wrapper
+  .lx-data-block-wrapper.lx-data-block-disabled
   .lx-data-block,
 .lx-form-grid
   > .lx-tab-control
   > .lx-tab-body
   > .lx-main
   .lx-form-section
-  .lx-data-block-wrapper
+  .lx-data-block-wrapper.lx-data-block-disabled
   .lx-data-block-header,
 .lx-form-grid
   > .lx-tab-control
   > .lx-tab-body
   > .lx-main
   .lx-form-section
-  .lx-data-block-wrapper
+  .lx-data-block-wrapper.lx-data-block-disabled
   .additional-buttons {
   background-color: var(--color-region-2);
   color: var(--color-data);
   margin-bottom: 0;
 }
 
-.lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper .lx-data-block-header:hover,
+.lx-form-grid .lx-main .lx-form-section .lx-data-block-wrapper.lx-data-block-expander:not(.lx-data-block-disabled) .lx-data-block-header:hover,
 .lx-form-grid
   > .lx-tab-control
   > .lx-tab-body
   > .lx-main
   .lx-form-section
-  .lx-data-block-wrapper
-  .lx-data-block-header:hover {
+  .lx-data-block-wrapper.lx-data-block-expander:not(.lx-data-block-disabled)
+  .lx-data-block-header:hover{
   background-color: var(--color-region-hover);
 }
 

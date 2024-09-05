@@ -106,6 +106,20 @@
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-date-time-picker:not(:disabled),
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-autocomplete-default:not(:disabled),
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-dropdown:not(:disabled),
+.lx-region .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-text-input:not(:disabled),
+.lx-region .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-text-area:not(:disabled),
+.lx-region .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-canvas-element:not(:disabled),
+.lx-region .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-date-time-picker:not(:disabled),
+.lx-region .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-markdown-text-area:not(:disabled),
+.lx-region .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-autocomplete-default:not(:disabled),
+.lx-region .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-dropdown-default .lx-dropdown-default-panel:not(:disabled),
+.lx-form-grid .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-text-input:not(:disabled),
+.lx-form-grid .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-text-area:not(:disabled),
+.lx-form-grid .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-canvas-element:not(:disabled),
+.lx-form-grid .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-date-time-picker:not(:disabled),
+.lx-form-grid .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-markdown-text-area:not(:disabled),
+.lx-form-grid .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-autocomplete-default:not(:disabled),
+.lx-form-grid .lx-data-block-wrapper .lx-data-block-content .lx-form-grid.lx-form-grid-stripped .lx-dropdown-default .lx-dropdown-default-panel:not(:disabled),
 .lx-region
   .lx-appendable-list
   .lx-appendable-list-item
@@ -116,6 +130,7 @@
   .lx-appendable-list-item
   .lx-form-grid
   .lx-form-section
+  .lx-dropdown-default
   .lx-dropdown-default-panel,
 .lx-region .lx-appendable-list .lx-appendable-list-item .lx-canvas-element,
 .lx-modal .lx-appendable-list .lx-appendable-list-item .lx-text-input:not(:disabled),
@@ -273,6 +288,7 @@
 .lx-form-grid > .lx-main .lx-text-area:not(:disabled),
 .lx-form-grid > .lx-main .lx-date-time-picker:not(:disabled),
 .lx-form-grid > .lx-main .lx-dropdown:not(:disabled),
+.lx-form-grid > .lx-main .lx-canvas-element:not(:disabled),
 .lx-form-grid
   > .lx-main
   .lx-dropdown-default-panel:not(.lx-dropdown-default[disabled='true'] .lx-dropdown-default-panel),
