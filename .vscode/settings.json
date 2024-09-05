@@ -20,5 +20,11 @@
   "cSpell.dictionaries": ["zzdats"],
   "eslint.enable": true,
   "eslint.codeActionsOnSave.mode": "all",
-  "eslint.run": "onSave"
+  "eslint.run": "onSave",
+  "[javascript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[vue]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
 }

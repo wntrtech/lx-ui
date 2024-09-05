@@ -40,8 +40,10 @@ module.exports = {
         patterns: ['.*'],
       },
     ],
+    'vue/html-indent': ['off'], // leave it to prettier
     'vue/multi-word-component-names': 'off',
     'vuejs-accessibility/label-has-for': 'off',
+    'indent': ['off'], // leave it to prettier
   },
   globals: {
     defineProps: 'readonly',
