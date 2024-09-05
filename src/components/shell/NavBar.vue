@@ -59,6 +59,7 @@ const emits = defineEmits([
   'update:selected-language',
   'update:theme',
   'update:hasAnimations',
+  'navClick',
 ]);
 
 function navToggle(ev) {
@@ -95,6 +96,10 @@ const animationsModel = computed({
     emits('update:hasAnimations', value);
   },
 });
+
+function navClick(id) {
+  emits('navClick', id);
+}
 </script>
 <template>
   <div class="lx-nav-panel" v-on-click-outside="navToggle">
@@ -106,7 +111,12 @@ const animationsModel = computed({
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" :icon="item.icon" />
+        <LxButton 
+          :label="item.label" 
+          :href="item.to" 
+          :icon="item.icon" 
+          @click="navClick(item?.id)"
+        />
       </li>
 
       <LxHeaderButtons
@@ -130,7 +140,12 @@ const animationsModel = computed({
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" :icon="item.icon" />
+        <LxButton
+          :label="item.label"
+          :href="item.to"
+          :icon="item.icon"
+          @click="navClick(item?.id)"
+        />
       </li>
     </ul>
   </div>

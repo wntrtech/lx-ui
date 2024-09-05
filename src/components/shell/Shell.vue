@@ -57,6 +57,7 @@ const emits = defineEmits([
   'confirmModalClosed',
   'update:theme',
   'update:nav-bar-switch',
+  'navClick',
 ]);
 
 const props = defineProps({
@@ -454,6 +455,10 @@ onMounted(() => {
 
   defineVars();
 });
+
+function navClick(id = null) {
+  emits('navClick', id);
+}
 </script>
 <template>
   <transition name="shell-switch">
@@ -619,6 +624,7 @@ onMounted(() => {
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
           @nav-toggle="navToggle"
+          @navClick="navClick"
           :selectedNavItems="navItemsSelected"
         />
       </nav>
@@ -703,6 +709,7 @@ onMounted(() => {
           @nav-toggle="navToggle"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
+          @navClick="navClick"
           :texts="texts"
         />
       </header>
@@ -731,6 +738,7 @@ onMounted(() => {
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @log-out="logOut"
+          @navClick="navClick"
         />
       </nav>
 
@@ -849,6 +857,7 @@ onMounted(() => {
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
           @nav-toggle="navToggle"
+          @navClick="navClick"
           :selectedNavItems="navItemsSelected"
         />
       </nav>

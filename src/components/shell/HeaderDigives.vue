@@ -90,6 +90,7 @@ const emits = defineEmits([
   'update:selected-alternative-profile',
   'log-out',
   'update:nav-bar-switch',
+  'navClick',
 ]);
 
 function logOut() {
@@ -167,6 +168,10 @@ function changePerson(item) {
     name: item?.name,
     description: item?.description,
   };
+}
+
+function navClick(id) {
+  emits('navClick', id);
 }
 </script>
 <template>
@@ -320,7 +325,12 @@ function changePerson(item) {
           v-for="items in navItemsUserMenuEves"
           :key="items.label"
         >
-          <LxButton :icon="items.icon" :label="items.label" kind="ghost" :href="items.to" />
+          <LxButton
+            :icon="items.icon"
+            :label="items.label"
+            kind="ghost"
+            @click="navClick(items?.id)"
+          />
         </div>
         <div
           class="lower-button lower-button-last"

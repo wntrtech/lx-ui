@@ -70,6 +70,7 @@ const emits = defineEmits([
   'alternativeProfileChanged',
   'update:selected-alternative-profile',
   'log-out',
+  'navClick',
 ]);
 
 const fullName = computed(() => {
@@ -135,6 +136,10 @@ function logOut() {
   emits('log-out');
 }
 
+function navClick(id) {
+  emits('navClick', id);
+}
+
 function toggleNavBar(event) {
   if (
     !props.navBarSwitch &&
@@ -154,7 +159,7 @@ function toggleNavBar(event) {
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" />
+        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)" />
       </li>
     </ul>
     <ul class="lx-nav-group">
@@ -163,7 +168,7 @@ function toggleNavBar(event) {
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" />
+        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)"/>
       </li>
     </ul>
   </div>
@@ -266,7 +271,7 @@ function toggleNavBar(event) {
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" />
+        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)" />
       </li>
     </ul>
     <ul class="lx-nav-group">
@@ -279,6 +284,7 @@ function toggleNavBar(event) {
           :label="item.label"
           :href="item.to"
           :icon="item.icon"
+          @click="navClick(item?.id)"
           icon-variant="gradient-brand-vertical"
         />
       </li>
@@ -287,7 +293,7 @@ function toggleNavBar(event) {
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" />
+        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)"/>
       </li>
       <div class="default-buttons">
         <div
@@ -295,7 +301,7 @@ function toggleNavBar(event) {
           v-for="items in navItemsUserMenuEves"
           :key="items.label"
         >
-          <LxButton :icon="items.icon" :label="items.label" kind="ghost" :href="items.to" />
+          <LxButton :icon="items.icon" :label="items.label" kind="ghost" @click="navClick(items?.id)"/>
         </div>
         <div
           class="lower-button lower-button-last"

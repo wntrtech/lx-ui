@@ -91,7 +91,7 @@ const model = computed({
     return null;
   },
   set: (value) => {
-    emit('update:modelValue', value);
+      emit('update:modelValue', value);
   },
 });
 
@@ -118,7 +118,7 @@ const listRef = ref();
 const idValue = ref('');
 
 const findItemById = (id, items) => {
-  return items?.find((item) => id === getIdAttributeString(item));
+    return items?.find((item) => id === getIdAttributeString(item));
 };
 
 const mergeItems = (newItems, storedItems) => {
@@ -773,7 +773,7 @@ function selectionChanged(selectedValue) {
   }
 
   selectionTimeout = setTimeout(() => {
-    if (JSON.stringify(selectedValue) !== JSON.stringify(model.value)) {
+    if (selectedValue && JSON.stringify(selectedValue) !== JSON.stringify(model.value)) {
       // Update selectedItems.value with new values
       const updatedItems = selectedItems.value?.filter((obj) =>
         selectedValue.includes(obj[props.idAttribute])
@@ -1292,6 +1292,8 @@ onMounted(() => {
           <LxList
             ref="listRef"
             :items="displaySelectedItems"
+            :idAttribute="props.idAttribute"
+            :primaryAttribute="props.nameAttribute"
             :hasSelecting="showListOptions"
             :has-search="showListOptions"
             selectingKind="multiple"

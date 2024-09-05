@@ -575,7 +575,7 @@ const selectedItems = computed(() => {
       }
 
       if (isKeyValid) {
-        if (props.selectingKind === 'multiple') {
+        if (props.selectingKind === 'multiple' && key !== 'undefined') {
           ret.push(key);
         } else if (props.selectingKind === 'single') {
           ret[0] = key;
@@ -642,16 +642,16 @@ function selectRows(arr = null) {
   if (arr === null) {
     if (props.kind !== 'treelist') {
       selectedItemsRaw.value = arrayToObject(
-        filterSelectable(itemsWithStringIds.value)?.map((x) => x[props.idAttribute].toString())
+        filterSelectable(itemsWithStringIds.value)?.map((x) => x?.[props.idAttribute]?.toString())
       );
     } else {
       selectedItemsRaw.value = arrayToObject(
-        filterSelectable(treeItems.value)?.map((x) => x[props.idAttribute].toString())
+        filterSelectable(treeItems.value)?.map((x) => x?.[props.idAttribute]?.toString())
       );
     }
   } else {
     selectedItemsRaw.value = arrayToObject(
-      filterSelectable(arr)?.map((x) => x?.[props.idAttribute].toString())
+      filterSelectable(arr)?.map((x) => x?.[props.idAttribute]?.toString())
     );
   }
 }
