@@ -285,11 +285,8 @@
 }
 
 .lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-button {
-  background-color: var(--color-nav-selected-background);
-}
-
-.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-button {
   color: var(--color-nav-selected-foreground);
+  background-color: var(--color-nav-selected-background);
 }
 
 .lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-button svg {

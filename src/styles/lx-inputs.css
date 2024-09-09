@@ -247,15 +247,11 @@
 .lx-modal .lx-autocomplete-wrapper .lx-autocomplete:not(:disabled),
 .lx-modal .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-toolbar,
 .lx-modal .lx-markdown-text-area:not(:disabled),
-.lx-region .lx-autocomplete-wrapper .lx-autocomplete:not(:disabled),
 .lx-form .lx-dropdown-default-wrapper .lx-text-input-wrapper:not(:disabled),
 .lx-form-section .lx-dropdown-default-wrapper .lx-text-input-wrapper:not(:disabled),
-.lx-region .lx-dropdown-default-wrapper .lx-text-input-wrapper:not(:disabled),
 .lx-modal .lx-dropdown-default-wrapper .lx-text-input-wrapper:not(:disabled),
-.lx-region .lx-dropdown-default-wrapper .lx-text-input-wrapper:not(:disabled),
 .lx-form .lx-dropdown-default-panel:not(:disabled),
 .lx-form-section .lx-dropdown-default-panel:not(:disabled),
-.lx-region .lx-dropdown-default-panel:not(:disabled),
 .lx-modal .lx-dropdown-default-panel:not(:disabled),
 .lx-region .lx-text-input:not(:disabled),
 .lx-region .lx-text-area:not(:disabled),
@@ -263,16 +259,13 @@
 .lx-region .lx-dropdown:not(:disabled),
 .lx-region .lx-dropdown-panel:not(:disabled),
 .lx-region .lx-file-upload:not(:disabled),
-.lx-region .lx-autocomplete-wrapper .lx-autocomplete:not(:disabled),
 .lx-region .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area,
 .lx-region .lx-markdown-text-area .lx-modal .lx-file-upload:not(:disabled),
 .lx-region .lx-autocomplete-wrapper .lx-autocomplete:not(:disabled),
 .lx-region .lx-dropdown-default-wrapper .lx-text-input-wrapper:not(:disabled),
-.lx-region .lx-dropdown-default-wrapper .lx-text-input-wrapper:not(:disabled),
 .lx-region .lx-dropdown-default-panel:not(:disabled),
 .lx-form .lx-rotator .lx-rotator-set .lx-rotator-tag:not(:disabled),
 .lx-form-section .lx-rotator .lx-rotator-set .lx-rotator-tag:not(:disabled),
-.lx-region .lx-rotator .lx-rotator-set .lx-rotator-tag:not(:disabled),
 .lx-modal .lx-rotator .lx-rotator-set .lx-rotator-tag:not(:disabled),
 .lx-region .lx-rotator .lx-rotator-set .lx-rotator-tag:not(:disabled),
 .lx-form .lx-rotator:not(:disabled),
@@ -620,12 +613,8 @@ h2.lx-section-header + p.lx-invalidation-message {
 
 .lx-radio-button-wrapper,
 .lx-checkbox-wrapper {
-  margin: 0.4rem 0;
-}
-
-.lx-radio-button-wrapper,
-.lx-checkbox-wrapper {
   position: relative;
+  margin: 0.4rem 0;
 }
 
 .lx-radio-button,
@@ -1074,7 +1063,6 @@ h2.lx-section-header + p.lx-invalidation-message {
   color: var(--color-data);
   display: flex;
   align-items: center;
-  width: 100%;
   height: 2.5rem;
   cursor: pointer;
   margin: 2px;
@@ -1853,11 +1841,6 @@ h2.lx-section-header + p.lx-invalidation-message {
   border-color: transparent;
 }
 
-.lx-content-switcher .lx-content-switcher-item:focus-visible,
-.lx-content-switcher .lx-content-switcher-item:focus {
-  border-color: transparent;
-}
-
 .lx-content-switcher-grid {
   border: 1px solid var(--color-content-switcher-foreground);
   border-radius: var(--radius-1);
@@ -1937,6 +1920,7 @@ h2.lx-section-header + p.lx-invalidation-message {
 .lx-content-switcher .lx-content-switcher-item:focus,
 .lx-content-switcher .lx-content-switcher-item:focus-visible {
   outline: 2px solid var(--color-focus-background);
+  border-color: transparent;
 }
 
 .lx-content-switcher-item svg {
@@ -3151,12 +3135,9 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-autocomplete-default.lx-invalid .inline-block div .lx-icons .lx-button {
+  position: relative;
   height: 2.4rem;
   bottom: -0.01rem;
-}
-
-.lx-autocomplete-default.lx-invalid .inline-block div .lx-icons .lx-button {
-  position: relative;
 }
 
 .lx-autocomplete-default {
@@ -3215,21 +3196,12 @@ input[type='range']:hover::-moz-range-thumb {
   color: var(--color-placeholder);
 }
 
-.lx-date-time-picker-wrapper.lx-date-time-range-wrapper .lx-date-time-range-input-fields {
-  display: flex;
-  gap: 0.5rem;
-}
-
 .lx-date-time-picker-wrapper.lx-date-time-range-wrapper
   .lx-date-time-range-input-fields
   > .lx-date-time-range-separator {
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.lx-date-time-picker-wrapper.lx-date-time-range-wrapper {
-  width: 21.5rem;
 }
 
 .lx-date-time-range-input-fields input {
@@ -3343,16 +3315,6 @@ input[type='range']:hover::-moz-range-thumb {
   padding-left: 0.9rem;
 }
 
-.lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all svg {
-  height: 1.45rem;
-  padding-left: 0.9rem;
-  padding-right: 0.2rem;
-}
-
-.lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all {
-  border-bottom: 1px solid var(--color-chrome);
-}
-
 .lx .lx-value-picker-default-wrapper.select-all .lx-toolbar.lx-search-toolbar.lx-list-toolbar,
 .lx .lx-toolbar.lx-search-toolbar.lx-list-toolbar.select-all {
   display: grid;
@@ -3377,11 +3339,15 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all {
+  border-bottom: 1px solid var(--color-chrome);
   color: var(--color-brand);
 }
 
 .lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all > svg {
   fill: var(--color-brand);
+  height: 1.45rem;
+  padding-left: 0.9rem;
+  padding-right: 0.2rem;
 }
 
 .lx-dropdown-default-data.lx-dropdown-flag {
@@ -3432,9 +3398,12 @@ input[type='range']:hover::-moz-range-thumb {
 
 .lx-date-time-picker-wrapper.lx-date-time-range-wrapper {
   position: static;
+  width: 21.5rem;
 }
 
 .lx-date-time-picker-wrapper.lx-date-time-range-wrapper .lx-date-time-range-input-fields {
+  display: flex;
+  gap: 0.5rem;
   position: relative;
 }
 
@@ -4142,14 +4111,6 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge {
-  font-size: var(--small-font-size);
-  text-align: right;
-  line-height: 1em;
-  opacity: 0.75;
-  margin-top: -0.1rem;
-}
-
-.lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge {
   position: absolute;
   background: var(--color-data);
   min-width: 1.5rem;
@@ -4165,6 +4126,7 @@ input[type='range']:hover::-moz-range-thumb {
   margin-top: 0;
   opacity: 1;
   right: 0.4rem;
+  font-size: var(--small-font-size);
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-second-badge {
@@ -4309,12 +4271,6 @@ input[type='range']:hover::-moz-range-thumb {
   padding-bottom: 1rem;
 }
 
-.lx .lx-visual-picker-wrapper .lx-tag-set .lx-tag {
-  height: var(--row-size);
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
 .lx-visual-picker-wrapper .lx-tag > .tag-text {
   display: flex;
   align-items: center;
@@ -4330,16 +4286,15 @@ input[type='range']:hover::-moz-range-thumb {
   flex-direction: column;
 }
 
-.lx .lx-visual-picker-wrapper .lx-tag-set .lx-tag {
-  background-color: var(--color-region-2);
-}
-
 .lx .lx-region .lx-visual-picker-wrapper .lx-tag-set .lx-tag {
   background-color: var(--color-background);
 }
 
 .lx .lx-visual-picker-wrapper .lx-tag-set .lx-tag {
   background-color: var(--color-region);
+  height: var(--row-size);
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .lx-visual-picker-wrapper .visual-select-picture > svg {
@@ -4562,7 +4517,7 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-camera img{
-  margin-top: calc(var(--row-size)  + 2px);
+  margin-top: calc(var(--row-size) + 2px);
 }
 
 

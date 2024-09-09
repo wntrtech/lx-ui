@@ -366,10 +366,9 @@ const startItems = computed(() => {
       };
       res.push(obj);
 
-      minMonth += 1;
-      if (minMonth === 13) {
+      minMonth = (minMonth % 12) + 1;
+      if (minMonth === 1) {
         minYear += 1;
-        minMonth = 1;
       }
     }
   } else if (props.kind === 'quarters') {
@@ -394,9 +393,8 @@ const startItems = computed(() => {
     for (let i = 0; i <= diff; i += 1) {
       const obj = { id: `${minYear}-Q${quarter}`, name: `${minYear}-Q${quarter}` };
       res.push(obj);
-      quarter += 1;
-      if (quarter === 5) {
-        quarter = 1;
+      quarter = (quarter % 4) + 1;
+      if (quarter === 1) {
         minYear += 1;
       }
     }
@@ -478,10 +476,9 @@ const endItems = computed(() => {
       };
       res.push(obj);
 
-      minMonth += 1;
-      if (minMonth === 13) {
+      minMonth = (minMonth % 12) + 1;
+      if (minMonth === 1) {
         minYear += 1;
-        minMonth = 1;
       }
     }
   } else if (props.kind === 'quarters') {
@@ -506,9 +503,8 @@ const endItems = computed(() => {
     for (let i = 0; i <= diff; i += 1) {
       const obj = { id: `${minYear}-Q${quarter}`, name: `${minYear}-Q${quarter}` };
       res.push(obj);
-      quarter += 1;
-      if (quarter === 5) {
-        quarter = 1;
+      quarter = (quarter % 4) + 1;
+      if (quarter === 1) {
         minYear += 1;
       }
     }

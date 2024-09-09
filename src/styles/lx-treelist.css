@@ -128,13 +128,6 @@
     border-left-color: var(--color-incomplete);
 }
 
-.lx-list-wrapper .tree-list .tree-item .selecting-block,
-.lx-list-wrapper .tree-item-small>.selecting-block {
-    min-width: var(--row-size);
-    padding: 0.5rem 0.5rem 0 0.5rem;
-    padding-left: 2px;
-}
-
 .lx-region .lx-list-wrapper .tree-list .tree-item .selecting-block,
 .lx-region .lx-list-wrapper .tree-item-small>.selecting-block {
     background-color: var(--color-region-2);
@@ -143,6 +136,9 @@
 .lx-list-wrapper .tree-list .tree-item .selecting-block,
 .lx-list-wrapper .tree-item-small>.selecting-block {
     background-color: var(--color-region);
+    min-width: var(--row-size);
+    padding: 0.5rem 0.5rem 0 0.5rem;
+    padding-left: 2px;
 }
 
 .tree-item-small {

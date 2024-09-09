@@ -4,7 +4,6 @@ import { generateUUID, textSearch } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxButton from '@/components/Button.vue';
-import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxAutoComplete from '@/components/AutoComplete.vue';
 import LxDropDown from '@/components/Dropdown.vue';

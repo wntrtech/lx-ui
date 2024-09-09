@@ -1074,13 +1074,6 @@ a.lx-tile:hover {
   transition: opacity 0.1s ease-out;
 }
 
-.lx .lx-layout.lx-layout-cover .lx-header > .lx-group > .lx-language-menu::before,
-.lx .lx-layout.lx-layout-cover .lx-header > .lx-group > .lx-alert-menu::before,
-.lx .lx-layout.lx-layout-cover .lx-header > .lx-group > .lx-help-button::before,
-.lx .lx-layout.lx-layout-cover .lx-header > .lx-group > .lx-theme-menu::before {
-  display: none;
-}
-
 .lx .lx-layout .lx-header > .lx-group > .lx-help-button .lx-button > svg,
 .lx .lx-layout .lx-header > .lx-group > .lx-theme-menu .lx-dropdown-toggler .lx-button > svg,
 .lx .lx-layout .lx-header > .lx-group > .lx-alert-menu .lx-dropdown-toggler .lx-button > svg,
@@ -2138,7 +2131,12 @@ a.lx-tile:hover {
     display: none;
   }
 
-  .lx-nav-panel .lx-nav-group .header-items::before {
+  .lx-nav-panel .lx-nav-group ul.header-items{
+    list-style-type: none;
+    padding-inline-start: 0;
+  }
+
+  .lx-nav-panel .lx-nav-group ul.header-items::before {
     position: absolute;
     z-index: 10;
     content: ' ';

@@ -1,7 +1,7 @@
 .lx-expander .lx-head {
   position: relative;
   padding: 0.625rem 1rem;
-  padding-right: 3rem;
+  padding-right: 0;
   outline: 2px solid transparent;
   outline-offset: -2px;
   cursor: pointer;
@@ -513,10 +513,6 @@
 
 .lx-list-expander {
   display: flex;
-}
-
-.lx-expander .lx-head {
-  padding-right: 0;
 }
 
 .lx-expander .lx-chevron-icon svg {

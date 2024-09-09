@@ -1126,11 +1126,6 @@
   pointer-events: none;
 }
 
-.vc-day-popover-container {
-  font-size: var(--vc-text-xs);
-  font-weight: var(--vc-font-medium);
-}
-
 .vc-day-popover-header {
   font-size: var(--vc-text-xs);
   color: var(--vc-day-popover-header-color);
@@ -1998,6 +1993,8 @@
   padding: 1rem;
   background-color: var(--color-tooltip-background);
   color: var(--color-tooltip-foreground);
+  font-size: var(--vc-text-xs);
+  font-weight: var(--vc-font-medium);
 }
 
 .vc-day-popover-container > .vc-day-popover-header {

@@ -204,8 +204,7 @@ onUnmounted(() => {
       <!-- eslint-disable-next-line vuejs-accessibility/media-has-caption -->
       <video ref="video" autoplay playsinline muted v-show="!modelValue" />
       <canvas ref="canvas" style="display: none" />
-      <!-- eslint-disable-next-line vuejs-accessibility/alt-text -->
-      <img :src="modelValue" v-if="modelValue" />
+      <img :src="modelValue" alt=" " v-if="modelValue" />
     </div>
     <div class="lx-camera-buttons" v-if="!error && !loading">
       <LxButton @click="captureImage" icon="camera" :label="texts.takePhoto" v-if="!modelValue" />

@@ -319,10 +319,6 @@
   margin-right: 0.5rem;
 }
 
-.lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge svg {
-  height: 1rem
-}
-
 .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge.lx-pass-protected-badge {
   background: var(--color-orange);
 }
@@ -333,6 +329,7 @@
 
 .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section > .lx-row .lx-badge.lx-main-data-badge svg {
   fill: var(--color-interactive-foreground);
+  height: 1rem
 }
 
 .lx-form-grid>.lx-main>.lx-form-section:first-of-type,

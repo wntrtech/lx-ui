@@ -86,41 +86,31 @@ export function objectClone(value) {
  * @property {string} [atvkName4]
  */
 
-export function formatAddress(/** @type {Address} */ address, includeAtvk = false) {
-  if (!address) {
-    return EMPTY_VALUE;
-  }
-
+function formatStreetLine(address) {
   let streetLine;
   if (address.streetName) {
     streetLine = address.streetName;
 
     // Usually regular (numeric) building number
     // is stored in a buildingNumberNumeric field.
-    if (address.buildingNumberNumeric) {
-      streetLine += ` ${address.buildingNumberNumeric}`;
-    }
+    streetLine += address.buildingNumberNumeric ? ` ${address.buildingNumberNumeric}` : '';
 
     // But in some rare cases regular (numeric) building number
     // is stored in a buildingNumber field.
-    if (address.buildingNumber) {
-      streetLine += ` ${address.buildingNumber}`;
-    }
+    streetLine += address.buildingNumber ? ` ${address.buildingNumber}` : '';
   } else if (address.buildingNumber) {
     streetLine = address.buildingNumber;
   }
 
   // In case if has street details, add more details
   if (streetLine) {
-    if (address.buildingNumberSuffix) {
-      streetLine += `/${address.buildingNumberSuffix}`;
-    }
-
-    if (address.unitId) {
-      streetLine += `-${address.unitId}`;
-    }
+    streetLine += address.buildingNumberSuffix ? `/${address.buildingNumberSuffix}` : '';
+    streetLine += address.unitId ? `-${address.unitId}` : '';
   }
+  return streetLine;
+}
 
+function formatAddressParts(address, streetLine) {
   const addressParts = [];
   if (streetLine) {
     addressParts.push(streetLine);
@@ -154,6 +144,15 @@ export function formatAddress(/** @type {Address} */ address, includeAtvk = fals
   }
 
   addressParts.push(address.country);
+  return addressParts;
+}
+
+export function formatAddress(/** @type {Address} */ address, includeAtvk = false) {
+  if (!address) {
+    return EMPTY_VALUE;
+  }
+  const streetLine = formatStreetLine(address);
+  const addressParts = formatAddressParts(address, streetLine);
 
   let addressString = addressParts.filter((line) => !!line).join(', ');
 

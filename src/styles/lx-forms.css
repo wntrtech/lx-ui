@@ -355,11 +355,6 @@
   color: var(--color-ongoing);
 }
 
-.lx-state-deleting .lx-state-indicator {
-  background-color: var(--color-region);
-  border-color: var(--color-deleted);
-}
-
 .lx-state-deleted .lx-state-indicator {
   background-color: var(--color-deleted);
   border-color: var(--color-deleted);

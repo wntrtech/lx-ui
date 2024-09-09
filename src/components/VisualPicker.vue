@@ -177,17 +177,19 @@ function mapClick(event) {
       countryId = event.target.parentNode?.id;
     }
     if (countryId?.includes('_')) countryId = countryId?.split('_')[0];
-    if (countryId) {
-      if (props.selectingKind === 'multiple') {
-        const res = [...model.value];
 
-        const index = res.findIndex((selectedItem) => selectedItem === countryId);
-        if (index !== -1) res.splice(index, 1);
-        else res.push(countryId);
+    if (!countryId) return;
 
-        model.value = res;
-      } else if (model.value === countryId) model.value = null;
-      else model.value = countryId;
+    if (props.selectingKind === 'multiple') {
+      const res = [...model.value];
+
+      const index = res.findIndex((selectedItem) => selectedItem === countryId);
+      if (index !== -1) res.splice(index, 1);
+      else res.push(countryId);
+
+      model.value = res;
+    } else {
+      model.value = model.value === countryId ? null : countryId;
     }
   }
 }

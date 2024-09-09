@@ -361,7 +361,6 @@ function clear() {
 
   if (!menuOpen.value) {
     openMenu();
-    return;
   }
 }
 
@@ -568,17 +567,9 @@ function openDetails() {
     props.hasDetails
   ) {
     if (props.detailMode === 'simple') {
-      if (props.selectingKind === 'single') {
         emit('openDetails', props.id);
-      } else if (props.selectingKind === 'multiple') {
-        emit('openDetails', props.id);
-      }
     } else if (props.detailMode === 'detailed') {
-      if (props.selectingKind === 'single') {
         detailedModeModal.value.open();
-      } else if (props.selectingKind === 'multiple') {
-        detailedModeModal.value.open();
-      }
     }
   }
 }

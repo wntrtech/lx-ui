@@ -49,13 +49,6 @@
   top: 0;
 }
 
-.lx .lx-data-grid .lx-cell-header,
-.lx .lx-data-grid .lx-cell {
-  border: none;
-  padding: var(--padding-cell);
-  line-height: 1.1em;
-}
-
 .lx .lx-data-grid .lx-cell {
   min-height: var(--row-size);
   height: auto;
@@ -65,6 +58,9 @@
 .lx .lx-data-grid .lx-cell-header {
   text-align: left;
   vertical-align: top;
+  border: none;
+  padding: var(--padding-cell);
+  line-height: 1.1em;
 }
 
 .lx .lx-data-grid .lx-grid-row {

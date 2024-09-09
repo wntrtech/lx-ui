@@ -517,7 +517,7 @@ function triggerThemeMenu(e) {
   </div>
 
   <template v-if="hasNavBar">
-    <span class="header-items">
+    <ul class="header-items">
       <li v-if="hasLanguagePicker" class="lx-language-picker">
         <div class="lx-language-menu">
           <LxDropDownMenu>
@@ -574,6 +574,6 @@ function triggerThemeMenu(e) {
           </LxDropDownMenu>
         </div>
       </li>
-    </span>
+    </ul>
   </template>
 </template>
