@@ -47,7 +47,7 @@ const props = defineProps({
 const emits = defineEmits(['update:modelValue']);
 
 const stringifiedItems = computed(() =>
-  props.items.map((item) => {
+  props.items?.map((item) => {
     const id = item[props.idAttribute];
     if (typeof id === 'number') {
       return {
