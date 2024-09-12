@@ -58,6 +58,10 @@
     margin-top: 0.05rem;
 }
 
+.lx-master-detail .lx-master .lx-list-item-interactive:hover p.lx-secondary{
+    color: var(--color-label)
+}
+
 .lx-master-detail-list {
     display: flex;
     flex-direction: column;
@@ -85,7 +89,8 @@
     border-right: solid var(--color-chrome) 0.125rem;
 }
 
-.lx-master-detail .lx-list-item.lx-list-item-active{
+.lx .lx-master-detail .lx-master .lx-list-item.lx-list-item-active,
+.lx .lx-master-detail .lx-master .lx-list-item.lx-list-item-active.lx-invalid{
     border-color: var(--color-brand);
 }
 
@@ -114,12 +119,18 @@
     outline: solid var(--color-focus-background) 0.125rem;
 }
 
-.lx-region .lx-list-item-wrapper .lx-list-item.lx-list-item-active{
-    background-color: var(--color-region);
+.lx-region .lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active,
+.lx-modal .lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active{
+    background-color: var(--color-region-2);
 }
 
-.lx-list-item-wrapper .lx-list-item.lx-list-item-active{
-    background-color: var(--color-region-2);
+.lx-region .lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active:hover,
+.lx-modal .lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active:hover{
+    background-color: var(--color-region-hover);
+}
+
+.lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active{
+    background-color: var(--color-region);
 }
 
 .lx-master-detail .lx-list-item{
