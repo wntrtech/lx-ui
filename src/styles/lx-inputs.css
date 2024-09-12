@@ -3341,6 +3341,7 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all {
   border-bottom: 1px solid var(--color-chrome);
   color: var(--color-brand);
+  align-items: center;
 }
 
 .lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all > svg {
