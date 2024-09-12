@@ -10,6 +10,10 @@
   position: unset;
 }
 
+.lx-appendable-list-item .lx-form-grid:not(:has(.lx-form-section-1)) {
+  width: 100%;
+}
+
 .lx-data-block .lx-form-grid,
 .lx-filter .lx-form-grid {
   border: none;
@@ -149,13 +153,11 @@
   align-items: baseline;
 }
 
-.lx-data-block-content .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section,
-.lx-modal .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section {
+.lx-data-block-content .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section {
   padding: 0;
 }
 
-.lx-data-block-content .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section-1,
-.lx-modal .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section-1 {
+.lx-data-block-content .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section-1 {
   grid-template-columns: 1fr;
 }
 
