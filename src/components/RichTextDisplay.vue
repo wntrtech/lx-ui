@@ -8,7 +8,7 @@ const props = defineProps({
   value: { type: String, default: '' },
   loading: { type: Boolean, default: false },
 });
-const markdown = computed(() => marked(props.value));
+const markdown = computed(() => (props.value ? marked(props.value) : ''));
 
 const vCleanHtml = buildVueDompurifyHTMLDirective({
   hooks: {
