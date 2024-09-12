@@ -360,7 +360,6 @@ function getTabIndex(id) {
   return -1;
 }
 
-
 </script>
 <template>
   <div

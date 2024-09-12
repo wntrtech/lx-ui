@@ -566,6 +566,11 @@ li .lx-category-incomplete {
   margin-left: 0.5rem;
 }
 
+.selecting-block>.lx-checkbox-wrapper .lx-checkbox-label,
+.selecting-block>.lx-radio-button-wrapper .lx-radio-button-label {
+  display: none;
+}
+
 .lx-list-wrapper>.lx-component-toolbar>.left-area>.lx-group:first-child {
   justify-content: space-between;
 }

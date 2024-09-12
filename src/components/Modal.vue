@@ -33,9 +33,14 @@ const nativeModal = ref();
 const isOpen = ref(false);
 const isOpenModal = ref(false);
 const modalRef = ref();
-const { activate, deactivate } = useFocusTrap(modalRef);
+const { activate, deactivate } = useFocusTrap(modalRef, {
+  allowOutsideClick: true,
+});
 
 function open() {
+  if (isOpen.value) {
+    return;
+  }
   if (props.kind === 'default') {
     isOpen.value = true;
   } else {

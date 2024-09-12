@@ -752,6 +752,39 @@ function selectSection(group) {
   }
 }
 
+function getTabIndex(id) {
+  const firstSelectable = itemsWithStringIds.value.find((item) => isSelectable(item));
+  const isFirstSelectable = firstSelectable && firstSelectable[props.idAttribute] === id;
+  const hasSelectedItem = Object.keys(selectedItemsRaw.value).length > 0;
+
+  if (selectedItemsRaw.value[id] || (isFirstSelectable && !hasSelectedItem)) {
+    return 0;
+  }
+  return -1;
+}
+
+function getGroupedTabIndex(id, groupId) {
+  let groupItems = [];
+  if (groupId) {
+    groupItems = itemsWithStringIds.value.filter(
+      (o) => prepareCode(o[props.groupAttribute]) === prepareCode(groupId)
+    );
+  } else {
+    groupItems = itemsArray.value[UNSPECIFIED_GROUP_CODE];
+  }
+  const firstSelectable = groupItems.find((item) => isSelectable(item));
+  const isFirstSelectable = firstSelectable && firstSelectable[props.idAttribute] === id;
+
+  const hasSelectedItemInGroup = groupItems.some(
+    (item) => selectedItemsRaw.value[item[props.idAttribute]]
+  );
+
+  if (selectedItemsRaw.value[id] || (isFirstSelectable && !hasSelectedItemInGroup)) {
+    return 0;
+  }
+  return -1;
+}
+
 const autoSearchMode = computed(() => {
   if (props.searchMode === 'compact') {
     return 'compact';
@@ -1077,7 +1110,9 @@ onMounted(() => {
                 :value="item[idAttribute]"
                 @click="selectRow(item[idAttribute])"
                 :disabled="loading || busy"
-                :tabindex="item[clickableAttribute] || item[hrefAttribute] ? 0 : -1"
+                :label="item[primaryAttribute]"
+                :group-id="`selection-${id}`"
+                :tabindex="getGroupedTabIndex(item[idAttribute], null)"
               />
               <LxCheckbox
                 v-else
@@ -1085,6 +1120,8 @@ onMounted(() => {
                 v-model="selectedItemsRaw[item[idAttribute]]"
                 :value="item[idAttribute]"
                 :disabled="loading || busy"
+                :label="item[primaryAttribute]"
+                :group-id="`selection-${id}`"
               />
             </template>
             <p v-else class="lx-checkbox-placeholder"></p>
@@ -1258,7 +1295,9 @@ onMounted(() => {
                     :value="item[idAttribute]"
                     @click="selectRow(item[idAttribute])"
                     :disabled="loading || busy"
-                    :tabindex="item[clickableAttribute] || item[hrefAttribute] ? 0 : -1"
+                    :label="item[primaryAttribute]"
+                    :group-id="`selection-${id}`"
+                    :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
                   />
                   <LxCheckbox
                     v-else
@@ -1266,6 +1305,8 @@ onMounted(() => {
                     v-model="selectedItemsRaw[item[idAttribute]]"
                     :value="item[idAttribute]"
                     :disabled="loading || busy"
+                    :label="item[primaryAttribute]"
+                    :group-id="`selection-${id}`"
                   />
                 </template>
                 <p v-else class="lx-checkbox-placeholder"></p>
@@ -1313,7 +1354,9 @@ onMounted(() => {
                 :value="item[idAttribute]"
                 @click="selectRow(item[idAttribute])"
                 :disabled="loading || busy"
-                :tabindex="item[clickableAttribute] || item[hrefAttribute] ? 0 : -1"
+                :label="item[primaryAttribute]"
+                :group-id="`selection-${id}`"
+                :tabindex="getTabIndex(item[idAttribute])"
               />
               <LxCheckbox
                 v-else
@@ -1321,6 +1364,8 @@ onMounted(() => {
                 v-model="selectedItemsRaw[item[idAttribute]]"
                 :value="item[idAttribute]"
                 :disabled="loading || busy"
+                :label="item[primaryAttribute]"
+                :group-id="`selection-${id}`"
               />
             </template>
             <p v-else class="lx-checkbox-placeholder"></p>
@@ -1603,7 +1648,9 @@ onMounted(() => {
               :value="element[idAttribute]"
               @click="selectRow(element[idAttribute])"
               :disabled="loading || busy"
-              :tabindex="element[clickableAttribute] || element[hrefAttribute] ? 0 : -1"
+              :label="element[primaryAttribute]"
+              :group-id="`selection-${id}`"
+              :tabindex="getTabIndex(element[idAttribute])"
             />
             <LxCheckbox
               v-else
@@ -1611,6 +1658,8 @@ onMounted(() => {
               v-model="selectedItemsRaw[element[idAttribute]]"
               :value="element[idAttribute]"
               :disabled="loading || busy"
+              :label="element[primaryAttribute]"
+              :group-id="`selection-${id}`"
             />
           </template>
           <p v-else class="lx-checkbox-placeholder"></p>

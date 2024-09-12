@@ -9,7 +9,7 @@ const props = defineProps({
   label: { type: String, default: null },
   disabled: { type: Boolean, default: false },
   value: { type: String, default: 'none' },
-  tabindex: { type: Number, default: 0 },
+  tabindex: { type: Number, default: null },
 });
 
 const emits = defineEmits(['update:modelValue', 'click']);
@@ -47,6 +47,7 @@ onMounted(() => {
       :name="groupId"
       v-model="model"
       :checked="model"
+      :aria-label="label"
       :aria-checked="model"
       :disabled="disabled"
       :value="value"
