@@ -867,54 +867,66 @@
 }
 
 .lx-data-grid svg.lx-grid-column-icon.draft,
-.lx-data-grid svg.lx-grid-column-icon.new {
+.lx-data-grid svg.lx-grid-column-icon.new,
+.lx-vertical svg.lx-grid-column-icon.draft {
   fill: var(--color-state-new);
 }
 
 .lx-data-grid svg.lx-grid-column-icon.draft,
-.lx-data-grid svg.lx-grid-column-icon.edited {
+.lx-data-grid svg.lx-grid-column-icon.edited,
+.lx-vertical svg.lx-grid-column-icon.edited {
   fill: var(--color-state-edited);
 }
 
 .lx-data-grid svg.lx-grid-column-icon.disabling,
-.lx-data-grid svg.lx-grid-column-icon.inactive {
+.lx-data-grid svg.lx-grid-column-icon.inactive,
+.lx-vertical svg.lx-grid-column-icon.inactive {
   fill: var(--color-state-deleted);
 }
 
 .lx-data-grid svg.lx-grid-column-icon.finishing,
-.lx-data-grid svg.lx-grid-column-icon.finished {
+.lx-data-grid svg.lx-grid-column-icon.finished,
+.lx-vertical svg.lx-grid-column-icon.finished {
   fill: var(--color-state-finished);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.deleting {
+.lx-data-grid svg.lx-grid-column-icon.deleting,
+.lx-vertical svg.lx-grid-column-icon.deleted{
   fill: var(--color-state-error);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.red {
+.lx-data-grid svg.lx-grid-column-icon.red,
+.lx-vertical svg.lx-grid-column-icon.red {
   fill: var(--color-red);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.green {
+.lx-data-grid svg.lx-grid-column-icon.green,
+.lx-vertical svg.lx-grid-column-icon.green {
   fill: var(--color-green);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.blue {
+.lx-data-grid svg.lx-grid-column-icon.blue,
+.lx-vertical svg.lx-grid-column-icon.blue {
   fill: var(--color-blue);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.black {
+.lx-data-grid svg.lx-grid-column-icon.black,
+.lx-vertical svg.lx-grid-column-icon.black {
   fill: var(--color-data);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.purple {
+.lx-data-grid svg.lx-grid-column-icon.purple,
+.lx-vertical svg.lx-grid-column-icon.purple {
   fill: var(--color-purple);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.orange {
+.lx-data-grid svg.lx-grid-column-icon.orange,
+.lx-vertical svg.lx-grid-column-icon.orange {
   fill: var(--color-orange);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.yellow {
+.lx-data-grid svg.lx-grid-column-icon.yellow,
+.lx-vertical svg.lx-grid-column-icon.yellow {
   fill: var(--color-yellow);
 }
 
@@ -943,4 +955,16 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.lx-data-grid-wrapper .lx-appendable-list .lx-row > div.lx-vertical {
+  min-height: auto;
+ }
+
+.lx-data-grid-wrapper .lx-appendable-list .lx-row > div.lx-vertical .lx-state {
+  float: left;
+ }
+
+ .lx-appendable-list-item .lx-grid-icon-wrapper { 
+  height: 1.5rem;
 }

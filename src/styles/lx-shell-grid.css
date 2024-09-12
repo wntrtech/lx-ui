@@ -438,7 +438,7 @@
 
 .lx-layout.lx-layout-default > .lx-main .lx-header {
   margin-top: var(--row-size);
-  margin-bottom: var(--row-size);
+  margin-bottom: var(--gap);
 }
 
 .lx-layout.lx-layout-default > .lx-main .lx-header .lx-toolbar {

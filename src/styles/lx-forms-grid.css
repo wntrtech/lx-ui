@@ -6,6 +6,10 @@
   position: relative;
 }
 
+.lx-modal .lx-form-grid {
+  position: inherit;
+ }
+
 .lx-appendable-list-item .lx-form-grid {
   position: unset;
 }
@@ -436,6 +440,9 @@
   min-height: var(--row-size);
   white-space: normal;
 }
+.lx-data-grid-wrapper .lx-appendable-list .lx-row > div.lx-vertical {
+  min-height: auto;
+ }
 
 .lx-form-grid > .lx-main .lx-row > div.lx-vertical > p.lx-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > p.lx-data,

@@ -26,12 +26,16 @@ const iconSetComputed = computed(() => (props.iconSet ? props.iconSet : 'cds'));
 
 const icon = computed(() => {
   // Separate icon name by '-' if any
+
+  if (typeof props.value === 'object') {
+    return null;
+  }
   const parts = props.value?.split('-');
 
   let ret = '';
   parts?.forEach((part) => {
     // Make first letter of each part uppercase and concat them to match icon file name
-    ret += `${part.charAt(0).toUpperCase()}${part.slice(1)}`;
+    ret += `${part?.charAt(0).toUpperCase()}${part?.slice(1)}`;
   });
 
   return ret;

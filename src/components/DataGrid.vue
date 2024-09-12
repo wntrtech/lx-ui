@@ -196,13 +196,19 @@ function formatValue(value, type, options = null) {
   }
 }
 function formatTooltip(displayName, title) {
-  let ret = '';
-  if (title) {
-    ret = `${displayName}\r\n${title}`;
-  } else {
-    ret = `${displayName}`;
+  const trimmedDisplayName = displayName?.trim();
+  const trimmedTitle = title?.trim();
+
+  if (trimmedDisplayName && trimmedTitle) {
+    return `${trimmedDisplayName}\r\n${trimmedTitle}`;
   }
-  return ret;
+  if (trimmedDisplayName) {
+    return trimmedDisplayName;
+  }
+  if (trimmedTitle) {
+    return trimmedTitle;
+  }
+  return '';
 }
 
 function actionClicked(actionName, rowCode, additionalParam) {
@@ -843,9 +849,21 @@ function emptyStateActionClicked(actionName) {
           >
             <div>
               <p class="lx-primary">{{ col.name }}</p>
-              <lx-icon value="sort-down" v-if="sortedColumns[col.id] === 'desc'"></lx-icon>
-              <lx-icon value="sort-up" v-if="sortedColumns[col.id] === 'asc'"></lx-icon>
-              <lx-icon value="sort-default" v-if="!sortedColumns[col.id]"></lx-icon>
+              <lx-icon
+                value="sort-down"
+                v-if="sortedColumns[col.id] === 'desc'"
+                :title="formatTooltip(col.name, col.title)"
+              ></lx-icon>
+              <lx-icon
+                value="sort-up"
+                v-if="sortedColumns[col.id] === 'asc'"
+                :title="formatTooltip(col.name, col.title)"
+              ></lx-icon>
+              <lx-icon
+                value="sort-default"
+                v-if="!sortedColumns[col.id]"
+                :title="formatTooltip(col.name, col.title)"
+              ></lx-icon>
             </div>
           </th>
           <th v-if="hasActionButtons" class="lx-cell-header lx-cell-action"></th>
@@ -1153,6 +1171,7 @@ function emptyStateActionClicked(actionName) {
       :hasSelecting="hasSelecting"
       :selectingKind="selectingKind"
       :actionDefinitions="actionDefinitions"
+      :force-uppercase="false"
       :columnCount="2"
       :defaultExpanded="false"
       :idAttribute="idAttribute"

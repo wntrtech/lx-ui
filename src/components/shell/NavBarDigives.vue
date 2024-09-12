@@ -144,7 +144,7 @@ function toggleNavBar(event) {
   if (
     !props.navBarSwitch &&
     windowSize.width.value < 1800 &&
-    windowSize.width.value > 1200 &&
+    windowSize.width.value > 800 &&
     event?.target?.parentNode?.id !== 'lx_nav-toggle' &&
     event?.target?.id !== 'lx_nav-toggle'
   )
@@ -168,7 +168,7 @@ function toggleNavBar(event) {
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)"/>
+        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)" />
       </li>
     </ul>
   </div>
@@ -293,7 +293,7 @@ function toggleNavBar(event) {
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)"/>
+        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)" />
       </li>
       <div class="default-buttons">
         <div
@@ -301,7 +301,12 @@ function toggleNavBar(event) {
           v-for="items in navItemsUserMenuEves"
           :key="items.label"
         >
-          <LxButton :icon="items.icon" :label="items.label" kind="ghost" @click="navClick(items?.id)"/>
+          <LxButton
+            :icon="items.icon"
+            :label="items.label"
+            kind="ghost"
+            @click="navClick(items?.id)"
+          />
         </div>
         <div
           class="lower-button lower-button-last"

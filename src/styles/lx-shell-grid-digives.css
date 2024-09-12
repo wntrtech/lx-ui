@@ -567,7 +567,7 @@
   }
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 800px) {
   .lx .lx-layout-digives {
     --nav-row-size: 6rem;
   }

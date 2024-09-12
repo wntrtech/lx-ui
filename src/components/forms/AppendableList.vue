@@ -18,6 +18,7 @@ const props = defineProps({
   requiredMode: { type: String, default: 'optional' }, // required || required-asterisk || optional //
   canAddItems: { type: Boolean, default: true },
   actionDefinitions: { type: Array, default: () => [] }, //
+  forceUppercase: { type: Boolean, default: true },
   hasSelecting: { type: Boolean, default: false },
   selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   defaultExpanded: { type: Boolean, default: true }, //
@@ -180,6 +181,7 @@ defineExpose({ clearModel });
           :expandable="true"
           v-model="expanded[item?.[idAttribute]]"
           :actionDefinitions="changeActions(allActions, item)"
+          :forceUppercase="forceUppercase"
           :hasSelecting="hasSelecting"
           :selectingKind="selectingKind"
           @actionClick="(val) => actionClick(val, item._lx_appendableKey, item[idAttribute])"
