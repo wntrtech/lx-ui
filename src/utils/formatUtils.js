@@ -1,4 +1,5 @@
 import { formatDate, formatDateTime } from '@/utils/dateUtils';
+import useLx from '@/hooks/useLx';
 
 const EMPTY_VALUE = '—';
 
@@ -165,4 +166,15 @@ export function formatAddress(/** @type {Address} */ address, includeAtvk = fals
   }
 
   return addressString;
+}
+
+export function formatDecimal(value, precision = 2) {
+  const language = useLx().getGlobals()?.locale || 'lv-LV';
+
+  return Number.isInteger(value)
+    ? value
+    : new Intl.NumberFormat(language, {
+        minimumFractionDigits: precision,
+        maximumFractionDigits: precision,
+      }).format(value);
 }

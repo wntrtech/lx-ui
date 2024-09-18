@@ -18,6 +18,7 @@ export { default as LxCheckbox } from '@/components/Checkbox.vue';
 export { default as LxContentSwitcher } from '@/components/ContentSwitcher.vue';
 export { default as LxDataBlock } from '@/components/DataBlock.vue';
 export { default as LxDataGrid } from '@/components/DataGrid.vue';
+export { default as LxDataVisualizer } from '@/components/DataVisualizer.vue';
 export { default as LxDateTimePicker } from '@/components/DateTimePicker.vue';
 export { default as LxDateTimeRange } from '@/components/DateTimeRange.vue';
 export { default as LxDropDown } from '@/components/Dropdown.vue';

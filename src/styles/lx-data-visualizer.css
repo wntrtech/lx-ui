@@ -1,0 +1,114 @@
+.lx-data-visualizer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.lx-data-visualizer .bar-wrapper {
+    display: grid;
+    grid-template-columns: minmax(1rem, var(--aside-size)) minmax(10rem, 1fr);
+    align-items: center;
+}
+
+.lx-data-visualizer .bar-wrapper .bar-name {
+    overflow-x: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.lx-data-visualizer .lx-bars-horizontal,
+.lx-data-visualizer .lx-latvia-visualizer,
+.lx-data-visualizer .lx-data-grid-wrapper {
+    width: 100%;
+}
+
+.lx-data-visualizer .lx-bars-horizontal.show-legend,
+.lx-data-visualizer .lx-latvia-visualizer.show-legend{
+    padding-bottom: 1rem;
+    border-bottom: 0.125rem solid var(--color-chrome);
+}
+
+.lx-data-visualizer .bar-wrapper .bar{
+    background-color: var(--color-data);
+    height: 1.5rem;
+    margin: 0.1rem 0;
+    width: var(--bar-width);
+    background-color: var(--bar-color);
+    display: flex;
+    align-items: center;
+    position: relative;
+    min-width: 0.25rem;
+    margin-left: var(--gap-buttons);
+}
+
+.lx-data-visualizer .bar-wrapper .bar:hover{
+    background-color: var(--color-interactive-hover-background);
+    cursor: pointer;
+}
+
+.lx-data-visualizer .bar-wrapper .bar:hover > p{
+    color: var(--color-interactive-hover-foreground);
+}
+
+.lx-data-visualizer .bar > p{
+    line-height: 1em;
+    padding-left: 0.5rem;
+    font-weight: var(--font-weight-bold);
+    font-size: var(--small-font-size);
+    color: var(--color-region);
+    position: absolute;
+}
+
+.lx-data-visualizer .bar.text-outside > p,
+.lx-data-visualizer .bar.text-outside:hover > p{
+    padding-left: calc(var(--outside-padding) + 0.75rem);
+    color: var(--color-data);
+}
+
+.lx-data-visualizer .lx-legend{
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.lx-data-visualizer .legend-item{
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.lx-data-visualizer .legend-indicator{
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background-color: var(--legend-color);
+}
+
+.lx-data-visualizer .lx-latvia-visualizer > svg{
+    fill: var(--color-region);
+}
+
+.lx-region .lx-data-visualizer .lx-latvia-visualizer > svg,
+.lx-modal .lx-data-visualizer .lx-latvia-visualizer > svg,
+.lx-form-grid .lx-data-visualizer .lx-latvia-visualizer > svg{
+    fill: var(--color-region-2);
+}
+
+.lx-data-visualizer #LV_Region g:hover,
+.lx-data-visualizer #LV_Region > path:hover{
+    fill: var(--color-interactive-hover-background) !important;
+    cursor: pointer;
+}
+
+.lx-data-visualizer .lx-latvia-visualizer{
+    display: flex;
+    justify-content: center;
+}
+
+.lx-data-visualizer .lx-latvia-visualizer .lx-loader-wrapper{
+    height: 31.25rem;
+    width: 31.25rem;
+    display: flex;
+    justify-content: center;
+}
