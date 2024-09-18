@@ -67,7 +67,7 @@
     "v-calendar": "3.1.2",
     "v-money3": "^3.24.0",
     "vue-country-flag-next": "^2.3.2",
-    "vue-dompurify-html": "^5.0.1",
+    "vue-dompurify-html": "^5.1.0",
     "vue-imask": "7.3.0",
     "vue-qrcode-reader": "^5.5.1",
     "vue-router": "^4.2.5",
@@ -100,5 +100,10 @@
   },
   "overrides": {
     "imask": "6.4.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "vue-dompurify-html>dompurify": "3.1.3"
+    }
   }
 }
