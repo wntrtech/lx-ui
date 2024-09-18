@@ -30,6 +30,9 @@ const props = defineProps({
   maxSizeForMeta: { type: Number, default: 30000000 },
   hasCamera: { type: Boolean, default: false },
   cameraSwitcherMode: { type: String, default: 'toggle' }, // toggle || list
+  hasFlashlightToggle: { type: Boolean, default: false },
+  imageSize: { type: String, default: 'default' }, // default || max
+  preferencesId: { type: String, default: 'lx-camera-settings' },
   texts: {
     type: Object,
     default: () => ({
@@ -638,6 +641,13 @@ const showCameraButton = computed(
     @primary-action="savePhoto"
     @secondary-action="cancelPhoto"
   >
-    <LxCamera v-model="cameraPhoto" :cameraSwitcherMode="cameraSwitcherMode" :texts="texts" />
+    <LxCamera
+      v-model="cameraPhoto"
+      :cameraSwitcherMode="cameraSwitcherMode"
+      :hasFlashlightToggle="hasFlashlightToggle"
+      :imageSize="imageSize"
+      :preferencesId="preferencesId"
+      :texts="texts"
+    />
   </LxModal>
 </template>

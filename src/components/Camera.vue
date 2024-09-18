@@ -6,12 +6,18 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxLoader from '@/components/Loader.vue';
+import LxToggle from '@/components/Toggle.vue';
+import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import { lxDevUtils } from '@/utils';
+import useLx from '@/hooks/useLx';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
   cameraSwitcherMode: { type: String, default: 'toggle' }, // toggle || list
+  hasFlashlightToggle: { type: Boolean, default: false },
+  imageSize: { type: String, default: 'default' }, // default || max
+  preferencesId: { type: String, default: 'lx-camera-settings' },
   texts: {
     type: Object,
     default: () => ({
@@ -21,9 +27,12 @@ const props = defineProps({
       changeCamera: 'Mainīt kameru',
       takePhoto: 'Uzņemt attēlu',
       deletePhoto: 'Mēģināt vēlreiz',
+      toggleFlashlight: 'Zibspuldze',
     }),
   },
 });
+
+const system = useLx().getGlobals()?.systemId;
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -41,10 +50,15 @@ const canvas = ref(null);
 const error = ref(false);
 const loading = ref(true);
 
+const flashlight = ref(false);
+const cameraHasFlashlight = ref(false);
+
 function captureImage() {
   const context = canvas.value.getContext('2d');
-  canvas.value.width = video.value.videoWidth;
-  canvas.value.height = video.value.videoHeight;
+  if (props.imageSize === 'default') {
+    canvas.value.width = video.value.videoWidth;
+    canvas.value.height = video.value.videoHeight;
+  }
   context.drawImage(video.value, 0, 0, canvas.value.width, canvas.value.height);
   model.value = canvas.value.toDataURL('image/jpeg');
 }
@@ -75,45 +89,61 @@ async function stopStream() {
 async function switchCamera(val) {
   await stopStream();
 
+  await getCameraDevices();
+
   try {
     error.value = false;
     loading.value = true;
 
     let constraints = {};
     if (props.cameraSwitcherMode === 'list') {
-      selectedCamera.value = val;
+      selectedCamera.value = val || camerasList.value?.[0];
 
       constraints = {
         video: selectedCamera.value?.deviceId ? { deviceId: selectedCamera.value.deviceId } : true,
       };
     } else if (props.cameraSwitcherMode === 'toggle') {
-      //
       if (!selectedCamera.value?.facingMode || selectedCamera.value?.facingMode === 'environment') {
         selectedCamera.value = { facingMode: 'user' };
       } else selectedCamera.value = { facingMode: 'environment' };
 
       constraints = {
-        video: { facingMode: selectedCamera.value?.facingMode || 'environment' },
+        video: {
+          facingMode: selectedCamera.value?.facingMode || 'environment',
+        },
       };
     }
+    try {
+      stream = await navigator.mediaDevices.getUserMedia(constraints);
+      video.value.srcObject = stream;
+      localStorage.setItem(
+        `${system}-${props.preferencesId}`,
+        JSON.stringify({ camera: constraints?.video, flashlight: flashlight.value })
+      );
+    } catch (errorVal) {
+      error.value = true;
+    }
 
-    let flag = 0;
-    while (flag < 10) {
-      try {
-        // eslint-disable-next-line no-await-in-loop
-        stream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.value.srcObject = stream;
-        break;
-      } catch (errorVal) {
-        // eslint-disable-next-line no-await-in-loop
-        await new Promise((resolve) => {
-          setTimeout(resolve, 2000);
-        });
-      } finally {
-        flag += 1;
+    if (camerasList.value?.length <= 1) await getCameraDevices();
+
+    if (stream && (props.hasFlashlightToggle || props.imageSize === 'max')) {
+      const [track] = stream.getVideoTracks();
+      const capabilities = track.getCapabilities();
+
+      if (props.imageSize === 'max') {
+        canvas.value.width = capabilities.width.max;
+        canvas.value.height = capabilities.height.max;
+      }
+
+      if (props.hasFlashlightToggle) {
+        if (capabilities.torch) {
+          track.applyConstraints({ advanced: [{ torch: flashlight.value }] });
+          cameraHasFlashlight.value = true;
+        } else {
+          cameraHasFlashlight.value = false;
+        }
       }
     }
-    if (flag >= 9) error.value = true;
   } catch (errorVal) {
     error.value = true;
     lxDevUtils.logError('Error switching cameras', errorVal);
@@ -121,6 +151,34 @@ async function switchCamera(val) {
     loading.value = false;
   }
 }
+
+watch(
+  () => flashlight.value,
+  (newValue) => {
+    if (stream && cameraHasFlashlight.value) {
+      const [track] = stream.getVideoTracks();
+      track.applyConstraints({ advanced: [{ torch: newValue }] });
+
+      const settings = localStorage.getItem(`${system}-${props.preferencesId}`);
+      const settingsObj = JSON.parse(settings);
+      settingsObj.flashlight = newValue;
+
+      localStorage.setItem(`${system}-${props.preferencesId}`, JSON.stringify(settingsObj));
+    }
+  }
+);
+
+watch(
+  () => props.imageSize,
+  (newValue) => {
+    if (stream && newValue === 'max') {
+      const [track] = stream.getVideoTracks();
+      const capabilities = track.getCapabilities();
+      canvas.value.width = capabilities.width.max;
+      canvas.value.height = capabilities.height.max;
+    }
+  }
+);
 
 watch(
   () => props.cameraSwitcherMode,
@@ -135,22 +193,32 @@ watch(
 
 function actionClicked(actionId) {
   if (actionId === 'refresh') {
+    localStorage.removeItem(`${system}-${props.preferencesId}`);
     window.location.reload();
   }
 }
 
 onMounted(async () => {
-  // used to cause camera access request
-  try {
-    await navigator.mediaDevices.getUserMedia({ video: true });
-  } catch (errorVal) {
-    error.value = true;
-  }
-  await getCameraDevices();
   if (camerasList.value?.length === 1 && camerasList.value[0].deviceId === '') {
     loading.value = false;
     error.value = true;
-  } else await switchCamera(camerasList.value?.[0]);
+  } else {
+    const settings = localStorage.getItem(`${system}-${props.preferencesId}`);
+    const settingsObj = JSON.parse(settings);
+    if (settings) {
+      if (!settingsObj?.camera?.facingMode) {
+        await switchCamera(settingsObj?.camera);
+      } else {
+        if (settingsObj?.camera?.facingMode === 'user')
+          selectedCamera.value = { facingMode: 'environment' };
+        else selectedCamera.value = { facingMode: 'user' };
+        await switchCamera();
+      }
+      if (settingsObj?.flashlight) flashlight.value = true;
+    } else {
+      await switchCamera();
+    }
+  }
 });
 
 onUnmounted(() => {
@@ -162,32 +230,37 @@ onUnmounted(() => {
   <div class="lx-camera">
     <LxToolbar v-if="!modelValue">
       <template #rightArea>
-        <LxButton
-          v-if="camerasList?.length > 1 && cameraSwitcherMode === 'toggle'"
-          icon="camera-switch"
-          kind="ghost"
-          :title="texts.changeCamera"
-          :disabled="error || loading"
-          @click="switchCamera()"
-        />
-        <LxDropDownMenu v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'">
+        <LxToolbarGroup v-if="hasFlashlightToggle && cameraHasFlashlight && !loading && !error">
+          <LxToggle v-model="flashlight" :tooltip="texts.toggleFlashlight" />
+        </LxToolbarGroup>
+        <LxToolbarGroup>
           <LxButton
-            :title="texts.changeCamera"
+            v-if="camerasList?.length > 1 && cameraSwitcherMode === 'toggle'"
+            icon="camera-switch"
             kind="ghost"
-            icon="menu"
+            :title="texts.changeCamera"
             :disabled="error || loading"
+            @click="switchCamera()"
           />
-          <template #panel>
+          <LxDropDownMenu v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'">
             <LxButton
-              v-for="camera in camerasList"
-              :key="camera.deviceId"
-              :label="camera.label ? camera.label : camera.deviceId"
+              :title="texts.changeCamera"
               kind="ghost"
-              :active="selectedCamera?.deviceId === camera?.deviceId"
-              @click="switchCamera(camera)"
+              icon="menu"
+              :disabled="error || loading"
             />
-          </template>
-        </LxDropDownMenu>
+            <template #panel>
+              <LxButton
+                v-for="camera in camerasList"
+                :key="camera.deviceId"
+                :label="camera.label || camera.deviceId"
+                kind="ghost"
+                :active="selectedCamera?.deviceId === camera?.deviceId"
+                @click="switchCamera(camera)"
+              />
+            </template>
+          </LxDropDownMenu>
+        </LxToolbarGroup>
       </template>
     </LxToolbar>
     <LxLoader :loading="true" v-if="loading" />

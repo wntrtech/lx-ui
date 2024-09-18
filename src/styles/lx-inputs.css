@@ -4521,6 +4521,14 @@ input[type='range']:hover::-moz-range-thumb {
   margin-top: calc(var(--row-size) + 2px);
 }
 
+.lx-camera>.lx-component-toolbar .lx-toggle-wrapper{
+  padding-left: 0.4rem;
+}
+
+.lx-camera>.lx-component-toolbar .right-area .lx-group > .lx-group:has(.lx-toggle-wrapper){
+  border-left: 0;
+}
+
 
 @media (max-width: 300px) {
   .lx .lx-uploaded-file-preview-wrapper {
