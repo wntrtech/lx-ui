@@ -108,7 +108,7 @@ const titleDescription = computed(() => {
           :icon="action.icon"
           :title="action.label"
           :destructive="action.destructive"
-          :disabled="disabled"
+          :disabled="action.disabled"
           @click="actionClicked(action.id)"
         />
       </div>

@@ -50,7 +50,7 @@ const strokeWidth = computed(() => (props.size === 's' ? 15 : 10));
 </script>
 
 <template>
-  <div class="lx-loader-wrapper" :if="id">
+  <div class="lx-loader-wrapper" :id="id">
     <div
       class="lx-loader-indeterminate"
       :class="[{ 'lx-small': size === 's' }, { bar: variant === 'bar' }]"
