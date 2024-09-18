@@ -553,7 +553,7 @@ defineExpose({ highlightRow, clearHighlights });
       v-if="showHeader && kind !== 'stripped'"
     >
       <div class="lx-group pre-header-group">
-        <LxInfoWrapper v-if="hasPreHeaderInfoSlot">
+        <LxInfoWrapper v-if="hasPreHeaderInfoSlot" placement="bottom-start">
           <div class="lx-toolbar-chip">
             <slot name="pre-header" />
           </div>
@@ -571,7 +571,7 @@ defineExpose({ highlightRow, clearHighlights });
         </div>
       </div>
       <div class="lx-group post-header-group">
-        <LxInfoWrapper v-if="hasPostHeaderInfoSlot">
+        <LxInfoWrapper v-if="hasPostHeaderInfoSlot" placement="bottom-end">
           <div class="lx-toolbar-chip">
             <slot name="post-header" />
           </div>
