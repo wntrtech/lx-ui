@@ -99,13 +99,15 @@ function getBarColor(item, grid = false) {
 }
 
 function colorSvg() {
-  const allElements = document.getElementById('LV_Region')?.querySelectorAll('path');
-  allElements?.forEach((element) => {
-    if (element?.id.includes('_')) return;
-    // eslint-disable-next-line no-param-reassign
-    element.style.fill = 'inherit';
-    const res = element.querySelector('title');
-    res.textContent = latvia?.[element.id];
+  const rootElement = document.getElementById('LV_Region');
+  Object.entries(latvia)?.forEach(([key, value]) => {
+    const safeKey = CSS.escape(key);
+    const element = rootElement?.querySelector(`#${safeKey}`);
+    if (element) {
+      element.style.fill = 'inherit';
+      const res = element.querySelector('title');
+      res.textContent = value;
+    }
   });
   props.items.forEach((item) => {
     const country = document.getElementById(item[props.idAttribute]);

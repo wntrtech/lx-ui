@@ -30,7 +30,6 @@
 }
 
 .lx-data-visualizer .bar-wrapper .bar{
-    background-color: var(--color-data);
     height: 1.5rem;
     margin: 0.1rem 0;
     width: var(--bar-width);
