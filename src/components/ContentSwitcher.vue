@@ -22,7 +22,7 @@ const props = defineProps({
   tooltip: { type: String, default: null },
 });
 
-const emits = defineEmits(['update:modelValue', 'changed']);
+const emits = defineEmits(['update:modelValue']);
 
 const globalEnvironment = useLx().getGlobals()?.environment;
 const windowSize = useWindowSize();
@@ -48,7 +48,6 @@ function getName() {
 
 function selectTab() {
   model.value = highlightedItemId.value;
-  emits('changed', model.value);
 }
 
 function focusPreviousTab() {

@@ -4,6 +4,10 @@
 
 ### Breaking changes
 
+#### LxContentSwitcher
+
+- `changed` event no longer supported.
+
 #### LxMasterDetail
 
 - `label` prop no longer supported.
