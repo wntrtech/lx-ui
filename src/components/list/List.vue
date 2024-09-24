@@ -1638,7 +1638,11 @@ onMounted(() => {
           :disabled="loading || busy"
           @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
           @action-click="actionClicked"
-        />
+        >
+          <template #customItem="item" v-if="$slots.customItem">
+            <slot name="customItem" v-bind="item" />
+          </template>
+        </LxListItem>
         <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
           <template v-if="isSelectable(element)">
             <LxRadioButton
