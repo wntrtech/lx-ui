@@ -191,6 +191,9 @@ defineExpose({ clearModel });
           <LxForm kind="stripped" :columnCount="columnCount" :required-mode="props.requiredMode">
             <slot name="customItem" v-bind="{ item }" />
           </LxForm>
+          <template #customHeader v-if="$slots.customHeader">
+            <slot name="customHeader" v-bind="item" />
+          </template>
         </LxDataBlock>
       </template>
 

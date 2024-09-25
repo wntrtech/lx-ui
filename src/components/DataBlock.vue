@@ -107,39 +107,42 @@ const selected = computed({
         @keyup.space="toggleExpander"
         tabindex="0"
       >
-        <div class="lx-icons" v-if="hasSelecting" @click.stop>
-          <LxRadioButton
-            v-model="selected"
-            @click="emits('selectingClick', id)"
-            v-if="props.hasSelecting && props.selectingKind === 'single'"
-          />
-          <LxCheckbox
-            v-model="selected"
-            @click="emits('selectingClick', id)"
-            v-if="props.hasSelecting && props.selectingKind === 'multiple'"
-          />
-        </div>
-        <div class="lx-icons" v-if="props.icon !== null && !hasSelecting">
-          <lx-icon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
-          <div class="lx-loader-container" v-show="busy">
-            <lx-loader :loading="true" size="s" />
+        <slot name="customHeader" v-if="$slots.customHeader" />
+        <template v-else>
+          <div class="lx-icons" v-if="hasSelecting" @click.stop>
+            <LxRadioButton
+              v-model="selected"
+              @click="emits('selectingClick', id)"
+              v-if="props.hasSelecting && props.selectingKind === 'single'"
+            />
+            <LxCheckbox
+              v-model="selected"
+              @click="emits('selectingClick', id)"
+              v-if="props.hasSelecting && props.selectingKind === 'multiple'"
+            />
           </div>
-        </div>
-        <div v-if="props.icon === null && !hasSelecting"></div>
-        <div class="lx-content">
-          <p
-            :class="[{ 'lx-primary-uppercase': forceUppercase }]"
-            class="lx-primary lx-title"
-            :title="name"
-          >
-            {{ name }}
-          </p>
-          <p class="lx-secondary" :title="description" v-show="description">{{ description }}</p>
-        </div>
-        <div class="lx-indications" v-if="expandable">
-          <lx-icon v-show="expandable" :value="expanded ? 'chevron-up' : 'chevron-down'" />
-        </div>
-        <div v-if="!expandable"></div>
+          <div class="lx-icons" v-if="props.icon !== null && !hasSelecting">
+            <lx-icon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
+            <div class="lx-loader-container" v-show="busy">
+              <lx-loader :loading="true" size="s" />
+            </div>
+          </div>
+          <div v-if="props.icon === null && !hasSelecting"></div>
+          <div class="lx-content">
+            <p
+              :class="[{ 'lx-primary-uppercase': forceUppercase }]"
+              class="lx-primary lx-title"
+              :title="name"
+            >
+              {{ name }}
+            </p>
+            <p class="lx-secondary" :title="description" v-show="description">{{ description }}</p>
+          </div>
+          <div class="lx-indications" v-if="expandable">
+            <lx-icon v-show="expandable" :value="expanded ? 'chevron-up' : 'chevron-down'" />
+          </div>
+          <div v-if="!expandable"></div>
+        </template>
       </header>
       <div class="additional-buttons" v-if="Number(actionDefinitionsLength) !== 0">
         <template v-if="actionDefinitions.length === 1">
