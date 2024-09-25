@@ -818,8 +818,7 @@ a.lx-tile:hover {
 
 .lx .lx-info-wrapper .popper {
   background-color: var(--color-tooltip-background);
-  backdrop-filter: blur(0.25rem);
-  -webkit-backdrop-filter: blur(0.25rem);
+
   padding: 0.5rem 1rem;
   color: var(--color-tooltip-foreground);
   margin-top: 0.5rem;

@@ -873,8 +873,7 @@ code {
 .lx-info-wrapper .lx-tooltip {
   display: none;
   background-color: var(--color-tooltip-background);
-  backdrop-filter: blur(0.25rem);
-  -webkit-backdrop-filter: blur(0.25rem);
+
   color: var(--color-tooltip-foreground);
   left: 0;
   width: auto;
@@ -1172,8 +1171,7 @@ code {
 /* InfoWrapper */
 .lx .lx-info-wrapper .popper {
   background-color: var(--color-tooltip-background);
-  backdrop-filter: blur(0.25rem);
-  -webkit-backdrop-filter: blur(0.25rem);
+
   padding: 0.5rem 1rem;
   color: var(--color-tooltip-foreground);
   margin-top: 0.5rem;
