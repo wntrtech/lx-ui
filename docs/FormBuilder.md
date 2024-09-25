@@ -43,17 +43,20 @@ For more LX features, use custom schema attribute `lx` with these parameters:
 - `disabled` - Component `disabled` prop
 - `placeholder` - LxTextInput, LxTextArea, LxValuePicker `placeholder` prop
 - `wrapper='placeholder'` - LxPlaceholder will be used instead of LxRow
-- `order` - Defines the order for LxRows. LxRows that do not have defined order attribute will be places at end in the same order as defined in schema.
+- `order` - Defines the order for LxRows. LxRows that do not have defined order attribute will be places at end in the same order as defined in schema
+- `actionDefinitions` - LxRow `actionDefinitions` prop
+  - `@rowActionClick` event available to handle LxRow action clicks. 
 
 
 ### for `type="string"` or `type="integer"` or `type="number"`:
 
 - `mask` - LxTextInput `mask` prop
 - `kind` - LxTextInput, LxValuePicker `kind` prop
-- `scale` - LXTextInput `scale` prop for `mask="decimal"`
+- `scale` - LxTextInput `scale` prop for `mask="decimal"`
 - `uppercase` - LxTextInput `uppercase` prop
 - `convertToString` - LxInput `convertToString` prop
 - `signed` - LxTextInput `signed` prop form `mask="decimal"`
+- `customMaskValue` - LxTextInput `customMaskValue` prop. Used only when `mask` prop is `custom`
 
 ### for `type="string"` and `lx.kind="multiple"`
 - `rows` - LxTextArea `rows` prop
@@ -65,6 +68,8 @@ For more LX features, use custom schema attribute `lx` with these parameters:
 - `alwaysAsArray` - LxValuePicker `alwaysAsArray` prop
 - `nullable` - LxValuePicker `nullable` prop
 - `texts` - LxValuePicker `texts` prop
+- `hasSelectAll` - LxValuePicker `hasSelectAll` prop
+- `readOnlyRenderType` - LxValuePicker `readOnlyRenderType` prop
 ### `type="string"` and (`format="date"` or `format="time"` or `format="date-time"`)
 - `minDate` - LxDateTimePicker `minDate` prop
 - `maxDate` - LxDateTimePicker `maxDate` prop
@@ -72,6 +77,11 @@ For more LX features, use custom schema attribute `lx` with these parameters:
 - `timeAdjust` - LxDateTimePicker `timeAdjust` prop
 - `clearIfNotExact` - LxDateTimePicker `clearIfNotExact` prop
 - `texts` - LxDateTimePicker `texts` prop
+- `tooltip` - LxDateTimePicker `tooltip` prop
+- `locale` LxDateTimePicker `locale` prop
+- `specialDates` LxDateTimePicker `specialDates` prop
+- `dictionary` LxDateTimePicker `dictionary` prop
+- `variant` - LxDateTimePicker `variant` prop
 ### `type="array"`
 - `items` - LxValuePicker `items` prop
 - `variant` - LxValuePicker `variant` prop
@@ -79,6 +89,15 @@ For more LX features, use custom schema attribute `lx` with these parameters:
 - `alwaysAsArray` - LxValuePicker `alwaysAsArray` prop
 - `nullable` - LxValuePicker `nullable` prop
 - `texts` - LxValuePicker `texts` prop
+- `hasSelectAll` - LxValuePicker `hasSelectAll` prop
+- `readOnlyRenderType` - LxValuePicker `readOnlyRenderType` prop
+- `idAttribute` - LxValuePicker `idAttribute` prop
+- `nameAttribute` - LxValuePicker `nameAttribute` prop
+- `iconAttribute` - LxValuePicker `iconAttribute` prop
+- `iconSetAttribute` - LxValuePicker `iconSetAttribute` prop
+- `categoryAttribute` - LxValuePicker `categoryAttribute` prop
+- `descriptionAttribute` - LxValuePicker `descriptionAttribute` prop
+- `searchAttributes` - LxValuePicker `searchAttributes` prop
 - `displayType` -  determines the way how array is displayed ('default' || 'list' || 'listModal' || 'table' || 'tableModal')
   - if `displayType = 'list'` || `displayType = 'listModal'`
     - `idAttribute` - LxList `idAttribute` prop
@@ -105,6 +124,8 @@ For more LX features, use custom schema attribute `lx` with these parameters:
     - `busy` - LxList `busy` prop
     - `hideFilteredItems` - LxList `hideFilteredItems` prop
     - `texts` - LxList `texts` prop
+    - `emptyStateIcon` - LxList `emptyStateIcon` prop
+    - `includeUnspecifiedGroup` - LxList `includeUnspecifiedGroup` prop
   - if `displayType = 'table'` || `displayType = 'tableModal'`
     - `loading` - LxDataGrid `loading` prop
     - `busy` - LxDataGrid `busy` prop
@@ -118,6 +139,8 @@ For more LX features, use custom schema attribute `lx` with these parameters:
     - `totalItems` - LxDataGrid `totalItems` prop
     - `sortingMode` - LxDataGrid `sortingMode` prop
     - `texts` - LxDataGrid `texts` prop
+    - `label` - LxDataGrid `label` prop
+    - `description` - LxDataGrid `description` prop
 ### `type="boolean"`
 - `size` - LxToggle `size` prop
 - `labelOn` - LxToggle on slot text
@@ -127,6 +150,13 @@ For more LX features, use custom schema attribute `lx` with these parameters:
  - `icon` - LxDataBlock `icon` prop
  - `nameAttribute` - LxDataBlock `name` prop
  - `columnCount` - LxForm `columnCount` prop
+ - `forceUppercase` - LxDataBlock `forceUppercase` prop
+ - `size` - LxDataBlock `size` prop
+ - `iconSet` - LxDataBlock `iconSet` prop
+ - `descriptionAttribute` - LxDataBlock `description` prop
+ - `disabled` - LxDataBlock `disabled`
+ - `loading` - LxDataBlock  `loading` prop
+ - `busy` - LxDataBlock `busy` prop
  - `displayType` -  determines the way how object is displayed ('default' || 'modal')
     - if `displayType = 'modal'`:
       - `primaryAttribute` - LxListItem `label` prop
@@ -151,6 +181,9 @@ The only exception is that LxAppendableList cannot be used inside another LxAppe
   - `columnCount` - LxAppendableList columnCount prop
   - `kind` - LxAppendableList kind prop
   - `requiredMode` - LxAppendableList required prop
+  - `forceUppercase` - LxAppendableList forceUppercase prop
+  - `defaultExpanded` - LxAppendableList defaultExpanded prop
+  - `expandedAttribute` - LxAppendableList expandedAttribute prop
 
 ## LxAppendableListSimle
 

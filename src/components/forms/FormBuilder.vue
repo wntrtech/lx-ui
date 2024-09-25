@@ -109,7 +109,7 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'rowActionClick']);
 
 const model = computed({
   get() {
@@ -439,6 +439,10 @@ function replaceErrorMessage(message, value) {
   return message.replace('{0}', value);
 }
 
+function rowActionClicked(action, value, schemaName, index) {
+  emits('rowActionClick', action, value, schemaName, index);
+}
+
 // Creates rule for 'modelValue' validation based on the provided schema
 const rules = computed(() => {
   const req = props.schema?.required;
@@ -634,6 +638,8 @@ defineExpose({ validateModel, clearValidations });
         :columnSpan="displaySchema?.properties[name]?.lx?.columnSpan"
         :required="isRequiredRow(name)"
         :inputId="id + '-' + name"
+        :action-definitions="displaySchema?.properties[name]?.lx?.actionDefinitions"
+        @action-click="(a, b, c) => rowActionClicked(b, c, name, undefined)"
       >
         <template #info v-if="row?.description">{{ row?.description }}</template>
         <LxTextInput
@@ -657,6 +663,7 @@ defineExpose({ validateModel, clearValidations });
           :readOnly="isReadOnly(displaySchema?.properties[name])"
           :invalid="vv?.value?.modelClone?.[name]?.$error"
           :invalidation-message="returnErrorMessage(name)"
+          :custom-mask-value="displaySchema?.properties[name]?.lx?.customMaskValue"
           v-model="model[name]"
         />
         <LxTextArea
@@ -682,6 +689,7 @@ defineExpose({ validateModel, clearValidations });
               : displaySchema?.properties[name]?.format
           "
           :placeholder="examplesValue(displaySchema?.properties[name])"
+          :tooltip="displaySchema?.properties[name]?.lx?.tooltip"
           :min-date="displaySchema?.properties[name]?.lx?.minDate"
           :max-date="displaySchema?.properties[name]?.lx?.maxDate"
           :required="displaySchema?.properties[name]?.lx?.required"
@@ -689,6 +697,10 @@ defineExpose({ validateModel, clearValidations });
           :time-adjust="displaySchema?.properties[name]?.lx?.timeAdjust"
           :clear-if-not-exact="displaySchema?.properties[name]?.lx?.clearIfNotExact"
           :texts="displaySchema?.properties[name]?.lx?.texts"
+          :locale="displaySchema?.properties[name]?.lx?.locale"
+          :special-dates="displaySchema?.properties[name]?.lx?.specialDates"
+          :dictionary="displaySchema?.properties[name]?.lx?.dictionary"
+          :variant="displaySchema?.properties[name]?.lx?.variant"
           :readOnly="isReadOnly(row)"
           :invalid="vv?.value?.modelClone?.[name]?.$error"
           :invalidation-message="returnErrorMessage(name)"
@@ -747,6 +759,12 @@ defineExpose({ validateModel, clearValidations });
               ? displaySchema?.properties[name]?.lx?.items
               : enumToObject(displaySchema?.properties[name])
           "
+          :id-attribute="displaySchema?.properties[name]?.lx?.idAttribute"
+          :name-attribute="displaySchema?.properties[name]?.lx?.nameAttribute"
+          :icon-attribute="displaySchema?.properties[name]?.lx?.iconAttribute"
+          :icon-set-attribute="displaySchema?.properties[name]?.lx?.iconSetAttribute"
+          :category-attribute="displaySchema?.properties[name]?.lx?.categoryAttribute"
+          :description-attribute="displaySchema?.properties[name]?.lx?.descriptionAttribute"
           :variant="displaySchema?.properties[name]?.lx?.variant"
           :has-search="displaySchema?.properties[name]?.lx?.hasSearch"
           :always-as-array="displaySchema?.properties[name]?.lx?.alwaysAsArray"
@@ -756,6 +774,9 @@ defineExpose({ validateModel, clearValidations });
           :placeholder="examplesValue(displaySchema?.properties[name])"
           :disabled="displaySchema?.properties[name]?.lx?.disabled"
           :readOnly="isReadOnly(displaySchema?.properties[name])"
+          :search-attributes="displaySchema?.properties[name]?.lx?.searchAttributes"
+          :has-select-all="displaySchema?.properties[name]?.lx?.hasSelectAll"
+          :read-only-render-type="displaySchema?.properties[name]?.lx?.readOnlyRenderType"
           :invalid="vv?.value?.modelClone?.[name]?.$error"
           :invalidation-message="returnErrorMessage(name)"
           v-model="model[name]"
@@ -763,12 +784,23 @@ defineExpose({ validateModel, clearValidations });
         <LxDataBlock
           v-else-if="componentSelect(row, name) === 'dataBlock'"
           :expandable="true"
+          :size="displaySchema?.properties[name]?.lx?.size"
           :icon="displaySchema?.properties[name]?.lx?.icon"
+          :icon-set="displaySchema?.properties[name]?.lx?.iconSet"
           :name="
             model?.[name]?.[displaySchema?.properties?.[name]?.lx?.nameAttribute]
               ? model?.[name]?.[displaySchema?.properties?.[name]?.lx?.nameAttribute]
               : model?.[name]?.name
           "
+          :description="
+            model?.[name]?.[displaySchema?.properties?.[name]?.lx?.descriptionAttribute]
+              ? model?.[name]?.[displaySchema?.properties?.[name]?.lx?.descriptionAttribute]
+              : model?.[name]?.description
+          "
+          :force-uppercase="displaySchema?.properties[name]?.lx?.forceUppercase"
+          :disabled="displaySchema?.properties[name]?.lx?.disabled"
+          :loading="displaySchema?.properties[name]?.lx?.loading"
+          :busy="displaySchema?.properties[name]?.lx?.busy"
           class="form-builder-data-block"
         >
           <LxForm
@@ -787,6 +819,8 @@ defineExpose({ validateModel, clearValidations });
                 :label="item?.title ? item?.title : itemName"
                 :rowSpan="item?.lx?.rowSpan"
                 :columnSpan="item?.lx?.columnSpan"
+                :action-definitions="item?.lx?.actionDefinitions"
+                @action-click="(a, b, c) => rowActionClicked(b, c, itemName, undefined)"
               >
                 <LxTextInput
                   v-if="componentSelect(item, itemName) === 'textInputDefault'"
@@ -801,6 +835,7 @@ defineExpose({ validateModel, clearValidations });
                   :placeholder="examplesValue(item)"
                   :signed="item?.lx?.signed"
                   :readOnly="isReadOnly(item)"
+                  :custom-mask-value="item?.lx?.customMaskValue"
                   v-model="model[name][itemName]"
                 />
                 <LxTextArea
@@ -840,12 +875,17 @@ defineExpose({ validateModel, clearValidations });
                   v-else-if="componentSelect(item, itemName) === 'dateTimePicker'"
                   :kind="item?.format === 'date-time' ? 'dateTime' : item?.format"
                   :placeholder="examplesValue(item)"
+                  :tooltip="item?.lx?.tooltip"
                   :min-date="item?.lx?.minDate"
                   :max-date="item?.lx?.maxDate"
                   :required="item?.lx?.required"
                   :disabled="item?.lx?.disabled"
                   :time-adjust="item?.lx?.timeAdjust"
                   :clear-if-not-exact="item?.lx?.clearIfNotExact"
+                  :locale="item?.lx?.locale"
+                  :special-dates="item?.lx?.specialDates"
+                  :dictionary="item?.lx?.dictionary"
+                  :variant="item?.lx?.variant"
                   :texts="item?.lx?.texts"
                   :readOnly="isReadOnly(item)"
                   v-model="model[name][itemName]"
@@ -854,6 +894,12 @@ defineExpose({ validateModel, clearValidations });
                   v-else-if="componentSelect(item, itemName) === 'valuePicker'"
                   :kind="item?.type === 'array' ? 'multiple' : 'single'"
                   :items="item?.lx?.items"
+                  :id-attribute="item?.lx?.idAttribute"
+                  :name-attribute="item?.lx?.nameAttribute"
+                  :icon-attribute="item?.lx?.iconAttribute"
+                  :icon-set-attribute="item?.lx?.iconSetAttribute"
+                  :category-attribute="item?.lx?.categoryAttribute"
+                  :description-attribute="item?.lx?.descriptionAttribute"
                   :variant="item?.lx?.variant"
                   :has-search="item?.lx?.hasSearch"
                   :always-as-array="item?.lx?.alwaysAsArray"
@@ -862,6 +908,9 @@ defineExpose({ validateModel, clearValidations });
                   :texts="item?.lx?.texts"
                   :placeholder="examplesValue(item)"
                   :disabled="item?.lx?.disabled"
+                  :search-attributes="item?.lx?.searchAttributes"
+                  :has-select-all="item?.lx?.hasSelectAll"
+                  :read-only-render-type="item?.lx?.readOnlyRenderType"
                   :readOnly="isReadOnly(item)"
                   v-model="model[name][itemName]"
                 />
@@ -920,6 +969,8 @@ defineExpose({ validateModel, clearValidations });
                   :label="item?.title ? item?.title : itemName"
                   :rowSpan="item?.lx?.rowSpan"
                   :columnSpan="item?.lx?.columnSpan"
+                  :action-definitions="item?.lx?.actionDefinitions"
+                  @action-click="(a, b, c) => rowActionClicked(b, c, itemName, undefined)"
                 >
                   <LxTextInput
                     v-if="componentSelect(item, itemName) === 'textInputDefault'"
@@ -934,6 +985,7 @@ defineExpose({ validateModel, clearValidations });
                     :placeholder="examplesValue(item)"
                     :signed="item?.lx?.signed"
                     :readOnly="isReadOnly(item)"
+                    :custom-mask-value="item?.lx?.customMaskValue"
                     v-model="model[name][itemName]"
                   />
                   <LxTextArea
@@ -974,12 +1026,17 @@ defineExpose({ validateModel, clearValidations });
                     v-else-if="componentSelect(item, itemName) === 'dateTimePicker'"
                     :kind="item?.format === 'date-time' ? 'dateTime' : item?.format"
                     :placeholder="examplesValue(item)"
+                    :tooltip="item?.lx?.tooltip"
                     :min-date="item?.lx?.minDate"
                     :max-date="item?.lx?.maxDate"
                     :required="item?.lx?.required"
                     :disabled="item?.lx?.disabled"
                     :time-adjust="item?.lx?.timeAdjust"
                     :clear-if-not-exact="item?.lx?.clearIfNotExact"
+                    :locale="item?.lx?.locale"
+                    :special-dates="item?.lx?.specialDates"
+                    :dictionary="item?.lx?.dictionary"
+                    :variant="item?.lx?.variant"
                     :texts="item?.lx?.texts"
                     :readOnly="isReadOnly(item)"
                     v-model="model[name][itemName]"
@@ -988,6 +1045,12 @@ defineExpose({ validateModel, clearValidations });
                     v-else-if="componentSelect(item, itemName) === 'valuePicker'"
                     :kind="item?.type === 'array' ? 'multiple' : 'single'"
                     :items="item?.lx?.items"
+                    :id-attribute="item?.lx?.idAttribute"
+                    :name-attribute="item?.lx?.nameAttribute"
+                    :icon-attribute="item?.lx?.iconAttribute"
+                    :icon-set-attribute="item?.lx?.iconSetAttribute"
+                    :category-attribute="item?.lx?.categoryAttribute"
+                    :description-attribute="item?.lx?.descriptionAttribute"
                     :variant="item?.lx?.variant"
                     :has-search="item?.lx?.hasSearch"
                     :always-as-array="item?.lx?.alwaysAsArray"
@@ -997,6 +1060,9 @@ defineExpose({ validateModel, clearValidations });
                     :placeholder="examplesValue(item)"
                     :disabled="item?.lx?.disabled"
                     :readOnly="isReadOnly(item)"
+                    :search-attributes="item?.lx?.searchAttributes"
+                    :has-select-all="item?.lx?.hasSelectAll"
+                    :read-only-render-type="item?.lx?.readOnlyRenderType"
                     v-model="model[name][itemName]"
                   />
                 </LxRow>
@@ -1026,12 +1092,14 @@ defineExpose({ validateModel, clearValidations });
           :icon="displaySchema?.properties[name]?.lx?.icon"
           :iconSet="displaySchema?.properties[name]?.lx?.iconSet"
           :kind="displaySchema?.properties[name]?.lx?.kind"
+          :emptyStateIcon="displaySchema?.properties[name]?.lx?.emptyStateIcon"
           :listType="displaySchema?.properties[name]?.lx?.listType || '1'"
           :searchString="displaySchema?.properties[name]?.lx?.searchString"
           :searchSide="displaySchema?.properties[name]?.lx?.searchSide"
           :loading="displaySchema?.properties[name]?.lx?.loading"
           :busy="displaySchema?.properties[name]?.lx?.busy"
           :hideFilteredItems="displaySchema?.properties[name]?.lx?.hideFilteredItems"
+          :includeUnspecifiedGroups="displaySchema?.properties[name]?.lx?.includeUnspecifiedGroups"
           :texts="displaySchema?.properties[name]?.lx?.texts"
           @actionClick="(val, item) => deleteArrayObject(val, item, name)"
         />
@@ -1061,12 +1129,14 @@ defineExpose({ validateModel, clearValidations });
             :icon="displaySchema?.properties[name]?.lx?.icon"
             :iconSet="displaySchema?.properties[name]?.lx?.iconSet"
             :kind="displaySchema?.properties[name]?.lx?.kind"
+            :emptyStateIcon="displaySchema?.properties[name]?.lx?.emptyStateIcon"
             :listType="displaySchema?.properties[name]?.lx?.listType || '1'"
             :searchString="displaySchema?.properties[name]?.lx?.searchString"
             :searchSide="displaySchema?.properties[name]?.lx?.searchSide"
             :loading="displaySchema?.properties[name]?.lx?.loading"
             :busy="displaySchema?.properties[name]?.lx?.busy"
             :hideFilteredItems="displaySchema?.properties[name]?.lx?.hideFilteredItems"
+            :includeUnspecifiedGroup="displaySchema?.properties[name]?.lx?.includeUnspecifiedGroup"
             :texts="displaySchema?.properties[name]?.lx?.texts"
             @action-click="(val, item) => listModalAction(val, item, name)"
           >
@@ -1102,6 +1172,8 @@ defineExpose({ validateModel, clearValidations });
                   :label="itemValue?.title ? itemValue?.title : itemName"
                   :rowSpan="itemValue?.lx?.rowSpan"
                   :columnSpan="itemValue?.lx?.columnSpan"
+                  :action-definitions="itemValue?.lx?.actionDefinitions"
+                  @action-click="(a, b, c) => rowActionClicked(b, c, itemName, undefined)"
                 >
                   <LxTextInput
                     v-if="componentSelect(itemValue, itemName) === 'textInputDefault'"
@@ -1116,6 +1188,7 @@ defineExpose({ validateModel, clearValidations });
                     :placeholder="examplesValue(itemValue)"
                     :signed="itemValue?.lx?.signed"
                     :readOnly="isReadOnly(itemValue)"
+                    :custom-mask-value="itemValue?.lx?.customMaskValue"
                     v-model="arrayModelValue[id + '-' + name][itemName]"
                   />
                   <LxTextArea
@@ -1156,12 +1229,17 @@ defineExpose({ validateModel, clearValidations });
                     v-else-if="componentSelect(itemValue, itemName) === 'dateTimePicker'"
                     :kind="itemValue?.format === 'date-time' ? 'dateTime' : itemValue?.format"
                     :placeholder="examplesValue(itemValue)"
+                    :tooltip="itemValue?.lx?.tooltip"
                     :min-date="itemValue?.lx?.minDate"
                     :max-date="itemValue?.lx?.maxDate"
                     :required="itemValue?.lx?.required"
                     :disabled="itemValue?.lx?.disabled"
                     :time-adjust="itemValue?.lx?.timeAdjust"
                     :clear-if-not-exact="itemValue?.lx?.clearIfNotExact"
+                    :locale="itemValue?.lx?.locale"
+                    :special-dates="itemValue?.lx?.specialDates"
+                    :dictionary="itemValue?.lx?.dictionary"
+                    :variant="itemValue?.lx?.variant"
                     :texts="itemValue?.lx?.texts"
                     :readOnly="isReadOnly(itemValue)"
                     v-model="arrayModelValue[id + '-' + name][itemName]"
@@ -1170,6 +1248,12 @@ defineExpose({ validateModel, clearValidations });
                     v-else-if="componentSelect(itemValue, itemName) === 'valuePicker'"
                     :kind="itemValue?.type === 'array' ? 'multiple' : 'single'"
                     :items="itemValue?.lx?.items"
+                    :id-attribute="itemValue?.lx?.idAttribute"
+                    :name-attribute="itemValue?.lx?.nameAttribute"
+                    :icon-attribute="itemValue?.lx?.iconAttribute"
+                    :icon-set-attribute="itemValue?.lx?.iconSetAttribute"
+                    :category-attribute="itemValue?.lx?.categoryAttribute"
+                    :description-attribute="itemValue?.lx?.descriptionAttribute"
                     :variant="itemValue?.lx?.variant"
                     :has-search="itemValue?.lx?.hasSearch"
                     :always-as-array="itemValue?.lx?.alwaysAsArray"
@@ -1179,6 +1263,9 @@ defineExpose({ validateModel, clearValidations });
                     :placeholder="examplesValue(itemValue)"
                     :disabled="itemValue?.lx?.disabled"
                     :readOnly="isReadOnly(itemValue)"
+                    :has-select-all="itemValue?.lx?.hasSelectAll"
+                    :search-attributes="itemValue?.lx?.searchAttributes"
+                    :read-only-render-type="itemValue?.lx?.readOnlyRenderType"
                     v-model="arrayModelValue[id + '-' + name][itemName]"
                   />
                   <LxAppendableList
@@ -1207,6 +1294,10 @@ defineExpose({ validateModel, clearValidations });
                             appendableListRequiredRow(row?.items?.required, appendableItemName)
                           "
                           :inputId="name + '-' + appendableItemName + '-' + index"
+                          :action-definitions="appendableItem?.lx?.actionDefinitions"
+                          @action-click="
+                            (a, b, c) => rowActionClicked(b, c, appendableItemName, index)
+                          "
                         >
                           <LxTextInput
                             v-if="
@@ -1225,6 +1316,7 @@ defineExpose({ validateModel, clearValidations });
                             :placeholder="examplesValue(appendableItem)"
                             :signed="appendableItem?.lx?.signed"
                             :readOnly="isReadOnly(appendableItem)"
+                            :custom-mask-value="appendableItem?.lx?.customMaskValue"
                             v-model="item[appendableItemName]"
                           />
                           <LxTextArea
@@ -1253,12 +1345,17 @@ defineExpose({ validateModel, clearValidations });
                                 : appendableItem?.format
                             "
                             :placeholder="examplesValue(appendableItem)"
+                            :tooltip="appendableItem?.lx?.tooltip"
                             :min-date="appendableItem?.lx?.minDate"
                             :max-date="appendableItem?.lx?.maxDate"
                             :required="appendableItem?.lx?.required"
                             :disabled="appendableItem?.lx?.disabled"
                             :time-adjust="appendableItem?.lx?.timeAdjust"
                             :clear-if-not-exact="appendableItem?.lx?.clearIfNotExact"
+                            :locale="appendableItem?.lx?.locale"
+                            :special-dates="appendableItem?.lx?.specialDates"
+                            :dictionary="appendableItem?.lx?.dictionary"
+                            :variant="appendableItem?.lx?.variant"
                             :texts="appendableItem?.lx?.texts"
                             :readOnly="isReadOnly(appendableItem)"
                             v-model="item[appendableItemName]"
@@ -1303,6 +1400,12 @@ defineExpose({ validateModel, clearValidations });
                             :id="name + '-' + appendableItemName + '-' + index"
                             :kind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
                             :items="appendableItem?.lx?.items"
+                            :id-attribute="appendableItem?.lx?.idAttribute"
+                            :name-attribute="appendableItem?.lx?.nameAttribute"
+                            :icon-attribute="appendableItem?.lx?.iconAttribute"
+                            :icon-set-attribute="appendableItem?.lx?.iconSetAttribute"
+                            :category-attribute="appendableItem?.lx?.categoryAttribute"
+                            :description-attribute="appendableItem?.lx?.descriptionAttribute"
                             :variant="appendableItem?.lx?.variant"
                             :has-search="appendableItem?.lx?.hasSearch"
                             :always-as-array="appendableItem?.lx?.alwaysAsArray"
@@ -1312,6 +1415,9 @@ defineExpose({ validateModel, clearValidations });
                             :placeholder="examplesValue(appendableItem)"
                             :disabled="appendableItem?.lx?.disabled"
                             :readOnly="isReadOnly(appendableItem)"
+                            :has-select-all="appendableItem?.lx?.hasSelectAll"
+                            :search-attributes="appendableItem?.lx?.searchAttributes"
+                            :read-only-render-type="appendableItem?.lx?.readOnlyRenderType"
                             v-model="item[appendableItemName]"
                           />
                         </LxRow>
@@ -1326,6 +1432,8 @@ defineExpose({ validateModel, clearValidations });
         <LxDataGrid
           v-else-if="componentSelect(row, name) === 'arrayTable'"
           :items="model[name]"
+          :label="displaySchema?.properties[name]?.lx?.label"
+          :description="displaySchema?.properties[name]?.lx?.description"
           :columnDefinitions="
             getColumnDefinitions(displaySchema?.properties[name]?.items?.properties)
           "
@@ -1350,6 +1458,8 @@ defineExpose({ validateModel, clearValidations });
         <div v-else-if="componentSelect(row, name) === 'arrayTableModal'">
           <LxDataGrid
             :items="model[name]"
+            :label="displaySchema?.properties[name]?.lx?.label"
+            :description="displaySchema?.properties[name]?.lx?.description"
             :idAttribute="displaySchema?.properties[name]?.lx?.idAttribute"
             :columnDefinitions="
               getColumnDefinitions(displaySchema?.properties[name]?.items?.properties)
@@ -1411,6 +1521,8 @@ defineExpose({ validateModel, clearValidations });
                   :label="itemValue?.title ? itemValue?.title : itemName"
                   :rowSpan="itemValue?.lx?.rowSpan"
                   :columnSpan="itemValue?.lx?.columnSpan"
+                  :action-definitions="itemValue?.lx?.actionDefinitions"
+                  @action-click="(a, b, c) => rowActionClicked(b, c, itemName, undefined)"
                 >
                   <LxTextInput
                     v-if="componentSelect(itemValue, itemName) === 'textInputDefault'"
@@ -1425,6 +1537,7 @@ defineExpose({ validateModel, clearValidations });
                     :placeholder="examplesValue(itemValue)"
                     :signed="itemValue?.lx?.signed"
                     :readOnly="isReadOnly(itemValue)"
+                    :custom-mask-value="itemValue?.lx?.customMaskValue"
                     v-model="arrayModelValue[id + '-' + name][itemName]"
                   />
                   <LxTextArea
@@ -1465,12 +1578,17 @@ defineExpose({ validateModel, clearValidations });
                     v-else-if="componentSelect(itemValue, itemName) === 'dateTimePicker'"
                     :kind="itemValue?.format === 'date-time' ? 'dateTime' : itemValue?.format"
                     :placeholder="examplesValue(itemValue)"
+                    :tooltip="itemValue?.lx?.tooltip"
                     :min-date="itemValue?.lx?.minDate"
                     :max-date="itemValue?.lx?.maxDate"
                     :required="itemValue?.lx?.required"
                     :disabled="itemValue?.lx?.disabled"
                     :time-adjust="itemValue?.lx?.timeAdjust"
                     :clear-if-not-exact="itemValue?.lx?.clearIfNotExact"
+                    :locale="itemValue?.lx?.locale"
+                    :special-dates="itemValue?.lx?.specialDates"
+                    :dictionary="itemValue?.lx?.dictionary"
+                    :variant="itemValue?.lx?.variant"
                     :texts="itemValue?.lx?.texts"
                     :readOnly="isReadOnly(itemValue)"
                     v-model="arrayModelValue[id + '-' + name][itemName]"
@@ -1479,6 +1597,12 @@ defineExpose({ validateModel, clearValidations });
                     v-else-if="componentSelect(itemValue, itemName) === 'valuePicker'"
                     :kind="itemValue?.type === 'array' ? 'multiple' : 'single'"
                     :items="itemValue?.lx?.items"
+                    :id-attribute="itemValue?.lx?.idAttribute"
+                    :name-attribute="itemValue?.lx?.nameAttribute"
+                    :icon-attribute="itemValue?.lx?.iconAttribute"
+                    :icon-set-attribute="itemValue?.lx?.iconSetAttribute"
+                    :category-attribute="itemValue?.lx?.categoryAttribute"
+                    :description-attribute="itemValue?.lx?.descriptionAttribute"
                     :variant="itemValue?.lx?.variant"
                     :has-search="itemValue?.lx?.hasSearch"
                     :always-as-array="itemValue?.lx?.alwaysAsArray"
@@ -1488,6 +1612,9 @@ defineExpose({ validateModel, clearValidations });
                     :placeholder="examplesValue(itemValue)"
                     :disabled="itemValue?.lx?.disabled"
                     :readOnly="isReadOnly(itemValue)"
+                    :has-select-all="itemValue?.lx?.hasSelectAll"
+                    :search-attributes="itemValue?.lx?.searchAttributes"
+                    :read-only-render-type="itemValue?.lx?.readOnlyRenderType"
                     v-model="arrayModelValue[id + '-' + name][itemName]"
                   />
                   <LxAppendableList
@@ -1516,6 +1643,10 @@ defineExpose({ validateModel, clearValidations });
                             appendableListRequiredRow(row?.items?.required, appendableItemName)
                           "
                           :inputId="name + '-' + appendableItemName + '-' + index"
+                          :action-definitions="appendableItem?.lx?.actionDefinitions"
+                          @action-click="
+                            (a, b, c) => rowActionClicked(b, c, appendableItemName, index)
+                          "
                         >
                           <LxTextInput
                             v-if="
@@ -1534,6 +1665,7 @@ defineExpose({ validateModel, clearValidations });
                             :placeholder="examplesValue(appendableItem)"
                             :signed="appendableItem?.lx?.signed"
                             :readOnly="isReadOnly(appendableItem)"
+                            :custom-mask-value="appendableItem?.lx?.customMaskValue"
                             v-model="item[appendableItemName]"
                           />
                           <LxTextArea
@@ -1562,12 +1694,17 @@ defineExpose({ validateModel, clearValidations });
                                 : appendableItem?.format
                             "
                             :placeholder="examplesValue(appendableItem)"
+                            :tooltip="appendableItem?.lx?.tooltip"
                             :min-date="appendableItem?.lx?.minDate"
                             :max-date="appendableItem?.lx?.maxDate"
                             :required="appendableItem?.lx?.required"
                             :disabled="appendableItem?.lx?.disabled"
                             :time-adjust="appendableItem?.lx?.timeAdjust"
                             :clear-if-not-exact="appendableItem?.lx?.clearIfNotExact"
+                            :locale="appendableItem?.lx?.locale"
+                            :special-dates="appendableItem?.lx?.specialDates"
+                            :dictionary="appendableItem?.lx?.dictionary"
+                            :variant="appendableItem?.lx?.variant"
                             :texts="appendableItem?.lx?.texts"
                             :readOnly="isReadOnly(appendableItem)"
                             v-model="item[appendableItemName]"
@@ -1612,6 +1749,12 @@ defineExpose({ validateModel, clearValidations });
                             :id="name + '-' + appendableItemName + '-' + index"
                             :kind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
                             :items="appendableItem?.lx?.items"
+                            :id-attribute="appendableItem?.lx?.idAttribute"
+                            :name-attribute="appendableItem?.lx?.nameAttribute"
+                            :icon-attribute="appendableItem?.lx?.iconAttribute"
+                            :icon-set-attribute="appendableItem?.lx?.iconSetAttribute"
+                            :category-attribute="appendableItem?.lx?.categoryAttribute"
+                            :description-attribute="appendableItem?.lx?.descriptionAttribute"
                             :variant="appendableItem?.lx?.variant"
                             :has-search="appendableItem?.lx?.hasSearch"
                             :always-as-array="appendableItem?.lx?.alwaysAsArray"
@@ -1621,6 +1764,9 @@ defineExpose({ validateModel, clearValidations });
                             :placeholder="examplesValue(appendableItem)"
                             :disabled="appendableItem?.lx?.disabled"
                             :readOnly="isReadOnly(appendableItem)"
+                            :has-select-all="appendableItem?.lx?.hasSelectAll"
+                            :search-attributes="appendableItem?.lx?.searchAttributes"
+                            :read-only-render-type="appendableItem?.lx?.readOnlyRenderType"
                             v-model="item[appendableItemName]"
                           />
                         </LxRow>
@@ -1643,6 +1789,9 @@ defineExpose({ validateModel, clearValidations });
           :kind="displaySchema?.properties[name]?.lx?.kind"
           :requiredMode="displaySchema?.properties[name]?.lx?.requiredMode"
           :canAddItems="displaySchema?.properties[name]?.lx?.canAddItems"
+          :force-uppercase="displaySchema?.properties[name]?.lx?.forceUppercase"
+          :defaultExpanded="displaySchema?.properties[name]?.lx?.defaultExpanded"
+          :expandedAttribute="displaySchema?.properties[name]?.lx?.expandedAttribute"
         >
           <template #customItem="{ item, index }">
             <template
@@ -1660,6 +1809,8 @@ defineExpose({ validateModel, clearValidations });
                 :columnSpan="appendableItem?.lx?.columnSpan"
                 :required="appendableListRequiredRow(row?.items?.required, appendableItemName)"
                 :inputId="name + '-' + appendableItemName + '-' + index"
+                :action-definitions="appendableItem?.lx?.actionDefinitions"
+                @action-click="(a, b, c) => rowActionClicked(b, c, appendableItemName, index)"
               >
                 <LxTextInput
                   v-if="componentSelect(appendableItem, appendableItemName) === 'textInputDefault'"
@@ -1675,6 +1826,7 @@ defineExpose({ validateModel, clearValidations });
                   :placeholder="examplesValue(appendableItem)"
                   :signed="appendableItem?.lx?.signed"
                   :readOnly="isReadOnly(appendableItem)"
+                  :custom-mask-value="appendableItem?.lx?.customMaskValue"
                   v-model="item[appendableItemName]"
                 />
                 <LxTextArea
@@ -1698,12 +1850,17 @@ defineExpose({ validateModel, clearValidations });
                     appendableItem?.format === 'date-time' ? 'dateTime' : appendableItem?.format
                   "
                   :placeholder="examplesValue(appendableItem)"
+                  :tooltip="appendableItem?.lx?.tooltip"
                   :min-date="appendableItem?.lx?.minDate"
                   :max-date="appendableItem?.lx?.maxDate"
                   :required="appendableItem?.lx?.required"
                   :disabled="appendableItem?.lx?.disabled"
                   :time-adjust="appendableItem?.lx?.timeAdjust"
                   :clear-if-not-exact="appendableItem?.lx?.clearIfNotExact"
+                  :locale="appendableItem?.lx?.locale"
+                  :special-dates="appendableItem?.lx?.specialDates"
+                  :dictionary="appendableItem?.lx?.dictionary"
+                  :variant="appendableItem?.lx?.variant"
                   :texts="appendableItem?.lx?.texts"
                   :readOnly="isReadOnly(appendableItem)"
                   v-model="item[appendableItemName]"
@@ -1741,6 +1898,12 @@ defineExpose({ validateModel, clearValidations });
                   :id="name + '-' + appendableItemName + '-' + index"
                   :kind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
                   :items="appendableItem?.lx?.items"
+                  :id-attribute="appendableItem?.lx?.idAttribute"
+                  :name-attribute="appendableItem?.lx?.nameAttribute"
+                  :icon-attribute="appendableItem?.lx?.iconAttribute"
+                  :icon-set-attribute="appendableItem?.lx?.iconSetAttribute"
+                  :category-attribute="appendableItem?.lx?.categoryAttribute"
+                  :description-attribute="appendableItem?.lx?.descriptionAttribute"
                   :variant="appendableItem?.lx?.variant"
                   :has-search="appendableItem?.lx?.hasSearch"
                   :always-as-array="appendableItem?.lx?.alwaysAsArray"
@@ -1750,6 +1913,9 @@ defineExpose({ validateModel, clearValidations });
                   :placeholder="examplesValue(appendableItem)"
                   :disabled="appendableItem?.lx?.disabled"
                   :readOnly="isReadOnly(appendableItem)"
+                  :has-select-all="appendableItem?.lx?.hasSelectAll"
+                  :search-attributes="appendableItem?.lx?.searchAttributes"
+                  :read-only-render-type="appendableItem?.lx?.readOnlyRenderType"
                   v-model="item[appendableItemName]"
                 />
               </LxRow>
@@ -1780,6 +1946,8 @@ defineExpose({ validateModel, clearValidations });
               :hideLabel="true"
               :rowSpan="row?.items?.lx?.rowSpan"
               :columnSpan="row?.items?.lx?.columnSpan"
+              :action-definitions="row?.items?.lx?.actionDefinitions"
+              @action-click="(a, b, c) => rowActionClicked(b, c, name, index)"
             >
               <LxTextInput
                 v-if="componentSelect(row?.items, name) === 'textInputDefault'"
@@ -1794,6 +1962,7 @@ defineExpose({ validateModel, clearValidations });
                 :placeholder="examplesValue(row?.items)"
                 :signed="row?.items?.lx?.signed"
                 :readOnly="isReadOnly(row?.items)"
+                :custom-mask-value="row?.items?.lx?.customMaskValue"
                 v-model="model[name][index]"
               />
               <LxTextInput
@@ -1840,6 +2009,7 @@ defineExpose({ validateModel, clearValidations });
               <LxDateTimePicker
                 v-else-if="componentSelect(row?.items, name) === 'dateTimePicker'"
                 :kind="row?.items?.format === 'date-time' ? 'dateTime' : row?.items?.format"
+                :tooltip="row?.items?.lx?.tooltip"
                 :placeholder="examplesValue(row?.items)"
                 :min-date="row?.items?.lx?.minDate"
                 :max-date="row?.items?.lx?.maxDate"
@@ -1847,6 +2017,10 @@ defineExpose({ validateModel, clearValidations });
                 :disabled="row?.items?.lx?.disabled"
                 :time-adjust="row?.items?.lx?.timeAdjust"
                 :clear-if-not-exact="row?.items?.lx?.clearIfNotExact"
+                :locale="row?.items?.lx?.locale"
+                :special-dates="row?.items?.lx?.specialDates"
+                :dictionary="row?.items?.lx?.dictionary"
+                :variant="row?.items?.lx?.variant"
                 :texts="row?.items?.lx?.texts"
                 :readOnly="isReadOnly(row?.items)"
                 v-model="model[name][index]"
