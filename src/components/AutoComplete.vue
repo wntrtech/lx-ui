@@ -1151,6 +1151,7 @@ onMounted(() => {
                                   highlightedItemId &&
                                   highlightedItemId === getIdAttributeString(item),
                                 'autocomplete-multiple': selectingKind === 'multiple',
+                                'autocomplete-default-item': variant === 'default',
                               },
                             ]"
                             :id="getItemId(getIdAttributeString(item))"

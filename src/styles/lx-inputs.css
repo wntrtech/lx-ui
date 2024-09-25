@@ -3192,6 +3192,11 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-autocomplete-default .lx-dropdown-default-content .lx-value-picker-item.autocomplete-multiple .lx-checkbox-wrapper {
   margin-top: 0.25rem;
 }
+
+.lx-autocomplete-default .lx-dropdown-default-content .lx-value-picker-item.autocomplete-multiple.autocomplete-default-item .lx-checkbox-wrapper {
+  margin-top: 0;
+}
+
 .lx-value-picker-placeholder.emptyModel {
   color: var(--color-placeholder);
 }
