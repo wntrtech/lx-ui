@@ -765,6 +765,11 @@
   padding-left: 1rem;
 }
 
+ .lx-data-grid .lx-cell-action .lx-context-container .lx-dropdown-panel .lx-button {
+  width: 100%;
+  height: var(--row-size);
+}
+
 @media (pointer: coarse) {
   .lx .lx-data-grid .lx-cell-action .lx-toolbar {
     visibility: inherit;

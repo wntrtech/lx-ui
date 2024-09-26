@@ -778,6 +778,8 @@ function toolbarClick(action) {
   else selectionActionClicked(action, selectedRows.value);
 }
 
+const actionDefinitionsGroup = computed(() => props.actionDefinitions?.slice(1));
+
 defineExpose({ cancelSelection, selectRows, sortBy });
 
 function emptyStateActionClicked(actionName) {
@@ -1107,30 +1109,53 @@ function emptyStateActionClicked(actionName) {
                   @click="actionClicked(action.id, row[idAttribute], actionAdditionalParameter)"
                 />
               </div>
-              <lx-dropdown-menu placement="left-start">
-                <div class="lx-toolbar" v-if="actionDefinitions.length > 2">
-                  <lx-button icon="overflow-menu" kind="ghost" :disabled="isDisabled" />
-                </div>
-                <template v-slot:panel>
-                  <div class="lx-button-set">
-                    <lx-button
-                      v-for="action in actionDefinitions"
-                      :key="action.id"
-                      :icon="action.icon"
-                      :label="action.name"
-                      :title="action.name"
-                      tabindex="0"
-                      :destructive="action.destructive"
-                      :disabled="
-                        isDisabled || action.enableByAttribute
-                          ? !row[action.enableByAttribute]
-                          : false
-                      "
-                      @click="actionClicked(action.id, row[idAttribute], actionAdditionalParameter)"
-                    />
+              <div class="lx-toolbar" v-if="actionDefinitions.length > 2">
+                <lx-button
+                  kind="ghost"
+                  tabindex="0"
+                  :icon="actionDefinitions?.[0]?.icon"
+                  :title="actionDefinitions?.[0]?.name"
+                  :destructive="actionDefinitions?.[0]?.destructive"
+                  :disabled="
+                    isDisabled || actionDefinitions?.[0]?.enableByAttribute
+                      ? !row[actionDefinitions?.[0]?.enableByAttribute]
+                      : false
+                  "
+                  @click="
+                    actionClicked(
+                      actionDefinitions?.[0]?.id,
+                      row[idAttribute],
+                      actionAdditionalParameter
+                    )
+                  "
+                />
+                <lx-dropdown-menu placement="left-start">
+                  <div class="lx-toolbar">
+                    <lx-button icon="overflow-menu" kind="ghost" :disabled="isDisabled" />
                   </div>
-                </template>
-              </lx-dropdown-menu>
+                  <template v-slot:panel>
+                    <div class="lx-button-set">
+                      <lx-button
+                        v-for="action in actionDefinitionsGroup"
+                        :key="action.id"
+                        :icon="action.icon"
+                        :label="action.name"
+                        :title="action.name"
+                        tabindex="0"
+                        :destructive="action.destructive"
+                        :disabled="
+                          isDisabled || action.enableByAttribute
+                            ? !row[action.enableByAttribute]
+                            : false
+                        "
+                        @click="
+                          actionClicked(action.id, row[idAttribute], actionAdditionalParameter)
+                        "
+                      />
+                    </div>
+                  </template>
+                </lx-dropdown-menu>
+              </div>
             </td>
           </transition-group>
         </tbody>
