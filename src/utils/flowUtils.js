@@ -92,6 +92,7 @@ const getError = (error) => {
     return { status: 499, data: null };
   }
   if (typeof response === 'undefined') {
+    // @ts-ignore
     logError(error);
     return { status: 500, data: null };
   }
@@ -112,13 +113,25 @@ const getError = (error) => {
   };
 };
 
-export async function beforeEach(to, from, next, appStore, authStore) {
+/**
+ * @param { import('vue-router').RouteLocationNormalized } to
+ * @param { import('vue-router').RouteLocationNormalized } from
+ * @param { import('vue-router').NavigationGuardNext} next
+ * @param { any } appStore - Pinia LX store
+ * @param { any } authStore - Pinia LX store
+ * @param {(to: import('vue-router').RouteLocationNormalized, from: import('vue-router').RouteLocationNormalized, next: import('vue-router').NavigationGuardNext) => void } [successCallbackFn] - optional callback function to be called after authStore, returns true if navigation should continue
+ */
+export async function beforeEach(to, from, next, appStore, authStore, successCallbackFn = null) {
   appStore.$reset();
   appStore.startNavigating();
 
   // If allowed to be anonymous:
   const allowAnonymous = to.matched.some((record) => record.meta.anonymous);
   if (allowAnonymous) {
+    if (typeof successCallbackFn === 'function') {
+      successCallbackFn(to, from, next);
+      return;
+    }
     next();
     return;
   }
@@ -163,6 +176,10 @@ export async function beforeEach(to, from, next, appStore, authStore) {
   }
   // If authorized, but route requires scopes:
   if (isAuthorized && hasScopeInternal) {
+    if (typeof successCallbackFn === 'function') {
+      successCallbackFn(to, from, next);
+      return;
+    }
     next();
     return;
   }

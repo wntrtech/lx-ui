@@ -60,7 +60,6 @@ myApp.use(createLx, {
 
 LxList items that have no groups defined, will be shown ungrouped by default (previously, they were not rendered at all). If for some reason you want the old behavior back - try assigning them groups that aren't defined in `group-definitions`.
 
-
 ## 1.2 → 1.3
 
 ### Prop changes

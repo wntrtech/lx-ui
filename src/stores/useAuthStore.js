@@ -1,6 +1,6 @@
 import { computed, ref } from 'vue';
 import { useStorage } from '@vueuse/core';
-import { HttpStatusCode } from 'axios';
+import { AxiosError, HttpStatusCode } from 'axios';
 import {
   hasScope,
   hasScopeRead,
@@ -123,6 +123,10 @@ export default (
           fillSession(resp.data);
         }
       } catch (err) {
+        // handle case when api call is aborted (e.g. user navigates to another page)
+        if (AxiosError.ECONNABORTED === err?.code) {
+          return;
+        }
         $reset();
         throw err;
       }
@@ -140,6 +144,10 @@ export default (
           fillSession(resp.data);
         }
       } catch (err) {
+        // handle case when api call is aborted (e.g. user navigates to another page)
+        if (AxiosError.ECONNABORTED === err?.code) {
+          return null;
+        }
         $reset();
         throw err;
       }
