@@ -1,0 +1,19 @@
+.lx {
+  --color-brand: #114B5F;
+  --color-interactive-background: #114B5F;
+  --color-toggle-background-true: #2c5c6e;
+  --color-toggle-border-true: #2c5c6e;
+  --color-interactive-hover-background: #093544;
+  --color-highlight: #ced9dd;
+  --color-nav-selected-background: var(--color-highlight);
+  --color-background: #efeff1;
+  --color-data: #12191b;
+}
+
+.lx.lx-theme-dark {
+  --color-brand: #6197a8;
+  --color-interactive-background: #6197a8;
+  --color-interactive-hover-background: #2c5c6e;
+  --color-nav-selected-background: var(--color-highlight);
+  --color-highlight: #313F46;
+}

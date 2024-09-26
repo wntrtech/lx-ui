@@ -9,7 +9,12 @@ function generateInput() {
   const stylesDir = path.resolve(__dirname, 'src/styles');
   const files = fs.readdirSync(stylesDir);
 
-  const excludedFiles = ['lx-bt-digives.css', 'lx-bt-eikis.css'];
+  const excludedFiles = [
+    'lx-bt-digives.css',
+    'lx-bt-eikis.css',
+    'lx-bt-visvaris-social.css',
+    'lx-bt-visvaris-misc.css',
+  ];
 
   files.forEach((file) => {
     if (!excludedFiles.includes(file)) {
@@ -100,6 +105,8 @@ const bundlesConfig = defineConfig({
       input: {
         'lx-bt-digives': path.resolve(__dirname, 'src/styles/lx-bt-digives.css'),
         'lx-bt-eikis': path.resolve(__dirname, 'src/styles/lx-bt-eikis.css'),
+        'lx-bt-visvaris-social': path.resolve(__dirname, 'src/styles/lx-bt-visvaris-social.css'),
+        'lx-bt-visvaris-misc': path.resolve(__dirname, 'src/styles/lx-bt-visvaris-misc.css'),
       },
       output: {
         inlineDynamicImports: false,
