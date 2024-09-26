@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
@@ -197,7 +197,7 @@ function formatValue(value, type, options = null) {
   }
 }
 function formatTooltip(displayName, title) {
-  const trimmedDisplayName = displayName?.trim();
+  const trimmedDisplayName = typeof displayName === 'string' ? displayName.trim() : displayName;
   const trimmedTitle = title?.trim();
 
   if (trimmedDisplayName && trimmedTitle) {
@@ -795,6 +795,61 @@ const shouldShowIconRow = computed(() => {
     (props.showAllColumns || extraIconColumns.length !== iconColumns.length)
   );
 });
+
+const gridColumnWidths = {
+  xs: 'minmax(4rem, 0.5fr)',
+  s: 'minmax(6rem, 0.75fr)',
+  m: 'minmax(12rem, 2fr)',
+  l: 'minmax(20rem, 4fr)',
+  xl: 'minmax(30rem, 6fr)',
+  '*': 'minmax(auto, 10fr)',
+};
+
+const gridTemplateColumns = ref('');
+const skeletonGridTemplateColumns = ref('6rem 12rem auto');
+
+function modifyColumn(templateColumns, condition, columnValue, prepend) {
+  const index = templateColumns.indexOf(columnValue);
+  if (condition && index === -1) {
+    if (prepend) {
+      templateColumns.unshift(columnValue);
+    } else {
+      templateColumns.push(columnValue);
+    }
+  } else if (!condition && index !== -1) {
+    templateColumns.splice(index, 1);
+  }
+}
+
+function updateGridTemplateColumns() {
+  const templateColumns = columnsComputed.value
+    .filter((col) => props.showAllColumns || col.kind !== 'extra')
+    .map((col) => gridColumnWidths[col.size] || 'auto');
+
+  const actionColumnWidth =
+    props.actionDefinitions?.length > 1 ? 'minmax(5rem, 0.5fr)' : 'minmax(2.5rem, 0.5fr)';
+
+  modifyColumn(templateColumns, hasActionButtons.value, actionColumnWidth, false);
+  modifyColumn(templateColumns, props.hasSelecting, 'minmax(3rem, 0.5fr)', true);
+
+  gridTemplateColumns.value = templateColumns.join(' ');
+}
+
+watch(
+  columnsComputed,
+  () => {
+    updateGridTemplateColumns();
+  },
+  { immediate: true }
+);
+
+watch(
+  [() => props.showAllColumns, () => props.hasSelecting],
+  () => {
+    updateGridTemplateColumns();
+  },
+  { deep: true }
+);
 </script>
 <template>
   <div class="lx-data-grid-wrapper">
@@ -828,16 +883,23 @@ const shouldShowIconRow = computed(() => {
     <article
       :id="id"
       class="lx-data-grid"
-      :class="[{ 'lx-scrollable': scrollable }, { 'lx-data-grid-full': showAllColumns }]"
+      :class="[
+        { 'lx-scrollable': scrollable },
+        { 'lx-data-grid-full': showAllColumns },
+        { 'lx-loading': loading },
+      ]"
+      :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
     >
-      <table
+      <div
+        class="lx-grid-table"
         v-show="!loading"
         :aria-labelledby="`${id}-label`"
         :aria-describedby="`${id}-description`"
       >
-        <thead class="lx-grid-row">
-          <th v-if="hasSelecting" class="lx-cell-header lx-cell-selector"></th>
-          <th
+        <div class="lx-grid-row">
+          <div v-if="hasSelecting" class="lx-cell-header lx-cell-selector"></div>
+          <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+          <div
             v-for="col in columnsComputed"
             :key="col.id"
             :title="formatTooltip(col.name, col.title)"
@@ -860,7 +922,7 @@ const shouldShowIconRow = computed(() => {
             @click="sortColumn(col.id)"
           >
             <div>
-              <p class="lx-primary">{{ col.name }}</p>
+              <p class="lx-primary" v-if="col.size !== 'xs'">{{ col.name }}</p>
               <lx-icon
                 value="sort-down"
                 v-if="sortedColumns[col.id] === 'desc'"
@@ -877,12 +939,12 @@ const shouldShowIconRow = computed(() => {
                 :title="formatTooltip(col.name, col.title)"
               ></lx-icon>
             </div>
-          </th>
-          <th v-if="hasActionButtons" class="lx-cell-header lx-cell-action"></th>
-        </thead>
-        <tbody>
+          </div>
+          <div v-if="hasActionButtons" class="lx-cell-header lx-cell-action"></div>
+        </div>
+        <div class="lx-grid-content">
           <transition-group
-            tag="tr"
+            tag="div"
             name="data-grid"
             class="lx-grid-row"
             :class="[{ 'lx-selected': selectedRowsRaw[row[idAttribute]] && hasSelecting }]"
@@ -894,7 +956,7 @@ const shouldShowIconRow = computed(() => {
             @keyup.space="defaultActionName ? defaultActionClicked(row[idAttribute], row) : null"
             @keyup.enter="defaultActionName ? defaultActionClicked(row[idAttribute], row) : null"
           >
-            <td v-if="hasSelecting" class="lx-cell lx-cell-selector">
+            <div v-if="hasSelecting" class="lx-cell lx-cell-selector">
               <lx-checkbox
                 v-if="selectingKind === 'multiple'"
                 :id="`select-${id}-${row[idAttribute]}`"
@@ -910,10 +972,10 @@ const shouldShowIconRow = computed(() => {
                 :disabled="isDisabled"
                 @click="selectRow(row[idAttribute])"
               />
-            </td>
-            <!-- Since key events are assigned to the whole <tr> already -->
+            </div>
+            <!-- Since key events are assigned to the whole <div> (lx-grid-row) already -->
             <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
-            <td
+            <div
               v-for="col in columnsComputed"
               :key="col.id"
               class="lx-cell"
@@ -1015,10 +1077,7 @@ const shouldShowIconRow = computed(() => {
                         :customClass="`lx-grid-column-icon ${row?.[col?.attributeName]?.category}`"
                       />
                       <p
-                        v-if="
-                          ['s', 'm', 'l', 'xl'].includes(col.size) &&
-                          isValidString(row?.[col?.attributeName]?.label)
-                        "
+                        v-if="col.size !== 'xs' && isValidString(row?.[col?.attributeName]?.label)"
                         class="lx-grid-icon-text"
                       >
                         {{ row?.[col?.attributeName].label }}
@@ -1098,8 +1157,8 @@ const shouldShowIconRow = computed(() => {
                   {{ `${i} ` }}</template
                 >
               </template>
-            </td>
-            <td
+            </div>
+            <div
               class="lx-cell-action"
               :class="[{ 'show-cell-borders': scrollable }]"
               v-if="hasActionButtons"
@@ -1166,28 +1225,31 @@ const shouldShowIconRow = computed(() => {
                   </template>
                 </lx-dropdown-menu>
               </div>
-            </td>
+            </div>
           </transition-group>
-        </tbody>
-      </table>
+        </div>
+      </div>
 
-      <table
-        class="lx-skeleton"
+      <div
+        class="lx-skeleton lx-grid-table"
         v-show="loading"
         :aria-labelledby="`${id}-label`"
         :aria-describedby="`${id}-description`"
+        :style="{
+          gridTemplateColumns: skeletonGridTemplateColumns,
+        }"
       >
-        <thead class="lx-grid-row">
-          <th class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></th>
-          <th class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></th>
-          <th class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></th>
-        </thead>
-        <tr class="lx-grid-row" v-for="index in props.skeletonRowCount" :key="index">
-          <td class="lx-cell lx-cell-s"><div class="lx-skeleton-placeholder"></div></td>
-          <td class="lx-cell lx-cell-m"><div class="lx-skeleton-placeholder"></div></td>
-          <td class="lx-cell lx-cell"><div class="lx-skeleton-placeholder"></div></td>
-        </tr>
-      </table>
+        <div class="lx-grid-row">
+          <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
+          <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
+          <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
+        </div>
+        <div class="lx-grid-row" v-for="index in props.skeletonRowCount" :key="index">
+          <div class="lx-cell lx-cell-s"><div class="lx-skeleton-placeholder"></div></div>
+          <div class="lx-cell lx-cell-m"><div class="lx-skeleton-placeholder"></div></div>
+          <div class="lx-cell lx-cell"><div class="lx-skeleton-placeholder"></div></div>
+        </div>
+      </div>
     </article>
     <LxEmptyState
       v-if="items?.length < 1 && !(loading || busy)"
@@ -1349,7 +1411,7 @@ const shouldShowIconRow = computed(() => {
                     :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
                   />
                   <p
-                    v-if="['s', 'm', 'l', 'xl'].includes(col.size)"
+                    v-if="col.size !== 'xs'"
                     class="lx-grid-icon-text"
                     :title="item?.[col?.attributeName]?.label"
                   >

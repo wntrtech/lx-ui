@@ -10,10 +10,14 @@ defineProps({
     type: String,
     default: 'normal',
   },
+  title: {
+    type: String,
+    default: '',
+  },
 });
 </script>
 <template>
   <div class="lx-flag">
-    <country-flag :country="value" :size="size" />
+    <country-flag :country="value" :size="size" :title="title" />
   </div>
 </template>

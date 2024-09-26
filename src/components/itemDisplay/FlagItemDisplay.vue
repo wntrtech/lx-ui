@@ -27,11 +27,23 @@ const idAttribute = computed(() => {
 function attributeExists(value, attribute) {
   return value[attribute] && value[attribute].trim() !== '';
 }
+
+const flagTitle = computed(() => {
+  if (attributeExists(props.value, props.nameAttribute)) {
+    return props.value[props.nameAttribute];
+  }
+  return '';
+});
 </script>
 <template>
   <div class="lx-item-display">
     <template v-if="attributeExists(value, idAttribute) || attributeExists(value, nameAttribute)">
-      <LxFlag v-if="attributeExists(value, idAttribute)" :value="value[idAttribute]" size="small" />
+      <LxFlag
+        v-if="attributeExists(value, idAttribute)"
+        :value="value[idAttribute]"
+        :title="flagTitle"
+        size="small"
+      />
       <p class="lx-data" v-if="attributeExists(value, nameAttribute)">
         {{ value[nameAttribute] }}
       </p>
