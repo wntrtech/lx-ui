@@ -3646,6 +3646,10 @@ input[type='range']:hover::-moz-range-thumb {
   border-left: 1px solid var(--color-chrome);
 }
 
+.lx-component-toolbar .right-area .lx-group > .lx-group:first-child {
+  border-left: none;
+}
+
 .lx-component-toolbar .left-area .lx-group {
   border-right: 1px solid var(--color-chrome);
 }
@@ -3939,6 +3943,100 @@ input[type='range']:hover::-moz-range-thumb {
   max-height: 100%;
 }
 
+.lx-file-viewer.lx-file-viewer-fullscreen .lx-pdf-canvas-wrapper {
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  width: 100dvw;
+}
+
+.lx-file-viewer.lx-file-viewer-fullscreen {
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 300;
+  background-color: var(--color-region);
+  display: grid;
+  grid-template-rows: 1fr;
+}
+
+.lx-file-viewer .lx-pdf-canvas-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 600px;
+}
+
+.lx-file-viewer .lx-pdf-wrapper {
+  display: flex;
+  justify-content: safe center;
+  overflow: auto;
+  background-color: var(--color-preview-backdrop);
+}
+
+.lx-file-viewer .pdf-canvas:not(:last-of-type) {
+  border-bottom: 2px solid var(--color-region) !important;
+}
+
+.lx-file-viewer .lx-pdf-wrapper.lx-pdf-wrapper-scrollable {
+  height: 600px;
+}
+
+.lx-file-viewer .lx-pdf-wrapper.lx-pdf-wrapper-fullscreen {
+  margin-top: 50px;
+}
+
+.lx-file-viewer .lx-file-viewer-loader {
+  position: absolute;
+  margin-top: 50px;
+}
+
+.lx-file-viewer .pdf-page-input {
+  display: flex;
+  align-items: center;
+  width: 8rem;
+  height: var(--row-size);
+}
+
+.lx-file-viewer .pdf-page-input .placeholder {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  padding-left: calc(1rem - 1px);
+  padding-right: 1rem;
+  width: 100%;
+  height: 100%;
+  border: 2px solid transparent;
+  outline: none;
+  transition: border-color 0.1s ease-in, background-color 0.1s ease-in;
+  cursor: pointer;
+}
+
+.lx-file-viewer .pdf-page-input .placeholder:hover {
+  background-color: var(--color-preview-backdrop);
+}
+
+.lx-file-viewer .pdf-page-input .placeholder:focus-visible {
+  border-color: var(--color-focus-background);
+}
+
+.lx-file-viewer {
+  overflow: hidden;
+}
+
+.lx-file-viewer.lx-file-viewer-fullscreen .lx-file-viewer-toolbar {
+  grid-row: 1 / 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  background-color: var(--color-region);
+  background-color: var(--color-background-overlay);
+  backdrop-filter: blur(5rem);
+}
+
 .lx-info-wrapper-panel .lx-file-preview img {
   max-height: var(--aside-size);
   object-fit: cover;
@@ -4034,7 +4132,7 @@ input[type='range']:hover::-moz-range-thumb {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: var(--color-preview-backdrop);
 }
 
 .lx-uploaded-file-preview-wrapper > .lx-file-preview-wrapper {

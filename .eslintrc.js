@@ -7,14 +7,17 @@ module.exports = {
       },
       alias: {
         extensions: ['.js', '.vue'],
-        map: [['@', './src']],
+        map: [
+          ['@', './src'],
+          ['pdfjs-dist', './node_modules/pdfjs-dist'],
+        ],
       },
     },
-    'import/core-modules': ['vue'],
+    'import/core-modules': ['vue', 'pdfjs-dist'],
   },
   env: {
     browser: true,
-    es2021: true,
+    es2022: true,
   },
   extends: [
     'plugin:vue/vue3-essential',
@@ -43,7 +46,16 @@ module.exports = {
     'vue/html-indent': ['off'], // leave it to prettier
     'vue/multi-word-component-names': 'off',
     'vuejs-accessibility/label-has-for': 'off',
-    'indent': ['off'], // leave it to prettier
+    indent: ['off'], // leave it to prettier
+    'import/no-unresolved': ['error', { ignore: ['pdfjs-dist/.*\\.mjs\\?url$'] }],
+    'import/no-extraneous-dependencies': [
+      'error',
+      {
+        devDependencies: true,
+        optionalDependencies: true,
+        peerDependencies: true,
+      },
+    ],
   },
   globals: {
     defineProps: 'readonly',
