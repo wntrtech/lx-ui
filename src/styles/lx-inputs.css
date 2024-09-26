@@ -4080,6 +4080,14 @@ input[type='range']:hover::-moz-range-thumb {
   color: var(--color-label);
 }
 
+.lx-file-meta>p.lx-data.meta-description{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .lx-uploaded-file-preview-wrapper {
   display: grid;
   grid-template-columns: calc(var(--row-size) * 3) 1fr;
@@ -4231,6 +4239,10 @@ input[type='range']:hover::-moz-range-thumb {
   opacity: 1;
   right: 0.4rem;
   font-size: var(--small-font-size);
+}
+
+.lx-uploaded-file-preview-wrapper > .lx-file-preview-wrapper .lx-badge {
+  top: 0.5rem;
 }
 
 .lx-uploaded-file-preview-wrapper .lx-file-preview-wrapper .lx-badge.lx-second-badge {

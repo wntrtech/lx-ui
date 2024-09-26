@@ -214,8 +214,11 @@ const additionalInfoTitle = computed(() => {
               {{ fileUploaderUtils.getFileExtension(props.customItem.name) }}
             </p>
             <p
-              class="lx-data"
-              :title="additionalInfoTitle"
+              class="lx-data meta-description"
+              :title="
+                additionalInfoTitle ||
+                fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts)
+              "
               v-if="fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts)"
             >
               {{ fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts) }}
