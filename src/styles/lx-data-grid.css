@@ -67,7 +67,8 @@
 }
 
 .lx .lx-data-grid .lx-cell,
-.lx .lx-data-grid .lx-cell-action {
+.lx .lx-data-grid .lx-cell-action,
+.lx .lx-data-grid .lx-cell-header {
   border-bottom: 1px solid var(--color-chrome);
 }
 
@@ -88,7 +89,8 @@
   padding-top: 0.35rem;
 }
 
-.lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected {
+.lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell,
+.lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell-action {
   background-color: var(--color-nav-selected-background);
 }
 
