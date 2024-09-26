@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDown from '@/components/Dropdown.vue';
@@ -145,18 +145,30 @@ watch(
   { deep: true, immediate: true }
 );
 
-onMounted(() => {
-  if (props.modelValue) {
-    if (typeof props.modelValue === 'number') {
-      inputValue.value = props.modelValue;
+watch(
+  () => props.modelValue,
+  (newValue, oldValue) => {
+    // Compare primitive values
+    if (newValue === oldValue) return;
+
+    // Compare object stringified values
+    if (typeof newValue === 'object' && typeof oldValue === 'object') {
+      if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return;
     }
-    if (typeof props.modelValue === 'object') {
-      inputValue.value = props.modelValue.value;
-      selectedUnit.value = props.modelValue.unit;
+
+    if (props.modelValue) {
+      if (typeof props.modelValue === 'number') {
+        inputValue.value = props.modelValue;
+      }
+      if (typeof props.modelValue === 'object') {
+        inputValue.value = props.modelValue.value;
+        selectedUnit.value = props.modelValue.unit;
+      }
+      calculateResult();
     }
-    calculateResult();
-  }
-});
+  },
+  { immediate: true }
+);
 </script>
 
 <template>
