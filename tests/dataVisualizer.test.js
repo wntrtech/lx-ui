@@ -71,7 +71,7 @@ test('LxDataVisualizer showValues', async () => {
         { id: 'two', name: 'two', value: 2 },
         { id: 'three', name: 'three', value: 3 },
       ],
-      showValues: true,
+      showValues: 'always',
     },
   });
 
@@ -80,7 +80,7 @@ test('LxDataVisualizer showValues', async () => {
   expect(bars[1].text()).toBe('2');
   expect(bars[2].text()).toBe('3');
   await wrapper.vm.$nextTick();
-  await wrapper.setProps({ showValues: false });
+  await wrapper.setProps({ showValues: 'never' });
   expect(bars[0].text()).toBeFalsy();
   expect(bars[1].text()).toBeFalsy();
   expect(bars[2].text()).toBeFalsy();

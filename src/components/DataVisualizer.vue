@@ -13,7 +13,7 @@ const props = defineProps({
   kind: { type: String, default: 'bars-horizontal' }, // bars-horizontal || latvia
   items: { type: Array, default: () => [] },
   thresholds: { type: Array, default: () => [] },
-  showValues: { type: Boolean, default: false },
+  showValues: { type: String, default: 'default' }, // default || always || never
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   colorAttribute: { type: String, default: 'color' },
@@ -114,8 +114,10 @@ function colorSvg() {
     const color = getBarColor(item);
     if (country) {
       if (color) country.style.fill = color;
-      const res = country.querySelector('title');
-      res.textContent = `${item[props.nameAttribute]} \n${item[props.valueAttribute]}`;
+      if (props.showValues !== 'never') {
+        const res = country.querySelector('title');
+        res.textContent = `${item[props.nameAttribute]} \n${item[props.valueAttribute]}`;
+      }
     }
   });
 }
@@ -144,33 +146,39 @@ function isTextOutside(index) {
   );
 }
 
-const columnDef = [
-  {
-    id: 'name',
-    name: 'Nosaukums',
-    attributeName: 'name',
-    title: 'Nosaukums',
-    type: 'primary',
-    kind: 'clickable',
-    size: '*',
-  },
-  {
-    id: 'value',
-    name: 'Vērtība',
-    attributeName: 'value',
-    title: 'Vērtība',
-    type: 'decimal',
-    size: 's',
-  },
-  {
-    id: 'icon',
-    name: ' ',
-    attributeName: 'icon',
-    title: 'Icon',
-    type: 'icon',
-    size: 'xs',
-  },
-];
+const columnDef = computed(() => {
+  const res = [
+    {
+      id: 'name',
+      name: 'Nosaukums',
+      attributeName: 'name',
+      title: 'Nosaukums',
+      type: 'primary',
+      kind: 'clickable',
+      size: '*',
+    },
+    {
+      id: 'value',
+      name: 'Vērtība',
+      attributeName: 'value',
+      title: 'Vērtība',
+      type: 'decimal',
+      size: 's',
+    },
+    {
+      id: 'icon',
+      name: ' ',
+      attributeName: 'icon',
+      title: 'Icon',
+      type: 'icon',
+      size: 'xs',
+    },
+  ];
+  if (props.showValues === 'never') {
+    res.splice(1, 1);
+  }
+  return res;
+});
 
 const dataGridItems = computed(() =>
   props.items.map((item) => ({
@@ -225,7 +233,7 @@ function loadImage() {
 }
 
 watch(
-  () => [props.items, props.thresholds],
+  () => [props.items, props.thresholds, props.showValues],
   () => {
     if (props.kind === 'latvia') {
       nextTick(() => colorSvg());
@@ -278,13 +286,17 @@ watch(
             },
           ]"
           :style="`${getBarWidth(item)}; ${getBarColor(item)}`"
-          :title="`${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute])}`"
+          :title="
+            showValues === 'never'
+              ? `${item?.[nameAttribute]}`
+              : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute])}`
+          "
           :ref="(el) => (modalRefs[index] = el)"
           @click="$emit('click', item?.[idAttribute])"
           @keydown.space="$emit('click', item?.[idAttribute])"
         >
           <p
-            v-if="showValues"
+            v-if="showValues === 'always'"
             :ref="(el) => (textRefs[index] = el)"
             :style="`--outside-padding: ${elementWidths?.[index]?.value}px`"
           >
