@@ -103,6 +103,7 @@ const props = defineProps({
       selectAllRows: 'Izvēlēties visu',
       noItems: 'Nav neviena ieraksta, ko attēlot',
       noItemsDescription: '',
+      iconsResponsiveRowLabel: 'Ikonas',
     }),
   },
 });
@@ -785,6 +786,15 @@ defineExpose({ cancelSelection, selectRows, sortBy });
 function emptyStateActionClicked(actionName) {
   emits('emptyStateActionClick', actionName);
 }
+
+const shouldShowIconRow = computed(() => {
+  const iconColumns = columnsComputed.value?.filter((col) => col.type === 'icon');
+  const extraIconColumns = iconColumns?.filter((col) => col.kind === 'extra');
+  return (
+    iconColumns.length > 0 &&
+    (props.showAllColumns || extraIconColumns.length !== iconColumns.length)
+  );
+});
 </script>
 <template>
   <div class="lx-data-grid-wrapper">
@@ -1206,123 +1216,160 @@ function emptyStateActionClicked(actionName) {
       :class="[{ 'lx-data-grid-full': showAllColumns }]"
     >
       <template #customItem="{ item }">
-        <LxRow
-          :label="col.name"
-          v-for="col in columnsComputed"
-          :key="col.id"
-          columnSpan="2"
-          :class="[
-            {
-              'lx-cell-clickable': col.kind === 'clickable',
-            },
-            {
-              'lx-cell-primary': col.kind === 'primary',
-            },
-            {
-              'lx-cell-secondary': col.kind === 'secondary',
-            },
-            {
-              'lx-cell-extra': col.kind === 'extra',
-            },
-            {
-              'lx-cell-link-disabled':
-                col.kind === 'clickable' && !checkEnableByAttributeName(item),
-            },
-          ]"
-        >
-          <div
-            v-if="
-              col.type !== 'state' &&
-              col.type !== 'rating' &&
-              col.type !== 'array' &&
-              col.type !== 'flag' &&
-              col.type !== 'country' &&
-              col.type !== 'person' &&
-              col.type !== 'icon'
-            "
-            :tabindex="col.kind === 'clickable' ? 0 : -1"
-            @click="
-              defaultActionName && col.kind === 'clickable'
-                ? defaultActionClicked(item[idAttribute], item)
-                : null
-            "
-            @keydown.enter="
-              defaultActionName && col.kind === 'clickable'
-                ? defaultActionClicked(item[idAttribute], item)
-                : null
-            "
+        <template v-if="$slots.customResponsiveItem">
+          <slot name="customResponsiveItem" v-bind="{ item }" />
+        </template>
+        <template v-else>
+          <LxRow
+            :label="col.name"
+            v-for="col in columnsComputed?.filter((col) => col.type !== 'icon')"
+            :key="col.id"
+            columnSpan="2"
+            :class="[
+              {
+                'lx-cell-clickable': col.kind === 'clickable',
+              },
+              {
+                'lx-cell-primary': col.kind === 'primary',
+              },
+              {
+                'lx-cell-secondary': col.kind === 'secondary',
+              },
+              {
+                'lx-cell-extra': col.kind === 'extra',
+              },
+              {
+                'lx-cell-link-disabled':
+                  col.kind === 'clickable' && !checkEnableByAttributeName(item),
+              },
+            ]"
           >
-            {{ formatValue(item[col.attributeName], col.type, col.options?.fractionDigits) }}
-          </div>
-
-          <lx-state-display
-            v-else-if="col.type === 'state'"
-            :value="item[col?.attributeName]"
-            :dictionary="col?.dictionary ? col?.dictionary : col?.options"
-          />
-
-          <LxRating
-            v-else-if="col.type === 'rating'"
-            :disabled="props.busy"
-            mode="read"
-            v-model="item[col.attributeName]"
-          />
-
-          <template v-else-if="col.type === 'icon'">
-            <template
-              v-if="
-                isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
-              "
-            >
-              <div class="lx-grid-icon-wrapper">
-                <LxIcon
-                  :value="item?.[col?.attributeName]?.icon"
-                  :icon-set="item?.[col?.attributeName]?.iconSet"
-                  :title="item?.[col?.attributeName]?.label"
-                  :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
-                />
-                <p v-if="['s', 'm', 'l', 'xl'].includes(col.size)" class="lx-grid-icon-text">
-                  {{ item?.[col?.attributeName].label }}
-                </p>
-              </div>
-            </template>
-            <template
-              v-else-if="
-                !isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
-              "
-            >
-              <div class="lx-grid-icon-wrapper">
-                <LxIcon :value="item?.[col?.attributeName]" customClass="lx-grid-column-icon" />
-              </div>
-            </template>
-            <span class="empty-icon-value" v-else>—</span>
-          </template>
-
-          <template v-if="col.type === 'flag' || col.type === 'country'">
             <div
-              class="flag-column"
               v-if="
-                typeof col[col.attributeName] === 'string' && col[col.attributeName].trim() !== ''
+                col.type !== 'state' &&
+                col.type !== 'rating' &&
+                col.type !== 'array' &&
+                col.type !== 'flag' &&
+                col.type !== 'country' &&
+                col.type !== 'person' &&
+                col.type !== 'icon'
+              "
+              :tabindex="col.kind === 'clickable' ? 0 : -1"
+              @click="
+                defaultActionName && col.kind === 'clickable'
+                  ? defaultActionClicked(item[idAttribute], item)
+                  : null
+              "
+              @keydown.enter="
+                defaultActionName && col.kind === 'clickable'
+                  ? defaultActionClicked(item[idAttribute], item)
+                  : null
               "
             >
-              <LxFlag size="small" :value="col[col.attributeName]" />
+              {{ formatValue(item[col.attributeName], col.type, col.options?.fractionDigits) }}
             </div>
-            <div class="flag-column" v-else-if="typeof col[col.attributeName] === 'object'">
-              <LxFlagItemDisplay
-                :value="col[col.attributeName]"
-                nameAttribute="name"
-                idAttribute="id"
-              />
-            </div>
-            <span class="empty-flag-value" v-else>—</span>
-          </template>
 
-          <LxPersonDisplay
-            v-else-if="col.type === 'person'"
-            :value="item[col.attributeName]"
-            size="s"
-          />
-        </LxRow>
+            <lx-state-display
+              v-else-if="col.type === 'state'"
+              :value="item[col?.attributeName]"
+              :dictionary="col?.dictionary ? col?.dictionary : col?.options"
+            />
+
+            <LxRating
+              v-else-if="col.type === 'rating'"
+              :disabled="props.busy"
+              mode="read"
+              v-model="item[col.attributeName]"
+            />
+            <template v-if="col.type === 'flag' || col.type === 'country'">
+              <div
+                class="flag-column"
+                v-if="
+                  typeof item[col.attributeName] === 'string' &&
+                  item[col.attributeName].trim() !== ''
+                "
+              >
+                <LxFlag size="small" :value="item[col.attributeName]" />
+              </div>
+
+              <div class="flag-column" v-else-if="typeof item[col.attributeName] === 'object'">
+                <LxFlagItemDisplay
+                  :value="item[col.attributeName]"
+                  nameAttribute="name"
+                  idAttribute="id"
+                />
+              </div>
+              <span class="empty-flag-value" v-else>—</span>
+            </template>
+
+            <LxPersonDisplay
+              v-else-if="col.type === 'person'"
+              :value="item[col.attributeName]"
+              size="s"
+            />
+          </LxRow>
+          <LxRow
+            v-if="shouldShowIconRow"
+            class="lx-responsive-grid-icons-row"
+            columnSpan="2"
+            :label="texts.iconsResponsiveRowLabel"
+          >
+            <div
+              v-for="col in columnsComputed?.filter((col) => col.type === 'icon')"
+              :key="col.id"
+              :class="[
+                {
+                  'lx-cell-clickable': col.kind === 'clickable',
+                },
+                {
+                  'lx-cell-primary': col.kind === 'primary',
+                },
+                {
+                  'lx-cell-secondary': col.kind === 'secondary',
+                },
+                {
+                  'lx-cell-extra': col.kind === 'extra',
+                },
+                {
+                  'lx-cell-link-disabled':
+                    col.kind === 'clickable' && !checkEnableByAttributeName(item),
+                },
+              ]"
+            >
+              <template
+                v-if="
+                  isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
+                "
+              >
+                <div class="lx-grid-icon-wrapper">
+                  <LxIcon
+                    :value="item?.[col?.attributeName]?.icon"
+                    :icon-set="item?.[col?.attributeName]?.iconSet"
+                    :title="item?.[col?.attributeName]?.label"
+                    :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
+                  />
+                  <p
+                    v-if="['s', 'm', 'l', 'xl'].includes(col.size)"
+                    class="lx-grid-icon-text"
+                    :title="item?.[col?.attributeName]?.label"
+                  >
+                    {{ item?.[col?.attributeName].label }}
+                  </p>
+                </div>
+              </template>
+              <template
+                v-else-if="
+                  !isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
+                "
+              >
+                <div class="lx-grid-icon-wrapper">
+                  <LxIcon :value="item?.[col?.attributeName]" customClass="lx-grid-column-icon" />
+                </div>
+              </template>
+              <span class="empty-icon-value" v-else>—</span>
+            </div>
+          </LxRow>
+        </template>
       </template>
     </LxAppendableList>
     <footer class="lx-statusbar" v-if="showStatusbar">
