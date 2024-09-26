@@ -323,6 +323,8 @@
   --day-content-transition-time: 0.13s ease-in;
 }
 
+
+
 /* lx-expanders */
 
 .lx:not(.lx-no-animations) .lx-expander .lx-head {
@@ -684,4 +686,10 @@
 
 .lx:not(.lx-no-animations)  .lx-data-visualizer .bar > p{
   transition: padding-left 0.4s ease-in-out; 
+}
+
+.lx:not(.lx-no-animations) .primary-menu-tile,
+.lx:not(.lx-no-animations) .secondary-menu-item {
+  transition: background-color .1s ease-in, color .1s ease-in, border-color .1s ease-in;
+  
 }

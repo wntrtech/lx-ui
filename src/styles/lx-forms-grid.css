@@ -427,7 +427,8 @@
 .lx-form-grid > .lx-main .lx-row > label,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row > .lx-row-header > label,
 .lx-form-grid > .lx-main .lx-row > .lx-row-header > label,
-.lx-row > .lx-row-header > .lx-info-wrapper label {
+.lx-row > .lx-row-header > .lx-info-wrapper label,
+.lx-mega-menu .lx-dropdown-panel label {
   color: var(--color-label);
   font-size: var(--label-font-size);
   overflow: hidden;

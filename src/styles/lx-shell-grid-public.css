@@ -232,6 +232,7 @@
 .lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-theme-menu .lx-dropdown-toggler .lx-button>svg,
 .lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-alert-menu .lx-dropdown-toggler .lx-button>svg,
 .lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-language-menu .lx-dropdown-toggler .lx-button>svg,
+.lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-mega-menu .lx-button>svg,
 .lx .lx-layout.lx-layout-public .lx-header>.lx-right-group #nav-toggle>svg {
   fill: var(--color-data);
 }

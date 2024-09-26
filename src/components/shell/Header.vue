@@ -56,6 +56,13 @@ const props = defineProps({
       'home';
     },
   },
+
+  hasMegaMenu: { type: Boolean, default: false },
+  megaMenuItems: { type: Array, default: () => [] },
+  megaMenuHasShowAll: { type: Boolean, default: false },
+  megaMenuGroupDefinitions: { type: Array, default: null },
+  selectedMegaMenuItem: { type: String, default: null },
+
   texts: {
     type: Object,
     required: false,
@@ -78,6 +85,8 @@ const props = defineProps({
       themeDark: 'Tumšais režīms',
       themeContrast: 'Kontrastais režīms',
       animations: 'Samazināt kustības',
+      showAllLabel: 'Vairāk',
+      megaMenuTitle: 'Lietotnes',
     }),
   },
 });
@@ -93,6 +102,7 @@ const emits = defineEmits([
   'alert-item-click',
   'alerts-click',
   'help-click',
+  'megaMenuShowAllClick',
   'contextPersonChanged',
   'update:selected-context-person',
   'alternativeProfileChanged',
@@ -100,6 +110,7 @@ const emits = defineEmits([
   'update:selected-alternative-profile',
   'update:theme',
   'update:hasAnimations',
+  'update:selectedMegaMenuItem',
 ]);
 
 const alternativeProfilesModal = ref();
@@ -275,6 +286,9 @@ watch(selectedAlternativeProfileModel, (newValue) => {
   emits('alternativeProfileChanged', newValue);
 });
 
+function triggerShowAllClick() {
+  emits('megaMenuShowAllClick');
+}
 const tempSelectedAlternativeProfileModel = ref(selectedAlternativeProfileModel.value);
 const tempSelectedContextPersonModel = ref(selectedContextPersonModel.value);
 
@@ -299,6 +313,15 @@ const alternativeProfilesComputed = computed(() => {
     ...item,
     clickable: true,
   }));
+});
+
+const selectedMegaMenuItemModel = computed({
+  get() {
+    return props.selectedMegaMenuItem;
+  },
+  set(value) {
+    emits('update:selectedMegaMenuItem', value);
+  },
 });
 </script>
 <template>
@@ -394,10 +417,16 @@ const alternativeProfilesComputed = computed(() => {
         :has-avatar="hasAvatar"
         :alternative-profiles-info="alternativeProfilesInfo"
         :context-persons-info="contextPersonsInfo"
+        :hasMegaMenu="hasMegaMenu"
+        :megaMenuItems="megaMenuItems"
+        :megaMenuHasShowAll="megaMenuHasShowAll"
+        :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
         v-model:selectedLanguage="selectedLanguageModel"
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
         v-model:selectedContextPerson="selectedContextPersonModel"
+        v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+        @mega-menu-show-all-click="triggerShowAllClick"
         @open-alternative-profiles-modal="openAlternativeProfilesModal"
         @open-context-person-modal="openContextPersonModal"
         @language-changed="languageChanged"
@@ -436,6 +465,12 @@ const alternativeProfilesComputed = computed(() => {
       :has-avatar="hasAvatar"
       :alternative-profiles-info="alternativeProfilesInfo"
       :context-persons-info="contextPersonsInfo"
+      :hasMegaMenu="hasMegaMenu"
+      :megaMenuItems="megaMenuItems"
+      :megaMenuHasShowAll="megaMenuHasShowAll"
+      :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+      v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+      @mega-menu-show-all-click="triggerShowAllClick"
       v-model:selectedLanguage="selectedLanguageModel"
       v-model:theme="themeModel"
       v-model:hasAnimations="animationsModel"

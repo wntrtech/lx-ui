@@ -4,6 +4,7 @@ import { computed, watch, ref } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import LxToggle from '@/components/Toggle.vue';
 import LxAvatar from '@/components/Avatar.vue';
 
@@ -33,6 +34,13 @@ const props = defineProps({
   hasHelp: { type: Boolean, default: false },
   headerNavDisable: { type: Boolean, default: false },
   hasNavBar: { type: Boolean, default: false },
+
+  hasMegaMenu: { type: Boolean, default: false },
+  megaMenuItems: { type: Array, default: () => [] },
+  megaMenuHasShowAll: { type: Boolean, default: false },
+  megaMenuGroupDefinitions: { type: Array, default: null },
+  selectedMegaMenuItem: { type: String, default: null },
+
   texts: {
     type: Object,
     required: false,
@@ -50,6 +58,8 @@ const props = defineProps({
       themeDark: 'Tumšais režīms',
       themeContrast: 'Kontrastais režīms',
       animations: 'Samazināt kustības',
+      showAllLabel: 'Vairāk',
+      megaMenuTitle: 'Lietotnes',
     }),
   },
 });
@@ -60,12 +70,14 @@ const emits = defineEmits([
   'alert-item-click',
   'alerts-click',
   'help-click',
+  'megaMenuShowAllClick',
   'openAlternativeProfilesModal',
   'openContextPersonModal',
   'update:selected-context-person',
   'update:selected-language',
   'update:theme',
   'update:hasAnimations',
+  'update:selectedMegaMenuItem',
 ]);
 
 const themeIcon = ref('theme');
@@ -104,6 +116,15 @@ const selectedLanguageModel = computed({
   },
   set(value) {
     emits('update:selected-language', value);
+  },
+});
+
+const selectedMegaMenuItemModel = computed({
+  get() {
+    return props.selectedMegaMenuItem;
+  },
+  set(value) {
+    emits('update:selectedMegaMenuItem', value);
   },
 });
 
@@ -258,6 +279,9 @@ const animationsModel = computed({
 
 function triggerThemeMenu(e) {
   themeMenu.value.preventClose(e);
+}
+function triggerShowAllClick() {
+  emits('megaMenuShowAllClick');
 }
 </script>
 
@@ -438,6 +462,17 @@ function triggerThemeMenu(e) {
           </div>
         </template>
       </LxDropDownMenu>
+    </div>
+
+    <div class="lx-mega-menu" v-if="hasMegaMenu">
+      <LxMegaMenu
+        :items="megaMenuItems"
+        :groupDefinitions="megaMenuGroupDefinitions"
+        :hasShowAll="megaMenuHasShowAll"
+        :texts="texts"
+        @mega-menu-show-all-click="triggerShowAllClick"
+        v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+      />
     </div>
 
     <div class="lx-user-menu" v-if="userInfo">

@@ -47,6 +47,7 @@ const emits = defineEmits([
   'helpClick',
   'contextPersonChanged',
   'alternativeProfileChanged',
+  'megaMenuShowAllClick',
   'update:notifications',
   'update:selected-language',
   'update:selected-context-person',
@@ -57,6 +58,7 @@ const emits = defineEmits([
   'confirmModalClosed',
   'update:theme',
   'update:nav-bar-switch',
+  'update:selectedMegaMenuItem',
   'navClick',
 ]);
 
@@ -130,6 +132,12 @@ const props = defineProps({
 
   navBarSwitch: { type: Boolean, default: true },
 
+  hasMegaMenu: { type: Boolean, default: false },
+  megaMenuItems: { type: Array, default: () => [] },
+  megaMenuHasShowAll: { type: Boolean, default: false },
+  megaMenuGroupDefinitions: { type: Array, default: null },
+  selectedMegaMenuItem: { type: String, default: null },
+
   texts: {
     type: Object,
     default: () => ({
@@ -165,6 +173,8 @@ const props = defineProps({
       nextAlertTitle: 'Nākamais paziņojums',
       userTitle: 'Lietotājs',
       menu: 'Izvēlne',
+      showAllLabel: 'Vairāk',
+      megaMenuTitle: 'Lietotnes',
     }),
   },
 });
@@ -300,6 +310,10 @@ const pageTitle = computed(() => {
   }
   return document.title;
 });
+
+function triggerShowAllClick() {
+  emits('megaMenuShowAllClick');
+}
 
 const idleModalRef = ref();
 function openAlternativeProfilesModal() {
@@ -459,6 +473,15 @@ onMounted(() => {
 function navClick(id = null) {
   emits('navClick', id);
 }
+
+const selectedMegaMenuItemModel = computed({
+  get() {
+    return props.selectedMegaMenuItem;
+  },
+  set(value) {
+    emits('update:selectedMegaMenuItem', value);
+  },
+});
 </script>
 <template>
   <transition name="shell-switch">
@@ -478,6 +501,12 @@ function navClick(id = null) {
           :available-themes="availableThemes"
           :environment="environment"
           :headerNavDisable="headerNavDisable"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           v-model:selectedLanguage="selectedLanguageModel"
@@ -587,6 +616,12 @@ function navClick(id = null) {
           :headerNavDisable="headerNavDisable"
           :has-avatar="hasAvatar"
           kind="public"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
@@ -825,6 +860,12 @@ function navClick(id = null) {
           :available-themes="availableThemes"
           :environment="environment"
           :headerNavDisable="headerNavDisable"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
