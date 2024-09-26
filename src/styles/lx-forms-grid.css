@@ -1237,6 +1237,46 @@ p .lx-person-display-wrapper {
   fill: var(--color-interactive-hover-foreground);
 }
 
+.lx .lx-filter .lx-form.lx-form-region:has( > .lx-form-grid){
+  padding: 0.5rem 1.5rem;
+  gap: 0.5rem;
+  margin-bottom: 0;
+}
+
+.lx .lx-filter .lx-body .lx-form.lx-form-region:has( > .lx-form-grid) .lx-button-set{
+  margin-top: 0;
+}
+
+.lx-filter-wrapper .shortlist-wrapper .lx-form-grid{
+  background-color: transparent;
+}
+
+.lx-filter-wrapper .shortlist-wrapper .lx-form-grid>.lx-compact-sections>.lx-form-section{
+  padding: 0 0.5rem 0.5rem 0.5rem;
+  gap: 0.5rem 0.5rem;
+}
+
+.lx-filter-wrapper .shortlist-wrapper .lx-form-grid>.lx-compact-sections>.lx-form-section .lx-row>.lx-row-header{
+  display: none;
+}
+
+.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-text-input:not(:disabled),
+.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-text-area:not(:disabled),
+.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-date-time-picker:not(:disabled),
+.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-dropdown:not(:disabled),
+.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-dropdown-default-panel:not(:disabled),
+.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-text-input:not(:disabled),
+.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-text-area:not(:disabled),
+.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-date-time-picker:not(:disabled),
+.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-dropdown:not(:disabled),
+.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-dropdown-default-panel:not(:disabled){
+  background-color: var(--color-region-2);
+} 
+
+.lx-filter-wrapper:has(.has-shortlist){
+  background-color: var(--color-region);
+}
+
 @media (max-width: 1900px) {
   .lx-index {
     display: none;
@@ -1442,6 +1482,10 @@ p .lx-person-display-wrapper {
 
   .lx-form-grid > header.lx-form-with-aside .lx-multiple-header-button {
     display: flex;
+  }
+
+  .lx-filter-wrapper .shortlist-wrapper{
+    display: none;
   }
 }
 

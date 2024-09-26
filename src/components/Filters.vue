@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { defineProps, computed } from 'vue';
+import { defineProps, computed, ref } from 'vue';
+import { useElementSize } from '@vueuse/core';
 import LxExpander from '@/components/Expander.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -22,6 +23,7 @@ const props = defineProps({
   badge: { type: String, default: '' },
   badgeType: { type: String, default: 'default' }, // default, good, info, warning, important},
   kind: { type: String, default: 'default' }, // default, form
+  shortlistColumnCount: { type: Number, default: 1 },
   texts: {
     type: Object,
     default: () => ({
@@ -61,80 +63,100 @@ function toggleExpander(value = null) {
   }
 }
 
+const filterBody = ref();
+const filterSize = useElementSize(filterBody);
+
 const labelText = computed(() => (props.label ? props.label : props.texts.filters));
 
 defineExpose({ toggleExpander });
 </script>
 <template>
-  <lx-expander
-    :id="id"
-    :label="labelText"
-    :description="description"
-    :variant="usesFilters ? 'highlighted' : ''"
-    v-model="isExpanded"
-    :disabled="disabled"
-    :badge="badge"
-    :badge-type="badgeType"
-    class="lx-filter"
-    icon="filter"
-  >
-    <div
-      class="lx-form lx-form-region"
-      :class="[
-        { 'lx-form-2': columnCount === 2 && kind === 'default' },
-        { 'lx-form-3': columnCount === 3 && kind === 'default' },
-      ]"
+  <div class="lx-filter-wrapper">
+    <lx-expander
+      :id="id"
+      :label="labelText"
+      :description="description"
+      :variant="usesFilters ? 'highlighted' : ''"
+      v-model="isExpanded"
+      :disabled="disabled"
+      :badge="badge"
+      :badge-type="badgeType"
+      class="lx-filter"
+      icon="filter"
+      :class="[{ 'has-shortlist': $slots.shortlist }]"
     >
-      <LxForm v-if="kind === 'form'" :columnCount="columnCount" kind="stripped"> <slot /> </LxForm>
+      <div
+        ref="filterBody"
+        class="lx-form lx-form-region"
+        :class="[
+          { 'lx-form-2': columnCount === 2 && kind === 'default' },
+          { 'lx-form-3': columnCount === 3 && kind === 'default' },
+        ]"
+      >
+        <LxForm v-if="kind === 'form'" :columnCount="columnCount" kind="stripped">
+          <slot />
+        </LxForm>
 
-      <slot v-else-if="kind === 'default'" />
+        <slot v-else-if="kind === 'default'" />
 
-      <div class="lx-button-set">
-        <lx-button
-          id="filter-search-button"
-          :kind="filterButtonKind"
-          :label="texts.search"
-          icon="refresh"
-          :disabled="disabled"
-          @click="filterSearch"
-        />
-        <LxDropDownMenu v-if="fastFilters && fastFilters.length > 1">
+        <div class="lx-button-set">
+          <lx-button
+            id="filter-search-button"
+            :kind="filterButtonKind"
+            :label="texts.search"
+            icon="refresh"
+            :disabled="disabled"
+            @click="filterSearch"
+          />
+          <LxDropDownMenu v-if="fastFilters && fastFilters.length > 1">
+            <LxButton
+              id="fast-filter-menu"
+              kind="tertiary"
+              icon="flash"
+              :label="texts.fastFiltersLabel"
+              :disabled="disabled"
+            />
+            <template v-slot:panel>
+              <div class="lx-button-set">
+                <LxButton
+                  v-for="item in fastFilters"
+                  :key="item[fastIdAttribute]"
+                  :label="item[fastNameAttribute]"
+                  @click="fastFilterClick(item[fastIdAttribute])"
+                />
+              </div>
+            </template>
+          </LxDropDownMenu>
           <LxButton
-            id="fast-filter-menu"
+            id="fast-filter-button"
             kind="tertiary"
             icon="flash"
-            :label="texts.fastFiltersLabel"
             :disabled="disabled"
+            v-if="fastFilters && fastFilters.length === 1"
+            :label="fastFilters[0][fastNameAttribute]"
+            @click="fastFilterClick(fastFilters[0][fastIdAttribute])"
           />
-          <template v-slot:panel>
-            <div class="lx-button-set">
-              <LxButton
-                v-for="item in fastFilters"
-                :key="item[fastIdAttribute]"
-                :label="item[fastNameAttribute]"
-                @click="fastFilterClick(item[fastIdAttribute])"
-              />
-            </div>
-          </template>
-        </LxDropDownMenu>
-        <LxButton
-          id="fast-filter-button"
-          kind="tertiary"
-          icon="flash"
-          :disabled="disabled"
-          v-if="fastFilters && fastFilters.length === 1"
-          :label="fastFilters[0][fastNameAttribute]"
-          @click="fastFilterClick(fastFilters[0][fastIdAttribute])"
-        />
-        <lx-button
-          id="filter-clear-button"
-          kind="tertiary"
-          :label="texts.clear"
-          icon="filters-reset"
-          :disabled="disabled"
-          @click="filterReset"
-        />
+          <lx-button
+            id="filter-clear-button"
+            kind="tertiary"
+            :label="texts.clear"
+            icon="filters-reset"
+            :disabled="disabled"
+            @click="filterReset"
+          />
+        </div>
       </div>
+    </lx-expander>
+    <div class="shortlist-wrapper" v-if="$slots.shortlist && filterSize.height.value === 0">
+      <LxForm
+        kind="compact"
+        :column-count="shortlistColumnCount"
+        :show-footer="false"
+        :show-header="false"
+        @keydown.enter="filterSearch"
+      >
+        <slot name="shortlist" />
+      </LxForm>
     </div>
-  </lx-expander>
+  </div>
 </template>
