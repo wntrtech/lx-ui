@@ -103,8 +103,7 @@
   margin-top: 0.5rem;
 }
 
-.lx .lx-form .lx-row label:not(.lx-button label),
-.lx .lx-form .lx-row label:not(.lx-radio-button-wrapper label) {
+.lx .lx-form .lx-row label:not(.lx-button label):not(.lx-radio-button-wrapper label):not(.lx-autocomplete-default label):not(.lx-value-picker-dropdown-wrapper label) {
   font-size: var(--small-font-size);
 }
 
