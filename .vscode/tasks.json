@@ -3,14 +3,49 @@
   "command": "pnpm",
   "tasks": [
     {
-      "label": "build",
+      "label": "Build All",
       "type": "shell",
-      "group": {
-        "kind": "build"
-      },
+      "command": "pnpm",
       "args": [
         "build"
-      ]
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Build Lib",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "build:lib"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Build CSS",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "build:css"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Build Bundles",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "build:bundles"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Build Vite Plugins",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "build:vite"
+      ],
+      "group": "build"
     },
     {
       "label": "test",

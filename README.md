@@ -44,6 +44,12 @@ myApp.use(createLx());
 …
 ```
 
+## Vite Plugins
+
+LX/UI now includes several Vite plugins to enhance your development experience and application security. These plugins are designed to seamlessly integrate with your Vite-based projects.
+
+For detailed information on available plugins and their usage, please refer to our [Vite Plugins Documentation](./VITE_PLUGINS.md).
+
 ## Develop
 
 ```bash

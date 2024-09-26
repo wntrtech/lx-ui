@@ -16,6 +16,7 @@ import {
  * keepAlive: () => Promise<any>;
  * login: () => Promise<any>;
  * logout: () => Promise<any>;
+ * authorize: (authType: string, clientID: string) => Promise<any>;
  * setSessionKey: (key: string) => void;
  * removeSessionKey: () => void;
  * session: () => Promise<any>;

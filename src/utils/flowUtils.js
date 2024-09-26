@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { hasScope, hasScopeAtLeast, hasAnyScopeWithNamespace } from '@/utils/permissionUtils';
 
 const has = (needed, value) => {

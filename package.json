@@ -5,7 +5,9 @@
   "files": [
     "dist",
     "dist/lx-fonts/*.woff",
-    "dist/lx-fonts/*.ttf"
+    "dist/lx-fonts/*.ttf",
+    "dist/vite",
+    "dist/styles"
   ],
   "license": "MIT",
   "bugs": {
@@ -14,6 +16,20 @@
   "main": "./dist/wntr-lx-ui.umd.js",
   "typings": "./dist/wntr-lx-ui.d.ts",
   "module": "./dist/wntr-lx-ui.esm.js",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/wntr-lx-ui.esm.js",
+      "require": "./dist/wntr-lx-ui.umd.js",
+      "types": "./dist/wntr-lx-ui.d.ts"
+    },
+    "./vite": {
+      "import": "./dist/vite/wntr-lx-ui-vite.es.js",
+      "types": "./dist/vite/types/index.d.ts"
+    },
+    "./dist/styles/*": "./dist/styles/*",
+    "./dist/lx-fonts/*": "./dist/lx-fonts/*"
+  },
   "packageManager": "pnpm@8.3.1",
   "version": "0.0.1",
   "scripts": {
@@ -22,7 +38,8 @@
     "build:lib": "pnpm vite build --mode lib",
     "build:css": "pnpm vite build --mode css",
     "build:bundles": "pnpm vite build --mode bundles",
-    "build": "pnpm build:lib && pnpm build:css && pnpm build:bundles",
+    "build:vite": "vite build --mode vite",
+    "build": "pnpm build:lib && pnpm build:css && pnpm build:bundles && pnpm build:vite",
     "preview": "pnpm vite preview --mode lib",
     "lint": "eslint .",
     "test": "pnpm vitest --mode lib"
@@ -106,5 +123,8 @@
     "overrides": {
       "vue-dompurify-html>dompurify": "3.1.3"
     }
+  },
+  "peerDependencies": {
+    "vue": "^3.4.15"
   }
 }

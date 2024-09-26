@@ -47,6 +47,8 @@ module.exports = {
     'vue/multi-word-component-names': 'off',
     'vuejs-accessibility/label-has-for': 'off',
     indent: ['off'], // leave it to prettier
+    quotes: ['off'], // leave it to prettier
+    'import/prefer-default-export': 'off',
     'import/no-unresolved': ['error', { ignore: ['pdfjs-dist/.*\\.mjs\\?url$'] }],
     'import/no-extraneous-dependencies': [
       'error',

@@ -2,7 +2,9 @@ import { setGlobalProperties } from '@/utils/global';
 
 function install(Vue, options) {
   // Don't install more than once
+  // @ts-ignore
   if (install.installed) return;
+  // @ts-ignore
   install.installed = true;
   setGlobalProperties(options);
 }
@@ -13,6 +15,7 @@ const plugin = { install };
 // Use automatically when global Vue instance detected
 let GlobalVue = null;
 if (typeof window !== 'undefined') {
+  // @ts-ignore
   GlobalVue = window.Vue;
 } else if (typeof global !== 'undefined') {
   GlobalVue = global.Vue;
