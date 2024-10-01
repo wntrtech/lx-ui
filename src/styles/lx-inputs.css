@@ -3119,6 +3119,14 @@ input[type='range']:hover::-moz-range-thumb {
   color: transparent;
 }
 
+.lx-autocomplete
+  .lx-autocomplete-default-panel
+  .lx-autocomplete-default-data
+  .lx-text-input-wrapper
+  .lx-text-input {
+  border: none;
+}
+
 .lx-autocomplete-default-panel {
   position: relative;
   height: 2.4rem;
