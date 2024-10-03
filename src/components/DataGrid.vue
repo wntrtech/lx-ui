@@ -797,12 +797,12 @@ const shouldShowIconRow = computed(() => {
 });
 
 const gridColumnWidths = {
-  xs: 'minmax(4rem, 0.5fr)',
-  s: 'minmax(6rem, 0.75fr)',
-  m: 'minmax(12rem, 2fr)',
-  l: 'minmax(20rem, 4fr)',
-  xl: 'minmax(30rem, 6fr)',
-  '*': 'minmax(auto, 10fr)',
+  xs: 'minmax(4rem, 1fr)',
+  s: 'minmax(10rem, 2.5fr)',
+  m: 'minmax(12rem, 3fr)',
+  l: 'minmax(20rem, 5fr)',
+  xl: 'minmax(30rem, 7.5fr)',
+  '*': 'minmax(auto, 20fr)',
 };
 
 const gridTemplateColumns = ref('');
@@ -826,11 +826,10 @@ function updateGridTemplateColumns() {
     .filter((col) => props.showAllColumns || col.kind !== 'extra')
     .map((col) => gridColumnWidths[col.size] || 'auto');
 
-  const actionColumnWidth =
-    props.actionDefinitions?.length > 1 ? 'minmax(5rem, 0.5fr)' : 'minmax(2.5rem, 0.5fr)';
+  const actionColumnWidth = props.actionDefinitions?.length > 1 ? '5rem' : '2.5rem';
 
   modifyColumn(templateColumns, hasActionButtons.value, actionColumnWidth, false);
-  modifyColumn(templateColumns, props.hasSelecting, 'minmax(3rem, 0.5fr)', true);
+  modifyColumn(templateColumns, props.hasSelecting, '3rem', true);
 
   gridTemplateColumns.value = templateColumns.join(' ');
 }

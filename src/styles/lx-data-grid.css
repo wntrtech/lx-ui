@@ -140,7 +140,6 @@
 
 .lx .lx-data-grid .lx-cell-selector {
   padding: 0;
-  width: var(--row-size);
 }
 
 .lx .lx-data-grid .lx-cell.lx-cell-selector {
@@ -332,10 +331,13 @@
   right: -1px;
 }
 
-.lx-cell + .lx-cell-action.show-cell-borders {
-  background-color: var(--color-region);
+.lx:not(.lx-theme-contrast) .lx-cell + .lx-cell-action.show-cell-borders {
   box-shadow: -1px 0 0 0 var(--color-grid-header), 0 -1px 0 0 var(--color-grid-header),
     0 1px 0 0 var(--color-grid-header);
+}
+
+.lx .lx-cell + .lx-cell-action.show-cell-borders {
+  background-color: var(--color-region);
 }
 
 .lx .lx-data-grid.lx-scrollable .lx-cell-action {
@@ -343,7 +345,6 @@
 }
 
 .lx .lx-data-grid.lx-scrollable .lx-cell-action .lx-toolbar {
-  background-color: var(--color-region);
   visibility: inherit;
 }
 
