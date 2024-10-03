@@ -3,9 +3,6 @@ import { createHash } from 'crypto';
 /**
  * @typedef {Object} Options
  * @property {boolean} [reportOnly=false] - Whether to use Content-Security-Policy-Report-Only header instead of Content-Security-Policy header. For development purposes.
- * @property {boolean} [allowInlineScripts=false] - Whether to allow inline scripts in CSP
- * @property {boolean} [allowInlineStyles=false] - Whether to allow inline styles in CSP
- * @property {boolean} [allowEval=false] - Whether to allow eval() in CSP
  * @property {boolean} [processI18n=true] - Whether to process i18n
  * @property {string} [noncePlaceholder='NONCE_PLACEHOLDER'] - The placeholder for nonce in the HTML
  * @property {string} [xssProtection='1; mode=block'] - Value for X-XSS-Protection header
@@ -14,12 +11,16 @@ import { createHash } from 'crypto';
  * @property {string} [referrerPolicy='strict-origin-when-cross-origin'] - Value for Referrer-Policy header
  * @property {string} [permissionsPolicy='camera=(), microphone=(), geolocation=()'] - Value for Permissions-Policy header
  * @property {string} [cacheControl='no-store, max-age=0'] - Value for Cache-Control header
+ * @property {(nonce: string) => string} [scriptSrc] - Function to generate script-src directive in CSP
+ * @property {(nonce: string) => string} [styleSrc] - Function to generate style-src directive in CSP
  * @property {string} [imgSrc="'self' data:"] - Value for img-src directive in CSP
  * @property {string} [fontSrc="'self'"] - Value for font-src directive in CSP
  * @property {string} [objectSrc="'none'"] - Value for object-src directive in CSP
  * @property {string} [baseUri="'self'"] - Value for base-uri directive in CSP
  * @property {string} [formAction="'self'"] - Value for form-action directive in CSP
  * @property {string} [frameAncestors="'none'"] - Value for frame-ancestors directive in CSP
+ * @property {string} [workerSrc="'self'"] - Value for worker-src directive in CSP
+ * @property {string} [connectSrc="'self'"] - Value for connect-src directive in CSP
  */
 
 /**
@@ -36,9 +37,6 @@ const createNonce = () => createHash('sha256').update(Date.now().toString()).dig
 export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
   const {
     reportOnly = false,
-    allowInlineScripts = false,
-    allowInlineStyles = false,
-    allowEval = false,
     processI18n = true,
     noncePlaceholder = 'NONCE_PLACEHOLDER',
     xssProtection = '1; mode=block',
@@ -47,12 +45,16 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
     referrerPolicy = 'strict-origin-when-cross-origin',
     permissionsPolicy = 'camera=(), microphone=(), geolocation=()',
     cacheControl = 'no-store, max-age=0',
+    scriptSrc,
+    styleSrc,
     imgSrc = "'self' data:",
     fontSrc = "'self'",
     objectSrc = "'none'",
     baseUri = "'self'",
     formAction = "'self'",
     frameAncestors = "'none'",
+    workerSrc = "'self'",
+    connectSrc = "'self'",
   } = options;
 
   let sharedNonce;
@@ -76,7 +78,6 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
         // eslint-disable-next-line no-param-reassign
         config.resolve.alias['vue-i18n'] = vueI18nPath;
       }
-
       return config;
     },
     configResolved(config) {
@@ -93,37 +94,24 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
      * @param {import('vite').ViteDevServer} server
      */
     configureServer(server) {
-      // @ts-ignore
       server.middlewares.use((req, res, next) => {
         const nonce = sharedNonce;
 
-        let scriptSrc = "'self'";
-        if (allowInlineScripts) {
-          scriptSrc += " 'unsafe-inline'";
-        } else {
-          scriptSrc += ` 'nonce-${nonce}'`;
-        }
-        if (allowEval) {
-          scriptSrc += " 'unsafe-eval'";
-        }
-
-        let styleSrc = "'self'";
-        if (allowInlineStyles) {
-          styleSrc += " 'unsafe-inline'";
-        } else {
-          styleSrc += ` 'nonce-${nonce}'`;
-        }
+        const scriptSrcValue = scriptSrc ? scriptSrc(nonce) : `'self' 'nonce-${nonce}'`;
+        const styleSrcValue = styleSrc ? styleSrc(nonce) : `'self' 'nonce-${nonce}'`;
 
         const csp = [
           "default-src 'self'",
-          `script-src ${scriptSrc}`,
-          `style-src ${styleSrc}`,
+          `script-src ${scriptSrcValue}`,
+          `style-src ${styleSrcValue}`,
           `img-src ${imgSrc}`,
           `font-src ${fontSrc}`,
           `object-src ${objectSrc}`,
           `base-uri ${baseUri}`,
           `form-action ${formAction}`,
           `frame-ancestors ${frameAncestors}`,
+          `worker-src ${workerSrc}`,
+          `connect-src ${connectSrc}`,
           'upgrade-insecure-requests',
         ].join('; ');
 
@@ -183,22 +171,18 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
 
       const linkRegex = /<link\s+([^>]*)>/g;
 
-      return (
-        html
-          .replace(/<script/g, `<script nonce="${nonce}"`)
-          .replace(/<style/g, `<style nonce="${nonce}"`)
-          // @ts-ignore
-          .replace(linkRegex, (match, attributes) => {
-            let newAttributes = attributes.replace(/\s*\/\s*$/, ''); // Remove trailing slash
-
-            if (!newAttributes.includes('nonce=')) {
-              newAttributes += ` nonce="${nonce}"`;
-            }
-            return `<link ${newAttributes.trim()}>`;
-          })
-          .replace(/style="/g, `style="nonce="${nonce}" `)
-          .replace('</head>', `${injectNonceScript}</head>`)
-      );
+      return html
+        .replace(/<script/g, `<script nonce="${nonce}"`)
+        .replace(/<style/g, `<style nonce="${nonce}"`)
+        .replace(linkRegex, (match, attributes) => {
+          let newAttributes = attributes.replace(/\s*\/\s*$/, '');
+          if (!newAttributes.includes('nonce=')) {
+            newAttributes += ` nonce="${nonce}"`;
+          }
+          return `<link ${newAttributes.trim()}>`;
+        })
+        .replace(/style="/g, `style="nonce="${nonce}" `)
+        .replace('</head>', `${injectNonceScript}</head>`);
     },
     /**
     //@param {import('rollup').OutputOptions} buildOptions
@@ -222,12 +206,10 @@ export function lxViteSecureHeadersPlugin(/** @type {Options} */ options = {}) {
                 .replace(/<style/g, `<style nonce="${nonce}"`)
                 // @ts-ignore
                 .replace(linkRegex, (match, attributes) => {
-                  let newAttributes = attributes.replace(/\s*\/\s*$/, ''); // Remove trailing slash
-
+                  let newAttributes = attributes.replace(/\s*\/\s*$/, '');
                   if (!newAttributes.includes('nonce=')) {
                     newAttributes += ` nonce="${nonce}"`;
                   }
-
                   return `<link ${newAttributes.trim()}>`;
                 })
                 .replace(/style="/g, `style="nonce="${nonce}" `),

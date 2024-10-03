@@ -16,9 +16,6 @@ export default defineConfig((command) => ({
   plugins: [
     lxViteSecureHeadersPlugin({
       reportOnly: false, // default: false - Report CSP violations instead of blocking them.
-      allowInlineScripts: false, // default: false - Allow inline scripts in CSP.
-      allowInlineStyles: false, // default: false - Allow inline styles in CSP.
-      allowEval: false, // default: false - Allow eval() in CSP.
       processI18n: true, // default: true - Process i18n.
       noncePlaceholder: 'NONCE_PLACEHOLDER', // default: 'NONCE_PLACEHOLDER' - Placeholder for nonce in HTML.
       xssProtection: '1; mode=block', // default: '1; mode=block' - Value for X-XSS-Protection header.
@@ -27,6 +24,10 @@ export default defineConfig((command) => ({
       referrerPolicy: 'strict-origin-when-cross-origin', // default: 'strict-origin-when-cross-origin' - Value for Referrer-Policy header.
       permissionsPolicy: 'camera=(), microphone=(), geolocation=()', // default: 'camera=(), microphone=(), geolocation()' - Value for Permissions-Policy header.
       cacheControl: 'no-store, max-age=0', // default: 'no-store, max-age=0' - Value for Cache-Control header.
+      scriptSrc: (nonce) => `'self' 'nonce-${nonce}'`, // default: `'self' 'nonce-${nonce}'` - Function to generate script-src directive in CSP
+      styleSrc: (nonce) => `'self' 'nonce-${nonce}'`, // default: `'self' 'nonce-${nonce}'` - Function to generate style-src directive in CSP
+      workerSrc: "'self'", // default: "'self'" - Value for worker-src directive in CSP.
+      connectSrc: "'self'", // default: "'self'" - Value for connect-src directive in CSP.
       imgSrc: "'self' data:", // default: "'self' data:" - Value for img-src directive in CSP.
       fontSrc: "'self'", // default: "'self'" - Value for font-src directive in CSP.
       objectSrc: "'none'", // default: "'none'" - Value for object-src directive in CSP.
@@ -64,6 +65,7 @@ module.exports = {
 - Adjust CSP and other security headers according to your application's needs.
 - Set any header option to `false` or an empty string to disable that specific header.
 - For production, configure your server to replace the nonce placeholder and set appropriate headers.
+- Use the `scriptSrc` and `styleSrc` functions to customize the `script-src` and `style-src` directives in the CSP. These functions receive the generated nonce as an argument.
 
 ### Nginx Configuration Example
 
@@ -77,7 +79,7 @@ server {
     sub_filter_types *;
     sub_filter NONCE_PLACEHOLDER $nonce;
 
-    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'nonce-$nonce'; style-src 'self' 'nonce-$nonce'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;";
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'nonce-$nonce'; style-src 'self' 'nonce-$nonce'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; connect-src: 'self'; frame-ancestors 'none'; worker-src 'self'; upgrade-insecure-requests;";
     add_header X-XSS-Protection "1; mode=block";
     add_header X-Frame-Options "DENY";
     add_header X-Content-Type-Options "nosniff";
@@ -89,4 +91,18 @@ server {
 }
 ```
 
-This configuration replaces the nonce placeholder and sets the security headers. Adjust the headers according to your plugin configuration.
+This configuration replaces the nonce placeholder and sets the security headers. Adjust the headers according to your plugin configuration and the `scriptSrc` and `styleSrc` functions you've defined.
+
+### Customizing script-src and style-src
+
+You can customize the `script-src` and `style-src` directives by providing functions in the plugin configuration. For example:
+
+```js
+lxViteSecureHeadersPlugin({
+  scriptSrc: (nonce) => `'self' 'nonce-${nonce}' https://example.com`,
+  styleSrc: (nonce) => `'self' 'nonce-${nonce}' 'unsafe-inline' https://fonts.googleapis.com`,
+  // ... other options ...
+})
+```
+
+This allows for fine-grained control over your Content Security Policy while still benefiting from nonce-based security.
