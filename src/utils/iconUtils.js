@@ -8,9 +8,13 @@ export function getAvailableIcons(iconSet = 'cds') {
   if (iconSet === 'material') {
     icons = import.meta.glob('@/components/icons/material/*.vue', { eager: true, as: 'url' });
   }
+  if (iconSet === 'phosphor') {
+    icons = import.meta.glob('@/components/icons/phosphor/*.vue', { eager: true, as: 'url' });
+  }
   if (iconSet === 'brand') {
     icons = import.meta.glob('@/components/icons/brand/*.vue', { eager: true, as: 'url' });
   }
+
   return Object.keys(icons).map((o) => camelToKebab(removeExtension(getFileNameFromPath(o))));
 }
 
@@ -34,7 +38,8 @@ export function getAvailableIconsMatrix() {
   const cdsIcons = getAvailableIcons('cds');
   const brandIcons = getAvailableIcons('brand');
   const materialIcons = getAvailableIcons('material');
-  return getDistinctKeysWithBooleans([cdsIcons, brandIcons, materialIcons]);
+  const phosphorIcon = getAvailableIcons('phosphor');
+  return getDistinctKeysWithBooleans([cdsIcons, brandIcons, materialIcons, phosphorIcon]);
 }
 
 export function getAvailableIconSets() {

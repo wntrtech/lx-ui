@@ -66,6 +66,9 @@ const viewBoxType = computed(() => {
   if (iconSetComputed.value === 'cds' || iconSetComputed.value === 'brand') {
     return '0 0 32 32';
   }
+  if (iconSetComputed.value === 'phosphor') {
+    return '0 0 256 256';
+  }
   return '0 96 960 960';
 });
 

@@ -1,3 +1,7 @@
+svg .lx-shade {
+  opacity: 0;
+}
+
 .lx-form-grid {
   display: grid;
   background-color: var(--color-region);
