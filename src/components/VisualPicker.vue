@@ -21,7 +21,7 @@ import { useElementSize } from '@vueuse/core';
 import { kebabToCamel, getTexts } from '@/utils/visualPickerUtils';
 
 const props = defineProps({
-  id: { type: String, default: generateUUID() },
+  id: { type: String, default: () => generateUUID() },
   kind: { type: String, default: 'europe' }, // europe, skeleton, spine, arms, left-hand, right-hand, latvia
   modelValue: { type: [Array, String], default: () => [] },
   readOnly: { type: Boolean, default: false },
@@ -119,8 +119,9 @@ const listRef = ref();
 function addTitles() {
   if (props.kind === 'spine') {
     items.value.forEach((bone) => {
-      const pathElementSide = document.getElementById(`${bone?.id}_lx_side`);
-      const pathElementFront = document.getElementById(`${bone?.id}_lx_front`);
+      const elem = document.getElementById(props.id);
+      const pathElementSide = elem.querySelector(`#${CSS.escape(bone?.id)}_lx_side`);
+      const pathElementFront = elem.querySelector(`#${CSS.escape(bone?.id)}_lx_front`);
       if (pathElementSide && pathElementFront) {
         const titleElementSide = pathElementSide.querySelector('title');
         const titleElementFront = pathElementFront.querySelector('title');
@@ -139,7 +140,8 @@ function addTitles() {
     });
   } else {
     items.value.forEach((bone) => {
-      const pathElement = document.getElementById(bone?.id);
+      const elem = document.getElementById(props.id);
+      const pathElement = elem.querySelector(`#${CSS.escape(bone?.id)}`);
       if (pathElement) {
         const titleElement = pathElement.querySelector('title');
         if (titleElement) {
@@ -295,20 +297,23 @@ function removeItem(id) {
 }
 
 function selectionChanged(selectedValue) {
-  const elements = Array.from(document.getElementsByClassName('selected-visual'));
-  elements.forEach((element) => {
-    element.classList.remove('selected-visual');
-  });
-  selectedValue?.forEach((element) => {
-    if (props.kind === 'spine') {
-      document.getElementById(`${element}_lx_side`)?.classList.add('selected-visual');
-      document.getElementById(`${element}_lx_front`)?.classList.add('selected-visual');
-    } else document.getElementById(element)?.classList.add('selected-visual');
-  });
-  if (JSON.stringify(model.value) !== JSON.stringify(selectedValue)) {
-    if (props.selectingKind === 'single') {
-      [model.value] = selectedValue;
-    } else model.value = selectedValue;
+  const elem = document.getElementById(props.id);
+  if (elem) {
+    const elements = Array.from(elem.querySelectorAll('.selected-visual'));
+    elements.forEach((element) => {
+      element.classList.remove('selected-visual');
+    });
+    selectedValue?.forEach((element) => {
+      if (props.kind === 'spine') {
+        elem.querySelector(`#${CSS.escape(element)}_lx_side`)?.classList.add('selected-visual');
+        elem.querySelector(`#${CSS.escape(element)}_lx_front`)?.classList.add('selected-visual');
+      } else elem.querySelector(`#${CSS.escape(element)}`)?.classList.add('selected-visual');
+    });
+    if (JSON.stringify(model.value) !== JSON.stringify(selectedValue)) {
+      if (props.selectingKind === 'single') {
+        [model.value] = selectedValue;
+      } else model.value = selectedValue;
+    }
   }
 }
 
@@ -337,7 +342,7 @@ const isImageVisible = computed(() => imageSize?.width.value > 500);
 defineExpose({ addTitles });
 </script>
 <template>
-  <div class="lx-visual-picker-wrapper" :class="{ 'read-only': readOnly }" ref="image">
+  <div class="lx-visual-picker-wrapper" :class="{ 'read-only': readOnly }" ref="image" :id="id">
     <LxContentSwitcher
       :items="contentSwitcherItems"
       v-model="contentSwitcherModel"

@@ -20,7 +20,7 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxTreeList from '@/components/list/TreeList.vue';
 
 const props = defineProps({
-  id: { type: String, default: generateUUID() },
+  id: { type: String, default: () => generateUUID() },
   items: { type: Array, default: null },
   hasSearch: { type: Boolean, default: false },
   groupDefinitions: { type: Array, default: null },
