@@ -17,6 +17,8 @@
 
   --color-preview-backdrop: rgba(0, 0, 0, 0.1);
 
+  --description-font-weight: 400;
+
   --h1-font-size: 3.3rem;
   --h1-font-weight: 300;
   --h2-font-size: 1.5rem;
@@ -54,7 +56,6 @@
   --content-padding-s: 2rem;
   --aside-border: 0px solid var(--color-chrome);
   --region-border: none;
-  --list-item-border: 2px solid transparent;
   --input-border: 1px solid transparent;
   --toggle-border: 2px solid transparent;
   --margin-default: 0.25rem;
@@ -99,4 +100,34 @@
   --screen-xs: 800px;
   --screen-xxs: 672px;
   --screen-xxxs: 320px;
+
+  --list-category-width: 0.25rem;
+  --list-expander-width: var(--row-size);
+  --list-gap: 0.5rem;
+  --list-handle-icon-height: var(--icon-size);
+  --list-handle-icon-width: var(--icon-size);
+  --list-handle-width: var(--row-size);
+  --list-header-margin-right: 0.5rem;
+  --list-header-min-height: var(--icon-size);
+  --list-header-padding-left: 0.75rem;
+  --list-icon-alignment: flex-start;
+  --list-icon-height: 1.55rem;
+  --list-icon-width: 1.55rem;
+  --list-inner-content-padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+  --list-inner-grid-areas: 'category inner-content icon';
+  --list-item-border: 2px solid var(--color-list-item-border);
+  --list-item-min-height: var(--row-size);
+  --list-middle-grid-areas: 'middle-content loader actions';
+  --list-outer-default-grid-areas: 'outer-content selecting';
+  --list-outer-draggable-grid-areas: 'handle outer-content';
+  --list-outer-treelist-grid-areas: 'expander outer-content selecting';
+  --list-primary-font-size: var(--font-size);
+  --list-primary-font-weight: bold;
+  --list-primary-line-height: 1.2em;
+  --list-secondary-font-size: var(--small-font-size);
+  --list-secondary-font-weight: var(--description-font-weight);
+  --list-secondary-line-height: 1em;
+  --list-selecting-block-padding: 0.5rem 0.5rem 0;
+  --list-selecting-block-width: var(--row-size);
+  --list-toolbar-gap: var(--gap-buttons);
 }

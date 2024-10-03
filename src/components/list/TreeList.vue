@@ -179,6 +179,8 @@ const isSelectable = (item) => {
   if (item[attribute] === false) return false;
   return item[attribute] !== false;
 };
+
+const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
 </script>
 <template>
   <div class="tree-list-wrapper">
@@ -238,6 +240,7 @@ const isSelectable = (item) => {
           :disabled="states?.[parent[idAttribute]]?.disabled"
           :busy="states?.[parent[idAttribute]]?.busy"
           :value="parent"
+          :selected="isItemSelected(parent[idAttribute])"
           @action-click="actionClicked"
           @click="parent[hrefAttribute] ? null : actionClicked('click', parent[idAttribute])"
         >
@@ -305,6 +308,7 @@ const isSelectable = (item) => {
           :disabled="states?.[item[idAttribute]]?.disabled"
           :busy="states?.[item[idAttribute]]?.busy"
           :value="item"
+          :selected="isItemSelected(item[idAttribute])"
           @action-click="actionClicked"
           @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
         >

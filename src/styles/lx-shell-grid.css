@@ -1330,12 +1330,7 @@ a.lx-tile:hover {
   align-items: stretch;
 }
 
-.lx-list-2 li {
-  width: 100%;
-  max-width: 100%;
-  display: flex;
-}
-
+.lx-list-2 li,
 .lx-list-3 li {
   width: 100%;
   max-width: 100%;
@@ -2142,10 +2137,10 @@ a.lx-tile:hover {
     display: none;
   }
 
-  .lx-list-2 li,
-  .lx-list-3 li {
-    width: 100%;
-    max-width: 100%;
+  .lx-list-2 li,		
+  .lx-list-3 li {		
+    width: 100%;		
+    max-width: 100%;		
   }
 
   .lx-layout.lx-layout-default > header .lx-header .lx-main-button {

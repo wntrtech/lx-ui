@@ -28,9 +28,8 @@
 }
 
 .lx-master-detail .lx-master li svg {
-    height: 1.2rem;
+    height: 1.5rem;
     flex-shrink: 0;
-    margin-left: 0.5rem;
 }
 
 .lx-master-detail .lx-detail {
@@ -56,10 +55,6 @@
     color: var(--color-label);
     line-height: 1.1em;
     margin-top: 0.05rem;
-}
-
-.lx-master-detail .lx-master .lx-list-item-interactive:hover p.lx-secondary{
-    color: var(--color-label)
 }
 
 .lx-master-detail-list {
@@ -89,154 +84,30 @@
     border-right: solid var(--color-chrome) 0.125rem;
 }
 
-.lx .lx-master-detail .lx-master .lx-list-item.lx-list-item-active,
-.lx .lx-master-detail .lx-master .lx-list-item.lx-list-item-active.lx-invalid{
-    border-color: var(--color-brand);
+.lx .lx-master-detail .lx-master .lx-list-item-wrapper:has(.lx-list-item.lx-list-item-active.lx-invalid) {
+    border-color: var(--color-list-selected-border);
 }
 
-.lx-master-detail .lx-list-item.lx-invalid {
-    border-color: var(--color-bad) ;
+.lx .lx-master-detail .lx-master .lx-list-item-wrapper:has(.lx-list-item.lx-invalid) {
+    border-color: var(--color-bad);
 }
 
-.lx-master-detail .lx-list-item {
-    border: solid transparent 0.125rem;
-}
-
-.lx-master-detail .lx-list-item.lx-invalid .invalid-icon{
+.lx .lx-master-detail .lx-master .lx-list-item.lx-invalid .invalid-icon {
     height: 1.5rem;
     fill: var(--color-bad);
+    grid-area: invalid-icon;
 }
 
-.lx-master-detail .lx-list-item.lx-invalid svg:not(.invalid-icon){
-    margin-left: 0;
+.lx.lx-theme-contrast .lx-list-item.lx-selected.lx-invalid .invalid-icon {
+    fill: var(--color-list-icon-selected);
 }
+
+.lx-master-detail li:hover .lx-list-item .invalid-icon{
+    fill: var(--color-list-foreground-hover);
+}
+
 .lx-master-detail li:focus-visible:has(.lx-list-item.lx-active){
     outline: solid var(--color-focus-background) 0.125rem;
-}
-
-.lx-master-detail .lx-list-item:focus-visible,
-.lx-master-detail .lx-list-item:focus{
-    outline: solid var(--color-focus-background) 0.125rem;
-}
-
-.lx-region .lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active,
-.lx-modal .lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active{
-    background-color: var(--color-region-2);
-}
-
-.lx-region .lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active:hover,
-.lx-modal .lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active:hover{
-    background-color: var(--color-region-hover);
-}
-
-.lx-master-detail .lx-list-item-wrapper .lx-list-item.lx-list-item-active{
-    background-color: var(--color-region);
-}
-
-.lx-master-detail .lx-list-item{
-    padding: 0.25rem 0.5rem 0.25rem 1.25rem;
-}
-
-.lx-master-detail .lx-list-item[class*="category"]{
-    padding-left: 0.25rem;
-}
-
-.lx-master-detail-list li .lx-category-red header {
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-red);
-}
-
-.lx-master-detail-list li .lx-category-blue header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-blue);
-}
-
-.lx-master-detail-list li .lx-category-green header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-green);
-}
-
-.lx-master-detail-list li .lx-category-purple header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-purple);
-}
-
-.lx-master-detail-list li .lx-category-orange header{
-    padding-left: 0.75rem;  border-left: solid 0.25rem var(--color-orange);
-}
-
-.lx-master-detail-list li .lx-category-bad header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-bad);
-}
-
-.lx-master-detail-list li .lx-category-new header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-new);
-}
-
-.lx-master-detail-list li .lx-category-good header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-good);
-}
-
-.lx-master-detail-list li .lx-category-draft header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-draft);
-}
-
-.lx-master-detail-list li .lx-category-error header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-error);
-}
-
-.lx-master-detail-list li .lx-category-edited header,
-.lx-master-detail-list li .lx-category-editing header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-edited);
-}
-
-.lx-master-detail-list li .lx-category-signed header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-signed);
-}
-
-.lx-master-detail-list li .lx-category-ongoing header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-ongoing);
-}
-
-.lx-master-detail-list li .lx-category-waiting header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-waiting);
-}
-
-.lx-master-detail-list li .lx-category-deleted header,
-.lx-master-detail-list li .lx-category-deleting header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-deleted);
-}
-
-.lx-master-detail-list li .lx-category-disabled header,
-.lx-master-detail-list li .lx-category-disabling header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-disabled);
-}
-
-.lx-master-detail-list li .lx-category-inactive header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-inactive);
-}
-
-.lx-master-detail-list li .lx-category-finished header,
-.lx-master-detail-list li .lx-category-finishing header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-finished);
-}
-
-.lx-master-detail-list li .lx-category-incomplete header{
-    padding-left: 0.75rem;
-    border-left: solid 0.25rem var(--color-incomplete);
 }
 
 .lx-master-detail .lx-master-detail-list .lx-list-item-wrapper .lx-primary{
@@ -245,11 +116,17 @@
 }
 
 .lx-master-detail .lx-master-detail-list .lx-list-item-wrapper header{
-    max-width: calc(100% - 2.5rem);
+    max-width: calc(100% - 1.55rem);
 }
 
 .lx-master-detail .lx-master-detail-list .lx-list-item.lx-invalid header{
-    max-width: calc(100% - 4.5rem);
+    max-width: calc(100% - 1rem);
+}
+
+/* Pagaidu variants */
+.lx-master-detail .lx-list-item .lx-inner-content-wrapper{
+    grid-template-areas: 'category inner-content invalid-icon icon';
+    grid-template-columns: auto 1fr auto auto;
 }
 
 @media (max-width: 1200px) {

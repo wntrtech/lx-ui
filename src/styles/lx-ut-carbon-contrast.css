@@ -117,6 +117,25 @@
   --color-placeholder-disabled: var(--contrast-background);
 
   --region-border: 2px solid var(--color-chrome);
-  --list-item-border: 2px solid var(--color-chrome);
   --input-border: 1px solid var(--color-chrome);
+
+  --color-list-category-contrast: transparent;
+  --color-list-checked-background: var(--contrast-background);
+  --color-list-checked-border: var(--color-list-checked-background);
+  --color-list-checkmark: var(--contrast-interactive);
+  --color-list-expander-selected-icon: var(--contrast-background);
+  --color-list-hover-border: var(--contrast-foreground);
+  --color-list-icon-selected: var(--contrast-background);
+  --color-list-interactive-background: var(--contrast-hover);
+  --color-list-item-border: var(--color-chrome);
+  --color-list-loader-stroke-interactive: var(--contrast-background);
+  --color-list-primary-text-selected: var(--contrast-background);
+  --color-list-region-selected-background: var(--contrast-foreground);
+  --color-list-secondary-text-hover: var(--color-list-foreground-hover);
+  --color-list-secondary-text-selected: var(--contrast-background);
+  --color-list-selected-background: var(--contrast-foreground);
+  --color-list-selected-border-hover: var(--contrast-foreground);
+  --color-list-selected-foreground-disabled: var(--color-background);
+  --color-list-unchecked-background-hover: var(--contrast-background);
+  --color-list-unchecked-border-hover: var(--contrast-background);
 }

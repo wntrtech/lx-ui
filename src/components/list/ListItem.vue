@@ -72,9 +72,11 @@ function secureURL(url) {
         { 'lx-list-item-active': active },
         { 'lx-category-red': category === 'red' },
         { 'lx-category-blue': category === 'blue' },
+        { 'lx-category-teal': category === 'teal' },
         { 'lx-category-green': category === 'green' },
         { 'lx-category-purple': category === 'purple' },
         { 'lx-category-orange': category === 'orange' },
+        { 'lx-category-yellow': category === 'yellow' },
         { 'lx-category-bad': category === 'bad' },
         { 'lx-category-new': category === 'new' },
         { 'lx-category-good': category === 'good' },
@@ -92,21 +94,23 @@ function secureURL(url) {
         { 'lx-invalid': invalid },
       ]"
     >
-      <header>
-        <template v-if="!$slots.customItem">
-          <p class="lx-primary">
-            <lx-searchable-text :value="label" :search-string="searchString" />
-          </p>
-          <p class="lx-secondary" v-if="description">
-            <lx-searchable-text :value="description" :search-string="searchString" />
-          </p>
-        </template>
-        <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>
-      </header>
-      <LxIcon value="invalid" v-if="invalid" customClass="invalid-icon" />
-      <lx-icon :value="icon" :iconSet="iconSet" v-if="clickable" />
+      <div class="lx-inner-content-wrapper">
+        <div v-if="category" class="lx-category-displayer" />
+        <header>
+          <template v-if="!$slots.customItem">
+            <p class="lx-primary">
+              <lx-searchable-text :value="label" :search-string="searchString" />
+            </p>
+            <p class="lx-secondary" v-if="description">
+              <lx-searchable-text :value="description" :search-string="searchString" />
+            </p>
+          </template>
+          <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>
+        </header>
+        <LxIcon value="invalid" v-if="invalid" customClass="invalid-icon" />
+        <lx-icon :value="icon" :iconSet="iconSet" v-if="clickable" />
+      </div>
     </div>
-
     <router-link
       v-if="href"
       class="lx-list-item"
@@ -122,9 +126,11 @@ function secureURL(url) {
         { 'lx-list-item-active': active },
         { 'lx-category-red': category === 'red' },
         { 'lx-category-blue': category === 'blue' },
+        { 'lx-category-teal': category === 'teal' },
         { 'lx-category-green': category === 'green' },
         { 'lx-category-purple': category === 'purple' },
         { 'lx-category-orange': category === 'orange' },
+        { 'lx-category-yellow': category === 'yellow' },
         { 'lx-category-bad': category === 'bad' },
         { 'lx-category-new': category === 'new' },
         { 'lx-category-good': category === 'good' },
@@ -143,19 +149,22 @@ function secureURL(url) {
       ]"
       :tabindex="href || clickable ? 0 : -1"
     >
-      <header>
-        <template v-if="!$slots.customItem">
-          <p class="lx-primary">
-            <lx-searchable-text :value="label" :search-string="searchString" />
-          </p>
-          <p class="lx-secondary" v-if="description">
-            <lx-searchable-text :value="description" :search-string="searchString" />
-          </p>
-        </template>
-        <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>
-      </header>
-      <LxIcon value="invalid" v-if="invalid" customClass="invalid-icon" />
-      <lx-icon :value="icon" :icon-set="iconSet" v-if="href" />
+      <div class="lx-inner-content-wrapper">
+        <div v-if="category" class="lx-category-displayer" />
+        <header>
+          <template v-if="!$slots.customItem">
+            <p class="lx-primary">
+              <lx-searchable-text :value="label" :search-string="searchString" />
+            </p>
+            <p class="lx-secondary" v-if="description">
+              <lx-searchable-text :value="description" :search-string="searchString" />
+            </p>
+          </template>
+          <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>
+        </header>
+        <LxIcon value="invalid" v-if="invalid" customClass="invalid-icon" />
+        <lx-icon :value="icon" :icon-set="iconSet" v-if="href" />
+      </div>
     </router-link>
     <div class="lx-list-item-loader" v-if="busy"><LxLoader :loading="true" size="s" /></div>
     <div

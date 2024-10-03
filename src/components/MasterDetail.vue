@@ -78,6 +78,7 @@ defineExpose({ selectItem });
               :category="item[categoryAttribute]"
               :invalid="item?.[invalidAttribute]"
               :tooltip="item?.[nameAttribute]"
+              :selected="activeItemCode === item?.[idAttribute]"
               icon="next"
               :clickable="true"
               :active="activeItemCode === item?.[idAttribute]"

@@ -144,6 +144,8 @@ const isSelectable = (item) => {
   return item[attribute] !== false;
 };
 
+const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
+
 watch(
   () => props.mode,
   (newMode) => {
@@ -191,6 +193,7 @@ watch(
         :disabled="states?.[item[idAttribute]]?.disabled"
         :busy="states?.[item[idAttribute]]?.busy"
         :value="item"
+        :selected="isItemSelected(item[idAttribute])"
         @action-click="actionClicked"
         @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
       >

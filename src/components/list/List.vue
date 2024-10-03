@@ -655,6 +655,7 @@ function selectRows(arr = null) {
     );
   }
 }
+const isItemSelected = computed(() => (itemId) => !!selectedItemsRaw.value[itemId]);
 
 function cancelSelection() {
   selectedItemsRaw.value = {};
@@ -1094,6 +1095,7 @@ onMounted(() => {
             :clickable="item[clickableAttribute]"
             :category="item[categoryAttribute]"
             :disabled="loading || busy"
+            :selected="isItemSelected(item[idAttribute])"
             @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
             @action-click="actionClicked"
           >
@@ -1279,6 +1281,7 @@ onMounted(() => {
                 :clickable="item[clickableAttribute]"
                 :category="item[categoryAttribute]"
                 :disabled="loading || busy"
+                :selected="isItemSelected(item[idAttribute])"
                 @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
                 @action-click="actionClicked"
               >
@@ -1338,6 +1341,7 @@ onMounted(() => {
             :clickable="item[clickableAttribute]"
             :category="item[categoryAttribute]"
             :disabled="loading || busy"
+            :selected="isItemSelected(item[idAttribute])"
             @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
             @action-click="actionClicked"
           >
@@ -1564,6 +1568,7 @@ onMounted(() => {
                       :clickable="element[clickableAttribute]"
                       :category="element[categoryAttribute]"
                       :disabled="loading || busy"
+                      :selected="isItemSelected(element[idAttribute])"
                       @click="
                         element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
                       "
@@ -1636,6 +1641,7 @@ onMounted(() => {
           :clickable="element[clickableAttribute]"
           :category="element[categoryAttribute]"
           :disabled="loading || busy"
+          :selected="isItemSelected(element[idAttribute])"
           @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
           @action-click="actionClicked"
         >

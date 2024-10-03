@@ -199,7 +199,12 @@
 
 .lx:not(.lx-no-animations) .lx-tile,
 .lx:not(.lx-no-animations) .lx-widget,
-.lx:not(.lx-no-animations) .lx-list-item-interactive,
+.lx:not(.lx-no-animations) .lx-list li,
+.lx:not(.lx-no-animations) .lx-list-item,
+.lx:not(.lx-no-animations) .selecting-block,
+.lx:not(.lx-no-animations) .lx-list-item-actions,
+.lx:not(.lx-no-animations) .lx-list-item-wrapper,
+.lx:not(.lx-no-animations) .lx-list-item-loader,
 .lx:not(.lx-no-animations) .lx-tile .lx-description,
 .lx:not(.lx-no-animations) .lx-draggable-group-list-item {
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;

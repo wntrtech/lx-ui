@@ -136,4 +136,39 @@
 
   --color-placeholder: #aaaaaa;
   --color-placeholder-disabled: #bbbbbb;
+  
+  --color-list-checked-background: var(--color-data);
+  --color-list-checked-border: var(--color-list-checked-background);
+  --color-list-checkmark: var(--color-region);
+  --color-list-background: var(--color-region);
+  --color-list-expander-selected-icon: var(--color-data);
+  --color-list-foreground-disabled: var(--color-disabled);
+  --color-list-foreground-hover: var(--color-region-hover-foreground);
+  --color-list-handle-background-hover: var(--color-list-hover-background);
+  --color-list-handle-icon: var(--color-label);
+  --color-list-handle-icon-hover: var(--color-list-foreground-hover);
+  --color-list-hover-background: var(--color-region-hover-background);
+  --color-list-hover-border: transparent;
+  --color-list-icon: var(--color-data);
+  --color-list-icon-selected: var(--color-data);
+  --color-list-interactive-background: var(--color-interactive-hover-background);
+  --color-list-interactive-foreground: var(--color-focus-foreground);
+  --color-list-item-border: transparent;
+  --color-list-loader-stroke-interactive: var(--color-interactive-background);
+  --color-list-primary: var(--color-data);
+  --color-list-primary-text-hover: var(--color-list-foreground-hover);
+  --color-list-primary-text-selected: var(--color-list-primary);
+  --color-list-region-background: var(--color-region-2);
+  --color-list-region-selected-background: var(--color-list-region-background);
+  --color-list-secondary: var(--color-label);
+  --color-list-secondary-text-hover: var(--color-list-secondary);
+  --color-list-secondary-text-selected: var(--color-list-secondary);
+  --color-list-selected-background: var(--color-list-background);
+  --color-list-selected-foreground-disabled: var(--color-disabled);
+  --color-list-selected-border: var(--color-brand);
+  --color-list-selected-border-hover: var(--color-interactive-hover-background);
+  --color-list-unchecked-background: transparent;
+  --color-list-unchecked-background-hover: var(--color-list-unchecked-background);
+  --color-list-unchecked-border: var(--color-data);
+  --color-list-unchecked-border-hover: var(--color-list-unchecked-border);
 }
