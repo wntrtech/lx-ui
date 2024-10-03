@@ -514,6 +514,10 @@
   margin: var(--margin-button-icon);
 }
 
+.lx-mega-menu .lx-context-container .inline-block .popper .lx-dropdown-panel {
+  width: 100%;
+}
+
 .lx-dashboard {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -1826,10 +1830,22 @@ a.lx-tile:hover {
 
 .lx-mega-menu .lx-mega-menu-container ul.primary-menu {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 0.5rem;
+  grid-template-columns: 4.65rem 4.65rem 4.65rem;
+  gap: .5rem;
   border-bottom: 1px solid var(--color-chrome);
-  padding-bottom: 0.5rem;
+  padding-bottom: .5rem;
+}
+
+.lx-mega-menu .lx-mega-menu-container ul.primary-menu .primary-menu-tile p,
+.lx-mega-menu .lx-mega-menu-container .secondary-menu .secondary-menu-item p {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lx-mega-menu .lx-mega-menu-container .secondary-menu .secondary-menu-item svg {
+  flex-shrink: 0;
 }
 
 .lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile {
@@ -1839,8 +1855,8 @@ a.lx-tile:hover {
   justify-content: center;
   gap: 0.5rem;
   border: 2px solid transparent;
-  min-height: 5rem;
-
+  height: 5rem;
+  padding: 0.25rem;
 }
 
 .lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile svg,

@@ -38,7 +38,7 @@ const primaryItems = computed(() => {
 
 const groupedSecondaryItems = computed(() => {
   if (!props.groupDefinitions) {
-    return props.items?.map((item) => ({ ...item, kind: 'primary' })) || [];
+    return [];
   }
 
   const groups = props.groupDefinitions.reduce((acc, group) => {
@@ -92,7 +92,14 @@ function specialStyles(item) {
 }
 
 function getIcon(item) {
-  return item.icon || 'zz-default';
+  return item.icon || 'none';
+}
+
+function getIconSet(item) {
+  if (!item.icon) {
+    return 'cds';
+  }
+  return item.iconSet || 'brand';
 }
 </script>
 <template>
@@ -121,7 +128,7 @@ function getIcon(item) {
           >
             <LxIcon
               :value="getIcon(item)"
-              :iconSet="item.iconSet || 'brand'"
+              :iconSet="getIconSet(item)"
               :style="specialStyles(item)"
               :title="item?.description"
             />
@@ -161,7 +168,7 @@ function getIcon(item) {
               >
                 <LxIcon
                   :value="getIcon(item)"
-                  :iconSet="item.iconSet || 'brand'"
+                  :iconSet="getIconSet(item)"
                   :style="specialStyles(item)"
                   :title="item?.description"
                 />
