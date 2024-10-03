@@ -1238,8 +1238,12 @@ p .lx-person-display-wrapper {
   fill: var(--color-interactive-hover-foreground);
 }
 
-.lx .lx-filter .lx-form.lx-form-region:has( > .lx-form-grid){
-  padding: 0.5rem 1.5rem;
+.lx-filter .lx-body:has(.lx-form-grid) {
+  padding: 0;
+}
+
+.lx .lx-filter .lx-form.lx-form-region:has(>.lx-form-grid) {
+  padding: 0.5rem 1.5rem 2rem 1.5rem;
   gap: 0.5rem;
   margin-bottom: 0;
 }
@@ -1274,7 +1278,8 @@ p .lx-person-display-wrapper {
   background-color: var(--color-region-2);
 } 
 
-.lx-filter-wrapper:has(.has-shortlist){
+.lx-filter-wrapper:has(.has-shortlist) .lx-filter .lx-head,
+.lx-filter-wrapper .shortlist-wrapper{
   background-color: var(--color-region);
 }
 
