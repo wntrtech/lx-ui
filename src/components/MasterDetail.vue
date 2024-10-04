@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxListItem from '@/components/list/ListItem.vue';
-import { useWindowSize } from '@vueuse/core';
+import { useWindowSize, useElementSize } from '@vueuse/core';
 
 const props = defineProps({
   modelValue: { type: Array, default: () => [] },
@@ -56,12 +56,22 @@ function addItem() {
   emits('newItemAdded');
 }
 
+const nav = ref();
+const detail = ref();
+
+const isNavBigger = computed(() => {
+  if (nav.value && detail.value) {
+    return useElementSize(nav).height.value > useElementSize(detail).height.value;
+  }
+  return false;
+});
+
 defineExpose({ selectItem });
 </script>
 <template>
-  <div class="lx-master-detail">
+  <div class="lx-master-detail" :class="[{ 'nav-border': isNavBigger }]">
     <Transition :name="windowWidth < 1200 ? 'master-detail-slide-right' : ''">
-      <nav class="lx-master" v-if="windowWidth >= 1200 || !activeItemCode">
+      <nav class="lx-master" v-if="windowWidth >= 1200 || !activeItemCode" ref="nav">
         <LxButton
           v-if="mode === 'edit'"
           icon="add-item"
@@ -97,7 +107,7 @@ defineExpose({ selectItem });
       kind="ghost"
     />
     <Transition :name="windowWidth < 1200 ? 'master-detail-slide-left' : ''">
-      <div class="lx-detail" v-if="windowWidth >= 1200 || activeItemCode">
+      <div class="lx-detail" v-if="windowWidth >= 1200 || activeItemCode" ref="detail">
         <LxEmptyState
           v-if="!activeItemCode"
           :label="texts?.noData"

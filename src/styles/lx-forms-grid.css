@@ -1287,6 +1287,10 @@ p .lx-person-display-wrapper {
   background-color: var(--color-region);
 }
 
+.lx-expander:not([data-disabled]).lx-filter .lx-head:hover {
+  background-color: var(--color-region-hover);
+}
+
 @media (max-width: 1900px) {
   .lx-index {
     display: none;
