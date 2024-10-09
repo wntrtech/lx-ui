@@ -7,7 +7,8 @@
     "dist/lx-fonts/*.woff",
     "dist/lx-fonts/*.ttf",
     "dist/vite",
-    "dist/styles"
+    "dist/styles",
+    "dist/bundles"
   ],
   "license": "MIT",
   "bugs": {
@@ -28,6 +29,7 @@
       "types": "./dist/vite/types/index.d.ts"
     },
     "./dist/styles/*": "./dist/styles/*",
+    "./dist/bundles/*": "./dist/bundles/*",
     "./dist/lx-fonts/*": "./dist/lx-fonts/*"
   },
   "packageManager": "pnpm@8.3.1",
