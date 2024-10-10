@@ -898,12 +898,23 @@ svg .lx-shade {
   fill: var(--color-data);
 }
 
+.lx-person-display-wrapper .lx-info-wrapper {
+  display: flex;
+}
+
 .lx-person-display {
   display: grid;
   grid-template-columns: auto 1fr;
   align-items: center;
   gap: 0 1ch;
-  margin-right: 0.5ch;
+}
+
+.lx-person-display.lx-person-display-s {
+  gap: 0 0.75ch;
+}
+
+.lx .lx-person-display.lx-icon-only {
+  gap: 0;
 }
 
 .lx-person-display p.lx-data {
@@ -928,12 +939,14 @@ svg .lx-shade {
 }
 
 .lx-avatar-display,
-.lx-user-icon-display {
+.lx-user-icon-display,
+.lx-person-icon-display {
   height: 2rem;
   width: 2rem;
   display: grid;
   justify-content: center;
   align-items: center;
+  align-self: flex-start;
   border: 2px var(--color-region) solid;
   border-radius: 50%;
   overflow: hidden;
@@ -942,19 +955,23 @@ svg .lx-shade {
 }
 
 .lx-avatar-display > svg,
-.lx-user-icon-display > svg {
+.lx-user-icon-display > svg,
+.lx-person-icon-display > svg {
   height: 100%;
   width: 100%;
 }
 
-.lx-user-icon-display {
+.lx-user-icon-displaym
+.lx-person-icon-display {
   border: 1px var(--color-region) solid;
 }
 
 .lx-region .lx-avatar-display,
 .lx-region .lx-user-icon-display,
+.lx-region .lx-person-icon-display,
 .lx-form-grid .lx-row .lx-avatar-display,
-.lx-form-grid .lx-row .lx-user-icon-display {
+.lx-form-grid .lx-row .lx-user-icon-display,
+.lx-form-grid .lx-row .lx-person-icon-display {
   border-color: var(--color-region-2);
 }
 
@@ -967,12 +984,9 @@ svg .lx-shade {
   min-height: auto;
 }
 
-.lx-person-display.lx-person-display-s {
-  gap: 0 0.75ch;
-}
-
 .lx-avatar-display-s,
-.lx-user-icon-display-s {
+.lx-user-icon-display-s,
+.lx-person-icon-display-s {
   height: 1.5rem;
   width: 1.5rem;
   padding: 0.3rem;
@@ -980,7 +994,10 @@ svg .lx-shade {
 
 .lx-user-icon-display,
 .lx-user-icon-display-s,
-.lx-user-icon-display-l {
+.lx-user-icon-display-l,
+.lx-person-icon-display,
+.lx-person-icon-display-s,
+.lx-person-icon-display-l {
   padding: 0;
 }
 
@@ -990,11 +1007,11 @@ svg .lx-shade {
 
 .lx-avatar-display-l,
 .lx-user-icon-display-l,
-.lx-person-display.lx-person-display-l > svg {
+.lx-person-icon-display-l {
   height: 2.5rem;
   width: 2.5rem;
-  margin-left: 0.2rem;
   grid-row: span 2;
+  margin-top: 0.2rem;
 }
 
 .lx-avatar-display-xl {
@@ -1036,32 +1053,40 @@ p .lx-person-display-wrapper {
 
 .lx-person-display-multiple .lx-avatar-display,
 .lx-person-display-multiple .lx-user-icon-display,
+.lx-person-display-multiple .lx-person-icon-display,
 .lx-person-display-multiple .lx-avatar-display + .overflow,
-.lx-person-display-multiple .lx-user-icon-display + .overflow {
+.lx-person-display-multiple .lx-user-icon-display + .overflow,
+.lx-person-display-multiple .lx-person-icon-display + .overflow {
   margin-left: -0.75rem;
 }
 
 .lx-person-display-multiple .lx-avatar-display-s,
 .lx-person-display-multiple .lx-user-icon-display-s,
+.lx-person-display-multiple .lx-person-icon-display-s,
 .lx-person-display-multiple .lx-avatar-display-s + .overflow,
-.lx-person-display-multiple .lx-user-icon-display-s + .overflow {
+.lx-person-display-multiple .lx-user-icon-display-s + .overflow,
+.lx-person-display-multiple .lx-person-icon-display-s + .overflow {
   margin-left: -0.5rem;
 }
 
 .lx-person-display-multiple .lx-avatar-display-l,
 .lx-person-display-multiple .lx-user-icon-display-l,
+.lx-person-display-multiple .lx-person-icon-display-l,
 .lx-person-display-multiple .lx-avatar-display-l + .overflow,
-.lx-person-display-multiple .lx-user-icon-display-l + .overflow {
+.lx-person-display-multiple .lx-user-icon-display-l + .overflow,
+.lx-person-display-multiple .lx-person-icon-display-l + .overflow {
   margin-left: -1rem;
 }
 
 .lx-person-display-multiple .lx-avatar-display:first-of-type,
-.lx-person-display-multiple .lx-user-icon-display:first-of-type {
+.lx-person-display-multiple .lx-user-icon-display:first-of-type,
+.lx-person-display-multiple .lx-person-icon-display:first-of-type {
   margin-left: 0;
 }
 
 .lx-person-display-multiple .lx-avatar-display + .overflow,
-.lx-person-display-multiple .lx-user-icon-display + .overflow {
+.lx-person-display-multiple .lx-user-icon-display + .overflow,
+.lx-person-display-multiple .lx-person-icon-display + .overflow {
   background-color: var(--color-region);
   border-radius: 50%;
   height: 2rem;
@@ -1077,20 +1102,23 @@ p .lx-person-display-wrapper {
 }
 
 .lx-person-display-multiple .lx-avatar-display-s + .overflow,
-.lx-person-display-multiple .lx-user-icon-display-s + .overflow {
+.lx-person-display-multiple .lx-user-icon-display-s + .overflow,
+.lx-person-display-multiple .lx-person-icon-display-s + .overflow {
   height: 1.5rem;
   width: 1.5rem;
 }
 
 .lx-person-display-multiple .lx-avatar-display-l + .overflow,
-.lx-person-display-multiple .lx-user-icon-display-l + .overflow {
+.lx-person-display-multiple .lx-user-icon-display-l + .overflow,
+.lx-person-display-multiple .lx-person-icon-display-l + .overflow {
   height: 2.5rem;
   width: 2.5rem;
   font-size: var(--font-size);
 }
 
 .lx-person-display-multiple .lx-avatar-display-s + .overflow > p .plus,
-.lx-person-display-multiple .lx-user-icon-display-s + .overflow > p .plus {
+.lx-person-display-multiple .lx-user-icon-display-s + .overflow > p .plus,
+.lx-person-display-multiple .lx-person-icon-display-s + .overflow > p .plus {
   display: none;
 }
 

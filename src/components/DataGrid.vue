@@ -104,6 +104,12 @@ const props = defineProps({
       noItems: 'Nav neviena ieraksta, ko attēlot',
       noItemsDescription: '',
       iconsResponsiveRowLabel: 'Ikonas',
+      personDisplay: {
+        name: 'Vārds, uzvārds',
+        description: 'Apraksts',
+        role: 'Loma',
+        institution: 'Iestāde',
+      },
     }),
   },
 });
@@ -1120,6 +1126,7 @@ watch(
               <LxPersonDisplay
                 v-if="col.type === 'person'"
                 :value="row[col.attributeName]"
+                :texts="texts?.personDisplay"
                 size="s"
               />
               <template v-if="col.type === 'array'">
@@ -1366,6 +1373,7 @@ watch(
             <LxPersonDisplay
               v-else-if="col.type === 'person'"
               :value="item[col.attributeName]"
+              :texts="texts?.personDisplay"
               size="s"
             />
           </LxRow>

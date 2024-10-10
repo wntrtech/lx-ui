@@ -4,6 +4,10 @@
 
 ### Breaking changes
 
+#### LxPersonDisplay
+
+- `kind` prop no longer supported.
+
 #### LxContentSwitcher
 
 - `changed` event no longer supported.

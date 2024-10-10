@@ -26,16 +26,17 @@ describe('LxPersonDisplay', () => {
 
       expect(props.value).toBe(null);
       expect(props.size).toBe('m');
-      expect(props.kind).toBe('default');
       expect(props.variant).toBe('full');
       expect(props.description).toBe(null);
       expect(props.role).toBe(null);
       expect(props.institution).toBe(null);
+      expect(props.icon).toBe(null);
       expect(props.firstNameAttribute).toBe('firstName');
       expect(props.lastNameAttribute).toBe('lastName');
       expect(props.descriptionAttribute).toBe('description');
       expect(props.roleAttribute).toBe('role');
       expect(props.institutionAttribute).toBe('institution');
+      expect(props.iconAttribute).toBe('icon');
       expect(props.maxLength).toBe(3);
       expect(props.texts.name).toBe('Vārds, uzvārds');
       expect(props.texts.description).toBe('Apraksts');
@@ -48,16 +49,17 @@ describe('LxPersonDisplay', () => {
         props: {
           value: 'custom-id',
           size: 's',
-          kind: 'icon',
           variant: 'icon-only',
           description: 'Custom description',
           role: 'Custom role',
           institution: 'Custom institution',
+          icon: 'Custom icon',
           firstNameAttribute: 'customName',
           lastNameAttribute: 'customSurname',
           descriptionAttribute: 'customDescription',
           roleAttribute: 'customRole',
           institutionAttribute: 'customInstitution',
+          iconAttribute: 'customIcon',
           maxLength: 5,
           texts: {
             name: 'Name, surname',
@@ -80,16 +82,17 @@ describe('LxPersonDisplay', () => {
 
       expect(props.value).toBe('custom-id').toBeTypeOf('string');
       expect(props.size).toBe('s').toBeTypeOf('string');
-      expect(props.kind).toBe('icon').toBeTypeOf('string');
       expect(props.variant).toBe('icon-only').toBeTypeOf('string');
       expect(props.description).toBe('Custom description').toBeTypeOf('string');
       expect(props.role).toBe('Custom role').toBeTypeOf('string');
       expect(props.institution).toBe('Custom institution').toBeTypeOf('string');
+      expect(props.icon).toBe('Custom icon').toBeTypeOf('string');
       expect(props.firstNameAttribute).toBe('customName').toBeTypeOf('string');
       expect(props.lastNameAttribute).toBe('customSurname').toBeTypeOf('string');
       expect(props.descriptionAttribute).toBe('customDescription').toBeTypeOf('string');
       expect(props.roleAttribute).toBe('customRole').toBeTypeOf('string');
       expect(props.institutionAttribute).toBe('customInstitution').toBeTypeOf('string');
+      expect(props.iconAttribute).toBe('customIcon').toBeTypeOf('string');
       expect(props.maxLength).toBe(5).toBeTypeOf('number');
       expect(props.texts.name).toBe('Name, surname');
       expect(props.texts.description).toBe('Description').toBeTypeOf('string');
@@ -217,6 +220,25 @@ describe('LxPersonDisplay', () => {
       expect(institution).toBe('Tech Inc.');
     });
 
+    test('icon should return provided icon', () => {
+      const wrapper = mount(LxPersonDisplay, {
+        props: {
+          value: { firstName: 'John', lastName: 'Doe', icon: 'flash' },
+        },
+        global: {
+          provide: {
+            sectionMode: 'none',
+            formMode: 'defaultFormMode',
+            rowRequiredTexts: 'defaultRequiredTexts',
+            sectionColumnCount: 3,
+          },
+        },
+      });
+      const { icon } = wrapper.vm;
+
+      expect(icon).toBe('flash');
+    });
+
     test('filteredValues should return filtered array based on attributes', () => {
       const wrapper = mount(LxPersonDisplay, {
         props: {
@@ -294,26 +316,6 @@ describe('LxPersonDisplay', () => {
         { firstName: 'John', lastName: 'Doe' },
         { firstName: 'Jane', lastName: 'Doe' },
       ]);
-    });
-
-    test('showAvatar should return true if nameKey is set and kind is default', () => {
-      const wrapper = mount(LxPersonDisplay, {
-        props: {
-          value: { firstName: 'John', lastName: 'Doe' },
-          kind: 'default',
-        },
-        global: {
-          provide: {
-            sectionMode: 'none',
-            formMode: 'defaultFormMode',
-            rowRequiredTexts: 'defaultRequiredTexts',
-            sectionColumnCount: 3,
-          },
-        },
-      });
-      const { showAvatar } = wrapper.vm;
-
-      expect(showAvatar).toBe(true);
     });
 
     test('showDescription should return true if description is set and size is l', () => {

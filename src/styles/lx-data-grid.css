@@ -48,11 +48,8 @@
 }
 
 .lx .lx-data-grid .lx-cell {
-  min-height: var(--row-size);
+  min-height: 2.5rem;
   height: auto;
-}
-
-.lx .lx-data-grid .lx-cell {
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -234,7 +231,9 @@
 }
 
 .lx-grid-row:hover .lx-cell-secondary .lx-user-icon-display > svg,
-.lx-grid-row:hover .lx-cell-extra .lx-user-icon-display > svg {
+.lx-grid-row:hover .lx-cell-extra .lx-user-icon-display > svg,
+.lx-grid-row:hover .lx-cell-secondary .lx-person-icon-display > svg,
+.lx-grid-row:hover .lx-cell-extra .lx-person-icon-display > svg {
   fill: var(--color-data);
 }
 
@@ -313,12 +312,11 @@
   margin-bottom: -5px;
 }
 
-.lx .lx-data-grid .empty-person-value {
+.lx .lx-data-grid .lx-empty-person-value {
   padding-top: 5px;
 }
 
 .lx .lx-data-grid .flag-column:not(:has(.lx-flag)) p.lx-data,
-.lx .lx-data-grid .empty-person-value,
 .lx .lx-data-grid .empty-icon-value,
 .lx .lx-data-grid .empty-flag-value {
   margin-left: 0.25rem;
@@ -986,6 +984,10 @@
   display: grid;
   gap: 0 0.75ch;
   align-items: center;
+}
+
+.lx-grid-icon-wrapper .lx-grid-column-icon {
+  align-self: flex-start;
 }
 
 .lx-grid-icon-wrapper:has(.lx-grid-icon-text){
