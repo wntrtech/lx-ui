@@ -377,151 +377,151 @@
   margin-right: 0.5rem;
 }
 
-.lx-state-shape-icon .lx-state-icon {
+.lx-state svg.lx-state-icon {
   height: 1rem;
   width: 1rem;
   margin: 0 0.3rem 0 -0.15rem;
 }
 
-.lx-state-shape-icon.lx-state-red .lx-state-icon,
-.lx-state-shape-icon.lx-state-red-full .lx-state-icon {
+.lx-state.lx-state-red svg.lx-state-icon,
+.lx-state.lx-state-red-full svg.lx-state-icon {
   fill: var(--color-red);
 }
 
-.lx-state-shape-icon.lx-state-blue .lx-state-icon,
-.lx-state-shape-icon.lx-state-blue-full .lx-state-icon {
+.lx-state.lx-state-blue svg.lx-state-icon,
+.lx-state.lx-state-blue-full svg.lx-state-icon {
   fill: var(--color-blue);
 }
 
-.lx-state-shape-icon.lx-state-green .lx-state-icon,
-.lx-state-shape-icon.lx-state-green-full .lx-state-icon {
+.lx-state.lx-state-green svg.lx-state-icon,
+.lx-state.lx-state-green-full svg.lx-state-icon {
   fill: var(--color-green);
 }
 
-.lx-state-shape-icon.lx-state-purple .lx-state-icon,
-.lx-state-shape-icon.lx-state-purple-full .lx-state-icon {
+.lx-state.lx-state-purple svg.lx-state-icon,
+.lx-state.lx-state-purple-full svg.lx-state-icon {
   fill: var(--color-purple);
 }
 
-.lx-state-shape-icon.lx-state-orange .lx-state-icon,
-.lx-state-shape-icon.lx-state-orange-full .lx-state-icon {
+.lx-state.lx-state-orange svg.lx-state-icon,
+.lx-state.lx-state-orange-full svg.lx-state-icon {
   fill: var(--color-orange);
 }
 
-.lx-state-shape-icon.lx-state-yellow .lx-state-icon,
-.lx-state-shape-icon.lx-state-yellow-full .lx-state-icon {
+.lx-state.lx-state-yellow svg.lx-state-icon,
+.lx-state.lx-state-yellow-full svg.lx-state-icon {
   fill: var(--color-yellow);
 }
 
-.lx-state-shape-icon.lx-state-new .lx-state-icon {
+.lx-state.lx-state-new svg.lx-state-icon {
   fill: var(--color-new);
 }
 
-.lx-state-shape-icon.lx-state-new .lx-primary {
+.lx-state.lx-state-new .lx-primary {
   color: var(--color-new);
 }
 
-.lx-state-shape-icon.lx-state-draft .lx-state-icon {
+.lx-state.lx-state-draft svg.lx-state-icon {
   fill: var(--color-draft);
 }
 
-.lx-state-shape-icon.lx-state-draft .lx-primary {
+.lx-state.lx-state-draft .lx-primary {
   color: var(--color-draft);
 }
 
-.lx-state-shape-icon.lx-state-edited .lx-state-icon,
-.lx-state-shape-icon.lx-state-editing .lx-state-icon {
+.lx-state.lx-state-edited svg.lx-state-icon,
+.lx-state.lx-state-editing svg.lx-state-icon {
   fill: var(--color-edited);
 }
 
-.lx-state-shape-icon.lx-state-edited .lx-primary,
-.lx-state-shape-icon.lx-state-editing .lx-primary {
+.lx-state.lx-state-edited .lx-primary,
+.lx-state.lx-state-editing .lx-primary {
   color: var(--color-edited);
 }
 
-.lx-state-shape-icon.lx-state-ongoing .lx-state-icon {
+.lx-state.lx-state-ongoing svg.lx-state-icon {
   fill: var(--color-ongoing);
 }
 
-.lx-state-shape-icon.lx-state-ongoing .lx-primary {
+.lx-state.lx-state-ongoing .lx-primary {
   color: var(--color-ongoing);
 }
 
-.lx-state-shape-icon.lx-state-incomplete .lx-state-icon {
+.lx-state.lx-state-incomplete svg.lx-state-icon {
   fill: var(--color-incomplete);
 }
 
-.lx-state-shape-icon.lx-state-incomplete .lx-primary {
+.lx-state.lx-state-incomplete .lx-primary {
   color: var(--color-incomplete);
 }
 
-.lx-state-shape-icon.lx-state-waiting .lx-state-icon {
+.lx-state.lx-state-waiting svg.lx-state-icon {
   fill: var(--color-waiting);
 }
 
-.lx-state-shape-icon.lx-state-waiting .lx-primary {
+.lx-state.lx-state-waiting .lx-primary {
   color: var(--color-waiting);
 }
 
-.lx-state-shape-icon.lx-state-disabled .lx-state-icon,
-.lx-state-shape-icon.lx-state-disabling .lx-state-icon {
+.lx-state.lx-state-disabled svg.lx-state-icon,
+.lx-state.lx-state-disabling svg.lx-state-icon {
   fill: var(--color-disabled);
 }
 
-.lx-state-shape-icon.lx-state-disabled .lx-primary,
-.lx-state-shape-icon.lx-state-disabling .lx-primary {
+.lx-state.lx-state-disabled .lx-primary,
+.lx-state.lx-state-disabling .lx-primary {
   color: var(--color-disabled);
 }
 
-.lx-state-shape-icon.lx-state-inactive .lx-state-icon {
+.lx-state.lx-state-inactive svg.lx-state-icon {
   fill: var(--color-inactive);
 }
 
-.lx-state-shape-icon.lx-state-inactive .lx-primary {
+.lx-state.lx-state-inactive .lx-primary {
   color: var(--color-inactive);
 }
 
-.lx-state-shape-icon.lx-state-finished .lx-state-icon,
-.lx-state-shape-icon.lx-state-finishing .lx-state-icon {
+.lx-state.lx-state-finished svg.lx-state-icon,
+.lx-state.lx-state-finishing svg.lx-state-icon {
   fill: var(--color-finished);
 }
 
-.lx-state-shape-icon.lx-state-finished .lx-primary,
-.lx-state-shape-icon.lx-state-finishing .lx-primary {
+.lx-state.lx-state-finished .lx-primary,
+.lx-state.lx-state-finishing .lx-primary {
   color: var(--color-finished);
 }
 
-.lx-state-shape-icon.lx-state-signed .lx-state-icon {
+.lx-state.lx-state-signed svg.lx-state-icon {
   fill: var(--color-signed);
 }
 
-.lx-state-shape-icon.lx-state-signed .lx-primary {
+.lx-state.lx-state-signed .lx-primary {
   color: var(--color-signed);
 }
 
-.lx-state-shape-icon.lx-state-deleted .lx-state-icon,
-.lx-state-shape-icon.lx-state-deleting .lx-state-icon {
+.lx-state.lx-state-deleted svg.lx-state-icon,
+.lx-state.lx-state-deleting svg.lx-state-icon {
   fill: var(--color-deleted);
 }
 
-.lx-state-shape-icon.lx-state-deleted .lx-primary,
-.lx-state-shape-icon.lx-state-deleting .lx-primary {
+.lx-state.lx-state-deleted .lx-primary,
+.lx-state.lx-state-deleting .lx-primary {
   color: var(--color-deleted);
 }
 
-.lx-state-shape-icon.lx-state-error .lx-state-icon {
+.lx-state.lx-state-error svg.lx-state-icon {
   fill: var(--color-error);
 }
 
-.lx-state-shape-icon.lx-state-error .lx-primary {
+.lx-state.lx-state-error .lx-primary {
   color: var(--color-error);
 }
 
-.lx-state-shape-icon.lx-state-default .lx-state-icon {
+.lx-state.lx-state-default svg.lx-state-icon {
   fill: var(--color-data);
 }
 
-.lx-state-shape-icon.lx-state-default .lx-primary {
+.lx-state.lx-state-default .lx-primary {
   color: var(--color-data);
 }
 
