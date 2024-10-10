@@ -1,5 +1,5 @@
 <script setup>
-import { provide, inject, computed, shallowRef, onMounted } from 'vue';
+import { provide, inject, computed, shallowRef, onMounted, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxExpander from '@/components/Expander.vue';
 import { lxDevUtils } from '@/utils';
@@ -119,10 +119,12 @@ const props = defineProps({
     }),
   },
 });
-const formMode = inject('formMode');
-const sectionIndexType = inject('formIndexType');
-const formIndex = inject('formIndex');
-const requiredTexts = inject('requiredTexts');
+const formMode = inject('formMode', 'none');
+const sectionIndexType = inject('formIndexType', 'default');
+const formIndex = inject('formIndex', null);
+const requiredTexts = inject('requiredTexts', () =>
+  ref({ required: '(obligāts)', optional: '(neobligāts)' })
+);
 const exactIndex = computed(() => {
   if (formIndex) return formIndex.value?.find((obj) => obj.id === props.id);
   return [];
@@ -139,8 +141,8 @@ const requiredModeValue = computed(() => {
 
 const rowRequiredTexts = computed(() => {
   const res = {
-    required: requiredTexts.required,
-    optional: requiredTexts.optional,
+    required: requiredTexts.value.required,
+    optional: requiredTexts.value.optional,
   };
   if (props.texts.required !== '(obligāts)' && props.texts.required) {
     res.required = props.texts.required;
@@ -171,7 +173,7 @@ onMounted(() => {
 });
 
 provide('sectionMode', requiredModeValue.value);
-provide('rowRequiredTexts', rowRequiredTexts.value);
+provide('rowRequiredTexts', rowRequiredTexts);
 provide('sectionColumnCount', props.columnCount);
 </script>
 <template>

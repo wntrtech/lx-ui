@@ -309,9 +309,13 @@ const bottomOutOfBounds = computed(() => {
 
 const indexTypeRef = computed(() => props.indexType);
 const indexRef = computed(() => props.index);
+const textsComp = computed(() => ({
+  required: props.texts.required,
+  optional: props.texts.optional,
+}));
 
 // eslint-disable-next-line vue/no-setup-props-destructure
-provide('requiredTexts', { required: props.texts.required, optional: props.texts.optional });
+provide('requiredTexts', textsComp);
 provide('formMode', props.requiredMode);
 provide('formIndexType', indexTypeRef);
 provide('formIndex', indexRef);
