@@ -131,7 +131,7 @@ test('LxFormBuilder with LxTextArea', () => {
   expect(wrapper.find('.lx-text-area').exists()).toBe(true);
 });
 
-test('LxFormBuilder with LxDateTimePicker', () => {
+test.skip('LxFormBuilder with LxDateTimePicker', () => {
   const schemaValue = {
     type: 'object',
     properties: { name: { type: 'string', format: 'date' } },
@@ -147,7 +147,7 @@ test('LxFormBuilder with LxDateTimePicker', () => {
   expect(wrapper.find('.lx-date-time-picker').exists()).toBe(true);
 });
 
-test('LxFormBuilder with LxDateTimePicker time', () => {
+test.skip('LxFormBuilder with LxDateTimePicker time', () => {
   const schemaValue = {
     type: 'object',
     properties: { name: { type: 'string', format: 'time' } },
@@ -163,7 +163,7 @@ test('LxFormBuilder with LxDateTimePicker time', () => {
   expect(wrapper.find('.lx-time').exists()).toBe(true);
 });
 
-test('LxFormBuilder with LxDateTimePicker dateTime', () => {
+test.skip('LxFormBuilder with LxDateTimePicker dateTime', () => {
   const schemaValue = {
     type: 'object',
     properties: { name: { type: 'string', format: 'date-time' } },

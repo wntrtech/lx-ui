@@ -6,7 +6,7 @@ import LxTextArea from '@/components/TextArea.vue';
 import LxToggle from '@/components/Toggle.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import { generateUUID } from '@/utils/stringUtils';
-import LxDateTimePicker from '@/components/DateTimePicker.vue';
+import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
 import LxPlaceholder from '@/components/forms/Placeholder.vue';
 import LxAppendableList from '@/components/forms/AppendableList.vue';
 import { useVuelidate } from '@vuelidate/core';

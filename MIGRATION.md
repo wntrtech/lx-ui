@@ -4,6 +4,10 @@
 
 ### Breaking changes
 
+#### LxDateTimePicker
+
+- `lx-date-pickers.css` new style file for updated/reworked LxDateTimePicker.
+
 #### LxPersonDisplay
 
 - `kind` prop no longer supported.

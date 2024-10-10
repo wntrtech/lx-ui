@@ -123,3 +123,11 @@ export function removeExtension(fileName) {
   }
   return fileName.slice(0, lastDotIndex);
 }
+
+/**
+ * Capitalize the first letter of provided string
+ * @returns {string} string with capitalized first letter
+ */
+export function capitalizeFirstLetter(string) {
+  return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
+}

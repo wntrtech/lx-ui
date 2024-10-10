@@ -7,6 +7,7 @@ const props = defineProps({
   customClass: { type: String, default: '' },
   disabled: { type: Boolean, default: false },
   triggerClick: { type: String, default: 'left' },
+  offsetSkid: { type: String, default: null },
 });
 
 const menuOpen = ref(false);
@@ -26,7 +27,7 @@ function preventClose(event) {
   event.stopPropagation();
 }
 
-defineExpose({ closeMenu, openMenu, preventClose });
+defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
 </script>
 
 <template>
@@ -40,6 +41,7 @@ defineExpose({ closeMenu, openMenu, preventClose });
       :hover="false"
       :interactive="true"
       :locked="false"
+      :offset-skid="offsetSkid"
       offset-distance="0"
       :show="menuOpen"
     >

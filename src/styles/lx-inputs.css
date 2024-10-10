@@ -11,7 +11,6 @@
 
 .lx-text-input-wrapper,
 .lx-text-area-wrapper,
-.lx-date-time-picker-wrapper,
 .lx-dropdown-wrapper,
 .lx-markdown-text-area-wrapper,
 .lx-toggle-wrapper,
@@ -30,7 +29,45 @@
 }
 
 .lx-date-time-picker-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
   width: var(--date-size);
+}
+
+.lx-date-time-picker-wrapper {
+  position: static;
+}
+
+.lx-date-time-picker-wrapper.lx-date,
+.lx-date-time-picker-wrapper.lx-time,
+.lx-date-time-picker-wrapper.lx-date-time {
+  display: grid;
+  grid-template-columns: 1fr 0;
+}
+
+.lx-date-time-picker-wrapper.lx-date .lx-datepicker-default,
+.lx-date-time-picker-wrapper.lx-time .lx-datepicker-default,
+.lx-date-time-picker-wrapper.lx-date-time .lx-datepicker-default {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.lx-date-time-picker-wrapper.lx-date:not(.lx-date-time-range-wrapper) svg.lx-invalidation-icon,
+.lx-date-time-picker-wrapper.lx-date:not(.lx-date-time-range-wrapper) svg.lx-date-time-icon,
+.lx-date-time-picker-wrapper.lx-time:not(.lx-date-time-range-wrapper) svg.lx-invalidation-icon,
+.lx-date-time-picker-wrapper.lx-time:not(.lx-date-time-range-wrapper) svg.lx-date-time-icon,
+.lx-date-time-picker-wrapper.lx-date-time:not(.lx-date-time-range-wrapper) svg.lx-invalidation-icon,
+.lx-date-time-picker-wrapper.lx-date-time:not(.lx-date-time-range-wrapper) svg.lx-date-time-icon {
+  position: static;
+  grid-column: 2;
+  grid-row: 1;
+  transform: none;
+  margin-left: -2rem;
+  z-index: 1;
+  margin-top: 0.7rem;
 }
 
 .lx-date-time-picker-wrapper.lx-date-time,
@@ -53,7 +90,7 @@
 
 .lx-date-time-picker-wrapper .lx-clear .lx-button {
   position: absolute;
-  right: 2.7rem;
+  right: 2.5rem;
   height: 2.5rem;
   width: 2.5rem;
   min-width: 2.5rem;
@@ -273,13 +310,26 @@
 .lx-region .lx-rotator:not(:disabled),
 .lx-modal .lx-rotator:not(:disabled),
 .lx-region .lx-canvas-element,
-.lx-modal .lx-canvas-element {
+.lx-modal .lx-canvas-element,
+.lx-region .lx-datepicker-default .lx-calendar-container,
+.lx-modal .lx-datepicker-default .lx-calendar-container {
   background-color: var(--color-background);
+}
+
+.lx-region .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before,
+.lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before {
+  background: linear-gradient(180deg, var(--color-background) 3%, transparent 100%);
+}
+
+.lx-region .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after,
+.lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after {
+  background: linear-gradient(0deg, var(--color-background) 3%, transparent 100%);
 }
 
 .lx-form-grid > .lx-main .lx-text-input:not(:disabled),
 .lx-form-grid > .lx-main .lx-text-area:not(:disabled),
 .lx-form-grid > .lx-main .lx-date-time-picker:not(:disabled),
+.lx-form-grid > .lx-main .lx-datepicker-default .lx-calendar-container,
 .lx-form-grid > .lx-main .lx-dropdown:not(:disabled),
 .lx-form-grid > .lx-main .lx-canvas-element:not(:disabled),
 .lx-form-grid
@@ -377,10 +427,6 @@
 .lx .lx-markdown-text-area a:hover {
   padding: 0.1em 0.1em;
   margin: -0.1em -0.1em;
-}
-
-.lx-date-time-picker {
-  font-family: var(--font-family-mono);
 }
 
 .lx-dropdown {
