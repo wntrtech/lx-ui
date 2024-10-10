@@ -34,3 +34,5 @@ export * from '@/components';
 
 // Allow util use individually
 export * from '@/utils';
+
+export * from '@/constants';

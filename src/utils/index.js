@@ -7,5 +7,6 @@ export * as lxFlowUtils from '@/utils/flowUtils';
 export * as lxDecorationUtils from '@/utils/decorationUtils';
 export * as lxArrayUtils from '@/utils/arrayUtils';
 export * as lxDevUtils from '@/utils/devUtils';
+export * as lxFileUtils from '@/utils/fileUtils';
 
 // Other components you plan to publish go here

@@ -1,25 +1,14 @@
 <script setup>
-import { ref, computed, shallowRef, watch, nextTick } from 'vue';
+import { ref, computed, shallowRef, watch, nextTick, onMounted } from 'vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
-
-const pdfjsLib = shallowRef(null);
-
-async function loadPdfLib() {
-  if (!pdfjsLib.value) {
-    // @ts-ignore
-    const pdfjs = await import('pdfjs-dist');
-    // @ts-ignore
-    const workerUrl = await import('pdfjs-dist/build/pdf.worker.mjs?url');
-    pdfjs.GlobalWorkerOptions.workerSrc = workerUrl.default;
-    pdfjsLib.value = pdfjs;
-  }
-  return pdfjsLib.value;
-}
+import { lxDevUtils } from '@/utils';
+import useLx from '@/hooks/useLx';
+import { MIME_TYPES } from '@/constants';
 
 const props = defineProps({
   modelValue: { type: String, default: null },
@@ -42,7 +31,23 @@ const props = defineProps({
       invalidFileUploadedDescription: 'Augšupielādējiet datni',
     }),
   },
+  /** @description list of mime types that should load they library on component initialization, useful when you already know that you will use pdf viewer and want to load it as soon as possible */
+  preloadLibs: { type: Array, default: () => [] },
 });
+
+const pdfjsLib = shallowRef(null);
+
+async function loadPdfLib() {
+  if (!pdfjsLib.value) {
+    // @ts-ignore
+    const pdfjs = await import('pdfjs-dist');
+    // @ts-ignore
+    const workerUrl = await import('pdfjs-dist/build/pdf.worker.mjs?url');
+    pdfjs.GlobalWorkerOptions.workerSrc = workerUrl.default;
+    pdfjsLib.value = pdfjs;
+  }
+  return pdfjsLib.value;
+}
 
 let observer = null;
 const scale = ref(1.25);
@@ -142,7 +147,7 @@ const renderingInProgress = computed(
   () => isPageRendering.value || (props.scrollable && !allPagesRendered.value)
 );
 
-const resetPdfViewer = computed(() => () => {
+function resetPdfViewer() {
   pdf.value = null;
   isFileUploaded.value = false;
   isExpanded.value = false;
@@ -151,7 +156,7 @@ const resetPdfViewer = computed(() => () => {
   totalPages.value = 0;
   showPdf.value = false;
   showInput.value = false;
-});
+}
 
 async function goToPage() {
   showInput.value = false;
@@ -370,23 +375,33 @@ watch(showInput, (newValue) => {
   }
 });
 
+const isLoadingPdf = ref(false);
+const base64PdfPrefix = `data:${MIME_TYPES.PDF};base64,`;
+
+async function loadPdfFromBase64(base64) {
+  try {
+    isLoadingPdf.value = true;
+    const base64Data = base64.slice(base64PdfPrefix.length);
+    await loadPdfFromFile(base64Data);
+    isFileUploaded.value = true;
+    showPdf.value = true;
+  } catch (error) {
+    lxDevUtils.logError('Error loading PDF file', useLx().getGlobals().environment);
+  } finally {
+    isLoadingPdf.value = false;
+  }
+}
+
 watch(
   () => props.modelValue,
   async (newValue) => {
-    if (newValue) {
-      const base64Prefix = 'data:application/pdf;base64,';
-      if (newValue.startsWith(base64Prefix)) {
-        const base64Data = newValue.slice(base64Prefix.length);
-        await loadPdfFromFile(base64Data);
-        isFileUploaded.value = true;
-        showPdf.value = true;
-      } else {
-        resetPdfViewer.value();
-      }
-    } else {
-      resetPdfViewer.value();
+    if (newValue?.startsWith(base64PdfPrefix)) {
+      await loadPdfFromBase64(newValue);
+      return;
     }
-  }
+    resetPdfViewer();
+  },
+  { immediate: true }
 );
 
 const isNextBtnDisabled = computed(
@@ -428,98 +443,112 @@ function toolbarActionClick(action) {
   else if (action === 'zoomOut') debouncedZoomOut();
   else if (action === 'fullscreen') toggleExpand();
 }
+
+onMounted(() => {
+  if (props.preloadLibs?.includes(MIME_TYPES.PDF)) {
+    loadPdfLib();
+  }
+});
 </script>
 
 <template>
   <div class="lx-file-viewer" :class="[{ 'lx-file-viewer-fullscreen': isExpanded }]">
-    <LxEmptyState
-      v-if="!showPdf"
-      :label="texts.invalidFileUploadedLabel"
-      :description="texts.invalidFileUploadedDescription"
-    />
-    <LxToolbar
-      v-if="showPdf"
-      :action-definitions="toolbarActions"
-      @action-click="toolbarActionClick"
-      class="lx-file-viewer-toolbar"
-    >
-      <template #rightArea>
-        <LxToolbarGroup v-if="pdf">
-          <LxButton
-            icon="first-page"
-            @click="firstPage"
-            kind="ghost"
-            :title="props.texts.firstPage"
-            :disabled="isPrevBtnDisabled"
-          />
-          <LxButton
-            icon="previous-page"
-            @click="debouncedPrevPage"
-            kind="ghost"
-            :title="props.texts.prevPage"
-            :disabled="isPrevBtnDisabled"
-          />
-          <div class="pdf-page-input" ref="pageInputWrapper">
-            <div
-              class="placeholder"
-              v-if="!showInput || renderingInProgress"
-              @click="showInput = true"
-              @keydown.enter="showInput = true"
-              tabindex="0"
-              :title="props.texts.inputTooltip"
-            >
-              {{ currentPage }} / {{ totalPages }}
-            </div>
-            <LxTextInput
-              v-if="showInput && !renderingInProgress"
-              mask="integer"
-              v-model.number="inputPage"
-              @keydown.enter="goToPage"
-            />
-          </div>
-          <LxButton
-            icon="arrow-right"
-            @click="goToPage"
-            kind="ghost"
-            :title="props.texts.goToPage"
-            :disabled="!showInput || renderingInProgress"
-          />
-          <LxButton
-            icon="next-page"
-            @click="debouncedNextPage"
-            kind="ghost"
-            :title="props.texts.nextPage"
-            :disabled="isNextBtnDisabled"
-          />
-          <LxButton
-            icon="last-page"
-            @click="lastPage"
-            kind="ghost"
-            :title="props.texts.lastPage"
-            :disabled="isNextBtnDisabled"
-          />
-        </LxToolbarGroup>
-      </template>
-    </LxToolbar>
-    <div
-      v-if="showPdf"
-      class="lx-pdf-wrapper"
-      :class="[
-        { 'lx-pdf-wrapper-scrollable': props.scrollable && !isExpanded },
-        { 'lx-pdf-wrapper-fullscreen': isExpanded },
-      ]"
-    >
-      <div class="lx-pdf-canvas-wrapper">
-        <canvas v-if="!scrollable" class="pdf-canvas" ref="canvas" />
-        <canvas
-          v-else
-          v-for="pageNum in totalPages"
-          :key="pageNum"
-          ref="canvasArray"
-          class="pdf-canvas"
-        />
-        <LxLoader class="lx-file-viewer-loader" :loading="renderingInProgress" size="l" />
+    <template v-if="isLoadingPdf">
+      <div class="lx-pdf-wrapper" :class="[{ 'lx-pdf-wrapper-scrollable': props.scrollable }]">
+        <div class="lx-pdf-canvas-wrapper">
+          <LxLoader class="lx-file-viewer-loader" :loading="true" size="l" />
+        </div>
       </div>
-    </div>
+    </template>
+    <template v-else-if="!showPdf">
+      <LxEmptyState
+        :label="texts.invalidFileUploadedLabel"
+        :description="texts.invalidFileUploadedDescription"
+      />
+    </template>
+    <template v-else>
+      <LxToolbar
+        :action-definitions="toolbarActions"
+        @action-click="toolbarActionClick"
+        class="lx-file-viewer-toolbar"
+      >
+        <template #rightArea>
+          <LxToolbarGroup v-if="pdf">
+            <LxButton
+              icon="first-page"
+              @click="firstPage"
+              kind="ghost"
+              :title="props.texts.firstPage"
+              :disabled="isPrevBtnDisabled"
+            />
+            <LxButton
+              icon="previous-page"
+              @click="debouncedPrevPage"
+              kind="ghost"
+              :title="props.texts.prevPage"
+              :disabled="isPrevBtnDisabled"
+            />
+            <div class="pdf-page-input" ref="pageInputWrapper">
+              <div
+                class="placeholder"
+                v-if="!showInput || renderingInProgress"
+                @click="showInput = true"
+                @keydown.enter="showInput = true"
+                tabindex="0"
+                :title="props.texts.inputTooltip"
+              >
+                {{ currentPage }} / {{ totalPages }}
+              </div>
+              <LxTextInput
+                v-if="showInput && !renderingInProgress"
+                mask="integer"
+                v-model.number="inputPage"
+                @keydown.enter="goToPage"
+              />
+            </div>
+            <LxButton
+              icon="arrow-right"
+              @click="goToPage"
+              kind="ghost"
+              :title="props.texts.goToPage"
+              :disabled="!showInput || renderingInProgress"
+            />
+            <LxButton
+              icon="next-page"
+              @click="debouncedNextPage"
+              kind="ghost"
+              :title="props.texts.nextPage"
+              :disabled="isNextBtnDisabled"
+            />
+            <LxButton
+              icon="last-page"
+              @click="lastPage"
+              kind="ghost"
+              :title="props.texts.lastPage"
+              :disabled="isNextBtnDisabled"
+            />
+          </LxToolbarGroup>
+        </template>
+      </LxToolbar>
+      <div
+        class="lx-pdf-wrapper"
+        :class="[
+          { 'lx-pdf-wrapper-scrollable': props.scrollable && !isExpanded },
+          { 'lx-pdf-wrapper-fullscreen': isExpanded },
+        ]"
+      >
+        <div class="lx-pdf-canvas-wrapper">
+          <canvas v-if="!scrollable" class="pdf-canvas" ref="canvas" />
+          <canvas
+            v-else
+            v-for="pageNum in totalPages"
+            :key="pageNum"
+            ref="canvasArray"
+            class="pdf-canvas"
+          />
+          <LxLoader class="lx-file-viewer-loader" :loading="renderingInProgress" size="l" />
+        </div>
+      </div>
+    </template>
   </div>
 </template>

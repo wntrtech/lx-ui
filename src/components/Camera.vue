@@ -146,7 +146,7 @@ async function switchCamera(val) {
     }
   } catch (errorVal) {
     error.value = true;
-    lxDevUtils.logError('Error switching cameras', errorVal);
+    lxDevUtils.logError('Error switching cameras', useLx().getGlobals()?.environment);
   } finally {
     loading.value = false;
   }
