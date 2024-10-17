@@ -1064,7 +1064,14 @@ watch(
                     isObject(row?.[col?.attributeName]) && !isValueEmpty(row?.[col?.attributeName])
                   "
                 >
-                  <div class="lx-grid-icon-wrapper">
+                  <div
+                    class="lx-grid-icon-wrapper"
+                    :class="{
+                      'lx-icon-has-tooltip':
+                        row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label,
+                    }"
+                    :title="row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label"
+                  >
                     <template
                       v-if="
                         isValidString(row?.[col?.attributeName]?.icon) ||
@@ -1078,7 +1085,9 @@ watch(
                             : 'default'
                         "
                         :icon-set="row?.[col?.attributeName]?.iconSet"
-                        :title="row?.[col?.attributeName]?.label"
+                        :title="
+                          row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label
+                        "
                         :customClass="`lx-grid-column-icon ${row?.[col?.attributeName]?.category}`"
                       />
                       <p
@@ -1126,7 +1135,7 @@ watch(
               <LxPersonDisplay
                 v-if="col.type === 'person'"
                 :value="row[col.attributeName]"
-                :texts="texts?.personDisplay"
+                :texts="row[col.attributeName]?.texts || texts?.personDisplay"
                 size="s"
               />
               <template v-if="col.type === 'array'">
@@ -1373,7 +1382,7 @@ watch(
             <LxPersonDisplay
               v-else-if="col.type === 'person'"
               :value="item[col.attributeName]"
-              :texts="texts?.personDisplay"
+              :texts="item[col.attributeName]?.texts || texts?.personDisplay"
               size="s"
             />
           </LxRow>
@@ -1410,18 +1419,21 @@ watch(
                   isObject(item?.[col?.attributeName]) && !isValueEmpty(item?.[col?.attributeName])
                 "
               >
-                <div class="lx-grid-icon-wrapper">
+                <div
+                  class="lx-grid-icon-wrapper"
+                  :class="{
+                    'lx-icon-has-tooltip':
+                      item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label,
+                  }"
+                  :title="item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label"
+                >
                   <LxIcon
                     :value="item?.[col?.attributeName]?.icon"
                     :icon-set="item?.[col?.attributeName]?.iconSet"
-                    :title="item?.[col?.attributeName]?.label"
+                    :title="item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label"
                     :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
                   />
-                  <p
-                    v-if="col.size !== 'xs'"
-                    class="lx-grid-icon-text"
-                    :title="item?.[col?.attributeName]?.label"
-                  >
+                  <p v-if="col.size !== 'xs'" class="lx-grid-icon-text">
                     {{ item?.[col?.attributeName].label }}
                   </p>
                 </div>

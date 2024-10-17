@@ -296,13 +296,15 @@
   fill: inherit;
 }
 
-.lx .lx-data-grid-wrapper.lx-data-grid .lx-cell-secondary p.lx-person-display-name,
+.lx .lx-data-grid-wrapper .lx-data-grid .lx-cell-secondary p.lx-person-display-name,
 .lx .lx-data-grid-wrapper .lx-data-grid .lx-cell-extra p.lx-person-display-name {
   font-weight: normal;
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: normal;
   word-break: normal;
+  margin-top: 0.3rem;
+  margin-bottom: 0.15rem;
 }
 
 .lx .lx-data-grid .flag-column:has(.lx-flag),
@@ -310,6 +312,10 @@
 .lx .lx-data-grid .lx-grid-icon-wrapper:has(.lx-grid-column-icon) {
   margin-top: -5px;
   margin-bottom: -5px;
+}
+
+.lx .lx-data-grid-wrapper .lx-grid-icon-wrapper.lx-icon-has-tooltip {
+  cursor: help;
 }
 
 .lx .lx-data-grid .lx-empty-person-value {
@@ -369,11 +375,11 @@
   display: contents;
 }
 
-.lx-data-grid > .lx-grid-table > .lx-grid-content > .lx-grid-row > .lx-cell-action .lx-button > svg {
+.lx-data-grid .lx-grid-content > .lx-grid-row > .lx-cell-action .lx-button > svg {
   fill: var(--color-data);
 }
 
-.lx-data-grid > .lx-grid-table > .lx-grid-content > .lx-grid-row > .lx-cell-action .lx-button:hover > svg {
+.lx-data-grid .lx-grid-content > .lx-grid-row > .lx-cell-action .lx-toolbar > .lx-button:hover > svg {
   fill: var(--color-interactive-hover-foreground);
 }
 
@@ -891,7 +897,7 @@
 }
 
 .lx .lx-data-grid .lx-item-display > .lx-flag {
-  margin-top: 0.1rem;
+  margin-top: 0.15rem;
 }
 
 .lx .lx-data-grid-wrapper .lx-data-grid .flag-column p.lx-data {
@@ -900,6 +906,8 @@
   text-overflow: ellipsis;
   word-wrap: normal;
   word-break: normal;
+  margin-top: 0.3rem;
+  margin-bottom: 0.15rem;
 }
 
 .lx-justified-toolbar .lx-group {
@@ -994,13 +1002,11 @@
   grid-template-columns: auto 1fr;
 }
 
-.lx-grid-icon-text {
-  padding-top: 2px;
-}
-
 .lx-data-grid .lx-grid-icon-text {
   overflow: hidden;
   text-overflow: ellipsis;
+  margin-top: 0.3rem;
+  margin-bottom: 0.15rem;
 }
 
 .lx-data-grid-wrapper .lx-appendable-list .lx-row > div.lx-vertical {
