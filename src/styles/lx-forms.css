@@ -826,7 +826,7 @@
 }
 
 .lx-tab-control .lx-dropdown-container {
-  display: block;
+  display: none;
   position: sticky;
   top: calc(var(--nav-row-size) + var(--row-size));
   z-index: 10;
@@ -865,9 +865,10 @@
   padding: 0.5rem 0 0.5rem 1rem;
 }
 
-@media (min-width: 700px) {
-  .lx-tab-control .lx-dropdown-container {
-    display: none;
+@media (max-width: 700px) {
+  .lx-tab-control .tab-control-default .lx-dropdown-container {
+    display: block;
+    width: 100%;
   }
 }
 

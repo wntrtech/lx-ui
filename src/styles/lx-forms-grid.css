@@ -643,8 +643,9 @@ svg .lx-shade {
 }
 
 .lx-tab-control header.lx-toolbar .lx-tab-container,
-.lx-tab-control header.lx-toolbar .lx-group {
-  display: none;
+.lx-tab-control header.lx-toolbar .lx-group,
+.lx-tab-control header.lx-toolbar {
+  display: flex;
 }
 
 .lx-form-grid > .lx-tab-control .lx-tab-container {
@@ -1598,10 +1599,17 @@ p .lx-person-display-wrapper {
   }
 }
 
-@media (min-width: 700px) {
-  .lx-tab-control header.lx-toolbar .lx-tab-container,
-  .lx-tab-control header.lx-toolbar .lx-group,
-  .lx-tab-control header.lx-toolbar {
-    display: flex;
+@media (max-width: 700px) {
+  .lx-tab-control header.lx-toolbar.tab-control-default .lx-tab-container,
+  .lx-tab-control header.lx-toolbar.tab-control-default .lx-group{
+    display: none;
+  }
+  
+  .lx-tab-control header.lx-toolbar .lx-tab-container .lx-tab .lx-primary{
+    display: none;
+  }
+
+  .lx-tab-control header.lx-toolbar .lx-tab-container .lx-tab svg{
+    margin-right: 0.5rem;
   }
 }

@@ -92,12 +92,15 @@
   flex-grow: 0;
   margin-bottom: 0.2rem;
   margin-left: 0.5rem;
-  fill: var(--color-bad);
+}
+
+.lx-tab-control .lx-tab-container .lx-tab svg.invalid {
   visibility: hidden;
 }
 
 .lx-tab-control .lx-tab-container .lx-tab.lx-invalid svg {
   visibility: visible;
+  fill: var(--color-bad)
 }
 
 .lx-tab-control .lx-tab-container .lx-tab.lx-invalid .lx-primary {
@@ -181,4 +184,17 @@
   opacity: 0;
   opacity: var(--tab-control-shadow-opacity);
   pointer-events: none;
+}
+
+.lx-tab-control header.lx-toolbar .lx-tab-container .lx-tab svg{
+  padding-right: 0;
+}
+
+.lx-tab-control .lx-tab svg.item-icon{
+  padding-right: 0.25rem;
+  fill: var(--color-label)
+}
+
+.lx-tab-control .lx-tab.lx-selected svg.item-icon{
+  fill: var(--color-data)
 }

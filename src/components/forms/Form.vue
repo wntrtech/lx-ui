@@ -466,6 +466,10 @@ function clearHighlights() {
   }
 }
 
+const indexHasIcons = computed(() =>
+  props.index.some((obj) => Object.prototype.hasOwnProperty.call(obj, 'icon'))
+);
+
 onMounted(() => {
   const elementForm = document.getElementById(props.id);
   props.index?.forEach((o) => {
@@ -732,6 +736,7 @@ defineExpose({ highlightRow, clearHighlights });
       :value="props.index"
       v-if="props.indexType === 'tabs' && index?.length > 0"
       @click="hideAll"
+      :kind="indexHasIcons ? 'combo' : 'default'"
     >
       <template #body>
         <div

@@ -8,6 +8,7 @@ import { useElementBounding, useElementSize } from '@vueuse/core';
 const props = defineProps({
   value: { type: Array, default: () => [] },
   level: { type: Number, default: 1 },
+  kind: { type: String, default: 'default' }, // 'default', 'icon-only', 'combo'
 });
 
 const activeItemCode = ref('');
@@ -72,9 +73,14 @@ defineExpose({ setActiveTab, isActiveTab });
     <header
       ref="tabHeader"
       class="lx-toolbar"
-      :class="[{ 'lx-sticky': level === 1 }, { 'lx-sticky-2': level > 1 }]"
+      :class="[
+        { 'lx-sticky': level === 1 },
+        { 'lx-sticky-2': level > 1 },
+        { 'tab-control-default': kind === 'default' },
+      ]"
     >
       <div class="lx-tab-container">
+        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
         <div
           :id="`tab-${t.id}`"
           v-for="t in props.value"
@@ -85,8 +91,13 @@ defineExpose({ setActiveTab, isActiveTab });
           :title="t.invalid ? t.invalidationMessage : ''"
           @click="setActiveTab(t.id)"
         >
-          <p class="lx-primary">{{ t.name }}</p>
-          <lx-icon value="invalid" />
+          <p class="lx-primary" v-if="kind !== 'icon-only'">{{ t.name }}</p>
+          <LxIcon :value="t.icon" customClass="item-icon" v-if="kind !== 'default' && !t.invalid" />
+          <lx-icon
+            value="invalid"
+            customClass="invalid"
+            v-show="!(kind !== 'default' && !t.invalid)"
+          />
         </div>
       </div>
       <div class="lx-group">
