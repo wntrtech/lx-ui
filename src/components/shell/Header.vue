@@ -36,6 +36,7 @@ const props = defineProps({
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark'] },
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
+  hasDeviceFonts: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
   clickSafeAlerts: { type: Boolean, default: false },
@@ -85,6 +86,7 @@ const props = defineProps({
       themeDark: 'Tumšais režīms',
       themeContrast: 'Kontrastais režīms',
       animations: 'Samazināt kustības',
+      fonts: 'Iekārtas fonti',
       showAllLabel: 'Vairāk',
       megaMenuTitle: 'Lietotnes',
     }),
@@ -110,6 +112,7 @@ const emits = defineEmits([
   'update:selected-alternative-profile',
   'update:theme',
   'update:hasAnimations',
+  'update:hasDeviceFonts',
   'update:selectedMegaMenuItem',
 ]);
 
@@ -202,6 +205,15 @@ const animationsModel = computed({
   },
   set(value) {
     emits('update:hasAnimations', value);
+  },
+});
+
+const deviceFontsModel = computed({
+  get() {
+    return props.hasDeviceFonts;
+  },
+  set(value) {
+    emits('update:hasDeviceFonts', value);
   },
 });
 
@@ -424,6 +436,7 @@ const selectedMegaMenuItemModel = computed({
         v-model:selectedLanguage="selectedLanguageModel"
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
+        v-model:hasDeviceFonts="deviceFontsModel"
         v-model:selectedContextPerson="selectedContextPersonModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
         @mega-menu-show-all-click="triggerShowAllClick"
@@ -474,6 +487,7 @@ const selectedMegaMenuItemModel = computed({
       v-model:selectedLanguage="selectedLanguageModel"
       v-model:theme="themeModel"
       v-model:hasAnimations="animationsModel"
+      v-model:hasDeviceFonts="deviceFontsModel"
       v-model:selectedContextPerson="selectedContextPersonModel"
       @open-alternative-profiles-modal="openAlternativeProfilesModal"
       @open-context-person-modal="openContextPersonModal"

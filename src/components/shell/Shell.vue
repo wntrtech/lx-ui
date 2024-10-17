@@ -53,6 +53,7 @@ const emits = defineEmits([
   'update:selected-context-person',
   'update:selected-alternative-profile',
   'update:hasAnimations',
+  'update:hasDeviceFonts',
   'idleModalPrimary',
   'idleModalSecondary',
   'confirmModalClosed',
@@ -96,6 +97,7 @@ const props = defineProps({
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: null },
+  hasDeviceFonts: { type: Boolean, default: null },
 
   hasLanguagePicker: { type: Boolean, default: false },
   languages: { type: Array, default: () => [] },
@@ -167,6 +169,7 @@ const props = defineProps({
       themeDark: 'Tumšais režīms',
       themeContrast: 'Kontrastainais režīms',
       animations: 'Samazināt kustības',
+      fonts: 'Iekārtas fonti',
       confirmModalSecondaryDefaultLabel: 'Nē',
       confirmModalPrimaryDefaultLabel: 'Jā',
       previousAlertTitle: 'Iepriekšējais paziņojums',
@@ -222,6 +225,49 @@ const themeModel = computed({
   },
 });
 
+const lxElement = document.querySelector('.lx');
+const fontToggle = ref(false);
+
+const deviceFontsStorageKey = ref(
+  `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-device-fonts`
+);
+
+function applyDeviceFonts(isEnabled) {
+  if (isEnabled) {
+    lxElement.style.setProperty('--font-family', 'system-ui, sans-serif');
+    lxElement.style.setProperty('--font-family-mono', 'ui-monospace, monospace, sans-serif');
+  } else {
+    lxElement.style.removeProperty('--font-family');
+    lxElement.style.removeProperty('--font-family-mono');
+  }
+}
+
+const deviceFontsModel = computed({
+  get() {
+    if (props.hasDeviceFonts !== null) {
+      return props.hasDeviceFonts;
+    }
+    const storedValue = localStorage.getItem(deviceFontsStorageKey.value);
+    if (storedValue) {
+      return JSON.parse(storedValue);
+    }
+    return fontToggle.value;
+  },
+  set(value) {
+    emits('update:hasDeviceFonts', value);
+    localStorage.setItem(deviceFontsStorageKey.value, JSON.stringify(value));
+    fontToggle.value = value;
+    applyDeviceFonts(value);
+  },
+});
+
+watch(
+  () => deviceFontsModel.value,
+  (newValue) => {
+    applyDeviceFonts(newValue);
+  }
+);
+
 const defaultAnimations = ref(true);
 
 const animationsModel = computed({
@@ -229,7 +275,6 @@ const animationsModel = computed({
     if (props.hasAnimations === null) {
       return defaultAnimations.value;
     }
-
     return props.hasAnimations;
   },
   set(value) {
@@ -467,6 +512,8 @@ onMounted(() => {
   }
   animationModeChange(animationsModel.value, storageKey);
 
+  applyDeviceFonts(deviceFontsModel.value);
+
   defineVars();
 });
 
@@ -512,6 +559,7 @@ const selectedMegaMenuItemModel = computed({
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
           @language-changed="languageChanged"
           @help-click="helpClicked"
           @log-out="logOut"
@@ -625,6 +673,7 @@ const selectedMegaMenuItemModel = computed({
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
           v-model:selectedContextPerson="selectedContextPersonModel"
@@ -658,6 +707,7 @@ const selectedMegaMenuItemModel = computed({
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
           @nav-toggle="navToggle"
           @navClick="navClick"
           :selectedNavItems="navItemsSelected"
@@ -869,6 +919,7 @@ const selectedMegaMenuItemModel = computed({
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
           @language-changed="languageChanged"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
@@ -897,6 +948,7 @@ const selectedMegaMenuItemModel = computed({
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
           @nav-toggle="navToggle"
           @navClick="navClick"
           :selectedNavItems="navItemsSelected"

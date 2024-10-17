@@ -23,6 +23,7 @@ const props = defineProps({
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
+  hasDeviceFonts: { type: Boolean, default: false },
   hasLanguagePicker: { type: Boolean, default: false },
   languages: { type: Array, default: () => [] },
   selectedLanguage: { type: Object, default: null },
@@ -40,6 +41,7 @@ const props = defineProps({
       themeDark: 'Tumšais režīms',
       themeContrast: 'Kontrastais režīms',
       animations: 'Samazināt kustības',
+      fonts: 'Iekārtas fonti',
     }),
   },
 });
@@ -59,6 +61,7 @@ const emits = defineEmits([
   'update:selected-language',
   'update:theme',
   'update:hasAnimations',
+  'update:hasDeviceFonts',
   'navClick',
 ]);
 
@@ -97,6 +100,15 @@ const animationsModel = computed({
   },
 });
 
+const deviceFontsModel = computed({
+  get() {
+    return props.hasDeviceFonts;
+  },
+  set(value) {
+    emits('update:hasDeviceFonts', value);
+  },
+});
+
 function navClick(id) {
   emits('navClick', id);
 }
@@ -111,10 +123,10 @@ function navClick(id) {
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton 
-          :label="item.label" 
-          :href="item.to" 
-          :icon="item.icon" 
+        <LxButton
+          :label="item.label"
+          :href="item.to"
+          :icon="item.icon"
           @click="navClick(item?.id)"
         />
       </li>
@@ -130,6 +142,7 @@ function navClick(id) {
         v-model:selectedLanguage="selectedLanguageModel"
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
+        v-model:hasDeviceFonts="deviceFontsModel"
         :texts="texts"
       />
     </ul>

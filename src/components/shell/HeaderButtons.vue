@@ -25,6 +25,7 @@ const props = defineProps({
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark'] },
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
+  hasDeviceFonts: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
   clickSafeAlerts: { type: Boolean, default: false },
@@ -58,6 +59,7 @@ const props = defineProps({
       themeDark: 'Tumšais režīms',
       themeContrast: 'Kontrastais režīms',
       animations: 'Samazināt kustības',
+      fonts: 'Iekārtas fonti',
       showAllLabel: 'Vairāk',
       megaMenuTitle: 'Lietotnes',
     }),
@@ -77,6 +79,7 @@ const emits = defineEmits([
   'update:selected-language',
   'update:theme',
   'update:hasAnimations',
+  'update:hasDeviceFonts',
   'update:selectedMegaMenuItem',
 ]);
 
@@ -277,6 +280,15 @@ const animationsModel = computed({
   },
 });
 
+const deviceFontsModel = computed({
+  get() {
+    return props.hasDeviceFonts;
+  },
+  set(value) {
+    emits('update:hasDeviceFonts', value);
+  },
+});
+
 function triggerThemeMenu(e) {
   themeMenu.value.preventClose(e);
 }
@@ -323,6 +335,10 @@ function triggerShowAllClick() {
           <div class="lx-animations-controller">
             <p>{{ texts.animations }}</p>
             <LxToggle v-model="animationsModel" @click="triggerThemeMenu"></LxToggle>
+          </div>
+          <div class="lx-fonts-controller">
+            <p>{{ texts.fonts }}</p>
+            <LxToggle v-model="deviceFontsModel" @click="triggerThemeMenu"></LxToggle>
           </div>
         </template>
       </LxDropDownMenu>
@@ -604,6 +620,10 @@ function triggerShowAllClick() {
               <div class="lx-animations-controller">
                 <p>{{ texts.animations }}</p>
                 <LxToggle v-model="animationsModel"></LxToggle>
+              </div>
+              <div class="lx-fonts-controller">
+                <p>{{ texts.fonts }}</p>
+                <LxToggle v-model="deviceFontsModel" @click="triggerThemeMenu"></LxToggle>
               </div>
             </template>
           </LxDropDownMenu>
