@@ -25,7 +25,7 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
-  modelValue: { type: [String, Date], default: null },
+  modelValue: { type: [String, Date, Object], default: null },
   mode: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   masks: { type: Object, default: () => {} },
@@ -40,14 +40,19 @@ const props = defineProps({
   specialDatesAttributes: { type: Array, default: null },
   clearIfNotExact: { type: Boolean, default: false },
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
+  pickerType: { type: String, default: 'single' }, // 'single', 'range'
   texts: {
     type: Object,
     default: () => ({
       clear: 'Attīrīt',
-      todayButton: 'Šodiena',
       clearButton: 'Attīrīt vērtību',
+      todayButton: 'Šodiena',
+      clearStart: 'Notīrīt sākuma vērtību',
+      clearEnd: 'Notīrīt beigu vērtību',
       next: 'Nākošais',
       previous: 'Iepriekšējais',
+      doNotIndicateStart: 'Nenorādīt sākumu',
+      doNotIndicateEnd: 'Nenorādīt beigas',
     }),
   },
 });
@@ -66,11 +71,25 @@ const minDateRef = ref(null);
 const maxDateRef = ref(null);
 
 const modelInput = ref(null);
+const modelEndDateInput = ref(null);
+
+const activeInput = ref(null);
 
 const windowSize = useWindowSize();
 
-function validateIfExact(e) {
-  if (!e.target.value) {
+// Computed model value for selected date handling
+const model = computed({
+  get() {
+    if (!props.modelValue) return null;
+    return props.modelValue;
+  },
+  set(value) {
+    emits('update:modelValue', value);
+  },
+});
+
+function validateIfExact(e, type = 'startInput') {
+  if (props.pickerType === 'single' && !e.target.value) {
     emits('update:modelValue', null);
     return;
   }
@@ -79,7 +98,27 @@ function validateIfExact(e) {
     const date = e.target.value;
     const inputMask = props.masks?.input || 'dd.MM.yyyy.';
 
-    if (inputMask.length !== date.length) {
+    if (date && inputMask.length !== date.length) {
+      if (props.pickerType === 'range') {
+        if (type === 'startInput' && model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: model.value.end,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+
+        if (type === 'endInput' && model.value.start) {
+          const updatedDatesObject = {
+            start: model.value.start,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+      }
+
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
       return;
@@ -96,8 +135,30 @@ function validateIfExact(e) {
     const normalizedDay = zeroPad(day);
     const normalizedMonth = zeroPad(month);
 
+    const dateString = `${year}-${normalizedMonth}-${normalizedDay}`; // "YYYY-MM-DD"
+
     // Check if the constructed date is valid
-    if (!isDateValid(`${year}-${normalizedMonth}-${normalizedDay}`)) {
+    if (day && month && year && !isDateValid(dateString)) {
+      if (props.pickerType === 'range') {
+        if (type === 'startInput' && model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: model.value.end,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+
+        if (type === 'endInput' && model.value.start) {
+          const updatedDatesObject = {
+            start: model.value.start,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+      }
+
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
       return;
@@ -105,20 +166,127 @@ function validateIfExact(e) {
 
     // Check if the date is within the min/max range
     if (
-      !canSelectDate(
-        new Date(`${year}-${normalizedMonth}-${normalizedDay}`),
-        props.minDate,
-        props.maxDate,
-        'date'
-      )
+      day &&
+      month &&
+      year &&
+      !canSelectDate(new Date(dateString), props.minDate, props.maxDate, 'date')
     ) {
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
       return;
     }
+
     // Update the value with the valid date
-    const updatedValue = new Date(year, month - 1, day);
-    emits('update:modelValue', updatedValue);
+    const updatedValue = day && month && year ? new Date(year, month - 1, day) : null;
+    const updatedStartValue = new Date('1900-01-01');
+    const updatedEndValue = new Date('9999-12-31');
+
+    if (props.pickerType === 'single') {
+      emits('update:modelValue', updatedValue);
+    }
+    if (props.pickerType === 'range') {
+      if (type === 'startInput') {
+        if (!updatedValue && model.value.end) {
+          const updatedDatesObject = {
+            start: updatedStartValue,
+            end: model.value.end,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (!updatedValue && !model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && model.value.start && model.value.end) {
+          const updatedDatesObject = {
+            start: updatedValue,
+            end: model.value.end,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && !model.value.start && model.value.end) {
+          const updatedDatesObject = {
+            start: updatedValue,
+            end: model.value.end,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && model.value.start && !model.value.end) {
+          const updatedDatesObject = {
+            start: updatedValue,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && !model.value.start && !model.value.end) {
+          const updatedDatesObject = {
+            start: updatedValue,
+            end: updatedEndValue,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+      }
+
+      if (type === 'endInput') {
+        if (!updatedValue && model.value.start) {
+          const updatedDatesObject = {
+            start: props.modelValue.start,
+            end: updatedEndValue,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (!updatedValue && !model.value.start) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && model.value.start && model.value.end) {
+          const updatedDatesObject = {
+            start: model.value.start,
+            end: updatedValue,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && model.value.start && !model.value.end) {
+          const updatedDatesObject = {
+            start: model.value.start,
+            end: updatedValue,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && !model.value.start && model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: updatedValue,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && !model.value.start && !model.value.end) {
+          const updatedDatesObject = {
+            start: updatedStartValue,
+            end: updatedValue,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+      }
+    }
   }
 
   if (props.mode === 'time') {
@@ -207,27 +375,47 @@ function validateIfExact(e) {
   }
 }
 
-// Computed model value for selected date handling
-const model = computed({
-  get() {
-    if (!props.modelValue) return null;
-    return props.modelValue;
-  },
-  set(value) {
-    emits('update:modelValue', value);
-  },
-});
-
 const handleFocusOut = (e) => {
   if (e.relatedTarget && !containerRef.value.contains(e.relatedTarget)) {
     dropDownMenuRef.value?.closeMenu();
   }
 };
 
-function handleOpen() {
+function handleOpen(type) {
+  activeInput.value = type;
   // Prevent opening the menu again if it's already open
   if (!dropDownMenuRef.value?.menuOpen) {
     dropDownMenuRef.value?.openMenu();
+  }
+}
+
+function handleClose() {
+  activeInput.value = null;
+  // Prevent closing the menu again if it's already close
+  if (dropDownMenuRef.value?.menuOpen) {
+    dropDownMenuRef.value?.closeMenu();
+  }
+}
+
+// Helper function to format date according to mode
+function formatDateByMode(date) {
+  switch (props.mode) {
+    case 'date':
+      return formatInputRawDate(props.masks.input, date);
+    case 'date-time':
+      return formatInputRawDateTime(props.masks.inputDateTime24hr, date);
+    case 'time':
+      return formatInputRawTime(props.masks.inputTime24hr, date);
+    case 'month':
+      return getMonthNameByOrder(localizedMonthsList.value, date.getMonth(), true);
+    case 'year':
+      return date.getFullYear();
+    case 'month-year':
+      return getMonthYearString(props.locale, date?.getMonth(), date?.getFullYear());
+    case 'quarters':
+      return extractQuarterFromDate(date, props.masks.inputQuarters);
+    default:
+      return formatInputRawDate(props.masks.input, date);
   }
 }
 
@@ -247,22 +435,38 @@ const placeholderComputed = computed(() => {
   }
 });
 
-const isMobileScreen = computed(() => windowSize.width.value < 450);
+const isMobileScreen = computed(() => windowSize.width.value < 640);
 
 // Computed determines offset amount for right popper placement in different modes
 const offsetSkidByKind = computed(() => {
   if (isMobileScreen.value) return '0';
 
-  if (props.mode === 'time') return '0';
-  if (props.mode === 'date-time') return '144';
-  if (props.mode === 'month') return '40';
-  if (props.mode === 'month-year') return '60';
-  if (props.mode === 'quarters') return '89';
+  if (props.mode === 'time' && props.pickerType === 'single') return '0';
+  if (props.mode === 'date-time' && props.pickerType === 'single') return '144';
+  if (props.mode === 'month' && props.pickerType === 'single') return '40';
+  if (props.mode === 'month-year' && props.pickerType === 'single') return '60';
+  if (props.mode === 'quarters' && props.pickerType === 'single') return '89';
+
+  if (props.mode === 'date' && props.pickerType === 'range') return '147';
+  if (props.mode === 'month' && props.pickerType === 'range') return '0';
+  if (props.mode === 'year' && props.pickerType === 'range') return '0';
+  if (props.mode === 'month-year' && props.pickerType === 'range') return '147';
+  if (props.mode === 'quarters' && props.pickerType === 'range') return '0';
 
   return '88';
 });
 
 const mode = computed(() => props.mode);
+
+const startInputIndex = computed(() => {
+  if (activeInput.value === 'endInput' && dropDownMenuRef.value?.menuOpen) return '-1';
+  return '0';
+});
+
+const endInputIndex = computed(() => {
+  if (activeInput.value === 'startInput' && dropDownMenuRef.value?.menuOpen) return '-1';
+  return '0';
+});
 
 watch(
   () => [props.locale, props.firstDayOfTheWeek],
@@ -304,46 +508,46 @@ watch(
 watch(
   () => props.modelValue,
   (newValue) => {
-    if (newValue === null || newValue === undefined) {
+    if ((newValue === null || newValue === undefined) && props.pickerType === 'single') {
       modelInput.value = null;
       return;
     }
+    if (
+      (newValue === null || newValue === undefined || (!newValue.start && !newValue.end)) &&
+      props.pickerType === 'range'
+    ) {
+      modelInput.value = null;
+      modelEndDateInput.value = null;
+      return;
+    }
 
-    switch (props.mode) {
-      case 'date':
-        modelInput.value = formatInputRawDate(props.masks.input, newValue);
-        break;
-      case 'date-time':
-        modelInput.value = formatInputRawDateTime(props.masks.inputDateTime24hr, newValue);
-        break;
-      case 'time':
-        modelInput.value = formatInputRawTime(props.masks.inputTime24hr, newValue);
-        break;
-      case 'month':
-        modelInput.value = getMonthNameByOrder(
-          localizedMonthsList.value,
-          newValue.getMonth(),
-          true
-        );
-        break;
-      case 'year':
-        modelInput.value = newValue.getFullYear();
-        break;
-      case 'month-year': {
-        modelInput.value = getMonthYearString(
-          props.locale,
-          newValue?.getMonth(),
-          newValue?.getFullYear()
-        );
-        break;
+    // Handle single and range picker types
+    if (props.pickerType === 'single') {
+      // Process the single value based on mode
+      modelInput.value = formatDateByMode(newValue);
+    }
+    if (props.pickerType === 'range') {
+      // For range date picker, process both start and end dates
+      if (newValue.start && newValue.end) {
+        const formattedStart = formatDateByMode(newValue.start);
+        const formattedEnd = formatDateByMode(newValue.end);
+        modelInput.value = formattedStart;
+        modelEndDateInput.value = formattedEnd;
+      } else if (newValue.start && !newValue.end) {
+        // When only the start date is selected
+        const formattedStart = formatDateByMode(newValue.start);
+        modelInput.value = formattedStart;
+        modelEndDateInput.value = null;
+      } else if (!newValue.start && newValue.end) {
+        // When only the end date is selected
+        const formattedEnd = formatDateByMode(newValue.end);
+        modelInput.value = null;
+        modelEndDateInput.value = formattedEnd;
+      } else {
+        // In case of no valid range, clear the input
+        modelInput.value = null;
+        modelEndDateInput.value = null;
       }
-      case 'quarters':
-        modelInput.value = extractQuarterFromDate(newValue, props.masks.inputQuarters);
-        break;
-
-      default:
-        modelInput.value = formatInputRawDate(props.masks.input, newValue);
-        break;
     }
   },
   { immediate: true }
@@ -353,7 +557,8 @@ watch(
   () => props.mode,
   () => {
     // Watch for mode change and reset input
-    modelInput.value = ''; // Clear input when switching modes
+    modelInput.value = null; // Clear input when switching modes
+    modelEndDateInput.value = null;
     model.value = null;
   }
 );
@@ -365,12 +570,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div
-    ref="containerRef"
-    class="lx-datepicker-default"
-    @focusout="handleFocusOut"
-    @focusin="handleOpen"
-  >
+  <div ref="containerRef" class="lx-datepicker-default" @focusout="handleFocusOut">
     <LxDropDownMenu
       v-if="variant === 'default'"
       ref="dropDownMenuRef"
@@ -380,26 +580,57 @@ onMounted(async () => {
     >
       <div
         class="lx-datepicker-input-container"
+        :class="[{ range: pickerType === 'range' }]"
         @click="dropDownMenuRef?.preventClose"
         @keydown="dropDownMenuRef?.preventClose"
       >
-        <label class="lx-visually-hidden" :for="id"></label>
-        <input
-          type="text"
-          class="lx-date-time-picker"
-          :value="modelInput"
-          :id="id"
-          :placeholder="placeholderComputed"
-          :disabled="disabled"
-          :class="[{ 'lx-invalid': invalid }]"
-          autocomplete="off"
-          :readonly="
-            mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
-          "
-          @click="handleOpen"
-          @keydown="handleOpen"
-          @change="validateIfExact"
-        />
+        <div class="lx-start-input-and-separator-wrapper">
+          <label class="lx-visually-hidden" :for="id"></label>
+          <input
+            type="text"
+            class="lx-date-time-picker"
+            :value="modelInput"
+            :id="id"
+            :placeholder="placeholderComputed"
+            :disabled="disabled"
+            :class="[{ 'lx-invalid': invalid }]"
+            autocomplete="off"
+            :readonly="
+              mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
+            "
+            :tabindex="startInputIndex"
+            @click="handleOpen('startInput')"
+            @keydown.arrow-down.prevent="handleOpen('startInput')"
+            @keydown.esc.prevent="handleClose"
+            @change="validateIfExact($event, 'startInput')"
+          />
+
+          <template v-if="pickerType === 'range'">
+            <span class="lx-date-time-range-separator"> - </span>
+          </template>
+        </div>
+
+        <template v-if="pickerType === 'range'">
+          <label class="lx-visually-hidden" :for="id"></label>
+          <input
+            type="text"
+            class="lx-date-time-picker"
+            :value="modelEndDateInput"
+            :id="id"
+            :placeholder="placeholderComputed"
+            :disabled="disabled"
+            :class="[{ 'lx-invalid': invalid }]"
+            autocomplete="off"
+            :readonly="
+              mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
+            "
+            :tabindex="endInputIndex"
+            @click="handleOpen('endInput')"
+            @keydown.arrow-down.prevent="handleOpen('endInput')"
+            @keydown.esc.prevent="handleClose"
+            @change="validateIfExact($event, 'endInput')"
+          />
+        </template>
       </div>
 
       <template #clickSafePanel>
@@ -420,6 +651,8 @@ onMounted(async () => {
           :menuState="dropDownMenuRef?.menuOpen"
           :cadenceOfMinutes="cadenceOfMinutes"
           :clearIfNotExact="clearIfNotExact"
+          :pickerType="pickerType"
+          :activeInput="activeInput"
           :texts="texts"
         />
       </template>
@@ -445,6 +678,7 @@ onMounted(async () => {
       :maxDateRef="maxDateRef"
       :cadenceOfMinutes="cadenceOfMinutes"
       :clearIfNotExact="clearIfNotExact"
+      :pickerType="pickerType"
       :texts="texts"
     />
   </div>

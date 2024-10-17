@@ -43,6 +43,7 @@ function determineSide() {
 }
 
 function calculateOffset() {
+  if (!container.value) return;
   posX.value =
     container.value.getBoundingClientRect().x + container.value.getBoundingClientRect().width / 2;
   determineSide();

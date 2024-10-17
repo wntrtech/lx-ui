@@ -70,6 +70,28 @@
   margin-top: 0.7rem;
 }
 
+.lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-date-time-icon,
+.lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-invalidation-icon {
+  position: static;
+  grid-column: 1;
+  grid-row: 1;
+  transform: none;
+  margin-left: 8rem;
+  z-index: 1;
+  margin-top: .7rem;
+}
+
+.lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-date-time-icon-end,
+.lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-invalidation-icon-end {
+  position: static;
+  grid-column: 2;
+  grid-row: 1;
+  transform: none;
+  margin-left: -2rem;
+  z-index: 1;
+  margin-top: 0.7rem;
+}
+
 .lx-date-time-picker-wrapper.lx-date-time,
 .lx-date-dropdowns .lx-field-wrapper,
 .lx-date-picker-dropdown .lx-field-wrapper {
@@ -3253,17 +3275,9 @@ input[type='range']:hover::-moz-range-thumb {
   color: var(--color-placeholder);
 }
 
-.lx-date-time-picker-wrapper.lx-date-time-range-wrapper
-  .lx-date-time-range-input-fields
-  > .lx-date-time-range-separator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.lx-date-time-range-input-fields input {
+/* .lx-date-time-range-input-fields input {
   width: 10rem;
-}
+} */
 
 .lx-date-time-range-wrapper .lx-date-time-icon-end,
 .lx-date-time-range-wrapper .lx-invalidation-icon-end {
@@ -3452,17 +3466,6 @@ input[type='range']:hover::-moz-range-thumb {
   .footer-buttons
   > .lx-button {
   width: auto;
-}
-
-.lx-date-time-picker-wrapper.lx-date-time-range-wrapper {
-  position: static;
-  width: 21.5rem;
-}
-
-.lx-date-time-picker-wrapper.lx-date-time-range-wrapper .lx-date-time-range-input-fields {
-  display: flex;
-  gap: 0.5rem;
-  position: relative;
 }
 
 .lx-date-time-range-wrapper > .lx-context-container .popper > .lx-dropdown-panel {
@@ -4779,40 +4782,26 @@ input[type='range']:hover::-moz-range-thumb {
   }
 }
 
-@media (min-width: 1000px) and (max-width: 1350px) {
-  .lx-form.lx-form-3
-    .lx-column
-    .lx-row
-    .lx-date-time-range-wrapper
-    .lx-date-time-range-input-fields {
-    flex-direction: column;
-    gap: 0;
+@media (max-width: 640px) {
+  .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-date-time-icon,
+  .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-invalidation-icon {
+    position: static;
+    grid-column: 1;
+    grid-row: 1;
+    transform: none;
+    margin-left: 8.45rem;
+    z-index: 1;
+    margin-top: 0.7rem;
   }
 
-  .lx-form.lx-form-3
-    .lx-column
-    .lx-row
-    .lx-date-time-range-wrapper
-    .lx-date-time-range-input-fields
-    .lx-date-time-icon-end,
-  .lx-form.lx-form-3
-    .lx-column
-    .lx-row
-    .lx-date-time-range-wrapper
-    .lx-date-time-range-input-fields
-    .lx-invalidation-icon-end {
-    top: 5.2rem;
-    left: 8rem;
-  }
-
-  .lx-form.lx-form-3 .lx-column .lx-row .lx-date-time-range-wrapper .lx-date-time-icon,
-  .lx-form.lx-form-3 .lx-column .lx-row .lx-date-time-range-wrapper .lx-invalidation-icon {
-    top: 1.3rem;
-    left: 8rem;
-  }
-
-  .lx-form.lx-form-3 .lx-column .lx-row .lx-date-time-range-wrapper .lx-date-time-range-separator {
-    justify-content: normal;
-    margin-left: 5rem;
+  .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-date-time-icon-end,
+  .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-invalidation-icon-end {
+    position: static;
+    grid-column: 2;
+    grid-row: 2;
+    transform: none;
+    margin-left: -2.95rem;
+    z-index: 1;
+    margin-top: -2.3rem;
   }
 }

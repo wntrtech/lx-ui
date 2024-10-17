@@ -16,11 +16,15 @@ export const zeroPad = (value) => {
   return Number(value) > 9 ? value : `0${Number(value)}`;
 };
 
-export function getTimeOrderIndex(arr, value) {
-  const timeUnit = arr.find((itm) => itm.orderIndex === value);
-  if (!timeUnit) return null;
-  const { orderIndex } = timeUnit;
-  return orderIndex;
+export function getTimeOrderIndex(arr, value, cadence = 1) {
+  // Round value to the nearest multiple of the cadence
+  const roundedValue = Math.round(value / cadence) * cadence;
+  // Find the index of the closest item in the array based on the rounded value
+  const index = arr.findIndex((itm) => itm.orderIndex === roundedValue);
+  // If no match found, return zero as fallback index
+  if (index === -1) return 0;
+  // Return the index of the found item in the array
+  return index;
 }
 
 export function getMonthNameByOrder(arrList, orderNumber, capitalize = false, nameType = 'full') {
@@ -91,42 +95,79 @@ export function canSelectDate(date, minDate, maxDate, mode = 'date') {
   return isAfterMinDate && isBeforeMaxDate;
 }
 
-export function canSelectTime(date, minDate, maxDate, selectedDay, timeUnit) {
+export function canSelectTime(
+  date,
+  minDate,
+  maxDate,
+  selectedDay,
+  timeUnit,
+  selectedHours,
+  selectedMinutes
+) {
   if (!date) return false;
+
   // Parse minDate and maxDate if they are strings
   const minDateParsed = minDate ? new Date(minDate) : null;
   const maxDateParsed = maxDate ? new Date(maxDate) : null;
 
-  const selectedHours = date.getHours();
-  const selectedMinutes = date.getMinutes();
+  const currentHour = date.getHours();
+  const currentMinute = date.getMinutes();
 
+  // Validate hours
   if (timeUnit === 'hour') {
-    // Only allow hours equal to or after minDate's hour
+    // When the minute is already selected, validate hour with minute
+    if (selectedMinutes !== null) {
+      // If selecting on minDate day
+      if (minDateParsed && selectedDay === minDateParsed.getDate()) {
+        // If the selected minute is earlier than minDate minute, only allow hours after minDate's hour
+        if (selectedMinutes < minDateParsed.getMinutes()) {
+          return currentHour > minDateParsed.getHours();
+        }
+      }
+      // If selecting on maxDate day
+      if (maxDateParsed && selectedDay === maxDateParsed.getDate()) {
+        // If the selected minute is later than maxDate minute, only allow hours before maxDate's hour
+        if (selectedMinutes > maxDateParsed.getMinutes()) {
+          return currentHour < maxDateParsed.getHours();
+        }
+      }
+    }
+    // Check if it's the same day as minDate
     if (minDateParsed && selectedDay === minDateParsed.getDate()) {
-      return selectedHours >= minDateParsed.getHours();
+      if (currentHour < minDateParsed.getHours()) return false; // Must be after minDate's hour
     }
-    // Only allow hours equal to or before maxDate's hour
+    // Check if it's the same day as maxDate
     if (maxDateParsed && selectedDay === maxDateParsed.getDate()) {
-      return selectedHours <= maxDateParsed.getHours();
+      if (currentHour > maxDateParsed.getHours()) return false; // Must be before maxDate's hour
     }
-    // Enable all hours for other cases
-    return true;
+    return true; // Allow all hours otherwise
   }
 
+  // Validate minutes
   if (timeUnit === 'minute') {
-    // Only allow minutes equal to or after minDate's minute
-    if (minDateParsed && selectedDay === minDateParsed.getDate()) {
-      return selectedMinutes >= minDateParsed.getMinutes();
+    // When the hour is already selected, validate minute with hour
+    if (selectedHours !== null) {
+      // If selecting on minDate day
+      if (minDateParsed && selectedDay === minDateParsed.getDate()) {
+        // If the selected hour is the same as minDate hour, validate minutes after minDate minutes
+        if (selectedHours === minDateParsed.getHours()) {
+          return currentMinute >= minDateParsed.getMinutes();
+        }
+        if (selectedHours > minDateParsed.getHours()) {
+          return true;
+        }
+      }
+      // If selecting on maxDate day
+      if (maxDateParsed && selectedDay === maxDateParsed.getDate()) {
+        // If the selected hour is the same as maxDate hour, validate minutes before maxDate minutes
+        if (selectedHours === maxDateParsed.getHours()) {
+          return currentMinute <= maxDateParsed.getMinutes();
+        }
+      }
     }
-    // Only allow minutes equal to or before maxDate's minute
-    if (maxDateParsed && selectedDay === maxDateParsed.getDate()) {
-      return selectedMinutes <= maxDateParsed.getMinutes();
-    }
-    // Enable all minutes for other cases
-    return true;
+    return true; // Allow all minutes otherwise
   }
-
-  return true;
+  return true; // Allow everything if no unit is specified
 }
 
 export function isSameMonth(date, comparisonDate) {
@@ -269,21 +310,24 @@ export function getGrid(type, rowLgth, startYr, endYr, localListArr) {
 }
 
 // Function to get months layout array for different cases ([Array(2),[Array(2)], [Array(1),[Array(1)], [Array(2)])
-export function getMonths(currentDate, variant, mode) {
+export function getMonths(currentDate, variant, mode, pickerType, isMobileScreen) {
   const months = [];
   let monthsToShow = 0;
   let elemInRow = 1;
 
   // Determine the number of months to show and elements per row based on variant and mode
-  if (variant === 'full' && mode === 'date') {
+  if (variant === 'full' && mode === 'date' && pickerType === 'single') {
     monthsToShow = 3; // Show the current month and the next 3 months
     elemInRow = 2; // 2 items per row
   }
-  if (variant === 'full-rows' && mode === 'date') {
+  if (variant === 'full-rows' && mode === 'date' && pickerType === 'single') {
     monthsToShow = 1; // Show the current month and the next 3 months
     elemInRow = 1; // 1 item per row
   }
-  if (variant === 'full-columns' && mode === 'date') {
+  if (
+    (variant === 'full-columns' && mode === 'date' && pickerType === 'single') ||
+    (pickerType === 'range' && !isMobileScreen)
+  ) {
     monthsToShow = 1; // Show the current month and the next 3 months
     elemInRow = 2; // 2 items per row
   }
@@ -501,3 +545,61 @@ export function getQuarterStringFromDate(date) {
   const quarter = Math.floor(month / 3) + 1;
   return `${year}-Q${quarter}`;
 }
+
+export const getDayTabIndex = (
+  date,
+  month,
+  weekIndex,
+  firstDayOfTheWeek,
+  monthsList,
+  variant,
+  pickerType,
+  minDateRef,
+  maxDateRef
+) => {
+  // Case 1: Date from another month, first week of the first month
+  if (
+    !isSameMonth(date, month) &&
+    monthsList.flat().indexOf(month) === 0 &&
+    weekIndex === 0 &&
+    canSelectDate(date, minDateRef, maxDateRef)
+  ) {
+    return '0';
+  }
+  // Case 2: Date from another month, last week of the last month for default and picker variants
+  if (
+    !isSameMonth(date, month) &&
+    monthsList.flat().length === 1 &&
+    (variant === 'default' || variant === 'picker') &&
+    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 1 === weekIndex &&
+    canSelectDate(date, minDateRef, maxDateRef)
+  ) {
+    return '0';
+  }
+  // Case 3: Date from another month, last week of the last month for full variant
+  if (
+    !isSameMonth(date, month) &&
+    monthsList.flat().indexOf(month) === 3 &&
+    variant === 'full' &&
+    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 1 === weekIndex &&
+    canSelectDate(date, minDateRef, maxDateRef)
+  ) {
+    return '0';
+  }
+  // Case 4: Date from another month, last week of the last month for full-rows, full-columns variants or range pickerType
+  if (
+    !isSameMonth(date, month) &&
+    monthsList.flat().indexOf(month) === 1 &&
+    (variant === 'full-rows' || variant === 'full-columns' || pickerType === 'range') &&
+    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 1 === weekIndex &&
+    canSelectDate(date, minDateRef, maxDateRef)
+  ) {
+    return '0';
+  }
+  // Case 7: Date in the same month and is selectable
+  if (isSameMonth(date, month) && canSelectDate(date, minDateRef, maxDateRef)) {
+    return '0';
+  }
+  // Default case: Not focusable
+  return '-1';
+};

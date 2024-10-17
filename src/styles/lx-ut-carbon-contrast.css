@@ -138,4 +138,6 @@
   --color-list-selected-foreground-disabled: var(--color-background);
   --color-list-unchecked-background-hover: var(--contrast-background);
   --color-list-unchecked-border-hover: var(--contrast-background);
+
+  --color-date-picker-selected-range-background: #bfdbfe;
 }

@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ref, computed, nextTick, watch, onBeforeMount } from 'vue';
-import { DatePicker } from 'v-calendar';
-import { formatDateJSON, formatDate, formatJSON, isDateValid } from '@/utils/dateUtils';
-import LxIcon from '@/components/Icon.vue';
-import LxButton from '@/components/Button.vue';
+import { computed, onBeforeMount, watch } from 'vue';
+
+// TODO: at the end need to remove v-calendar package
+// import { DatePicker } from 'v-calendar';
+
 import useLx from '@/hooks/useLx';
+import { formatDateJSON, formatDate, parseDate } from '@/utils/dateUtils';
+
+import LxIcon from '@/components/Icon.vue';
+import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
-import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import { lxDevUtils } from '@/utils';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -30,54 +32,59 @@ const props = defineProps({
   texts: {
     type: Object,
     default: () => ({
-      clear: 'Notīrīt',
-      clearButton: 'Notīrīt vērtības',
-      todayButton: 'Atgriezties uz šodienu',
+      clear: 'Attīrīt',
+      clearButton: 'Attīrīt vērtību',
+      todayButton: 'Šodiena',
       clearStart: 'Notīrīt sākuma vērtību',
       clearEnd: 'Notīrīt beigu vērtību',
+      next: 'Nākošais',
+      previous: 'Iepriekšējais',
+      doNotIndicateStart: 'Nenorādīt sākumu',
+      doNotIndicateEnd: 'Nenorādīt beigas',
     }),
   },
 });
 const emits = defineEmits(['update:startDate', 'update:endDate']);
-const dp = ref();
-const changingKey = ref(1);
-const inputStart = ref();
-const inputEnd = ref();
-const idEnd = ref('idEnd');
-const startRaw = ref('');
-const endRaw = ref('');
-const calendarValue = ref({ start: null, end: null });
-const disableMinMax = ref(false);
-const dropDownMenu = ref();
 
 const { dateFormat, dateTimeFormat } = useLx().getGlobals();
+
+function updateStartValue(startValue) {
+  if (props.kind === 'date') {
+    if (typeof startValue !== 'string') {
+      if (formatDateJSON(startValue) !== '1900-01-01') {
+        const nv = formatDateJSON(startValue);
+        emits('update:startDate', nv);
+      } else {
+        emits('update:startDate', null);
+      }
+    } else if (startValue !== '1900-01-01') {
+      emits('update:startDate', startValue);
+    } else if (startValue === '1900-01-01') {
+      emits('update:startDate', null);
+    }
+  }
+}
 
 function updateEndValue(endValue) {
   if (props.kind === 'date') {
     if (typeof endValue !== 'string') {
-      if (formatDateJSON(endValue) !== '9999-12-31')
-        emits('update:endDate', formatDateJSON(endValue));
-      else emits('update:endDate', null);
+      if (formatDateJSON(endValue) !== '9999-12-31') {
+        const nv = formatDateJSON(endValue);
+        emits('update:endDate', nv);
+      } else {
+        emits('update:endDate', null);
+      }
     } else if (endValue !== '9999-12-31') {
       emits('update:endDate', endValue);
-    } else if (endValue === '9999-12-31') emits('update:endDate', null);
-    changingKey.value += 1;
+    } else if (endValue === '9999-12-31') {
+      emits('update:endDate', null);
+    }
   }
 }
-function updateStartValue(startValue) {
-  if (props.kind === 'date') {
-    if (typeof startValue !== 'string') {
-      if (formatDateJSON(startValue) !== '1900-01-01')
-        emits('update:startDate', formatDateJSON(startValue));
-      else emits('update:startDate', null);
-    } else if (startValue !== '1900-01-01') {
-      emits('update:startDate', startValue);
-    } else if (startValue === '1900-01-01') emits('update:startDate', null);
-  }
-}
+
 const model = computed({
   get() {
-    return { start: props.startDate, end: props.endDate };
+    return { start: parseDate(props.startDate), end: parseDate(props.endDate) };
   },
   set(value) {
     if (!value || (!value.start && !value.end)) {
@@ -89,160 +96,17 @@ const model = computed({
     if (value) {
       if (value.start) {
         updateStartValue(value.start);
-      } else emits('update:endDate', null);
+      } else {
+        emits('update:startDate', null);
+      }
       if (value.end) {
         updateEndValue(value.end);
-      } else emits('update:endDate', null);
+      } else {
+        emits('update:endDate', null);
+      }
     }
   },
 });
-
-function formatToLocale(string) {
-  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
-  let res = props.locale?.masks?.input || dateFormatToUse;
-  const date = new Date(string);
-  const year = date?.getFullYear();
-  let month = date?.getMonth();
-  if (month || month === 0) month += 1;
-  const day = date?.getDate();
-  res = res
-    .replace('yyyy', year)
-    .replace('MM', month > 9 ? month : `0${month}`)
-    .replace('dd', day > 9 ? day : `0${day}`);
-  if (day && month && year) return res;
-  return null;
-}
-
-function formatFromLocale(string) {
-  const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
-  const res = props.locale?.masks?.input || dateTimeFormatToUse;
-  const day = string?.substr(res?.indexOf('dd'), 2);
-  const month = string?.substr(res?.indexOf('MM'), 2);
-  const year = string?.substr(res?.indexOf('yyyy'), 4);
-  if (isDateValid(`${year}-${month}-${day}`)) {
-    return `${year}-${month}-${day}`;
-  }
-  return null;
-}
-
-function isTheSameDate(dateOne, dateTwo) {
-  let one = dateOne;
-  let two = dateTwo;
-  if (dateOne && typeof dateOne !== 'string') one = formatJSON(dateOne)?.split('T')[0];
-  if (dateTwo && typeof dateTwo !== 'string') two = formatJSON(dateTwo)?.split('T')[0];
-  return one === two;
-}
-
-const globalEnvironment = useLx().getGlobals()?.environment;
-
-watch(
-  () => model.value,
-  (newValue, oldValue) => {
-    if (newValue?.start !== oldValue?.start || newValue?.end !== oldValue?.end) {
-      let resetStart = false;
-      let resetEnd = false;
-      if (props.startDate) {
-        if (props.minDate && newValue?.start <= props.minDate) {
-          resetStart = true;
-        } else {
-          startRaw.value = formatToLocale(props.startDate);
-        }
-      } else {
-        startRaw.value = '';
-      }
-      if (props.endDate) {
-        if (props.maxDate && newValue?.end >= props.maxDate) {
-          resetEnd = true;
-        } else {
-          endRaw.value = formatToLocale(props.endDate);
-        }
-      } else {
-        endRaw.value = '';
-      }
-      if (resetStart || resetEnd) {
-        lxDevUtils.log('Piešķirtā vērtībā ir ārpus min-max robežām!', globalEnvironment, 'warn');
-        model.value = {
-          start: resetStart ? oldValue?.start : newValue?.start,
-          end: resetEnd ? oldValue?.end : newValue?.end,
-        };
-      }
-    }
-    if (
-      !isTheSameDate(calendarValue.value?.start, props.startDate) ||
-      !isTheSameDate(calendarValue.value?.end, props.endDate) ||
-      newValue?.start <= newValue?.end ||
-      newValue?.start >= props.minDate ||
-      newValue?.end <= props.maxDate
-    ) {
-      let resStart = null;
-      let resEnd = null;
-      disableMinMax.value = true;
-
-      if (newValue.start)
-        resStart = newValue?.start <= props.minDate ? oldValue?.start : newValue?.start;
-      if (newValue.end) resEnd = newValue?.end >= props.maxDate ? oldValue?.end : newValue?.end;
-      if (!resStart && !resEnd) {
-        calendarValue.value = {
-          start: null,
-          end: null,
-        };
-      } else
-        calendarValue.value = {
-          start: resStart || '1900-01-01',
-          end: resEnd || '9999-12-31',
-        };
-      nextTick(() => {
-        disableMinMax.value = false;
-      });
-    }
-  },
-  { immediate: true }
-);
-
-function getModelConfigMask() {
-  const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
-  if (props.kind === 'date') return dateFormatToUse;
-  return null;
-}
-
-const modelConfig = computed(() => ({
-  type: 'string',
-  mask: getModelConfigMask(),
-  timeAdjust: props.timeAdjust,
-}));
-
-const placeholderComputed = computed(() => {
-  if (props.placeholder !== null) return props.placeholder;
-  if (props.kind === 'date') return 'dd.mm.gggg.';
-  return null;
-});
-
-function onInputClick() {
-  const currentDate = formatJSON(new Date());
-  if ((!props.startDate || !props.endDate) && currentDate > props.maxDate) {
-    dp.value.move(new Date(props.maxDate));
-  } else if ((!props.startDate || !props.endDate) && currentDate < props.minDate) {
-    dp.value.move(new Date(props.minDate));
-  } else if (!props.startDate || !props.endDate) {
-    if (props.rangeMonth === 'previous') {
-      const today = new Date();
-      dp.value.move(today.setMonth(today.getMonth() - 1));
-    } else dp.value.move(new Date());
-  }
-}
-
-function clear() {
-  emits('update:startDate', null);
-  emits('update:endDate', null);
-}
-function focus(source = null) {
-  if (source === 'start') {
-    inputStart.value.focus();
-    nextTick(() => dp.value.showPopover());
-  } else if (source === 'end') {
-    inputEnd.value.focus();
-  }
-}
 
 const localeComputed = computed(() => (props.locale?.locale ? props.locale?.locale : 'lv-LV'));
 const localeFirstDay = computed(() =>
@@ -261,6 +125,7 @@ function getNameStart() {
   if (props.startDate && props.kind === 'date') return formatDate(new Date(props.startDate));
   return props.startDate;
 }
+
 function getNameEnd() {
   if (props.endDate && props.kind === 'date') return formatDate(new Date(props.endDate));
   return props.endDate;
@@ -540,175 +405,14 @@ watch(
   }
 );
 
-function changeStart() {
-  if ((props.minDate && formatFromLocale(startRaw.value) >= props.minDate) || !props.minDate) {
-    if (startRaw.value !== '' && endRaw.value === '') {
-      disableMinMax.value = true;
-      calendarValue.value = {
-        start: `${formatFromLocale(startRaw.value)}`,
-        end: '9999-12-31',
-      };
-      nextTick(() => {
-        disableMinMax.value = false;
-      });
-      model.value = { start: formatFromLocale(startRaw.value), end: null };
-    } else {
-      calendarValue.value = {
-        start: formatFromLocale(startRaw.value),
-        end: formatFromLocale(endRaw.value),
-      };
-      model.value = {
-        start: formatFromLocale(startRaw.value),
-        end: formatFromLocale(endRaw.value),
-      };
-    }
-  } else if (startRaw.value === '' && endRaw.value !== '') {
-    disableMinMax.value = true;
-    calendarValue.value = {
-      start: '1900-01-01',
-      end: `${formatFromLocale(endRaw.value)}`,
-    };
-    nextTick(() => {
-      disableMinMax.value = false;
-    });
-    model.value = {
-      start: null,
-      end: formatFromLocale(endRaw.value),
-    };
-  } else if (startRaw.value === '' && endRaw.value === '') {
-    calendarValue.value = {
-      start: null,
-      end: null,
-    };
-    model.value = null;
-  } else startRaw.value = formatToLocale(props.startDate);
-}
-
-function changeEnd() {
-  if ((props.maxDate && formatFromLocale(endRaw.value) <= props.maxDate) || !props.maxDate) {
-    if (endRaw.value !== '' && startRaw.value === '') {
-      disableMinMax.value = true;
-      calendarValue.value = {
-        start: '1900-01-01',
-        end: `${formatFromLocale(endRaw.value)}`,
-      };
-      nextTick(() => {
-        disableMinMax.value = false;
-      });
-      model.value = { start: null, end: formatFromLocale(endRaw.value) };
-    } else {
-      calendarValue.value = {
-        start: formatFromLocale(startRaw.value),
-        end: formatFromLocale(endRaw.value),
-      };
-      model.value = {
-        start: formatFromLocale(startRaw.value),
-        end: formatFromLocale(endRaw.value),
-      };
-    }
-  } else if (startRaw.value !== '' && endRaw.value === '') {
-    disableMinMax.value = true;
-    calendarValue.value = {
-      start: `${formatFromLocale(startRaw.value)}`,
-      end: '9999-12-31',
-    };
-    nextTick(() => {
-      disableMinMax.value = false;
-    });
-    model.value = {
-      start: formatFromLocale(startRaw.value),
-      end: null,
-    };
-  } else if (startRaw.value === '' && endRaw.value === '') {
-    calendarValue.value = {
-      start: null,
-      end: null,
-    };
-    model.value = null;
-  } else endRaw.value = formatToLocale(props.endDate);
-}
-
-function nullStartValue() {
-  disableMinMax.value = true;
-  if (endRaw.value === '') {
-    calendarValue.value = {
-      start: null,
-      end: null,
-    };
-  } else
-    calendarValue.value = {
-      start: '1900-01-01',
-      end: `${formatDateJSON(endRaw.value)}`,
-    };
-  nextTick(() => {
-    disableMinMax.value = false;
-  });
-  startRaw.value = '';
-}
-
-function nullEndValue() {
-  disableMinMax.value = true;
-  if (startRaw.value === '') {
-    calendarValue.value = {
-      start: null,
-      end: null,
-    };
-  } else
-    calendarValue.value = {
-      start: `${formatDateJSON(startRaw.value)}`,
-      end: '9999-12-31',
-    };
-  nextTick(() => {
-    disableMinMax.value = false;
-  });
-  endRaw.value = '';
-}
-
-function moveTo() {
-  if (model.value?.start) {
-    dp.value.move(calendarValue.value?.start);
-  } else if (model.value?.end) {
-    const endDate = new Date(calendarValue.value?.end);
-    if (props.rangeMonth === 'previous') {
-      dp.value.move(endDate.setMonth(endDate.getMonth() - 1));
-    } else dp.value.move(calendarValue.value?.end);
-  } else if (props.rangeMonth === 'previous') {
-    const today = new Date();
-    dp.value.move(today.setMonth(today.getMonth() - 1));
-  } else dp.value.move(new Date());
-}
-
-function openDropDownMenu() {
-  dropDownMenu.value.openMenu();
-  moveTo();
-}
-
-function updateCalendar() {
-  model.value = {
-    start: formatJSON(calendarValue.value?.start)?.split('T')[0] || null,
-    end: formatJSON(calendarValue.value?.end)?.split('T')[0] || null,
-  };
-  if (formatJSON(calendarValue.value?.start)?.split('T')[0] === '1900-01-01') startRaw.value = '';
-  else {
-    startRaw.value = formatToLocale(calendarValue.value?.start);
-  }
-  if (formatJSON(calendarValue.value?.end)?.split('T')[0] === '9999-12-31') endRaw.value = '';
-  else {
-    endRaw.value = formatToLocale(calendarValue.value?.end);
-  }
-}
-
 onBeforeMount(() => {
   if (props.startDate && props.endDate && props.endDate < props.startDate) {
     model.value = {
       start: props.startDate,
       end: null,
     };
-    endRaw.value = '';
   }
 });
-
-defineExpose({ focus });
 </script>
 
 <template>
@@ -721,120 +425,39 @@ defineExpose({ focus });
       <div
         class="lx-date-time-picker-wrapper lx-date-time-range-wrapper"
         :class="{
-          'lx-date': kind === 'date',
+          'lx-date':
+            kind === 'date' ||
+            kind === 'month' ||
+            kind === 'year' ||
+            kind === 'month-year' ||
+            kind === 'quarters',
         }"
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
         v-if="kind === 'date'"
       >
-        <LxDropDownMenu ref="dropDownMenu">
-          <div
-            class="lx-date-time-range-input-fields"
-            @click="moveTo()"
-            @keyup.tab="openDropDownMenu()"
-          >
-            <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
-            <input
-              ref="inputStart"
-              :id="id"
-              type="text"
-              class="lx-date-time-picker"
-              :class="[{ 'lx-invalid': invalid }]"
-              :placeholder="placeholderComputed"
-              :disabled="disabled"
-              v-model="startRaw"
-              autocomplete="off"
-              @click="onInputClick()"
-              @change="changeStart()"
-              @keydown.tab="openDropDownMenu()"
-            />
-            <div class="lx-date-time-range-separator">
-              <p>-</p>
-            </div>
-            <div>
-              <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
-              <input
-                ref="inputEnd"
-                :id="idEnd"
-                type="text"
-                class="lx-date-time-picker"
-                :class="[{ 'lx-invalid': invalid }]"
-                :placeholder="placeholderComputed"
-                :disabled="disabled"
-                v-model="endRaw"
-                autocomplete="off"
-                @click="onInputClick()"
-                @change="changeEnd()"
-                @keydown.tab="openDropDownMenu()"
-              />
-              <LxIcon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
-              <LxIcon
-                v-show="!invalid && kind !== 'time'"
-                customClass="lx-date-time-icon"
-                value="calendar"
-              />
-              <LxIcon v-show="invalid" customClass="lx-invalidation-icon-end" value="invalid" />
-              <LxIcon
-                v-show="!invalid && kind !== 'time'"
-                customClass="lx-date-time-icon-end"
-                value="calendar"
-              />
-            </div>
-          </div>
-          <template #clickSafePanel>
-            <DatePicker
-              ref="dp"
-              v-model.range="calendarValue"
-              :model-config="modelConfig"
-              :mode="kind"
-              :title="tooltip"
-              :min-date="disableMinMax ? null : props.minDate"
-              :max-date="disableMinMax ? null : props.maxDate"
-              :is-required="required"
-              is24hr
-              :locale="localeComputed"
-              :update-on-input="true"
-              :columns="2"
-              :first-day-of-week="localeFirstDay"
-              :masks="localeMasks"
-              :input-debounce="0"
-              @update:model-value="updateCalendar()"
-            >
-              <template #footer>
-                <div class="footer-buttons">
-                  <LxButton
-                    @click="nullStartValue"
-                    icon="first-page"
-                    kind="ghost"
-                    :title="props.texts.clearStart"
-                  />
-                  <lx-button
-                    :title="props.texts.todayButton"
-                    kind="ghost"
-                    icon="reset"
-                    variant="icon-only"
-                    @click="dp.move(new Date())"
-                  />
-                  <LxButton
-                    @click="nullEndValue"
-                    icon="last-page"
-                    kind="ghost"
-                    :title="props.texts.clearEnd"
-                  />
-                  <lx-button
-                    :title="props.texts.clearButton"
-                    kind="ghost"
-                    icon="close"
-                    :destructive="true"
-                    variant="icon-only"
-                    @click="clear"
-                  />
-                </div>
-              </template>
-            </DatePicker>
-          </template>
-        </LxDropDownMenu>
+        <LxIcon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
+        <LxIcon v-show="!invalid" customClass="lx-date-time-icon" value="calendar" />
+        <LxIcon v-show="invalid" customClass="lx-invalidation-icon-end" value="invalid" />
+        <LxIcon v-show="!invalid" customClass="lx-date-time-icon-end" value="calendar" />
+
+        <LxDatePicker
+          :id="id"
+          v-model="model"
+          :mode="kind"
+          :masks="localeMasks"
+          :placeholder="placeholder"
+          :disabled="disabled"
+          :invalid="invalid"
+          :min-date="minDate"
+          :max-date="maxDate"
+          :locale="localeComputed"
+          :first-day-of-the-week="localeFirstDay"
+          picker-type="range"
+          :texts="texts"
+        />
       </div>
+
       <div v-if="kind !== 'date'" class="lx-date-dropdowns" :data-invalid="invalid ? '' : null">
         <LxValuePicker
           id="start"
@@ -860,6 +483,7 @@ defineExpose({ focus });
           :placeholder="placeholder"
         />
       </div>
+
       <div class="lx-invalidation-message">{{ invalidationMessage }}</div>
     </template>
   </div>

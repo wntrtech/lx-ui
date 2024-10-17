@@ -158,4 +158,6 @@
   --color-list-unchecked-background-hover: var(--color-list-unchecked-background);
   --color-list-unchecked-border: var(--color-data);
   --color-list-unchecked-border-hover: var(--color-list-unchecked-border);
+
+  --color-date-picker-selected-range-background: #bfdbfe;
 }

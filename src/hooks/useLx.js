@@ -6,6 +6,8 @@ export default () => {
    * @property {string} [environment] - The current environment
    * @property {string} [iconSet] - The current icon set
    * @property {string} [dateFormat] - The current date format
+   * @property {string} [dateTimeFormat] - The current date time format
+   * @property {string} [dateTimeFullFormat] - The current date time full format
    */
 
   /**

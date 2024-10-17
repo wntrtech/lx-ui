@@ -3,7 +3,7 @@ import { ref, computed, watch } from 'vue';
 import { subYears, addYears, subMonths, addMonths } from 'date-fns';
 import { useWindowSize, onClickOutside } from '@vueuse/core';
 
-import { formatLocalizedDate } from '@/utils/dateUtils';
+import { formatDateJSON, formatLocalizedDate } from '@/utils/dateUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import {
   getTimeOrderIndex,
@@ -22,13 +22,14 @@ import {
   zeroPad,
   dateFromYearAndQuarter,
   extractQuarterFromDate,
+  getDayTabIndex,
 } from '@/components/datePicker/helpers';
 
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 
 const props = defineProps({
-  modelValue: { type: [String, Date], default: null },
+  modelValue: { type: [String, Date, Object], default: null },
   mode: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   disabled: { type: Boolean, default: false },
@@ -44,14 +45,20 @@ const props = defineProps({
   menuState: { type: Boolean, default: false },
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
   clearIfNotExact: { type: Boolean, default: false },
+  pickerType: { type: String, default: 'single' }, // 'single', 'range'
+  activeInput: { type: String, default: 'startInput' }, // 'startInput', 'endInput'
   texts: {
     type: Object,
     default: () => ({
       clear: 'Attīrīt',
-      todayButton: 'Šodiena',
       clearButton: 'Attīrīt vērtību',
+      todayButton: 'Šodiena',
+      clearStart: 'Notīrīt sākuma vērtību',
+      clearEnd: 'Notīrīt beigu vērtību',
       next: 'Nākošais',
       previous: 'Iepriekšējais',
+      doNotIndicateStart: 'Nenorādīt sākumu',
+      doNotIndicateEnd: 'Nenorādīt beigas',
     }),
   },
 });
@@ -83,8 +90,24 @@ const selectedYear = ref();
 const selectedMonth = ref();
 const selectedQuarter = ref();
 
-const startYear = ref(todayDate.value.getFullYear() - 7);
-const endYear = ref(todayDate.value.getFullYear() + 4);
+const selectedStartDate = ref(null);
+const selectedStartDay = ref(null);
+const selectedEndDate = ref(null);
+const selectedEndDay = ref(null);
+const selectedStartYear = ref();
+const selectedEndYear = ref();
+const selectedStartMonth = ref();
+const selectedEndMonth = ref();
+// const selectedStartQuarter = ref();
+// const selectedEndQuarter = ref();
+
+const hoveredDate = ref(null);
+
+const startYear = ref(todayDate.value.getFullYear() - 5);
+const endYear = ref(todayDate.value.getFullYear() + 6);
+
+const startQuarterYear = ref(todayDate.value.getFullYear() - 4);
+const endQuarterYear = ref(todayDate.value.getFullYear() + 5);
 
 const windowSize = useWindowSize();
 
@@ -109,7 +132,7 @@ const visibleMinutes = ref([]);
 const selectedHour = ref(null);
 const selectedMinute = ref(null);
 
-const isMobileScreen = computed(() => windowSize.width.value < 450);
+const isMobileScreen = computed(() => windowSize.width.value < 640);
 
 function openMonthSelect() {
   if (props.mode === 'month-year' && monthsLayout.value) return;
@@ -159,9 +182,13 @@ function selectPreviousSlide() {
   if (monthsLayout.value && currentDate.value) {
     prevMonthOrYear.setFullYear(currentDate.value.getFullYear() - 1);
   }
-  if (yearsLayout.value || quartersLayout.value) {
+  if (yearsLayout.value) {
     startYear.value -= 12;
     endYear.value -= 12;
+  }
+  if (quartersLayout.value) {
+    startQuarterYear.value -= 10;
+    endQuarterYear.value -= 10;
   }
   currentDate.value = prevMonthOrYear;
   selectedMonth.value = prevMonthOrYear.getMonth();
@@ -177,9 +204,13 @@ function selectNextSlide() {
   if (monthsLayout.value && currentDate.value) {
     nextMonthOrYear.setFullYear(currentDate.value.getFullYear() + 1);
   }
-  if (yearsLayout.value || quartersLayout.value) {
+  if (yearsLayout.value) {
     startYear.value += 12;
     endYear.value += 12;
+  }
+  if (quartersLayout.value) {
+    startQuarterYear.value += 10;
+    endQuarterYear.value += 10;
   }
   currentDate.value = nextMonthOrYear;
   selectedMonth.value = nextMonthOrYear.getMonth();
@@ -194,7 +225,103 @@ function clearSelectedValues() {
   selectedMinute.value = null;
   selectedQuarter.value = null;
 
+  selectedStartDate.value = null;
+  selectedStartDay.value = null;
+  selectedEndDate.value = null;
+  selectedEndDay.value = null;
+  hoveredDate.value = null;
+
+  selectedStartMonth.value = null;
+  selectedEndMonth.value = null;
+  selectedStartYear.value = null;
+  selectedEndYear.value = null;
+
   emits('update:modelValue', null);
+}
+
+function handleDoNotIndicateStart() {
+  // Declare new date reference
+  const newStartDate = new Date('1900-01-01');
+
+  if (selectedStartDate.value && !selectedEndDate.value && props.activeInput === 'startInput') {
+    selectedEndDate.value = selectedStartDate.value;
+    selectedEndDay.value = selectedStartDate.value.getDate();
+    selectedEndMonth.value = selectedStartDate.value.getMonth();
+    selectedEndYear.value = selectedStartDate.value.getFullYear();
+
+    emits('update:modelValue', {
+      start: newStartDate,
+      end: selectedEndDate.value,
+    });
+  }
+
+  if (selectedStartDate.value && selectedEndDate.value && props.activeInput === 'startInput') {
+    emits('update:modelValue', {
+      start: newStartDate,
+      end: selectedEndDate.value,
+    });
+  }
+
+  if (selectedStartDate.value && selectedEndDate.value && props.activeInput === 'endInput') {
+    emits('update:modelValue', {
+      start: newStartDate,
+      end: selectedEndDate.value,
+    });
+  }
+
+  if (!selectedStartDate.value && selectedEndDate.value && props.activeInput === 'endInput') {
+    selectedStartDate.value = newStartDate;
+    selectedStartDay.value = newStartDate.getDate();
+    selectedStartMonth.value = newStartDate.getMonth();
+    selectedStartYear.value = newStartDate.getFullYear();
+
+    emits('update:modelValue', {
+      start: selectedStartDate.value,
+      end: selectedEndDate.value,
+    });
+  }
+}
+
+function handleDoNotIndicateEnd() {
+  // Declare new date reference
+  const newEndDate = new Date('9999-12-31');
+
+  if (selectedStartDate.value && !selectedEndDate.value && props.activeInput === 'startInput') {
+    selectedEndDate.value = newEndDate;
+    selectedEndDay.value = newEndDate.getDate();
+    selectedEndMonth.value = newEndDate.getMonth();
+    selectedEndYear.value = newEndDate.getFullYear();
+
+    emits('update:modelValue', {
+      start: selectedStartDate.value,
+      end: selectedEndDate.value,
+    });
+  }
+
+  if (selectedStartDate.value && selectedEndDate.value && props.activeInput === 'startInput') {
+    emits('update:modelValue', {
+      start: selectedStartDate.value,
+      end: newEndDate,
+    });
+  }
+  if (selectedStartDate.value && selectedEndDate.value && props.activeInput === 'endInput') {
+    emits('update:modelValue', {
+      start: selectedStartDate.value,
+      end: newEndDate,
+    });
+  }
+
+  if (!selectedStartDate.value && selectedEndDate.value && props.activeInput === 'endInput') {
+    selectedStartDate.value = selectedEndDate.value;
+    selectedStartDay.value = selectedEndDate.value.getDate();
+    selectedStartMonth.value = selectedEndDate.value.getMonth();
+    selectedStartYear.value = selectedEndDate.value.getFullYear();
+
+    emits('update:modelValue', {
+      start: selectedStartDate.value,
+      end: newEndDate,
+    });
+  }
 }
 
 function handleLayoutDisplay() {
@@ -235,7 +362,12 @@ function handleLayoutDisplay() {
   }
 }
 
-function handleSelection(selectedValue, selectionType, isNotSelectable = false) {
+// Compute properties for months, years and quarters grid
+const monthsList = computed(() =>
+  getMonths(currentDate.value, props.variant, props.mode, props.pickerType, isMobileScreen.value)
+);
+
+function handleSingleSelection(selectedValue, selectionType, isNotSelectable = false) {
   if (props.disabled) return;
   if (isNotSelectable) return;
   selectedManually.value = true;
@@ -247,7 +379,6 @@ function handleSelection(selectedValue, selectionType, isNotSelectable = false) 
     newDate.setMonth(selectedValue);
     currentDate.value = newDate;
     selectedMonth.value = Number(selectedValue);
-    // selectedYear.value = currentDate.value.getFullYear();
 
     if (props.mode === 'month') {
       emits('update:modelValue', newDate);
@@ -331,7 +462,7 @@ function handleSelection(selectedValue, selectionType, isNotSelectable = false) 
   }
 
   if (selectionType === 'date') {
-    // Set selectedDay from the selected value
+    // Set selected Day, Month, Year from the selected value
     selectedDay.value = selectedValue.getDate();
     selectedMonth.value = selectedValue.getMonth();
     selectedYear.value = selectedValue.getFullYear();
@@ -349,8 +480,33 @@ function handleSelection(selectedValue, selectionType, isNotSelectable = false) 
     selectedDate.value = updatedDate;
 
     if (props.mode === 'date') {
-      // Update the selectedDate value and emit the event
-      currentDate.value = updatedDate;
+      // Get the last element of the flattened monthsList array
+      const clonedArray = [...monthsList.value.flat()];
+      const lastDateInMonthList = clonedArray.slice(-1)[0];
+
+      // Check if the updatedDate exists in the flattened monthsList array
+      const isDateInMonthList = monthsList.value
+        .flat()
+        .some((monthDate) => monthDate.getMonth() === updatedDate.getMonth());
+
+      // Check if the updatedDate is after the lastDateInMonthList
+      if (updatedDate > lastDateInMonthList) {
+        // Set currentDate to the updatedDate minus 3 months
+        const threeMonthsBeforeDate = new Date(updatedDate);
+        if (props.variant === 'full') {
+          threeMonthsBeforeDate.setMonth(threeMonthsBeforeDate.getMonth() - 3);
+        }
+        if (props.variant === 'full-rows' || props.variant === 'full-columns') {
+          threeMonthsBeforeDate.setMonth(threeMonthsBeforeDate.getMonth() - 3);
+        }
+        currentDate.value = threeMonthsBeforeDate;
+      }
+      // If updatedDate is NOT in the monthsList, update currentDate.value
+      else if (!isDateInMonthList) {
+        currentDate.value = updatedDate;
+      }
+
+      // Emit the event with updated value
       emits('update:modelValue', updatedDate);
 
       // Handle layout display and close the menu
@@ -407,6 +563,346 @@ function handleSelection(selectedValue, selectionType, isNotSelectable = false) 
   }
 }
 
+function handleRangeSelection(selectedValue, selectionType, isNotSelectable = false) {
+  if (props.disabled) return;
+  if (isNotSelectable) return;
+  selectedManually.value = true;
+
+  // Declare new cloned date reference
+  const newDate = new Date(currentDate.value);
+
+  if (selectionType === 'month') {
+    newDate.setMonth(selectedValue);
+    currentDate.value = newDate;
+
+    // Set selectedMonth from the selected value
+    selectedMonth.value = Number(selectedValue);
+
+    if (props.mode === 'month') {
+      // Declare new cloned date reference
+      const newStartDate = new Date(currentDate.value);
+      const newEndDate = new Date(currentDate.value);
+
+      if (!selectedStartMonth.value) {
+        newStartDate.setMonth(selectedValue);
+        // If start date is not selected, set the start date
+        selectedStartMonth.value = selectedValue;
+        hoveredDate.value = selectedValue;
+      } else if (selectedStartMonth.value && !selectedEndMonth.value) {
+        // If start month is selected, but end month is not, set the end month
+        // Ensure the end month is after the start month
+        if (selectedValue >= selectedStartDate.value) {
+          newEndDate.setMonth(selectedValue);
+          selectedEndMonth.value = selectedValue;
+
+          // Update the selectedDate value and emit the event
+          emits('update:modelValue', {
+            start: newStartDate,
+            end: newEndDate,
+          });
+
+          // Reset hover and close the menu
+          hoveredDate.value = null;
+          // Handle layout display and close the menu
+          handleLayoutDisplay();
+          props.closeMenu();
+          return;
+        }
+      } else {
+        // If the clicked date is before the start date, reset the selection
+        newStartDate.setMonth(selectedValue);
+        selectedStartMonth.value = selectedValue;
+        hoveredDate.value = selectedValue;
+      }
+      // emits('update:modelValue', newDate);
+      // Handle layout display and close the menu
+      // handleLayoutDisplay();
+
+      return;
+    }
+
+    monthsLayout.value = false;
+    regularLayout.value = true;
+    return;
+  }
+
+  if (selectionType === 'year') {
+    newDate.setFullYear(selectedValue);
+    currentDate.value = newDate;
+
+    // Set selectedYear from the selected value
+    selectedYear.value = Number(selectedValue);
+
+    yearsLayout.value = false;
+    regularLayout.value = true;
+    return;
+  }
+
+  if (selectionType === 'date') {
+    if (props.activeInput === 'startInput' && !selectedStartDate.value) {
+      // If start date is not selected, set the start date
+      selectedStartDate.value = selectedValue;
+      selectedStartDay.value = selectedValue.getDate();
+      selectedStartMonth.value = selectedValue.getMonth();
+      selectedStartYear.value = selectedValue.getFullYear();
+      hoveredDate.value = selectedValue;
+    } else if (
+      props.activeInput === 'startInput' &&
+      selectedStartDate.value &&
+      !selectedEndDate.value
+    ) {
+      // If start date is selected, but end date is not, set the end date
+      // Ensure the end date is after the start date
+      if (selectedValue >= selectedStartDate.value) {
+        selectedEndDate.value = selectedValue;
+        selectedEndDay.value = selectedValue.getDate();
+        selectedEndMonth.value = selectedValue.getMonth();
+        selectedEndYear.value = selectedValue.getFullYear();
+
+        // Update the selectedDate value and emit the event
+        currentDate.value = selectedStartDate.value;
+        emits('update:modelValue', {
+          start: selectedStartDate.value,
+          end: selectedEndDate.value,
+        });
+
+        // Reset hover and close the menu
+        hoveredDate.value = null;
+        // Handle layout display and close the menu
+        handleLayoutDisplay();
+        props.closeMenu();
+      } else {
+        // If the clicked date is before the start date, flip selected values
+        selectedEndDate.value = selectedStartDate.value;
+        selectedEndDay.value = selectedStartDate.value.getDate();
+        selectedEndMonth.value = selectedStartDate.value.getMonth();
+        selectedEndYear.value = selectedStartDate.value.getFullYear();
+        selectedStartDate.value = selectedValue;
+        selectedStartDay.value = selectedValue.getDate();
+        selectedStartMonth.value = selectedValue.getMonth();
+        selectedStartYear.value = selectedValue.getFullYear();
+
+        // Update the selectedDate value and emit the event
+        currentDate.value = selectedStartDate.value;
+        emits('update:modelValue', {
+          start: selectedStartDate.value,
+          end: selectedEndDate.value,
+        });
+
+        // Reset hover and close the menu
+        hoveredDate.value = null;
+        // Handle layout display and close the menu
+        handleLayoutDisplay();
+        props.closeMenu();
+      }
+    } else if (selectedStartDate.value && selectedEndDate.value) {
+      // Both start and end dates are selected, and a new date is selected
+      if (props.activeInput === 'endInput' && selectedValue >= selectedStartDate.value) {
+        // If the new date is greater than or equal to the start date, update the end date
+        selectedEndDate.value = selectedValue;
+        selectedEndDay.value = selectedValue.getDate();
+        selectedEndMonth.value = selectedValue.getMonth();
+        selectedEndYear.value = selectedValue.getFullYear();
+
+        // // Check if selectedStartDate is '1900-01-01' and update currentDate accordingly
+        if (formatDateJSON(selectedStartDate.value) === '1900-01-01') {
+          currentDate.value = selectedEndDate.value; // Update to end date
+        }
+        // Check if selectedEndDate is '9999-12-31' and update currentDate accordingly
+        else if (formatDateJSON(selectedEndDate.value) === '9999-12-31') {
+          currentDate.value = selectedStartDate.value; // Update to start date
+        }
+        // If neither condition is met, default to current start date
+        else {
+          currentDate.value = selectedStartDate.value;
+        }
+
+        emits('update:modelValue', {
+          start: selectedStartDate.value,
+          end: selectedEndDate.value,
+        });
+
+        // Reset hover and close the menu
+        hoveredDate.value = null;
+        handleLayoutDisplay();
+        props.closeMenu();
+      }
+      // Case for updating the start date when the 'startInput' is active
+      else if (props.activeInput === 'startInput' && selectedValue <= selectedEndDate.value) {
+        // If the new date is less than or equal to the end date, update the start date
+        selectedStartDate.value = selectedValue;
+        selectedStartDay.value = selectedValue.getDate();
+        selectedStartMonth.value = selectedValue.getMonth();
+        selectedStartYear.value = selectedValue.getFullYear();
+
+        // Check for special cases like 1900-01-01 and 9999-12-31
+        if (formatDateJSON(selectedStartDate.value) === '1900-01-01') {
+          currentDate.value = selectedEndDate.value; // Update to end date
+        } else if (formatDateJSON(selectedEndDate.value) === '9999-12-31') {
+          currentDate.value = selectedStartDate.value; // Update to start date
+        } else {
+          currentDate.value = selectedStartDate.value;
+        }
+
+        emits('update:modelValue', {
+          start: selectedStartDate.value,
+          end: selectedEndDate.value,
+        });
+
+        // Reset hover and close the menu
+        hoveredDate.value = null;
+        handleLayoutDisplay();
+        props.closeMenu();
+      }
+    } else if (props.activeInput === 'endInput' && !selectedEndDate.value) {
+      selectedEndDate.value = selectedValue;
+      selectedEndDay.value = selectedValue.getDate();
+      selectedEndMonth.value = selectedValue.getMonth();
+      selectedEndYear.value = selectedValue.getFullYear();
+      hoveredDate.value = selectedValue;
+    } else if (
+      props.activeInput === 'endInput' &&
+      !selectedStartDate.value &&
+      selectedEndDate.value
+    ) {
+      // If end date is selected, but start date is not, set the start date
+      // Ensure the start date is before the end date
+      if (selectedValue <= selectedEndDate.value) {
+        selectedStartDate.value = selectedValue;
+        selectedStartDay.value = selectedValue.getDate();
+        selectedStartMonth.value = selectedValue.getMonth();
+        selectedStartYear.value = selectedValue.getFullYear();
+
+        // Update the selectedDate value and emit the event
+        currentDate.value = selectedStartDate.value;
+        emits('update:modelValue', {
+          start: selectedStartDate.value,
+          end: selectedEndDate.value,
+        });
+
+        // Reset hover and close the menu
+        hoveredDate.value = null;
+        // Handle layout display and close the menu
+        handleLayoutDisplay();
+        props.closeMenu();
+      } else {
+        // If the clicked date is after the end date, flip selected values
+        selectedStartDate.value = selectedEndDate.value;
+        selectedStartDay.value = selectedEndDate.value.getDate();
+        selectedStartMonth.value = selectedEndDate.value.getMonth();
+        selectedStartYear.value = selectedEndDate.value.getFullYear();
+        selectedEndDate.value = selectedValue;
+        selectedEndDay.value = selectedValue.getDate();
+        selectedEndMonth.value = selectedValue.getMonth();
+        selectedEndYear.value = selectedValue.getFullYear();
+
+        // Update the selectedDate value and emit the event
+        currentDate.value = selectedStartDate.value;
+        emits('update:modelValue', {
+          start: selectedStartDate.value,
+          end: selectedEndDate.value,
+        });
+
+        // Reset hover and close the menu
+        hoveredDate.value = null;
+        // Handle layout display and close the menu
+        handleLayoutDisplay();
+        props.closeMenu();
+      }
+    }
+  }
+}
+
+const handleSelections = (selectedValue, selectionType, isNotSelectable = false) => {
+  if (props.pickerType === 'single') {
+    return handleSingleSelection(selectedValue, selectionType, isNotSelectable);
+  }
+  return handleRangeSelection(selectedValue, selectionType, isNotSelectable);
+};
+
+// When hovering over a date
+const hoverDate = (date) => {
+  if (props.pickerType === 'single') return;
+
+  if (props.mode === 'date') {
+    hoveredDate.value = date; // Set the hovered date to show potential range
+  }
+
+  if (props.mode === 'month' && selectedStartMonth.value && !selectedEndMonth.value) {
+    hoveredDate.value = date; // Set the hovered date to show potential range
+  }
+};
+
+// Check if a day is in the hovering range
+const isHoveringRange = (date) => {
+  // Case where only the start date is selected and hover date exists (forward range)
+  if (selectedStartDate.value && !selectedEndDate.value && hoveredDate.value) {
+    if (hoveredDate.value >= selectedStartDate.value) {
+      // Hovered date is after the start date (forward selection)
+      return date >= selectedStartDate.value && date <= hoveredDate.value;
+    }
+    // Hovered date is before the start date (backward selection)
+    return date >= hoveredDate.value && date <= selectedStartDate.value;
+  }
+
+  // Case where only the end date is selected and hover date exists (backward range)
+  if (selectedEndDate.value && !selectedStartDate.value && hoveredDate.value) {
+    if (hoveredDate.value <= selectedEndDate.value) {
+      // Hovered date is before the end date (backward selection)
+      return date >= hoveredDate.value && date <= selectedEndDate.value;
+    }
+    // Hovered date is after the end date (forward selection)
+    return date >= selectedEndDate.value && date <= hoveredDate.value;
+  }
+
+  // Return false if none of the conditions match
+  return false;
+};
+
+const isSelectedDateRange = (date) => {
+  if (selectedStartDate.value && selectedEndDate.value) {
+    return date >= selectedStartDate.value && date <= selectedEndDate.value;
+  }
+  return false;
+};
+
+const isSelectedMonthRange = (monthIndex) => {
+  const currentYear = currentDate.value.getFullYear();
+
+  // Check if both start and end month and year are selected
+  if (selectedStartMonth.value !== null && selectedEndMonth.value !== null) {
+    // When both start and end are in the same year
+    if (selectedStartYear.value === selectedEndYear.value) {
+      return (
+        currentYear === selectedStartYear.value &&
+        monthIndex >= selectedStartMonth.value &&
+        monthIndex <= selectedEndMonth.value
+      );
+    }
+
+    // When start year is earlier than end year
+    if (currentYear === selectedStartYear.value) {
+      return monthIndex >= selectedStartMonth.value; // Hovering in the start year
+    }
+    if (currentYear === selectedEndYear.value) {
+      return monthIndex <= selectedEndMonth.value; // Hovering in the end year
+    }
+
+    // For years between the start and end years
+    if (currentYear > selectedStartYear.value && currentYear < selectedEndYear.value) {
+      return true; // Hovering for all months in the intermediate years
+    }
+  }
+  return false;
+};
+
+const isSelectedYearRange = (year) => {
+  if (selectedStartYear.value && selectedEndYear.value) {
+    return year >= selectedStartYear.value && year <= selectedEndYear.value;
+  }
+  return false;
+};
+
 // Create a computed property for filtering minutes based on cadence
 const filteredMinutes = computed(() => {
   const validCadenceValues = [1, 5, 15];
@@ -433,7 +929,7 @@ const filteredMinutes = computed(() => {
 
 const currentHourIndex = ref(getTimeOrderIndex(hours.value, todayDate.value.getHours()));
 const currentMinuteIndex = ref(
-  getTimeOrderIndex(filteredMinutes.value, todayDate.value.getMinutes())
+  getTimeOrderIndex(filteredMinutes.value, todayDate.value.getMinutes(), props.cadenceOfMinutes)
 );
 const selectedMinuteId = ref(null);
 const selectedMinuteCenterId = ref(filteredMinutes.value[currentMinuteIndex.value]?.id);
@@ -458,18 +954,16 @@ function updateVisibleMinutes() {
 function returnToToday() {
   const newDate = new Date();
   currentDate.value = newDate;
-  startYear.value = newDate.getFullYear() - 7;
-  endYear.value = newDate.getFullYear() + 4;
+  startYear.value = newDate.getFullYear() - 5;
+  endYear.value = newDate.getFullYear() + 6;
 
-  if (props.cadenceOfMinutes === 1) {
-    currentHourIndex.value = getTimeOrderIndex(hours.value, newDate.getHours());
-    currentMinuteIndex.value = getTimeOrderIndex(filteredMinutes.value, newDate.getMinutes());
-    selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
-  } else {
-    currentHourIndex.value = 0;
-    currentMinuteIndex.value = 0;
-    selectedMinuteCenterId.value = filteredMinutes.value[0].id;
-  }
+  currentHourIndex.value = getTimeOrderIndex(hours.value, newDate.getHours());
+  currentMinuteIndex.value = getTimeOrderIndex(
+    filteredMinutes.value,
+    newDate.getMinutes(),
+    props.cadenceOfMinutes
+  );
+  selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
 
   updateVisibleHours();
   updateVisibleMinutes();
@@ -623,18 +1117,18 @@ const selectMinute = (minuteObj, isNotSelectable) => {
 function moveCalendar(minDate, maxDate) {
   const now = new Date();
   // Check if both minDate and maxDate are in the future
-  if (minDate > now && minDate > now) {
+  if (minDate > now && maxDate > now) {
     currentDate.value = new Date(minDate);
-    startYear.value = minDate.getFullYear() - 7;
-    endYear.value = minDate.getFullYear() + 4;
+    startYear.value = minDate.getFullYear() - 5;
+    endYear.value = minDate.getFullYear() + 6;
     return;
   }
 
   // Check if both minDate and maxDate are in the past
-  if (maxDate < now && maxDate < now) {
+  if (minDate < now && maxDate < now) {
     currentDate.value = new Date(maxDate);
-    startYear.value = maxDate.getFullYear() - 7;
-    endYear.value = maxDate.getFullYear() + 4;
+    startYear.value = maxDate.getFullYear() - 5;
+    endYear.value = maxDate.getFullYear() + 6;
   }
 }
 
@@ -798,6 +1292,15 @@ function handleDateTimeSelection() {
   }
 }
 
+function handleOutsideClickRangeSelection() {
+  if (props.activeInput === 'startInput' && selectedStartDate.value && !selectedEndDate.value) {
+    handleDoNotIndicateEnd();
+  }
+  if (props.activeInput === 'endInput' && !selectedStartDate.value && selectedEndDate.value) {
+    handleDoNotIndicateStart();
+  }
+}
+
 const handleFocusOut = (e) => {
   if (!containerRef.value.contains(e.relatedTarget)) {
     handleDateTimeSelection();
@@ -815,8 +1318,11 @@ const isCalendarRootAvailable = computed(
 );
 
 const yearsPeriodPlaceholder = computed(() => {
-  if (props.mode === 'year' || props.mode === 'quarters') {
+  if (props.mode === 'year') {
     return `${startYear.value}-${endYear.value}`;
+  }
+  if (props.mode === 'quarters') {
+    return `${startQuarterYear.value}-${endQuarterYear.value}`;
   }
   return '';
 });
@@ -915,16 +1421,18 @@ const canSelectNext = computed(() => {
 });
 
 // Compute properties for months, years and quarters grid
-const monthsList = computed(() => getMonths(currentDate.value, props.variant, props.mode));
 const monthsInYear = computed(() => getGrid('months', 3, 0, 0, props.localizedMonthsList));
 const yearsList = computed(() => getGrid('years', 3, startYear.value, endYear.value));
-const quartersList = computed(() => getGrid('quarters', 5, startYear.value, endYear.value));
+const quartersList = computed(() =>
+  getGrid('quarters', 5, startQuarterYear.value, endQuarterYear.value)
+);
 
 const monthsSelectButtonLabel = computed(() => {
   if (
-    (props.mode === 'date' && props.variant === 'full') ||
-    (props.mode === 'date' && props.variant === 'full-rows') ||
-    (props.mode === 'date' && props.variant === 'full-columns')
+    (props.mode === 'date' && props.variant === 'full' && props.pickerType === 'single') ||
+    (props.mode === 'date' && props.variant === 'full-rows' && props.pickerType === 'single') ||
+    (props.mode === 'date' && props.variant === 'full-columns' && props.pickerType === 'single') ||
+    props.pickerType === 'range'
   ) {
     // Flatten the monthsList array to handle the different structures
     const flattenedMonths = monthsList.value.flat();
@@ -959,9 +1467,9 @@ const monthsSelectButtonLabel = computed(() => {
 
 const yearsSelectButtonLabel = computed(() => {
   if (
-    (props.mode === 'date' && props.variant === 'full') ||
-    (props.mode === 'date' && props.variant === 'full-rows') ||
-    (props.mode === 'date' && props.variant === 'full-columns')
+    (props.mode === 'date' && props.variant === 'full' && props.pickerType === 'single') ||
+    (props.mode === 'date' && props.variant === 'full-rows' && props.pickerType === 'single') ||
+    (props.mode === 'date' && props.variant === 'full-columns' && props.pickerType === 'single')
   ) {
     // Flatten the monthsList array to handle the different structures
     const flattenedMonths = monthsList.value.flat();
@@ -998,8 +1506,11 @@ const timeSelectButtonLabel = computed(() => {
 });
 
 onClickOutside(containerRef, () => {
-  if (props.variant !== 'default') {
+  if (props.pickerType === 'single' && props.variant !== 'default') {
     handleDateTimeSelection();
+  }
+  if (props.pickerType === 'range') {
+    handleOutsideClickRangeSelection();
   }
 });
 
@@ -1077,12 +1588,8 @@ watch(
 
 watch(
   () => props.cadenceOfMinutes,
-  (newValue) => {
-    if (newValue !== 1) {
-      currentHourIndex.value = 0;
-      currentMinuteIndex.value = 0;
-    }
-    selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+  () => {
+    selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
     updateVisibleHours();
     updateVisibleMinutes();
   },
@@ -1101,13 +1608,23 @@ watch(
 watch(
   () => props.modelValue,
   (newValue) => {
-    if (newValue === null || newValue === undefined) {
+    if ((newValue === null || newValue === undefined) && props.pickerType === 'single') {
       clearSelectedValues();
       emits('update:modelValue', null);
       return;
     }
 
     if (
+      (newValue === null || newValue === undefined || (!newValue.start && !newValue.end)) &&
+      props.pickerType === 'range'
+    ) {
+      clearSelectedValues();
+      emits('update:modelValue', null);
+      return;
+    }
+
+    if (
+      props.pickerType === 'single' &&
       props.mode !== 'month' &&
       props.mode !== 'quarters' &&
       !canSelectDate(newValue, props.minDateRef, props.maxDateRef, props.mode)
@@ -1117,14 +1634,10 @@ watch(
       return;
     }
 
-    if (newValue !== null && newValue !== undefined) {
+    if (props.pickerType === 'single' && newValue !== null && newValue !== undefined) {
       if (props.mode === 'date' || props.mode === 'date-time') {
         selectedDate.value = new Date(newValue);
         if (!selectedManually.value) currentDate.value = selectedDate.value;
-
-        selectedDay.value = selectedDate.value.getDate();
-        selectedYear.value = selectedDate.value.getFullYear();
-        selectedMonth.value = selectedDate.value.getMonth();
 
         selectedHour.value = selectedDate.value.getHours();
         selectedMinute.value = selectedDate.value.getMinutes();
@@ -1151,7 +1664,7 @@ watch(
         currentMinuteIndex.value =
           filteredIndex !== -1
             ? filteredIndex
-            : getTimeOrderIndex(filteredMinutes.value, minutesValue);
+            : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
 
         // Ensure currentMinuteIndex is valid, otherwise default to 0
         if (
@@ -1165,7 +1678,7 @@ watch(
         selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
         selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
 
-        handleSelection(selectedDate.value, 'date');
+        handleSelections(selectedDate.value, 'date');
       }
 
       if (props.mode === 'time') {
@@ -1192,7 +1705,7 @@ watch(
         currentMinuteIndex.value =
           filteredIndex !== -1
             ? filteredIndex
-            : getTimeOrderIndex(filteredMinutes.value, minutesValue);
+            : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
 
         // Ensure currentMinuteIndex is valid, otherwise default to 0
         if (
@@ -1219,18 +1732,18 @@ watch(
         selectedDate.value = newValue;
         if (!selectedManually.value) currentDate.value = selectedDate.value;
 
-        handleSelection(selectedDate.value.getMonth(), 'month');
+        handleSelections(selectedDate.value.getMonth(), 'month');
       }
 
       if (props.mode === 'year') {
         selectedDate.value = newValue;
-        handleSelection(selectedDate.value.getFullYear(), 'year');
+        handleSelections(selectedDate.value.getFullYear(), 'year');
       }
 
       if (props.mode === 'month-year') {
         selectedDate.value = newValue;
         selectedMonth.value = selectedDate.value.getMonth();
-        handleSelection(selectedDate.value.getFullYear(), 'year');
+        handleSelections(selectedDate.value.getFullYear(), 'year');
       }
 
       if (props.mode === 'quarters') {
@@ -1247,7 +1760,84 @@ watch(
           emits('update:modelValue', null);
           return;
         }
-        handleSelection(constructedQuarterObj, 'quarter');
+        handleSelections(constructedQuarterObj, 'quarter');
+      }
+    }
+
+    if (props.pickerType === 'range' && newValue) {
+      if (newValue.start && newValue.end) {
+        if (
+          !canSelectDate(newValue.start, props.minDateRef, props.maxDateRef, props.mode) ||
+          !canSelectDate(newValue.end, props.minDateRef, props.maxDateRef, props.mode)
+        ) {
+          clearSelectedValues();
+          emits('update:modelValue', null);
+          return;
+        }
+
+        if (!selectedManually.value) currentDate.value = newValue.start;
+
+        selectedStartDate.value = newValue.start;
+        selectedStartDay.value = newValue.start.getDate();
+        selectedStartMonth.value = newValue.start.getMonth();
+        selectedStartYear.value = newValue.start.getFullYear();
+        selectedEndDate.value = newValue.end;
+        selectedEndDay.value = newValue.end.getDate();
+        selectedEndMonth.value = newValue.end.getMonth();
+        selectedEndYear.value = newValue.end.getFullYear();
+
+        emits('update:modelValue', {
+          start: selectedStartDate.value,
+          end: selectedEndDate.value,
+        });
+      } else if (newValue.start && !newValue.end) {
+        if (!canSelectDate(newValue.start, props.minDateRef, props.maxDateRef, props.mode)) {
+          clearSelectedValues();
+          emits('update:modelValue', null);
+          return;
+        }
+
+        if (!selectedManually.value) currentDate.value = newValue.start;
+
+        const newEndDate = new Date('9999-12-31');
+
+        selectedStartDate.value = newValue.start;
+        selectedStartDay.value = newValue.start.getDate();
+        selectedStartMonth.value = newValue.start.getMonth();
+        selectedStartYear.value = newValue.start.getFullYear();
+        selectedEndDate.value = newEndDate;
+        selectedEndDay.value = newEndDate.getDate();
+        selectedEndMonth.value = newEndDate.getMonth();
+        selectedEndYear.value = newEndDate.getFullYear();
+
+        emits('update:modelValue', {
+          start: selectedStartDate.value,
+          end: newEndDate,
+        });
+      } else if (!newValue.start && newValue.end) {
+        if (!canSelectDate(newValue.end, props.minDateRef, props.maxDateRef, props.mode)) {
+          clearSelectedValues();
+          emits('update:modelValue', null);
+          return;
+        }
+
+        if (!selectedManually.value) currentDate.value = newValue.end;
+
+        const newStartDate = new Date('1900-01-01');
+
+        selectedStartDate.value = newStartDate;
+        selectedStartDay.value = newStartDate.getDate();
+        selectedStartMonth.value = newStartDate.getMonth();
+        selectedStartYear.value = newStartDate.getFullYear();
+        selectedEndDate.value = newValue.end;
+        selectedEndDay.value = newValue.end.getDate();
+        selectedEndMonth.value = newValue.end.getMonth();
+        selectedEndYear.value = newValue.end.getFullYear();
+
+        emits('update:modelValue', {
+          start: newStartDate,
+          end: selectedEndDate.value,
+        });
       }
     }
 
@@ -1321,7 +1911,13 @@ watch(
             'lx-full-layout':
               (mode === 'date' && variant === 'full') ||
               (mode === 'date' && variant === 'full-rows'),
-            'lx-full-columns': mode === 'date' && variant === 'full-columns',
+            'lx-full-columns':
+              (pickerType === 'single' && mode === 'date' && variant === 'full-columns') ||
+              (pickerType === 'range' &&
+                !isMobileScreen &&
+                mode !== 'month' &&
+                mode !== 'year' &&
+                mode !== 'quarters'),
             'mobile-date-time': mode === 'date-time' && isMobileScreen,
             'date-time-only': mode === 'date-time' && isMobileScreen && mobileTimeLayout,
             'months-only': mode === 'month' && !isMobileScreen,
@@ -1344,9 +1940,16 @@ watch(
           :class="[
             {
               'lx-full-layout':
-                (mode === 'date' && variant === 'full') ||
-                (mode === 'date' && variant === 'full-columns'),
+                (mode === 'date' && variant === 'full' && pickerType === 'single') ||
+                (mode === 'date' && variant === 'full-columns' && pickerType === 'single') ||
+                (pickerType === 'range' &&
+                  !isMobileScreen &&
+                  mode !== 'month' &&
+                  mode !== 'year' &&
+                  mode !== 'quarters'),
               'date-time-only': isMobileScreen && mobileTimeLayout,
+              'range-month': pickerType === 'range' && mode === 'month',
+              'range-year': pickerType === 'range' && mode === 'year',
             },
           ]"
         >
@@ -1366,7 +1969,8 @@ watch(
                       v-if="
                         (mode === 'date' && variant === 'full') ||
                         (mode === 'date' && variant === 'full-rows') ||
-                        (mode === 'date' && variant === 'full-columns')
+                        (mode === 'date' && variant === 'full-columns') ||
+                        (pickerType === 'range' && !isMobileScreen)
                       "
                       class="lx-calendar-regular-layout-month-label"
                     >
@@ -1396,7 +2000,9 @@ watch(
                         {
                           'last-month':
                             monthsList.flat().indexOf(month) === 1 &&
-                            (variant === 'full-rows' || variant === 'full-columns'),
+                            (variant === 'full-rows' ||
+                              variant === 'full-columns' ||
+                              pickerType === 'range'),
                         },
                         {
                           'last-month':
@@ -1425,67 +2031,119 @@ watch(
                             :disabled="
                               !hasSpecialDates(date, specialDatesAttributes) ||
                               (!isSameMonth(date, month) &&
-                                !canSelectDate(date, minDateRef, maxDateRef, 'date'))
+                                !canSelectDate(date, minDateRef, maxDateRef, 'date')) ||
+                              pickerType === 'range'
                             "
-                            :arrow="false"
+                            :arrow="true"
                           >
                             <div
-                              class="lx-calendar-day"
+                              class="lx-calendar-day-wrapper"
                               :class="[
-                                { 'lx-other-month': !isSameMonth(date, month) },
                                 {
-                                  'lx-today':
-                                    date.getDate() === todayDate.getDate() &&
-                                    date.getMonth() === todayDate.getMonth() &&
-                                    date.getFullYear() === todayDate.getFullYear(),
+                                  'hovering-range':
+                                    (isHoveringRange(date) || isSelectedDateRange(date)) &&
+                                    isSameMonth(date, month),
                                 },
                                 {
-                                  'lx-selected-day':
-                                    date.getDate() === selectedDay &&
-                                    date.getMonth() === selectedDate.getMonth() &&
-                                    date.getFullYear() === selectedDate.getFullYear(),
+                                  'start-day':
+                                    date.getDate() === selectedStartDay &&
+                                    date.getMonth() === selectedStartDate.getMonth() &&
+                                    date.getFullYear() === selectedStartDate.getFullYear(),
                                 },
                                 {
-                                  'lx-disabled-date':
-                                    !canSelectDate(date, minDateRef, maxDateRef, 'date') ||
-                                    disabled,
+                                  'end-day':
+                                    date.getDate() === selectedEndDay &&
+                                    date.getMonth() === selectedEndDate.getMonth() &&
+                                    date.getFullYear() === selectedEndDate.getFullYear(),
                                 },
                               ]"
-                              :aria-label="date.getDate()"
-                              role="cell"
-                              :tabindex="
-                                !canSelectDate(date, minDateRef, maxDateRef, 'date') ? '-1' : '0'
-                              "
-                              @click.stop.prevent="
-                                handleSelection(
-                                  date,
-                                  'date',
-                                  !canSelectDate(date, minDateRef, maxDateRef, 'date')
-                                )
-                              "
-                              @keydown.enter.prevent="
-                                handleSelection(
-                                  date,
-                                  'date',
-                                  !canSelectDate(date, minDateRef, maxDateRef, 'date')
-                                )
-                              "
                             >
-                              <div class="lx-calendar-day-content">
-                                {{ date.getDate() }}
-                              </div>
-                              <div class="lx-calendar-day-layer">
-                                <div class="lx-day-layer-bars">
-                                  <template
-                                    v-for="(attr, attrIndex) in specialDatesAttributes"
-                                    :key="attrIndex"
-                                  >
-                                    <span
-                                      v-if="checkForSpecialDate(date, attr.dates)"
-                                      class="lx-day-layer-bar"
-                                      :class="['bar-' + attr.barColor]"
-                                    ></span>
-                                  </template>
+                              <div
+                                class="lx-calendar-day"
+                                :class="[
+                                  { 'lx-other-month': !isSameMonth(date, month) },
+                                  {
+                                    'lx-today':
+                                      date.getDate() === todayDate.getDate() &&
+                                      date.getMonth() === todayDate.getMonth() &&
+                                      date.getFullYear() === todayDate.getFullYear(),
+                                  },
+                                  {
+                                    'lx-selected-day':
+                                      date.getDate() === selectedDay &&
+                                      date.getMonth() === selectedDate.getMonth() &&
+                                      date.getFullYear() === selectedDate.getFullYear(),
+                                  },
+                                  {
+                                    'lx-selected-start-day':
+                                      date.getDate() === selectedStartDay &&
+                                      date.getMonth() === selectedStartDate.getMonth() &&
+                                      date.getFullYear() === selectedStartDate.getFullYear(),
+                                  },
+                                  {
+                                    'lx-selected-end-day':
+                                      date.getDate() === selectedEndDay &&
+                                      date.getMonth() === selectedEndDate.getMonth() &&
+                                      date.getFullYear() === selectedEndDate.getFullYear(),
+                                  },
+                                  {
+                                    'lx-disabled-date':
+                                      !canSelectDate(date, minDateRef, maxDateRef, 'date') ||
+                                      disabled,
+                                  },
+                                  {
+                                    'hovering-range':
+                                      isHoveringRange(date) || isSelectedDateRange(date),
+                                  },
+                                ]"
+                                :aria-label="date.getDate()"
+                                role="cell"
+                                :tabindex="
+                                  getDayTabIndex(
+                                    date,
+                                    month,
+                                    weekIndex,
+                                    firstDayOfTheWeek,
+                                    monthsList,
+                                    variant,
+                                    pickerType,
+                                    minDateRef,
+                                    maxDateRef
+                                  )
+                                "
+                                @click.stop.prevent="
+                                  handleSelections(
+                                    date,
+                                    'date',
+                                    !canSelectDate(date, minDateRef, maxDateRef, 'date')
+                                  )
+                                "
+                                @keydown.enter.prevent="
+                                  handleSelections(
+                                    date,
+                                    'date',
+                                    !canSelectDate(date, minDateRef, maxDateRef, 'date')
+                                  )
+                                "
+                                @focusin="hoverDate(date)"
+                                @mouseover="hoverDate(date)"
+                              >
+                                <div class="lx-calendar-day-content">
+                                  {{ date.getDate() }}
+                                </div>
+                                <div class="lx-calendar-day-layer">
+                                  <div class="lx-day-layer-bars">
+                                    <template
+                                      v-for="(attr, attrIndex) in specialDatesAttributes"
+                                      :key="attrIndex"
+                                    >
+                                      <span
+                                        v-if="checkForSpecialDate(date, attr.dates)"
+                                        class="lx-day-layer-bar"
+                                        :class="['bar-' + attr.barColor]"
+                                      ></span>
+                                    </template>
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -1554,8 +2212,21 @@ watch(
                         {
                           'lx-selected-month':
                             (month.orderIndex === selectedMonth &&
-                              currentDate.getFullYear() === Number(selectedYear)) ||
+                              currentDate.getFullYear() === Number(selectedYear) &&
+                              pickerType === 'single') ||
                             (month.orderIndex === selectedMonth && mode === 'month'),
+                        },
+                        {
+                          'lx-selected-start-month':
+                            (month.orderIndex === selectedStartMonth &&
+                              currentDate.getFullYear() === Number(selectedStartYear)) ||
+                            (month.orderIndex === selectedStartMonth && mode === 'month'),
+                        },
+                        {
+                          'lx-selected-end-month':
+                            (month.orderIndex === selectedEndMonth &&
+                              currentDate.getFullYear() === Number(selectedEndYear)) ||
+                            (month.orderIndex === selectedEndMonth && mode === 'month'),
                         },
                         {
                           'lx-disabled-month':
@@ -1574,6 +2245,9 @@ watch(
                         },
                         {
                           'lx-full-layout': mode === 'date' && variant === 'full',
+                        },
+                        {
+                          'hovering-range': isSelectedMonthRange(month.orderIndex),
                         },
                       ]"
                       :aria-label="capitalizeFirstLetter(month.fullName)"
@@ -1594,7 +2268,7 @@ watch(
                           : '0'
                       "
                       @click.stop.prevent="
-                        handleSelection(
+                        handleSelections(
                           month.orderIndex,
                           'month',
                           mode !== 'month' &&
@@ -1611,7 +2285,7 @@ watch(
                         )
                       "
                       @keydown.enter.prevent="
-                        handleSelection(
+                        handleSelections(
                           month.orderIndex,
                           'month',
                           mode !== 'month' &&
@@ -1627,6 +2301,8 @@ watch(
                             )
                         )
                       "
+                      @focusin="hoverDate(month.orderIndex)"
+                      @mouseover="hoverDate(month.orderIndex)"
                     >
                       <span class="lx-calendar-month-content">
                         {{
@@ -1661,7 +2337,13 @@ watch(
                           'lx-today': todayDate.getFullYear() === year,
                         },
                         {
-                          'lx-selected-year': selectedYear === year,
+                          'lx-selected-year': selectedYear === year && pickerType === 'single',
+                        },
+                        {
+                          'lx-selected-start-year': year === selectedStartYear,
+                        },
+                        {
+                          'lx-selected-end-year': year === selectedEndYear,
                         },
                         {
                           'lx-disabled-year':
@@ -1671,6 +2353,9 @@ watch(
                               maxDateRef,
                               'year'
                             ) || disabled,
+                        },
+                        {
+                          'hovering-range': isSelectedYearRange(year),
                         },
                       ]"
                       :aria-label="year"
@@ -1686,7 +2371,7 @@ watch(
                           : '-1'
                       "
                       @click.stop.prevent="
-                        handleSelection(
+                        handleSelections(
                           year,
                           'year',
                           !canSelectDate(
@@ -1698,7 +2383,7 @@ watch(
                         )
                       "
                       @keydown.enter.prevent="
-                        handleSelection(
+                        handleSelections(
                           year,
                           'year',
                           !canSelectDate(
@@ -1722,7 +2407,7 @@ watch(
 
           <div v-if="quartersLayout" class="lx-calendar-quarters-wrapper">
             <TransitionGroup :name="transitionName">
-              <div class="lx-calendar-quarters" :key="startYear" role="rowgroup">
+              <div class="lx-calendar-quarters" :key="startQuarterYear" role="rowgroup">
                 <div
                   v-for="(quarter, quartersRowIndex) in quartersList"
                   :key="quartersRowIndex"
@@ -1757,7 +2442,7 @@ watch(
                       role="cell"
                       tabindex="0"
                       @click.stop.prevent="
-                        handleSelection(
+                        handleSelections(
                           {
                             year: quarter.year,
                             quarter: quarterItem,
@@ -1774,7 +2459,7 @@ watch(
                         )
                       "
                       @keydown.enter.prevent="
-                        handleSelection(
+                        handleSelections(
                           {
                             year: quarter.year,
                             quarter: quarterItem,
@@ -1862,11 +2547,31 @@ watch(
                       minDateRef,
                       maxDateRef,
                       selectedDay,
-                      'hour'
+                      'hour',
+                      selectedHour,
+                      selectedMinute
                     ) || disabled,
                 },
               ]"
-              tabindex="0"
+              :tabindex="
+                !canSelectTime(
+                  new Date(
+                    todayDate.getFullYear(),
+                    todayDate.getMonth(),
+                    todayDate.getDate(),
+                    hour.value,
+                    0
+                  ),
+                  minDateRef,
+                  maxDateRef,
+                  selectedDay,
+                  'hour',
+                  selectedHour,
+                  selectedMinute
+                )
+                  ? '-1'
+                  : '0'
+              "
               @click.stop.prevent="
                 selectHour(
                   hour,
@@ -1881,7 +2586,9 @@ watch(
                     minDateRef,
                     maxDateRef,
                     selectedDay,
-                    'hour'
+                    'hour',
+                    selectedHour,
+                    selectedMinute
                   )
                 )
               "
@@ -1899,7 +2606,9 @@ watch(
                     minDateRef,
                     maxDateRef,
                     selectedDay,
-                    'hour'
+                    'hour',
+                    selectedHour,
+                    selectedMinute
                   )
                 )
               "
@@ -1959,11 +2668,31 @@ watch(
                       minDateRef,
                       maxDateRef,
                       selectedDay,
-                      'minute'
+                      'minute',
+                      selectedHour,
+                      selectedMinute
                     ) || disabled,
                 },
               ]"
-              tabindex="0"
+              :tabindex="
+                !canSelectTime(
+                  new Date(
+                    todayDate.getFullYear(),
+                    todayDate.getMonth(),
+                    todayDate.getDate(),
+                    0,
+                    minute.value
+                  ),
+                  minDateRef,
+                  maxDateRef,
+                  selectedDay,
+                  'minute',
+                  selectedHour,
+                  selectedMinute
+                )
+                  ? '-1'
+                  : '0'
+              "
               @click.stop.prevent="
                 selectMinute(
                   minute,
@@ -1978,7 +2707,9 @@ watch(
                     minDateRef,
                     maxDateRef,
                     selectedDay,
-                    'minute'
+                    'minute',
+                    selectedHour,
+                    selectedMinute
                   )
                 )
               "
@@ -1996,7 +2727,9 @@ watch(
                     minDateRef,
                     maxDateRef,
                     selectedDay,
-                    'minute'
+                    'minute',
+                    selectedHour,
+                    selectedMinute
                   )
                 )
               "
@@ -2031,15 +2764,65 @@ watch(
       />
     </div>
 
-    <div class="lx-calendar-footer">
+    <div
+      class="lx-calendar-footer"
+      :class="[
+        {
+          'range-buttons': pickerType === 'range' && mode !== 'month',
+          'range-buttons-icon':
+            pickerType === 'range' && mode !== 'month' && mode !== 'year' && mode !== 'quarters',
+          'text-unavailable': pickerType === 'range' && !texts.doNotIndicateStart,
+        },
+      ]"
+    >
+      <LxButton
+        v-if="pickerType === 'range' && mode !== 'month'"
+        custom-class="min-date-button"
+        :title="texts.doNotIndicateStart"
+        :label="texts.doNotIndicateStart"
+        kind="ghost"
+        icon="min-date"
+        :variant="
+          mode === 'month' ||
+          mode === 'year' ||
+          mode === 'quarters' ||
+          isMobileScreen ||
+          !texts.doNotIndicateStart
+            ? 'icon-only'
+            : 'default'
+        "
+        :disabled="disabled"
+        @click.stop.prevent="handleDoNotIndicateStart"
+      />
+
       <LxButton
         :title="texts.clearButton"
         :label="texts.clear"
         kind="ghost"
         icon="clear"
-        :variant="mode === 'time' ? 'icon-only' : 'default'"
+        :variant="
+          (mode === 'time' && !isMobileScreen) || (pickerType === 'range' && isMobileScreen)
+            ? 'icon-only'
+            : 'default'
+        "
         :disabled="disabled"
         @click.stop.prevent="clearSelectedValues"
+      />
+
+      <LxButton
+        v-if="pickerType === 'range' && mode !== 'month'"
+        custom-class="max-date-button"
+        :title="texts.doNotIndicateEnd"
+        :label="texts.doNotIndicateEnd"
+        kind="ghost"
+        icon="max-date"
+        :variant="
+          mode === 'month' || mode === 'year' || mode === 'quarters' || isMobileScreen
+            ? 'icon-only'
+            : 'default'
+        "
+        :disabled="disabled"
+        @click.stop.prevent="handleDoNotIndicateEnd"
       />
     </div>
   </div>
