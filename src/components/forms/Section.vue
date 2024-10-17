@@ -4,6 +4,8 @@ import { generateUUID } from '@/utils/stringUtils';
 import LxExpander from '@/components/Expander.vue';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
+import LxButton from '@/components/Button.vue';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
 /**
  * Represents a section component that can be used inside form.
  *
@@ -107,6 +109,17 @@ const props = defineProps({
    */
   badge: { type: String, default: '' },
   /**
+   * Defines the action definitions for the section.
+   *
+   * @type {Array}
+   * @default []
+   * @since 1.7.0-beta.8
+   */
+  actionDefinitions: {
+    type: Array,
+    default: () => [],
+  },
+  /**
    * The object containing text translations for the section.
    * @type {Object}
    * @since 1.2.3
@@ -119,6 +132,9 @@ const props = defineProps({
     }),
   },
 });
+
+const emits = defineEmits(['actionClick']);
+
 const formMode = inject('formMode', 'none');
 const sectionIndexType = inject('formIndexType', 'default');
 const formIndex = inject('formIndex', null);
@@ -217,9 +233,41 @@ provide('sectionColumnCount', props.columnCount);
       { 'lx-form-section-8': columnCount === 8 },
     ]"
   >
-    <header v-if="label || description">
-      <h3 v-if="label">{{ label }}</h3>
-      <p v-if="description" class="lx-description">{{ description }}</p>
+    <header v-if="label || description || actionDefinitions?.length > 0">
+      <div>
+        <h3 v-if="label">{{ label }}</h3>
+        <p v-if="description" class="lx-description">{{ description }}</p>
+      </div>
+      <div v-if="actionDefinitions?.length > 0">
+        <LxButton
+          v-if="actionDefinitions?.length === 1"
+          :icon="actionDefinitions?.[0]?.icon"
+          :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.name"
+          :disabled="actionDefinitions?.[0]?.disabled"
+          :destructive="actionDefinitions?.[0]?.destructive"
+          kind="ghost"
+          @click="emits('actionClick', actionDefinitions?.[0]?.id)"
+        />
+        <LxDropDownMenu v-else>
+          <LxButton icon="overflow-menu" kind="ghost" />
+          <template #panel>
+            <div class="lx-button-set">
+              <LxButton
+                v-for="action in actionDefinitions"
+                :key="action?.id"
+                :icon="action?.icon"
+                :icon-set="action?.iconSet"
+                :label="action?.name"
+                :title="action?.title || action?.name"
+                :destructive="action?.destructive"
+                :disabled="action?.disabled"
+                kind="ghost"
+                @click="emits('actionClick', action?.id)"
+              />
+            </div>
+          </template>
+        </LxDropDownMenu>
+      </div>
     </header>
     <slot />
   </section>
