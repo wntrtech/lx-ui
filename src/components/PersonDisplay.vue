@@ -11,6 +11,10 @@ const props = defineProps({
     type: [String, Object],
     default: null,
   },
+  name: {
+    type: String,
+    default: null,
+  },
   size: {
     type: String,
     default: 'm' /* 's', 'm', 'l' */,
@@ -34,6 +38,14 @@ const props = defineProps({
   icon: {
     type: String,
     default: null,
+  },
+  idAttribute: {
+    type: String,
+    default: 'id',
+  },
+  nameAttribute: {
+    type: String,
+    default: 'name',
   },
   firstNameAttribute: {
     type: String,
@@ -86,16 +98,20 @@ function formatName(val) {
     return val;
   }
   if (typeof val === 'object') {
-    if (!val[props.firstNameAttribute] || !val[props.lastNameAttribute]) {
-      return null;
+    if (!val[props.nameAttribute]) {
+      if (!val[props.firstNameAttribute] || !val[props.lastNameAttribute]) {
+        return null;
+      }
+      return `${val[props.firstNameAttribute]} ${val[props.lastNameAttribute]}`;
     }
-    return `${val[props.firstNameAttribute]} ${val[props.lastNameAttribute]}`;
+    return val[props.nameAttribute];
   }
-
   return null;
 }
 
-const name = computed(() => formatName(props.value));
+const name = computed(() =>
+  props.name && typeof props.value !== 'object' ? props.name : formatName(props.value)
+);
 
 const showMultiple = computed(() => {
   if (Array.isArray(props.value)) {
@@ -144,7 +160,7 @@ const icon = computed(() => {
 const filteredValues = computed(() => {
   if (!Array.isArray(props.value) || props.value.length === 0) return '';
   const filteredItems = props.value.filter(
-    (item) => (item.firstName && item.lastName) || item.description
+    (item) => (item.firstName && item.lastName) || item.name || item.description
   );
   return filteredItems;
 });
@@ -162,7 +178,27 @@ const tooltipItems = computed(() => {
   return filteredValues.value;
 });
 
-const nameKey = computed(() => safeString(name.value));
+function getAvatarKey(value) {
+  if (typeof value === 'string') {
+    if (value) return safeString(value);
+
+    if (props.name) {
+      return safeString(props.name);
+    }
+  }
+  if (typeof value === 'object') {
+    if (value[props.idAttribute]) {
+      return safeString(value[props.idAttribute]);
+    }
+    if (value[props.nameAttribute]) {
+      return safeString(value[props.nameAttribute]);
+    }
+    if (value[props.firstNameAttribute] && value[props.lastNameAttribute]) {
+      return safeString(`${value[props.firstNameAttribute]} ${value[props.lastNameAttribute]}`);
+    }
+  }
+  return null;
+}
 
 const showDescription = computed(() => description.value && props.size === 'l');
 </script>
@@ -179,7 +215,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
         ]"
       >
         <template v-if="!icon">
-          <LxAvatar v-if="nameKey" :value="nameKey" :size="size" />
+          <LxAvatar v-if="name" :value="getAvatarKey(value)" :size="size" />
           <div
             v-else-if="description"
             class="lx-user-icon-display"
@@ -193,7 +229,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
           </div>
         </template>
         <div
-          v-else-if="nameKey || description"
+          v-else-if="name || description"
           class="lx-person-icon-display"
           :class="[
             { 'lx-person-icon-display-s': size === 's' },
@@ -204,7 +240,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
           <LxIcon :value="icon" :size="size" />
         </div>
 
-        <template v-if="!nameKey && description && size !== 'l' && variant !== 'icon-only'">
+        <template v-if="!name && description && size !== 'l' && variant !== 'icon-only'">
           {{ '—' }}
         </template>
 
@@ -212,7 +248,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
           <p class="lx-data lx-person-display-name">{{ name }}</p>
           <p class="lx-description" v-if="showDescription">{{ description }}</p>
         </template>
-        <template v-if="!nameKey && !description">
+        <template v-if="!name && !description">
           <span class="lx-empty-person-value">—</span>
         </template>
       </div>
@@ -221,8 +257,8 @@ const showDescription = computed(() => description.value && props.size === 'l');
         <template v-for="(item, index) in displayItems" :key="index">
           <template v-if="!item.icon">
             <LxAvatar
-              v-if="item.firstName && item.lastName"
-              :value="safeString(formatName(item))"
+              v-if="(item.firstName && item.lastName) || item.name"
+              :value="getAvatarKey(item)"
               :size="size"
             />
             <div
@@ -238,7 +274,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
             </div>
           </template>
           <div
-            v-else-if="(item.firstName && item.lastName) || item.description"
+            v-else-if="(item.firstName && item.lastName) || item.name || item.description"
             class="lx-person-icon-display"
             :class="[
               { 'lx-person-icon-display-s': size === 's' },
@@ -274,7 +310,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
         <template v-else>
           <LxRow v-for="i in tooltipItems.slice(0, 10)" :key="i" :show-label="false">
             <p class="lx-data">
-              {{ i.firstName && i.lastName ? formatName(i) : i.description }}
+              {{ (i.firstName && i.lastName) || i.name ? formatName(i) : i.description }}
             </p>
           </LxRow>
           <LxRow v-if="filteredValues.length > 10">

@@ -25,12 +25,15 @@ describe('LxPersonDisplay', () => {
       const props = wrapper.props();
 
       expect(props.value).toBe(null);
+      expect(props.name).toBe(null);
       expect(props.size).toBe('m');
       expect(props.variant).toBe('full');
       expect(props.description).toBe(null);
       expect(props.role).toBe(null);
       expect(props.institution).toBe(null);
       expect(props.icon).toBe(null);
+      expect(props.idAttribute).toBe('id');
+      expect(props.nameAttribute).toBe('name');
       expect(props.firstNameAttribute).toBe('firstName');
       expect(props.lastNameAttribute).toBe('lastName');
       expect(props.descriptionAttribute).toBe('description');
@@ -48,13 +51,16 @@ describe('LxPersonDisplay', () => {
       const wrapper = mount(LxPersonDisplay, {
         props: {
           value: 'custom-id',
+          name: 'Custom name',
           size: 's',
           variant: 'icon-only',
           description: 'Custom description',
           role: 'Custom role',
           institution: 'Custom institution',
           icon: 'Custom icon',
-          firstNameAttribute: 'customName',
+          idAttribute: 'customId',
+          nameAttribute: 'customName',
+          firstNameAttribute: 'customFirstName',
           lastNameAttribute: 'customSurname',
           descriptionAttribute: 'customDescription',
           roleAttribute: 'customRole',
@@ -81,13 +87,16 @@ describe('LxPersonDisplay', () => {
       const props = wrapper.props();
 
       expect(props.value).toBe('custom-id').toBeTypeOf('string');
+      expect(props.name).toBe('Custom name').toBeTypeOf('string');
       expect(props.size).toBe('s').toBeTypeOf('string');
       expect(props.variant).toBe('icon-only').toBeTypeOf('string');
       expect(props.description).toBe('Custom description').toBeTypeOf('string');
       expect(props.role).toBe('Custom role').toBeTypeOf('string');
       expect(props.institution).toBe('Custom institution').toBeTypeOf('string');
       expect(props.icon).toBe('Custom icon').toBeTypeOf('string');
-      expect(props.firstNameAttribute).toBe('customName').toBeTypeOf('string');
+      expect(props.idAttribute).toBe('customId').toBeTypeOf('string');
+      expect(props.nameAttribute).toBe('customName').toBeTypeOf('string');
+      expect(props.firstNameAttribute).toBe('customFirstName').toBeTypeOf('string');
       expect(props.lastNameAttribute).toBe('customSurname').toBeTypeOf('string');
       expect(props.descriptionAttribute).toBe('customDescription').toBeTypeOf('string');
       expect(props.roleAttribute).toBe('customRole').toBeTypeOf('string');

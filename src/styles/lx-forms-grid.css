@@ -954,6 +954,12 @@ svg .lx-shade {
   background-color: var(--color-region);
 }
 
+.lx-person-icon-display {
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+}
+
 .lx-avatar-display > svg,
 .lx-user-icon-display > svg,
 .lx-person-icon-display > svg {
