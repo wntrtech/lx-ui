@@ -146,6 +146,16 @@ function validateIfExact(e, type = 'startInput') {
             end: model.value.end,
           };
           emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+        if (type === 'startInput' && !model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
           return;
         }
 
@@ -155,6 +165,16 @@ function validateIfExact(e, type = 'startInput') {
             end: null,
           };
           emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+        if (type === 'endInput' && !model.value.start) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
           return;
         }
       }
@@ -203,18 +223,34 @@ function validateIfExact(e, type = 'startInput') {
           return;
         }
         if (updatedValue && model.value.start && model.value.end) {
-          const updatedDatesObject = {
+          let updatedDatesObject = {
             start: updatedValue,
             end: model.value.end,
           };
+
+          if (updatedValue > model.value.end) {
+            updatedDatesObject = {
+              start: updatedValue,
+              end: null,
+            };
+          }
+
           emits('update:modelValue', updatedDatesObject);
           return;
         }
         if (updatedValue && !model.value.start && model.value.end) {
-          const updatedDatesObject = {
+          let updatedDatesObject = {
             start: updatedValue,
             end: model.value.end,
           };
+
+          if (updatedValue > model.value.end) {
+            updatedDatesObject = {
+              start: null,
+              end: updatedValue,
+            };
+          }
+
           emits('update:modelValue', updatedDatesObject);
           return;
         }
@@ -254,18 +290,33 @@ function validateIfExact(e, type = 'startInput') {
           return;
         }
         if (updatedValue && model.value.start && model.value.end) {
-          const updatedDatesObject = {
+          let updatedDatesObject = {
             start: model.value.start,
             end: updatedValue,
           };
+
+          if (updatedValue < model.value.start) {
+            updatedDatesObject = {
+              start: null,
+              end: updatedValue,
+            };
+          }
+
           emits('update:modelValue', updatedDatesObject);
           return;
         }
         if (updatedValue && model.value.start && !model.value.end) {
-          const updatedDatesObject = {
+          let updatedDatesObject = {
             start: model.value.start,
             end: updatedValue,
           };
+
+          if (updatedValue < model.value.start) {
+            updatedDatesObject = {
+              start: updatedValue,
+              end: null,
+            };
+          }
           emits('update:modelValue', updatedDatesObject);
           return;
         }

@@ -605,7 +605,6 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
           hoveredDate.value = null;
           // Handle layout display and close the menu
           handleLayoutDisplay();
-          props.closeMenu();
           return;
         }
       } else {
@@ -670,7 +669,6 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
         hoveredDate.value = null;
         // Handle layout display and close the menu
         handleLayoutDisplay();
-        props.closeMenu();
       } else {
         // If the clicked date is before the start date, flip selected values
         selectedEndDate.value = selectedStartDate.value;
@@ -689,11 +687,9 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
           end: selectedEndDate.value,
         });
 
-        // Reset hover and close the menu
+        // Reset hover
         hoveredDate.value = null;
-        // Handle layout display and close the menu
         handleLayoutDisplay();
-        props.closeMenu();
       }
     } else if (selectedStartDate.value && selectedEndDate.value) {
       // Both start and end dates are selected, and a new date is selected
@@ -722,10 +718,9 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
           end: selectedEndDate.value,
         });
 
-        // Reset hover and close the menu
+        // Reset hover
         hoveredDate.value = null;
         handleLayoutDisplay();
-        props.closeMenu();
       }
       // Case for updating the start date when the 'startInput' is active
       else if (props.activeInput === 'startInput' && selectedValue <= selectedEndDate.value) {
@@ -749,10 +744,33 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
           end: selectedEndDate.value,
         });
 
-        // Reset hover and close the menu
+        // Reset hover
         hoveredDate.value = null;
         handleLayoutDisplay();
-        props.closeMenu();
+      } else if (props.activeInput === 'startInput' && selectedValue > selectedEndDate.value) {
+        // If the new date is greater than or equal to the end date, update the start date
+        selectedStartDate.value = selectedValue;
+        selectedStartDay.value = selectedValue.getDate();
+        selectedStartMonth.value = selectedValue.getMonth();
+        selectedStartYear.value = selectedValue.getFullYear();
+        selectedEndDate.value = null;
+        selectedEndDay.value = null;
+        selectedEndMonth.value = null;
+        selectedEndYear.value = null;
+
+        hoveredDate.value = selectedValue;
+      } else if (props.activeInput === 'endInput' && selectedValue < selectedStartDate.value) {
+        // If the new date is less than the start date, update the end date
+        selectedStartDate.value = null;
+        selectedStartDay.value = null;
+        selectedStartMonth.value = null;
+        selectedStartYear.value = null;
+        selectedEndDate.value = selectedValue;
+        selectedEndDay.value = selectedValue.getDate();
+        selectedEndMonth.value = selectedValue.getMonth();
+        selectedEndYear.value = selectedValue.getFullYear();
+
+        hoveredDate.value = selectedValue;
       }
     } else if (props.activeInput === 'endInput' && !selectedEndDate.value) {
       selectedEndDate.value = selectedValue;
@@ -780,11 +798,9 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
           end: selectedEndDate.value,
         });
 
-        // Reset hover and close the menu
+        // Reset hover
         hoveredDate.value = null;
-        // Handle layout display and close the menu
         handleLayoutDisplay();
-        props.closeMenu();
       } else {
         // If the clicked date is after the end date, flip selected values
         selectedStartDate.value = selectedEndDate.value;
@@ -803,11 +819,9 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
           end: selectedEndDate.value,
         });
 
-        // Reset hover and close the menu
+        // Reset hover
         hoveredDate.value = null;
-        // Handle layout display and close the menu
         handleLayoutDisplay();
-        props.closeMenu();
       }
     }
   }
@@ -1847,10 +1861,21 @@ watch(
   },
   { immediate: true }
 );
+
+function handleClose() {
+  handleOutsideClickRangeSelection();
+  props.closeMenu();
+}
 </script>
 
 <template>
-  <div ref="containerRef" class="lx-calendar-container" tabindex="-1" @focusout="handleFocusOut">
+  <div
+    ref="containerRef"
+    class="lx-calendar-container"
+    tabindex="-1"
+    @focusout="handleFocusOut"
+    @keydown.esc.prevent="handleClose"
+  >
     <div
       class="lx-calendar-header"
       v-if="
