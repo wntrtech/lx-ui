@@ -1519,6 +1519,46 @@ const timeSelectButtonLabel = computed(() => {
   return `${currentHours}:${currentMinutes}`;
 });
 
+const doNotIndicateStartDisableState = computed(() => {
+  if (props.disabled) return true;
+  // Start date already selected as not set: disabled
+  if (formatDateJSON(selectedStartDate.value) === '1900-01-01') {
+    return true;
+  }
+  if (!selectedStartDate.value && !selectedEndDate.value) {
+    return true;
+  }
+  // Default case: enabled
+  return false;
+});
+
+const clearButtonDisableState = computed(() => {
+  if (props.disabled) return true;
+  // Picker type is "single" and date is not selected: disabled
+  if (props.pickerType === 'single' && !selectedDate.value) {
+    return true;
+  }
+  // Picker type is "range" and start/end dates are not selected: disabled
+  if (props.pickerType === 'range' && !selectedStartDate.value && !selectedEndDate.value) {
+    return true;
+  }
+  // Default case: enabled
+  return false;
+});
+
+const doNotIndicateEndDisableState = computed(() => {
+  if (props.disabled) return true;
+  // End date already selected as not set: disabled
+  if (formatDateJSON(selectedEndDate.value) === '9999-12-31') {
+    return true;
+  }
+  if (!selectedStartDate.value && !selectedEndDate.value) {
+    return true;
+  }
+  // Default case: enabled
+  return false;
+});
+
 onClickOutside(containerRef, () => {
   if (props.pickerType === 'single' && props.variant !== 'default') {
     handleDateTimeSelection();
@@ -1789,7 +1829,7 @@ watch(
           return;
         }
 
-        if (!selectedManually.value) currentDate.value = newValue.start;
+        currentDate.value = newValue.start;
 
         selectedStartDate.value = newValue.start;
         selectedStartDay.value = newValue.start.getDate();
@@ -1811,7 +1851,7 @@ watch(
           return;
         }
 
-        if (!selectedManually.value) currentDate.value = newValue.start;
+        currentDate.value = newValue.start;
 
         const newEndDate = new Date('9999-12-31');
 
@@ -1835,7 +1875,7 @@ watch(
           return;
         }
 
-        if (!selectedManually.value) currentDate.value = newValue.end;
+        currentDate.value = newValue.end;
 
         const newStartDate = new Date('1900-01-01');
 
@@ -2816,7 +2856,7 @@ function handleClose() {
             ? 'icon-only'
             : 'default'
         "
-        :disabled="disabled"
+        :disabled="doNotIndicateStartDisableState"
         @click.stop.prevent="handleDoNotIndicateStart"
       />
 
@@ -2830,7 +2870,7 @@ function handleClose() {
             ? 'icon-only'
             : 'default'
         "
-        :disabled="disabled"
+        :disabled="clearButtonDisableState"
         @click.stop.prevent="clearSelectedValues"
       />
 
@@ -2846,7 +2886,7 @@ function handleClose() {
             ? 'icon-only'
             : 'default'
         "
-        :disabled="disabled"
+        :disabled="doNotIndicateEndDisableState"
         @click.stop.prevent="handleDoNotIndicateEnd"
       />
     </div>
