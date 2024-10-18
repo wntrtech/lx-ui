@@ -32,6 +32,7 @@ describe('LxPersonDisplay', () => {
       expect(props.role).toBe(null);
       expect(props.institution).toBe(null);
       expect(props.icon).toBe(null);
+      expect(props.iconSet).toBe(null);
       expect(props.idAttribute).toBe('id');
       expect(props.nameAttribute).toBe('name');
       expect(props.firstNameAttribute).toBe('firstName');
@@ -40,6 +41,7 @@ describe('LxPersonDisplay', () => {
       expect(props.roleAttribute).toBe('role');
       expect(props.institutionAttribute).toBe('institution');
       expect(props.iconAttribute).toBe('icon');
+      expect(props.iconSetAttribute).toBe('iconSet');
       expect(props.maxLength).toBe(3);
       expect(props.texts.name).toBe('Vārds, uzvārds');
       expect(props.texts.description).toBe('Apraksts');
@@ -58,6 +60,7 @@ describe('LxPersonDisplay', () => {
           role: 'Custom role',
           institution: 'Custom institution',
           icon: 'Custom icon',
+          iconSet: 'Custom icon set',
           idAttribute: 'customId',
           nameAttribute: 'customName',
           firstNameAttribute: 'customFirstName',
@@ -66,6 +69,7 @@ describe('LxPersonDisplay', () => {
           roleAttribute: 'customRole',
           institutionAttribute: 'customInstitution',
           iconAttribute: 'customIcon',
+          iconSetAttribute: 'customIconSet',
           maxLength: 5,
           texts: {
             name: 'Name, surname',
@@ -94,6 +98,7 @@ describe('LxPersonDisplay', () => {
       expect(props.role).toBe('Custom role').toBeTypeOf('string');
       expect(props.institution).toBe('Custom institution').toBeTypeOf('string');
       expect(props.icon).toBe('Custom icon').toBeTypeOf('string');
+      expect(props.iconSet).toBe('Custom icon set').toBeTypeOf('string');
       expect(props.idAttribute).toBe('customId').toBeTypeOf('string');
       expect(props.nameAttribute).toBe('customName').toBeTypeOf('string');
       expect(props.firstNameAttribute).toBe('customFirstName').toBeTypeOf('string');
@@ -102,6 +107,7 @@ describe('LxPersonDisplay', () => {
       expect(props.roleAttribute).toBe('customRole').toBeTypeOf('string');
       expect(props.institutionAttribute).toBe('customInstitution').toBeTypeOf('string');
       expect(props.iconAttribute).toBe('customIcon').toBeTypeOf('string');
+      expect(props.iconSetAttribute).toBe('customIconSet').toBeTypeOf('string');
       expect(props.maxLength).toBe(5).toBeTypeOf('number');
       expect(props.texts.name).toBe('Name, surname');
       expect(props.texts.description).toBe('Description').toBeTypeOf('string');
@@ -248,14 +254,38 @@ describe('LxPersonDisplay', () => {
       expect(icon).toBe('flash');
     });
 
+    test('iconSet should return provided iconSet', () => {
+      const wrapper = mount(LxPersonDisplay, {
+        props: {
+          value: { firstName: 'John', lastName: 'Doe', iconSet: 'cds' },
+        },
+        global: {
+          provide: {
+            sectionMode: 'none',
+            formMode: 'defaultFormMode',
+            rowRequiredTexts: 'defaultRequiredTexts',
+            sectionColumnCount: 3,
+          },
+        },
+      });
+      const { iconSet } = wrapper.vm;
+
+      expect(iconSet).toBe('cds');
+    });
+
     test('filteredValues should return filtered array based on attributes', () => {
       const wrapper = mount(LxPersonDisplay, {
         props: {
           value: [
             { firstName: 'John', lastName: 'Doe', description: 'Developer' },
             { firstName: 'Jane' },
+            { name: 'John Doe' },
             { description: 'Tester' },
           ],
+          firstNameAttribute: 'firstName',
+          lastNameAttribute: 'lastName',
+          nameAttribute: 'name',
+          description: 'description',
         },
         global: {
           provide: {
@@ -270,6 +300,7 @@ describe('LxPersonDisplay', () => {
 
       expect(filteredValues).toEqual([
         { firstName: 'John', lastName: 'Doe', description: 'Developer' },
+        { name: 'John Doe' },
         { description: 'Tester' },
       ]);
     });

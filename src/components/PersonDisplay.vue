@@ -39,6 +39,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  iconSet: {
+    type: String,
+    default: null,
+  },
   idAttribute: {
     type: String,
     default: 'id',
@@ -70,6 +74,10 @@ const props = defineProps({
   iconAttribute: {
     type: String,
     default: 'icon',
+  },
+  iconSetAttribute: {
+    type: String,
+    default: 'iconSet',
   },
   maxLength: {
     type: Number,
@@ -157,10 +165,21 @@ const icon = computed(() => {
   return '';
 });
 
+const iconSet = computed(() => {
+  if (props.iconSet) return props.iconSet;
+  if (props.value && typeof props.value === 'object') {
+    return props.value[props.iconSetAttribute] ? props.value[props.iconSetAttribute] : '';
+  }
+  return '';
+});
+
 const filteredValues = computed(() => {
   if (!Array.isArray(props.value) || props.value.length === 0) return '';
   const filteredItems = props.value.filter(
-    (item) => (item.firstName && item.lastName) || item.name || item.description
+    (item) =>
+      (item[props.firstNameAttribute] && item[props.lastNameAttribute]) ||
+      item[props.nameAttribute] ||
+      item[props.description]
   );
   return filteredItems;
 });
@@ -237,7 +256,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
           ]"
           :size="size"
         >
-          <LxIcon :value="icon" :size="size" />
+          <LxIcon :value="icon" :iconSet="iconSet" :size="size" />
         </div>
 
         <template v-if="!name && description && size !== 'l' && variant !== 'icon-only'">
@@ -255,14 +274,14 @@ const showDescription = computed(() => description.value && props.size === 'l');
 
       <div class="lx-person-display-multiple" v-if="showMultiple">
         <template v-for="(item, index) in displayItems" :key="index">
-          <template v-if="!item.icon">
+          <template v-if="!item[iconAttribute]">
             <LxAvatar
-              v-if="(item.firstName && item.lastName) || item.name"
+              v-if="(item[firstNameAttribute] && item[lastNameAttribute]) || item[nameAttribute]"
               :value="getAvatarKey(item)"
               :size="size"
             />
             <div
-              v-else-if="item.description"
+              v-else-if="item[descriptionAttribute]"
               class="lx-user-icon-display"
               :class="[
                 { 'lx-user-icon-display-s': size === 's' },
@@ -274,7 +293,11 @@ const showDescription = computed(() => description.value && props.size === 'l');
             </div>
           </template>
           <div
-            v-else-if="(item.firstName && item.lastName) || item.name || item.description"
+            v-else-if="
+              (item[firstNameAttribute] && item[lastNameAttribute]) ||
+              item[nameAttribute] ||
+              item[descriptionAttribute]
+            "
             class="lx-person-icon-display"
             :class="[
               { 'lx-person-icon-display-s': size === 's' },
@@ -282,7 +305,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
             ]"
             :size="size"
           >
-            <LxIcon :value="item.icon" :size="size" />
+            <LxIcon :value="item[iconAttribute]" :iconSet="item[iconSetAttribute]" :size="size" />
           </div>
         </template>
         <div class="overflow" v-if="displayItems.length < filteredValues.length">
