@@ -1635,7 +1635,20 @@ watch(
       handleLayoutDisplay();
     }
     // Handle missing date time parts when calendar menu closes
-    if (!newValue) handleDateTimeSelection();
+    if (!newValue) {
+      if (props.pickerType === 'single') {
+        handleDateTimeSelection();
+
+        if (!selectedDate.value) {
+          returnToToday();
+        }
+      }
+      if (props.pickerType === 'range') {
+        if (!selectedStartDate.value && !selectedEndDate.value) {
+          returnToToday();
+        }
+      }
+    }
   },
   { immediate: true }
 );

@@ -98,7 +98,7 @@ function validateIfExact(e, type = 'startInput') {
     const date = e.target.value;
     const inputMask = props.masks?.input || 'dd.MM.yyyy.';
 
-    if (date && inputMask.length !== date.length) {
+    if (date && date.length !== 10 && date.length !== 11) {
       if (props.pickerType === 'range') {
         if (type === 'startInput' && model.value.end) {
           const updatedDatesObject = {
@@ -106,6 +106,17 @@ function validateIfExact(e, type = 'startInput') {
             end: model.value.end,
           };
           emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+
+        if (type === 'startInput' && !model.value.end && !model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
           return;
         }
 
@@ -115,6 +126,17 @@ function validateIfExact(e, type = 'startInput') {
             end: null,
           };
           emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+
+        if (type === 'endInput' && !model.value.end && !model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
           return;
         }
       }
