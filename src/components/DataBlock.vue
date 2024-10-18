@@ -97,6 +97,7 @@ const selected = computed({
       { 'lx-data-block-expander': expandable },
       { 'lx-data-block-expanded': expanded },
       { 'lx-data-block-disabled': disabled || busy || loading },
+      { 'lx-data-block-custom-header': $slots.customHeader },
     ]"
   >
     <div class="lx-data-block">
