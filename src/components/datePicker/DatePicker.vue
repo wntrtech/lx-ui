@@ -563,6 +563,15 @@ watch(
   }
 );
 
+watch(
+  () => dropDownMenuRef.value?.menuOpen,
+  (newValue) => {
+    if (!newValue) {
+      activeInput.value = null;
+    }
+  }
+);
+
 onMounted(async () => {
   localizedMonthsList.value = getMonthNames(props.locale);
   weekDaysList.value = getWeekdayNames(props.locale, props.firstDayOfTheWeek);
@@ -589,11 +598,11 @@ onMounted(async () => {
           <input
             type="text"
             class="lx-date-time-picker"
+            :class="[{ 'lx-invalid': invalid }, { 'input-active': activeInput === 'startInput' }]"
             :value="modelInput"
             :id="id"
             :placeholder="placeholderComputed"
             :disabled="disabled"
-            :class="[{ 'lx-invalid': invalid }]"
             autocomplete="off"
             :readonly="
               mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
@@ -615,11 +624,11 @@ onMounted(async () => {
           <input
             type="text"
             class="lx-date-time-picker"
+            :class="[{ 'lx-invalid': invalid }, { 'input-active': activeInput === 'endInput' }]"
             :value="modelEndDateInput"
             :id="id"
             :placeholder="placeholderComputed"
             :disabled="disabled"
-            :class="[{ 'lx-invalid': invalid }]"
             autocomplete="off"
             :readonly="
               mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'

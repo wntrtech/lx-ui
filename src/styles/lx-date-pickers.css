@@ -25,6 +25,14 @@
   font-weight: var(--font-weight);
 }
 
+.lx-datepicker-default .lx-datepicker-input-container.range .lx-date-time-picker.input-active {
+  background-color: var(--color-highlight);
+}
+
+.lx-datepicker-default .lx-datepicker-input-container.range .lx-date-time-picker:focus {
+  background-color: var(--color-highlight);
+}
+
 .lx-datepicker-default .lx-datepicker-input-container.range {
   display: flex;
   align-items: center;
