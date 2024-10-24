@@ -8,6 +8,7 @@ import {
   eachDayOfInterval,
   addMonths,
   format,
+  isMatch,
 } from 'date-fns';
 import useLx from '@/hooks/useLx';
 
@@ -602,4 +603,28 @@ export const getDayTabIndex = (
   }
   // Default case: Not focusable
   return '-1';
+};
+
+// Removes last character thats is not number or letter
+export const removeLastNonAlphanumeric = (input) => input.replace(/[^a-zA-Z0-9]$/, '');
+
+// Validate the date based on the mask
+export const validateDateByMask = (date, mask) => isMatch(date, mask);
+
+// Function to sanitize the input based on mode (date, date-time, or time)
+export const sanitizeDateInput = (e, mode) => {
+  let allowedChars;
+  const input = e.target.value;
+
+  // Set allowed characters based on the mode
+  if (mode === 'date') {
+    allowedChars = /[^0-9.,/-]/g; // number, dot, comma, slash, dash
+  } else if (mode === 'date-time') {
+    allowedChars = /[^0-9.,/\- :]/g; // number, dot, comma, slash, dash, space, colon
+  } else if (mode === 'time') {
+    allowedChars = /[^0-9:]/g; // only number and colon
+  }
+
+  // Remove any disallowed characters
+  e.target.value = input.replace(allowedChars, '');
 };

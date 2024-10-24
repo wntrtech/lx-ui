@@ -35,9 +35,7 @@ export function isDateValid(date) {
 export function isTimeValid(value) {
   // Check the basic format first using regex
   const timePattern = /^\d{2}:\d{2}$/;
-  if (!timePattern.test(value)) {
-    return false;
-  }
+  if (!timePattern.test(value)) return false;
   // Split the time string into hours and minutes
   const [hours, minutes] = value.split(':').map(Number);
   // Check if hours and minutes are within valid ranges

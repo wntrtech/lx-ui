@@ -7,6 +7,7 @@
 #### LxDateTimePicker
 
 - `lx-date-pickers.css` new style file for updated/reworked LxDateTimePicker.
+- `lx-calendars.css` old style file removed.
 
 #### LxPersonDisplay
 
@@ -323,7 +324,6 @@ import '@zzdats/lx-ui/dist/styles/lx-loaders.css';
 import '@zzdats/lx-ui/dist/styles/lx-lists.css';
 import '@zzdats/lx-ui/dist/styles/lx-expanders.css';
 import '@zzdats/lx-ui/dist/styles/lx-tabs.css';
-import '@zzdats/lx-ui/dist/styles/lx-calendars.css';
 import '@zzdats/lx-ui/dist/styles/lx-animations.css';
 import '@zzdats/lx-ui/dist/styles/lx-master-detail.css';
 import '@zzdats/lx-ui/dist/styles/lx-ratings.css';

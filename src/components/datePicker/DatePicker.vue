@@ -18,6 +18,9 @@ import {
   canSelectDate,
   zeroPad,
   extractQuarterFromDate,
+  validateDateByMask,
+  removeLastNonAlphanumeric,
+  sanitizeDateInput,
 } from '@/components/datePicker/helpers';
 
 import LxCalendarContainer from '@/components/datePicker/CalendarContainer.vue';
@@ -74,6 +77,8 @@ const modelInput = ref(null);
 const modelEndDateInput = ref(null);
 
 const activeInput = ref(null);
+const startInputRef = ref();
+const endInputRef = ref();
 
 const windowSize = useWindowSize();
 
@@ -88,6 +93,19 @@ const model = computed({
   },
 });
 
+function setActiveInput(type) {
+  activeInput.value = type;
+
+  if (startInputRef.value && type === 'startInput') {
+    startInputRef.value.focus();
+    return;
+  }
+  if (endInputRef.value && type === 'endInput') {
+    endInputRef.value.focus();
+    endInputRef.value.select();
+  }
+}
+
 function validateIfExact(e, type = 'startInput') {
   if (props.pickerType === 'single' && !e.target.value) {
     emits('update:modelValue', null);
@@ -98,7 +116,10 @@ function validateIfExact(e, type = 'startInput') {
     const date = e.target.value;
     const inputMask = props.masks?.input || 'dd.MM.yyyy.';
 
-    if (date && date.length !== 10 && date.length !== 11) {
+    const cleanedDate = removeLastNonAlphanumeric(date);
+    const cleanedMask = removeLastNonAlphanumeric(inputMask);
+
+    if (date && !validateDateByMask(cleanedDate, cleanedMask)) {
       if (props.pickerType === 'range') {
         if (type === 'startInput' && model.value.end) {
           const updatedDatesObject = {
@@ -143,16 +164,27 @@ function validateIfExact(e, type = 'startInput') {
 
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
+
+      const newDay = new Date().getDate();
+      const newMonth = new Date().getMonth();
+      const newYear = new Date().getFullYear();
+
+      const newDateString = inputMask
+        .replace('dd', zeroPad(newDay))
+        .replace('MM', zeroPad(newMonth + 1))
+        .replace('yyyy', newYear);
+
+      e.target.value = props.clearIfNotExact ? null : newDateString;
       return;
     }
 
-    const dayIndex = inputMask?.indexOf('dd');
-    const monthIndex = inputMask?.indexOf('MM');
-    const yearIndex = inputMask?.indexOf('yyyy');
+    const dayIndex = cleanedMask?.indexOf('dd');
+    const monthIndex = cleanedMask?.indexOf('MM');
+    const yearIndex = cleanedMask?.indexOf('yyyy');
 
-    const day = Number(date.substring(dayIndex, dayIndex + 2));
-    const month = Number(date.substring(monthIndex, monthIndex + 2));
-    const year = Number(date.substring(yearIndex, yearIndex + 4));
+    const day = Number(cleanedDate.substring(dayIndex, dayIndex + 2));
+    const month = Number(cleanedDate.substring(monthIndex, monthIndex + 2));
+    const year = Number(cleanedDate.substring(yearIndex, yearIndex + 4));
 
     const normalizedDay = zeroPad(day);
     const normalizedMonth = zeroPad(month);
@@ -160,7 +192,7 @@ function validateIfExact(e, type = 'startInput') {
     const dateString = `${year}-${normalizedMonth}-${normalizedDay}`; // "YYYY-MM-DD"
 
     // Check if the constructed date is valid
-    if (day && month && year && !isDateValid(dateString)) {
+    if (day && month && year && !isDateValid(new Date(dateString))) {
       if (props.pickerType === 'range') {
         if (type === 'startInput' && model.value.end) {
           const updatedDatesObject = {
@@ -203,6 +235,17 @@ function validateIfExact(e, type = 'startInput') {
 
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
+
+      const newDay = new Date().getDate();
+      const newMonth = new Date().getMonth();
+      const newYear = new Date().getFullYear();
+
+      const newDateString = inputMask
+        .replace('dd', zeroPad(newDay))
+        .replace('MM', zeroPad(newMonth + 1))
+        .replace('yyyy', newYear);
+
+      e.target.value = props.clearIfNotExact ? null : newDateString;
       return;
     }
 
@@ -234,6 +277,7 @@ function validateIfExact(e, type = 'startInput') {
             end: model.value.end,
           };
           emits('update:modelValue', updatedDatesObject);
+          setActiveInput('endInput');
           return;
         }
         if (!updatedValue && !model.value.end) {
@@ -255,9 +299,11 @@ function validateIfExact(e, type = 'startInput') {
               start: updatedValue,
               end: null,
             };
+            setActiveInput('endInput');
           }
 
           emits('update:modelValue', updatedDatesObject);
+          setActiveInput('endInput');
           return;
         }
         if (updatedValue && !model.value.start && model.value.end) {
@@ -268,11 +314,11 @@ function validateIfExact(e, type = 'startInput') {
 
           if (updatedValue > model.value.end) {
             updatedDatesObject = {
-              start: null,
-              end: updatedValue,
+              start: updatedValue,
+              end: null,
             };
+            setActiveInput('endInput');
           }
-
           emits('update:modelValue', updatedDatesObject);
           return;
         }
@@ -282,6 +328,7 @@ function validateIfExact(e, type = 'startInput') {
             end: null,
           };
           emits('update:modelValue', updatedDatesObject);
+          setActiveInput('endInput');
           return;
         }
         if (updatedValue && !model.value.start && !model.value.end) {
@@ -290,6 +337,7 @@ function validateIfExact(e, type = 'startInput') {
             end: updatedEndValue,
           };
           emits('update:modelValue', updatedDatesObject);
+          setActiveInput('endInput');
           return;
         }
       }
@@ -319,9 +367,10 @@ function validateIfExact(e, type = 'startInput') {
 
           if (updatedValue < model.value.start) {
             updatedDatesObject = {
-              start: null,
-              end: updatedValue,
+              start: updatedValue,
+              end: null,
             };
+            setActiveInput('endInput');
           }
 
           emits('update:modelValue', updatedDatesObject);
@@ -348,6 +397,7 @@ function validateIfExact(e, type = 'startInput') {
             end: updatedValue,
           };
           emits('update:modelValue', updatedDatesObject);
+          setActiveInput('startInput');
           return;
         }
         if (updatedValue && !model.value.start && !model.value.end) {
@@ -364,20 +414,29 @@ function validateIfExact(e, type = 'startInput') {
 
   if (props.mode === 'time') {
     const now = new Date();
-    const date = e.target.value;
+    const time = e.target.value;
     const inputTime24hrMask = props.masks?.inputTime24hr || 'HH:mm';
 
-    if (inputTime24hrMask.length !== date.length) {
+    if (inputTime24hrMask.length !== time.length || !validateDateByMask(time, inputTime24hrMask)) {
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
+
+      const newHours = new Date().getHours();
+      const newMinutes = new Date().getMinutes();
+
+      const newTimeString = inputTime24hrMask
+        .replace('HH', zeroPad(newHours))
+        .replace('mm', zeroPad(newMinutes));
+
+      e.target.value = props.clearIfNotExact ? null : newTimeString;
       return;
     }
 
     const hoursIndex = inputTime24hrMask?.indexOf('HH');
     const minutesIndex = inputTime24hrMask?.indexOf('mm');
 
-    const hours = Number(date.substring(hoursIndex, hoursIndex + 2));
-    const minutes = Number(date.substring(minutesIndex, minutesIndex + 2));
+    const hours = Number(time.substring(hoursIndex, hoursIndex + 2));
+    const minutes = Number(time.substring(minutesIndex, minutesIndex + 2));
 
     const normalizedHours = zeroPad(hours);
     const normalizedMinutes = zeroPad(minutes);
@@ -386,6 +445,15 @@ function validateIfExact(e, type = 'startInput') {
     if (!isTimeValid(`${normalizedHours}:${normalizedMinutes}`)) {
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
+
+      const newHours = new Date().getHours();
+      const newMinutes = new Date().getMinutes();
+
+      const newTimeString = inputTime24hrMask
+        .replace('HH', zeroPad(newHours))
+        .replace('mm', zeroPad(newMinutes));
+
+      e.target.value = props.clearIfNotExact ? null : newTimeString;
       return;
     }
 
@@ -395,26 +463,54 @@ function validateIfExact(e, type = 'startInput') {
   }
 
   if (props.mode === 'date-time') {
-    const date = e.target.value;
+    const dateTime = e.target.value;
     const inputDateTime24hrMask = props.masks?.inputDateTime24hr || 'dd.MM.yyyy. HH:mm';
 
-    if (inputDateTime24hrMask.length !== date.length) {
+    const [date, time] = dateTime.split(' ');
+    const [dateMask, timeMask] = inputDateTime24hrMask.split(' ');
+
+    const cleanedDate = removeLastNonAlphanumeric(date);
+    const cleanedMask = removeLastNonAlphanumeric(dateMask);
+
+    const constructedDateTimeString = `${cleanedDate} ${time}`;
+    const constructedMaskString = `${cleanedMask} ${timeMask}`;
+
+    if (
+      (dateTime && !validateDateByMask(constructedDateTimeString, constructedMaskString)) ||
+      timeMask.length !== time.length ||
+      cleanedDate.length !== cleanedMask.length
+    ) {
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
+
+      const newDay = new Date().getDate();
+      const newMonth = new Date().getMonth();
+      const newYear = new Date().getFullYear();
+      const newHours = new Date().getHours();
+      const newMinutes = new Date().getMinutes();
+
+      const newDateTimeString = inputDateTime24hrMask
+        .replace('dd', zeroPad(newDay))
+        .replace('MM', zeroPad(newMonth + 1))
+        .replace('yyyy', newYear)
+        .replace('HH', newHours)
+        .replace('mm', newMinutes);
+
+      e.target.value = props.clearIfNotExact ? null : newDateTimeString;
       return;
     }
 
-    const dayIndex = inputDateTime24hrMask?.indexOf('dd');
-    const monthIndex = inputDateTime24hrMask?.indexOf('MM');
-    const yearIndex = inputDateTime24hrMask?.indexOf('yyyy');
-    const hoursIndex = inputDateTime24hrMask?.indexOf('HH');
-    const minutesIndex = inputDateTime24hrMask?.indexOf('mm');
+    const dayIndex = constructedMaskString?.indexOf('dd');
+    const monthIndex = constructedMaskString?.indexOf('MM');
+    const yearIndex = constructedMaskString?.indexOf('yyyy');
+    const hoursIndex = constructedMaskString?.indexOf('HH');
+    const minutesIndex = constructedMaskString?.indexOf('mm');
 
-    const day = date?.substring(dayIndex, dayIndex + 2);
-    const month = date?.substring(monthIndex, monthIndex + 2);
-    const year = date?.substring(yearIndex, yearIndex + 4);
-    const hours = date?.substring(hoursIndex, hoursIndex + 2);
-    const minutes = date?.substring(minutesIndex, minutesIndex + 2);
+    const day = constructedDateTimeString?.substring(dayIndex, dayIndex + 2);
+    const month = constructedDateTimeString?.substring(monthIndex, monthIndex + 2);
+    const year = constructedDateTimeString?.substring(yearIndex, yearIndex + 4);
+    const hours = constructedDateTimeString?.substring(hoursIndex, hoursIndex + 2);
+    const minutes = constructedDateTimeString?.substring(minutesIndex, minutesIndex + 2);
 
     const normalizedDay = zeroPad(day);
     const normalizedMonth = zeroPad(month);
@@ -423,16 +519,18 @@ function validateIfExact(e, type = 'startInput') {
     const normalizedSeconds = zeroPad(0);
 
     const dateString = `${year}-${normalizedMonth}-${normalizedDay}`; // "YYYY-MM-DD"
-    const timeString = `${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`; // "HH:mm"
+    const timeString = `${normalizedHours}:${normalizedMinutes}`; // "HH:mm"
+    const fullTimeString = `${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`; // "HH:mm:ss"
 
     // Check if the constructed date and time is valid
     if (!isDateValid(dateString) || !isTimeValid(timeString)) {
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
+      return;
     }
 
     // Combine the date and time strings into a valid ISO string
-    const dateTimeString = `${dateString}T${timeString}`;
+    const dateTimeString = `${dateString}T${fullTimeString}`;
 
     // Check if the date is within the min/max range
     if (!canSelectDate(new Date(dateTimeString), props.minDate, props.maxDate, props.mode)) {
@@ -539,6 +637,23 @@ const startInputIndex = computed(() => {
 const endInputIndex = computed(() => {
   if (activeInput.value === 'startInput' && dropDownMenuRef.value?.menuOpen) return '-1';
   return '0';
+});
+
+// Function to determine maxLength based on mode
+const getMaxLength = computed(() => {
+  if (mode.value === 'date') {
+    const inputMask = props.masks?.input || 'dd.MM.yyyy.';
+    return inputMask.length;
+  }
+  if (mode.value === 'time') {
+    const inputTime24hrMask = props.masks?.inputTime24hr || 'HH:mm';
+    return inputTime24hrMask.length;
+  }
+  if (mode.value === 'date-time') {
+    const inputDateTime24hrMask = props.masks?.inputDateTime24hr || 'dd.MM.yyyy. HH:mm';
+    return inputDateTime24hrMask.length;
+  }
+  return null; // No limit if not a specific mode
 });
 
 watch(
@@ -669,6 +784,7 @@ onMounted(async () => {
         <div class="lx-start-input-and-separator-wrapper">
           <label class="lx-visually-hidden" :for="id"></label>
           <input
+            ref="startInputRef"
             type="text"
             class="lx-date-time-picker"
             :class="[{ 'lx-invalid': invalid }, { 'input-active': activeInput === 'startInput' }]"
@@ -681,10 +797,12 @@ onMounted(async () => {
               mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
             "
             :tabindex="startInputIndex"
+            :maxlength="getMaxLength"
             @click="handleOpen('startInput')"
             @keydown.arrow-down.prevent="handleOpen('startInput')"
             @keydown.esc.prevent="handleClose"
             @change="validateIfExact($event, 'startInput')"
+            @input="sanitizeDateInput($event, mode)"
           />
 
           <template v-if="pickerType === 'range'">
@@ -695,6 +813,7 @@ onMounted(async () => {
         <template v-if="pickerType === 'range'">
           <label class="lx-visually-hidden" :for="id"></label>
           <input
+            ref="endInputRef"
             type="text"
             class="lx-date-time-picker"
             :class="[{ 'lx-invalid': invalid }, { 'input-active': activeInput === 'endInput' }]"
@@ -707,10 +826,12 @@ onMounted(async () => {
               mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
             "
             :tabindex="endInputIndex"
+            :maxlength="getMaxLength"
             @click="handleOpen('endInput')"
             @keydown.arrow-down.prevent="handleOpen('endInput')"
             @keydown.esc.prevent="handleClose"
             @change="validateIfExact($event, 'endInput')"
+            @input="sanitizeDateInput($event, mode)"
           />
         </template>
       </div>
@@ -735,6 +856,7 @@ onMounted(async () => {
           :clearIfNotExact="clearIfNotExact"
           :pickerType="pickerType"
           :activeInput="activeInput"
+          :setActiveInput="setActiveInput"
           :texts="texts"
         />
       </template>

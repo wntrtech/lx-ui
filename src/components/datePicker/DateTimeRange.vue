@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeMount, watch } from 'vue';
 
-// TODO: at the end need to remove v-calendar package
-// import { DatePicker } from 'v-calendar';
-
 import useLx from '@/hooks/useLx';
 import { formatDateJSON, formatDate, parseDate } from '@/utils/dateUtils';
 

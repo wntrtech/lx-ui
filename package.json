@@ -84,7 +84,6 @@
     "prosemirror-model": "^1.19.4",
     "prosemirror-state": "^1.4.3",
     "tiptap-markdown": "^0.8.9",
-    "v-calendar": "3.1.2",
     "v-money3": "^3.24.0",
     "vue-country-flag-next": "^2.3.2",
     "vue-dompurify-html": "^5.1.0",
