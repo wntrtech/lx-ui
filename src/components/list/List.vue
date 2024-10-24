@@ -45,6 +45,7 @@ const props = defineProps({
   selectableAttribute: { type: String, default: 'selectable' },
   orderAttribute: { type: String, default: 'order' },
   actionDefinitions: { type: Array, default: null },
+  actionsLayout: { type: String, default: 'default' }, // default, vertical
   emptyStateActionDefinitions: { type: Array, default: null },
   emptyStateIcon: { type: String, default: '' },
   listType: { type: String, default: '3' },
@@ -1088,6 +1089,7 @@ onMounted(() => {
             :value="item"
             :href="item[hrefAttribute]"
             :actionDefinitions="actionDefinitions"
+            :actionsLayout="actionsLayout"
             :icon="item[iconAttribute] ? item[iconAttribute] : icon"
             :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
             :tooltip="item[tooltipAttribute]"
@@ -1203,6 +1205,7 @@ onMounted(() => {
                     :value="element"
                     :href="element[hrefAttribute]"
                     :actionDefinitions="actionDefinitions"
+                    :actionsLayout="actionsLayout"
                     :icon="element[iconAttribute] ? element[iconAttribute] : icon"
                     :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
                     :tooltip="element[tooltipAttribute]"
@@ -1274,6 +1277,7 @@ onMounted(() => {
                 :value="item"
                 :href="item[hrefAttribute]"
                 :actionDefinitions="actionDefinitions"
+                :actionsLayout="actionsLayout"
                 :icon="item[iconAttribute] ? item[iconAttribute] : icon"
                 :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
                 :tooltip="item[tooltipAttribute]"
@@ -1334,6 +1338,7 @@ onMounted(() => {
             :value="item"
             :href="item[hrefAttribute]"
             :actionDefinitions="actionDefinitions"
+            :actionsLayout="actionsLayout"
             :icon="item[iconAttribute] ? item[iconAttribute] : icon"
             :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
             :tooltip="item[tooltipAttribute]"
@@ -1448,6 +1453,7 @@ onMounted(() => {
                     :value="element"
                     :href="element[hrefAttribute]"
                     :actionDefinitions="actionDefinitions"
+                    :actionsLayout="actionsLayout"
                     :icon="element[iconAttribute] ? element[iconAttribute] : icon"
                     :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
                     :tooltip="element[tooltipAttribute]"
@@ -1561,6 +1567,7 @@ onMounted(() => {
                       :value="element"
                       :href="element[hrefAttribute]"
                       :actionDefinitions="actionDefinitions"
+                      :actionsLayout="actionsLayout"
                       :icon="element[iconAttribute] ? element[iconAttribute] : icon"
                       :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
                       :tooltip="element[tooltipAttribute]"
@@ -1602,6 +1609,7 @@ onMounted(() => {
         :categoryAttribute="categoryAttribute"
         :selectable-attribute="selectableAttribute"
         :action-definitions="actionDefinitions"
+        :actionsLayout="actionsLayout"
         :icon="icon"
         :iconSet="iconSet"
         :hasSelecting="hasSelecting"
@@ -1634,6 +1642,7 @@ onMounted(() => {
           :value="element"
           :href="element[hrefAttribute]"
           :actionDefinitions="actionDefinitions"
+          :actionsLayout="actionsLayout"
           :icon="element[iconAttribute] ? element[iconAttribute] : icon"
           :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
           :tooltip="element[tooltipAttribute]"

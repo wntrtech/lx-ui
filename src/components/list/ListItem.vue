@@ -6,6 +6,7 @@ import LxSearchableText from '@/components/SearchableText.vue';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import useLx from '@/hooks/useLx';
 import LxLoader from '@/components/Loader.vue';
+import { ref } from 'vue';
 
 const emits = defineEmits(['click', 'actionClick']);
 
@@ -31,6 +32,7 @@ const props = defineProps({
   searchString: { type: String, default: '' },
   tooltip: { type: String, default: '' },
   actionDefinitions: { type: Array, default: () => [] },
+  actionsLayout: { type: String, default: 'default' }, // default, vertical
 });
 
 function performClick() {
@@ -39,9 +41,23 @@ function performClick() {
   }
 }
 
-function actionClicked(actionName, rowCode) {
+const dropDownMenu = ref();
+
+function actionClicked(actionName, rowCode, event = null, href = false, close = false) {
+  event?.stopPropagation();
+  if (href) event?.preventDefault();
   emits('actionClick', actionName, rowCode);
+  if (close) dropDownMenu.value.closeMenu();
 }
+
+function openDropDownMenu(event, href = false) {
+  if (href) event.preventDefault();
+  else {
+    event.stopPropagation();
+    dropDownMenu.value.openMenu();
+  }
+}
+
 function secureURL(url) {
   if (url && typeof url === 'string') {
     return sanitizeUrl(url);
@@ -92,6 +108,10 @@ function secureURL(url) {
         { 'lx-category-finished': category === 'finished' },
         { 'lx-category-incomplete': category === 'incomplete' },
         { 'lx-invalid': invalid },
+        {
+          'lx-list-item-compact-actions':
+            actionDefinitions?.length > 0 && actionsLayout === 'vertical',
+        },
       ]"
     >
       <div class="lx-inner-content-wrapper">
@@ -108,7 +128,76 @@ function secureURL(url) {
           <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>
         </header>
         <LxIcon value="invalid" v-if="invalid" customClass="invalid-icon" />
-        <lx-icon :value="icon" :iconSet="iconSet" v-if="clickable" />
+        <div class="compact-actions">
+          <lx-icon :value="icon" :iconSet="iconSet" v-if="clickable" />
+          <div
+            class="lx-list-item-actions"
+            v-if="
+              actionDefinitions?.length &&
+              actionDefinitions?.length === 1 &&
+              actionsLayout === 'vertical'
+            "
+          >
+            <lx-button
+              v-for="action in actionDefinitions"
+              :key="action.id"
+              kind="ghost"
+              :tabindex="0"
+              :icon="action.icon"
+              :icon-set="action.iconSet"
+              :title="action.name"
+              :destructive="action.destructive"
+              :disabled="
+                action.disabled != null
+                  ? action.disabled
+                  : action.enableByAttribute
+                  ? !value[action.enableByAttribute]
+                  : false
+              "
+              @click="actionClicked(action.id, id, $event)"
+            />
+          </div>
+          <div
+            class="lx-list-item-actions"
+            v-if="
+              actionDefinitions?.length &&
+              actionDefinitions?.length > 1 &&
+              actionsLayout === 'vertical'
+            "
+          >
+            <lx-drop-down-menu ref="dropDownMenu">
+              <div v-if="actionDefinitions.length > 1">
+                <lx-button
+                  icon="overflow-menu"
+                  kind="ghost"
+                  @click="openDropDownMenu($event, clickable ? false : true)"
+                />
+              </div>
+              <template v-slot:panel>
+                <div class="lx-button-set">
+                  <lx-button
+                    v-for="action in actionDefinitions"
+                    :key="action.id"
+                    :icon="action.icon"
+                    :icon-set="action.iconSet"
+                    :label="action.name"
+                    :title="action.name"
+                    :tabindex="0"
+                    :destructive="action.destructive"
+                    :disabled="
+                      action.disabled != null
+                        ? action.disabled
+                        : action.enableByAttribute
+                        ? !value[action.enableByAttribute]
+                        : false
+                    "
+                    @click="actionClicked(action.id, id, $event, false, true)"
+                  />
+                </div>
+              </template>
+            </lx-drop-down-menu>
+          </div>
+        </div>
       </div>
     </div>
     <router-link
@@ -146,6 +235,10 @@ function secureURL(url) {
         { 'lx-category-finished': category === 'finished' },
         { 'lx-category-incomplete': category === 'incomplete' },
         { 'lx-invalid': invalid },
+        {
+          'lx-list-item-compact-actions':
+            actionDefinitions?.length > 0 && actionsLayout === 'vertical',
+        },
       ]"
       :tabindex="href || clickable ? 0 : -1"
     >
@@ -163,13 +256,84 @@ function secureURL(url) {
           <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>
         </header>
         <LxIcon value="invalid" v-if="invalid" customClass="invalid-icon" />
-        <lx-icon :value="icon" :icon-set="iconSet" v-if="href" />
+        <div class="compact-actions">
+          <lx-icon :value="icon" :icon-set="iconSet" v-if="href" />
+          <div
+            class="lx-list-item-actions"
+            v-if="
+              actionDefinitions?.length &&
+              actionDefinitions?.length === 1 &&
+              actionsLayout === 'vertical'
+            "
+          >
+            <lx-button
+              v-for="action in actionDefinitions"
+              :key="action.id"
+              kind="ghost"
+              :tabindex="0"
+              :icon="action.icon"
+              :icon-set="action.iconSet"
+              :title="action.name"
+              :destructive="action.destructive"
+              :disabled="
+                action.disabled != null
+                  ? action.disabled
+                  : action.enableByAttribute
+                  ? !value[action.enableByAttribute]
+                  : false
+              "
+              @click="actionClicked(action.id, id, $event, true)"
+            />
+          </div>
+          <div
+            class="lx-list-item-actions"
+            v-if="
+              actionDefinitions?.length &&
+              actionDefinitions?.length > 1 &&
+              actionsLayout === 'vertical'
+            "
+          >
+            <lx-drop-down-menu ref="dropDownMenu">
+              <div v-if="actionDefinitions.length > 1">
+                <lx-button
+                  icon="overflow-menu"
+                  kind="ghost"
+                  @click="openDropDownMenu($event, true)"
+                />
+              </div>
+              <template v-slot:panel>
+                <div class="lx-button-set">
+                  <lx-button
+                    v-for="action in actionDefinitions"
+                    :key="action.id"
+                    :icon="action.icon"
+                    :icon-set="action.iconSet"
+                    :label="action.name"
+                    :title="action.name"
+                    :tabindex="0"
+                    :destructive="action.destructive"
+                    :disabled="
+                      action.disabled != null
+                        ? action.disabled
+                        : action.enableByAttribute
+                        ? !value[action.enableByAttribute]
+                        : false
+                    "
+                    @click="actionClicked(action.id, id, $event, true, true)"
+                  />
+                </div>
+              </template>
+            </lx-drop-down-menu>
+          </div>
+        </div>
       </div>
     </router-link>
     <div class="lx-list-item-loader" v-if="busy"><LxLoader :loading="true" size="s" /></div>
     <div
       class="lx-list-item-actions"
-      v-if="actionDefinitions?.length && actionDefinitions?.length === 1"
+      v-if="
+        actionDefinitions?.length && actionDefinitions?.length === 1 && actionsLayout !== 'vertical'
+      "
     >
       <lx-button
         v-for="action in actionDefinitions"
@@ -187,12 +351,14 @@ function secureURL(url) {
             ? !value[action.enableByAttribute]
             : false
         "
-        @click="actionClicked(action.id, id)"
+        @click="actionClicked(action.id, id, $event)"
       />
     </div>
     <div
       class="lx-list-item-actions"
-      v-if="actionDefinitions?.length && actionDefinitions?.length > 1"
+      v-if="
+        actionDefinitions?.length && actionDefinitions?.length > 1 && actionsLayout !== 'vertical'
+      "
     >
       <lx-drop-down-menu>
         <div v-if="actionDefinitions.length > 1">

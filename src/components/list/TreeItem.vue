@@ -27,6 +27,7 @@ const props = defineProps({
   selectableAttribute: { type: String, default: 'selectable' },
   hasSearch: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: null },
+  actionsLayout: { type: String, default: 'default' }, // default, vertical
   icon: { type: String, default: 'open' },
   iconSet: {
     type: String,
@@ -186,6 +187,7 @@ watch(
         :href="item[hrefAttribute]"
         :clickable="item[clickableAttribute]"
         :actionDefinitions="actionDefinitions"
+        :actionsLayout="actionsLayout"
         :icon="item[iconAttribute] ? item[iconAttribute] : icon"
         :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
         :tooltip="item[tooltipAttribute]"
@@ -248,6 +250,7 @@ watch(
       :categoryAttribute="categoryAttribute"
       :selectable-attribute="selectableAttribute"
       :action-definitions="actionDefinitions"
+      :actionsLayouts="actionsLayout"
       :icon="icon"
       :iconSet="iconSet"
       :hasSelecting="hasSelecting"

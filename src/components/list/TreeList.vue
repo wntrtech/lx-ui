@@ -26,6 +26,7 @@ const props = defineProps({
   selectableAttribute: { type: String, default: 'selectable' },
   hasSearch: { type: Boolean, default: false },
   actionDefinitions: { type: Array, default: null },
+  actionsLayout: { type: String, default: 'default' }, // default, vertical
   icon: { type: String, default: 'open' },
   iconSet: {
     type: String,
@@ -200,6 +201,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         :categoryAttribute="categoryAttribute"
         :selectable-attribute="selectableAttribute"
         :action-definitions="actionDefinitions"
+        :actionsLayout="actionsLayout"
         :icon="icon"
         :iconSet="iconSet"
         :hasSelecting="hasSelecting"
@@ -233,6 +235,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           :href="parent[hrefAttribute]"
           :clickable="parent[clickableAttribute]"
           :actionDefinitions="actionDefinitions"
+          :actionsLayout="actionsLayout"
           :icon="parent[iconAttribute] ? parent[iconAttribute] : icon"
           :iconSet="parent[iconSetAttribute] ? parent[iconSetAttribute] : iconSet"
           :tooltip="parent[tooltipAttribute]"
@@ -301,6 +304,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           :href="item[hrefAttribute]"
           :clickable="item[clickableAttribute]"
           :actionDefinitions="actionDefinitions"
+          :actionsLayout="actionsLayout"
           :icon="item[iconAttribute] ? item[iconAttribute] : icon"
           :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
           :tooltip="item[tooltipAttribute]"

@@ -392,8 +392,8 @@
   fill: var(--color-list-icon);
 }
 
-.lx-list-item-wrapper:has(.lx-list-item-interactive:not(.lx-list-item-disabled):hover) .lx-inner-content-wrapper > svg,
-.lx-list-item-wrapper:has(.lx-list-item-interactive:not(.lx-list-item-disabled):hover) .lx-list-item-actions .lx-dropdown-toggler svg {
+.lx-list-item-wrapper:has(.lx-list-item-interactive:not(.lx-list-item-disabled):not(.lx-list-item-compact-actions):hover) .lx-inner-content-wrapper > svg,
+.lx-list-item-wrapper:has(.lx-list-item-interactive:not(.lx-list-item-disabled):not(.lx-list-item-compact-actions):hover) .lx-list-item-actions .lx-dropdown-toggler svg {
   fill: var(--color-list-foreground-hover);
 }
 
@@ -958,6 +958,26 @@ li .lx-list-item.lx-inactive {
 .lx-list-item.lx-list-item-tile p.lx-secondary {
   margin-top: 1rem;
 }
+
+.lx-list-wrapper .lx-list-item-wrapper .compact-actions{
+  grid-column: icon;
+}
+
+.lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions > svg{
+  align-self: flex-end;
+  margin-right: .7rem;
+  margin-bottom: 0.75rem;
+}
+
+.lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions .lx-button > svg{
+  align-self: center;
+}
+
 
 @media (max-width: 1900px) {
   .lx-list-3 li {
