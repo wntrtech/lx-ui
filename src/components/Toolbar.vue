@@ -87,7 +87,7 @@ function actionClicked(id) {
 </script>
 
 <template>
-  <div class="lx-component-toolbar" :class="{ 'lx-toolbar-no-borders': noBorders }">
+  <div class="lx-component-toolbar" :class="{ 'lx-toolbar-no-borders': noBorders }" role="toolbar">
     <div class="left-area">
       <LxToolbarGroup v-for="group in leftGroups" :key="group.id" class="action-definitions-group">
         <template v-for="action in leftActions" :key="action.id">

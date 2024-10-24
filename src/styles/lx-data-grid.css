@@ -101,6 +101,7 @@
   background-color: var(--color-grid-header);
   text-align: left;
   line-height: 1.1em;
+  outline-color: var(--color-focus-background);
 }
 
 .lx .lx-data-grid .lx-cell-header div {
@@ -361,7 +362,6 @@
 }
 
 .lx .lx-data-grid .lx-cell-action .lx-toolbar {
-  visibility: hidden;
   align-items: flex-start;
   justify-content: flex-end;
   height: 100%;

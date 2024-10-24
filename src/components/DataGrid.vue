@@ -95,6 +95,7 @@ const props = defineProps({
         endingWith1: 'Izvēlēts',
       },
       of: 'no',
+      firstPage: 'Pirmā lapa',
       nextPage: 'Nākamā lapa',
       previousPage: 'Iepriekšējā lapa',
       clear: 'Attīrīt izvēles',
@@ -104,6 +105,8 @@ const props = defineProps({
       noItems: 'Nav neviena ieraksta, ko attēlot',
       noItemsDescription: '',
       iconsResponsiveRowLabel: 'Ikonas',
+      moreActions: 'Papildu darbības',
+      actions: 'Darbības',
       personDisplay: {
         name: 'Vārds, uzvārds',
         description: 'Apraksts',
@@ -740,6 +743,12 @@ function primaryColumn() {
   return clickableObject || primaryObject || columnsComputed.value[0];
 }
 
+function getAriaSorting(sortDirection) {
+  if (sortDirection === 'asc') return 'ascending';
+  if (sortDirection === 'desc') return 'descending';
+  return 'none';
+}
+
 const toolbarActions = computed(() => {
   const res = ref([]);
   if (
@@ -888,6 +897,7 @@ watch(
     <article
       :id="id"
       class="lx-data-grid"
+      role="presentation"
       :class="[
         { 'lx-scrollable': scrollable },
         { 'lx-data-grid-full': showAllColumns },
@@ -898,17 +908,26 @@ watch(
       <div
         class="lx-grid-table"
         v-show="!loading"
+        role="table"
         :aria-labelledby="`${id}-label`"
         :aria-describedby="`${id}-description`"
       >
-        <div class="lx-grid-row">
-          <div v-if="hasSelecting" class="lx-cell-header lx-cell-selector"></div>
+        <div class="lx-grid-row" role="row">
+          <div
+            v-if="hasSelecting"
+            class="lx-cell-header lx-cell-selector"
+            role="columnheader"
+          ></div>
           <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
           <div
             v-for="col in columnsComputed"
             :key="col.id"
             :title="formatTooltip(col.name, col.title)"
+            role="columnheader"
             class="lx-cell-header"
+            :aria-sort="getAriaSorting(sortedColumns[col.id])"
+            :aria-label="formatTooltip(col.name, col.title)"
+            tabindex="0"
             :class="[
               {
                 'lx-cell-number':
@@ -925,6 +944,8 @@ watch(
               },
             ]"
             @click="sortColumn(col.id)"
+            @keyup.space.prevent="sortColumn(col.id)"
+            @keyup.enter="sortColumn(col.id)"
           >
             <div>
               <p class="lx-primary" v-if="col.size !== 'xs'">{{ col.name }}</p>
@@ -945,7 +966,12 @@ watch(
               ></lx-icon>
             </div>
           </div>
-          <div v-if="hasActionButtons" class="lx-cell-header lx-cell-action"></div>
+          <div
+            v-if="hasActionButtons"
+            class="lx-cell-header lx-cell-action"
+            role="columnheader"
+            :title="texts?.actions"
+          ></div>
         </div>
         <div class="lx-grid-content">
           <transition-group
@@ -956,12 +982,13 @@ watch(
             :id="`row-${row[idAttribute]}`"
             v-for="row in rows"
             tabindex="0"
+            role="row"
             :key="row[idAttribute]"
             @dblclick="defaultActionClicked(row[idAttribute], row)"
             @keyup.space="defaultActionName ? defaultActionClicked(row[idAttribute], row) : null"
             @keyup.enter="defaultActionName ? defaultActionClicked(row[idAttribute], row) : null"
           >
-            <div v-if="hasSelecting" class="lx-cell lx-cell-selector">
+            <div v-if="hasSelecting" class="lx-cell lx-cell-selector" role="cell">
               <lx-checkbox
                 v-if="selectingKind === 'multiple'"
                 :id="`select-${id}-${row[idAttribute]}`"
@@ -984,6 +1011,7 @@ watch(
               v-for="col in columnsComputed"
               :key="col.id"
               class="lx-cell"
+              role="cell"
               @click="
                 defaultActionName && col.kind === 'clickable' && !isDisabled
                   ? defaultActionClicked(row[idAttribute], row)
@@ -1175,10 +1203,11 @@ watch(
             </div>
             <div
               class="lx-cell-action"
+              role="cell"
               :class="[{ 'show-cell-borders': scrollable }]"
               v-if="hasActionButtons"
             >
-              <div class="lx-toolbar" v-if="actionDefinitions.length <= 2">
+              <div class="lx-toolbar" v-if="actionDefinitions.length <= 2" role="toolbar">
                 <lx-button
                   v-for="action in actionDefinitions"
                   :key="action.id"
@@ -1193,7 +1222,7 @@ watch(
                   @click="actionClicked(action.id, row[idAttribute], actionAdditionalParameter)"
                 />
               </div>
-              <div class="lx-toolbar" v-if="actionDefinitions.length > 2">
+              <div class="lx-toolbar" v-if="actionDefinitions.length > 2" role="toolbar">
                 <lx-button
                   kind="ghost"
                   tabindex="0"
@@ -1215,7 +1244,13 @@ watch(
                 />
                 <lx-dropdown-menu placement="left-start">
                   <div class="lx-toolbar">
-                    <lx-button icon="overflow-menu" kind="ghost" :disabled="isDisabled" />
+                    <lx-button
+                      icon="overflow-menu"
+                      kind="ghost"
+                      :disabled="isDisabled"
+                      :label="texts?.moreActions"
+                      variant="icon-only"
+                    />
                   </div>
                   <template v-slot:panel>
                     <div class="lx-button-set">
@@ -1485,6 +1520,8 @@ watch(
         <lx-button
           kind="ghost"
           icon="first-page"
+          :label="texts.firstPage"
+          variant="icon-only"
           :disabled="pageCurrent < 1 || isDisabled"
           @click="selectFirstPage()"
         ></lx-button>
@@ -1492,6 +1529,8 @@ watch(
         <lx-button
           kind="ghost"
           icon="previous-page"
+          :label="texts.previousPage"
+          variant="icon-only"
           :disabled="pageCurrent < 1 || isDisabled"
           @click="selectPreviousPage"
         ></lx-button>
@@ -1499,6 +1538,8 @@ watch(
         <lx-button
           kind="ghost"
           icon="next-page"
+          :label="texts.nextPage"
+          variant="icon-only"
           :disabled="Number(pageCurrent) + 1 >= Number(pagesTotal) || isDisabled"
           @click="selectNextPage"
         ></lx-button>
