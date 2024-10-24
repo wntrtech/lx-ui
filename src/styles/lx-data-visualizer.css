@@ -217,4 +217,5 @@
 
 .lx-data-visualizer .targets-list>.lx-list-item-wrapper {
     width: auto;
+    padding-right: 1rem;
 }
