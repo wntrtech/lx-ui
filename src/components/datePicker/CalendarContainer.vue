@@ -1675,15 +1675,20 @@ const doNotIndicateStartDisableState = computed(() => {
 const clearButtonDisableState = computed(() => {
   if (props.disabled) return true;
   // Picker type is "single" and date is not selected: disabled
-  if (
-    props.pickerType === 'single' &&
-    !selectedDate.value &&
-    !selectedHour.value &&
-    !selectedMinute.value &&
-    !selectedQuarter.value
-  ) {
-    return true;
+  if (props.pickerType === 'single') {
+    if (
+      props.mode !== 'quarters' &&
+      !selectedDate.value &&
+      selectedHour.value === null &&
+      selectedMinute.value === null
+    ) {
+      return true;
+    }
+    if (props.mode === 'quarters' && !selectedQuarter.value) {
+      return true;
+    }
   }
+
   // Picker type is "range" and start/end dates are not selected: disabled
   if (props.pickerType === 'range' && !selectedStartDate.value && !selectedEndDate.value) {
     return true;
@@ -1704,6 +1709,18 @@ const doNotIndicateEndDisableState = computed(() => {
   // Default case: enabled
   return false;
 });
+
+const isMinMaxInFuture = computed(() =>
+  props.minDateRef && props.maxDateRef
+    ? props.minDateRef > new Date() && props.maxDateRef > new Date()
+    : false
+);
+
+const isMinMaxInPast = computed(() =>
+  props.minDateRef && props.maxDateRef
+    ? props.minDateRef < new Date() && props.maxDateRef < new Date()
+    : false
+);
 
 onClickOutside(containerRef, () => {
   if (props.pickerType === 'single' && props.variant !== 'default') {
@@ -1786,12 +1803,7 @@ watch(
       if (props.pickerType === 'single') {
         handleDateTimeSelection();
 
-        if (
-          !selectedDate.value &&
-          !selectedHour.value &&
-          !selectedMinute.value &&
-          !selectedQuarter.value
-        ) {
+        if (!selectedDate.value && !isMinMaxInFuture.value && !isMinMaxInPast.value) {
           returnToToday();
         }
 
@@ -2863,37 +2875,27 @@ watch(
                 {
                   'lx-disabled-hour':
                     !canSelectTime(
-                      new Date(
-                        todayDate.getFullYear(),
-                        todayDate.getMonth(),
-                        todayDate.getDate(),
-                        hour.value,
-                        0
-                      ),
+                      hour.value,
                       minDateRef,
                       maxDateRef,
                       selectedDay,
                       'hour',
                       selectedHour,
-                      selectedMinute
+                      selectedMinute,
+                      mode === 'time'
                     ) || disabled,
                 },
               ]"
               :tabindex="
                 !canSelectTime(
-                  new Date(
-                    todayDate.getFullYear(),
-                    todayDate.getMonth(),
-                    todayDate.getDate(),
-                    hour.value,
-                    0
-                  ),
+                  hour.value,
                   minDateRef,
                   maxDateRef,
                   selectedDay,
                   'hour',
                   selectedHour,
-                  selectedMinute
+                  selectedMinute,
+                  mode === 'time'
                 )
                   ? '-1'
                   : '0'
@@ -2902,19 +2904,14 @@ watch(
                 selectHour(
                   hour,
                   !canSelectTime(
-                    new Date(
-                      todayDate.getFullYear(),
-                      todayDate.getMonth(),
-                      todayDate.getDate(),
-                      hour.value,
-                      0
-                    ),
+                    hour.value,
                     minDateRef,
                     maxDateRef,
                     selectedDay,
                     'hour',
                     selectedHour,
-                    selectedMinute
+                    selectedMinute,
+                    mode === 'time'
                   )
                 )
               "
@@ -2922,19 +2919,14 @@ watch(
                 selectHour(
                   hour,
                   !canSelectTime(
-                    new Date(
-                      todayDate.getFullYear(),
-                      todayDate.getMonth(),
-                      todayDate.getDate(),
-                      hour.value,
-                      0
-                    ),
+                    hour.value,
                     minDateRef,
                     maxDateRef,
                     selectedDay,
                     'hour',
                     selectedHour,
-                    selectedMinute
+                    selectedMinute,
+                    mode === 'time'
                   )
                 )
               "
@@ -2984,37 +2976,27 @@ watch(
                 {
                   'lx-disabled-hour':
                     !canSelectTime(
-                      new Date(
-                        todayDate.getFullYear(),
-                        todayDate.getMonth(),
-                        todayDate.getDate(),
-                        0,
-                        minute.value
-                      ),
+                      minute.value,
                       minDateRef,
                       maxDateRef,
                       selectedDay,
                       'minute',
                       selectedHour,
-                      selectedMinute
+                      selectedMinute,
+                      mode === 'time'
                     ) || disabled,
                 },
               ]"
               :tabindex="
                 !canSelectTime(
-                  new Date(
-                    todayDate.getFullYear(),
-                    todayDate.getMonth(),
-                    todayDate.getDate(),
-                    0,
-                    minute.value
-                  ),
+                  minute.value,
                   minDateRef,
                   maxDateRef,
                   selectedDay,
                   'minute',
                   selectedHour,
-                  selectedMinute
+                  selectedMinute,
+                  mode === 'time'
                 )
                   ? '-1'
                   : '0'
@@ -3023,19 +3005,14 @@ watch(
                 selectMinute(
                   minute,
                   !canSelectTime(
-                    new Date(
-                      todayDate.getFullYear(),
-                      todayDate.getMonth(),
-                      todayDate.getDate(),
-                      0,
-                      minute.value
-                    ),
+                    minute.value,
                     minDateRef,
                     maxDateRef,
                     selectedDay,
                     'minute',
                     selectedHour,
-                    selectedMinute
+                    selectedMinute,
+                    mode === 'time'
                   )
                 )
               "
@@ -3043,19 +3020,14 @@ watch(
                 selectMinute(
                   minute,
                   !canSelectTime(
-                    new Date(
-                      todayDate.getFullYear(),
-                      todayDate.getMonth(),
-                      todayDate.getDate(),
-                      0,
-                      minute.value
-                    ),
+                    minute.value,
                     minDateRef,
                     maxDateRef,
                     selectedDay,
                     'minute',
                     selectedHour,
-                    selectedMinute
+                    selectedMinute,
+                    mode === 'time'
                   )
                 )
               "

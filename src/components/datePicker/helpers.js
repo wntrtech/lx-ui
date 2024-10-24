@@ -59,6 +59,19 @@ export function canSelectDate(date, minDate, maxDate, mode = 'date') {
     return isAfterMinDate && isBeforeMaxDate;
   }
 
+  if (mode === 'time') {
+    const selectedHours = date.getHours();
+    const selectedMinutes = date.getMinutes();
+
+    const isAfterMinHours = !minDateParsed || selectedHours >= minDateParsed.getHours();
+    const isBeforeMaxHours = !maxDateParsed || selectedHours <= maxDateParsed.getHours();
+
+    const isAfterMinMinutes = !minDateParsed || selectedMinutes >= minDateParsed.getMinutes();
+    const isBeforeMaxMinutes = !maxDateParsed || selectedMinutes <= maxDateParsed.getMinutes();
+
+    return isAfterMinHours && isBeforeMaxHours && isAfterMinMinutes && isBeforeMaxMinutes;
+  }
+
   if (mode === 'year') {
     const selectedYear = date.getFullYear();
     const isAfterMinYear = !minDateParsed || selectedYear >= minDateParsed.getFullYear();
@@ -97,49 +110,108 @@ export function canSelectDate(date, minDate, maxDate, mode = 'date') {
 }
 
 export function canSelectTime(
-  date,
+  hourOrMinuteValue,
   minDate,
   maxDate,
   selectedDay,
   timeUnit,
   selectedHours,
-  selectedMinutes
+  selectedMinutes,
+  timeOnly
 ) {
-  if (!date) return false;
+  if (hourOrMinuteValue === null && hourOrMinuteValue === undefined) return false;
 
   // Parse minDate and maxDate if they are strings
   const minDateParsed = minDate ? new Date(minDate) : null;
   const maxDateParsed = maxDate ? new Date(maxDate) : null;
 
-  const currentHour = date.getHours();
-  const currentMinute = date.getMinutes();
+  // If timeOnly is true, we ignore date validation and only focus on time validation
+  if (timeOnly) {
+    if (timeUnit === 'hour') {
+      if (minDateParsed && Number(hourOrMinuteValue) < minDateParsed.getHours()) return false;
+      if (maxDateParsed && Number(hourOrMinuteValue) > maxDateParsed.getHours()) return false;
+      return true;
+    }
 
+    if (timeUnit === 'minute') {
+      if (minDateParsed && Number(hourOrMinuteValue) < minDateParsed.getMinutes()) return false;
+      if (maxDateParsed && Number(hourOrMinuteValue) > maxDateParsed.getMinutes()) return false;
+      return true;
+    }
+
+    return true; // Allow any time if timeUnit isn't specified
+  }
+
+  // Regular date and time validation if timeOnly is false
   // Validate hours
   if (timeUnit === 'hour') {
     // When the minute is already selected, validate hour with minute
     if (selectedMinutes !== null) {
       // If selecting on minDate day
-      if (minDateParsed && selectedDay === minDateParsed.getDate()) {
+      if (
+        minDateParsed &&
+        maxDateParsed &&
+        selectedDay === minDateParsed.getDate() &&
+        selectedDay !== maxDateParsed.getDate()
+      ) {
         // If the selected minute is earlier than minDate minute, only allow hours after minDate's hour
         if (selectedMinutes < minDateParsed.getMinutes()) {
-          return currentHour > minDateParsed.getHours();
+          return hourOrMinuteValue > minDateParsed.getHours();
         }
       }
       // If selecting on maxDate day
-      if (maxDateParsed && selectedDay === maxDateParsed.getDate()) {
+      if (
+        minDateParsed &&
+        maxDateParsed &&
+        selectedDay !== minDateParsed.getDate() &&
+        selectedDay === maxDateParsed.getDate()
+      ) {
         // If the selected minute is later than maxDate minute, only allow hours before maxDate's hour
         if (selectedMinutes > maxDateParsed.getMinutes()) {
-          return currentHour < maxDateParsed.getHours();
+          return hourOrMinuteValue < maxDateParsed.getHours();
         }
       }
+      // If selecting on minDate and maxDate day
+      if (
+        minDateParsed &&
+        maxDateParsed &&
+        selectedDay === minDateParsed.getDate() &&
+        selectedDay === maxDateParsed.getDate()
+      ) {
+        // If the selected minute is the same as minDate minute, validate hours before maxDate hours and after minDate hours
+        if (selectedMinutes === minDateParsed.getMinutes()) {
+          return (
+            hourOrMinuteValue >= minDateParsed.getHours() &&
+            hourOrMinuteValue <= maxDateParsed.getHours()
+          );
+        }
+        // If the selected minute is the same as maxDate minute, validate hours before maxDate hours and after minDate hours
+        if (selectedMinutes === maxDateParsed.getMinutes()) {
+          return (
+            hourOrMinuteValue >= minDateParsed.getHours() &&
+            hourOrMinuteValue <= maxDateParsed.getHours()
+          );
+        }
+        if (
+          selectedMinutes >= minDateParsed.getMinutes() &&
+          selectedMinutes <= maxDateParsed.getMinutes()
+        ) {
+          return (
+            hourOrMinuteValue >= minDateParsed.getHours() &&
+            hourOrMinuteValue <= maxDateParsed.getHours()
+          );
+        }
+        return false;
+      }
     }
+
     // Check if it's the same day as minDate
     if (minDateParsed && selectedDay === minDateParsed.getDate()) {
-      if (currentHour < minDateParsed.getHours()) return false; // Must be after minDate's hour
+      if (hourOrMinuteValue < minDateParsed.getHours()) return false; // Must be after minDate's hour
     }
     // Check if it's the same day as maxDate
     if (maxDateParsed && selectedDay === maxDateParsed.getDate()) {
-      if (currentHour > maxDateParsed.getHours()) return false; // Must be before maxDate's hour
+      if (hourOrMinuteValue > maxDateParsed.getHours()) return false; // Must be before maxDate's hour
     }
     return true; // Allow all hours otherwise
   }
@@ -149,25 +221,68 @@ export function canSelectTime(
     // When the hour is already selected, validate minute with hour
     if (selectedHours !== null) {
       // If selecting on minDate day
-      if (minDateParsed && selectedDay === minDateParsed.getDate()) {
+      if (
+        minDateParsed &&
+        maxDateParsed &&
+        selectedDay === minDateParsed.getDate() &&
+        selectedDay !== maxDateParsed.getDate()
+      ) {
         // If the selected hour is the same as minDate hour, validate minutes after minDate minutes
         if (selectedHours === minDateParsed.getHours()) {
-          return currentMinute >= minDateParsed.getMinutes();
+          return hourOrMinuteValue >= minDateParsed.getMinutes();
         }
         if (selectedHours > minDateParsed.getHours()) {
           return true;
         }
       }
       // If selecting on maxDate day
-      if (maxDateParsed && selectedDay === maxDateParsed.getDate()) {
+      if (
+        minDateParsed &&
+        maxDateParsed &&
+        selectedDay !== minDateParsed.getDate() &&
+        selectedDay === maxDateParsed.getDate()
+      ) {
         // If the selected hour is the same as maxDate hour, validate minutes before maxDate minutes
         if (selectedHours === maxDateParsed.getHours()) {
-          return currentMinute <= maxDateParsed.getMinutes();
+          return hourOrMinuteValue <= maxDateParsed.getMinutes();
         }
+      }
+      // If selecting on minDate and maxDate day
+      if (
+        minDateParsed &&
+        maxDateParsed &&
+        selectedDay === minDateParsed.getDate() &&
+        selectedDay === maxDateParsed.getDate()
+      ) {
+        // If the selected hour is the same as minDate hour, validate minutes before maxDate minutes and after minDate minutes
+        if (selectedHours === minDateParsed.getHours()) {
+          return (
+            hourOrMinuteValue >= minDateParsed.getMinutes() &&
+            hourOrMinuteValue <= maxDateParsed.getMinutes()
+          );
+        }
+        // If the selected hour is the same as maxDate hour, validate minutes before maxDate minutes and after minDate minutes
+        if (selectedHours === maxDateParsed.getHours()) {
+          return (
+            hourOrMinuteValue >= minDateParsed.getMinutes() &&
+            hourOrMinuteValue <= maxDateParsed.getMinutes()
+          );
+        }
+        if (
+          selectedHours >= minDateParsed.getHours() &&
+          selectedHours <= maxDateParsed.getHours()
+        ) {
+          return (
+            hourOrMinuteValue >= minDateParsed.getMinutes() &&
+            hourOrMinuteValue <= maxDateParsed.getMinutes()
+          );
+        }
+        return false;
       }
     }
     return true; // Allow all minutes otherwise
   }
+
   return true; // Allow everything if no unit is specified
 }
 
