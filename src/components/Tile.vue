@@ -2,11 +2,12 @@
 import { computed } from 'vue';
 import Icon from '@/components/Icon.vue';
 import useLx from '@/hooks/useLx';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
   id: {
     type: String,
-    default: null,
+    default: () => generateUUID(),
   },
   label: {
     type: String,
@@ -67,6 +68,8 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
     class="lx-tile"
     :class="[{ 'lx-mini': kind === 'mini' }, { 'lx-disabled': isDisabled }]"
     :title="tooltipComputed"
+    :aria-labelledby="label ? `${id}-label` : null"
+    :aria-describedby="description ? `${id}-desc` : null"
   >
     <header>
       <Icon
@@ -76,8 +79,8 @@ const tooltipComputed = computed(() => (props.title ? props.title : props.descri
         :title="label"
         :desc="description"
       />
-      <p class="lx-primary">{{ label }}</p>
-      <p class="lx-description">{{ description }}</p>
+      <p :id="`${id}-label`" class="lx-primary">{{ label }}</p>
+      <p :id="`${id}-desc`" class="lx-description">{{ description }}</p>
     </header>
     <article class="lx-main"><slot></slot></article>
   </router-link>
