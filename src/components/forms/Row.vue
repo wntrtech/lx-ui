@@ -143,17 +143,19 @@ const tooltip = computed(() => {
   return props.label;
 });
 
-const sectionRequiredMode = inject('sectionMode', 'none');
-const formRequiredMode = inject('formMode', 'none');
-const requiredTexts = inject('rowRequiredTexts', () =>
+const sectionRequiredMode = inject('sectionMode', ref('none'));
+const formRequiredMode = inject('formMode', ref('none'));
+const requiredTexts = inject(
+  'rowRequiredTexts',
   ref({ required: '(obligāts)', optional: '(neobligāts)' })
 );
 const sectionColumnCount = inject('sectionColumnCount', 1);
 
 // Finds the required mode of the section the row is placed in
 const rowRequiredMode = computed(() => {
-  if (sectionRequiredMode === 'none' || !sectionRequiredMode) return formRequiredMode;
-  return sectionRequiredMode;
+  if (sectionRequiredMode.value === 'none' || !sectionRequiredMode.value)
+    return formRequiredMode.value;
+  return sectionRequiredMode.value;
 });
 
 const actionDropDown = ref();

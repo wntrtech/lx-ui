@@ -135,10 +135,11 @@ const props = defineProps({
 
 const emits = defineEmits(['actionClick']);
 
-const formMode = inject('formMode', 'none');
+const formMode = inject('formMode', ref('none'));
 const sectionIndexType = inject('formIndexType', 'default');
 const formIndex = inject('formIndex', null);
-const requiredTexts = inject('requiredTexts', () =>
+const requiredTexts = inject(
+  'requiredTexts',
   ref({ required: '(obligāts)', optional: '(neobligāts)' })
 );
 const exactIndex = computed(() => {
@@ -152,7 +153,7 @@ const requiredModeValue = computed(() => {
   if (props.requiredMode !== 'none') {
     return props.requiredMode;
   }
-  return formMode;
+  return formMode.value;
 });
 
 const rowRequiredTexts = computed(() => {
@@ -188,7 +189,7 @@ onMounted(() => {
   checkElements();
 });
 
-provide('sectionMode', requiredModeValue.value);
+provide('sectionMode', requiredModeValue);
 provide('rowRequiredTexts', rowRequiredTexts);
 provide('sectionColumnCount', props.columnCount);
 </script>

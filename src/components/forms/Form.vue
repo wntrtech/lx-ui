@@ -313,10 +313,11 @@ const textsComp = computed(() => ({
   required: props.texts.required,
   optional: props.texts.optional,
 }));
+const requiredMode = computed(() => props.requiredMode);
 
 // eslint-disable-next-line vue/no-setup-props-destructure
 provide('requiredTexts', textsComp);
-provide('formMode', props.requiredMode);
+provide('formMode', requiredMode);
 provide('formIndexType', indexTypeRef);
 provide('formIndex', indexRef);
 
