@@ -119,6 +119,8 @@
   --region-border: 2px solid var(--color-chrome);
   --input-border: 1px solid var(--color-chrome);
 
+  --list-item-border: 2px solid var(--color-foreground);
+
   --color-list-category-contrast: transparent;
   --color-list-checked-background: var(--contrast-background);
   --color-list-checked-border: var(--color-list-checked-background);

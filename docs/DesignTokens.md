@@ -10,36 +10,49 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 
 ### Layout
 
-| Variable name                                | Default value                           |
-|----------------------------------------------|-----------------------------------------|
-| `--list-category-width`                      | 0.25rem                                 |
-| `--list-expander-width`                      | `--row-size`                            |
-| `--list-gap`                                 | 0.5rem                                  |
-| `--list-handle-icon-height`                  | `--icon-size`                           |
-| `--list-handle-icon-width`                   | `--icon-size`                           |
-| `--list-handle-width`                        | `--row-size`                            |
-| `--list-header-margin-right`                 | 0.5rem                                  |
-| `--list-header-min-height`                   | `--icon-size`                           |
-| `--list-header-padding-left`                 | 0.75rem                                 |
-| `--list-icon-alignment`                      | flex-start                              |
-| `--list-icon-height`                         | 1.55rem                                 |
-| `--list-icon-width`                          | 1.55rem                                 |
-| `--list-inner-content-padding`               | 0.25rem 0.5rem 0.25rem 0.25rem          |
-| `--list-inner-grid-areas`                    | 'category inner-content icon'           |
-| `--list-item-border`                         | 2px solid var(--color-list-item-border) |
-| `--list-item-min-height`                     | `--row-size`                            |
-| `--list-middle-grid-areas`                   | 'middle-content actions'                |
-| `--list-outer-default-grid-areas`            | 'outer-content selecting'               |
-| `--list-outer-draggable-grid-areas`          | 'handle outer-content'                  |
-| `--list-outer-treelist-grid-areas`           | 'expander outer-content selecting'      |
-| `--list-primary-font-size`                   | `--font-size`                           |
-| `--list-primary-font-weight`                 | bold                                    |
-| `--list-primary-line-height`                 | 1.2em                                   |
-| `--list-secondary-font-size`                 | `--small-font-size`                     |
-| `--list-secondary-font-weight`               | `--description-font-weight`             |
-| `--list-secondary-line-height`               | 1em                                     |
-| `--list-selecting-block-padding`             | 0.5rem 0.5rem 0                         |
-| `--list-toolbar-gap`                         | `--gap-buttons`                         |
+| Variable name                                  | Default value                                                 |
+|------------------------------------------------|---------------------------------------------------------------|
+| `--list-button-border-radius`                  | 0                                                             |
+| `--list-category-border-radius`                | 0                                                             |
+| `--list-category-margin`                       | 0.25rem                                                       |
+| `--list-category-width`                        | 0.25rem                                                       |
+| `--list-draggable-inner-column-span`           | 1 / span 4                                                    |
+| `--list-draggable-grid-areas`                  | 'handle category content invalid-icon icon loader actions'    |
+| `--list-draggable-grid-template-columns`       | auto auto 1fr auto auto auto auto                             |
+| `--list-draggable-outer-column-span`           | 2 / span 6                                                    |
+| `--list-expander-width`                        | `--row-size`                                                  |
+| `--list-gap`                                   | 0.5rem                                                        |
+| `--list-handle-icon-height`                    | `--icon-size`                                                 |
+| `--list-handle-icon-width`                     | `--icon-size`                                                 |
+| `--list-handle-width`                          | `--row-size`                                                  |
+| `--list-header-border-radius`                  | `--list-item-border-radius`                                   |
+| `--list-header-margin`                         | 0.2rem 0 0 0                                                  |
+| `--list-header-padding`                        | 0.35rem 0.35rem 0.2rem 0.5rem                                 |
+| `--list-header-min-height`                     | 2.5rem                                                        |
+| `--list-icon-height`                           | 1.5rem                                                        |
+| `--list-icon-padding`                          | 0.75rem 0.75rem 0 0.75rem                                     |
+| `--list-icon-width`                            | 1.5rem                                                        |
+| `--list-inner-column-span`                     | 1 / span 4                                                    |
+| `--list-item-border`                           | 2px solid var(--color-list-item-border)                       |
+| `--list-item-border-radius`                    | 0                                                             |
+| `--list-item-min-height`                       | `--row-size`                                                  |
+| `--list-grid-areas`                            | 'category content invalid-icon icon loader actions selecting' |
+| `--list-grid-template-columns`                 | auto 1fr auto auto auto auto auto                             |
+| `--list-outer-column-span`                     | 1 / span 6                                                    |
+| `--list-primary-font-size`                     | `--font-size`                                                 |
+| `--list-primary-font-weight`                   | bold                                                          |
+| `--list-primary-line-height`                   | 1.2em                                                         |
+| `--list-secondary-font-size`                   | `--small-font-size`                                           |
+| `--list-secondary-font-weight`                 | `--description-font-weight`                                   |
+| `--list-secondary-line-height`                 | 1em                                                           |
+| `--list-selecting-block-padding`               | 0.9rem 0.95rem 0 0.95rem                                      |
+| `--list-toolbar-gap`                           | `--gap-buttons`                                               |
+| `--list-treelist-child-left-indent`            | `--row-size`                                                  |
+| `--list-treelist-child-right-indent`           | 0                                                             |
+| `--list-treelist-grid-areas`                   | 'expander treelist-content'                                   |
+| `--list-treelist-grid-template-columns`        | auto 1fr                                                      |
+| `--list-treelist-left-indent`                  | 3rem                                                          |
+| `--list-treelist-right-indent`                 | 0                                                             |
 
 ### Color
 

@@ -43,17 +43,6 @@
     padding-left: 1rem;
 }
 
-.lx-master-detail .lx-master li {
-    display: flex;
-    flex-direction: column;
-    justify-self: start;
-    list-style-type: none;
-    font-weight: var(--font-weight-bold);
-    min-height: var(--row-size);
-    justify-content: center;
-    margin: 0 0.125rem;
-}
-
 .lx-secondary {
     font-weight: normal;
     font-size: var(--small-font-size);
@@ -67,6 +56,7 @@
     flex-direction: column;
     gap: 0.2rem;
     padding-top: 0.2rem;
+    list-style-type: none;
 }
 
 .lx-master-detail .lx-master li.label-item,
@@ -96,17 +86,17 @@
     border-color: var(--color-bad);
 }
 
-.lx .lx-master-detail .lx-master .lx-list-item.lx-invalid .invalid-icon {
+.lx .lx-master-detail .lx-master .lx-list-item.lx-invalid .lx-invalidation-icon {
     height: 1.5rem;
     fill: var(--color-bad);
     grid-area: invalid-icon;
 }
 
-.lx.lx-theme-contrast .lx-list-item.lx-selected.lx-invalid .invalid-icon {
+.lx.lx-theme-contrast .lx-list-item.lx-selected.lx-invalid .lx-invalidation-icon {
     fill: var(--color-list-icon-selected);
 }
 
-.lx-master-detail li:hover .lx-list-item .invalid-icon{
+.lx-master-detail li:hover .lx-list-item .lx-invalidation-icon {
     fill: var(--color-list-foreground-hover);
 }
 
@@ -125,12 +115,6 @@
 
 .lx-master-detail .lx-master-detail-list .lx-list-item.lx-invalid header{
     max-width: calc(100% - 1rem);
-}
-
-/* Pagaidu variants */
-.lx-master-detail .lx-list-item .lx-inner-content-wrapper{
-    grid-template-areas: 'category inner-content invalid-icon icon';
-    grid-template-columns: auto 1fr auto auto;
 }
 
 .lx-master-detail:not(.nav-border) > .lx-detail{

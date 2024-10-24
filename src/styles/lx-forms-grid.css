@@ -522,22 +522,6 @@ svg .lx-shade {
   line-height: 1.25em;
 }
 
-.lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row .lx-list-item-wrapper,
-.lx-form-grid > .lx-main .lx-row .lx-list-item-wrapper,
-.lx-form-grid > .lx-main .lx-row .lx-list-item-wrapper .lx-list-item-actions {
-  background-color: var(--color-region-2);
-}
-
-.lx-form-grid
-  > .lx-tab-control
-  > .lx-tab-body
-  > .lx-main
-  .lx-row
-  .lx-list-item.lx-list-item-interactive:hover,
-.lx-form-grid > .lx-main .lx-row .lx-list-item.lx-list-item-interactive:hover {
-  background-color: var(--color-region-hover-background);
-}
-
 .lx-form-grid > .lx-main .lx-row ul.lx-tag-set,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row ul.lx-tag-set,
 .lx-form .lx-row ul.lx-tag-set {
@@ -550,11 +534,6 @@ svg .lx-shade {
   color: var(--color-data);
   height: var(--input-size);
   line-height: 1.1em;
-}
-
-.lx-form-grid > .lx-main .lx-row ul.lx-list .lx-list-item,
-.lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row ul.lx-list .lx-list-item {
-  background: var(--color-region-2);
 }
 
 .lx-form-grid > .lx-main .lx-row > div.lx-vertical > code,

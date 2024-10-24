@@ -1334,7 +1334,6 @@ a.lx-tile:hover {
 .lx-list-3 li {
   width: 100%;
   max-width: 100%;
-  display: flex;
 }
 
 .lx-list li > .lx-list-item-wrapper {
@@ -1987,6 +1986,14 @@ a.lx-tile:hover {
   }
 }
 
+@media (max-width: 1600px) {
+  .lx-list-3:has(.lx-list-item ~ .lx-list-item-actions):has(.lx-handle),
+  .lx-list-3:has(.lx-list-item ~  .lx-list-item-actions):has(.selecting-block) {
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+  }
+}
+
 @media (max-width: 1400px) {
   .lx-layout.lx-layout-cover > header {
     grid-template-columns: auto 1fr auto;
@@ -2098,8 +2105,8 @@ a.lx-tile:hover {
     display: none;
   }
 
-  .lx-list-2,
-  .lx-list-3 {
+  .lx .lx-layout .lx-list-wrapper .lx-list.lx-list-2,
+  .lx .lx-layout .lx-list-wrapper .lx-list.lx-list-3 {
     grid-template-columns: 1fr;
     align-items: stretch;
   }
@@ -2140,6 +2147,7 @@ a.lx-tile:hover {
 
   .lx-list-2 li,		
   .lx-list-3 li {		
+    display: flex;
     width: 100%;		
     max-width: 100%;		
   }

@@ -1081,6 +1081,7 @@ onMounted(() => {
         <li
           v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
           :key="item[idAttribute]"
+          class="lx-list-item-container"
         >
           <LxListItem
             :id="item[idAttribute]"
@@ -1163,65 +1164,66 @@ onMounted(() => {
             >
               <div class="lx-transition-layer" :key="element[idAttribute]">
                 <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                  <LxDropDownMenu
-                    triggerClick="right"
-                    :disabled="loading || busy || draggableIsDisabledByQuery"
-                  >
-                    <div
-                      class="lx-handle"
-                      :id="`handleId-${element[props.idAttribute]}`"
-                      tabindex="0"
-                      @keydown.up.prevent="moveGroupedItem(element, 'forward')"
-                      @keydown.down.prevent="moveGroupedItem(element, 'backward')"
-                      @keydown.right.prevent="moveGroupedItem(element, 'backward')"
-                      @keydown.left.prevent="moveGroupedItem(element, 'forward')"
-                      :class="[
-                        {
-                          'handle-disabled': draggableIsDisabledByQuery || loading || busy,
-                        },
-                      ]"
+                  <div class="lx-list-item-container">
+                    <LxDropDownMenu
+                      triggerClick="right"
+                      :disabled="loading || busy || draggableIsDisabledByQuery"
                     >
-                      <LxIcon class="lx-icon" value="drag"></LxIcon>
-                    </div>
-                    <template #panel>
-                      <div class="lx-button-set">
-                        <LxButton
-                          v-for="button in draggableButtons"
-                          :key="button.id"
-                          :icon="button.icon"
-                          :label="button.title"
-                          :title="button.title"
-                          :disabled="button.disabled"
-                          @click="moveDraggableItem(button.id, element, 'grouped')"
-                        />
+                      <div
+                        class="lx-handle"
+                        :id="`handleId-${element[props.idAttribute]}`"
+                        tabindex="0"
+                        @keydown.up.prevent="moveGroupedItem(element, 'forward')"
+                        @keydown.down.prevent="moveGroupedItem(element, 'backward')"
+                        @keydown.right.prevent="moveGroupedItem(element, 'backward')"
+                        @keydown.left.prevent="moveGroupedItem(element, 'forward')"
+                        :class="[
+                          {
+                            'handle-disabled': draggableIsDisabledByQuery || loading || busy,
+                          },
+                        ]"
+                      >
+                        <LxIcon class="lx-icon" value="drag"></LxIcon>
                       </div>
-                    </template>
-                  </LxDropDownMenu>
-
-                  <lx-list-item
-                    :id="element[idAttribute]"
-                    :label="element[primaryAttribute]"
-                    :description="element[secondaryAttribute]"
-                    :value="element"
-                    :href="element[hrefAttribute]"
-                    :actionDefinitions="actionDefinitions"
-                    :actionsLayout="actionsLayout"
-                    :icon="element[iconAttribute] ? element[iconAttribute] : icon"
-                    :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
-                    :tooltip="element[tooltipAttribute]"
-                    :searchString="query"
-                    :clickable="element[clickableAttribute]"
-                    :category="element[categoryAttribute]"
-                    :disabled="loading || busy"
-                    @click="
-                      element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
-                    "
-                    @action-click="actionClicked"
-                  >
-                    <template #customItem="item" v-if="$slots.customItem">
-                      <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-                    </template>
-                  </lx-list-item>
+                      <template #panel>
+                        <div class="lx-button-set">
+                          <LxButton
+                            v-for="button in draggableButtons"
+                            :key="button.id"
+                            :icon="button.icon"
+                            :label="button.title"
+                            :title="button.title"
+                            :disabled="button.disabled"
+                            @click="moveDraggableItem(button.id, element, 'grouped')"
+                          />
+                        </div>
+                      </template>
+                    </LxDropDownMenu>
+                    <lx-list-item
+                      :id="element[idAttribute]"
+                      :label="element[primaryAttribute]"
+                      :description="element[secondaryAttribute]"
+                      :value="element"
+                      :href="element[hrefAttribute]"
+                      :actionDefinitions="actionDefinitions"
+                      :actionsLayout="actionsLayout"
+                      :icon="element[iconAttribute] ? element[iconAttribute] : icon"
+                      :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
+                      :tooltip="element[tooltipAttribute]"
+                      :searchString="query"
+                      :clickable="element[clickableAttribute]"
+                      :category="element[categoryAttribute]"
+                      :disabled="loading || busy"
+                      @click="
+                        element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
+                      "
+                      @action-click="actionClicked"
+                    >
+                      <template #customItem="item" v-if="$slots.customItem">
+                        <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                      </template>
+                    </lx-list-item>
+                  </div>
                 </div>
               </div>
             </TransitionGroup>
@@ -1269,6 +1271,7 @@ onMounted(() => {
             <li
               v-for="item in filteredGroupedItems[prepareCode(group.id)]"
               :key="item[idAttribute]"
+              class="lx-list-item-container"
             >
               <lx-list-item
                 :id="item[idAttribute]"
@@ -1330,7 +1333,7 @@ onMounted(() => {
         class="lx-list"
         :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
       >
-        <li v-for="item in filteredItems" :key="item[idAttribute]">
+        <li v-for="item in filteredItems" :key="item[idAttribute]" class="lx-list-item-container">
           <LxListItem
             :id="item[idAttribute]"
             :label="item[primaryAttribute]"
@@ -1411,65 +1414,67 @@ onMounted(() => {
             >
               <div class="lx-transition-layer" :key="element[idAttribute]">
                 <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                  <LxDropDownMenu
-                    triggerClick="right"
-                    :disabled="loading || busy || draggableIsDisabledByQuery"
-                  >
-                    <div
-                      class="lx-handle"
-                      :id="`handleId-${element[props.idAttribute]}`"
-                      tabindex="0"
-                      @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
-                      @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
-                      @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
-                      @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
-                      :class="[
-                        {
-                          'handle-disabled': draggableIsDisabledByQuery || loading || busy,
-                        },
-                      ]"
+                  <div class="lx-list-item-container">
+                    <LxDropDownMenu
+                      triggerClick="right"
+                      :disabled="loading || busy || draggableIsDisabledByQuery"
                     >
-                      <LxIcon class="lx-icon" value="drag"></LxIcon>
-                    </div>
-                    <template #panel>
-                      <div class="lx-button-set">
-                        <LxButton
-                          v-for="button in draggableButtons"
-                          :key="button.id"
-                          :icon="button.icon"
-                          :label="button.title"
-                          :title="button.title"
-                          :disabled="button.disabled"
-                          @click="moveDraggableItem(button.id, element, 'ungrouped')"
-                        />
+                      <div
+                        class="lx-handle"
+                        :id="`handleId-${element[props.idAttribute]}`"
+                        tabindex="0"
+                        @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
+                        @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
+                        @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
+                        @keydown.left.prevent="moveUngroupedItem(element, 'forward')"
+                        :class="[
+                          {
+                            'handle-disabled': draggableIsDisabledByQuery || loading || busy,
+                          },
+                        ]"
+                      >
+                        <LxIcon class="lx-icon" value="drag"></LxIcon>
                       </div>
-                    </template>
-                  </LxDropDownMenu>
+                      <template #panel>
+                        <div class="lx-button-set">
+                          <LxButton
+                            v-for="button in draggableButtons"
+                            :key="button.id"
+                            :icon="button.icon"
+                            :label="button.title"
+                            :title="button.title"
+                            :disabled="button.disabled"
+                            @click="moveDraggableItem(button.id, element, 'ungrouped')"
+                          />
+                        </div>
+                      </template>
+                    </LxDropDownMenu>
 
-                  <lx-list-item
-                    :id="element[idAttribute]"
-                    :label="element[primaryAttribute]"
-                    :description="element[secondaryAttribute]"
-                    :value="element"
-                    :href="element[hrefAttribute]"
-                    :actionDefinitions="actionDefinitions"
-                    :actionsLayout="actionsLayout"
-                    :icon="element[iconAttribute] ? element[iconAttribute] : icon"
-                    :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
-                    :tooltip="element[tooltipAttribute]"
-                    :searchString="query"
-                    :clickable="element[clickableAttribute]"
-                    :category="element[categoryAttribute]"
-                    :disabled="loading || busy"
-                    @click="
-                      element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
-                    "
-                    @action-click="actionClicked"
-                  >
-                    <template #customItem="item" v-if="$slots.customItem">
-                      <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-                    </template>
-                  </lx-list-item>
+                    <lx-list-item
+                      :id="element[idAttribute]"
+                      :label="element[primaryAttribute]"
+                      :description="element[secondaryAttribute]"
+                      :value="element"
+                      :href="element[hrefAttribute]"
+                      :actionDefinitions="actionDefinitions"
+                      :actionsLayout="actionsLayout"
+                      :icon="element[iconAttribute] ? element[iconAttribute] : icon"
+                      :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
+                      :tooltip="element[tooltipAttribute]"
+                      :searchString="query"
+                      :clickable="element[clickableAttribute]"
+                      :category="element[categoryAttribute]"
+                      :disabled="loading || busy"
+                      @click="
+                        element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
+                      "
+                      @action-click="actionClicked"
+                    >
+                      <template #customItem="item" v-if="$slots.customItem">
+                        <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                      </template>
+                    </lx-list-item>
+                  </div>
                 </div>
               </div>
             </TransitionGroup>
@@ -1525,66 +1530,70 @@ onMounted(() => {
               >
                 <div class="lx-transition-layer" :key="element[idAttribute]">
                   <div v-if="!element.placeholder" class="lx-draggable-group-list-item">
-                    <LxDropDownMenu
-                      triggerClick="right"
-                      :disabled="loading || busy || draggableIsDisabledByQuery"
-                    >
-                      <div
-                        class="lx-handle"
-                        :id="`handleId-${element[props.idAttribute]}`"
-                        tabindex="0"
-                        @keydown.up.prevent="moveGroupedItem(element, 'forward')"
-                        @keydown.down.prevent="moveGroupedItem(element, 'backward')"
-                        @keydown.right.prevent="moveGroupedItem(element, 'backward')"
-                        @keydown.left.prevent="moveGroupedItem(element, 'forward')"
-                        :class="[
-                          {
-                            'handle-disabled': draggableIsDisabledByQuery || loading || busy,
-                          },
-                        ]"
+                    <div class="lx-list-item-container">
+                      <LxDropDownMenu
+                        triggerClick="right"
+                        :disabled="loading || busy || draggableIsDisabledByQuery"
                       >
-                        <LxIcon class="lx-icon" value="drag"></LxIcon>
-                      </div>
-                      <template #panel>
-                        <div class="lx-button-set">
-                          <LxButton
-                            v-for="button in draggableButtons"
-                            :key="button.id"
-                            :icon="button.icon"
-                            :label="button.title"
-                            :title="button.title"
-                            :disabled="button.disabled"
-                            @click="moveDraggableItem(button.id, element, 'grouped')"
-                          />
+                        <div
+                          class="lx-handle"
+                          :id="`handleId-${element[props.idAttribute]}`"
+                          tabindex="0"
+                          @keydown.up.prevent="moveGroupedItem(element, 'forward')"
+                          @keydown.down.prevent="moveGroupedItem(element, 'backward')"
+                          @keydown.right.prevent="moveGroupedItem(element, 'backward')"
+                          @keydown.left.prevent="moveGroupedItem(element, 'forward')"
+                          :class="[
+                            {
+                              'handle-disabled': draggableIsDisabledByQuery || loading || busy,
+                            },
+                          ]"
+                        >
+                          <LxIcon class="lx-icon" value="drag"></LxIcon>
                         </div>
-                      </template>
-                    </LxDropDownMenu>
+                        <template #panel>
+                          <div class="lx-button-set">
+                            <LxButton
+                              v-for="button in draggableButtons"
+                              :key="button.id"
+                              :icon="button.icon"
+                              :label="button.title"
+                              :title="button.title"
+                              :disabled="button.disabled"
+                              @click="moveDraggableItem(button.id, element, 'grouped')"
+                            />
+                          </div>
+                        </template>
+                      </LxDropDownMenu>
 
-                    <lx-list-item
-                      :id="element[idAttribute]"
-                      :label="element[primaryAttribute]"
-                      :description="element[secondaryAttribute]"
-                      :value="element"
-                      :href="element[hrefAttribute]"
-                      :actionDefinitions="actionDefinitions"
-                      :actionsLayout="actionsLayout"
-                      :icon="element[iconAttribute] ? element[iconAttribute] : icon"
-                      :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
-                      :tooltip="element[tooltipAttribute]"
-                      :searchString="query"
-                      :clickable="element[clickableAttribute]"
-                      :category="element[categoryAttribute]"
-                      :disabled="loading || busy"
-                      :selected="isItemSelected(element[idAttribute])"
-                      @click="
-                        element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
-                      "
-                      @action-click="actionClicked"
-                    >
-                      <template #customItem="item" v-if="$slots.customItem">
-                        <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
-                      </template>
-                    </lx-list-item>
+                      <lx-list-item
+                        :id="element[idAttribute]"
+                        :label="element[primaryAttribute]"
+                        :description="element[secondaryAttribute]"
+                        :value="element"
+                        :href="element[hrefAttribute]"
+                        :actionDefinitions="actionDefinitions"
+                        :actionsLayout="actionsLayout"
+                        :icon="element[iconAttribute] ? element[iconAttribute] : icon"
+                        :iconSet="element[iconSetAttribute] ? element[iconSetAttribute] : iconSet"
+                        :tooltip="element[tooltipAttribute]"
+                        :searchString="query"
+                        :clickable="element[clickableAttribute]"
+                        :category="element[categoryAttribute]"
+                        :disabled="loading || busy"
+                        :selected="isItemSelected(element[idAttribute])"
+                        @click="
+                          element[hrefAttribute]
+                            ? null
+                            : actionClicked('click', element[idAttribute])
+                        "
+                        @action-click="actionClicked"
+                      >
+                        <template #customItem="item" v-if="$slots.customItem">
+                          <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                        </template>
+                      </lx-list-item>
+                    </div>
                   </div>
                 </div>
               </TransitionGroup>
@@ -1633,7 +1642,7 @@ onMounted(() => {
       <div
         v-for="element in filteredTreeItems"
         :key="element?.[idAttribute]"
-        class="tree-list-search-item"
+        class="tree-list-search-item lx-list-item-container"
       >
         <LxListItem
           :id="element[idAttribute]"

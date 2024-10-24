@@ -180,46 +180,48 @@ watch(
         :title="isExpanded(item?.[idAttribute]) ? texts?.collapse : texts?.expand"
         @click="collapse(item?.[idAttribute], item)"
       />
-      <LxListItem
-        :id="item[idAttribute]"
-        :label="item[primaryAttribute]"
-        :description="item[secondaryAttribute]"
-        :href="item[hrefAttribute]"
-        :clickable="item[clickableAttribute]"
-        :actionDefinitions="actionDefinitions"
-        :actionsLayout="actionsLayout"
-        :icon="item[iconAttribute] ? item[iconAttribute] : icon"
-        :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
-        :tooltip="item[tooltipAttribute]"
-        :category="item[categoryAttribute]"
-        :disabled="states?.[item[idAttribute]]?.disabled"
-        :busy="states?.[item[idAttribute]]?.busy"
-        :value="item"
-        :selected="isItemSelected(item[idAttribute])"
-        @action-click="actionClicked"
-        @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
-      >
-        <template #customItem="item" v-if="$slots.customItem">
-          <slot name="customItem" v-bind="item" />
-        </template>
-      </LxListItem>
-      <div class="selecting-block" v-if="hasSelecting">
-        <template v-if="isSelectable(item)">
-          <LxRadioButton
-            v-if="selectingKind === 'single'"
-            :id="`select-${id}-${item[idAttribute]}`"
-            v-model="selected[item[idAttribute]]"
-            :value="item[idAttribute]"
-            @click="selectRow(item[idAttribute])"
-          />
-          <LxCheckbox
-            v-else
-            :id="`select-${id}-${item[idAttribute]}`"
-            v-model="selected[item[idAttribute]]"
-            :value="item[idAttribute]"
-          />
-        </template>
-        <p v-else class="lx-checkbox-placeholder"></p>
+      <div class="lx-list-item-container">
+        <LxListItem
+          :id="item[idAttribute]"
+          :label="item[primaryAttribute]"
+          :description="item[secondaryAttribute]"
+          :href="item[hrefAttribute]"
+          :clickable="item[clickableAttribute]"
+          :actionDefinitions="actionDefinitions"
+          :actionsLayout="actionsLayout"
+          :icon="item[iconAttribute] ? item[iconAttribute] : icon"
+          :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
+          :tooltip="item[tooltipAttribute]"
+          :category="item[categoryAttribute]"
+          :disabled="states?.[item[idAttribute]]?.disabled"
+          :busy="states?.[item[idAttribute]]?.busy"
+          :value="item"
+          :selected="isItemSelected(item[idAttribute])"
+          @action-click="actionClicked"
+          @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+        >
+          <template #customItem="item" v-if="$slots.customItem">
+            <slot name="customItem" v-bind="item" />
+          </template>
+        </LxListItem>
+        <div class="selecting-block" v-if="hasSelecting">
+          <template v-if="isSelectable(item)">
+            <LxRadioButton
+              v-if="selectingKind === 'single'"
+              :id="`select-${id}-${item[idAttribute]}`"
+              v-model="selected[item[idAttribute]]"
+              :value="item[idAttribute]"
+              @click="selectRow(item[idAttribute])"
+            />
+            <LxCheckbox
+              v-else
+              :id="`select-${id}-${item[idAttribute]}`"
+              v-model="selected[item[idAttribute]]"
+              :value="item[idAttribute]"
+            />
+          </template>
+          <p v-else class="lx-checkbox-placeholder"></p>
+        </div>
       </div>
     </div>
     <div class="tree-item-invalid" v-if="states?.[item[idAttribute]]?.invalid">

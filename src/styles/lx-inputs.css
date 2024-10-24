@@ -365,8 +365,6 @@
 .lx-form-grid > .lx-main .lx-markdown-text-area-wrapper:not([data-disabled]) .lx-markdown-text-area,
 .lx-form-grid > .lx-main .lx-markdown-text-area .lx-modal .lx-file-upload:not(:disabled),
 .lx-form-grid > .lx-main ul.lx-list li,
-.lx-form-grid > .lx-main ul.lx-list > li > .selecting-block,
-.lx-form-grid > .lx-main .lx-list-item-wrapper > .lx-list-item,
 .lx-form-grid > .lx-main .lx-list .lx-dropdown-toggler,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-text-input:not(:disabled),
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-text-area:not(:disabled),
@@ -403,10 +401,6 @@
 
 .lx-form-grid > .lx-main .popper ul.lx-list li {
   background-color: var(--color-tooltip-background);
-}
-
-.lx-list-wrapper .lx-list li {
-  background-color: var(--color-region);
 }
 
 .lx-dropdown-default-panel:not(.lx-dropdown-default[disabled='true'] .lx-dropdown-default-panel),
@@ -845,15 +839,15 @@ h2.lx-section-header + p.lx-invalidation-message {
   background-color: var(--color-interactive-hover-foreground);
 }
 
-.lx-radio-button-wrapper:hover
+.lx .lx-radio-button-wrapper:hover
   .lx-radio-button:not(:disabled)
   + .lx-radio-button-label-wrapper
   .lx-radio-button-appearance,
-.lx-checkbox-wrapper:hover
+.lx .lx-checkbox-wrapper:hover
   .lx-checkbox:not(:disabled)
   + .lx-checkbox-label-wrapper
   .lx-checkbox-appearance {
-  background-color: var(--color-interactive-hover-background) !important;
+  background-color: var(--color-interactive-hover-background);
   border-color: transparent;
 }
 
@@ -1172,17 +1166,17 @@ h2.lx-section-header + p.lx-invalidation-message {
   align-items: center;
 }
 
-.lx-value-picker-default-item
+.lx .lx-value-picker-default-item
   .lx-radio-button-wrapper:hover
   .lx-radio-button:not(:disabled)
   + .lx-radio-button-label-wrapper
   .lx-radio-button-appearance,
-.lx-value-picker-default-item
+.lx .lx-value-picker-default-item
   .lx-checkbox-wrapper:hover
   .lx-checkbox:not(:disabled)
   + .lx-checkbox-label-wrapper
   .lx-checkbox-appearance {
-  background-color: var(--color-interactive-hover-background) !important;
+  background-color: var(--color-interactive-hover-background);
   border-color: transparent;
 }
 
@@ -3768,7 +3762,7 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-file-main-part {
-  display: flex;
+  display: grid;
   grid-template-columns: 1fr auto auto;
   height: var(--row-size);
 }
@@ -3855,10 +3849,6 @@ input[type='range']:hover::-moz-range-thumb {
   border: none;
 }
 
-.lx-file-upload-wrapper .lx-list-item > header {
-  margin: 0;
-}
-
 .lx-file-upload-wrapper .lx-list-item .lx-file-indicators .lx-invalidation-icon,
 .lx-file-upload-wrapper .lx-list-item .lx-file-indicators .lx-loader svg {
   height: 1rem;
@@ -3893,10 +3883,6 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-draggable-upload-wrapper:hover.lx-disabled p {
   color: var(--color-disabled-foreground);
   text-decoration: none;
-}
-
-.lx-uploaded-file-list-wrapper {
-  margin-top: 0.5rem;
 }
 
 .lx-archive-content .tree-list header {
@@ -3936,10 +3922,26 @@ input[type='range']:hover::-moz-range-thumb {
   text-overflow: ellipsis;
 }
 
-.lx-file-upload-wrapper .lx-uploaded-file-list-wrapper .lx-list li {
-  grid-template-columns: 1fr;
+.lx .lx-uploaded-file-list-wrapper {
+  margin-top: 0.5rem;
 }
 
+.lx .lx-uploaded-file-list-wrapper .lx-list-item-wrapper {
+  background-color: transparent !important;
+}
+
+.lx:not(.lx-theme-contrast) .lx-uploaded-file-list-wrapper .lx-list-item-wrapper {
+  border: none;
+}
+
+.lx .lx-uploaded-file-list-wrapper .lx-category-displayer {
+  display: none;
+}
+
+.lx .lx-uploaded-file-list-wrapper header {
+  padding: 0;
+  margin: 0;
+}
 
 .lx-file-upload-wrapper .lx-uploaded-file-list-wrapper  li .lx-file-wrapper .lx-list-item.lx-list-item-interactive,
 .lx-file-upload-wrapper .lx-uploaded-file-list-wrapper .lx-list li {
@@ -3949,14 +3951,6 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-file-upload-wrapper .lx-uploaded-file-list-wrapper li .lx-file-wrapper
 .lx-file-main-part > .lx-list-item-interactive:not(.lx-list-item-disabled):hover {
   border-color: var(--color-interactive-hover-background);
-}
-
-.lx-uploaded-file-list-wrapper .lx-list .lx-inner-content-wrapper {
-  padding: 0;
-}
-
-.lx-uploaded-file-list-wrapper .lx-list .lx-inner-content-wrapper > header {
-  margin: 0;
 }
 
 .lx-file-meta .lx-skeleton-placeholder {
@@ -4285,7 +4279,7 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-file-wrapper .lx-list-item {
-  border: var(--list-item-border);
+  border: 2px solid transparent;
   background-color: transparent !important;
   height: 100%;
   overflow: hidden;
