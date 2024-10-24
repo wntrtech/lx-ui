@@ -1974,7 +1974,7 @@ defineExpose({ validateModel, clearValidations });
                 :scale="row?.items?.lx?.scale"
                 :disabled="row?.items?.lx?.disabled"
                 :uppercase="row?.items?.lx?.uppercase"
-                :convert-to-string="iterow?.itemsm?.lx?.convertToString"
+                :convert-to-string="row?.items?.lx?.convertToString"
                 :placeholder="examplesValue(row?.items)"
                 :signed="row?.items?.lx?.signed"
                 :readOnly="isReadOnly(row?.items)"

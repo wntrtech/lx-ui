@@ -7,6 +7,8 @@ import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxDataGrid from '@/components/DataGrid.vue';
 import LxLoader from '@/components/Loader.vue';
 import { formatDecimal } from '@/utils/formatUtils';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import LxListItem from '@/components/list/ListItem.vue';
 
 const props = defineProps({
   id: { type: String, default: generateUUID() },
@@ -19,15 +21,18 @@ const props = defineProps({
   colorAttribute: { type: String, default: 'color' },
   valueAttribute: { type: String, default: 'value' },
   showLegend: { type: Boolean, default: false },
+  targets: { type: Array, default: () => [] },
   texts: {
     type: Object,
     default: () => ({
       graph: 'Grafiks',
       table: 'Tabula',
+      from: 'no',
+      to: 'līdz',
+      target: 'Mērķis',
     }),
   },
 });
-
 const emits = defineEmits(['click']);
 
 const latvia = getTexts('latvia');
@@ -40,6 +45,10 @@ const maxValue = computed(
 
 function getBarWidth(item) {
   return `--bar-width: ${(item[props.valueAttribute] / maxValue.value) * 100}%`;
+}
+
+function getTargetPosition(item) {
+  return `--target-position: ${(item / maxValue.value) * 100}%`;
 }
 
 function checkValue(item, cloneThreshold, grid) {
@@ -220,7 +229,7 @@ function loadImage() {
   return new Promise((resolve, reject) => {
     imagePath.value = defineAsyncComponent({
       loader: () =>
-        import(`@/components/visualPickerPictures/Latvia.vue`)
+        import('@/components/visualPickerPictures/Latvia.vue')
           .then(async (component) => {
             resolve(component);
             return component;
@@ -258,6 +267,48 @@ async function getImage() {
   }
 }
 
+const barsOnly = ref();
+
+const barsOnlyWidth = computed(() => useElementSize(barsOnly).width);
+
+const targetsComputed = computed(() => {
+  const objArray = [...props.targets]
+    .sort((a, b) => a - b)
+    .map((item) => ({ value: item, count: 1 }));
+
+  const res = [];
+
+  for (let i = 0, j = 0; i < objArray.length; i += 1) {
+    const location = (objArray[i].value / maxValue.value) * barsOnlyWidth.value.value; // item location in px
+
+    // if gap smaller than 48px(3rem), than marge
+    if (res[j - 1]?.value && location - res[j - 1].value < 48) {
+      res[j - 1].value = (res[j - 1].value + location) / 2; // value of items in px for comparison
+      res[j - 1].count += 1; // count of items in this location
+      res[j - 1].absoluteValue = (res[j - 1].absoluteValue + objArray[i].value) / 2; // absolute value of items in this location
+      res[j - 1].list.push(objArray[i].value); // list of items in this location
+    } else {
+      res.push({
+        value: location,
+        count: 1,
+        locationRaw: (objArray[i].value / maxValue.value) * 100, // item location in %
+        absoluteValue: objArray[i].value,
+        list: [objArray[i].value],
+      });
+      j += 1;
+    }
+  }
+  return res;
+});
+
+const targetsList = computed(() => {
+  const res = [];
+  props.targets.forEach((item) => {
+    res.push({ id: item, name: item, description: props.texts?.target });
+  });
+  return res;
+});
+
 watch(
   () => props.kind,
   async (newValue) => {
@@ -274,10 +325,20 @@ watch(
     <div
       class="lx-bars-horizontal"
       v-if="kind === 'bars-horizontal' && contentModel === 'default'"
-      :class="[{ 'show-legend': showLegend }]"
+      :class="[{ 'show-legend': showLegend }, { 'has-targets': targets?.length > 0 }]"
+      :style="`--item-count: ${items?.length}`"
     >
-      <div class="bar-wrapper" v-for="(item, index) in items" :key="item[idAttribute]">
-        <div class="bar-name" :title="item?.[nameAttribute]">{{ item?.[nameAttribute] }}</div>
+      <div class="bar-wrapper">
+        <div
+          class="bar-name"
+          :title="item?.[nameAttribute]"
+          v-for="item in items"
+          :key="item[idAttribute]"
+        >
+          {{ item?.[nameAttribute] }}
+        </div>
+      </div>
+      <div class="bar-wrapper bars-only" ref="barsOnly">
         <div
           class="bar"
           :class="[
@@ -294,6 +355,8 @@ watch(
           :ref="(el) => (modalRefs[index] = el)"
           @click="$emit('click', item?.[idAttribute])"
           @keydown.space="$emit('click', item?.[idAttribute])"
+          v-for="(item, index) in items"
+          :key="item[idAttribute]"
         >
           <p
             v-if="showValues === 'always'"
@@ -303,8 +366,37 @@ watch(
             {{ item?.[valueAttribute] }}
           </p>
         </div>
+        <div
+          class="lx-target-wrapper"
+          v-for="target in targetsComputed"
+          :key="target?.value"
+          :style="`${getTargetPosition(target.absoluteValue)}`"
+          :class="[{ 'lx-target-wrapper-multiple': target.list?.length > 1 }]"
+        >
+          <div class="lx-target-header" v-if="showValues !== 'never' || target.list?.length > 1">
+            <div class="target-value" v-if="target.list?.length == 1" :title="target.absoluteValue">
+              {{ target.absoluteValue }}
+            </div>
+            <div class="target-value-multiple" v-else>
+              <LxInfoWrapper offsetDistance="8">
+                <div>
+                  {{ target.count }}
+                </div>
+                <template #panel>
+                  <div>
+                    <div v-for="item in target.list" :key="item">
+                      {{ item }}
+                    </div>
+                  </div>
+                </template>
+              </LxInfoWrapper>
+            </div>
+          </div>
+          <div class="lx-target" />
+        </div>
       </div>
     </div>
+
     <div
       v-else-if="kind === 'latvia' && contentModel === 'default'"
       class="lx-latvia-visualizer"
@@ -329,10 +421,30 @@ watch(
           <p v-if="item?.min && item?.max">
             {{ `${formatDecimal(item?.min)} - ${formatDecimal(item?.max)}` }}
           </p>
-          <p v-else-if="!item?.max">{{ `no ${formatDecimal(item?.min)}` }}</p>
-          <p v-else-if="!item?.min">{{ `līdz ${formatDecimal(item?.max)}` }}</p>
+          <p v-else-if="!item?.max">
+            {{ `${texts?.from || 'no'} ${formatDecimal(item?.min)}` }}
+          </p>
+          <p v-else-if="!item?.min">
+            {{ `${texts?.to || 'līdz'} ${formatDecimal(item?.max)}` }}
+          </p>
         </div>
       </div>
+    </div>
+    <div
+      class="targets-list"
+      v-if="
+        contentModel === 'table' &&
+        targets?.length > 0 &&
+        showValues !== 'never' &&
+        kind === 'bars-horizontal'
+      "
+    >
+      <LxListItem
+        v-for="item in targetsList"
+        :key="item"
+        :label="item.name"
+        :description="item.description"
+      />
     </div>
   </div>
 </template>

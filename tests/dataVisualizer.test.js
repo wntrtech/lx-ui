@@ -16,7 +16,7 @@ test('LxDataVisualizer items', () => {
   });
 
   // process.stdout.write(`${wrapper.html()}\n`);
-  const bars = wrapper.findAll('.bar-wrapper');
+  const bars = wrapper.findAll('.bar');
   expect(bars.length).toBe(3);
 });
 
