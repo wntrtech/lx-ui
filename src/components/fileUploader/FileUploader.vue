@@ -261,12 +261,12 @@ const triggerFileUpload = () => {
 const formatExtensions = computed(() =>
   props.allowedFileExtensions
     .map((ext) => {
-      // Check if its a MIME type
-      if (ext.includes('/')) return ext;
+      // Check if it's a MIME type
+      if (ext.includes('/')) return ext.toLowerCase();
 
       // Otherwise treat it as file extension
       const match = ext.match(/(?:\.([^.]+))?$/);
-      return match ? match[1] : null;
+      return match ? match[1].toLowerCase() : null;
     })
     .filter(Boolean)
 );
@@ -277,7 +277,6 @@ async function processFiles(files) {
   const promises = files.map(async (file) => {
     const fileId = generateUUID();
     const fileExtension = file.name.split('.').pop();
-
     if (
       formatExtensions.value.length > 0 &&
       !fileUploaderUtils.checkExtension(fileExtension, formatExtensions.value)
@@ -436,14 +435,15 @@ function cancelPhoto() {
   cameraPhoto.value = null;
   cameraModal.value.close();
 }
-
-const showCameraButton = computed(
-  () =>
+const showCameraButton = computed(() => {
+  const lowerCaseExtensions = props.allowedFileExtensions?.map((ext) => ext.toLowerCase()) || [];
+  return (
     props.hasCamera &&
-    (props.allowedFileExtensions?.includes('image/*') ||
-      props.allowedFileExtensions?.includes('.jpeg') ||
-      props.allowedFileExtensions?.length === 0)
-);
+    (lowerCaseExtensions.includes('image/*') ||
+      lowerCaseExtensions.includes('.jpeg') ||
+      lowerCaseExtensions.length === 0)
+  );
+});
 </script>
 <template>
   <div
@@ -463,7 +463,7 @@ const showCameraButton = computed(
         class="lx-visually-hidden"
         type="file"
         ref="fileInput"
-        :accept="allowedFileExtensions.join(',')"
+        :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
         @change="uploadFiles"
       />
       <div class="lx-draggable-wrapper" v-if="!props.draggable && advancedFilesData.length < 1">
@@ -520,7 +520,7 @@ const showCameraButton = computed(
         class="lx-visually-hidden"
         type="file"
         ref="fileInput"
-        :accept="allowedFileExtensions.join(',')"
+        :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
         @change="uploadFiles"
         multiple
       />
