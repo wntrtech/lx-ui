@@ -2797,6 +2797,13 @@ h2.lx-section-header + p.lx-invalidation-message {
   color: var(--color-data);
 }
 
+.lx .lx-layout .lx-markdown-text-area-wrapper .lx-component-toolbar .lx-group .popper .lx-dropdown-panel .lx-markdown-tag-item p.lx-data {
+  padding: 0;
+  font-weight: normal;
+  color: var(--color-data);
+  min-height: auto;
+}
+
 .lx-markdown-text-area-wrapper .placeholder-new {
   background-color: var(--color-state-new-20);
 }
