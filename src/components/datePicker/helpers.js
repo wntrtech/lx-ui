@@ -9,6 +9,7 @@ import {
   addMonths,
   format,
   isMatch,
+  addDays,
 } from 'date-fns';
 import useLx from '@/hooks/useLx';
 
@@ -290,49 +291,41 @@ export function isSameMonth(date, comparisonDate) {
   return date.getMonth() === comparisonDate.getMonth();
 }
 
-export function getSurroundingHours(arr, centerValue, visibleRange) {
+export function getSurroundingHours(arr, centerValue, isMobileScreen) {
   if (!arr.length) return [];
 
-  // Find the index of the center value in the array (wrapped correctly for filtered array)
-  const normalizedIndex = Math.min(centerValue, arr.length - 1);
+  // Ensure the center value index is within array bounds
+  const centerIndex = Math.min(centerValue, arr.length - 1);
 
-  // Get the start and end of the surrounding range
-  const start = (normalizedIndex - visibleRange + arr.length) % arr.length;
-  const end = (normalizedIndex + visibleRange + 1) % arr.length;
+  // Number of items before the center to reach desired position (4th position)
+  const offset = isMobileScreen ? 7 : 6;
 
-  // Return the visible surrounding range of items
-  if (start < end) {
-    return arr.slice(start, end);
-  }
-  return [...arr.slice(start), ...arr.slice(0, end)];
+  // Calculate the starting index to bring the center to the 4th position
+  const startIndex = (centerIndex - offset + arr.length) % arr.length;
+
+  // Reorder the array so it starts from startIndex and wraps around
+  return [...arr.slice(startIndex), ...arr.slice(0, startIndex)];
 }
 
-export function getSurroundingMinutes(arr, selectedId, visibleRange) {
+export function getSurroundingMinutes(arr, selectedId, isMobileScreen) {
   if (!arr.length) return [];
 
-  // Find the item in the array by the selected ID
-  const selectedItem = arr.find((item) => item.id === selectedId);
-  if (!selectedItem) return [];
-
-  // Find the index of the selected item in the extended array
+  // Find the index of the selected item
   const selectedIndex = arr.findIndex((item) => item.id === selectedId);
+  if (selectedIndex === -1) return []; // Return empty if the selected item is not found
 
-  // Calculate the start and end indexes for surrounding items
-  const start = (selectedIndex - visibleRange + arr.length) % arr.length;
-  const end = (selectedIndex + visibleRange + 1) % arr.length;
+  // Number of items before the center to reach desired position (4th position)
+  const offset = isMobileScreen ? 7 : 6;
 
-  // Return the visible surrounding range of items
-  if (start < end) {
-    return arr.slice(start, end);
-  }
-  return [...arr.slice(start), ...arr.slice(0, end)];
+  // Calculate the starting index to bring the selected item to the 4th position
+  const startIndex = (selectedIndex - offset + arr.length) % arr.length;
+
+  // Return all items in order, starting from the calculated startIndex and wrapping around
+  return [
+    ...arr.slice(startIndex), // From calculated startIndex to the end
+    ...arr.slice(0, startIndex), // Wrap around from start to calculated startIndex
+  ];
 }
-
-// Helper to determine if an item is the center and should be active
-export const isCenterActive = (index, isMobileScreen, mode) => {
-  if (isMobileScreen && mode === 'date-time') return index === 4; // Since we always render 9 elements in mobile screen, the 5th one is the center
-  return index === 3; // Since we always render 7 elements in other screens, the 4th one is the center
-};
 
 export function checkForSpecialDate(dayToCheck, datesArr) {
   return datesArr?.some((date) => date === formatDateJSON(dayToCheck));
@@ -375,6 +368,16 @@ export function getDaysInMonthGrid(date, firstDayOfWeek) {
   // Push the last week if it has remaining days
   if (currentWeek.length > 0) {
     weeks.push(currentWeek);
+  }
+
+  // If there are fewer than 6 weeks, fill remaining rows with days from the next month
+  const lastDay = endCalendar;
+  while (weeks.length < 6) {
+    const nextWeek = [];
+    for (let i = 0; i < 7; i += 1) {
+      nextWeek.push(addDays(lastDay, i + 1));
+    }
+    weeks.push(nextWeek);
   }
 
   return weeks;
@@ -429,51 +432,56 @@ export function getGrid(type, rowLgth, startYr, endYr, localListArr) {
 export function getMonths(currentDate, variant, mode, pickerType, isMobileScreen) {
   const months = [];
   let monthsToShow = 0;
-  let elemInRow = 1;
 
   // Determine the number of months to show and elements per row based on variant and mode
   if (variant === 'full' && mode === 'date' && pickerType === 'single') {
     monthsToShow = 3; // Show the current month and the next 3 months
-    elemInRow = 2; // 2 items per row
   }
   if (variant === 'full-rows' && mode === 'date' && pickerType === 'single') {
-    monthsToShow = 1; // Show the current month and the next 3 months
-    elemInRow = 1; // 1 item per row
+    monthsToShow = 1; // Show the current month and the next month
   }
   if (
     (variant === 'full-columns' && mode === 'date' && pickerType === 'single') ||
     (pickerType === 'range' && !isMobileScreen)
   ) {
-    monthsToShow = 1; // Show the current month and the next 3 months
-    elemInRow = 2; // 2 items per row
+    monthsToShow = 1; // Show the current month and the next month
   }
 
-  // Calculate the current month and the next 3 months
+  // Generate the list of months based on the calculated monthsToShow
   for (let i = 0; i <= monthsToShow; i += 1) {
     const month = addMonths(currentDate, i); // Add months to the current date
     months.push(month);
   }
 
-  const rows = [];
-  let currentRow = [];
+  const rows = [[], []];
 
-  // Arrange months into rows based on elemInRow value
-  months.forEach((item, idx) => {
-    currentRow.push(item);
-
-    // Push the row when the row is full
-    if ((idx + 1) % elemInRow === 0) {
-      rows.push(currentRow);
-      currentRow = [];
-    }
-  });
-
-  // Push any remaining months into the last row
-  if (currentRow.length > 0) {
-    rows.push(currentRow);
+  // Special logic for 'full-columns' variant: add two months to the first row
+  if (
+    (variant === 'full-columns' && mode === 'date' && pickerType === 'single') ||
+    (pickerType === 'range' && !isMobileScreen)
+  ) {
+    rows[0].push(months[0], months[1]); // First two months go to the first row
+    // Remaining months in alternating rows
+    months.slice(2).forEach((month, index) => {
+      if (index % 2 === 0) {
+        rows[1].push(month); // Alternate remaining months to row 1
+      } else {
+        rows[0].push(month); // Alternate remaining months to row 0
+      }
+    });
+  } else {
+    // Default alternating pattern for other variants
+    months.forEach((month, index) => {
+      if (index % 2 === 0) {
+        rows[0].push(month);
+      } else {
+        rows[1].push(month);
+      }
+    });
   }
 
-  return rows;
+  // Remove empty rows if any
+  return rows.filter((row) => row.length > 0);
 }
 
 export function isQuarterValid(quarterObject, minDateRef, maxDateRef) {

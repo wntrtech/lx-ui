@@ -339,13 +339,15 @@
 }
 
 .lx-region .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before,
-.lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before {
-  background: linear-gradient(180deg, var(--color-background) 3%, transparent 100%);
+.lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before,
+.lx-modal .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before {
+  background: linear-gradient(180deg, var(--color-background) 20%, transparent 100%);
 }
 
 .lx-region .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after,
-.lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after {
-  background: linear-gradient(0deg, var(--color-background) 3%, transparent 100%);
+.lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after,
+.lx-modal .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after {
+  background: linear-gradient(0deg, var(--color-background) 20%, transparent 100%);
 }
 
 .lx-form-grid > .lx-main .lx-text-input:not(:disabled),

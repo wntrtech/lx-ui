@@ -274,83 +274,50 @@
   }
 }
 
-/* lx-calendar */
-
-.lx:not(.lx-no-animations) .vc-dot {
-  transition: all var(--day-content-transition-time);
-}
-
-.lx:not(.lx-no-animations) .vc-bar {
-  transition: all var(--day-content-transition-time);
-}
-
-.lx:not(.lx-no-animations) .vc-none-enter-active,
-.lx:not(.lx-no-animations) .vc-none-leave-active {
-  transition-duration: 0s;
-}
-
-.lx:not(.lx-no-animations) .vc-fade-enter-active,
-.lx:not(.lx-no-animations) .vc-fade-leave-active,
-.lx:not(.lx-no-animations) .vc-slide-left-enter-active,
-.lx:not(.lx-no-animations) .vc-slide-left-leave-active,
-.lx:not(.lx-no-animations) .vc-slide-right-enter-active,
-.lx:not(.lx-no-animations) .vc-slide-right-leave-active,
-.lx:not(.lx-no-animations) .vc-slide-up-enter-active,
-.lx:not(.lx-no-animations) .vc-slide-up-leave-active,
-.lx:not(.lx-no-animations) .vc-slide-down-enter-active,
-.lx:not(.lx-no-animations) .vc-slide-down-leave-active,
-.lx:not(.lx-no-animations) .vc-slide-fade-enter-active,
-.lx:not(.lx-no-animations) .vc-slide-fade-leave-active {
-  transition: opacity var(--slide-duration) var(--slide-timing),
-    -webkit-transform var(--slide-duration) var(--slide-timing);
-  transition: transform var(--slide-duration) var(--slide-timing),
-    opacity var(--slide-duration) var(--slide-timing);
-  transition: transform var(--slide-duration) var(--slide-timing),
-    opacity var(--slide-duration) var(--slide-timing),
-    -webkit-transform var(--slide-duration) var(--slide-timing);
-}
-
-.lx:not(.lx-no-animations) .vc-day.popover-row {
-  --day-content-transition-time: 0.13s ease-in;
-  transition: all var(--day-content-transition-time);
-}
-
-.lx:not(.lx-no-animations) .vc-day-popover-row-indicator span {
-  transition: all var(--day-content-transition-time);
-}
-
-.lx:not(.lx-no-animations) .vc-container {
-  --slide-duration: 0.15s;
-  --slide-timing: ease;
-  --day-content-transition-time: 0.13s ease-in;
-}
-
 /* New lx-date-picker animations */
 
 .lx:not(.lx-no-animations) .lx-next-slide-enter-active,
 .lx:not(.lx-no-animations) .lx-next-slide-leave-active,
+.lx:not(.lx-no-animations) .lx-next-full-row-slide-enter-active,
+.lx:not(.lx-no-animations) .lx-next-full-row-slide-leave-active,
 .lx:not(.lx-no-animations) .lx-previous-slide-enter-active,
-.lx:not(.lx-no-animations) .lx-previous-slide-leave-active {
-  transition: transform 0.1s ease-out, opacity 0.1s ease-out;
+.lx:not(.lx-no-animations) .lx-previous-slide-leave-active,
+.lx:not(.lx-no-animations) .lx-previous-full-row-slide-enter-active,
+.lx:not(.lx-no-animations) .lx-previous-full-row-slide-leave-active {
+  transition: transform 200ms ease-out, opacity 200ms ease-out;
   backface-visibility: hidden;
   pointer-events: none;
 }
 
 .lx:not(.lx-no-animations) .lx-next-slide-leave-active,
-.lx:not(.lx-no-animations) .lx-previous-slide-leave-active {
+.lx:not(.lx-no-animations) .lx-next-full-row-slide-leave-active,
+.lx:not(.lx-no-animations) .lx-previous-slide-leave-active,
+.lx:not(.lx-no-animations) .lx-previous-full-row-slide-leave-active {
   position: absolute;
   width: 100%;
 }
 
 .lx:not(.lx-no-animations) .lx-next-slide-enter-from,
 .lx:not(.lx-no-animations) .lx-previous-slide-leave-to {
-  transform: translateX(30%);
+  transform: translateX(100%);
+  opacity: 0;
+}
+
+.lx:not(.lx-no-animations) .lx-next-full-row-slide-enter-from,
+.lx:not(.lx-no-animations) .lx-previous-full-row-slide-leave-to {
+  transform: translateY(100%);
   opacity: 0;
 }
 
 .lx:not(.lx-no-animations) .lx-next-slide-leave-to,
 .lx:not(.lx-no-animations) .lx-previous-slide-enter-from {
-  transform: translateX(-30%);
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.lx:not(.lx-no-animations) .lx-next-full-row-slide-leave-to,
+.lx:not(.lx-no-animations) .lx-previous-full-row-slide-enter-from {
+  transform: translateY(-100%);
   opacity: 0;
 }
 
@@ -362,11 +329,21 @@
   opacity: 1;
 }
 
-.lx:not(.lx-no-animations) .lx-next-slide-enter-active .lx-next-slide-leave-active,
-.lx:not(.lx-no-animations) .lx-previous-slide-enter-active .lx-previous-slide-leave-active {
-  transition: transform 0.1s ease-in, opacity 0.1s ease-in;
-  pointer-events: none;
+.lx:not(.lx-no-animations) .lx-next-full-row-slide-enter-to,
+.lx:not(.lx-no-animations) .lx-previous-full-row-slide-enter-to,
+.lx:not(.lx-no-animations) .lx-next-full-row-slide-leave-from,
+.lx:not(.lx-no-animations) .lx-previous-full-row-slide-leave-from {
+  transform: translateY(0%);
+  opacity: 1;
 }
+
+/* time rotator part */
+
+.lx:not(.lx-no-animations) .lx-time-picker-time-list,
+.lx:not(.lx-no-animations) .lx-time-picker-time-list .lx-time-list-item {
+  transition: transform 200ms ease-out;
+}
+
 
 /* lx-expanders */
 

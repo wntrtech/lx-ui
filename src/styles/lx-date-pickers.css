@@ -285,7 +285,7 @@
 }
 
 .lx-datepicker-default .lx-calendar-layouts-wrapper.lx-full-layout {
-  height: 34rem;
+  height: 37rem;
 }
 
 .lx-datepicker-default .lx-calendar-layouts-wrapper.months-only {
@@ -325,7 +325,7 @@
 
 .lx-datepicker-default .lx-calendar-regular-layout {
   display: flex;
-  gap: 3rem;
+  gap: 2rem;
   justify-content: space-between;
 }
 
@@ -538,6 +538,7 @@
   pointer-events: all;
 }
 
+.lx-datepicker-default .lx-calendar-weeks.last-month .lx-calendar-week.penultimate-week .lx-calendar-day.lx-other-month:not(.lx-disabled-date),
 .lx-datepicker-default .lx-calendar-weeks.last-month .lx-calendar-week.last-week .lx-calendar-day.lx-other-month:not(.lx-disabled-date) {
   pointer-events: all;
 }
@@ -599,12 +600,6 @@
   border-left: none;
 }
 
-.lx-datepicker-default .lx-time-picker-time-list {
-  height: 14rem;
-  overflow-y: hidden;
-}
-
-.lx-datepicker-default .lx-time-picker-time-list::before,
 .lx-datepicker-default .lx-time-picker-time-list::before,
 .lx-datepicker-default .lx-time-picker-time-list::after {
   content: '';
@@ -617,22 +612,28 @@
 }
 
 .lx-datepicker-default .lx-time-picker-time-list::before {
-  top: 2rem;
-  background: linear-gradient(180deg,  var(--color-region) 3%, transparent 100%);
+  top: 6rem;
+  background: linear-gradient(180deg,  var(--color-region) 20%, transparent 100%);
 }
 
 .lx-datepicker-default .lx-time-picker-time-list::after {
-  bottom: 2rem;
-  background: linear-gradient(0deg,  var(--color-region) 3%, transparent 100%);
+  top: 18.1rem;
+  background: linear-gradient(0deg,  var(--color-region) 20%, transparent 100%);
 }
 
 .lx-datepicker-default .lx-time-picker-time-list::-webkit-scrollbar {
   display: none;
 }
 
+.lx-datepicker-default .time-picker-wrapper {
+  overflow: hidden;
+  height: 13.9rem;
+}
+
 .lx-datepicker-default .lx-time-picker-time-list {
   -ms-overflow-style: none;
   scrollbar-width: none;
+  transform: translateY(-6.1rem);
 }
 
 .lx-datepicker-default .lx-time-list-item {
@@ -645,6 +646,7 @@
   user-select: none;
   color: var(--color-data);
   z-index: 1;
+  list-style: none;
 }
 
 .lx-datepicker-default .lx-time-list-item:hover {
@@ -658,7 +660,7 @@
 }
 
 .lx-datepicker-default .lx-time-lists-separator {
-  padding: 0.1rem;
+  padding: 0.1rem 0.1rem 0.3rem;
 }
 
 .lx-datepicker-default .lx-active-hour,
@@ -794,6 +796,7 @@
 }
 
 .lx-datepicker-default .lx-day-layer-popper-main .lx-list li {
+  display: flex;
   align-items: center;
 }
 
@@ -924,7 +927,7 @@
     right: calc(9rem + 1px);
   }
 
-  .lx-datepicker-default .lx-time-picker-time-list.date-time-only {
+  .lx-datepicker-default .time-picker-wrapper.date-time-only {
     height: 17.9rem;
   }
 
@@ -944,6 +947,10 @@
 
   .lx-datepicker-default .lx-datepicker-input-container.range .lx-date-time-picker {
     margin-bottom: 0.5rem;
+  }
+
+  .lx-datepicker-default .lx-time-picker-time-list::after {
+    top: 22.1rem;
   }
 }
 

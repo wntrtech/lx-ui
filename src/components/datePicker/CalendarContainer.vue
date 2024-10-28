@@ -173,12 +173,22 @@ function openMobileTimeSelect() {
   }
 }
 
+const computedPrevTransitionName = computed(() =>
+  props.variant === 'full-rows' ? 'lx-previous-full-row-slide' : 'lx-previous-slide'
+);
+
+const computedNextTransitionName = computed(() =>
+  props.variant === 'full-rows' ? 'lx-next-full-row-slide' : 'lx-next-slide'
+);
+
 function selectPreviousSlide() {
-  transitionName.value = 'lx-previous-slide';
+  transitionName.value = computedPrevTransitionName.value;
+
   const prevMonthOrYear = new Date(currentDate.value);
 
   if (regularLayout.value && currentDate.value) {
-    prevMonthOrYear.setMonth(currentDate.value.getMonth() - 1);
+    const monthOffset = props.variant === 'full' ? 2 : 1;
+    prevMonthOrYear.setMonth(currentDate.value.getMonth() - monthOffset);
   }
   if (monthsLayout.value && currentDate.value) {
     prevMonthOrYear.setFullYear(currentDate.value.getFullYear() - 1);
@@ -196,11 +206,13 @@ function selectPreviousSlide() {
 }
 
 function selectNextSlide() {
-  transitionName.value = 'lx-next-slide';
+  transitionName.value = computedNextTransitionName.value;
+
   const nextMonthOrYear = new Date(currentDate.value);
 
   if (regularLayout.value && currentDate.value) {
-    nextMonthOrYear.setMonth(currentDate.value.getMonth() + 1);
+    const monthOffset = props.variant === 'full' ? 2 : 1;
+    nextMonthOrYear.setMonth(currentDate.value.getMonth() + monthOffset);
   }
   if (monthsLayout.value && currentDate.value) {
     nextMonthOrYear.setFullYear(currentDate.value.getFullYear() + 1);
@@ -556,27 +568,30 @@ function handleSingleSelection(selectedValue, selectionType, isNotSelectable = f
     if (props.mode === 'date') {
       // Get the last element of the flattened monthsList array
       const clonedArray = [...monthsList.value.flat()];
-      const lastDateInMonthList = clonedArray.slice(-1)[0];
+      const lastMonthInList = clonedArray[clonedArray.length - 1];
 
       // Check if the updatedDate exists in the flattened monthsList array
-      const isDateInMonthList = monthsList.value
-        .flat()
-        .some((monthDate) => monthDate.getMonth() === updatedDate.getMonth());
+      const isDateInMonthList = clonedArray.some(
+        (monthDate) => monthDate.getMonth() === updatedDate.getMonth()
+      );
 
       // Check if the updatedDate is after the lastDateInMonthList
-      if (updatedDate > lastDateInMonthList) {
+      if (updatedDate.getMonth() > lastMonthInList.getMonth()) {
         // Set currentDate to the updatedDate minus 3 months
         const threeMonthsBeforeDate = new Date(updatedDate);
         if (props.variant === 'full') {
           threeMonthsBeforeDate.setMonth(threeMonthsBeforeDate.getMonth() - 3);
         }
         if (props.variant === 'full-rows' || props.variant === 'full-columns') {
-          threeMonthsBeforeDate.setMonth(threeMonthsBeforeDate.getMonth() - 3);
+          threeMonthsBeforeDate.setMonth(threeMonthsBeforeDate.getMonth() - 1);
         }
+
+        transitionName.value = computedNextTransitionName.value;
         currentDate.value = threeMonthsBeforeDate;
       }
       // If updatedDate is NOT in the monthsList, update currentDate.value
       else if (!isDateInMonthList) {
+        transitionName.value = computedPrevTransitionName.value;
         currentDate.value = updatedDate;
       }
 
@@ -1062,23 +1077,51 @@ const selectedMinuteCenterId = ref(filteredMinutes.value[currentMinuteIndex.valu
 
 // Update visible hours
 function updateVisibleHours() {
-  const visibleCount = isMobileScreen.value && props.mode === 'date-time' ? 4 : 3; // Number of hours to show before and after the current one
-  visibleHours.value = getSurroundingHours(hours.value, currentHourIndex.value, visibleCount);
+  visibleHours.value = getSurroundingHours(
+    hours.value,
+    currentHourIndex.value,
+    isMobileScreen.value
+  );
 }
 
 // Update visible minutes
 function updateVisibleMinutes() {
-  const visibleCount = isMobileScreen.value && props.mode === 'date-time' ? 4 : 3; // Number of minutes to show before and after the current one
-
   visibleMinutes.value = getSurroundingMinutes(
     filteredMinutes.value,
     selectedMinuteCenterId.value,
-    visibleCount
+    isMobileScreen.value
   );
 }
 
 function returnToToday() {
   const newDate = new Date();
+
+  // Check if the mode is not 'year' or 'quarters' to handle month transitions
+  if (props.mode !== 'year' && props.mode !== 'quarters') {
+    if (currentDate.value > newDate) {
+      transitionName.value = computedPrevTransitionName.value;
+    } else {
+      transitionName.value = computedNextTransitionName.value;
+    }
+  } else if (props.mode === 'year') {
+    // Handle year transitions
+    if (startYear.value > newDate.getFullYear() && endYear.value > newDate.getFullYear()) {
+      transitionName.value = computedPrevTransitionName.value;
+    } else {
+      transitionName.value = computedNextTransitionName.value;
+    }
+  } else if (props.mode === 'quarters') {
+    // Handle quarter transitions
+    if (
+      startQuarterYear.value > newDate.getFullYear() &&
+      endQuarterYear.value > newDate.getFullYear()
+    ) {
+      transitionName.value = computedPrevTransitionName.value;
+    } else {
+      transitionName.value = computedNextTransitionName.value;
+    }
+  }
+
   currentDate.value = newDate;
   startYear.value = newDate.getFullYear() - 5;
   endYear.value = newDate.getFullYear() + 6;
@@ -1123,20 +1166,23 @@ function onScrollClick(direction, type) {
   }
 }
 
-const scrollThreshold = 60; // Adjust this value to control how fast or slow the scroll is
+const scrollThreshold = 100; // Threshold to trigger scroll
 let scrollAccumulated = 0;
 
-function onScrollWheel(e, type) {
-  scrollAccumulated += e.deltaY;
+function onScrollWheel(event, type) {
+  event.preventDefault(); // Prevent default scroll behavior
+
+  scrollAccumulated += event.deltaY;
 
   if (Math.abs(scrollAccumulated) >= scrollThreshold) {
-    if (scrollAccumulated > 0) {
-      onScrollClick(1, type); // Scroll down
-    } else {
-      onScrollClick(-1, type); // Scroll up
-    }
+    // Determine scroll direction based on accumulated scroll
+    const direction = scrollAccumulated > 0 ? 1 : -1;
 
-    scrollAccumulated = 0; // Reset after scroll
+    // Call the function to change the visible hours
+    onScrollClick(direction, type);
+
+    // Reset scroll accumulator for smooth scrolling
+    scrollAccumulated = 0;
   }
 }
 
@@ -1433,7 +1479,7 @@ function handleOutsideClickRangeSelection() {
 }
 
 const handleFocusOut = (e) => {
-  if (!containerRef.value.contains(e.relatedTarget)) {
+  if (e.relatedTarget && !containerRef.value.contains(e.relatedTarget)) {
     handleDateTimeSelection();
   }
 };
@@ -2265,7 +2311,7 @@ watch(
           customClass="lx-previous-slide-button"
           :title="texts.previous"
           kind="ghost"
-          icon="previous-page"
+          :icon="variant === 'full-rows' ? 'caret-up' : 'previous-page'"
           variant="icon-only"
           :disabled="!canSelectPrevious"
           @click.stop.prevent="selectPreviousSlide"
@@ -2299,7 +2345,9 @@ watch(
               >
                 <TransitionGroup :name="transitionName">
                   <div
-                    :key="currentDate ? currentDate.getMonth() : todayDate.getMonth()"
+                    :key="`${currentDate ? currentDate.getFullYear() : todayDate.getFullYear()}-${
+                      currentDate ? currentDate.getMonth() : todayDate.getMonth()
+                    }`"
                     class="lx-calendar-regular-layout-month"
                   >
                     <div
@@ -2356,6 +2404,10 @@ watch(
                         class="lx-calendar-week"
                         :class="[
                           { 'first-week': weekIndex === 0 },
+                          {
+                            'penultimate-week':
+                              getDaysInMonthGrid(month, firstDayOfTheWeek).length - 2 === weekIndex,
+                          },
                           {
                             'last-week':
                               getDaysInMonthGrid(month, firstDayOfTheWeek).length - 1 === weekIndex,
@@ -2828,7 +2880,7 @@ watch(
           customClass="lx-next-slide-button"
           :title="texts.next"
           kind="ghost"
-          icon="next-page"
+          :icon="variant === 'full-rows' ? 'caret-down' : 'next-page'"
           variant="icon-only"
           :disabled="!canSelectNext"
           @click.stop.prevent="selectNextSlide"
@@ -2858,22 +2910,69 @@ watch(
           />
 
           <div
-            class="lx-time-picker-time-list"
+            class="time-picker-wrapper"
             :class="[
               {
-                'date-time-only': mode === 'date-time' && isMobileScreen && mobileTimeLayout,
+                'date-time-only':
+                  (mode === 'date-time' && isMobileScreen && mobileTimeLayout) ||
+                  (mode === 'time' && isMobileScreen),
               },
             ]"
-            @wheel.prevent="onScrollWheel($event, 'hours')"
           >
-            <div
-              v-for="hour in visibleHours"
-              :key="hour.id"
-              class="lx-time-list-item"
+            <TransitionGroup
+              tag="div"
+              class="lx-time-picker-time-list"
               :class="[
-                { 'is-active': Number(hour.value) === selectedHour },
                 {
-                  'lx-disabled-hour':
+                  'date-time-only': mode === 'date-time' && isMobileScreen && mobileTimeLayout,
+                },
+              ]"
+              @wheel.prevent="onScrollWheel($event, 'hours')"
+            >
+              <div
+                v-for="(hour, index) in visibleHours"
+                :key="hour.orderIndex"
+                class="lx-time-list-item"
+                :class="[
+                  {
+                    'is-active':
+                      index >= 3 &&
+                      index <= (isMobileScreen ? 11 : 9) &&
+                      Number(hour.value) === selectedHour,
+                  },
+                  {
+                    'lx-disabled-hour':
+                      !canSelectTime(
+                        hour.value,
+                        minDateRef,
+                        maxDateRef,
+                        selectedDay,
+                        'hour',
+                        selectedHour,
+                        selectedMinute,
+                        mode === 'time'
+                      ) || disabled,
+                  },
+                ]"
+                :tabindex="
+                  index >= 3 &&
+                  index <= (isMobileScreen ? 11 : 9) &&
+                  canSelectTime(
+                    hour.value,
+                    minDateRef,
+                    maxDateRef,
+                    selectedDay,
+                    'hour',
+                    selectedHour,
+                    selectedMinute,
+                    mode === 'time'
+                  )
+                    ? '0'
+                    : '-1'
+                "
+                @click.stop.prevent="
+                  selectHour(
+                    hour,
                     !canSelectTime(
                       hour.value,
                       minDateRef,
@@ -2883,56 +2982,28 @@ watch(
                       selectedHour,
                       selectedMinute,
                       mode === 'time'
-                    ) || disabled,
-                },
-              ]"
-              :tabindex="
-                !canSelectTime(
-                  hour.value,
-                  minDateRef,
-                  maxDateRef,
-                  selectedDay,
-                  'hour',
-                  selectedHour,
-                  selectedMinute,
-                  mode === 'time'
-                )
-                  ? '-1'
-                  : '0'
-              "
-              @click.stop.prevent="
-                selectHour(
-                  hour,
-                  !canSelectTime(
-                    hour.value,
-                    minDateRef,
-                    maxDateRef,
-                    selectedDay,
-                    'hour',
-                    selectedHour,
-                    selectedMinute,
-                    mode === 'time'
+                    )
                   )
-                )
-              "
-              @keydown.enter.stop.prevent="
-                selectHour(
-                  hour,
-                  !canSelectTime(
-                    hour.value,
-                    minDateRef,
-                    maxDateRef,
-                    selectedDay,
-                    'hour',
-                    selectedHour,
-                    selectedMinute,
-                    mode === 'time'
+                "
+                @keydown.enter.stop.prevent="
+                  selectHour(
+                    hour,
+                    !canSelectTime(
+                      hour.value,
+                      minDateRef,
+                      maxDateRef,
+                      selectedDay,
+                      'hour',
+                      selectedHour,
+                      selectedMinute,
+                      mode === 'time'
+                    )
                   )
-                )
-              "
-            >
-              {{ hour.value }}
-            </div>
+                "
+              >
+                {{ hour.value }}
+              </div>
+            </TransitionGroup>
           </div>
 
           <LxButton
@@ -2956,25 +3027,65 @@ watch(
           />
 
           <div
-            class="lx-time-picker-time-list"
+            class="time-picker-wrapper"
             :class="[
               {
-                'date-time-only': mode === 'date-time' && isMobileScreen && mobileTimeLayout,
+                'date-time-only':
+                  (mode === 'date-time' && isMobileScreen && mobileTimeLayout) ||
+                  (mode === 'time' && isMobileScreen),
               },
             ]"
-            @wheel.prevent="onScrollWheel($event, 'minutes')"
           >
-            <div
-              v-for="minute in visibleMinutes"
-              :key="minute.id"
-              class="lx-time-list-item"
-              :class="[
-                {
-                  'is-active':
-                    minute.orderIndex === selectedMinute && minute.id === selectedMinuteId,
-                },
-                {
-                  'lx-disabled-hour':
+            <TransitionGroup
+              tag="div"
+              class="lx-time-picker-time-list"
+              @wheel.prevent="onScrollWheel($event, 'minutes')"
+            >
+              <div
+                v-for="(minute, index) in visibleMinutes"
+                :key="minute.id"
+                class="lx-time-list-item"
+                :class="[
+                  {
+                    'is-active':
+                      index >= 3 &&
+                      index <= (isMobileScreen ? 11 : 9) &&
+                      minute.orderIndex === selectedMinute &&
+                      minute.id === selectedMinuteId,
+                  },
+                  {
+                    'lx-disabled-hour':
+                      !canSelectTime(
+                        minute.value,
+                        minDateRef,
+                        maxDateRef,
+                        selectedDay,
+                        'minute',
+                        selectedHour,
+                        selectedMinute,
+                        mode === 'time'
+                      ) || disabled,
+                  },
+                ]"
+                :tabindex="
+                  index >= 3 &&
+                  index <= (isMobileScreen ? 11 : 9) &&
+                  canSelectTime(
+                    minute.value,
+                    minDateRef,
+                    maxDateRef,
+                    selectedDay,
+                    'minute',
+                    selectedHour,
+                    selectedMinute,
+                    mode === 'time'
+                  )
+                    ? '0'
+                    : '-1'
+                "
+                @click.stop.prevent="
+                  selectMinute(
+                    minute,
                     !canSelectTime(
                       minute.value,
                       minDateRef,
@@ -2984,56 +3095,28 @@ watch(
                       selectedHour,
                       selectedMinute,
                       mode === 'time'
-                    ) || disabled,
-                },
-              ]"
-              :tabindex="
-                !canSelectTime(
-                  minute.value,
-                  minDateRef,
-                  maxDateRef,
-                  selectedDay,
-                  'minute',
-                  selectedHour,
-                  selectedMinute,
-                  mode === 'time'
-                )
-                  ? '-1'
-                  : '0'
-              "
-              @click.stop.prevent="
-                selectMinute(
-                  minute,
-                  !canSelectTime(
-                    minute.value,
-                    minDateRef,
-                    maxDateRef,
-                    selectedDay,
-                    'minute',
-                    selectedHour,
-                    selectedMinute,
-                    mode === 'time'
+                    )
                   )
-                )
-              "
-              @keydown.enter.stop.prevent="
-                selectMinute(
-                  minute,
-                  !canSelectTime(
-                    minute.value,
-                    minDateRef,
-                    maxDateRef,
-                    selectedDay,
-                    'minute',
-                    selectedHour,
-                    selectedMinute,
-                    mode === 'time'
+                "
+                @keydown.enter.stop.prevent="
+                  selectMinute(
+                    minute,
+                    !canSelectTime(
+                      minute.value,
+                      minDateRef,
+                      maxDateRef,
+                      selectedDay,
+                      'minute',
+                      selectedHour,
+                      selectedMinute,
+                      mode === 'time'
+                    )
                   )
-                )
-              "
-            >
-              {{ minute.value }}
-            </div>
+                "
+              >
+                {{ minute.value }}
+              </div>
+            </TransitionGroup>
           </div>
 
           <LxButton
