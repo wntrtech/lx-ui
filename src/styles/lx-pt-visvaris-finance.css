@@ -1,0 +1,17 @@
+.lx {
+    --color-brand: #2A5E31;
+    --color-interactive-background: #2A5E31;
+    --color-interactive-hover-background: #1e4423;
+    --color-nav-selected-background: var(--color-highlight);
+    --color-highlight: #d2ddd3;
+    --color-background: #f0f0f0;
+    --color-data: #0f1a0d;
+  }
+  
+  .lx.lx-theme-dark {
+    --color-brand: #5e9260;
+    --color-interactive-background: #5e9260;
+    --color-interactive-hover-background: #3c6241;
+    --color-nav-selected-background: var(--color-highlight);
+    --color-highlight: #2F3C36;
+  }
