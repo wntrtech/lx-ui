@@ -252,7 +252,7 @@ watch(
       :categoryAttribute="categoryAttribute"
       :selectable-attribute="selectableAttribute"
       :action-definitions="actionDefinitions"
-      :actionsLayouts="actionsLayout"
+      :actionsLayout="actionsLayout"
       :icon="icon"
       :iconSet="iconSet"
       :hasSelecting="hasSelecting"
