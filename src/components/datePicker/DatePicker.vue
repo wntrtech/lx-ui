@@ -76,9 +76,12 @@ const maxDateRef = ref(null);
 const modelInput = ref(null);
 const modelEndDateInput = ref(null);
 
+// Refs for active input state handling
 const activeInput = ref(null);
 const startInputRef = ref();
 const endInputRef = ref();
+
+const tabPressed = ref(false);
 
 const windowSize = useWindowSize();
 
@@ -546,9 +549,17 @@ function validateIfExact(e, type = 'startInput') {
   }
 }
 
+const handleTabKeyDown = (e) => {
+  if (e.key === 'Tab') {
+    tabPressed.value = true;
+  }
+};
+
 const handleFocusOut = (e) => {
-  if (e.relatedTarget && !containerRef.value.contains(e.relatedTarget)) {
+  // Check if the focus change is due to a `Tab` key event
+  if (tabPressed.value && !containerRef.value.contains(e?.relatedTarget)) {
     dropDownMenuRef.value?.closeMenu();
+    tabPressed.value = false; // Reset the flag after handling
   }
 };
 
@@ -767,7 +778,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div ref="containerRef" class="lx-datepicker-default" @focusout="handleFocusOut">
+  <div
+    ref="containerRef"
+    class="lx-datepicker-default"
+    @focusout="handleFocusOut"
+    @keydown="handleTabKeyDown"
+  >
     <LxDropDownMenu
       v-if="variant === 'default'"
       ref="dropDownMenuRef"

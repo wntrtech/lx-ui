@@ -394,6 +394,7 @@ function handleDoNotIndicateEnd() {
       end: newEndDate,
     });
     hoveredDate.value = null;
+    return;
   }
 
   if (!selectedStartDate.value && selectedEndDate.value && props.activeInput === 'startInput') {
@@ -1484,7 +1485,8 @@ const handleFocusOut = (e) => {
   }
 };
 
-function handleClose() {
+function handleClose(e) {
+  e.stopPropagation();
   handleOutsideClickRangeSelection();
   props.closeMenu();
 }
