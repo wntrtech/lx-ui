@@ -383,17 +383,63 @@ export function getDaysInMonthGrid(date, firstDayOfWeek) {
   return weeks;
 }
 
-export function getGrid(type, rowLgth, startYr, endYr, localListArr) {
-  const items = [];
+function formatGrid(items, rowLength) {
+  const rows = [];
+  let currentRow = [];
 
-  if (type === 'months') {
-    items.push(...localListArr);
+  items.forEach((item, idx) => {
+    currentRow.push(item);
+
+    if ((idx + 1) % rowLength === 0) {
+      rows.push(currentRow);
+      currentRow = [];
+    }
+  });
+
+  if (currentRow.length > 0) {
+    rows.push(currentRow);
   }
+
+  return rows;
+}
+
+export function getMonthGrid(pickerType, mode, currentYear, rowLgth, localListArr, isMobileScreen) {
+  // Create arrays for the current and next years
+  if (pickerType === 'range' && mode === 'month-year' && !isMobileScreen) {
+    const currentYearMonths = localListArr.map((month, index) => ({
+      ...month,
+      year: currentYear,
+      orderIndex: index,
+    }));
+
+    const nextYearMonths = localListArr.map((month, index) => ({
+      ...month,
+      year: currentYear + 1,
+      orderIndex: index,
+    }));
+
+    return [formatGrid(currentYearMonths, rowLgth), formatGrid(nextYearMonths, rowLgth)];
+  }
+
+  // Create array for the current years
+  const currentYearMonths = localListArr.map((month, index) => ({
+    ...month,
+    year: currentYear,
+    orderIndex: index,
+  }));
+
+  return [formatGrid(currentYearMonths, rowLgth)];
+}
+
+export function getGrid(type, rowLgth, startYr, endYr) {
+  const items = [];
 
   if (type === 'years') {
     for (let year = startYr; year <= endYr; year += 1) {
       items.push(year);
     }
+
+    return formatGrid(items, rowLgth);
   }
 
   if (type === 'quarters') {
@@ -407,25 +453,7 @@ export function getGrid(type, rowLgth, startYr, endYr, localListArr) {
     return items;
   }
 
-  const rows = [];
-  let currentRow = [];
-
-  items.forEach((item, idx) => {
-    currentRow.push(item);
-
-    // Start a new row when we reach the end of a row (3 for months and years or 7 for days items per row)
-    if ((idx + 1) % rowLgth === 0) {
-      rows.push(currentRow);
-      currentRow = [];
-    }
-  });
-
-  // Push the last row if it has remaining items
-  if (currentRow.length > 0) {
-    rows.push(currentRow);
-  }
-
-  return rows;
+  return [];
 }
 
 // Function to get months layout array for different cases ([Array(2),[Array(2)], [Array(1),[Array(1)], [Array(2)])
@@ -660,6 +688,11 @@ export function dateFromYearAndQuarter(year, quarter) {
   };
   // Construct a new Date object using the year and the starting month of the quarter
   return new Date(year, quarterStartMonth[quarter], 1); // Day is set to 1st of the quarter's starting month
+}
+
+export function quarterFromMonth(month) {
+  // Calculate the quarter from the 0-indexed month (0-11)
+  return Math.floor(month / 3) + 1;
 }
 
 export function getQuarterStringFromDate(date) {

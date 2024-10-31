@@ -96,6 +96,7 @@ const model = computed({
     if (props.kind === 'month') {
       if (typeof props.modelValue === 'string' && props.modelValue?.length === 2) {
         const newDate = new Date();
+        newDate.setDate(1); // Set to the first day of the month
         newDate.setMonth(Number(props.modelValue) - 1);
         return newDate;
       }
@@ -112,6 +113,7 @@ const model = computed({
     if (props.kind === 'month-year') {
       if (typeof props.modelValue === 'string' && props.modelValue?.length === 7) {
         const newDate = new Date();
+        newDate.setDate(1); // Set to the first day of the month
         newDate.setFullYear(Number(props.modelValue?.slice(0, 4)));
         newDate.setMonth(Number(props.modelValue?.slice(5, 7)) - 1);
         return newDate;

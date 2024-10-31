@@ -2,6 +2,19 @@
   font-family: var(--font-family);
 }
 
+.lx-datepicker-default .lx-datepicker-input-container.range .lx-date-time-picker {
+  width: 10rem
+}
+
+.lx-datepicker-default .lx-datepicker-input-container.range.month-year .lx-date-time-picker {
+  width: var(--date-time-size)
+}
+
+/* .lx-datepicker-default .lx-datepicker-input-container .lx-start-input-and-separator-wrapper {
+  display: flex;
+  flex-direction: row;
+} */
+
 .lx-datepicker-default .lx-context-container .inline-block .popper .lx-dropdown-panel {
   width: fit-content;
   padding: 0;
@@ -271,6 +284,10 @@
   width: 21.5rem;
 }
 
+.lx-date-time-picker-wrapper.lx-date-time-range-wrapper.month-year {
+  width: 29.5rem;
+}
+
 .lx-datepicker-default .lx-calendar-layouts-wrapper.lx-quarters {
   height: 24rem;
 }
@@ -308,14 +325,19 @@
   align-items: center;
 }
 
-.lx-datepicker-default .lx-calendar-regular-layout-month-label {
+.lx-datepicker-default .lx-calendar-regular-layout-month-label,
+.lx-datepicker-default .lx-calendar-month-layout-year-label {
   color: var(--color-label);
   line-height: 1em;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  margin-top: 1rem;
+  margin-top: 1.2rem;
   font-size: var(--small-font-size);
+}
+
+.lx-datepicker-default .lx-calendar-month-layout-year-label {
+  margin-bottom: 0.5rem;
 }
 
 .lx-datepicker-default .lx-calendar-regular-layout {
@@ -387,6 +409,11 @@
   top: 0;
 }
 
+.lx-datepicker-default .lx-calendar-months.month-year {
+  display: flex;
+  justify-content: space-around;
+}
+
 .lx-datepicker-default .lx-calendar-week,
 .lx-datepicker-default .lx-calendar-month-row,
 .lx-datepicker-default .lx-calendar-year-row,
@@ -401,9 +428,36 @@
   margin: 0.35rem 0;
 }
 
-.lx-datepicker-default .lx-calendar-month-row,
+.lx-datepicker-default .lx-calendar-month-row {
+  margin: 0.5rem 0;
+}
+
 .lx-datepicker-default .lx-calendar-year-row {
   margin: 1rem 0;
+}
+
+.lx-datepicker-default .lx-calendar-month-row-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.lx-datepicker-default .lx-calendar-month-row-wrapper.month-year {
+  margin-top: 0;
+}
+
+.lx-datepicker-default .lx-calendar-month-wrapper,
+.lx-datepicker-default .lx-calendar-year-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 5.13rem;
+}
+
+.lx-datepicker-default .lx-calendar-quarter-inner-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 3rem;
 }
 
 .lx-datepicker-default .lx-calendar-day,
@@ -424,6 +478,7 @@
   user-select: none;
   color: var(--color-data);
   width: 1.8rem;
+  z-index: 1;
 }
 
 .lx-datepicker-default .lx-calendar-day:focus,
@@ -443,7 +498,7 @@
 .lx-datepicker-default .lx-calendar-year {
   height: 2rem;
   width: 4rem;
-  margin: 0 0.565rem;
+  position: relative;
 }
 
 .lx-datepicker-default .lx-calendar-month.lx-full-layout,
@@ -453,55 +508,70 @@
 
 .lx-datepicker-default .lx-calendar-quarter {
   width: 2rem;
-  margin: 0 0.5rem;
+  position: relative;
 }
 
 .lx-datepicker-default .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):hover,
 .lx-datepicker-default .lx-calendar-day:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):focus,
-.lx-datepicker-default .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):hover,
-.lx-datepicker-default .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):focus,
-.lx-datepicker-default .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):hover,
-.lx-datepicker-default .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):focus,
-.lx-datepicker-default .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):hover,
-.lx-datepicker-default .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):focus {
+.lx-datepicker-default .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):hover,
+.lx-datepicker-default .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):focus,
+.lx-datepicker-default .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):hover,
+.lx-datepicker-default .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):focus,
+.lx-datepicker-default .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):hover,
+.lx-datepicker-default .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):focus {
   background-color: var(--color-grid-hover-background);
 }
 
 .lx-datepicker-default .lx-calendar-day.lx-today:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):hover,
 .lx-datepicker-default .lx-calendar-day.lx-today:not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day):focus,
-.lx-datepicker-default .lx-calendar-month.lx-today:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):hover,
-.lx-datepicker-default .lx-calendar-month.lx-today:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):focus,
-.lx-datepicker-default .lx-calendar-year.lx-today:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):hover,
-.lx-datepicker-default .lx-calendar-year.lx-today:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):focus,
-.lx-datepicker-default .lx-calendar-quarter.lx-today:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):hover,
-.lx-datepicker-default .lx-calendar-quarter.lx-today:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):focus {
+.lx-datepicker-default .lx-calendar-month.lx-today:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):hover,
+.lx-datepicker-default .lx-calendar-month.lx-today:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month):not(.hovering-range):focus,
+.lx-datepicker-default .lx-calendar-year.lx-today:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):hover,
+.lx-datepicker-default .lx-calendar-year.lx-today:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year):not(.hovering-range):focus,
+.lx-datepicker-default .lx-calendar-quarter.lx-today:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):hover,
+.lx-datepicker-default .lx-calendar-quarter.lx-today:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter):not(.hovering-range):focus {
   background-color: var(--color-grid-hover-background);
 }
 
 .lx-calendar-day-wrapper.hovering-range.start-day,
-.lx-calendar-day-wrapper.hovering-range.end-day {
+.lx-calendar-day-wrapper.hovering-range.end-day,
+.lx-calendar-month-wrapper.hovering-range.start-month,
+.lx-calendar-month-wrapper.hovering-range.end-month,
+.lx-calendar-year-wrapper.hovering-range.start-year,
+.lx-calendar-year-wrapper.hovering-range.end-year,
+.lx-calendar-quarter-inner-wrapper.hovering-range.start-quarter,
+.lx-calendar-quarter-inner-wrapper.hovering-range.end-quarter {
   background-color: transparent;
 }
 
-.lx-calendar-day-wrapper.hovering-range.start-day::before {
+.lx-calendar-day-wrapper.hovering-range.start-day::before,
+.lx-calendar-month-wrapper.hovering-range.start-month::before,
+.lx-calendar-year-wrapper.hovering-range.start-year::before,
+.lx-calendar-quarter-inner-wrapper.hovering-range.start-quarter::before {
   content: '';
   position: absolute;
-  margin-right: 2rem;
-  width: 0.2rem;
-  height: 1.8rem;
+  left: 0;
+  width: 0.6rem;
+  height: 100%;
   background-color: var(--color-background);
 }
 
-.lx-calendar-day-wrapper.hovering-range.end-day::before {
+.lx-calendar-day-wrapper.hovering-range.end-day::after,
+.lx-calendar-month-wrapper.hovering-range.end-month::after,
+.lx-calendar-year-wrapper.hovering-range.end-year::after,
+.lx-calendar-quarter-inner-wrapper.hovering-range.end-quarter::after {
   content: '';
   position: absolute;
-  margin-left: 2rem;
-  width: 0.2rem;
-  height: 1.8rem;
+  right: 0;
+  width: 0.6rem;
+  height: 100%;
   background-color: var(--color-background);
 }
 
-.lx-calendar-day-wrapper.hovering-range.start-day.end-day {
+.lx-calendar-day-wrapper.hovering-range.start-day.end-day,
+.lx-calendar-month-wrapper.hovering-range.start-month.end-month,
+.lx-calendar-year-wrapper.hovering-range.start-year.end-year,
+.lx-calendar-quarter-inner-wrapper.hovering-range.start-quarter.end-quarter {
   position: relative;
   background-color: var(--your-hover-color);
 }
@@ -540,7 +610,7 @@
 
 .lx-datepicker-default .lx-today {
   color: var(--color-interactive-background);
-  font-weight: 700;
+  font-weight: var(--font-weight-extra-bold);
 }
 
 .lx-datepicker-default .lx-selected-day,
@@ -557,7 +627,7 @@
 .lx-datepicker-default .lx-selected-end-quarter {
   background-color: var(--color-interactive-background);
   color: var(--color-interactive-hover-foreground);
-  font-weight: 700;
+  font-weight: var(--font-weight-extra-bold);
 }
 
 .lx-datepicker-default .lx-time-picker-time-list-wrapper {
@@ -651,7 +721,7 @@
 .lx-datepicker-default .lx-time-list-item.is-active {
   background-color: var(--color-interactive-background);
   color: var(--color-interactive-hover-foreground);
-  font-weight: 700;
+  font-weight: var(--font-weight-extra-bold);
 }
 
 .lx-datepicker-default .lx-time-lists-separator {
@@ -702,7 +772,11 @@
   width: 2.2rem;
 }
 
-.lx-datepicker-default .lx-calendar-day-wrapper.hovering-range {
+.lx-datepicker-default .lx-calendar-day-wrapper.hovering-range,
+.lx-datepicker-default .lx-calendar-month-wrapper.hovering-range,
+.lx-datepicker-default .lx-calendar-year-wrapper.hovering-range,
+.lx-datepicker-default .lx-calendar-quarter-inner-wrapper.hovering-range {
+  position: relative;
   background-color: var(--color-input-selected-range-background);
 }
 
@@ -727,9 +801,10 @@
 
 .lx-datepicker-default .lx-calendar-day:not(.lx-other-month):not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day).hovering-range,
 .lx-datepicker-default .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month).hovering-range,
-.lx-datepicker-default .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year).hovering-range {
-  background-color: var(--color-input-selected-range-background);
-  font-weight: 700;
+.lx-datepicker-default .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year).hovering-range,
+.lx-datepicker-default .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter).hovering-range {
+  background-color:var(--color-input-selected-range-background);
+  font-weight: var(--font-weight-extra-bold);
   color: #000;
 }
 
@@ -928,6 +1003,10 @@
 
   .lx-date-time-picker-wrapper.lx-date-time-range-wrapper {
     width: var(--input-date-width);
+  }
+
+  .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.month-year {
+    width: var(--date-time-size);
   }
 
   .lx-datepicker-default .lx-datepicker-input-container.range {

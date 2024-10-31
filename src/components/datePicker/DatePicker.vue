@@ -635,7 +635,7 @@ const offsetSkidByKind = computed(() => {
   if (props.mode === 'date' && props.pickerType === 'range') return '147';
   if (props.mode === 'month' && props.pickerType === 'range') return '0';
   if (props.mode === 'year' && props.pickerType === 'range') return '0';
-  if (props.mode === 'month-year' && props.pickerType === 'range') return '147';
+  if (props.mode === 'month-year' && props.pickerType === 'range') return '85';
   if (props.mode === 'quarters' && props.pickerType === 'range') return '0';
 
   return '88';
@@ -800,6 +800,7 @@ onMounted(async () => {
           { 'lx-disabled': disabled },
           { 'lx-invalid': invalid },
           { range: pickerType === 'range' },
+          { 'month-year': mode === 'month-year' },
         ]"
         @click="dropDownMenuRef?.preventClose"
         @keydown="dropDownMenuRef?.preventClose"
@@ -809,7 +810,6 @@ onMounted(async () => {
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
         >
           <div class="pseudo-input" />
-          <label class="lx-visually-hidden" :for="id"></label>
           <input
             ref="startInputRef"
             type="text"
@@ -848,7 +848,7 @@ onMounted(async () => {
           </div>
         </div>
         <template v-if="pickerType === 'range'">
-          <span class="lx-date-time-range-separator"> - </span>
+          <span class="lx-date-time-range-separator">–</span>
         </template>
 
         <template v-if="pickerType === 'range'">
@@ -857,7 +857,6 @@ onMounted(async () => {
             :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
           >
             <div class="pseudo-input" />
-            <label class="lx-visually-hidden" :for="id"></label>
             <input
               ref="endInputRef"
               type="text"
@@ -879,20 +878,11 @@ onMounted(async () => {
               @change="validateIfExact($event, 'endInput')"
               @input="sanitizeDateInput($event, mode)"
             />
-            <div v-if="invalid && variant === 'default'" class="lx-input-icon-wrapper">
+            <div v-if="invalid" class="lx-input-icon-wrapper">
               <LxIcon customClass="lx-invalidation-icon" value="invalid" />
             </div>
-            <div
-              v-if="!invalid && mode !== 'time' && variant === 'default'"
-              class="lx-input-icon-wrapper"
-            >
+            <div v-if="!invalid" class="lx-input-icon-wrapper">
               <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="calendar" />
-            </div>
-            <div
-              v-if="!invalid && mode === 'time' && variant === 'default'"
-              class="lx-input-icon-wrapper"
-            >
-              <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="time" />
             </div>
           </div>
         </template>

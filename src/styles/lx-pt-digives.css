@@ -22,6 +22,7 @@
   --font-family-mono: 'Poppins', 'IBM Plex Mono', monospace;
   --font-weight-data: 600;
   --font-weight-bold: 600;
+  --font-weight-extra-bold: 700;
   --data-weight: var(--font-weight-data);
   --h1-font-size: 2.25rem;
 

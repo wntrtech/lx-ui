@@ -43,6 +43,7 @@
   --font-family: 'UbuntuLX', 'IBM Plex Sans', sans-serif !important;
   --font-weight-data: 600;
   --font-weight-bold: 600;
+  --font-weight-extra-bold: 700;
   --data-weight: var(--font-weight-data);
   --h1-font-size: 2rem;
   --radius-default: 100px;
