@@ -887,14 +887,21 @@ const imageInputTypes = [
           </LxToolbarGroup>
         </template>
       </LxToolbar>
-      <lx-icon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
-      <editor-content
-        class="lx-markdown-text-area"
-        :class="{ 'lx-invalid': invalid }"
-        :style="{ 'min-height': rows * 2.2 + 'rem' }"
-        :editor="editor"
-        :title="tooltip"
-      />
+      <div
+        class="lx-input-wrapper"
+        :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
+      >
+        <div class="pseudo-input" />
+        <editor-content
+          class="lx-markdown-text-area lx-input-area"
+          :style="{ 'min-height': rows * 2.2 + 'rem' }"
+          :editor="editor"
+          :title="tooltip"
+        />
+        <div v-if="invalid" class="lx-invalidation-icon-wrapper">
+          <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+        </div>
+      </div>
       <div
         v-if="editor && maxlength"
         class="lx-text-length"
@@ -902,8 +909,10 @@ const imageInputTypes = [
       >
         {{ characterCount }}/{{ maxlength }}
       </div>
+      <div class="lx-invalidation-message" v-if="invalid && !readOnly">
+        {{ invalidationMessage }}
+      </div>
     </div>
     <LxRichTextDisplay v-if="readOnly" :value="model" />
-    <div class="lx-invalidation-message" v-if="readOnly === false">{{ invalidationMessage }}</div>
   </div>
 </template>

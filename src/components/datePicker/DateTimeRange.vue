@@ -433,11 +433,6 @@ onBeforeMount(() => {
         :data-disabled="disabled ? '' : null"
         v-if="kind === 'date'"
       >
-        <LxIcon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
-        <LxIcon v-show="!invalid" customClass="lx-date-time-icon" value="calendar" />
-        <LxIcon v-show="invalid" customClass="lx-invalidation-icon-end" value="invalid" />
-        <LxIcon v-show="!invalid" customClass="lx-date-time-icon-end" value="calendar" />
-
         <LxDatePicker
           :id="id"
           v-model="model"
@@ -446,6 +441,7 @@ onBeforeMount(() => {
           :placeholder="placeholder"
           :disabled="disabled"
           :invalid="invalid"
+          :invalidation-message="invalidationMessage"
           :min-date="minDate"
           :max-date="maxDate"
           :locale="localeComputed"
@@ -480,8 +476,9 @@ onBeforeMount(() => {
           :placeholder="placeholder"
         />
       </div>
-
-      <div class="lx-invalidation-message">{{ invalidationMessage }}</div>
+      <div v-if="invalid && kind !== 'date'" class="lx-invalidation-message">
+        {{ invalidationMessage }}
+      </div>
     </template>
   </div>
 </template>

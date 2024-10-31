@@ -301,15 +301,16 @@ onMounted(() => {
     </p>
     <template v-if="props.kind === 'native' && !readOnly">
       <div
-        class="lx-dropdown-wrapper"
+        class="lx-dropdown-wrapper lx-input-wrapper"
+        :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
         :data-invalid="invalid ? '' : null"
         :data-disabled="isDisabled ? '' : null"
       >
-        <lx-icon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
+        <div class="pseudo-input" />
         <select
           v-model="model"
           :id="idValue"
-          class="lx-dropdown"
+          class="lx-dropdown lx-input-area"
           :class="[
             { 'lx-invalid': invalid },
             {
@@ -334,8 +335,14 @@ onMounted(() => {
             {{ item[nameAttribute] }}
           </option>
         </select>
+        <div v-if="invalid" class="lx-invalidation-icon-wrapper">
+          <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+        </div>
+        <div class="lx-input-icon-wrapper">
+          <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
+        </div>
       </div>
-      <div class="lx-invalidation-message">{{ invalidationMessage }}</div>
+      <div v-if="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
     </template>
     <template v-if="props.kind === 'default' && !readOnly">
       <div
@@ -366,53 +373,66 @@ onMounted(() => {
           close-delay="0"
           role="listbox"
         >
-          <div
-            class="lx-dropdown-default-panel"
-            @click="openDropDownDefault"
-            :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
-            :title="tooltip"
-          >
-            <p
-              v-if="modelValue === '' || modelValue === null || modelValue === undefined"
-              class="placeholder"
+          <!--eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
+          <div class="lx-dropdown-input-wrapper" @click="openDropDownDefault">
+            <div
+              class="lx-dropdown-default-panel lx-input-wrapper"
+              :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
+              :title="tooltip"
             >
-              {{ placeholder }}
-            </p>
-            <slot>
-              <div class="lx-dropdown-default-data" :title="tooltip" v-if="variant === 'state'">
-                <LxStateDisplay
-                  :value="selectedItem?.id ? selectedItem?.id : props.placeholder"
-                  :dictionary="[
-                    {
-                      value: selectedItem?.id ? selectedItem?.id : props.placeholder,
-                      displayName: selectedItem?.name ? selectedItem?.name : props.placeholder,
-                      displayType: props.dictionary?.displayType,
-                      displayShape: props.dictionary?.displayShape,
-                    },
-                  ]"
-                />
-              </div>
-              <div
-                class="lx-dropdown-default-data lx-dropdown-flag"
-                :title="tooltip"
-                v-else-if="variant === 'country'"
-              >
-                <LxFlag
-                  :value="selectedItem?.country ? selectedItem?.country : 'lv'"
-                  size="small"
-                />
-                {{ name }}
-              </div>
-              <div class="lx-dropdown-default-data" :title="tooltip" v-else>
-                {{ name }}
-              </div>
-
-              <LxIcon
-                v-show="invalid"
-                customClass="lx-modifier-icon lx-invalidation-icon"
-                value="invalid"
-              />
-            </slot>
+              <slot>
+                <div class="pseudo-input" />
+                <div
+                  class="lx-dropdown-default-data lx-input-area"
+                  :title="tooltip"
+                  v-if="variant === 'state'"
+                >
+                  <LxStateDisplay
+                    :value="selectedItem?.id ? selectedItem?.id : props.placeholder"
+                    :dictionary="[
+                      {
+                        value: selectedItem?.id ? selectedItem?.id : props.placeholder,
+                        displayName: selectedItem?.name ? selectedItem?.name : props.placeholder,
+                        displayType: props.dictionary?.displayType,
+                        displayShape: props.dictionary?.displayShape,
+                      },
+                    ]"
+                  />
+                </div>
+                <div
+                  class="lx-dropdown-default-data lx-dropdown-flag lx-input-area"
+                  :title="tooltip"
+                  v-else-if="variant === 'country'"
+                >
+                  <LxFlag
+                    :value="selectedItem?.country ? selectedItem?.country : 'lv'"
+                    size="small"
+                  />
+                  <span class="lx-input-text"> {{ name }} </span>
+                </div>
+                <div class="lx-dropdown-default-data lx-input-area" :title="tooltip" v-else>
+                  <p class="lx-input-text">{{ name }}</p>
+                </div>
+                <div
+                  v-if="
+                    (modelValue === '' || modelValue === null || modelValue === undefined) &&
+                    variant !== 'state'
+                  "
+                  class="lx-placeholder lx-input-area"
+                >
+                  <p class="lx-input-text">{{ placeholder }}</p>
+                </div>
+                <div v-if="invalid" class="lx-invalidation-icon-wrapper">
+                  <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+                </div>
+                <div class="lx-input-icon-wrapper">
+                  <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
+                </div>
+              </slot>
+            </div>
+            <div v-if="invalid" class="lx-invalidation-message" @click.stop @mousedown.prevent>
+              {{ invalidationMessage }}
+            </div>
           </div>
           <template #content>
             <div
@@ -466,7 +486,6 @@ onMounted(() => {
           </template>
         </Popper>
       </div>
-      <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
     </template>
   </div>
 </template>

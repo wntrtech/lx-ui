@@ -117,7 +117,8 @@
   --color-placeholder-disabled: var(--contrast-background);
 
   --region-border: 2px solid var(--color-chrome);
-  --input-border: 1px solid var(--color-chrome);
+  --input-border: 2px solid var(--color-chrome);
+  --input-border-bottom: var(--input-border);
 
   --list-item-border: 2px solid var(--color-foreground);
 
@@ -141,5 +142,8 @@
   --color-list-unchecked-background-hover: var(--contrast-background);
   --color-list-unchecked-border-hover: var(--contrast-background);
 
-  --color-date-picker-selected-range-background: #bfdbfe;
+  --color-input-disabled: var(--contrast-foreground);
+  --color-input-disabled-border: var(--contrast-foreground);
+  --color-input-outline: var(--contrast-foreground);
+  --color-input-selected-range-background: var(--contrast-hover);
 }

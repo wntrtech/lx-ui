@@ -5,7 +5,7 @@ import LxTextInput from '@/components/TextInput.vue';
 
 // Testing helper functions
 function readOnlyTest(wrapper) {
-  expect(wrapper.find('.lx-text-input-wrapper').attributes('style')).toContain('display: none');
+  expect(wrapper.find('.lx-text-input-wrapper').exists()).toBe(false);
   expect(wrapper.find('.lx-data').exists()).toBe(true);
   expect(wrapper.find('.lx-data').text()).toBe('Test model value');
   expect(wrapper.find('.lx-data').text()).toBeTypeOf('string', 'number');
@@ -128,10 +128,8 @@ describe('LxTextInput', () => {
           },
         });
 
-        expect(wrapper.find('.lx-data').attributes('style')).toContain('display: none');
-        expect(wrapper.find('.lx-text-input-wrapper.password-mask').attributes('style')).toContain(
-          'display: none'
-        );
+        expect(wrapper.find('.lx-data').exists()).toBe(false);
+        expect(wrapper.find('.lx-text-input-wrapper.password-mask').exists()).toBe(false);
       });
 
       test('readOnly and kind="password" hides data, password mask, and invalidation message', async () => {
@@ -146,13 +144,9 @@ describe('LxTextInput', () => {
           },
         });
 
-        expect(wrapper.find('.lx-data').attributes('style')).toContain('display: none');
-        expect(wrapper.find('.lx-text-input-wrapper.password-mask').attributes('style')).toContain(
-          'display: none'
-        );
-        expect(wrapper.find('.lx-invalidation-message').attributes('style')).toContain(
-          'display: none'
-        );
+        expect(wrapper.find('.lx-data').exists()).toBe(false);
+        expect(wrapper.find('.lx-text-input-wrapper.password-mask').exists()).toBe(false);
+        expect(wrapper.find('.lx-invalidation-message').exists()).toBe(false);
       });
 
       test('readOnly and kind="default" shows data and hides invalidation message', async () => {
@@ -168,9 +162,7 @@ describe('LxTextInput', () => {
         });
 
         expect(wrapper.find('.lx-data').exists()).toBe(true);
-        expect(wrapper.find('.lx-invalidation-message').attributes('style')).toContain(
-          'display: none'
-        );
+        expect(wrapper.find('.lx-invalidation-message').exists()).toBe(false);
       });
     });
 

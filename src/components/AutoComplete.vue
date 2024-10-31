@@ -411,11 +411,6 @@ const handleInputFocus = () => {
   isInputFocused.value = true;
 };
 
-const shouldHideInput = computed(() => {
-  if (!menuOpen.value && hasValue.value) return true;
-  return false;
-});
-
 const shouldShowPlaceholder = computed(() => {
   if (!hasValue.value && !query.value && !menuOpen.value) return true;
   return false;
@@ -841,7 +836,7 @@ watch(
 );
 
 watch([hasValue, query, menuOpen], ([newHasValue, newQuery, newMenuOpen]) => {
-  if (!newHasValue && !newMenuOpen) {
+  if (!newHasValue && !newMenuOpen || newHasValue && !newMenuOpen) {
     inputReadonly.value = true;
   } else {
     inputReadonly.value = false;
@@ -865,7 +860,7 @@ onMounted(() => {
       <template v-if="variant === 'default'">
         <span v-if="displayReadOnlyPlaceholder">—</span>
         <template v-else>
-          {{ getName(false) }}
+          <p class="lx-input-text"> {{ getName(false) }} </p>
         </template>
       </template>
 
@@ -879,7 +874,7 @@ onMounted(() => {
             :name-attribute="nameAttribute"
           />
           <template v-else>
-            {{ getName(false) }}
+            <p class="lx-input-text"> {{ getName(false) }} </p>
           </template>
         </template>
       </template>
@@ -900,7 +895,7 @@ onMounted(() => {
             ]"
           />
           <template v-else>
-            {{ getName(false) }}
+            <p class="lx-input-text"> {{ getName(false) }} </p>
           </template>
         </template>
       </template>
@@ -967,13 +962,33 @@ onMounted(() => {
                         { emptyModel: model?.length === 0 || !model || selectingKind === 'single' },
                       ]"
                     >
-                      <div class="lx-text-input-wrapper" :data-invalid="invalid ? '' : null">
+                      <div 
+                        class="lx-text-input-wrapper lx-input-wrapper" 
+                        :class="[
+                          { 'lx-disabled': disabled },
+                          { 'lx-invalid': invalid },
+                        ]"
+                        :data-invalid="invalid ? '' : null"
+                      >
+                        <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag">
+                          <div class="lx-tag-label">{{ model?.length }}</div>
+                          <div class="lx-tag-button">
+                          <LxButton
+                            id="clearButton"
+                            :title="texts.clear"
+                            :disabled="disabled"
+                            kind="secondary"
+                            variant="icon-only"
+                            icon="remove"
+                            @click.stop="clear"
+                              />
+                          </div>
+                        </div>
                         <input
-                          :class="[{ 'lx-hidden-value': shouldHideInput }]"
                           ref="refQuery"
                           :placeholder="shouldShowInputPlaceholder ? getName() : null"
                           v-model="query"
-                          class="lx-text-input lx-value-picker-placeholder"
+                          class="lx-text-input lx-value-picker-placeholder lx-input-area"
                           role="search"
                           :aria-label="getName(false)"
                           tabindex="0"
@@ -982,127 +997,102 @@ onMounted(() => {
                           @focus="handleInputFocus"
                           @keydown="handleMenuAndInputKeydown"
                         />
-                      </div>
-                    </div>
-
-                    <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag">
-                      <div class="lx-tag-label">{{ model?.length }}</div>
-                      <div class="lx-tag-button">
+                        <template v-if="shouldShowValuePlaceholder">
+                          <div
+                            class="lx-value lx-input-area"
+                            :title="selectingKind === 'single' ? getName(false) : ''"
+                          >
+                            <template v-if="variant === 'country' && selectingKind === 'single'">
+                              <LxFlagItemDisplay
+                                :value="selectedItem"
+                                :id-attribute="idAttribute"
+                                :name-attribute="nameAttribute"
+                              />
+                            </template>
+                            <template v-if="variant === 'state' && selectingKind === 'single'">
+                              <LxStateDisplay
+                                :value="selectedItem?.[idAttribute]"
+                                :dictionary="[
+                                  {
+                                    value: selectedItem?.[idAttribute],
+                                    displayName: selectedItem[nameAttribute],
+                                    displayType: props.dictionary?.displayType,
+                                    displayShape: props.dictionary?.displayShape,
+                                  },
+                                ]"
+                              />
+                            </template>
+                            <template
+                              v-if="
+                                variant === 'default' ||
+                                variant === 'custom' ||
+                                (variant === 'country' && selectingKind === 'multiple') ||
+                                (variant === 'state' && selectingKind === 'multiple')
+                              "
+                            >
+                              <p class="lx-input-text"> {{ getName(false) }} </p>
+                            </template>
+                          </div>
+                        </template>
+                        <template v-if="shouldShowPlaceholder">
+                          <div class="lx-placeholder lx-input-area">
+                            <p class="lx-input-text"> {{ getName() }} </p>
+                          </div>
+                        </template>
+                        <div v-if="invalid && !(loadingState || loading)" class="lx-invalidation-icon-wrapper">
+                          <LxIcon
+                            customClass="lx-invalidation-icon"
+                            value="invalid"
+                          />
+                        </div>
+                        <div v-if="shouldShowIcon" class="lx-input-icon-wrapper">
+                          <LxIcon customClass="lx-modifier-icon" :value="icon" />
+                        </div>
                         <LxButton
-                          id="clearButton"
-                          :title="texts.clear"
-                          :disabled="disabled"
-                          kind="secondary"
-                          variant="icon-only"
-                          icon="remove"
-                          @click.stop="clear"
-                        />
-                      </div>
-                    </div>
-
-                    <template v-if="shouldShowValuePlaceholder">
-                      <div
-                        class="lx-value"
-                        :title="selectingKind === 'single' ? getName(false) : ''"
-                      >
-                        <template v-if="variant === 'country' && selectingKind === 'single'">
-                          <LxFlagItemDisplay
-                            :value="selectedItem"
-                            :id-attribute="idAttribute"
-                            :name-attribute="nameAttribute"
-                          />
-                        </template>
-                        <template v-if="variant === 'state' && selectingKind === 'single'">
-                          <LxStateDisplay
-                            :value="selectedItem?.[idAttribute]"
-                            :dictionary="[
-                              {
-                                value: selectedItem?.[idAttribute],
-                                displayName: selectedItem[nameAttribute],
-                                displayType: props.dictionary?.displayType,
-                                displayShape: props.dictionary?.displayShape,
-                              },
-                            ]"
-                          />
-                        </template>
-                        <template
                           v-if="
-                            variant === 'default' ||
-                            variant === 'custom' ||
-                            (variant === 'country' && selectingKind === 'multiple') ||
-                            (variant === 'state' && selectingKind === 'multiple')
+                            selectingKind === 'single' &&
+                            !invalid &&
+                            hasValue &&
+                            !(loadingState || loading)
                           "
-                        >
-                          {{ getName(false) }}
-                        </template>
+                          id="clearButton"
+                          :disabled="disabled"
+                          icon="close"
+                          kind="ghost"
+                          :title="texts.clear"
+                          @click="clear"
+                        />
+                        <LxButton
+                          v-if="
+                            selectingKind === 'single' &&
+                            invalid &&
+                            hasValue &&
+                            !(loadingState || loading)
+                          "
+                          id="clearButton"
+                          :disabled="disabled"
+                          icon="close"
+                          kind="ghost"
+                          :title="texts.clear"
+                          @click="clear"
+                        />
+                        <LxButton
+                          v-if="shouldShowDetailsBtn"
+                          :disabled="disabled"
+                          icon="search-details"
+                          kind="ghost"
+                          :title="texts.detailsButton"
+                          @click="openDetails"
+                          @keydown.enter="openDetails"
+                          @keydown.tab="focusOnDropDown"
+                          @keydown.f3.prevent="openDetails"
+                        />
+                        <div class="lx-autocomplete-loader" v-if="loadingState || loading">
+                          <LxLoader loading size="s" />
+                        </div>
                       </div>
-                    </template>
-
-                    <template v-if="shouldShowPlaceholder">
-                      <div class="lx-placeholder">
-                        {{ getName() }}
-                      </div>
-                    </template>
-                  </div>
-                </div>
-                <div class="lx-icons">
-                  <LxIcon
-                    v-show="invalid && !(loadingState || loading)"
-                    customClass="lx-modifier-icon lx-invalidation-icon"
-                    value="invalid"
-                  />
-
-                  <LxIcon v-show="shouldShowIcon" customClass="lx-modifier-icon" :value="icon" />
-
-                  <div
-                    v-show="
-                      selectingKind === 'single' &&
-                      !invalid &&
-                      hasValue &&
-                      !(loadingState || loading)
-                    "
-                  >
-                    <LxButton
-                      id="clearButton"
-                      :disabled="disabled"
-                      icon="close"
-                      kind="ghost"
-                      :title="texts.clear"
-                      @click="clear"
-                    />
-                  </div>
-                  <div
-                    class="lx-invalid-true"
-                    v-show="
-                      selectingKind === 'single' &&
-                      invalid &&
-                      hasValue &&
-                      !(loadingState || loading)
-                    "
-                  >
-                    <LxButton
-                      id="clearButton"
-                      :disabled="disabled"
-                      icon="close"
-                      kind="ghost"
-                      :title="texts.clear"
-                      @click="clear"
-                    />
-                  </div>
-                  <div class="lx-primary" v-if="shouldShowDetailsBtn">
-                    <LxButton
-                      :disabled="disabled"
-                      icon="search-details"
-                      kind="ghost"
-                      :title="texts.detailsButton"
-                      @click="openDetails"
-                      @keydown.enter="openDetails"
-                      @keydown.tab="focusOnDropDown"
-                      @keydown.f3.prevent="openDetails"
-                    />
-                  </div>
-                  <div class="lx-autocomplete-loader" v-show="loadingState || loading">
-                    <LxLoader loading size="s" />
+                      <div v-if="invalid" class="lx-invalidation-message" @click.stop>{{ invalidationMessage }}</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1294,8 +1284,6 @@ onMounted(() => {
           />
         </template>
       </LxModal>
-
-      <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
     </template>
   </div>
 </template>

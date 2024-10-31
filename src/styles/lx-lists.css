@@ -123,6 +123,7 @@
 
 .lx .first-row .lx-text-input.lx-search-input {
   background-color: transparent;
+  height: 100%;
 }
 
 .lx-transition-layer {
@@ -359,6 +360,7 @@
 .lx .lx-list-item .lx-invalidation-icon-wrapper,
 .lx .lx-list-item .lx-list-icon-wrapper {
   padding: var(--list-icon-padding);
+  height: 100%;
 }
 
 .lx-list-item-disabled svg {
@@ -687,8 +689,8 @@
   display: flex;
 }
 
-.lx-list-toolbar > .second-row .lx-text-input,
-.lx-list-toolbar > .first-row .lx-text-input {
+.lx .lx-layout .lx-list-toolbar > .second-row .lx-text-input,
+.lx .lx-layout .lx-list-toolbar > .first-row .lx-text-input {
   height: var(--row-size);
 }
 

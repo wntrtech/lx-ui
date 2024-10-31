@@ -457,15 +457,10 @@
 
 /* lx-inputs */
 
-.lx:not(.lx-no-animations) .lx-dropdown-wrapper::before,
-.lx:not(.lx-no-animations) .lx-dropdown-default-panel::before {
-  -webkit-transition: 70ms cubic-bezier(0.2, 0, 0.38, 0.9) all;
-  transition: 70ms cubic-bezier(0.2, 0, 0.38, 0.9) all;
-}
-
+.lx:not(.lx-no-animations) .lx-input-wrapper,
+.lx:not(.lx-no-animations) .lx-rotator-tag,
 .lx:not(.lx-no-animations) .lx-text-input,
 .lx:not(.lx-no-animations) .lx-text-area,
-.lx:not(.lx-no-animations) .lx-date-time-picker,
 .lx:not(.lx-no-animations) .lx-dropdown,
 .lx:not(.lx-no-animations) .lx-markdown-text-area {
   -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 0.38, 0.9),

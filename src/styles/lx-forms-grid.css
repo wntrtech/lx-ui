@@ -162,6 +162,10 @@ svg .lx-shade {
   align-items: baseline;
 }
 
+.lx-filter-wrapper > .shortlist-wrapper > .lx-form-grid > .lx-main > .lx-form-section {
+  align-items: normal;
+}
+
 .lx-data-block-content .lx-form-grid.lx-form-grid-stripped > .lx-main > .lx-form-section {
   padding: 0;
 }
@@ -454,20 +458,6 @@ svg .lx-shade {
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > p.lx-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-field-wrapper p.lx-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-field-wrapper p.lx-data,
-.lx-form-grid
-  > .lx-main
-  .lx-row
-  > div.lx-horizontal
-  > .lx-field-wrapper
-  > .lx-dropdown-default-wrapper
-  > p.lx-data,
-.lx-form-grid
-  > .lx-main
-  .lx-row
-  > div.lx-vertical
-  > .lx-field-wrapper
-  > .lx-dropdown-default-wrapper
-  > p.lx-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-field-wrapper > span > p.lx-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-field-wrapper > span > p.lx-data,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row > div.lx-vertical > p.lx-data,
@@ -533,7 +523,7 @@ svg .lx-shade {
 .lx-form-grid > .lx-main .lx-row ul.lx-tag-set .lx-tag,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row ul.lx-tag-set .lx-tag {
   color: var(--color-data);
-  height: var(--input-size);
+  height: var(--input-height);
   line-height: 1.1em;
 }
 
@@ -591,7 +581,7 @@ svg .lx-shade {
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-button,
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-horizontal > .lx-button {
   width: 100%;
-  max-height: var(--input-size);
+  max-height: var(--input-height);
 }
 
 .lx-modal > .lx-main .lx-form-section,
@@ -616,10 +606,6 @@ svg .lx-shade {
 
 .lx .lx-form-grid .lx-row {
   width: auto;
-}
-
-.lx-form .lx-row .lx-dropdown-default {
-  color: var(--color-data);
 }
 
 .lx-tab-control header.lx-toolbar .lx-tab-container,
@@ -1278,19 +1264,6 @@ p .lx-person-display-wrapper {
 .lx-filter-wrapper .shortlist-wrapper .lx-form-grid>.lx-compact-sections>.lx-form-section .lx-row>.lx-row-header{
   display: none;
 }
-
-.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-text-input:not(:disabled),
-.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-text-area:not(:disabled),
-.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-date-time-picker:not(:disabled),
-.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-dropdown:not(:disabled),
-.lx-region .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-dropdown-default-panel:not(:disabled),
-.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-text-input:not(:disabled),
-.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-text-area:not(:disabled),
-.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-date-time-picker:not(:disabled),
-.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-dropdown:not(:disabled),
-.lx-modal .lx-filter-wrapper .shortlist-wrapper .lx-form-grid  .lx-dropdown-default-panel:not(:disabled){
-  background-color: var(--color-region-2);
-} 
 
 .lx-filter-wrapper:has(.has-shortlist) .lx-filter .lx-head,
 .lx-filter-wrapper .shortlist-wrapper{

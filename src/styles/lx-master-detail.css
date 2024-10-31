@@ -109,14 +109,6 @@
     text-overflow: ellipsis;
 }
 
-.lx-master-detail .lx-master-detail-list .lx-list-item-wrapper header{
-    max-width: calc(100% - 1.55rem);
-}
-
-.lx-master-detail .lx-master-detail-list .lx-list-item.lx-invalid header{
-    max-width: calc(100% - 1rem);
-}
-
 .lx-master-detail:not(.nav-border) > .lx-detail{
     border-left: solid var(--color-chrome) 0.125rem;
 }

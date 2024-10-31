@@ -321,21 +321,21 @@ onMounted(() => {
           />
         </template>
       </LxToolbar>
-
-      <canvas
-        ref="canvas"
-        class="lx-canvas-element"
-        :class="{ 'is-disabled': disabled }"
-        :width="canvasWidth"
-        :height="canvasHeight"
-        @pointerdown.prevent="startDrawing"
-        @pointermove.prevent="draw"
-        @pointerup.prevent="stopDrawing"
-        @pointerleave.prevent="stopDrawing"
-        @pointercancel.prevent="stopDrawing"
-        @contextmenu.prevent
-      >
-      </canvas>
+      <div class="lx-input-wrapper" :class="{ 'lx-disabled': disabled }">
+        <canvas
+          ref="canvas"
+          class="lx-canvas-element lx-input-area"
+          :width="canvasWidth"
+          :height="canvasHeight"
+          @pointerdown.prevent="startDrawing"
+          @pointermove.prevent="draw"
+          @pointerup.prevent="stopDrawing"
+          @pointerleave.prevent="stopDrawing"
+          @pointercancel.prevent="stopDrawing"
+          @contextmenu.prevent
+        >
+        </canvas>
+      </div>
     </div>
   </div>
 </template>

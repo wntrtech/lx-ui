@@ -2,12 +2,34 @@
 
 ## 1.6 → 1.7
 
+
+### Layout changes
+
+In the effort of making styles and theming more customizable and accessible, some components have their layouts and styles changed. Normally, you wouldn't notice a difference, but if you're using locally copied components, you might get surprised.
+
+Affected components:
+- LxList;
+- LxButton;
+- LxDataGrid;
+- Virtually every input:
+  - LxTextInput;
+  - LxAutoComplete;
+  - LxDropDown;
+  - LxValuePicker (`dropdown' variant);
+  - LxRotator;
+  - LxDayInput;
+  - LxDateTimePicker;
+  - LxDateTimeRange;
+  - LxTextArea;
+  - LxMarkdownTextArea;
+  - LxDrawPad;
+
+
 ### Breaking changes
 
 #### LxDateTimePicker
 
-- `lx-date-pickers.css` new style file for updated/reworked LxDateTimePicker.
-- `lx-calendars.css` old style file removed.
+- You should use `lx-date-pickers.css` file instead of ~~`lx-calendars.css`~~.
 
 #### LxPersonDisplay
 

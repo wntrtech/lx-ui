@@ -349,55 +349,58 @@ function isReadOnlyEmail() {
 </script>
 <template>
   <div class="lx-field-wrapper">
-    <p v-show="readOnly && props.kind !== 'password' && !isReadOnlyEmail()" class="lx-data">
+    <p v-if="readOnly && props.kind !== 'password' && !isReadOnlyEmail()" class="lx-data">
       {{ forcedMaskedValue }} <span v-if="model === null || model === undefined">—</span>
     </p>
     <a v-if="isReadOnlyEmail()" :href="`mailto:${model}`">{{ model }}</a>
     <div
-      class="lx-text-input-wrapper"
-      :class="[{ 'password-mask': kind === 'password' }]"
+      class="lx-text-input-wrapper lx-input-wrapper"
+      :class="[
+        { 'password-mask': kind === 'password' },
+        { 'lx-invalid': invalid },
+        { 'lx-disabled': disabled },
+      ]"
       :data-invalid="invalid ? '' : null"
-      v-show="!readOnly"
+      v-if="!readOnly"
     >
-      <lx-icon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
-      <lx-icon
-        v-show="kind === 'search' && !invalid"
-        customClass="lx-modifier-icon"
-        value="search"
-      />
-      <div class="lx-input-wrapper">
-        <input
-          v-if="mask !== 'currency'"
-          ref="input"
-          :type="props.kind === 'password' && hidePassword ? 'password' : 'text'"
-          autocomplete="off"
-          class="lx-text-input"
-          :class="[
-            { 'lx-invalid': invalid },
-            { 'lx-search-input': kind === 'search' },
-            { 'lx-uppercase': uppercase },
-          ]"
-          :id="id"
-          :value="valueRaw"
-          :placeholder="placeholder"
-          :aria-label="placeholder"
-          :disabled="disabled"
-          :maxlength="maxLengthValue"
-          v-imask="inputMask"
-          :title="tooltip"
-          @accept="onAccept"
-          @blur="onBlur"
-        />
-        <LxButton
-          variant="icon-only"
-          :icon="hidePassword ? 'visible' : 'hidden'"
-          kind="ghost"
-          :disabled="disabled"
-          :title="hidePassword ? props.texts.showPassword : props.texts.hidePassword"
-          v-if="props.kind === 'password'"
-          @click="showPasswordChange()"
-        />
+      <div v-if="invalid" class="lx-invalidation-icon-wrapper">
+        <lx-icon customClass="lx-invalidation-icon" value="invalid" />
       </div>
+      <div v-if="kind === 'search'" class="lx-input-icon-wrapper">
+        <lx-icon customClass="lx-modifier-icon" value="search" />
+      </div>
+      <div class="pseudo-input" />
+      <input
+        v-if="mask !== 'currency'"
+        ref="input"
+        :type="props.kind === 'password' && hidePassword ? 'password' : 'text'"
+        autocomplete="off"
+        class="lx-text-input lx-input-area"
+        :class="[
+          { 'lx-invalid': invalid },
+          { 'lx-search-input': kind === 'search' },
+          { 'lx-uppercase': uppercase },
+        ]"
+        :id="id"
+        :value="valueRaw"
+        :placeholder="placeholder"
+        :aria-label="placeholder"
+        :disabled="disabled"
+        :maxlength="maxLengthValue"
+        v-imask="inputMask"
+        :title="tooltip"
+        @accept="onAccept"
+        @blur="onBlur"
+      />
+      <LxButton
+        variant="icon-only"
+        :icon="hidePassword ? 'visible' : 'hidden'"
+        kind="ghost"
+        :disabled="disabled"
+        :title="hidePassword ? props.texts.showPassword : props.texts.hidePassword"
+        v-if="props.kind === 'password'"
+        @click="showPasswordChange()"
+      />
       <Money3Component
         v-if="mask === 'currency'"
         v-model="model"
@@ -405,10 +408,10 @@ function isReadOnlyEmail() {
         :disabled="disabled"
         :title="tooltip"
         :placeholder="placeholder"
-        class="lx-text-input"
+        class="lx-text-input lx-input-area"
         :class="[{ 'lx-invalid': invalid }, { 'lx-search-input': props.kind === 'search' }]"
       ></Money3Component>
     </div>
-    <div class="lx-invalidation-message" v-show="!readOnly">{{ invalidationMessage }}</div>
+    <div class="lx-invalidation-message" v-if="invalid && !readOnly">{{ invalidationMessage }}</div>
   </div>
 </template>

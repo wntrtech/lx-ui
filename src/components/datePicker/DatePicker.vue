@@ -25,6 +25,7 @@ import {
 
 import LxCalendarContainer from '@/components/datePicker/CalendarContainer.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import LxIcon from '@/components/Icon.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -35,6 +36,7 @@ const props = defineProps({
   placeholder: { type: String, default: null },
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
+  invalidationMessage: { type: String, default: null },
   minDate: { type: [String, Date], default: null },
   maxDate: { type: [String, Date], default: null },
   required: { type: Boolean, default: false },
@@ -564,6 +566,7 @@ const handleFocusOut = (e) => {
 };
 
 function handleOpen(type) {
+  if (props.disabled) return;
   activeInput.value = type;
   // Prevent opening the menu again if it's already open
   if (!dropDownMenuRef.value?.menuOpen) {
@@ -793,16 +796,24 @@ onMounted(async () => {
     >
       <div
         class="lx-datepicker-input-container"
-        :class="[{ range: pickerType === 'range' }]"
+        :class="[
+          { 'lx-disabled': disabled },
+          { 'lx-invalid': invalid },
+          { range: pickerType === 'range' },
+        ]"
         @click="dropDownMenuRef?.preventClose"
         @keydown="dropDownMenuRef?.preventClose"
       >
-        <div class="lx-start-input-and-separator-wrapper">
+        <div
+          class="lx-start-input-and-separator-wrapper lx-input-wrapper"
+          :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
+        >
+          <div class="pseudo-input" />
           <label class="lx-visually-hidden" :for="id"></label>
           <input
             ref="startInputRef"
             type="text"
-            class="lx-date-time-picker"
+            class="lx-date-time-picker lx-input-area"
             :class="[{ 'lx-invalid': invalid }, { 'input-active': activeInput === 'startInput' }]"
             :value="modelInput"
             :id="id"
@@ -820,35 +831,70 @@ onMounted(async () => {
             @change="validateIfExact($event, 'startInput')"
             @input="sanitizeDateInput($event, mode)"
           />
-
-          <template v-if="pickerType === 'range'">
-            <span class="lx-date-time-range-separator"> - </span>
-          </template>
+          <div v-if="invalid && variant === 'default'" class="lx-input-icon-wrapper">
+            <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+          </div>
+          <div
+            v-if="!invalid && mode !== 'time' && variant === 'default'"
+            class="lx-input-icon-wrapper"
+          >
+            <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="calendar" />
+          </div>
+          <div
+            v-if="!invalid && mode === 'time' && variant === 'default'"
+            class="lx-input-icon-wrapper"
+          >
+            <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="time" />
+          </div>
         </div>
+        <template v-if="pickerType === 'range'">
+          <span class="lx-date-time-range-separator"> - </span>
+        </template>
 
         <template v-if="pickerType === 'range'">
-          <label class="lx-visually-hidden" :for="id"></label>
-          <input
-            ref="endInputRef"
-            type="text"
-            class="lx-date-time-picker"
-            :class="[{ 'lx-invalid': invalid }, { 'input-active': activeInput === 'endInput' }]"
-            :value="modelEndDateInput"
-            :id="id"
-            :placeholder="placeholderComputed"
-            :disabled="disabled"
-            autocomplete="off"
-            :readonly="
-              mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
-            "
-            :tabindex="endInputIndex"
-            :maxlength="getMaxLength"
-            @click="handleOpen('endInput')"
-            @keydown.arrow-down.prevent="handleOpen('endInput')"
-            @keydown.esc.prevent="handleClose"
-            @change="validateIfExact($event, 'endInput')"
-            @input="sanitizeDateInput($event, mode)"
-          />
+          <div
+            class="lx-input-wrapper"
+            :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
+          >
+            <div class="pseudo-input" />
+            <label class="lx-visually-hidden" :for="id"></label>
+            <input
+              ref="endInputRef"
+              type="text"
+              class="lx-date-time-picker lx-input-area"
+              :class="[{ 'lx-invalid': invalid }, { 'input-active': activeInput === 'endInput' }]"
+              :value="modelEndDateInput"
+              :id="id"
+              :placeholder="placeholderComputed"
+              :disabled="disabled"
+              autocomplete="off"
+              :readonly="
+                mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
+              "
+              :tabindex="endInputIndex"
+              :maxlength="getMaxLength"
+              @click="handleOpen('endInput')"
+              @keydown.arrow-down.prevent="handleOpen('endInput')"
+              @keydown.esc.prevent="handleClose"
+              @change="validateIfExact($event, 'endInput')"
+              @input="sanitizeDateInput($event, mode)"
+            />
+            <div v-if="invalid && variant === 'default'" class="lx-input-icon-wrapper">
+              <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+            </div>
+            <div
+              v-if="!invalid && mode !== 'time' && variant === 'default'"
+              class="lx-input-icon-wrapper"
+            >
+              <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="calendar" />
+            </div>
+            <div
+              v-if="!invalid && mode === 'time' && variant === 'default'"
+              class="lx-input-icon-wrapper"
+            >
+              <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="time" />
+            </div>
+          </div>
         </template>
       </div>
 
@@ -901,5 +947,8 @@ onMounted(async () => {
       :pickerType="pickerType"
       :texts="texts"
     />
+    <div v-if="invalid" class="lx-invalidation-message">
+      {{ invalidationMessage }}
+    </div>
   </div>
 </template>

@@ -118,5 +118,93 @@ Customized values for contrast mode:
 | `--color-list-unchecked-background-hover`    | `--contrast-background`                   |
 | `--color-list-unchecked-border-hover`        | `--contrast-background`                   |
 
+## Inputs 
+
+Some input components are both visually and functionally similar. This includes:
+- LxTextInput 
+- LxAutoComplete 
+- LxDropDown
+- LxValuePicker `variant='dropdown'`
+- LxRotator
+- LxDayInput 
+- LxDateTimePicker 
+- LxDateTimeRange 
+- LxTextArea 
+- LxMarkdownTextArea
+- LxDrawPad
+
+### Layout
+
+| Variable name                          | Default value                                 |
+|----------------------------------------|-----------------------------------------------|
+| `--input-border`                       | 2px solid transparent                         |
+| `--input-border-bottom`                | 1px solid var(--color-input-border-bottom)    |
+| `--input-border-radius`                | 0                                             |
+| `--input-button-border-radius`         | 0                                             |
+| `--input-button-height`                | 2.5rem                                        |
+| `--input-button-left-indent`           | 0rem                                          |
+| `--input-button-right-indent`          | `--input-icon-wrapper-width`                  |
+| `--input-button-width`                 | 2.5rem                                        |
+| `--input-date-time-picker-width`       | 10rem                                         |
+| `--input-date-time-width`              | 14rem                                         |
+| `--input-date-width`                   | 10.5rem                                       |
+| `--input-font-size`                    | `--font-size`                                 |
+| `--input-font-weight`                  | 400                                           |
+| `--input-grid-areas`                   | 'tag input invalid-icon icon button'          |
+| `--input-grid-template-columns`        | auto 1fr auto auto auto                       |
+| `--input-height`                       | 2.5rem                                        |
+| `--input-icon-height`                  | 1.25rem                                       |
+| `--input-icon-left-indent`             | 0rem                                          |
+| `--input-icon-right-indent`            | `--input-icon-wrapper-width`                  |
+| `--input-icon-width`                   | 1.25rem                                       |
+| `--input-icon-wrapper-height`          | 100%                                          |
+| `--input-icon-wrapper-width`           | `--input-button-width`                        |
+| `--input-invalid-icon-height`          | 1.15rem                                       |
+| `--input-invalid-icon-width`           | 1.15rem                                       |
+| `--input-invalid-left-indent`          | 0rem                                          |
+| `--input-invalid-right-indent`         | `--input-icon-wrapper-width`                  |
+| `--input-left-padding`                 | 1rem                                          |
+| `--input-right-padding`                | 1rem                                          |
+| `--input-rotator-font-weight`          | `--data-weight`                               |
+| `--input-rotator-icon-height`          | 1.5rem                                        |
+| `--input-rotator-icon-width`           | auto                                          |
+| `--input-tag-height`                   | 1.5rem                                        |
+| `--input-tag-left-indent`              | calc(var(--input-tag-width) + 1rem)           |
+| `--input-tag-margin`                   | 0 0.5rem                                      |
+| `--input-tag-right-indent`             | 0rem                                          |
+| `--input-tag-width`                    | 2.75rem                                       |
+| `--input-text-area-justify`            | left                                          |
+| `--input-text-area-min-height`         | 6rem                                          |
+| `--input-text-area-vertical-padding`   | 1rem                                          |
+| `--input-time-width`                   | `--input-date-width`                          |
+| `--input-width`                        | auto                                          |
+
+### Color
 
 
+| Variable name                                | Light mode value                        | Dark mode value                          |
+|----------------------------------------------|-----------------------------------------|------------------------------------------|
+| `--color-input`                              | `--color-data`                          | `--color-data`                           |
+| `--color-input-background`                   | `--color-region`                        | `--color-region`                         |
+| `--color-input-border-bottom`                | `--color-label`                         | `--color-label`                          |
+| `--color-input-date-time-icon`               | `--color-data`                          | `--color-data`                           |
+| `--color-input-disabled`                     | `--color-disabled-foreground`           | `--color-disabled-foreground`            |
+| `--color-input-disabled-background`          | transparent                             | transparent                              |
+| `--color-input-disabled-border`              | `--color-input-disabled-background`     | `--color-input-disabled-background`      |
+| `--color-input-disabled-border-bottom`       | `--color-input-disabled`                | `--color-input-disabled`                 |
+| `--color-input-icon`                         | `--color-label`                         | `--color-label`                          |
+| `--color-input-icon-disabled`                | `--color-disabled-foreground`           | `--color-disabled-foreground`            |
+| `--color-input-region-background`            | `--color-region-2`                      | `--color-region-2`                       |
+| `--color-input-rotator-icon`                 | `--color-data`                          | `--color-data`                           |
+| `--color-input-text-length`                  | `--color-label`                         | `--color-label`                          |
+
+
+<br>
+Customized values for contrast mode:
+
+| Variable name                                | Contrast mode value                       |
+|----------------------------------------------|-------------------------------------------|
+| `--color-input-disabled`                     | `--contrast-foreground`                   |
+| `--color-input-disabled-border`              | `--contrast-foreground`                   |
+| `--color-input-outline`                      | `--contrast-foreground`                   |
+| `--color-input-selected-range-background`    | `--contrast-hover`                        |

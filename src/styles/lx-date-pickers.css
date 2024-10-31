@@ -2,15 +2,6 @@
   font-family: var(--font-family);
 }
 
-.lx-datepicker-default .lx-datepicker-input-container.range .lx-date-time-picker {
-  width: 10rem
-}
-
-.lx-datepicker-default .lx-datepicker-input-container .lx-start-input-and-separator-wrapper {
-  display: flex;
-  flex-direction: row;
-}
-
 .lx-datepicker-default .lx-context-container .inline-block .popper .lx-dropdown-panel {
   width: fit-content;
   padding: 0;
@@ -25,11 +16,11 @@
   font-weight: var(--font-weight);
 }
 
-.lx-datepicker-default .lx-datepicker-input-container.range .lx-date-time-picker.input-active {
+.lx-datepicker-default .lx-datepicker-input-container.range .lx-input-wrapper:has(.lx-date-time-picker.input-active) {
   background-color: var(--color-highlight);
 }
 
-.lx-datepicker-default .lx-datepicker-input-container.range .lx-date-time-picker:focus {
+.lx-datepicker-default .lx-datepicker-input-container.range .lx-input-wrapper:has(.lx-date-time-picker:focus) {
   background-color: var(--color-highlight);
 }
 
@@ -49,6 +40,10 @@
   background-color: var(--color-region);
   border: var(--region-border);
   overflow-y: auto;
+}
+
+.lx-date-time-picker-wrapper[data-invalid] .lx-datepicker-default > .lx-calendar-container {
+  border: 2px solid var(--color-bad);
 }
 
 .lx-datepicker-default .lx-calendar-header {
@@ -708,7 +703,7 @@
 }
 
 .lx-datepicker-default .lx-calendar-day-wrapper.hovering-range {
-  background-color: var(--color-date-picker-selected-range-background);
+  background-color: var(--color-input-selected-range-background);
 }
 
 .lx-datepicker-default .lx-calendar-day .lx-calendar-day-layer {
@@ -733,7 +728,7 @@
 .lx-datepicker-default .lx-calendar-day:not(.lx-other-month):not(.lx-selected-day):not(.lx-selected-start-day):not(.lx-selected-end-day).hovering-range,
 .lx-datepicker-default .lx-calendar-month:not(.lx-selected-month):not(.lx-selected-start-month):not(.lx-selected-end-month).hovering-range,
 .lx-datepicker-default .lx-calendar-year:not(.lx-selected-year):not(.lx-selected-start-year):not(.lx-selected-end-year).hovering-range {
-  background-color: var(--color-date-picker-selected-range-background);
+  background-color: var(--color-input-selected-range-background);
   font-weight: 700;
   color: #000;
 }
@@ -932,7 +927,7 @@
   }
 
   .lx-date-time-picker-wrapper.lx-date-time-range-wrapper {
-    width: var(--date-size);
+    width: var(--input-date-width);
   }
 
   .lx-datepicker-default .lx-datepicker-input-container.range {

@@ -260,24 +260,30 @@ const queueItems = computed(() => {
       :title="tooltip"
     >
       <LxDropDownMenu triggerClick="right">
-        <div class="lx-rotator-dropdown-wrapper">
+        <div
+          class="lx-rotator-dropdown-wrapper lx-input-wrapper"
+          :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
+          @keydown.space.prevent="selectSingle(null)"
+          @click="selectSingle(null)"
+          tabindex="0"
+        >
+          <div class="pseudo-input" />
           <TransitionGroup
             name="rotator"
             tag="ul"
-            class="lx-rotator-set"
+            class="lx-rotator-set lx-input-area"
             :class="[{ 'lx-rotator-set-custom': variant === 'rotator-custom' }]"
-            tabindex="0"
-            @keydown.space.prevent="selectSingle(null)"
-            @click="selectSingle(null)"
           >
             <li v-for="item in queueItems" :key="item.key" class="lx-rotator-tag">
-              <p v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
+              <p class="lx-input-text" v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
               <template v-if="variant === 'rotator-custom'">
                 <slot name="customItem" v-bind="item"></slot>
               </template>
             </li>
           </TransitionGroup>
-          <LxIcon value="rotator" class="thumb" />
+          <div class="lx-input-icon-wrapper">
+            <LxIcon customClass="lx-modifier-icon thumb" value="rotator" />
+          </div>
         </div>
         <template #panel>
           <LxButton
@@ -290,7 +296,9 @@ const queueItems = computed(() => {
           />
         </template>
       </LxDropDownMenu>
+      <div v-if="invalid" class="lx-invalidation-message" @contextmenu.stop>
+        {{ invalidationMessage }}
+      </div>
     </div>
-    <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
   </template>
 </template>

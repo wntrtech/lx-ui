@@ -159,5 +159,19 @@
   --color-list-unchecked-border: var(--color-data);
   --color-list-unchecked-border-hover: var(--color-list-unchecked-border);
 
-  --color-date-picker-selected-range-background: #bfdbfe;
+  --color-input: var(--color-data);
+  --color-input-background: var(--color-region);
+  --color-input-border-bottom: var(--color-label);
+  --color-input-date-time-icon: var(--color-data);
+  --color-input-disabled: var(--color-disabled-foreground);
+  --color-input-disabled-background: transparent;
+  --color-input-disabled-border: var(--color-input-disabled-background);
+  --color-input-disabled-border-bottom: var(--color-input-disabled);
+  --color-input-icon: var(--color-label);
+  --color-input-icon-disabled: var(--color-disabled-foreground);
+  --color-input-outline: transparent;
+  --color-input-region-background: var(--color-region-2);
+  --color-input-rotator-icon: var(--color-data);
+  --color-input-selected-range-background: #bfdbfe;
+  --color-input-text-length: var(--color-label);
 }

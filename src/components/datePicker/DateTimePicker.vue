@@ -20,7 +20,6 @@ import {
   extractYearMonthFromDate,
 } from '@/components/datePicker/helpers';
 
-import LxIcon from '@/components/Icon.vue';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 
 const props = defineProps({
@@ -289,22 +288,6 @@ const mode = computed(() => {
         :data-disabled="disabled ? '' : null"
         :title="tooltip"
       >
-        <LxIcon
-          v-show="invalid && variant === 'default'"
-          customClass="lx-invalidation-icon"
-          value="invalid"
-        />
-        <LxIcon
-          v-show="!invalid && kind !== 'time' && variant === 'default'"
-          customClass="lx-date-time-icon"
-          value="calendar"
-        />
-        <LxIcon
-          v-show="!invalid && kind === 'time' && variant === 'default'"
-          customClass="lx-date-time-icon"
-          value="time"
-        />
-
         <LxDatePicker
           :id="id"
           v-model="model"
@@ -314,6 +297,7 @@ const mode = computed(() => {
           :placeholder="placeholder"
           :disabled="disabled"
           :invalid="invalid"
+          :invalidationMessage="invalidationMessage"
           :min-date="minDate"
           :max-date="maxDate"
           :locale="localeComputed"
@@ -324,8 +308,6 @@ const mode = computed(() => {
           :texts="texts"
         />
       </div>
-
-      <div class="lx-invalidation-message">{{ invalidationMessage }}</div>
     </template>
   </div>
 </template>

@@ -608,17 +608,17 @@ const columnReadOnly = computed(() => {
           close-delay="0"
         >
           <div
-            class="lx-dropdown-default-panel"
+            class="lx-dropdown-default-panel lx-input-wrapper"
             @click="openDropDownDefault"
             :class="[
               { 'lx-invalid': invalid && !hasSearch },
               { 'lx-disabled': disabled },
-              { 'without-border': hasSearch },
             ]"
             :title="tooltip"
             tabindex="-1"
           >
             <slot>
+              <div class="pseudo-input" />
               <div v-if="model?.length > 0" class="lx-tag">
                 <div class="lx-tag-label">{{ model?.length }}</div>
                 <div class="lx-tag-button">
@@ -635,19 +635,10 @@ const columnReadOnly = computed(() => {
               </div>
               
               <div
-                class="lx-dropdown-default-data dropdown-multiple"
+                class="lx-dropdown-default-data dropdown-multiple lx-input-area"
                 :class="[{ emptyModel: model?.length === 0 }]"
                 :title="tooltip"
               >
-                <lx-button
-                  v-if="query"
-                  :disabled="disabled"
-                  icon="clear"
-                  kind="ghost"
-                  variant="icon-only"
-                  :title="texts.clearQuery"
-                  @click="query = ''"
-                />
                 <div
                   class="lx-value-picker-placeholder"
                   :class="[{ emptyModel: model?.length === 0 }]"
@@ -655,11 +646,15 @@ const columnReadOnly = computed(() => {
                   {{ getName() }}
                 </div>
               </div>
-              <LxIcon
-                v-show="invalid"
-                customClass="lx-modifier-icon lx-invalidation-icon"
-                value="invalid"
-              />
+              <div v-if="invalid" class="lx-invalidation-icon-wrapper">
+                <LxIcon
+                  customClass="lx-invalidation-icon"
+                  value="invalid"
+                />
+              </div>
+              <div class="lx-input-icon-wrapper">
+                <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
+              </div>
             </slot>
           </div>
 
