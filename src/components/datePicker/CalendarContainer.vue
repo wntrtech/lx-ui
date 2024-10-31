@@ -110,6 +110,8 @@ const endYear = ref(todayDate.value.getFullYear() + 6);
 const startQuarterYear = ref(todayDate.value.getFullYear() - 4);
 const endQuarterYear = ref(todayDate.value.getFullYear() + 5);
 
+const shouldCloseMenu = ref(true);
+
 const windowSize = useWindowSize();
 
 // Hours and minutes arrays
@@ -250,6 +252,8 @@ function clearSelectedValues() {
 
   hoveredDate.value = null;
   selectedManually.value = false;
+
+  shouldCloseMenu.value = true;
 
   emits('update:modelValue', null);
   props.setActiveInput('startInput');
@@ -648,7 +652,7 @@ function handleSingleSelection(selectedValue, selectionType, isNotSelectable = f
 
       // Handle layout display and close the menu
       handleLayoutDisplay();
-      props.closeMenu();
+      if (shouldCloseMenu.value) props.closeMenu();
     }
   }
 }
@@ -1208,6 +1212,7 @@ const selectHour = (hourObj, isNotSelectable) => {
       selectedMinute.value
     );
     emits('update:modelValue', updatedDate);
+    props.closeMenu();
   }
 
   if (
@@ -1235,7 +1240,7 @@ const selectHour = (hourObj, isNotSelectable) => {
 
     // Handle layout display and close the menu
     handleLayoutDisplay();
-    props.closeMenu();
+    if (shouldCloseMenu.value) props.closeMenu();
   }
 };
 
@@ -1259,6 +1264,7 @@ const selectMinute = (minuteObj, isNotSelectable) => {
       selectedMinute.value
     );
     emits('update:modelValue', updatedDate);
+    props.closeMenu();
   }
 
   if (
@@ -1286,7 +1292,7 @@ const selectMinute = (minuteObj, isNotSelectable) => {
 
     // Handle layout display and close the menu
     handleLayoutDisplay();
-    props.closeMenu();
+    if (shouldCloseMenu.value) props.closeMenu();
   }
 };
 
@@ -1778,6 +1784,16 @@ onClickOutside(containerRef, () => {
     handleOutsideClickRangeSelection();
   }
 });
+
+watch(
+  () => [selectedDate.value, selectedHour.value, selectedMinute.value],
+  (_, [oldSelectDate, oldSelectHour, oldSelectMinute]) => {
+    if (props.mode !== 'date-time') return;
+    if (oldSelectDate && oldSelectHour && oldSelectMinute) {
+      shouldCloseMenu.value = false;
+    }
+  }
+);
 
 watch(
   () => [props.minDateRef, props.maxDateRef],
