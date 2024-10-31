@@ -36,7 +36,8 @@
   height: 100vh;
 }
 
-.lx-cover h1 {
+.lx-cover h1,
+.lx-cover .heading-1 {
   font-size: 3.3rem;
   line-height: 1.1em;
   color: var(--color-brand);
@@ -268,14 +269,16 @@ code {
   margin-bottom: 3rem;
 }
 
-.lx-main h1 {
+.lx-main h1,
+.lx-main .heading-1 {
   font-size: var(--h1-font-size);
   font-weight: var(--h1-font-weight);
   color: var(--color-data);
   line-height: 1.1em;
 }
 
-.lx-main h2 {
+.lx-main h2,
+.lx-main .heading-2 {
   font-size: var(--h2-font-size);
   font-weight: var(--h2-font-weight);
   color: var(--color-data);
@@ -284,27 +287,32 @@ code {
   line-height: 1.1em;
 }
 
-.lx-main h2.lx-invalid {
+.lx-main h2.lx-invalid,
+.lx-main .heading-2.lx-invalid {
   color: var(--color-bad);
   cursor: help;
 }
 
-.lx-main h2.lx-invalid svg {
+.lx-main h2.lx-invalid svg,
+.lx-main .heading-2.lx-invalid svg {
   fill: var(--color-bad);
   height: 0.75em;
   margin-bottom: 0;
   margin-right: 0;
 }
 
-.lx-main h2:not(.lx-section-header):first-of-type {
+.lx-main h2:not(.lx-section-header):first-of-type,
+.lx-main .heading-2:not(.lx-section-header):first-of-type {
   margin-top: 0em;
 }
 
-.lx-main h2.lx-section-header {
+.lx-main h2.lx-section-header,
+.lx-main .heading-2.lx-section-header {
   margin-bottom: 0em;
 }
 
-.lx-main h2 svg {
+.lx-main h2 svg,
+.lx-main .heading-2 svg {
   height: 1.25em;
   margin-right: 0.5rem;
   margin-bottom: -0.45rem;
@@ -630,7 +638,8 @@ code {
   fill: var(--color-bad);
 }
 
-.lx-error h1 {
+.lx-error h1,
+.lx-error .heading-1 {
   color: var(--color-bad);
   margin-bottom: var(--row-size);
 }
@@ -1159,6 +1168,7 @@ code {
 
 .lx-tag-set .lx-tag>span,
 .lx-main h1,
+.lx-main .heading-1,
 .lx-list-item>header>p,
 .lx-master-detail .lx-master ul li>span {
   display: -webkit-box;
@@ -1281,7 +1291,8 @@ code {
     margin-bottom: 2rem;
   }
 
-  .lx-main h1 {
+  .lx-main h1,
+  .lx-main .heading-1 {
     font-size: 2rem;
     font-weight: bold;
   }
@@ -1321,7 +1332,8 @@ code {
     flex-grow: 1;
   }
 
-  .lx-cover h1 {
+  .lx-cover h1,
+  .lx-cover .heading-1 {
     font-size: 2.5rem;
   }
 

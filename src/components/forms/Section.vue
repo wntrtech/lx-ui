@@ -236,7 +236,7 @@ provide('sectionColumnCount', props.columnCount);
   >
     <header v-if="label || description || actionDefinitions?.length > 0">
       <div>
-        <h3 v-if="label">{{ label }}</h3>
+        <div class="heading-3" v-if="label">{{ label }}</div>
         <p v-if="description" class="lx-description">{{ description }}</p>
       </div>
       <div v-if="actionDefinitions?.length > 0">

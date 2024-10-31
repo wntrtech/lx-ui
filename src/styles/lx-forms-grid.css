@@ -96,7 +96,8 @@ svg .lx-shade {
   min-width: var(--icon-size);
 }
 
-.lx-form-grid h2 {
+.lx-form-grid h2,
+.lx-form-grid .heading-2 {
   margin-top: var(--row-size);
   margin-bottom: var(--gap);
 }

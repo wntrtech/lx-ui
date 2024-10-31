@@ -69,3 +69,39 @@ select {
     scroll-behavior: auto;
   }
 }
+
+/* heading-1...heading-6 to replace <h1>...<h6> */
+
+.heading-1,
+.heading-2,
+.heading-3,
+.heading-4,
+.heading-5,
+.heading-6 {
+  display: block;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  margin: 0;
+  font-weight: bold;
+  unicode-bidi: isolate;
+}
+
+.heading-1 {
+  font-size: 2em;
+}
+
+.heading-2 {
+  font-size: 1.5em;
+}
+
+.heading-3 {
+  font-size: 1.17em;
+}
+
+.heading-5 {
+  font-size: 0.83em;
+}
+
+.heading-6 {
+  font-size: 0.67em;
+}

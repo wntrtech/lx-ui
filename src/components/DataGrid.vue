@@ -868,7 +868,7 @@ watch(
 <template>
   <div class="lx-data-grid-wrapper">
     <header v-if="showHeader">
-      <h2 :id="`${id}-label`">{{ label }}</h2>
+      <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
       <p :id="`${id}-description`" class="lx-description">{{ description }}</p>
     </header>
     <LxToolbar

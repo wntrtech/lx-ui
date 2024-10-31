@@ -599,8 +599,12 @@ const selectedMegaMenuItemModel = computed({
               </template>
             </div>
             <div>
-              <h1 v-if="systemNameFormatted" v-clean-html="systemNameFormatted" />
-              <h1 v-else>{{ systemName }}</h1>
+              <div
+                class="heading-1"
+                v-if="systemNameFormatted"
+                v-clean-html="systemNameFormatted"
+              />
+              <div class="heading-1" v-else>{{ systemName }}</div>
               <p class="lx-description">{{ systemSubheader }}</p>
             </div>
             <div class="cover-main-area">

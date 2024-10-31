@@ -113,7 +113,7 @@ function selectExpander(event, id) {
             </div>
           </template>
           <div class="lx-header-data">
-            <h4 v-if="label">{{ label }}</h4>
+            <div class="heading-4" v-if="label">{{ label }}</div>
             <p v-if="description" class="lx-description">{{ description }}</p>
           </div>
           <div class="lx-expander-additional-info" v-if="$slots.additionalInfo">

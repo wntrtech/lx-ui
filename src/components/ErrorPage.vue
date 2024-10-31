@@ -90,7 +90,7 @@ const titleDescription = computed(() => {
   <article class="lx-error-landing">
     <div class="lx-header lx-error">
       <LxIllustration class="lx-illustration" :value="pictogram" />
-      <h1>{{ titleText }}</h1>
+      <div class="heading-1">{{ titleText }}</div>
       <div class="lx-description">
         <p>{{ titleDescription }}</p>
       </div>

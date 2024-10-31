@@ -7,7 +7,8 @@
   padding: var(--padding-grid-header);
 }
 
-.lx .lx-data-grid-wrapper header h2 {
+.lx .lx-data-grid-wrapper header h2,
+.lx .lx-data-grid-wrapper header .heading-2 {
   margin-bottom: 0.5rem;
 }
 

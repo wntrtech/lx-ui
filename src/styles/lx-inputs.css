@@ -630,7 +630,8 @@
   margin-right: 1.5rem;
 }
 
-h2.lx-section-header + p.lx-invalidation-message {
+h2.lx-section-header + p.lx-invalidation-message,
+.heading-2.lx-section-header + p.lx-invalidation-message {
   display: block;
   max-height: inherit;
   font-size: var(--small-font-size);

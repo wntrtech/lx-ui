@@ -678,15 +678,18 @@
 
 .lx .lx-form.lx-form-2 .lx-column.lx-column-wide,
 .lx .lx-form.lx-form-3 .lx-column.lx-column-wide,
-.lx .lx-form h2 {
+.lx .lx-form h2,
+.lx .lx-form .heading-2 {
   width: 100%;
 }
 
-.lx .lx-form h2 {
+.lx .lx-form h2,
+.lx .lx-form .heading-2 {
   margin-bottom: 0.5em;
 }
 
-.lx .lx-form h3 {
+.lx .lx-form h3,
+.lx .lx-form .heading-3 {
   margin-top: 1em;
 }
 

@@ -103,7 +103,7 @@ test('LxSection label', () => {
   });
 
   const section = wrapper.find('section#one');
-  expect(section.find('h3').text()).toBe('Section one');
+  expect(section.find('.heading-3').text()).toBe('Section one');
 });
 
 test('LxSection description', () => {

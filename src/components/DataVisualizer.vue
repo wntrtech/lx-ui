@@ -9,6 +9,8 @@ import LxLoader from '@/components/Loader.vue';
 import { formatDecimal } from '@/utils/formatUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxListItem from '@/components/list/ListItem.vue';
+import { logWarn } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
 
 const props = defineProps({
   id: { type: String, default: generateUUID() },
@@ -22,6 +24,8 @@ const props = defineProps({
   valueAttribute: { type: String, default: 'value' },
   showLegend: { type: Boolean, default: false },
   targets: { type: Array, default: () => [] },
+  maxValue: { type: Number, default: null },
+  mode: { type: String, default: 'default' }, // default || compact
   texts: {
     type: Object,
     default: () => ({
@@ -37,11 +41,19 @@ const emits = defineEmits(['click']);
 
 const latvia = getTexts('latvia');
 
-const maxValue = computed(
-  () =>
-    Math.max(...props.items.map((item) => item?.[props.valueAttribute])) +
-    Math.max(...props.items.map((item) => item?.[props.valueAttribute])) * 0.05
-);
+const globalEnvironment = useLx().getGlobals()?.environment;
+
+const maxValue = computed(() => {
+  const maxItemValue = Math.max(...props.items.map((item) => item?.[props.valueAttribute]));
+  const maxTargetValue = Math.max(...props.targets);
+  const maxCombinedValue = Math.max(maxItemValue, maxTargetValue);
+  if (props.maxValue) {
+    if (props.maxValue >= maxCombinedValue) return props.maxValue + props.maxValue * 0.05;
+    logWarn('maxValue is smaller than the biggest value in items and targets', globalEnvironment);
+  }
+
+  return maxCombinedValue + maxCombinedValue * 0.05;
+});
 
 function getBarWidth(item) {
   return `--bar-width: ${(item[props.valueAttribute] / maxValue.value) * 100}%`;
@@ -318,10 +330,23 @@ watch(
   },
   { deep: true, immediate: true }
 );
+
+watch(
+  () => props.mode,
+  async (newValue) => {
+    if (newValue === 'compact' && contentModel.value === 'table') {
+      contentModel.value = 'default';
+    }
+  }
+);
 </script>
 <template>
   <div class="lx-data-visualizer" :id="id">
-    <LxContentSwitcher :items="contentItems" v-model="contentModel" v-if="items?.length > 0" />
+    <LxContentSwitcher
+      :items="contentItems"
+      v-model="contentModel"
+      v-if="mode === 'default' && items?.length > 0"
+    />
     <div
       class="lx-bars-horizontal"
       v-if="kind === 'bars-horizontal' && contentModel === 'default'"
@@ -329,14 +354,16 @@ watch(
       :style="`--item-count: ${items?.length}`"
     >
       <div class="bar-wrapper">
-        <div
+        <data
+          :id="`${id}-${item[idAttribute]}`"
           class="bar-name"
           :title="item?.[nameAttribute]"
           v-for="item in items"
           :key="item[idAttribute]"
+          :value="item?.[valueAttribute]"
         >
           {{ item?.[nameAttribute] }}
-        </div>
+        </data>
       </div>
       <div class="bar-wrapper bars-only" ref="barsOnly">
         <div
@@ -357,6 +384,7 @@ watch(
           @keydown.space="$emit('click', item?.[idAttribute])"
           v-for="(item, index) in items"
           :key="item[idAttribute]"
+          :aria-labelledby="`${id}-${item[idAttribute]}`"
         >
           <p
             v-if="showValues === 'always'"
@@ -407,7 +435,7 @@ watch(
     </div>
 
     <LxDataGrid
-      v-else-if="contentModel === 'table'"
+      v-else-if="mode === 'default' && contentModel === 'table'"
       :column-definitions="columnDef"
       :items="dataGridItems"
       :has-sorting="true"
