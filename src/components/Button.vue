@@ -3,13 +3,14 @@ import { computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
 import useLx from '@/hooks/useLx';
+import { generateUUID } from '@/utils/stringUtils';
 
 const emits = defineEmits(['click']);
 
 const props = defineProps({
   id: {
     type: String,
-    default: '',
+    default: () => generateUUID(),
   },
   label: {
     type: String,
@@ -158,7 +159,7 @@ const accessibleTitle = computed(() => {
     </template>
     <div v-if="!showIcon"></div>
     <div class="lx-button-content" v-if="variant !== 'icon-only'">
-      <label v-if="label">{{ label }}</label>
+      <span class="lx-button-label" v-if="label">{{ label }}</span>
     </div>
     <p
       class="lx-badge"
@@ -210,7 +211,7 @@ const accessibleTitle = computed(() => {
       </div>
     </template>
     <div class="lx-button-content" v-if="variant !== 'icon-only'">
-      <label v-if="label">{{ label }}</label>
+      <template v-if="label">{{ label }}</template>
     </div>
     <p
       class="lx-badge"

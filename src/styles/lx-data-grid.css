@@ -238,7 +238,7 @@
   fill: var(--color-data);
 }
 
-.lx .lx-data-grid .lx-cell-clickable,
+.lx .lx-data-grid .lx-cell-clickable > span,
 .lx-data-grid-wrapper
   .lx-appendable-list
   .lx-appendable-list-item

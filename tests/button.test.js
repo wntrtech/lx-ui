@@ -16,7 +16,7 @@ test('LxButton label', async () => {
     },
   });
 
-  const inputElement = wrapper.find('label').text();
+  const inputElement = wrapper.find('.lx-button-label').text();
   expect(inputElement).toBe('Test label');
   // after setting href, element changes from 'button' to 'a' so we need to check again
   await wrapper.setProps({ href: { name: 'test' } });

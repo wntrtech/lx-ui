@@ -985,8 +985,6 @@ watch(
             role="row"
             :key="row[idAttribute]"
             @dblclick="defaultActionClicked(row[idAttribute], row)"
-            @keyup.space="defaultActionName ? defaultActionClicked(row[idAttribute], row) : null"
-            @keyup.enter="defaultActionName ? defaultActionClicked(row[idAttribute], row) : null"
           >
             <div v-if="hasSelecting" class="lx-cell lx-cell-selector" role="cell">
               <lx-checkbox
@@ -1012,11 +1010,6 @@ watch(
               :key="col.id"
               class="lx-cell"
               role="cell"
-              @click="
-                defaultActionName && col.kind === 'clickable' && !isDisabled
-                  ? defaultActionClicked(row[idAttribute], row)
-                  : null
-              "
               :class="[
                 {
                   'lx-cell-number':
@@ -1061,7 +1054,7 @@ watch(
                 },
               ]"
             >
-              <template
+              <span
                 v-if="
                   col.type !== 'state' &&
                   col.type !== 'rating' &&
@@ -1071,9 +1064,22 @@ watch(
                   col.type !== 'person' &&
                   col.type !== 'icon'
                 "
+                :role="col.kind === 'clickable' ? 'link' : null"
+                :tabindex="col.kind === 'clickable' ? 0 : null"
+                @click="
+                  defaultActionName && col.kind === 'clickable' && !isDisabled
+                    ? defaultActionClicked(row[idAttribute], row)
+                    : null
+                "
+                @keyup.space="
+                  defaultActionName ? defaultActionClicked(row[idAttribute], row) : null
+                "
+                @keyup.enter="
+                  defaultActionName ? defaultActionClicked(row[idAttribute], row) : null
+                "
               >
                 {{ formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) }}
-              </template>
+              </span>
 
               <lx-state-display
                 v-if="col.type === 'state'"
