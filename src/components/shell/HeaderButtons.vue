@@ -508,7 +508,14 @@ function triggerShowAllClick() {
               <span v-if="!selectedContextPersonModel">{{ fullName }}</span>
               <span v-else>{{ contextPersonFullName }}</span>
             </p>
-            <p class="lx-secondary">
+            <p
+              class="lx-secondary"
+              :title="
+                selectedContextPersonModel
+                  ? selectedContextPersonModel?.description
+                  : userInfo?.description
+              "
+            >
               <span v-if="!selectedContextPersonModel">{{ userInfo?.description }}</span>
               <span v-else>{{ selectedContextPersonModel?.description }}</span>
             </p>
