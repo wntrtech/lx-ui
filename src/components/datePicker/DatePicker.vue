@@ -688,7 +688,8 @@ watch(
     if (newMinDate) {
       const parsedMinDate = parseDate(newMinDate);
       if (parsedMinDate) {
-        minDateRef.value = new Date(parsedMinDate);
+        const normalizedMinDate = parsedMinDate.setSeconds(0, 0);
+        minDateRef.value = new Date(normalizedMinDate);
       }
     } else {
       minDateRef.value = null;
@@ -697,7 +698,8 @@ watch(
     if (newMaxDate) {
       const parsedMaxDate = parseDate(newMaxDate);
       if (parsedMaxDate) {
-        maxDateRef.value = new Date(parsedMaxDate);
+        const normalizedMaxDate = parsedMaxDate.setSeconds(0, 0);
+        maxDateRef.value = new Date(normalizedMaxDate);
       }
     } else {
       maxDateRef.value = null;
@@ -847,6 +849,7 @@ onMounted(async () => {
             <LxIcon customClass="lx-date-time-icon lx-modifier-icon" value="time" />
           </div>
         </div>
+
         <template v-if="pickerType === 'range'">
           <span class="lx-date-time-range-separator">–</span>
         </template>

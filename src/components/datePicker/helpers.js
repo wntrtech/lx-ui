@@ -784,3 +784,13 @@ export const sanitizeDateInput = (e, mode) => {
   // Remove any disallowed characters
   e.target.value = input.replace(allowedChars, '');
 };
+
+// Helper function to get decade start year
+export function findDecadeStartYear(year) {
+  return year - (year % 10);
+}
+
+// Helper function to check if the year is start or end
+export function isStartOrEndYear(year, startYear, endYear) {
+  return year === startYear || year === endYear;
+}

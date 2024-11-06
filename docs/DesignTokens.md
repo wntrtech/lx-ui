@@ -145,7 +145,6 @@ Some input components are both visually and functionally similar. This includes:
 | `--input-button-left-indent`           | 0rem                                          |
 | `--input-button-right-indent`          | `--input-icon-wrapper-width`                  |
 | `--input-button-width`                 | 2.5rem                                        |
-| `--input-date-time-picker-width`       | 10rem                                         |
 | `--input-date-time-width`              | 14rem                                         |
 | `--input-date-width`                   | 10.5rem                                       |
 | `--input-font-size`                    | `--font-size`                                 |

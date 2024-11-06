@@ -298,8 +298,7 @@ onBeforeMount(() => {
   <div class="lx-field-wrapper">
     <p v-if="readOnly" class="lx-data">
       <time :datetime="startDate">{{ getNameStart() }}</time
-      >–
-      <time :datetime="endDate">{{ getNameEnd() }}</time>
+      >–<time :datetime="endDate">{{ getNameEnd() }}</time>
     </p>
     <template v-else>
       <div
