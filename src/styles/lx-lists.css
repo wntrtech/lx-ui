@@ -14,7 +14,6 @@
   background-color: var(--color-list-background);
   border: var(--list-item-border);
   border-radius: var(--list-item-border-radius);
-  min-height: var(--list-item-min-height);
   overflow: hidden;
 }
 
@@ -32,6 +31,7 @@
   grid-template-areas: var(--list-grid-areas);
   border: var(--list-item-border);
   border-radius: var(--list-item-border-radius);
+  min-height: var(--list-item-min-height);
   overflow: hidden;
   background-color: var(--color-list-background);
 }
@@ -121,7 +121,7 @@
   padding: 0.5rem 1.5rem 0 0.5rem;
 }
 
-.lx .first-row .lx-text-input.lx-search-input {
+.lx .lx-layout .first-row .lx-text-input.lx-search-input {
   background-color: transparent;
   height: 100%;
 }
@@ -435,7 +435,6 @@
   width: auto;
   min-height: var(--list-header-min-height);
   min-width: 0; /* So that text overflow works */
-  margin: var(--list-header-margin);
   padding: var(--list-header-padding);
   grid-area: content;
 }
@@ -667,6 +666,7 @@
 }
 
 .lx-list-toolbar.toolbar-selecting > .first-row {
+  background-color: var(--color-brand);
   border-bottom: 0;
   justify-content: space-between;
 }
@@ -694,8 +694,8 @@
   height: var(--row-size);
 }
 
-.lx-list-wrapper .lx-list-toolbar.toolbar-selecting {
-  background-color: var(--color-brand);
+.lx-list-wrapper .lx-list-toolbar:has(.toolbar-search-button.is-expanded) {
+  gap: 0.15rem;
 }
 
 .lx-list-wrapper .lx-list-toolbar > .first-row > p {
@@ -703,7 +703,7 @@
 }
 
 .lx-list-wrapper .lx-list-toolbar.toolbar-selecting > .first-row > p,
-.lx-list-wrapper .lx-list-toolbar.toolbar-selecting > .first-row .lx-button svg {
+.lx-list-wrapper .lx-list-toolbar.toolbar-selecting > .first-row .lx-button-content .lx-button-label {
   color: var(--color-list-interactive-foreground);
 }
 

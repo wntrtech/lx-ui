@@ -8,6 +8,7 @@
   border-radius: var(--input-border-radius);
   background-color: var(--color-input-background);
   color: var(--color-input);
+  overflow: hidden;
 }
 
 .lx .lx-input-wrapper input {
@@ -44,7 +45,8 @@
 }
 
 .lx .lx-layout .lx-field-wrapper .lx-input-wrapper.lx-invalid .lx-input-area {
-  border: 2px solid var(--color-bad);
+  border: var(--input-border);
+  border-color: var(--color-bad);
 }
 
 .lx-input-wrapper > .lx-text-input:active:not(.lx-disabled) {
@@ -209,7 +211,7 @@ h2.lx-section-header + p.lx-invalidation-message {
   cursor: auto;
 }
 
-.lx-field-wrapper:has(.lx-text-length) .lx-invalidation-message {
+.lx .lx-field-wrapper:has(.lx-text-length) .lx-invalidation-message {
   margin-top: -0.3rem;
 }
 
@@ -1053,6 +1055,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx .lx-layout .lx-search-wrapper .lx-input-wrapper,
 .lx .lx-layout .lx-search-toolbar .lx-input-wrapper,
 .lx .lx-layout .lx-search-wrapper input.lx-input-area,
+.lx .lx-layout .lx-toolbar.lx-sticky .lx-input-wrapper,
 .lx .lx-layout .lx-search-toolbar .lx-input-wrapper .lx-search-input {
   background-color: transparent;
   height: var(--row-size);
@@ -2596,10 +2599,12 @@ input[type='range']:hover::-moz-range-thumb {
   grid-column: 1 / -1;
   width: 100%;
   height: var(--input-height);
+  padding-bottom: 0.1rem;
   outline: 2px solid transparent;
   outline-offset: -2px;
   border: var(--input-border);
   border-bottom: var(--input-border-bottom);
+  border-radius: var(--input-border-radius);
 }
 
 .lx .lx-layout .lx-input-wrapper textarea.lx-input-area,
@@ -3739,6 +3744,7 @@ input[type='range']:hover::-moz-range-thumb {
   cursor: pointer;
   border-bottom: var(--input-border-bottom);
   outline: none;
+  overflow: visible;
 }
 
 .lx .lx-layout div.lx-input-wrapper.lx-disabled.lx-rotator-dropdown-wrapper {
