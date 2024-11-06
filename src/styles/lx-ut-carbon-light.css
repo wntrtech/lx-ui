@@ -84,10 +84,10 @@
 
   --color-green: rgb(25, 128, 56);
   --color-red: rgb(218, 30, 40);
-  --color-orange: rgb(255, 131, 43);
+  --color-orange: #c55300;
   --color-purple: #6554c0;
-  --color-blue: #2684ff;
-  --color-teal: #00b8d9;
+  --color-blue: #036cf5;
+  --color-teal: #178295;
   --color-yellow: #f1c21b;
   --color-grey: #6C6C6C;
   --color-green-20: rgb(25, 128, 5, 0.2);
