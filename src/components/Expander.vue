@@ -98,6 +98,7 @@ function selectExpander(event, id) {
       tabindex="0"
       role="button"
       :aria-expanded="isExpandedRaw"
+      :aria-invalid="invalid"
       aria-controls="lx-body"
     >
       <template v-if="$slots.customHeader">

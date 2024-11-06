@@ -991,6 +991,7 @@ onMounted(() => {
                           class="lx-text-input lx-value-picker-placeholder lx-input-area"
                           role="search"
                           :aria-label="getName(false)"
+                          :aria-invalid="invalid"
                           tabindex="0"
                           :readonly="inputReadonly"
                           @focusout="handleFocusOut"

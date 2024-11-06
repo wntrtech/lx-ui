@@ -401,6 +401,7 @@ const indicatorTooltips = computed(() => {
       :class="[{ 'lx-invalid': invalid }]"
       v-if="variant === 'indicator'"
       :title="tooltip"
+      :aria-invalid="invalid"
     >
       <ul class="lx-indicator-set" v-if="kind === 'single'">
         <li

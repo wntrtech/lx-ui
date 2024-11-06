@@ -384,6 +384,7 @@ function isReadOnlyEmail() {
         :id="id"
         :value="valueRaw"
         :placeholder="placeholder"
+        :aria-invalid="invalid"
         :aria-label="placeholder"
         :disabled="disabled"
         :maxlength="maxLengthValue"

@@ -73,6 +73,7 @@ defineExpose({ focus });
               'lx-input-area',
               { 'lx-text-area-dynamic': props.dynamicHeight },
             ]"
+            :aria-invalid="invalid"
             :id="props.id"
             :placeholder="props.placeholder"
             :rows="props.rows"

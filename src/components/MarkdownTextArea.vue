@@ -897,6 +897,8 @@ const imageInputTypes = [
           :style="{ 'min-height': rows * 2.2 + 'rem' }"
           :editor="editor"
           :title="tooltip"
+          role="textbox"
+          :aria-invalid="invalid"
         />
         <div v-if="invalid" class="lx-invalidation-icon-wrapper">
           <LxIcon customClass="lx-invalidation-icon" value="invalid" />

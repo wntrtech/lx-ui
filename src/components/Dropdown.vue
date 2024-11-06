@@ -310,6 +310,7 @@ onMounted(() => {
         <select
           v-model="model"
           :id="idValue"
+          :aria-invalid="invalid"
           class="lx-dropdown lx-input-area"
           :class="[
             { 'lx-invalid': invalid },
@@ -379,6 +380,7 @@ onMounted(() => {
               class="lx-dropdown-default-panel lx-input-wrapper"
               :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
               :title="tooltip"
+              :aria-invalid="invalid"
             >
               <slot>
                 <div class="pseudo-input" />

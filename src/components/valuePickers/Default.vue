@@ -365,6 +365,7 @@ function getTabIndex(id) {
   <div
     class="lx-value-picker-default-wrapper"
     :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && kind === 'multiple' }]"
+    :aria-invalid="invalid"
     role="radiogroup"
     :title="tooltip"
   >

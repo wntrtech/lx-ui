@@ -76,6 +76,7 @@ function secureURL(url) {
       :tabindex="href || clickable ? 0 : -1"
       class="lx-list-item"
       @click="performClick()"
+      :aria-invalid="invalid"
       v-on:keyup.enter="performClick()"
       v-on:keyup.space="performClick()"
       :title="clickable ? tooltip : ''"
@@ -206,6 +207,7 @@ function secureURL(url) {
     <router-link
       v-if="href"
       class="lx-list-item"
+      :aria-invalid="invalid"
       :to="secureURL(href)"
       :title="tooltip"
       :class="[

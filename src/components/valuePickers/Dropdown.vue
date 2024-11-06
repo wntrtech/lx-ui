@@ -593,6 +593,7 @@ const columnReadOnly = computed(() => {
         @keydown.tab="focusOnDropDown"
         tabindex="0"
         role="combobox"
+        :aria-invalid="invalid"
         :aria-expanded="menuOpen"
         aria-controls="popper-id"
       >

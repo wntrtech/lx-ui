@@ -263,6 +263,7 @@ const queueItems = computed(() => {
         <div
           class="lx-rotator-dropdown-wrapper lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
+          :aria-invalid="invalid"
           @keydown.space.prevent="selectSingle(null)"
           @click="selectSingle(null)"
           tabindex="0"

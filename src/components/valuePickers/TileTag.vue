@@ -402,6 +402,7 @@ function selectAll() {
       :class="[{ 'lx-invalid': invalid }, {'lx-tile-custom': variant === 'tiles-custom'}]"
       v-if="variant === 'tiles' || variant === 'tiles-custom'"
       role="radiogroup"
+      :aria-invalid="invalid"
       :title="tooltip"
     >
       <div v-for="item in itemsDisplay" :key="item[idAttribute]">
@@ -511,6 +512,7 @@ function selectAll() {
       class="lx-value-picker-tags"
       :class="[{ 'lx-invalid': invalid }]"
       v-if="variant === 'tags' || variant === 'tags-custom'"
+      :aria-invalid="invalid"
       :title="tooltip"
     >
       <ul class="lx-tag-set" v-if="kind === 'single'" :class="[{'lx-tag-custom': variant === 'tags-custom'}]">

@@ -100,6 +100,7 @@ onMounted(() => {
         v-model="model"
         :checked="model"
         :aria-checked="model"
+        :aria-invalid="invalid"
         role="switch"
         :disabled="disabled"
       />
