@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, computed } from 'vue';
+import { computed } from 'vue';
 import { generateUUID, generateIntegerHash } from '@/utils/stringUtils';
 import { BACKGROUND_COLORS, SHAPE_COLORS, SHAPES } from '@/utils/decorationUtils';
 

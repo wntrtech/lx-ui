@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, computed, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import LxExpander from '@/components/Expander.vue';
 import LxButton from '@/components/Button.vue';

@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, computed } from 'vue';
+import { computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';

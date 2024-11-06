@@ -23,7 +23,7 @@ const props = defineProps({
   href: { type: [String, Object], default: null },
   kind: { type: String, default: 'default' },
   category: { type: String, default: null },
-  clickable: { type: Boolean, default: false },
+  clickable: { type: [Boolean, String], default: false },
   selected: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
