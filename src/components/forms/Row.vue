@@ -104,12 +104,12 @@ const props = defineProps({
   /**
    * The orientation of the row.
    * @type {String}
-   * @default 'vertical'
+   * @default null
    * @since 0.1.63
    */
   orientation: {
     type: String,
-    default: 'vertical',
+    default: null,
   },
   /**
    * Determines whether the row is required.
@@ -150,12 +150,20 @@ const requiredTexts = inject(
   ref({ required: '(obligāts)', optional: '(neobligāts)' })
 );
 const sectionColumnCount = inject('sectionColumnCount', 1);
+const formOrientation = inject('formOrientation', ref(null));
+const sectionOrientation = inject('sectionOrientation', ref(null));
 
 // Finds the required mode of the section the row is placed in
 const rowRequiredMode = computed(() => {
   if (sectionRequiredMode.value === 'none' || !sectionRequiredMode.value)
     return formRequiredMode.value;
   return sectionRequiredMode.value;
+});
+
+const rowOrientation = computed(() => {
+  if (props.orientation) return props.orientation;
+  if (sectionOrientation.value) return sectionOrientation.value;
+  return formOrientation.value;
 });
 
 const actionDropDown = ref();
@@ -196,27 +204,33 @@ const validatedColumnSpan = computed(() => {
       { 'lx-row-row-4': Number(rowSpan) === 4 },
       { 'lx-row-row-6': Number(rowSpan) === 6 },
       { 'lx-row-row-8': Number(rowSpan) === 8 },
+      { 'lx-row-horizontal': rowOrientation === 'horizontal' },
     ]"
   >
-    <div class="lx-row-header" v-if="!hideLabel && !$slots.info">
-      <label :title="!$slots.info ? tooltip : ''" :for="inputId"
-        >{{ label ? label : '&nbsp;' }}
-        <span class="lx-required" v-if="rowRequiredMode === 'required' && required && !hideLabel">{{
-          requiredTexts.required
-        }}</span>
+    <div
+      class="lx-row-header"
+      v-if="(rowOrientation === 'horizontal' && !$slots.info) || (!hideLabel && !$slots.info)"
+    >
+      <label :title="!$slots.info ? tooltip : ''" :for="inputId" v-if="!hideLabel">
+        {{ label ? label : '&nbsp;' }}
+        <span class="lx-required" v-if="rowRequiredMode === 'required' && required && !hideLabel">
+          {{ requiredTexts.required }}
+        </span>
         <span
           class="lx-required-asterisk"
           v-if="rowRequiredMode === 'required-asterisk' && required && !hideLabel"
-          >*
+        >
+          *
         </span>
         <span
           class="lx-optional"
           v-if="rowRequiredMode === 'optional' && required === false && !hideLabel"
-          >{{ requiredTexts.optional }}
+        >
+          {{ requiredTexts.optional }}
         </span>
       </label>
 
-      <div>
+      <div v-if="!hideLabel">
         <template v-if="actionDefinitions?.length === 1">
           <LxToggle
             v-if="actionDefinitions?.[0]?.kind === 'toggle'"
@@ -277,24 +291,27 @@ const validatedColumnSpan = computed(() => {
       </div>
     </div>
 
-    <div class="lx-row-header" v-if="!hideLabel && $slots.info">
-      <LxInfoWrapper class="lx-info-slot-wrapper">
+    <div
+      class="lx-row-header"
+      v-if="(rowOrientation === 'horizontal' && $slots.info) || (!hideLabel && $slots.info)"
+    >
+      <LxInfoWrapper class="lx-info-slot-wrapper" v-if="!hideLabel">
         <label :title="!$slots.info ? tooltip : ''" :for="inputId">
           {{ label ? label : '&nbsp;' }}
-          <span
-            class="lx-required"
-            v-if="rowRequiredMode === 'required' && required && !hideLabel"
-            >{{ requiredTexts.required }}</span
-          >
+          <span class="lx-required" v-if="rowRequiredMode === 'required' && required && !hideLabel">
+            {{ requiredTexts.required }}
+          </span>
           <span
             class="lx-required-asterisk"
             v-if="rowRequiredMode === 'required-asterisk' && required && !hideLabel"
-            >*
+          >
+            *
           </span>
           <span
             class="lx-optional"
             v-if="rowRequiredMode === 'optional' && required === false && !hideLabel"
-            >{{ requiredTexts.optional }}
+          >
+            {{ requiredTexts.optional }}
           </span>
           <LxIcon value="info" v-if="$slots.info" />
         </label>
@@ -303,7 +320,7 @@ const validatedColumnSpan = computed(() => {
         </template>
       </LxInfoWrapper>
 
-      <div>
+      <div v-if="!hideLabel">
         <template v-if="actionDefinitions?.length === 1">
           <LxToggle
             v-if="actionDefinitions?.[0]?.kind === 'toggle'"
@@ -365,8 +382,8 @@ const validatedColumnSpan = computed(() => {
     </div>
     <div
       :class="[
-        { 'lx-vertical': orientation === 'vertical' },
-        { 'lx-horizontal': orientation === 'horizontal' },
+        { 'lx-vertical': !rowOrientation || rowOrientation === 'vertical' },
+        { 'lx-horizontal': rowOrientation === 'horizontal' },
       ]"
     >
       <slot />

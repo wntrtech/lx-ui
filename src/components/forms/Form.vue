@@ -217,6 +217,13 @@ const props = defineProps({
    */
   kind: { type: String, default: 'default' }, // default || compact || stripped
   /**
+   * The orientation of the forms rows
+   * @type {String}
+   * @default null
+   * @since 1.7.0-beta.13
+   */
+  orientation: { type: String, default: null }, // vertical || horizontal
+  /**
    * The object containing text translations for the form.
    * @type {Object}
    * @since 0.3.5
@@ -314,12 +321,14 @@ const textsComp = computed(() => ({
   optional: props.texts.optional,
 }));
 const requiredMode = computed(() => props.requiredMode);
+const formOrientation = computed(() => props.orientation);
 
 // eslint-disable-next-line vue/no-setup-props-destructure
 provide('requiredTexts', textsComp);
 provide('formMode', requiredMode);
 provide('formIndexType', indexTypeRef);
 provide('formIndex', indexRef);
+provide('formOrientation', formOrientation);
 
 const primaryButtons = computed(() => {
   const ret = props.actionDefinitions?.filter((x) => x.kind === 'primary');

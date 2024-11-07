@@ -120,6 +120,13 @@ const props = defineProps({
     default: () => [],
   },
   /**
+   * The orientation of the sections rows
+   * @type {String}
+   * @default null
+   * @since 1.7.0-beta.13
+   */
+  orientation: { type: String, default: null }, // vertical || horizontal
+  /**
    * The object containing text translations for the section.
    * @type {Object}
    * @since 1.2.3
@@ -142,6 +149,8 @@ const requiredTexts = inject(
   'requiredTexts',
   ref({ required: '(obligāts)', optional: '(neobligāts)' })
 );
+const formOrientation = inject('formOrientation', ref(null));
+
 const exactIndex = computed(() => {
   if (formIndex) return formIndex.value?.find((obj) => obj.id === props.id);
   return [];
@@ -170,6 +179,13 @@ const rowRequiredTexts = computed(() => {
   return res;
 });
 
+const sectionOrientation = computed(() => {
+  if (props.orientation) {
+    return props.orientation;
+  }
+  return formOrientation.value;
+});
+
 const globalEnvironment = useLx().getGlobals()?.environment;
 
 function checkElements() {
@@ -185,6 +201,19 @@ function checkElements() {
   }
 }
 
+const columnCountComputed = computed(() => {
+  let res = props.columnCount;
+  if (sectionOrientation.value === 'horizontal' && props.columnCount > 2) {
+    lxDevUtils.log(
+      `LxSection '${props.id}' with horizontal orientation should have less than 3 columns.`,
+      globalEnvironment,
+      'warn'
+    );
+    res = 2;
+  }
+  return res;
+});
+
 onMounted(() => {
   checkElements();
 });
@@ -192,6 +221,7 @@ onMounted(() => {
 provide('sectionMode', requiredModeValue);
 provide('rowRequiredTexts', rowRequiredTexts);
 provide('sectionColumnCount', props.columnCount);
+provide('sectionOrientation', sectionOrientation);
 </script>
 <template>
   <LxExpander
@@ -209,11 +239,11 @@ provide('sectionColumnCount', props.columnCount);
       :id="id"
       class="lx-form-section"
       :class="[
-        { 'lx-form-section-1': columnCount === 1 },
-        { 'lx-form-section-2': columnCount === 2 },
-        { 'lx-form-section-3': columnCount === 3 },
-        { 'lx-form-section-4': columnCount === 4 },
-        { 'lx-form-section-8': columnCount === 8 },
+        { 'lx-form-section-1': columnCountComputed === 1 },
+        { 'lx-form-section-2': columnCountComputed === 2 },
+        { 'lx-form-section-3': columnCountComputed === 3 },
+        { 'lx-form-section-4': columnCountComputed === 4 },
+        { 'lx-form-section-8': columnCountComputed === 8 },
       ]"
     >
       <header v-if="description">
@@ -227,11 +257,11 @@ provide('sectionColumnCount', props.columnCount);
     :id="id"
     class="lx-form-section"
     :class="[
-      { 'lx-form-section-1': columnCount === 1 },
-      { 'lx-form-section-2': columnCount === 2 },
-      { 'lx-form-section-3': columnCount === 3 },
-      { 'lx-form-section-4': columnCount === 4 },
-      { 'lx-form-section-8': columnCount === 8 },
+      { 'lx-form-section-1': columnCountComputed === 1 },
+      { 'lx-form-section-2': columnCountComputed === 2 },
+      { 'lx-form-section-3': columnCountComputed === 3 },
+      { 'lx-form-section-4': columnCountComputed === 4 },
+      { 'lx-form-section-8': columnCountComputed === 8 },
     ]"
   >
     <header v-if="label || description || actionDefinitions?.length > 0">
