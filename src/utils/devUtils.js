@@ -11,6 +11,10 @@ export function logInfo(message, environment) {
       break;
   }
 }
+/**
+ * @param {Object} message
+ * @param {string} environment
+ */
 export function logError(message, environment) {
   switch (environment) {
     case 'development':

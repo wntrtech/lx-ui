@@ -40,6 +40,7 @@ export default (
   ) =>
   () => {
     const service = authService(authUrl, publicUrl, clientId, scope, authSessionKey);
+    const storage = () => (useLocalStorage ? localStorage : sessionStorage);
     const initState = {
       active: false,
       family_name: null,
@@ -58,15 +59,10 @@ export default (
       isSessionExtendable: false,
     };
     const returnPath = useStorage('returnPath', null, sessionStorage);
-    const session = useStorage(
-      'lx-auth-session',
-      { ...initState },
-      useLocalStorage ? localStorage : sessionStorage,
-      {
-        deep: true,
-        listenToStorageChanges: true,
-      }
-    );
+    const session = useStorage('lx-auth-session', { ...initState }, storage(), {
+      deep: true,
+      listenToStorageChanges: true,
+    });
     const rolesState = ref({
       roles: [],
       initialized: false,
@@ -103,6 +99,10 @@ export default (
       sessionStorage.removeItem(authSessionKey);
     }
 
+    async function getSessionKey() {
+      return sessionStorage.getItem(authSessionKey);
+    }
+
     async function clearReturnPath() {
       returnPath.value = null;
     }
@@ -112,7 +112,6 @@ export default (
 
     function $reset() {
       session.value = { ...initState };
-      session.value.st = 'none'; // don't call fetchSession() after reset
       removeSessionKey();
       clearReturnPath();
     }
@@ -140,6 +139,9 @@ export default (
     }
     async function fetchSession() {
       try {
+        if (!getSessionKey()) {
+          return null;
+        }
         const resp = await service.session();
         if (resp.status === 200) {
           fillSession(resp.data);
@@ -158,7 +160,7 @@ export default (
       try {
         return await service.logout();
       } finally {
-        [$reset, sessionStorage.clear].forEach((f) => {
+        [$reset, () => sessionStorage.clear(), () => storage().clear()].forEach((f) => {
           try {
             f();
           } catch {
@@ -215,7 +217,7 @@ export default (
       return hasScopeDelete(session.value?.scope, name);
     }
 
-    function getSessionKey(oneTimeToken) {
+    function getSessionKeyFromOtt(oneTimeToken) {
       return service.getSessionKey(oneTimeToken);
     }
 
@@ -253,7 +255,7 @@ export default (
       setRole,
       setSessionKey,
       removeSessionKey,
-      getSessionKey,
+      getSessionKey: getSessionKeyFromOtt,
       hasPermission,
       hasPermissionRead,
       hasPermissionWrite,

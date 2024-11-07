@@ -39,6 +39,6 @@ export default (authUrl, publicUrl, clientId, scope, authSessionKey) => ({
   },
 
   getSessionKey(oneTimeToken) {
-    return apiAuth(authUrl, null).get(`/session/id?ott=${oneTimeToken}`);
+    return apiAuth(authUrl, null, { allowAnonymous: true }).get(`/session/id?ott=${oneTimeToken}`);
   },
 });
