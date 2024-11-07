@@ -111,8 +111,14 @@ onMounted(() => {
       >
         <template v-if="!readOnly">
           <span class="lx-toggle-appearance"></span>
-          <span class="lx-toggle-text" v-if="size !== 's'">
-            <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate"> <slot></slot> </span>
+          <span
+            class="lx-toggle-text"
+            v-if="
+              size !== 's' && ($slots.on || $slots.off || $slots.indeterminate || $slots.default)
+            "
+          >
+            <!-- Default slot -->
+            <slot></slot>
             <span v-show="model === null">
               <slot name="indeterminate"></slot>
             </span>

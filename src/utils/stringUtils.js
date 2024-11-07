@@ -53,6 +53,16 @@ export function isUrl(value) {
     value
   );
 }
+/**
+ * Check if a string is a valid file name
+ * @param {string} fileName -  file name to check
+ * @returns {boolean} - True if the file name is valid, false otherwise
+ */
+export function isValidFileName(fileName) {
+  // eslint-disable-next-line no-control-regex
+  const invalidChars = /[<>:"/\\|?*\u0000-\u001F]/gu;
+  return !invalidChars.test(fileName) && fileName.length > 0;
+}
 
 export function foldToAscii(v) {
   return cyrillicToTranslit

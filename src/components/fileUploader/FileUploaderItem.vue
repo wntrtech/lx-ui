@@ -124,16 +124,6 @@ const additionalInfoTitle = computed(() => {
       </div>
       <div class="lx-upload-buttons">
         <LxButton
-          v-if="props.showMeta && !props.readOnly && props.mode === 'compact'"
-          kind="ghost"
-          variant="icon-only"
-          :disabled="props.disabled"
-          :loading="props.loading"
-          icon="info"
-          :title="props.texts.infoButton"
-          @click="openModal(props.customItem.id)"
-        ></LxButton>
-        <LxButton
           v-if="!props.readOnly"
           kind="ghost"
           variant="icon-only"
@@ -246,7 +236,7 @@ const additionalInfoTitle = computed(() => {
     </div>
   </div>
 
-  <div v-if="props.mode === 'compact'">
+  <div v-if="props.mode === 'compact'" class="compact-wrapper">
     <LxInfoWrapper :disabled="!props.imagePreview">
       <div
         class="lx-file-wrapper"
@@ -257,7 +247,9 @@ const additionalInfoTitle = computed(() => {
         ref="wrapperContainer"
       >
         <div class="lx-file-main-part">
+          <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview"></div>
           <div
+            v-else
             class="lx-list-item"
             :class="{
               'lx-list-item-interactive':
@@ -310,6 +302,7 @@ const additionalInfoTitle = computed(() => {
               <LxIcon v-if="props.hasDownloadButton" value="download"></LxIcon>
             </div>
           </div>
+
           <div class="lx-file-indicators" v-if="props.customItem.state">
             <LxLoader
               v-if="props.customItem.state === 'loading'"
