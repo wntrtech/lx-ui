@@ -80,10 +80,8 @@ const modelEndDateInput = ref(null);
 
 // Refs for active input state handling
 const activeInput = ref(null);
-const startInputRef = ref();
-const endInputRef = ref();
-
-const tabPressed = ref(false);
+const startInputRefs = ref({});
+const endInputRefs = ref({});
 
 const windowSize = useWindowSize();
 
@@ -98,16 +96,16 @@ const model = computed({
   },
 });
 
-function setActiveInput(type) {
+function setActiveInput(type, id) {
   activeInput.value = type;
 
-  if (startInputRef.value && type === 'startInput') {
-    startInputRef.value.focus();
+  if (startInputRefs.value[id] && type === 'startInput') {
+    startInputRefs.value[id].focus();
     return;
   }
-  if (endInputRef.value && type === 'endInput') {
-    endInputRef.value.focus();
-    endInputRef.value.select();
+  if (endInputRefs.value[id] && type === 'endInput') {
+    endInputRefs.value[id].focus();
+    endInputRefs.value[id].select();
   }
 }
 
@@ -268,8 +266,6 @@ function validateIfExact(e, type = 'startInput') {
 
     // Update the value with the valid date
     const updatedValue = day && month && year ? new Date(year, month - 1, day) : null;
-    const updatedStartValue = new Date('1900-01-01');
-    const updatedEndValue = new Date('9999-12-31');
 
     if (props.pickerType === 'single') {
       emits('update:modelValue', updatedValue);
@@ -278,7 +274,7 @@ function validateIfExact(e, type = 'startInput') {
       if (type === 'startInput') {
         if (!updatedValue && model.value.end) {
           const updatedDatesObject = {
-            start: updatedStartValue,
+            start: null,
             end: model.value.end,
           };
           emits('update:modelValue', updatedDatesObject);
@@ -339,7 +335,7 @@ function validateIfExact(e, type = 'startInput') {
         if (updatedValue && !model.value.start && !model.value.end) {
           const updatedDatesObject = {
             start: updatedValue,
-            end: updatedEndValue,
+            end: null,
           };
           emits('update:modelValue', updatedDatesObject);
           setActiveInput('endInput');
@@ -351,7 +347,7 @@ function validateIfExact(e, type = 'startInput') {
         if (!updatedValue && model.value.start) {
           const updatedDatesObject = {
             start: props.modelValue.start,
-            end: updatedEndValue,
+            end: null,
           };
           emits('update:modelValue', updatedDatesObject);
           return;
@@ -407,7 +403,7 @@ function validateIfExact(e, type = 'startInput') {
         }
         if (updatedValue && !model.value.start && !model.value.end) {
           const updatedDatesObject = {
-            start: updatedStartValue,
+            start: null,
             end: updatedValue,
           };
           emits('update:modelValue', updatedDatesObject);
@@ -551,17 +547,11 @@ function validateIfExact(e, type = 'startInput') {
   }
 }
 
-const handleTabKeyDown = (e) => {
-  if (e.key === 'Tab') {
-    tabPressed.value = true;
-  }
-};
-
 const handleFocusOut = (e) => {
-  // Check if the focus change is due to a `Tab` key event
-  if (tabPressed.value && !containerRef.value.contains(e?.relatedTarget)) {
-    dropDownMenuRef.value?.closeMenu();
-    tabPressed.value = false; // Reset the flag after handling
+  if (e.relatedTarget && !containerRef.value.contains(e.relatedTarget)) {
+    setTimeout(() => {
+      dropDownMenuRef.value?.closeMenu();
+    }, 200);
   }
 };
 
@@ -783,18 +773,12 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div
-    ref="containerRef"
-    class="lx-datepicker-default"
-    @focusout="handleFocusOut"
-    @keydown="handleTabKeyDown"
-  >
+  <div ref="containerRef" class="lx-datepicker-default" @focusout="handleFocusOut">
     <LxDropDownMenu
       v-if="variant === 'default'"
       ref="dropDownMenuRef"
       :offset-skid="offsetSkidByKind"
       :disabled="disabled"
-      :preventClickAway="true"
     >
       <div
         class="lx-datepicker-input-container"
@@ -813,7 +797,7 @@ onMounted(async () => {
         >
           <div class="pseudo-input" />
           <input
-            ref="startInputRef"
+            :ref="(el) => (startInputRefs[id] = el)"
             type="text"
             class="lx-date-time-picker lx-input-area"
             :class="[{ 'lx-invalid': invalid }, { 'input-active': activeInput === 'startInput' }]"
@@ -862,6 +846,7 @@ onMounted(async () => {
           >
             <div class="pseudo-input" />
             <input
+              :ref="(el) => (endInputRefs[id] = el)"
               ref="endInputRef"
               type="text"
               class="lx-date-time-picker lx-input-area"
@@ -895,6 +880,7 @@ onMounted(async () => {
 
       <template #clickSafePanel>
         <LxCalendarContainer
+          :id="id"
           v-model="model"
           :mode="mode"
           :variant="variant"
@@ -926,6 +912,7 @@ onMounted(async () => {
         variant === 'full-rows' ||
         variant === 'full-columns'
       "
+      :id="id"
       v-model="model"
       :mode="mode"
       :variant="variant"

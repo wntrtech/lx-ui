@@ -310,8 +310,10 @@ export function getSurroundingHours(arr, centerValue, isMobileScreen) {
 export function getSurroundingMinutes(arr, selectedId, isMobileScreen) {
   if (!arr.length) return [];
 
+  const resolvedId = selectedId || arr[0].id;
+
   // Find the index of the selected item
-  const selectedIndex = arr.findIndex((item) => item.id === selectedId);
+  const selectedIndex = arr.findIndex((item) => item.id === resolvedId);
   if (selectedIndex === -1) return []; // Return empty if the selected item is not found
 
   // Number of items before the center to reach desired position (4th position)

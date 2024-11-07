@@ -285,15 +285,15 @@
 }
 
 .lx-datepicker-default .lx-calendar-layouts-wrapper.date-only {
-  height: 17.5rem;
+  height: 16rem;
 }
 
 .lx-datepicker-default .lx-calendar-layouts-wrapper.lx-full-layout {
-  height: 41rem;
+  height: 37rem;
 }
 
 .lx-datepicker-default .lx-calendar-layouts-wrapper.lx-full-columns {
-  height: 19.5rem;
+  height: 17.5rem;
 }
 
 .lx-datepicker-default .lx-calendar-layouts-wrapper.range-month-year {
@@ -349,6 +349,7 @@
   align-items: center;
   justify-content: center;
   margin-top: 0.7rem;
+  margin-bottom: 0.15rem;
 }
 
 .lx-datepicker-default
@@ -426,7 +427,15 @@
 
 .lx-datepicker-default .lx-calendar-week,
 .lx-datepicker-default .lx-calendar-quarter-row {
-  margin: 0.35rem 0;
+  margin: 0.175rem 0;
+}
+
+.lx-datepicker-default .lx-calendar-quarters .lx-calendar-quarter-row:first-child {
+  margin-top: 0.5rem; 
+}
+
+.lx-datepicker-default .lx-calendar-quarters .lx-calendar-quarter-row:last-child {
+  margin-bottom: 0.5rem; 
 }
 
 .lx-datepicker-default .lx-calendar-month-row {

@@ -19,11 +19,12 @@ import {
   extractYearFromDate,
   extractYearMonthFromDate,
 } from '@/components/datePicker/helpers';
+import { generateUUID } from '@/utils/stringUtils';
 
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: generateUUID() },
   modelValue: { type: [String, Date], default: null },
   kind: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'
   placeholder: { type: String, default: null },

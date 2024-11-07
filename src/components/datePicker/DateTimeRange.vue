@@ -3,6 +3,8 @@ import { computed, onBeforeMount } from 'vue';
 
 import useLx from '@/hooks/useLx';
 import { formatDateJSON, formatDate, parseDate } from '@/utils/dateUtils';
+import { generateUUID } from '@/utils/stringUtils';
+
 import {
   dateFromYearAndQuarter,
   extractMonthFromDate,
@@ -13,7 +15,7 @@ import {
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: generateUUID() },
   startDate: { type: String, default: null },
   endDate: { type: String, default: null },
   kind: { type: String, default: 'date' }, // 'date', 'month', 'year', 'month-year', 'quarters'
@@ -30,6 +32,7 @@ const props = defineProps({
   timeAdjust: { type: String, default: null },
   locale: { type: Object, default: () => useLx().getGlobals()?.locale },
   rangeMonth: { type: String, default: 'next' }, // next, previous
+  clearIfNotExact: { type: Boolean, default: false },
   texts: {
     type: Object,
     default: () => ({
@@ -70,91 +73,39 @@ const localeMasks = computed(() => {
 
 function updateStartValue(startValue) {
   if (props.kind === 'date') {
-    if (typeof startValue !== 'string') {
-      if (formatDateJSON(startValue) !== '1900-01-01') {
-        const nv = formatDateJSON(startValue);
-        emits('update:startDate', nv);
-      } else {
-        emits('update:startDate', null);
-      }
-    } else if (startValue !== '1900-01-01') {
-      emits('update:startDate', startValue);
-    } else if (startValue === '1900-01-01') {
-      emits('update:startDate', null);
-    }
+    const nv = formatDateJSON(startValue);
+    emits('update:startDate', nv);
   } else if (props.kind === 'month') {
-    if (formatDateJSON(startValue) !== '1900-01-01') {
-      const nv = extractMonthFromDate(startValue);
-      emits('update:startDate', nv);
-    } else {
-      emits('update:startDate', null);
-    }
+    const nv = extractMonthFromDate(startValue);
+    emits('update:startDate', nv);
   } else if (props.kind === 'year') {
-    if (formatDateJSON(startValue) !== '1900-01-01') {
-      const nv = extractYearFromDate(startValue);
-      emits('update:startDate', nv);
-    } else {
-      emits('update:startDate', null);
-    }
+    const nv = extractYearFromDate(startValue);
+    emits('update:startDate', nv);
   } else if (props.kind === 'month-year') {
-    if (formatDateJSON(startValue) !== '1900-01-01') {
-      const nv = extractYearMonthFromDate(startValue, localeMasks.value.monthYearFormat);
-      emits('update:startDate', nv);
-    } else {
-      emits('update:startDate', null);
-    }
+    const nv = extractYearMonthFromDate(startValue, localeMasks.value.monthYearFormat);
+    emits('update:startDate', nv);
   } else if (props.kind === 'quarters') {
-    if (formatDateJSON(startValue) !== '1900-01-01') {
-      const nv = extractQuarterFromDate(startValue);
-      emits('update:startDate', nv);
-    } else {
-      emits('update:startDate', null);
-    }
+    const nv = extractQuarterFromDate(startValue);
+    emits('update:startDate', nv);
   }
 }
 
 function updateEndValue(endValue) {
   if (props.kind === 'date') {
-    if (typeof endValue !== 'string') {
-      if (formatDateJSON(endValue) !== '9999-12-31') {
-        const nv = formatDateJSON(endValue);
-        emits('update:endDate', nv);
-      } else {
-        emits('update:endDate', null);
-      }
-    } else if (endValue !== '9999-12-31') {
-      emits('update:endDate', endValue);
-    } else if (endValue === '9999-12-31') {
-      emits('update:endDate', null);
-    }
+    const nv = formatDateJSON(endValue);
+    emits('update:endDate', nv);
   } else if (props.kind === 'month') {
-    if (formatDateJSON(endValue) !== '9999-12-31') {
-      const nv = extractMonthFromDate(endValue);
-      emits('update:endDate', nv);
-    } else {
-      emits('update:endDate', null);
-    }
+    const nv = extractMonthFromDate(endValue);
+    emits('update:endDate', nv);
   } else if (props.kind === 'year') {
-    if (formatDateJSON(endValue) !== '9999-12-31') {
-      const nv = extractYearFromDate(endValue);
-      emits('update:endDate', nv);
-    } else {
-      emits('update:endDate', null);
-    }
+    const nv = extractYearFromDate(endValue);
+    emits('update:endDate', nv);
   } else if (props.kind === 'month-year') {
-    if (formatDateJSON(endValue) !== '9999-12-31') {
-      const nv = extractYearMonthFromDate(endValue, localeMasks.value.monthYearFormat);
-      emits('update:endDate', nv);
-    } else {
-      emits('update:endDate', null);
-    }
+    const nv = extractYearMonthFromDate(endValue, localeMasks.value.monthYearFormat);
+    emits('update:endDate', nv);
   } else if (props.kind === 'quarters') {
-    if (formatDateJSON(endValue) !== '9999-12-31') {
-      const nv = extractQuarterFromDate(endValue);
-      emits('update:endDate', nv);
-    } else {
-      emits('update:endDate', null);
-    }
+    const nv = extractQuarterFromDate(endValue);
+    emits('update:endDate', nv);
   }
 }
 
@@ -167,7 +118,7 @@ const model = computed({
       if (typeof props.startDate === 'string' && props.startDate?.length === 2) {
         newStartDate = new Date();
         newStartDate.setDate(1); // Set to the first day of the month
-        newStartDate.setHours(0, 0, 0);
+        newStartDate.setHours(0, 0, 0, 0);
         newStartDate.setMonth(Number(props.startDate) - 1);
       } else {
         newStartDate = props.startDate;
@@ -175,7 +126,7 @@ const model = computed({
       if (typeof props.endDate === 'string' && props.endDate?.length === 2) {
         newEndDate = new Date();
         newEndDate.setDate(1); // Set to the first day of the month
-        newEndDate.setHours(0, 0, 0);
+        newEndDate.setHours(0, 0, 0, 0);
         newEndDate.setMonth(Number(props.endDate) - 1);
       } else {
         newEndDate = props.endDate;
@@ -194,14 +145,14 @@ const model = computed({
         newStartDate = new Date();
         newStartDate.setDate(1); // Set to the first day of the month
         newStartDate.setMonth(1);
-        newStartDate.setHours(0, 0, 0);
+        newStartDate.setHours(0, 0, 0, 0);
         newStartDate.setFullYear(Number(props.startDate));
       }
       if (typeof props.endDate === 'string' && props.endDate?.length === 4) {
         newEndDate = new Date();
         newEndDate.setDate(1); // Set to the first day of the month
         newEndDate.setMonth(1);
-        newEndDate.setHours(0, 0, 0);
+        newEndDate.setHours(0, 0, 0, 0);
         newEndDate.setFullYear(Number(props.endDate));
       }
       return {
@@ -216,14 +167,14 @@ const model = computed({
       if (typeof props.startDate === 'string' && props.startDate?.length === 7) {
         newStartDate = new Date();
         newStartDate.setDate(1); // Set to the first day of the month
-        newStartDate.setHours(0, 0, 0);
+        newStartDate.setHours(0, 0, 0, 0);
         newStartDate.setFullYear(Number(props.startDate?.slice(0, 4)));
         newStartDate.setMonth(Number(props.startDate?.slice(5, 7)) - 1);
       }
       if (typeof props.endDate === 'string' && props.endDate?.length === 7) {
         newEndDate = new Date();
         newEndDate.setDate(1); // Set to the first day of the month
-        newEndDate.setHours(0, 0, 0);
+        newEndDate.setHours(0, 0, 0, 0);
         newEndDate.setFullYear(Number(props.endDate?.slice(0, 4)));
         newEndDate.setMonth(Number(props.endDate?.slice(5, 7)) - 1);
       }
@@ -333,6 +284,7 @@ onBeforeMount(() => {
           :locale="localeComputed"
           :first-day-of-the-week="localeFirstDay"
           picker-type="range"
+          :clearIfNotExact="clearIfNotExact"
           :texts="texts"
         />
       </div>
