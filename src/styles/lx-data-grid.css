@@ -698,7 +698,7 @@
   .lx-grid-toolbar.lx-selection-toolbar
   .lx-button.lx-button-ghost
   .lx-button-content
-  > label {
+  > .lx-button-label {
   color: var(--color-focus-foreground);
 }
 
@@ -772,7 +772,7 @@
   .lx-component-toolbar.lx-selection-toolbar
   .lx-button.lx-button-ghost
   .lx-button-content
-  > label {
+  > .lx-button-label {
   color: var(--color-focus-foreground);
 }
 
