@@ -453,6 +453,55 @@ const monthsList = computed(() =>
   getMonths(currentDate.value, props.variant, props.mode, props.pickerType, isMobileScreen.value)
 );
 
+// Create a computed property for filtering minutes based on cadence
+const filteredMinutes = computed(() => {
+  const validCadenceValues = [1, 5, 15];
+  let cadence = props.cadenceOfMinutes;
+
+  if (!validCadenceValues.includes(cadence)) {
+    cadence = 1;
+  }
+
+  // Filter the minutes array based on the cadence
+  let filtered = minutes.value.filter((_, index) => index % cadence === 0);
+
+  // Extend the array if it has fewer than 9 items (for consistent rendering)
+  const minVisibleItems = 9; // Minimum number of visible items for smooth scrolling
+  if (filtered.length < minVisibleItems) {
+    while (filtered.length < minVisibleItems) {
+      filtered = filtered.concat(filtered);
+    }
+  }
+
+  // Map over filtered array to add unique IDs (to avoid key duplication issues)
+  return filtered.map((item) => ({ ...item, id: generateUUID() }));
+});
+
+const currentHourIndex = ref(getTimeOrderIndex(hours.value, todayDate.value.getHours()));
+const currentMinuteIndex = ref(
+  getTimeOrderIndex(filteredMinutes.value, todayDate.value.getMinutes(), props.cadenceOfMinutes)
+);
+const selectedMinuteId = ref(null);
+const selectedMinuteCenterId = ref(filteredMinutes.value[currentMinuteIndex.value]?.id);
+
+// Update visible hours
+function updateVisibleHours() {
+  visibleHours.value = getSurroundingHours(
+    hours.value,
+    currentHourIndex.value,
+    isMobileScreen.value
+  );
+}
+
+// Update visible minutes
+function updateVisibleMinutes() {
+  visibleMinutes.value = getSurroundingMinutes(
+    filteredMinutes.value,
+    selectedMinuteCenterId.value,
+    isMobileScreen.value
+  );
+}
+
 // Helper functions for setting and resetting dates
 function setStartDate(date) {
   selectedStartDate.value = date;
@@ -886,6 +935,146 @@ function handleSingleSelection(selectedValue, selectionType, isNotSelectable = f
       handleLayoutDisplay();
       props.closeMenu();
       props.setActiveInput('startInput', props.id);
+    }
+
+    if (
+      props.mode === 'date-time' &&
+      selectedHour.value !== null &&
+      selectedMinute.value === null &&
+      !mobileTimeLayout.value
+    ) {
+      if (props.clearIfNotExact) {
+        if (!selectedDay.value || selectedHour.value === null || selectedMinute.value === null) {
+          clearSelectedValues();
+        }
+      }
+      // Check and update hours based on min date
+      if (
+        props.minDateRef &&
+        selectedValue.getDate() === props.minDateRef.getDate() &&
+        !props.clearIfNotExact
+      ) {
+        if (selectedHour.value < props.minDateRef?.getHours()) {
+          selectedHour.value = props.minDateRef?.getHours();
+          currentHourIndex.value = getTimeOrderIndex(hours.value, selectedHour.value);
+          updateVisibleHours();
+        }
+      }
+      // Check and update hours based on max date
+      if (
+        props.maxDateRef &&
+        selectedValue.getDate() === props.maxDateRef.getDate() &&
+        !props.clearIfNotExact
+      ) {
+        if (selectedHour.value > props.maxDateRef?.getHours()) {
+          selectedHour.value = props.maxDateRef?.getHours();
+          currentHourIndex.value = getTimeOrderIndex(hours.value, selectedHour.value);
+          updateVisibleHours();
+        }
+      }
+    }
+
+    if (
+      props.mode === 'date-time' &&
+      selectedHour.value === null &&
+      selectedMinute.value !== null &&
+      !mobileTimeLayout.value
+    ) {
+      if (props.clearIfNotExact) {
+        if (!selectedDay.value || selectedHour.value === null || selectedMinute.value === null) {
+          clearSelectedValues();
+        }
+      }
+      // Check and update minutes based on min date
+      if (
+        props.minDateRef &&
+        selectedValue.getDate() === props.minDateRef.getDate() &&
+        !props.clearIfNotExact
+      ) {
+        if (selectedMinute.value < props.minDateRef?.getMinutes()) {
+          selectedMinute.value = props.minDateRef?.getMinutes();
+          const cadence = props.cadenceOfMinutes;
+          const minutesValue = selectedMinute.value;
+          let filteredIndex = -1;
+
+          // Check if cadence is 5 and filteredMinutes length is 12
+          if (cadence === 5 && filteredMinutes.value.length === 12) {
+            filteredIndex = filteredMinutes.value.findIndex(
+              (item) => Number(item.value) === minutesValue
+            );
+          }
+          // Check if cadence is 15 and filteredMinutes length is 16
+          else if (cadence === 15 && filteredMinutes.value.length === 16) {
+            filteredIndex = filteredMinutes.value.findIndex(
+              (item) => Number(item.value) === minutesValue
+            );
+          }
+
+          // Use fallback index (0) if filteredIndex is invalid
+          currentMinuteIndex.value =
+            filteredIndex !== -1
+              ? filteredIndex
+              : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
+
+          // Ensure currentMinuteIndex is valid, otherwise default to 0
+          if (
+            currentMinuteIndex.value === null ||
+            currentMinuteIndex.value === undefined ||
+            currentMinuteIndex.value < 0
+          ) {
+            currentMinuteIndex.value = 0;
+          }
+
+          selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+          selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+          updateVisibleMinutes();
+        }
+      }
+      // Check and update minutes based on max date
+      if (
+        props.maxDateRef &&
+        selectedValue.getDate() === props.maxDateRef.getDate() &&
+        !props.clearIfNotExact
+      ) {
+        if (selectedMinute.value > props.maxDateRef?.getMinutes()) {
+          selectedMinute.value = props.maxDateRef?.getMinutes();
+          const cadence = props.cadenceOfMinutes;
+          const minutesValue = selectedMinute.value;
+          let filteredIndex = -1;
+
+          // Check if cadence is 5 and filteredMinutes length is 12
+          if (cadence === 5 && filteredMinutes.value.length === 12) {
+            filteredIndex = filteredMinutes.value.findIndex(
+              (item) => Number(item.value) === minutesValue
+            );
+          }
+          // Check if cadence is 15 and filteredMinutes length is 16
+          else if (cadence === 15 && filteredMinutes.value.length === 16) {
+            filteredIndex = filteredMinutes.value.findIndex(
+              (item) => Number(item.value) === minutesValue
+            );
+          }
+
+          // Use fallback index (0) if filteredIndex is invalid
+          currentMinuteIndex.value =
+            filteredIndex !== -1
+              ? filteredIndex
+              : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
+
+          // Ensure currentMinuteIndex is valid, otherwise default to 0
+          if (
+            currentMinuteIndex.value === null ||
+            currentMinuteIndex.value === undefined ||
+            currentMinuteIndex.value < 0
+          ) {
+            currentMinuteIndex.value = 0;
+          }
+
+          selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+          selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+          updateVisibleMinutes();
+        }
+      }
     }
 
     if (
@@ -1339,55 +1528,6 @@ const isSelectedQuarterRange = (quarterYear, quarterItem) => {
   // No match for selected range
   return false;
 };
-
-// Create a computed property for filtering minutes based on cadence
-const filteredMinutes = computed(() => {
-  const validCadenceValues = [1, 5, 15];
-  let cadence = props.cadenceOfMinutes;
-
-  if (!validCadenceValues.includes(cadence)) {
-    cadence = 1;
-  }
-
-  // Filter the minutes array based on the cadence
-  let filtered = minutes.value.filter((_, index) => index % cadence === 0);
-
-  // Extend the array if it has fewer than 9 items (for consistent rendering)
-  const minVisibleItems = 9; // Minimum number of visible items for smooth scrolling
-  if (filtered.length < minVisibleItems) {
-    while (filtered.length < minVisibleItems) {
-      filtered = filtered.concat(filtered);
-    }
-  }
-
-  // Map over filtered array to add unique IDs (to avoid key duplication issues)
-  return filtered.map((item) => ({ ...item, id: generateUUID() }));
-});
-
-const currentHourIndex = ref(getTimeOrderIndex(hours.value, todayDate.value.getHours()));
-const currentMinuteIndex = ref(
-  getTimeOrderIndex(filteredMinutes.value, todayDate.value.getMinutes(), props.cadenceOfMinutes)
-);
-const selectedMinuteId = ref(null);
-const selectedMinuteCenterId = ref(filteredMinutes.value[currentMinuteIndex.value]?.id);
-
-// Update visible hours
-function updateVisibleHours() {
-  visibleHours.value = getSurroundingHours(
-    hours.value,
-    currentHourIndex.value,
-    isMobileScreen.value
-  );
-}
-
-// Update visible minutes
-function updateVisibleMinutes() {
-  visibleMinutes.value = getSurroundingMinutes(
-    filteredMinutes.value,
-    selectedMinuteCenterId.value,
-    isMobileScreen.value
-  );
-}
 
 function returnToToday() {
   const newDate = new Date();

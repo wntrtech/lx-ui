@@ -281,6 +281,22 @@ export function canSelectTime(
         return false;
       }
     }
+    // When the hour is not selected, validate minute by min max
+    if (selectedHours === null) {
+      // If selecting on minDate and maxDate day
+      if (
+        minDateParsed &&
+        maxDateParsed &&
+        selectedDay === minDateParsed.getDate() &&
+        selectedDay === maxDateParsed.getDate()
+      ) {
+        // If the selected day is the same as min/max maxDate hour, validate minutes before maxDate minutes and after minDate minutes
+        return (
+          hourOrMinuteValue >= minDateParsed.getMinutes() &&
+          hourOrMinuteValue <= maxDateParsed.getMinutes()
+        );
+      }
+    }
     return true; // Allow all minutes otherwise
   }
 
