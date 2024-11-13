@@ -140,10 +140,6 @@
   flex-wrap: wrap;
 }
 
-.lx-value-picker-search + .lx-value-picker-tags .lx-tag-set {
-  margin-top: 0;
-}
-
 .lx .lx-tag-set .lx-tag,
 .lx .lx-indicator-set .lx-indicator {
   padding: 0.25rem 1rem;

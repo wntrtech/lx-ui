@@ -348,116 +348,97 @@ function selectAll() {
 </script>
 
 <template>
-  <div class="lx-value-picker-tile-tag-container">
-    <template v-if="readOnly">
-      <p v-if="readOnlyRenderType === 'row'" class="lx-data">
-        {{ getName(false) }}
-        <template v-if="model === null || model === undefined || model?.length < 1">—</template>
-      </p>
-      <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
-        <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
-      </ul>
-    </template>
+  <template v-if="readOnly">
+    <p v-if="readOnlyRenderType === 'row'" class="lx-data">
+      {{ getName(false) }}
+      <template v-if="model === null || model === undefined || model?.length < 1">—</template>
+    </p>
+    <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
+      <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
+    </ul>
+  </template>
 
-    <template v-else>
-      <div
+  <template v-else>
+    <div
+      v-if="hasSearch"
+      class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
+      :class="[{ 'select-all': hasSelectAll && kind === 'multiple' }]"
+    >
+      <LxButton
+        kind="ghost"
+        :icon="
+          areSomeSelected
+            ? areAllSelected
+              ? 'checkbox-filled'
+              : 'checkbox-indeterminate'
+            : 'checkbox'
+        "
+        v-if="hasSelectAll && kind === 'multiple'"
+        @click="selectAll"
+        :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
+        :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+      />
+      <lx-text-input
         v-if="hasSearch"
-        class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
-        :class="[{ 'select-all': hasSelectAll && kind === 'multiple' }]"
-      >
-        <LxButton
-          kind="ghost"
-          :icon="
-            areSomeSelected
-              ? areAllSelected
-                ? 'checkbox-filled'
-                : 'checkbox-indeterminate'
-              : 'checkbox'
-          "
-          v-if="hasSelectAll && kind === 'multiple'"
-          @click="selectAll"
-          :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
-          :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
-        />
-        <lx-text-input
-          v-if="hasSearch"
-          :disabled="disabled"
-          ref="queryInput"
-          v-model="query"
-          kind="search"
-          :placeholder="texts.searchPlaceholder"
-          role="search"
-        />
-        <lx-button
-          v-if="query && hasSearch"
-          icon="clear"
-          kind="ghost"
-          variant="icon-only"
-          :title="texts.clearQuery"
-          :disabled="disabled"
-          @click="query = ''"
-        />
-      </div>
-      <div
-        class="lx-value-picker-tile-wrapper"
-        :class="[{ 'lx-invalid': invalid }, {'lx-tile-custom': variant === 'tiles-custom'}]"
-        v-if="variant === 'tiles' || variant === 'tiles-custom'"
-        role="radiogroup"
-        :aria-invalid="invalid"
-        :title="tooltip"
-      >
-        <div v-for="item in itemsDisplay" :key="item[idAttribute]">
-          <div
-            v-if="kind === 'single' && !isElementHidden(item)"
-            v-on:focus="onFocus"
-            class="lx-value-picker-tile"
-            :class="{
-              'lx-value-picker-tile-selected':
-                itemsModel[item[idAttribute]] ||
-                (!alwaysAsArray && item[idAttribute] === model) ||
-                item[idAttribute] === checkNull(model),
-            }"
-            :id="getItemId(item[idAttribute])"
-            :group-id="groupId"
-            tabindex="0"
-            :disabled="disabled"
-            @click="disabled ? null : selectSingle(item[idAttribute])"
-            role="radio"
-            :aria-checked="
+        :disabled="disabled"
+        ref="queryInput"
+        v-model="query"
+        kind="search"
+        :placeholder="texts.searchPlaceholder"
+        role="search"
+      />
+      <lx-button
+        v-if="query && hasSearch"
+        icon="clear"
+        kind="ghost"
+        variant="icon-only"
+        :title="texts.clearQuery"
+        :disabled="disabled"
+        @click="query = ''"
+      />
+    </div>
+    <div
+      class="lx-value-picker-tile-wrapper"
+      :class="[{ 'lx-invalid': invalid }, {'lx-tile-custom': variant === 'tiles-custom'}]"
+      v-if="variant === 'tiles' || variant === 'tiles-custom'"
+      role="radiogroup"
+      :aria-invalid="invalid"
+      :title="tooltip"
+    >
+      <div v-for="item in itemsDisplay" :key="item[idAttribute]">
+        <div
+          v-if="kind === 'single' && !isElementHidden(item)"
+          v-on:focus="onFocus"
+          class="lx-value-picker-tile"
+          :class="{
+            'lx-value-picker-tile-selected':
               itemsModel[item[idAttribute]] ||
-                (!alwaysAsArray && item[idAttribute] === model) ||
-                item[idAttribute] === checkNull(model)
-            "
-            @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
-          >
-            <template v-if="variant === 'tiles'">
-              <div class="lx-value-picker-tile-header">
-                <div class="lx-value-picker-tile-name">
-                  <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-                </div>
-                <div class="lx-value-picker-icon">
-                  <LxIcon
-                    v-if="
-                      itemsModel[item[idAttribute]] ||
-                        (!alwaysAsArray && item[idAttribute] === model) ||
-                      item[idAttribute] === checkNull(model)
-                    "
-                    value="selected"
-                  />
-                  <LxIcon v-else value="unselected" />
-                </div>
+              (!alwaysAsArray && item[idAttribute] === model) ||
+              item[idAttribute] === checkNull(model),
+          }"
+          :id="getItemId(item[idAttribute])"
+          :group-id="groupId"
+          tabindex="0"
+          :disabled="disabled"
+          @click="disabled ? null : selectSingle(item[idAttribute])"
+          role="radio"
+          :aria-checked="
+            itemsModel[item[idAttribute]] ||
+              (!alwaysAsArray && item[idAttribute] === model) ||
+              item[idAttribute] === checkNull(model)
+          "
+          @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
+        >
+          <template v-if="variant === 'tiles'">
+            <div class="lx-value-picker-tile-header">
+              <div class="lx-value-picker-tile-name">
+                <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
               </div>
-              <div class="lx-value-picker-description">
-                <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
-              </div>
-            </template>
-            <div class="lx-value-picker-tile-header" v-else-if="variant === 'tiles-custom'">
-                <slot name="customItem" v-bind="item"></slot>
               <div class="lx-value-picker-icon">
                 <LxIcon
                   v-if="
                     itemsModel[item[idAttribute]] ||
-                    (!alwaysAsArray && item[idAttribute] === model) ||
+                      (!alwaysAsArray && item[idAttribute] === model) ||
                     item[idAttribute] === checkNull(model)
                   "
                   value="selected"
@@ -465,122 +446,139 @@ function selectAll() {
                 <LxIcon v-else value="unselected" />
               </div>
             </div>
-          </div>
-
-          <div
-            v-if="kind === 'multiple' && !isElementHidden(item)"
-            v-on:focus="onFocus"
-            class="lx-value-picker-tile"
-            :id="getItemId(item[idAttribute])"
-            :group-id="groupId"
-            tabindex="0"
-            :class="{
-              'lx-value-picker-tile-selected': itemsModel[item[idAttribute]],
-            }"
-            :disabled="disabled"
-            @click="selectMultiple(item[idAttribute])"
-            role="checkbox"
-            :aria-checked="itemsModel[item[idAttribute]]"
-            @keydown.space.prevent="selectMultiple(item[idAttribute])"
-          >
-            <template v-if="variant === 'tiles'">
-              <div class="lx-value-picker-tile-header">
-                <div class="lx-value-picker-tile-name">
-                  <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-                </div>
-                <div class="lx-value-picker-icon">
-                  <LxIcon v-if="itemsModel[item[idAttribute]]" value="selected" />
-                  <LxIcon v-else value="unselected" />
-                </div>
-              </div>
-              <div class="lx-value-picker-description">
-                <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
-              </div>
-            </template>
-            <template v-else-if="variant === 'tiles-custom'">
-              <div class="lx-value-picker-tile-header">
-                  <slot name="customItem" v-bind="item"></slot>
-                <div class="lx-value-picker-icon">
-                  <LxIcon v-if="itemsModel[item[idAttribute]]" value="selected" />
-                  <LxIcon v-else value="unselected" />
-                </div>
-              </div>
-            </template>
+            <div class="lx-value-picker-description">
+              <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
+            </div>
+          </template>
+          <div class="lx-value-picker-tile-header" v-else-if="variant === 'tiles-custom'">
+              <slot name="customItem" v-bind="item"></slot>
+            <div class="lx-value-picker-icon">
+              <LxIcon
+                v-if="
+                  itemsModel[item[idAttribute]] ||
+                  (!alwaysAsArray && item[idAttribute] === model) ||
+                  item[idAttribute] === checkNull(model)
+                "
+                value="selected"
+              />
+              <LxIcon v-else value="unselected" />
+            </div>
           </div>
         </div>
+
+        <div
+          v-if="kind === 'multiple' && !isElementHidden(item)"
+          v-on:focus="onFocus"
+          class="lx-value-picker-tile"
+          :id="getItemId(item[idAttribute])"
+          :group-id="groupId"
+          tabindex="0"
+          :class="{
+            'lx-value-picker-tile-selected': itemsModel[item[idAttribute]],
+          }"
+          :disabled="disabled"
+          @click="selectMultiple(item[idAttribute])"
+          role="checkbox"
+          :aria-checked="itemsModel[item[idAttribute]]"
+          @keydown.space.prevent="selectMultiple(item[idAttribute])"
+        >
+          <template v-if="variant === 'tiles'">
+            <div class="lx-value-picker-tile-header">
+              <div class="lx-value-picker-tile-name">
+                <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+              </div>
+              <div class="lx-value-picker-icon">
+                <LxIcon v-if="itemsModel[item[idAttribute]]" value="selected" />
+                <LxIcon v-else value="unselected" />
+              </div>
+            </div>
+            <div class="lx-value-picker-description">
+              <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
+            </div>
+          </template>
+          <template v-else-if="variant === 'tiles-custom'">
+            <div class="lx-value-picker-tile-header">
+                <slot name="customItem" v-bind="item"></slot>
+              <div class="lx-value-picker-icon">
+                <LxIcon v-if="itemsModel[item[idAttribute]]" value="selected" />
+                <LxIcon v-else value="unselected" />
+              </div>
+            </div>
+          </template>
+        </div>
       </div>
-      <div
-        class="lx-value-picker-tags"
-        :class="[{ 'lx-invalid': invalid }]"
-        v-if="variant === 'tags' || variant === 'tags-custom'"
-        :aria-invalid="invalid"
-        :title="tooltip"
-      >
-        <ul class="lx-tag-set" v-if="kind === 'single'" :class="[{'lx-tag-custom': variant === 'tags-custom'}]">
-          <li
-            v-for="item in itemsDisplay"
-            :key="item[idAttribute]"
-            v-on:focus="onFocus"
-            class="lx-tag"
-            :title="item[descriptionAttribute]"
-            :id="getItemId(item[idAttribute])"
-            :group-id="groupId"
-            :class="{
-              'lx-tags-tile-selected':
-                itemsModel[item[idAttribute]] ||
-                (!alwaysAsArray && item[idAttribute] === model) ||
-                item[idAttribute] === checkNull(model),
-              'lx-value-hidden': isElementHidden(item),
-            }"
-            :disabled="disabled"
-            tabindex="0"
-            @click="disabled ? null : selectSingle(item[idAttribute])"
-            role="radio"
-            :aria-checked="
+    </div>
+    <div
+      class="lx-value-picker-tags"
+      :class="[{ 'lx-invalid': invalid }]"
+      v-if="variant === 'tags' || variant === 'tags-custom'"
+      :aria-invalid="invalid"
+      :title="tooltip"
+    >
+      <ul class="lx-tag-set" v-if="kind === 'single'" :class="[{'lx-tag-custom': variant === 'tags-custom'}]">
+        <li
+          v-for="item in itemsDisplay"
+          :key="item[idAttribute]"
+          v-on:focus="onFocus"
+          class="lx-tag"
+          :title="item[descriptionAttribute]"
+          :id="getItemId(item[idAttribute])"
+          :group-id="groupId"
+          :class="{
+            'lx-tags-tile-selected':
               itemsModel[item[idAttribute]] ||
-                (!alwaysAsArray && item[idAttribute] === model) ||
-                item[idAttribute] === checkNull(model)
-            "
-            @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
-          >
-            <template v-if="variant === 'tags'">
-              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-            </template>
-            <template v-else-if="variant === 'tags-custom'">
-                <slot name="customItem" v-bind="item"></slot>
-            </template>
-          </li>
-        </ul>
-        <ul class="lx-tag-set" v-if="kind === 'multiple'" :class="[{'lx-tag-custom': variant === 'tags-custom'}]">
-          <li
-            v-for="item in itemsDisplay"
-            v-on:focus="onFocus"
-            :key="item[idAttribute]"
-            class="lx-tag"
-            :title="item[descriptionAttribute]"
-            :id="getItemId(item[idAttribute])"
-            :group-id="groupId"
-            :class="{
-              'lx-tags-tile-selected': itemsModel[item[idAttribute]],
-              'lx-value-hidden': isElementHidden(item),
-            }"
-            :disabled="disabled"
-            tabindex="0"
-            @click="selectMultiple(item[idAttribute])"
-            role="checkbox"
-            :aria-checked="itemsModel[item[idAttribute]]"
-            @keydown.space.prevent="selectMultiple(item[idAttribute])"
-          >
-            <template v-if="variant === 'tags'">
-              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-            </template>
-            <template v-else-if="variant === 'tags-custom'">
-                <slot name="customItem" v-bind="item"></slot>
-            </template>
-          </li>
-        </ul>
-      </div>
-      <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
-    </template>
-  </div>
+              (!alwaysAsArray && item[idAttribute] === model) ||
+              item[idAttribute] === checkNull(model),
+            'lx-value-hidden': isElementHidden(item),
+          }"
+          :disabled="disabled"
+          tabindex="0"
+          @click="disabled ? null : selectSingle(item[idAttribute])"
+          role="radio"
+          :aria-checked="
+            itemsModel[item[idAttribute]] ||
+              (!alwaysAsArray && item[idAttribute] === model) ||
+              item[idAttribute] === checkNull(model)
+          "
+          @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
+        >
+          <template v-if="variant === 'tags'">
+            <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+          </template>
+          <template v-else-if="variant === 'tags-custom'">
+              <slot name="customItem" v-bind="item"></slot>
+          </template>
+        </li>
+      </ul>
+      <ul class="lx-tag-set" v-if="kind === 'multiple'" :class="[{'lx-tag-custom': variant === 'tags-custom'}]">
+        <li
+          v-for="item in itemsDisplay"
+          v-on:focus="onFocus"
+          :key="item[idAttribute]"
+          class="lx-tag"
+          :title="item[descriptionAttribute]"
+          :id="getItemId(item[idAttribute])"
+          :group-id="groupId"
+          :class="{
+            'lx-tags-tile-selected': itemsModel[item[idAttribute]],
+            'lx-value-hidden': isElementHidden(item),
+          }"
+          :disabled="disabled"
+          tabindex="0"
+          @click="selectMultiple(item[idAttribute])"
+          role="checkbox"
+          :aria-checked="itemsModel[item[idAttribute]]"
+          @keydown.space.prevent="selectMultiple(item[idAttribute])"
+        >
+          <template v-if="variant === 'tags'">
+            <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+          </template>
+          <template v-else-if="variant === 'tags-custom'">
+              <slot name="customItem" v-bind="item"></slot>
+          </template>
+        </li>
+      </ul>
+    </div>
+    <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
+  </template>
 </template>

@@ -17,7 +17,7 @@ const props = defineProps({
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: 'description' },
-  groupId: { type: String, default: () => generateUUID() },
+  groupId: { type: String, default: null },
   kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   variant: { type: String, default: 'default' },
