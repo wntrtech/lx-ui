@@ -6,6 +6,7 @@ import LxValuePickerDropDown from '@/components/valuePickers/Dropdown.vue';
 import LxValuePickerTileTag from '@/components/valuePickers/TileTag.vue';
 import LxValuePickerRotator from '@/components/valuePickers/Rotator.vue';
 import LxValuePickerIndicator from '@/components/valuePickers/Indicator.vue';
+import LxValuePickerHorizontal from '@/components/valuePickers/Horizontal.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -18,7 +19,7 @@ const props = defineProps({
   categoryAttribute: { type: String, default: 'category' },
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
-  variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'rotator' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'|| 'rotator-custom' || 'indicator'
+  variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'rotator' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'|| 'rotator-custom' || 'indicator' || 'horizontal' || 'horizontal-custom'
   kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   placeholder: { type: String, default: null },
@@ -115,7 +116,9 @@ onMounted(() => {
       props.variant === 'tags' ||
       props.variant === 'tiles-custom' ||
       props.variant === 'tags-custom' ||
-      props.variant === 'indicator'
+      props.variant === 'indicator' ||
+      props.variant === 'horizontal' ||
+      props.variant === 'horizontal-custom'
     ) {
       updateModelValue(null);
     } else {
@@ -281,5 +284,33 @@ onMounted(() => {
         <slot name="customItem" v-bind="slotData" />
       </template>
     </LxValuePickerIndicator>
+    <LxValuePickerHorizontal
+      v-if="variant === 'horizontal' || variant === 'horizontal-custom'"
+      v-model="model"
+      :items="stringifiedItems"
+      :idAttribute="idAttribute"
+      :nameAttribute="nameAttribute"
+      :descriptionAttribute="descriptionAttribute"
+      :groupId="groupId"
+      :kind="kind"
+      :disabled="disabled"
+      :invalid="invalid"
+      :invalidation-message="invalidationMessage"
+      :texts="texts"
+      :placeholder="placeholder"
+      :tooltip="tooltip"
+      :has-search="hasSearch"
+      :always-as-array="alwaysAsArray"
+      :nullable="nullable"
+      :readOnly="readOnly"
+      :readOnlyRenderType="readOnlyRenderType"
+      :variant="variant"
+      :search-attributes="searchAttributes"
+      :hasSelectAll="hasSelectAll"
+    >
+      <template v-slot:customItem="slotData" v-if="$slots.customItem">
+        <slot name="customItem" v-bind="slotData" />
+      </template>
+    </LxValuePickerHorizontal>
   </div>
 </template>
