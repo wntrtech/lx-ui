@@ -22,6 +22,7 @@ const props = defineProps({
   hasSearch: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
+  busy: { type: Boolean, default: false },
   readOnly: { type: Boolean, default: false },
   allowedFileExtensions: { type: Array, default: () => [] },
   maxFileSize: { type: Number, default: 30000000 },
@@ -364,7 +365,7 @@ async function uploadFiles(event) {
 }
 
 async function handleDrop(event) {
-  if (props.disabled || props.loading) {
+  if (props.disabled || props.loading || props.busy) {
     return;
   }
   event.preventDefault();
@@ -473,6 +474,7 @@ const showCameraButton = computed(() => {
           icon="upload"
           :disabled="props.disabled"
           :loading="props.loading"
+          :busy="props.busy"
           @click="triggerFileUpload"
         />
         <LxButton
@@ -481,7 +483,7 @@ const showCameraButton = computed(() => {
           icon="camera"
           kind="tertiary"
           :title="texts.useCamera"
-          :disabled="disabled || loading"
+          :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
       </div>
@@ -490,7 +492,7 @@ const showCameraButton = computed(() => {
           class="lx-draggable-upload-wrapper"
           :class="[
             { 'lx-dragging': isDragging },
-            { 'lx-disabled': props.disabled || props.loading },
+            { 'lx-disabled': props.disabled || props.loading || props.busy },
           ]"
           @dragover.prevent="handleDragOver"
           @dragleave="handleDragLeave"
@@ -508,7 +510,7 @@ const showCameraButton = computed(() => {
           icon="camera"
           kind="tertiary"
           :title="texts.useCamera"
-          :disabled="disabled || loading"
+          :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
       </div>
@@ -532,6 +534,7 @@ const showCameraButton = computed(() => {
           @click="triggerFileUpload"
           :disabled="props.disabled"
           :loading="props.loading"
+          :busy="props.busy"
         />
         <LxButton
           v-if="showCameraButton"
@@ -539,7 +542,7 @@ const showCameraButton = computed(() => {
           icon="camera"
           kind="tertiary"
           :title="texts.useCamera"
-          :disabled="disabled || loading"
+          :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
       </div>
@@ -548,7 +551,7 @@ const showCameraButton = computed(() => {
           class="lx-draggable-upload-wrapper"
           :class="[
             { 'lx-dragging': isDragging },
-            { 'lx-disabled': props.disabled || props.loading },
+            { 'lx-disabled': props.disabled || props.loading || props.busy },
           ]"
           @dragover.prevent="handleDragOver"
           @dragleave="handleDragLeave"
@@ -566,7 +569,7 @@ const showCameraButton = computed(() => {
           icon="camera"
           kind="tertiary"
           :title="texts.useCamera"
-          :disabled="disabled || loading"
+          :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
       </div>
@@ -587,6 +590,7 @@ const showCameraButton = computed(() => {
             :hasDownloadButton="props.hasDownloadButton"
             :disabled="props.disabled"
             :loading="props.loading"
+            :busy="props.busy"
             :showMeta="props.showMeta"
             :read-only="props.readOnly"
             :texts="props.texts"

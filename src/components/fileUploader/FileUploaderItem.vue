@@ -14,6 +14,7 @@ const props = defineProps({
   mode: { type: String, default: 'default' }, // default, compact
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
+  busy: { type: Boolean, default: false },
   readOnly: { type: Boolean, default: false },
   hasDownloadButton: { type: Boolean, default: false },
   showMeta: { type: Boolean, default: true },
@@ -43,17 +44,17 @@ const props = defineProps({
 const emits = defineEmits(['downloadFile', 'openModal', 'removeFile']);
 
 function downloadFile(id) {
-  if (!props.disabled && !props.loading) {
+  if (!props.disabled && !props.loading && !props.busy) {
     emits('downloadFile', id);
   }
 }
 function openModal(id) {
-  if (!props.disabled && !props.loading) {
+  if (!props.disabled && !props.loading && !props.busy) {
     emits('openModal', id);
   }
 }
 function removeFile(id) {
-  if (!props.disabled && !props.loading) {
+  if (!props.disabled && !props.loading && !props.busy) {
     emits('removeFile', id);
   }
 }
@@ -96,7 +97,8 @@ const additionalInfoTitle = computed(() => {
       <div
         class="lx-list-item"
         :class="{
-          'lx-list-item-interactive': props.hasDownloadButton && !props.disabled && !props.loading,
+          'lx-list-item-interactive':
+            props.hasDownloadButton && !props.disabled && !props.loading && !props.busy,
         }"
         :title="props.hasDownloadButton ? props.texts?.download : ''"
         @keyup.space="downloadFile(props.customItem.id)"
@@ -133,6 +135,7 @@ const additionalInfoTitle = computed(() => {
           :destructive="true"
           :disabled="props.disabled"
           :loading="props.loading"
+          :busy="props.busy"
         ></LxButton>
       </div>
     </div>
@@ -187,6 +190,7 @@ const additionalInfoTitle = computed(() => {
                 :label="props.texts.infoButton"
                 :disabled="props.disabled"
                 :loading="props.loading"
+                :busy="props.busy"
                 icon="info"
                 :variant="infoButtonVariant"
                 :title="props.texts.infoButton"
@@ -225,6 +229,7 @@ const additionalInfoTitle = computed(() => {
               :label="props.texts.infoButton"
               :disabled="props.disabled"
               :loading="props.loading"
+              :busy="props.busy"
               icon="info"
               :variant="infoButtonVariant"
               :title="props.texts.infoButton"
@@ -253,7 +258,7 @@ const additionalInfoTitle = computed(() => {
             class="lx-list-item"
             :class="{
               'lx-list-item-interactive':
-                props.hasDownloadButton && !props.disabled && !props.loading,
+                props.hasDownloadButton && !props.disabled && !props.loading && !props.busy,
             }"
             :title="props.hasDownloadButton ? props.texts?.download : ''"
             @keyup.space="downloadFile(props.customItem.id)"
@@ -305,7 +310,7 @@ const additionalInfoTitle = computed(() => {
 
           <div class="lx-file-indicators" v-if="props.customItem.state">
             <LxLoader
-              v-if="props.customItem.state === 'loading'"
+              v-if="props.customItem.state === 'loading' || props.customItem.state === 'busy'"
               :loading="true"
               size="s"
             ></LxLoader>
@@ -323,6 +328,7 @@ const additionalInfoTitle = computed(() => {
               variant="icon-only"
               :disabled="props.disabled"
               :loading="props.loading"
+              :busy="props.busy"
               icon="info"
               :title="props.texts.infoButton"
               @click="openModal(props.customItem.id)"
@@ -337,6 +343,7 @@ const additionalInfoTitle = computed(() => {
               :destructive="true"
               :disabled="props.disabled"
               :loading="props.loading"
+              :busy="props.busy"
             ></LxButton>
           </div>
         </div>

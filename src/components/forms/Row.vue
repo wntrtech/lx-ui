@@ -250,6 +250,7 @@ const validatedColumnSpan = computed(() => {
             :icon="actionDefinitions?.[0]?.icon"
             :disabled="actionDefinitions?.[0]?.disabled"
             :loading="actionDefinitions?.[0]?.loading"
+            :busy="actionDefinitions?.[0]?.busy"
             :destructive="actionDefinitions?.[0]?.destructive"
             @click="actionClicked(id, actionDefinitions?.[0].id)"
           />
@@ -282,6 +283,7 @@ const validatedColumnSpan = computed(() => {
                 :icon="action?.icon"
                 :disabled="action?.disabled"
                 :loading="action?.loading"
+                :busy="action?.busy"
                 :destructive="action?.destructive"
                 @click="actionClicked(id, action.id)"
               />
@@ -340,6 +342,7 @@ const validatedColumnSpan = computed(() => {
             :icon="actionDefinitions?.[0]?.icon"
             :disabled="actionDefinitions?.[0]?.disabled"
             :loading="actionDefinitions?.[0]?.loading"
+            :busy="actionDefinitions?.[0]?.busy"
             :destructive="actionDefinitions?.[0]?.destructive"
             @click="actionClicked(id, actionDefinitions?.[0].id)"
           />
@@ -372,6 +375,7 @@ const validatedColumnSpan = computed(() => {
                 :icon="action?.icon"
                 :disabled="action?.disabled"
                 :loading="action?.loading"
+                :busy="action?.busy"
                 :destructive="action?.destructive"
                 @click="actionClicked(id, action.id)"
               />

@@ -1222,6 +1222,7 @@ watch(
                   :icon="action.icon"
                   :title="action.name"
                   :destructive="action.destructive"
+                  :busy="action.busy"
                   :disabled="
                     isDisabled || action.enableByAttribute ? !row[action.enableByAttribute] : false
                   "
@@ -1235,6 +1236,7 @@ watch(
                   :icon="actionDefinitions?.[0]?.icon"
                   :title="actionDefinitions?.[0]?.name"
                   :destructive="actionDefinitions?.[0]?.destructive"
+                  :busy="actionDefinitions?.[0]?.busy"
                   :disabled="
                     isDisabled || actionDefinitions?.[0]?.enableByAttribute
                       ? !row[actionDefinitions?.[0]?.enableByAttribute]
