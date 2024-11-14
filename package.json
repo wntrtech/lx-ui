@@ -83,6 +83,7 @@
     "pinia": "^2.1.7",
     "prosemirror-model": "^1.19.4",
     "prosemirror-state": "^1.4.3",
+    "qrcode.vue": "^3.6.0",
     "tiptap-markdown": "^0.8.9",
     "v-money3": "^3.24.0",
     "vue-country-flag-next": "^2.3.2",

@@ -4369,3 +4369,25 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-region .lx-rich-text-wrapper.lx-article code {
   background-color: var(--color-region-2);
 }
+
+/*LxQr*/
+.lx-qr-wrapper > svg{
+  height: 100%;
+  width: 100%;
+}
+
+.lx-qr-wrapper {
+  padding: 0.5rem;
+}
+
+.lx-qr-wrapper > svg > rect{
+  fill: var(--color-region); 
+}
+
+.lx-region .lx-qr-wrapper > svg > rect{
+  fill: var(--color-region-2); 
+}
+
+.lx-qr-wrapper > svg > path{
+  fill: var(--color-data); 
+}

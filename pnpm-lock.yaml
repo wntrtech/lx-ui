@@ -112,6 +112,9 @@ dependencies:
   prosemirror-state:
     specifier: ^1.4.3
     version: 1.4.3
+  qrcode.vue:
+    specifier: ^3.6.0
+    version: 3.6.0(vue@3.4.15)
   tiptap-markdown:
     specifier: ^0.8.9
     version: 0.8.9(@tiptap/core@2.1.12)
@@ -6270,6 +6273,14 @@ packages:
   /pure-rand@6.0.4:
     resolution: {integrity: sha512-LA0Y9kxMYv47GIPJy6MI84fqTd2HmYZI83W/kM/SkKfDlajnZYfmXFTxkbY+xSBPkLJxltMa9hIkmdc29eguMA==}
     dev: true
+
+  /qrcode.vue@3.6.0(vue@3.4.15):
+    resolution: {integrity: sha512-vQcl2fyHYHMjDO1GguCldJxepq2izQjBkDEEu9NENgfVKP6mv/e2SU62WbqYHGwTgWXLhxZ1NCD1dAZKHQq1fg==}
+    peerDependencies:
+      vue: ^3.0.0
+    dependencies:
+      vue: 3.4.15(typescript@5.5.4)
+    dev: false
 
   /querystringify@2.2.0:
     resolution: {integrity: sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==}
