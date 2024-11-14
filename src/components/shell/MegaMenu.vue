@@ -3,8 +3,10 @@ import { computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   items: { type: Array, default: () => [] },
   hasShowAll: { type: Boolean, default: false },
   groupDefinitions: { type: Array, default: null },
@@ -109,8 +111,8 @@ function getIconSet(item) {
     </div>
 
     <template v-slot:panel>
-      <div class="lx-mega-menu-container">
-        <ul class="primary-menu">
+      <div class="lx-mega-menu-container" :id="id">
+        <ul class="primary-menu" role="group">
           <li
             v-for="item in primaryItems"
             :key="item.id"
@@ -148,8 +150,14 @@ function getIconSet(item) {
         </ul>
 
         <div class="secondary-menu" v-if="groupedSecondaryItems?.length > 0">
-          <div v-for="group in groupedSecondaryItems" :key="group.id" class="secondary-menu-group">
-            <label :title="group.name">{{ group.name }}</label>
+          <div
+            v-for="group in groupedSecondaryItems"
+            :key="group.id"
+            class="secondary-menu-group"
+            role="group"
+            :aria-labelledby="`mm-${id}-${group.id}`"
+          >
+            <label :id="`mm-${id}-${group.id}`" :title="group.name">{{ group.name }}</label>
             <ul>
               <li
                 v-for="item in group.items"

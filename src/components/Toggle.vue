@@ -66,6 +66,12 @@ const tooltipValue = computed(() => {
   return res;
 });
 
+const hasSlots = computed(() => !!(slots.on || slots.off || slots.indeterminate || slots.default));
+
+function toggleValue() {
+  input.value?.click();
+}
+
 watch(model, () => {
   checkModelState();
 });
@@ -95,6 +101,8 @@ onMounted(() => {
       :aria-labelledby="labelledBy"
     >
       <lx-icon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
+      <!-- it's labelled by the label below, or if that's absent, by aria-label -->
+      <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label-->
       <input
         ref="input"
         type="checkbox"
@@ -106,57 +114,51 @@ onMounted(() => {
         :checked="model"
         :aria-checked="model"
         :aria-invalid="invalid"
+        :aria-label="!(size !== 's' && hasSlots) ? tooltipValue : null"
         role="switch"
         :disabled="disabled"
       />
-      <label
-        :for="idValue"
-        class="lx-toggle-label-wrapper"
-        :class="{ 'lx-toggle-read-only': readOnly }"
-      >
+      <div class="lx-toggle-label-wrapper" :class="{ 'lx-toggle-read-only': readOnly }">
         <template v-if="!readOnly">
-          <span class="lx-toggle-appearance"></span>
-          <span
-            class="lx-toggle-text"
-            v-if="
-              size !== 's' && ($slots.on || $slots.off || $slots.indeterminate || $slots.default)
-            "
-          >
-            <!-- Default slot -->
-            <slot></slot>
+          <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
+          <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
+          <span class="lx-toggle-appearance" @click="toggleValue" role="presentation" />
+          <label class="lx-toggle-text" v-if="size !== 's' && hasSlots" :for="idValue">
+            <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate"> <slot /> </span>
             <span v-show="model === null">
-              <slot name="indeterminate"></slot>
+              <slot name="indeterminate" />
             </span>
             <span v-show="model === false">
-              <slot name="off"></slot>
+              <slot name="off" />
             </span>
             <span v-show="model === true">
-              <slot name="on"></slot>
+              <slot name="on" />
             </span>
-          </span>
+          </label>
         </template>
         <template v-else>
           <span
             class="lx-toggle-text"
             v-if="!$slots.on && !$slots.off && !$slots.indeterminate && !$slots.default"
-            ><p class="lx-data">{{ formatValueBool(modelValue, booleanTexts) }}</p></span
           >
+            <p class="lx-data">{{ formatValueBool(modelValue, booleanTexts) }}</p>
+          </span>
           <span class="lx-toggle-text" v-else>
             <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate">
-              <p class="lx-data"><slot></slot>: {{ formatValueBool(modelValue, booleanTexts) }}</p>
+              <p class="lx-data"><slot />: {{ formatValueBool(modelValue, booleanTexts) }}</p>
             </span>
             <span v-show="model === null">
-              <slot name="indeterminate"></slot>
+              <slot name="indeterminate" />
             </span>
             <span v-show="model === false">
-              <slot name="off"></slot>
+              <slot name="off" />
             </span>
             <span v-show="model === true">
-              <slot name="on"></slot>
+              <slot name="on" />
             </span>
           </span>
         </template>
-      </label>
+      </div>
     </div>
     <div class="lx-invalidation-message">{{ invalidationMessage }}</div>
   </div>

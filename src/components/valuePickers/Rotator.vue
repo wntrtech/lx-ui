@@ -276,6 +276,11 @@ const queueItems = computed(() => {
             tag="ul"
             class="lx-rotator-set lx-input-area"
             :class="[{ 'lx-rotator-set-custom': variant === 'rotator-custom' }]"
+            tabindex="0"
+            role="button"
+            aria-live="polite"
+            @keydown.space.prevent="selectSingle(null)"
+            @click="selectSingle(null)"
           >
             <li v-for="item in queueItems" :key="item.key" class="lx-rotator-tag">
               <p class="lx-input-text" v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
