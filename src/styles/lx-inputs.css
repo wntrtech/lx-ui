@@ -2090,9 +2090,9 @@ input[type='range']:hover::-moz-range-thumb {
 .input-slider-container-wrapper {
   align-items: center;
   justify-content: center;
+  gap: 1rem;
   display: flex;
-  height: 40px;
-  width: 350px;
+  height: 2.5rem;
 }
 
 .input-slider-filled {
@@ -2106,7 +2106,7 @@ input[type='range']:hover::-moz-range-thumb {
 
 .input-slider-full {
   position: relative;
-  background-color: var(--color-background);
+  background-color: var(--color-chrome);
   margin-top: -0.2rem;
   width: 200px;
   height: 0.2rem;
@@ -2114,22 +2114,17 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .input-slider-container-wrapper .input-slider {
-  margin-left: 1rem;
-  margin-right: 1rem;
-  height: 30px;
-  width: 200px;
+  height: 1.75rem;
+  width: 12.5rem;
   position: relative;
 }
 
 .input-slider-range-label {
-  justify-content: center;
-  width: 1rem;
   font-family: var(--font-family-mono);
 }
 
 .input-slider-range-text {
-  width: 100px;
-  margin-left: 2rem;
+  width: 4.5rem;
 }
 
 /*** LxDrawPad styles***/
