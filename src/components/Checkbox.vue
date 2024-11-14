@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, inject } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 
@@ -11,7 +11,6 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   value: { type: String, default: 'none' },
   tabindex: { type: String, default: '0' },
-  labelId: { type: String, default: null },
 });
 
 const emits = defineEmits(['update:modelValue', 'click']);
@@ -38,9 +37,6 @@ onMounted(() => {
 const click = (e) => {
   emits('click', e);
 };
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 
 <template>
@@ -56,7 +52,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       :disabled="disabled"
       :value="value"
       :tabindex="tabindex"
-      :aria-labelledby="labelledBy"
       @click="click"
     />
     <label :for="idValue" class="lx-checkbox-label-wrapper">

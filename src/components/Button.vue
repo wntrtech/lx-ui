@@ -141,7 +141,6 @@ const accessibleTitle = computed(() => {
     :title="accessibleTitle"
     :disabled="isDisabled"
     :aria-disabled="isDisabled"
-    :aria-pressed="active ? active : null"
     :tabindex="tabindex"
   >
     <slot />

@@ -5,7 +5,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="lx-group" :class="props.class" role="group">
+  <div class="lx-group" :class="props.class">
     <slot />
   </div>
 </template>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, inject } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDown from '@/components/Dropdown.vue';
@@ -13,7 +13,6 @@ const props = defineProps({
   kind: { type: String, default: 'label' }, // result kind: label, icon
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
-  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -170,15 +169,11 @@ watch(
   },
   { immediate: true }
 );
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 
 <template>
   <div
     :class="[{ 'lx-day-input-wrapper': !readOnly }, { 'lx-day-input-readonly-wrapper': readOnly }]"
-    :labelId="labelledBy"
   >
     <p v-if="readOnly" class="lx-data" :title="computedTitle">{{ result }}</p>
 
@@ -205,7 +200,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         :disabled="disabled"
         :invalid="invalid"
         @update:modelValue="calculateResult"
-      />
+      ></LxDropDown>
     </template>
 
     <div class="lx-day-input-result-info-icon">

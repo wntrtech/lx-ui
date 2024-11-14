@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, computed, onMounted, watch, ref, inject } from 'vue';
+import { shallowRef, computed, onMounted, watch, ref } from 'vue';
 import { IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
 import LxIcon from '@/components/Icon.vue';
@@ -49,7 +49,6 @@ const props = defineProps({
   scale: { type: [Number, String], default: 2 },
   signed: { type: Boolean, default: false },
   kind: { type: String, default: 'default' },
-  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -347,9 +346,6 @@ function onBlur() {
 function isReadOnlyEmail() {
   return props.mask === 'email' && props.readOnly && isEmail(model.value);
 }
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 <template>
   <div class="lx-field-wrapper">
@@ -365,7 +361,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         { 'lx-disabled': disabled },
       ]"
       :data-invalid="invalid ? '' : null"
-      :aria-labelledby="labelledBy"
       v-if="!readOnly"
     >
       <div v-if="invalid" class="lx-invalidation-icon-wrapper">
@@ -416,7 +411,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         :placeholder="placeholder"
         class="lx-text-input lx-input-area"
         :class="[{ 'lx-invalid': invalid }, { 'lx-search-input': props.kind === 'search' }]"
-      />
+      ></Money3Component>
     </div>
     <div class="lx-invalidation-message" v-if="invalid && !readOnly">{{ invalidationMessage }}</div>
   </div>

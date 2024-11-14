@@ -322,7 +322,7 @@ function triggerShowAllClick() {
           />
         </div>
         <template v-slot:panel>
-          <div class="lx-button-set" role="group">
+          <div class="lx-button-set">
             <LxButton
               v-for="item in availableThemes"
               :key="item"
@@ -346,18 +346,20 @@ function triggerShowAllClick() {
 
     <div class="lx-alert-menu" v-if="hasAlerts">
       <LxDropDownMenu v-if="alertsKind === 'menu' || alertsKind === 'combo'">
-        <LxButton
-          variant="icon-only"
-          kind="ghost"
-          icon="notifications"
-          :title="texts.alertsTitle"
-          :badge="alertsCount"
-          :disabled="headerNavDisable"
-          :badgeType="alertLevelToBadgeType"
-        />
+        <div class="lx-toolbar">
+          <LxButton
+            variant="icon-only"
+            kind="ghost"
+            icon="notifications"
+            :title="texts.alertsTitle"
+            :badge="alertsCount"
+            :disabled="headerNavDisable"
+            :badgeType="alertLevelToBadgeType"
+          />
+        </div>
 
         <template v-if="clickSafeAlerts" v-slot:clickSafePanel>
-          <div class="lx-button-set" role="toolbar">
+          <div class="lx-button-set">
             <LxButton
               v-if="alertsKind === 'combo'"
               kind="ghost"
@@ -367,13 +369,8 @@ function triggerShowAllClick() {
               icon="open"
               @click="alertsClicked"
             />
-          </div>
-          <ol role="group" aria-live="polite">
-            <li
-              :aria-labelledby="`alert-${item?.id}-name`"
-              :aria-describedby="`alert-${item?.id}-desc`"
+            <div
               class="lx-alert-button"
-              :role="item?.clickable ? 'button' : null"
               :class="[
                 { 'lx-alert-success': item?.level === 'success' },
                 { 'lx-alert-info': item?.level === 'info' },
@@ -382,7 +379,7 @@ function triggerShowAllClick() {
                 { 'lx-alert-clickable': item?.clickable },
               ]"
               v-for="item in alerts"
-              :key="item?.id"
+              :key="item?.alerts"
               @click="alertItemClicked(item)"
               @keyup.enter="alertItemClicked(item)"
               @keyup.space="alertItemClicked(item)"
@@ -392,20 +389,18 @@ function triggerShowAllClick() {
               </div>
               <div class="lx-alert-data">
                 <div class="lx-alert-header">
-                  <p class="lx-data" :id="`alert-${item?.id}-name`">{{ item?.name }}</p>
+                  <p class="lx-data">{{ item?.name }}</p>
                 </div>
                 <div class="lx-alert-description">
-                  <p class="lx-description" :id="`alert-${item?.id}-desc`">
-                    {{ item?.description }}
-                  </p>
+                  <p class="lx-description">{{ item?.description }}</p>
                 </div>
               </div>
-            </li>
-          </ol>
+            </div>
+          </div>
         </template>
 
         <template v-else v-slot:panel>
-          <div class="lx-button-set" role="toolbar">
+          <div class="lx-button-set">
             <LxButton
               v-if="alertsKind === 'combo'"
               kind="ghost"
@@ -415,13 +410,8 @@ function triggerShowAllClick() {
               icon="open"
               @click="alertsClicked"
             />
-          </div>
-          <ol role="group" aria-live="polite">
-            <li
-              :aria-labelledby="`alert-${item?.id}-name`"
-              :aria-describedby="`alert-${item?.id}-desc`"
+            <div
               class="lx-alert-button"
-              :role="item?.clickable ? 'button' : null"
               :class="[
                 { 'lx-alert-success': item?.level === 'success' },
                 { 'lx-alert-info': item?.level === 'info' },
@@ -430,7 +420,7 @@ function triggerShowAllClick() {
                 { 'lx-alert-clickable': item?.clickable },
               ]"
               v-for="item in alerts"
-              :key="item?.id"
+              :key="item?.alerts"
               @click="alertItemClicked(item)"
               @keyup.enter="alertItemClicked(item)"
               @keyup.space="alertItemClicked(item)"
@@ -440,16 +430,14 @@ function triggerShowAllClick() {
               </div>
               <div class="lx-alert-data">
                 <div class="lx-alert-header">
-                  <p class="lx-data" :id="`alert-${item?.id}-name`">{{ item?.name }}</p>
+                  <p class="lx-data">{{ item?.name }}</p>
                 </div>
                 <div class="lx-alert-description">
-                  <p class="lx-description" :id="`alert-${item?.id}-desc`">
-                    {{ item?.description }}
-                  </p>
+                  <p class="lx-description">{{ item?.description }}</p>
                 </div>
               </div>
-            </li>
-          </ol>
+            </div>
+          </div>
         </template>
       </LxDropDownMenu>
 
@@ -468,7 +456,14 @@ function triggerShowAllClick() {
 
     <div class="lx-language-menu" v-if="hasLanguagePicker">
       <LxDropDownMenu>
-        <LxButton variant="icon-only" kind="ghost" icon="language" :title="texts.languagesTitle" />
+        <div class="lx-toolbar">
+          <LxButton
+            variant="icon-only"
+            kind="ghost"
+            icon="language"
+            :title="texts.languagesTitle"
+          />
+        </div>
 
         <template v-slot:panel>
           <div class="lx-button-set">
@@ -552,7 +547,7 @@ function triggerShowAllClick() {
             @click="openContextPersonModal"
           ></LxButton>
 
-          <ul class="lx-group" role="group">
+          <ul class="lx-group">
             <li v-for="item in navItemsUserMenu" :key="item.label">
               <LxButton
                 kind="ghost"
@@ -563,7 +558,7 @@ function triggerShowAllClick() {
               />
             </li>
           </ul>
-          <ul class="lx-group" role="group">
+          <ul class="lx-group">
             <li>
               <LxButton
                 kind="ghost"

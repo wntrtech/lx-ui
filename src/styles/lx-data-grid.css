@@ -852,26 +852,6 @@
   .lx .lx-data-grid-wrapper {
     background-color: transparent;
   }
-
-  .lx-data-grid-wrapper .lx-group.action-definitions-small .lx-dropdown-panel{
-    background-color: var(--color-background);
-  }
-  
-  .lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-group.action-definitions-small  .lx-dropdown-panel  .lx-button.lx-button-ghost .lx-button-content>.lx-button-label{
-    color: var(--color-data);
-  }
-  
-  .lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-group.action-definitions-small .lx-dropdown-panel .lx-button.lx-button-ghost svg{
-    fill: var(--color-data);
-  }
-  
-  .lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-group.action-definitions-small .lx-dropdown-panel .lx-button.lx-button-ghost:hover svg{
-    fill: var(--color-interactive-hover-foreground);
-  }
-  
-  .lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-group.action-definitions-small .lx-dropdown-panel .lx-button.lx-button-ghost:hover .lx-button-content>.lx-button-label{
-    color: var(--color-interactive-hover-foreground);
-  }
 }
 
 @media (max-width: 600px) {

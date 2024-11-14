@@ -326,16 +326,6 @@
   border-color: var(--color-header-hover-background);
 }
 
-.lx-layout .lx-alert-menu ol {
-  padding-inline-start: 0;
-  gap: var(--gap-buttons);
-  display: grid;
-}
-
-.lx-layout .lx-alert-menu .lx-alert-clickable {
-  cursor: pointer;
-}
-
 .lx .lx-layout .lx-header>.lx-right-group .lx-help-button .lx-button:hover>svg,
 .lx .lx-layout .lx-header>.lx-right-group .lx-theme-menu .lx-dropdown-toggler .lx-button:hover>svg,
 .lx .lx-layout .lx-header>.lx-right-group .lx-alert-menu .lx-dropdown-toggler .lx-button:hover>svg,

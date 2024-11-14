@@ -62,11 +62,11 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         <slot />
       </div>
       <template #content>
-        <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel" role="group">
+        <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel">
           <slot name="clickSafePanel"> </slot>
         </div>
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
-        <div v-if="$slots.panel" @click="closeMenu" class="lx-dropdown-panel" role="group">
+        <div v-if="$slots.panel" @click="closeMenu" class="lx-dropdown-panel">
           <slot name="panel"> </slot>
         </div>
       </template>

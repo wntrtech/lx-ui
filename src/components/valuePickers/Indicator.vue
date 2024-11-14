@@ -8,7 +8,7 @@ import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 
 const props = defineProps({
-  id: { type: String, default: () => generateUUID() },
+  id: { type: String, default: null },
   modelValue: { type: [Array, String], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -32,7 +32,6 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
-  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -169,11 +168,6 @@ function getIconSet(item, iconSetAttribute) {
 function getItemId(id) {
   return `${id}---${generateUUID()}`;
 }
-
-function getLabelId(id) {
-  return `${id}-${props.id}-icon`;
-}
-
 function selectSingle(id) {
   if (props.disabled || props.readOnly) return;
 
@@ -408,7 +402,6 @@ const indicatorTooltips = computed(() => {
       v-if="variant === 'indicator'"
       :title="tooltip"
       :aria-invalid="invalid"
-      :aria-labelledby="labelId"
     >
       <ul class="lx-indicator-set" v-if="kind === 'single'">
         <li
@@ -434,17 +427,14 @@ const indicatorTooltips = computed(() => {
               (!alwaysAsArray && item[idAttribute] === model) ||
               item[idAttribute] === checkNull(model)
           "
-          :aria-labelledby="getLabelId(item[idAttribute])"
           @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
         >
           <template v-if="variant === 'indicator'">
             <LxIcon
-              :id="getLabelId(item[idAttribute])"
               :value="getIcon(item, iconAttribute)"
               :title="indicatorTooltips[item[idAttribute]]"
               :iconSet="getIconSet(item, iconSetAttribute)"
-              class="lx-indicator-icon"
-              />
+              class="lx-indicator-icon"/>
           </template>
         </li>
       </ul>
@@ -468,12 +458,10 @@ const indicatorTooltips = computed(() => {
           @click="selectMultiple(item[idAttribute])"
           role="checkbox"
           :aria-checked="itemsModel[item[idAttribute]]"
-          :aria-labelledby="getLabelId(item[idAttribute])"
           @keydown.space.prevent="selectMultiple(item[idAttribute])"
         >
           <template v-if="variant === 'indicator'">
-            <LxIcon
-              :id="getLabelId(item[idAttribute])"
+            <LxIcon 
               :value="getIcon(item, iconAttribute)"
               :title="indicatorTooltips[item[idAttribute]]"
               :iconSet="getIconSet(item, iconSetAttribute)"

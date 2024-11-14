@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, inject } from 'vue';
+import { ref, computed, watch } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 
 const props = defineProps({
@@ -11,7 +11,6 @@ const props = defineProps({
   stepMultiplier: { type: Number, default: 5 },
   hasInput: { type: Boolean, default: false },
   readOnly: { type: Boolean, default: false },
-  labelId: { type: String, default: null },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -64,14 +63,11 @@ function onFocus() {
 function deFocus() {
   color.value = '--color-data';
 }
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 <template>
   <div class="lx-field-wrapper">
     <p v-if="readOnly" class="lx-data">{{ model }}</p>
-    <div class="input-slider-container-wrapper" v-if="!readOnly" :aria-labelledby="labelledBy">
+    <div class="input-slider-container-wrapper" v-if="!readOnly">
       <div class="input-slider-range-label">
         <p>{{ props.min }}</p>
       </div>

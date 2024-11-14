@@ -16,7 +16,7 @@ export default {
       this.isOpen = true;
     },
     pushSimple(title, message, primaryCallback) {
-      this.push(title, message, null, null, primaryCallback, () => this.confirm());
+      this.push(title, message, null, null, primaryCallback, null);
     },
     async confirm(callback) {
       if (callback) {

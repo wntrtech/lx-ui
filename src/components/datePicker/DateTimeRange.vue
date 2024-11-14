@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount, ref, inject } from 'vue';
+import { computed, onBeforeMount } from 'vue';
 
 import useLx from '@/hooks/useLx';
 import { formatDateJSON, formatDate, parseDate } from '@/utils/dateUtils';
@@ -33,7 +33,6 @@ const props = defineProps({
   locale: { type: Object, default: () => useLx().getGlobals()?.locale },
   rangeMonth: { type: String, default: 'next' }, // next, previous
   clearIfNotExact: { type: Boolean, default: false },
-  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -73,7 +72,7 @@ const localeMasks = computed(() => {
 });
 
 function updateStartValue(startValue) {
-  if (props.kind === 'date' || props.kind === 'legacy') {
+  if (props.kind === 'date') {
     const nv = formatDateJSON(startValue);
     emits('update:startDate', nv);
   } else if (props.kind === 'month') {
@@ -92,7 +91,7 @@ function updateStartValue(startValue) {
 }
 
 function updateEndValue(endValue) {
-  if (props.kind === 'date' || props.kind === 'legacy') {
+  if (props.kind === 'date') {
     const nv = formatDateJSON(endValue);
     emits('update:endDate', nv);
   } else if (props.kind === 'month') {
@@ -236,36 +235,6 @@ function getNameEnd() {
   return props.endDate;
 }
 
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
-
-// Computed properties to handle individual updates for start and end dates
-const modelStart = computed({
-  get: () => parseDate(props.startDate),
-  set: (value) => {
-    if (value) {
-      updateStartValue(value);
-    } else {
-      emits('update:startDate', null);
-    }
-  },
-});
-
-const modelEnd = computed({
-  get: () => parseDate(props.endDate),
-  set: (value) => {
-    if (value) {
-      updateEndValue(value);
-    } else {
-      emits('update:endDate', null);
-    }
-  },
-});
-
-// Conditional min and max dates for each picker
-const startMaxDate = computed(() => modelEnd.value || props.maxDate);
-const endMinDate = computed(() => modelStart.value || props.minDate);
-
 onBeforeMount(() => {
   if (props.startDate && props.endDate && props.endDate < props.startDate) {
     model.value = {
@@ -300,10 +269,8 @@ onBeforeMount(() => {
         ]"
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
-        :aria-labelledby="labelledBy"
       >
         <LxDatePicker
-          v-if="kind !== 'legacy'"
           :id="id"
           v-model="model"
           :mode="kind"
@@ -320,41 +287,6 @@ onBeforeMount(() => {
           :clearIfNotExact="clearIfNotExact"
           :texts="texts"
         />
-
-        <div v-if="kind === 'legacy'" class="legacy-pickers-wrapper">
-          <LxDatePicker
-            :id="id"
-            v-model="modelStart"
-            :masks="localeMasks"
-            :placeholder="placeholder"
-            :disabled="disabled"
-            :invalid="invalid"
-            :invalidationMessage="invalidationMessage"
-            :min-date="minDate"
-            :max-date="startMaxDate"
-            :locale="localeComputed"
-            :first-day-of-the-week="localeFirstDay"
-            :clearIfNotExact="clearIfNotExact"
-            :texts="texts"
-          />
-
-          <span class="lx-date-time-range-separator">–</span>
-
-          <LxDatePicker
-            :id="id"
-            v-model="modelEnd"
-            :masks="localeMasks"
-            :placeholder="placeholder"
-            :disabled="disabled"
-            :invalid="invalid"
-            :min-date="endMinDate"
-            :max-date="maxDate"
-            :locale="localeComputed"
-            :first-day-of-the-week="localeFirstDay"
-            :clearIfNotExact="clearIfNotExact"
-            :texts="texts"
-          />
-        </div>
       </div>
     </template>
   </div>

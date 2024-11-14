@@ -44,7 +44,6 @@ export { default as LxNotification } from '@/components/Notification.vue';
 export { default as LxNumberSlider } from '@/components/NumberSlider.vue';
 export { default as LxPlaceholder } from '@/components/forms/Placeholder.vue';
 export { default as LxPersonDisplay } from '@/components/PersonDisplay.vue';
-export { default as LxQr } from '@/components/Qr.vue';
 export { default as LxQrScanner } from '@/components/QrScanner.vue';
 export { default as LxRatings } from '@/components/Ratings.vue';
 export { default as LxRadioButton } from '@/components/RadioButton.vue';

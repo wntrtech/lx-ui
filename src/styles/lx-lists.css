@@ -143,10 +143,7 @@
 }
 
 .lx .lx-draggable-group-list-item:has(.lx-list-item.lx-selected) .lx-handle,
-.lx-master-detail-list .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
-.lx-list:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
-.tree-item:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
-.tree-list:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
+.lx:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
 .lx .lx-list-item-container:has(.lx-list-item.lx-selected) {
   background-color: var(--color-list-selected-background);
   border-color: var(--color-list-selected-border);

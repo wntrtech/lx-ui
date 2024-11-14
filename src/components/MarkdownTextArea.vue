@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, inject } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import { Editor, EditorContent } from '@tiptap/vue-3';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -51,7 +51,6 @@ const props = defineProps({
   showHeadingPicker: { type: Boolean, default: false },
   imageMaxSize: { type: Number, default: 3000000 }, // 3MB
   dictionary: { type: Object, default: null },
-  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -490,9 +489,6 @@ const imageInputTypes = [
   { id: 'url', name: props.texts.inputTypeUrl },
   { id: 'fileUploader', name: props.texts.inputTypeFile },
 ];
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 
 <template>
@@ -903,7 +899,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :title="tooltip"
           role="textbox"
           :aria-invalid="invalid"
-          :aria-labelledby="labelledBy"
         />
         <div v-if="invalid" class="lx-invalidation-icon-wrapper">
           <LxIcon customClass="lx-invalidation-icon" value="invalid" />

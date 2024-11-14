@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, inject } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 
 const props = defineProps({
@@ -14,7 +14,6 @@ const props = defineProps({
   maxlength: { type: Number, default: null },
   dynamicHeight: { type: Boolean, default: false },
   tooltip: { type: String, default: null },
-  labelId: { type: String, default: null },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -52,10 +51,6 @@ watch(
 function focus() {
   if (textarea.value !== null && textarea.value !== undefined) textarea.value.focus();
 }
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
-
 defineExpose({ focus });
 </script>
 
@@ -63,11 +58,7 @@ defineExpose({ focus });
   <div class="lx-field-wrapper">
     <p v-if="props.readOnly" class="lx-data">{{ model }} <span v-if="!model">—</span></p>
     <template v-else>
-      <div
-        class="lx-text-area-wrapper"
-        :data-invalid="invalid ? '' : null"
-        :aria-labelledby="labelledBy"
-      >
+      <div class="lx-text-area-wrapper" :data-invalid="invalid ? '' : null">
         <div
           class="lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
@@ -90,7 +81,7 @@ defineExpose({ focus });
             :maxlength="props.maxlength"
             :title="props.tooltip"
             @input="triggerResize"
-          />
+          ></textarea>
 
           <!-- Hidden template textarea for height calculation -->
           <label class="lx-visually-hidden" :for="props.id"></label>
@@ -101,7 +92,7 @@ defineExpose({ focus });
             :id="props.id"
             readonly
             :tabindex="-1"
-          />
+          ></textarea>
 
           <div v-if="invalid" class="lx-invalidation-icon-wrapper">
             <LxIcon customClass="lx-invalidation-icon" value="invalid" />

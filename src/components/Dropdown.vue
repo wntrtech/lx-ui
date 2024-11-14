@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted, watch, nextTick, inject } from 'vue';
+import { computed, ref, onMounted, watch, nextTick } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxStateDisplay from '@/components/StateDisplay.vue';
 import LxFlag from '@/components/Flag.vue';
@@ -23,7 +23,6 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
-  labelId: { type: String, default: null },
 });
 
 const emits = defineEmits(['update:modelValue', 'change']);
@@ -283,9 +282,6 @@ function isItemSelected(item) {
   );
 }
 
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
-
 onMounted(() => {
   if (props.id) {
     idValue.value = props.id;
@@ -325,7 +321,6 @@ onMounted(() => {
           ]"
           :title="tooltip"
           :disabled="isDisabled"
-          :aria-labelledby="labelledBy"
           @change="change($event)"
         >
           <option disabled value="" v-show="false" class="placeholder-select">
@@ -366,7 +361,6 @@ onMounted(() => {
         role="combobox"
         :aria-expanded="menuOpen"
         aria-controls="popper-id"
-        :aria-labelledby="labelledBy"
       >
         <Popper
           id="popper-id"

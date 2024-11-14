@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, nextTick, computed, watch, inject } from 'vue';
+import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -17,7 +17,6 @@ const props = defineProps({
   cameraSwitcherMode: { type: String, default: 'list' }, // list || toggle
   hasFlashlightToggle: { type: Boolean, default: false },
   showAlerts: { type: Boolean, default: true },
-  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -168,9 +167,6 @@ const showScanner = computed(() => {
   return !loading.value && !refreshError.value;
 });
 
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
-
 onMounted(async () => {
   await getCameraDevices();
   switchCamera(camerasList.value?.[0]);
@@ -178,11 +174,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div
-    class="lx-qr-scanner-wrapper"
-    :class="{ 'drag-over': dragOver }"
-    :aria-labelledby="labelledBy"
-  >
+  <div class="lx-qr-scanner-wrapper" :class="{ 'drag-over': dragOver }">
     <div
       class="lx-toolbar"
       v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"

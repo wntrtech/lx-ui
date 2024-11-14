@@ -2,6 +2,10 @@
   font-family: var(--font-family);
 }
 
+.lx-datepicker-default .lx-datepicker-input-container.range .lx-date-time-picker {
+  width: 10rem
+}
+
 .lx-datepicker-default .lx-datepicker-input-container.range.month-year .lx-date-time-picker {
   width: var(--input-date-time-width)
 }
@@ -36,17 +40,7 @@
 .lx-datepicker-default .lx-datepicker-input-container .lx-date-time-range-separator {
   display: flex;
   align-items: center;
-  padding: 0 0.5rem;
-}
-
-.lx-date-time-picker-wrapper.lx-date-time-range-wrapper .legacy-pickers-wrapper .lx-date-time-range-separator {
-  display: flex;
-  padding: 0 0.5rem;
-  margin-top: 0.55rem;
-}
-
-.lx-date-time-picker-wrapper.lx-date-time-range-wrapper .legacy-pickers-wrapper {
-  display: flex;
+  padding: 0 0.5rem 0 0.5rem;
 }
 
 .lx-datepicker-default .lx-calendar-container {
@@ -1049,14 +1043,6 @@
 
   .lx-datepicker-default .lx-time-picker-time-list::after {
     top: 22.1rem;
-  }
-
-  .lx-date-time-picker-wrapper.lx-date-time-range-wrapper .legacy-pickers-wrapper {
-    display: block;
-  }
-
-  .lx-date-time-picker-wrapper.lx-date-time-range-wrapper .legacy-pickers-wrapper .lx-date-time-range-separator {
-    margin-top: 0;
   }
 }
 

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, ref } from 'vue';
+import { computed } from 'vue';
 
 import {
   parseDate,
@@ -42,7 +42,6 @@ const props = defineProps({
   dictionary: { type: Array, default: () => [] },
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
-  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -269,9 +268,6 @@ const mode = computed(() => {
       return props.kind;
   }
 });
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 
 <template>
@@ -296,7 +292,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
         :title="tooltip"
-        :aria-labelledby="labelledBy"
       >
         <LxDatePicker
           :id="id"

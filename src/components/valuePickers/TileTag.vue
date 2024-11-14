@@ -29,7 +29,6 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
-  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -388,7 +387,6 @@ function selectAll() {
           kind="search"
           :placeholder="texts.searchPlaceholder"
           role="search"
-          :aria-labelledby="labelId"
         />
         <lx-button
           v-if="query && hasSearch"
@@ -407,7 +405,6 @@ function selectAll() {
         role="radiogroup"
         :aria-invalid="invalid"
         :title="tooltip"
-        :aria-labelledby="labelId"
       >
         <div v-for="item in itemsDisplay" :key="item[idAttribute]">
           <div
@@ -455,7 +452,7 @@ function selectAll() {
               </div>
             </template>
             <div class="lx-value-picker-tile-header" v-else-if="variant === 'tiles-custom'">
-                <slot name="customItem" v-bind="item" />
+                <slot name="customItem" v-bind="item"></slot>
               <div class="lx-value-picker-icon">
                 <LxIcon
                   v-if="
@@ -502,7 +499,7 @@ function selectAll() {
             </template>
             <template v-else-if="variant === 'tiles-custom'">
               <div class="lx-value-picker-tile-header">
-                  <slot name="customItem" v-bind="item" />
+                  <slot name="customItem" v-bind="item"></slot>
                 <div class="lx-value-picker-icon">
                   <LxIcon v-if="itemsModel[item[idAttribute]]" value="selected" />
                   <LxIcon v-else value="unselected" />
@@ -512,7 +509,6 @@ function selectAll() {
           </div>
         </div>
       </div>
-    
       <div
         class="lx-value-picker-tags"
         :class="[{ 'lx-invalid': invalid }]"
@@ -545,14 +541,13 @@ function selectAll() {
                 (!alwaysAsArray && item[idAttribute] === model) ||
                 item[idAttribute] === checkNull(model)
             "
-
             @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
           >
             <template v-if="variant === 'tags'">
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
             </template>
             <template v-else-if="variant === 'tags-custom'">
-                <slot name="customItem" v-bind="item" />
+                <slot name="customItem" v-bind="item"></slot>
             </template>
           </li>
         </ul>

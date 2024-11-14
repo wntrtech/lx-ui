@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, inject } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { generateUUID } from '@/utils/stringUtils';
@@ -34,7 +34,6 @@ const props = defineProps({
   hasFlashlightToggle: { type: Boolean, default: false },
   imageSize: { type: String, default: 'default' }, // default || max
   preferencesId: { type: String, default: 'lx-camera-settings' },
-  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -446,9 +445,6 @@ const showCameraButton = computed(() => {
       lowerCaseExtensions.length === 0)
   );
 });
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 <template>
   <div
@@ -460,7 +456,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       { compact: props.mode === 'compact' },
       { 'lx-disabled': props.disabled },
     ]"
-    :aria-labelledby="labelledBy"
   >
     <template v-if="props.kind === 'single' && !props.readOnly">
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
