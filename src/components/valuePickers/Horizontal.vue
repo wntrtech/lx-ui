@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
 
-import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
+import LxIcon from '@/components/Icon.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -17,7 +17,7 @@ const props = defineProps({
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: 'description' },
-  groupId: { type: String, default: () => generateUUID() },
+  groupId: { type: String, default: null },
   kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   variant: { type: String, default: 'default' },
@@ -56,6 +56,10 @@ const model = computed({
 });
 
 const idValue = ref('');
+const itemsModel = ref({});
+const itemsDisplay = computed(() => JSON.parse(JSON.stringify(props.items)));
+const notSelectedId = 'notSelected';
+let currentIndex = 0;
 
 onMounted(() => {
   if (props.id) {
@@ -79,11 +83,6 @@ onMounted(() => {
     );
   }
 });
-
-const itemsModel = ref({});
-const itemsDisplay = computed(() => JSON.parse(JSON.stringify(props.items)));
-
-const notSelectedId = 'notSelected';
 
 function activate() {
   // First set all items as not selected
@@ -119,12 +118,24 @@ function activate() {
       itemsModel.value[model.value?.toString()] = true;
     }
   }
+
+  if (model.value && model.value.length > 0) {
+    currentIndex = itemsDisplay.value.findIndex((item) => item[props.idAttribute] === model.value);
+  } else {
+    currentIndex = 0;
+  }
 }
 activate();
 
 function deactivate() {
   if (props.kind === 'single' && !props.nullable) {
     if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
+
+    if (model.value && model.value.length > 0) {
+      currentIndex = itemsDisplay.value.findIndex((item) => item[props.idAttribute] === model.value);
+    } else {
+      currentIndex = 0;
+    }
   }
 }
 
@@ -204,6 +215,7 @@ function selectSingle(id) {
     model.value = [id];
     itemsModel.value[id] = true;
   }
+  currentIndex = itemsDisplay.value.findIndex((item) => item[props.idAttribute] === id);
 }
 
 watch(
@@ -360,132 +372,193 @@ function getTabIndex(id) {
   return -1;
 }
 
+function isAnyItemSelected() {
+  return itemsDisplay.value.some(
+    (item) => item[props.idAttribute] !== notSelectedId && item[props.idAttribute] === model.value
+  );
+}
+
+function onPrev() {
+  const itemsCount = itemsDisplay.value.length;
+  if (itemsCount > 0) {
+    currentIndex = (currentIndex - 1 + itemsCount) % itemsCount;
+    const prevItem = itemsDisplay.value[currentIndex];
+    selectSingle(prevItem[props.idAttribute]);
+  }
+}
+
+function onNext() {
+  const itemsCount = itemsDisplay.value.length;
+  if (itemsCount > 0) {
+    if (!isAnyItemSelected()) {
+      currentIndex = 1;
+    } else {
+      currentIndex = (currentIndex + 1) % itemsCount;
+    }
+    const nextItem = itemsDisplay.value[currentIndex];
+    selectSingle(nextItem[props.idAttribute]);
+  }
+}
+
+function handleFocus() {
+  nextTick(() => {
+    const container = document.getElementById(idValue.value);
+    const selectedItem = container?.querySelector('.lx-value-picker-horizontal-icon-wrapper.lx-selected');
+
+    // @ts-ignore
+    selectedItem?.focus();
+  });
+}
+
+function focusPrevious() {
+  onPrev();
+  handleFocus();
+}
+
+function focusNext() {
+  onNext();
+  handleFocus();
+}
+
 </script>
 <template>
-  <div
-    class="lx-value-picker-default-wrapper"
-    :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && kind === 'multiple' }]"
-    :aria-invalid="invalid"
-    role="radiogroup"
-    :title="tooltip"
-  >
-    <template v-if="readOnly">
-      <p v-if="readOnlyRenderType === 'row'" class="lx-data">
-        {{ getName(false) }}
-        <template v-if="model === null || model === undefined || model?.length < 1">—</template>
-      </p>
-      <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
-        <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
-      </ul>
-    </template>
-
-    <template v-else>
-      <div
+  <div class="lx-value-picker-horizontal-container" :id="idValue">
+    <div
+      v-if="hasSearch && !readOnly"
+      class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
+    >
+      <LxButton
+        kind="ghost"
+        :icon="
+          areSomeSelected
+            ? areAllSelected
+              ? 'checkbox-filled'
+              : 'checkbox-indeterminate'
+            : 'checkbox'
+        "
+        v-if="hasSelectAll && kind === 'multiple'"
+        @click="selectAll"
+        :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
+        :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+      />
+      <lx-text-input
         v-if="hasSearch"
-        class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
-      >
-        <LxButton
-          kind="ghost"
-          :icon="
-            areSomeSelected
-              ? areAllSelected
-                ? 'checkbox-filled'
-                : 'checkbox-indeterminate'
-              : 'checkbox'
-          "
-          v-if="hasSelectAll && kind === 'multiple'"
-          @click="selectAll"
-          :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
-          :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
-        />
-        <lx-text-input
-          v-if="hasSearch"
-          :disabled="disabled"
-          ref="queryInput"
-          v-model="query"
-          kind="search"
-          role="search"
-          :placeholder="texts.searchPlaceholder"
-        />
-        <lx-button
-          v-if="query && hasSearch"
-          icon="clear"
-          kind="ghost"
-          variant="icon-only"
-          :disabled="disabled"
-          :title="texts.clearQuery"
-          @click="query = ''"
-        />
-      </div>
+        :disabled="disabled"
+        ref="queryInput"
+        v-model="query"
+        kind="search"
+        role="search"
+        :placeholder="texts.searchPlaceholder"
+      />
+      <lx-button
+        v-if="query && hasSearch"
+        icon="clear"
+        kind="ghost"
+        variant="icon-only"
+        :disabled="disabled"
+        :title="texts.clearQuery"
+        @click="query = ''"
+      />
+    </div>
+    <div
+      class="lx-value-picker-horizontal-wrapper"
+      :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && kind === 'multiple' }]"
+      :role="props.kind === 'single' ? 'radiogroup' : 'group'"
+    >
+      <template v-if="readOnly">
+        <p v-if="readOnlyRenderType === 'row'" class="lx-data">
+          {{ getName(false) }}
+          <template v-if="model === null || model === undefined || model?.length < 1">—</template>
+        </p>
+        <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
+          <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
+        </ul>
+      </template>
 
-      <div
-        :id="idValue"
-        v-for="item in itemsDisplay"
-        v-if="!readOnly"
-        :key="item[idAttribute]"
-        class="lx-value-picker-default-item"
-        :class="[
-          { 'lx-value-hidden': isElementHidden(item) },
-          { 'lx-value-picker-item-disabled': disabled },
-        ]"
-      >
-        <lx-radio-button
-          v-if="kind === 'single'"
-          :id="getItemId(item[idAttribute])"
-          :group-id="groupId"
-          v-model="itemsModel[item[idAttribute]]"
-          :disabled="disabled"
-          :value="item[idAttribute].toString()"
-          @click="selectSingle(item[idAttribute])"
-          :tabindex="getTabIndex(item[idAttribute])"
+      <template v-else>
+        <div
+          :id="idValue"
+          v-for="item in itemsDisplay"
+          v-if="!readOnly"
+          :key="item[idAttribute]"
+          class="lx-value-picker-horizontal-item"
+          :class="[
+            { 'lx-value-hidden': isElementHidden(item) },
+            { 'lx-value-picker-item-disabled': disabled },
+          ]"
         >
-          <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
-            <div class="lx-value-picker-default-item-label">
-              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-            </div>
-            <div class="lx-value-picker-default-item-description">
-              <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
-            </div>
-          </div>
-          <div
-            class="lx-value-picker-default-item-container"
-            v-else-if="variant === 'default-custom'"
+          <div v-if="kind === 'single'" 
+            class="lx-label-wrapper" 
+            :group-id="groupId" 
           >
-            <div>
-              <slot name="customItem" v-bind="item"></slot>
+            <div v-if="variant === 'horizontal'"
+              class="lx-value-picker-horizontal-item-container"
+              @click="selectSingle(item[idAttribute])"
+              :title="item[descriptionAttribute] || tooltip"
+            >
+              <div class="lx-value-picker-horizontal-item-label">
+                <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+              </div>
+            </div>
+            <div v-else-if="variant === 'horizontal-custom'"
+              class="lx-value-picker-horizontal-item-container"
+              :title="item[descriptionAttribute] || tooltip"
+            >
+              <div class="lx-slot-wrapper" @click="selectSingle(item[idAttribute])">
+                <slot name="customItem" v-bind="item"></slot>
+              </div>
+            </div>
+            <div class="lx-value-picker-horizontal-icon-wrapper" 
+              :class="{ 'lx-selected': itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null)}"
+              @keydown.right="focusNext()"
+              @keydown.down.prevent="focusNext()"
+              @keydown.left="focusPrevious()"
+              @keydown.up.prevent="focusPrevious()"
+              @click="selectSingle(item[idAttribute])"
+              :tabindex="getTabIndex(item[idAttribute])">
+              <LxIcon
+                :id="getItemId(item[idAttribute])"
+                :value="itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null) ? 'selected' : 'unselected'"
+                :disabled="disabled"
+                v-model="itemsModel[item[idAttribute]]"
+              />
             </div>
           </div>
-        </lx-radio-button>
-        <lx-checkbox
-          v-if="kind === 'multiple'"
-          :id="getItemId(item[idAttribute])"
-          :group-id="groupId"
-          v-model="itemsModel[item[idAttribute]]"
-          :disabled="disabled"
-          :value="item[idAttribute]?.toString()"
-          @click="selectMultiple(item[idAttribute])"
-          @keydown.space.prevent="selectMultiple(item[idAttribute])"
-        >
-          <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
-            <div class="lx-value-picker-default-item-label">
-              <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
-            </div>
-            <div class="lx-value-picker-default-item-description">
-              <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
-            </div>
-          </div>
-          <div
-            class="lx-value-picker-default-item-container"
-            v-else-if="variant === 'default-custom'"
+          <div v-if="kind === 'multiple'"
+            class="lx-label-wrapper" 
+            :group-id="groupId" 
           >
-            <div>
-              <slot name="customItem" v-bind="item"></slot>
+            <div class="lx-value-picker-horizontal-item-container" v-if="variant === 'horizontal'" @click="selectMultiple(item[idAttribute])">
+              <div class="lx-value-picker-horizontal-item-label">
+                <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
+              </div>
+            </div>
+            <div
+              class="lx-value-picker-horizontal-item-container"
+              v-else-if="variant === 'horizontal-custom'"
+              :title="item[descriptionAttribute] || tooltip"
+            >
+              <div class="lx-slot-wrapper" @click="selectMultiple(item[idAttribute])">
+                <slot name="customItem" v-bind="item"></slot>
+              </div>
+            </div>
+            <div class="lx-value-picker-horizontal-icon-wrapper" 
+              :class="{ 'lx-selected': itemsModel[item[idAttribute]] }"
+              @click="selectMultiple(item[idAttribute])"
+              @keydown.space.prevent="selectMultiple(item[idAttribute])"
+              :tabindex="0"
+            >
+              <LxIcon
+                :id="getItemId(item[idAttribute])"
+                :value="itemsModel[item[idAttribute]] ? 'selected' : 'unselected'"
+                :disabled="disabled"
+                v-model="itemsModel[item[idAttribute]]"
+              />
             </div>
           </div>
-        </lx-checkbox>
-      </div>
-
-      <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
-    </template>
+        </div>
+      </template>
+    </div>
   </div>
+  <div v-show="invalid && !readOnly" class="lx-invalidation-message">{{ invalidationMessage }}</div>
 </template>
