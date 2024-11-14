@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, onMounted } from 'vue';
+import { computed, watch, onMounted, ref, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
@@ -34,6 +34,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -102,6 +103,9 @@ watch(
   }
 );
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 onMounted(() => {
   const updateModelValue = (value) => emits('update:modelValue', value);
 
@@ -157,6 +161,7 @@ onMounted(() => {
       :variant="variant"
       :search-attributes="searchAttributes"
       :hasSelectAll="hasSelectAll"
+      :labelId="labelledBy"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />
@@ -186,6 +191,7 @@ onMounted(() => {
       :variant="variant"
       :search-attributes="searchAttributes"
       :hasSelectAll="hasSelectAll"
+      :labelId="labelledBy"
     >
       <template v-slot:customItemDropdown="slotData">
         <slot name="customItem" v-bind="slotData" />
@@ -220,6 +226,7 @@ onMounted(() => {
       :readOnlyRenderType="readOnlyRenderType"
       :search-attributes="searchAttributes"
       :hasSelectAll="hasSelectAll"
+      :labelId="labelledBy"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />
@@ -248,6 +255,7 @@ onMounted(() => {
       :readOnly="readOnly"
       :readOnlyRenderType="readOnlyRenderType"
       :search-attributes="searchAttributes"
+      :labelId="labelledBy"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />
@@ -280,6 +288,7 @@ onMounted(() => {
       :readOnlyRenderType="readOnlyRenderType"
       :search-attributes="searchAttributes"
       :hasSelectAll="hasSelectAll"
+      :labelId="labelledBy"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />

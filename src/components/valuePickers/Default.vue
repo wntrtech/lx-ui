@@ -11,7 +11,7 @@ import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Array, String], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -32,6 +32,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -184,6 +185,10 @@ function getName(returnPlaceholder = true) {
 
 function getItemId(id) {
   return `${id}---${generateUUID()}`;
+}
+
+function getLabelId(id) {
+  return `${id}-${props.id}-label`;
 }
 
 function selectSingle(id) {
@@ -419,8 +424,8 @@ function getTabIndex(id) {
       </div>
 
       <div
-        :id="idValue"
-        v-for="item in itemsDisplay"
+        :id="`${idValue}-${index}`"
+        v-for="(item, index) in itemsDisplay"
         v-if="!readOnly"
         :key="item[idAttribute]"
         class="lx-value-picker-default-item"
@@ -438,9 +443,10 @@ function getTabIndex(id) {
           :value="item[idAttribute].toString()"
           @click="selectSingle(item[idAttribute])"
           :tabindex="getTabIndex(item[idAttribute])"
+          :label-id="`${getLabelId(item[idAttribute])}`"
         >
-          <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
-            <div class="lx-value-picker-default-item-label">
+          <div class="lx-value-picker-default-item-container" :id="`${getLabelId(item[idAttribute])}`" v-if="variant === 'default'" >
+            <div class="lx-value-picker-default-item-label" >
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
             </div>
             <div class="lx-value-picker-default-item-description">
@@ -449,6 +455,7 @@ function getTabIndex(id) {
           </div>
           <div
             class="lx-value-picker-default-item-container"
+            :id="`${getLabelId(item[idAttribute])}`"
             v-else-if="variant === 'default-custom'"
           >
             <div>
@@ -463,10 +470,11 @@ function getTabIndex(id) {
           v-model="itemsModel[item[idAttribute]]"
           :disabled="disabled"
           :value="item[idAttribute]?.toString()"
+          :label-id="`${getLabelId(item[idAttribute])}`"
           @click="selectMultiple(item[idAttribute])"
           @keydown.space.prevent="selectMultiple(item[idAttribute])"
         >
-          <div class="lx-value-picker-default-item-container" v-if="variant === 'default'">
+          <div class="lx-value-picker-default-item-container" :id="`${getLabelId(item[idAttribute])}`" v-if="variant === 'default'" >
             <div class="lx-value-picker-default-item-label">
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
             </div>
@@ -476,6 +484,7 @@ function getTabIndex(id) {
           </div>
           <div
             class="lx-value-picker-default-item-container"
+            :id="`${getLabelId(item[idAttribute])}`"
             v-else-if="variant === 'default-custom'"
           >
             <div>

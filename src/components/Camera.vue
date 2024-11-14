@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch, computed, onUnmounted } from 'vue';
+import { ref, onMounted, watch, computed, onUnmounted, inject } from 'vue';
 import LxButton from '@/components/Button.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -18,6 +18,7 @@ const props = defineProps({
   hasFlashlightToggle: { type: Boolean, default: false },
   imageSize: { type: String, default: 'default' }, // default || max
   preferencesId: { type: String, default: 'lx-camera-settings' },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -221,13 +222,16 @@ onMounted(async () => {
   }
 });
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 onUnmounted(() => {
   stopStream();
 });
 </script>
 
 <template>
-  <div class="lx-camera">
+  <div class="lx-camera" :aria-labelledby="labelledBy">
     <LxToolbar v-if="!modelValue">
       <template #rightArea>
         <LxToolbarGroup v-if="hasFlashlightToggle && cameraHasFlashlight && !loading && !error">

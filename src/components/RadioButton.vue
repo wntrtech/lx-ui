@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
@@ -10,6 +10,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   value: { type: String, default: 'none' },
   tabindex: { type: Number, default: null },
+  labelId: { type: String, default: null },
 });
 
 const emits = defineEmits(['update:modelValue', 'click']);
@@ -28,6 +29,9 @@ const click = (e) => {
 };
 
 const idValue = ref('');
+
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
 
 onMounted(() => {
   if (props.id) {
@@ -52,6 +56,7 @@ onMounted(() => {
       :disabled="disabled"
       :value="value"
       :tabindex="tabindex"
+      :aria-labelledby="labelledBy"
       @click="click"
     />
     <label :for="idValue" class="lx-radio-button-label-wrapper">

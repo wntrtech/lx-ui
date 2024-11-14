@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeMount } from 'vue';
+import { computed, onBeforeMount, ref, inject } from 'vue';
 
 import useLx from '@/hooks/useLx';
 import { formatDateJSON, formatDate, parseDate } from '@/utils/dateUtils';
@@ -33,6 +33,7 @@ const props = defineProps({
   locale: { type: Object, default: () => useLx().getGlobals()?.locale },
   rangeMonth: { type: String, default: 'next' }, // next, previous
   clearIfNotExact: { type: Boolean, default: false },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -235,6 +236,9 @@ function getNameEnd() {
   return props.endDate;
 }
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 // Computed properties to handle individual updates for start and end dates
 const modelStart = computed({
   get: () => parseDate(props.startDate),
@@ -296,6 +300,7 @@ onBeforeMount(() => {
         ]"
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
+        :aria-labelledby="labelledBy"
       >
         <LxDatePicker
           v-if="kind !== 'legacy'"

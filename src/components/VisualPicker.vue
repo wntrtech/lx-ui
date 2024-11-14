@@ -7,6 +7,7 @@ import {
   onBeforeMount,
   defineAsyncComponent,
   nextTick,
+  inject,
 } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxFlag from '@/components/Flag.vue';
@@ -27,6 +28,7 @@ const props = defineProps({
   readOnly: { type: Boolean, default: false },
   mode: { type: String, default: 'default' }, // default, compact
   selectingKind: { type: String, default: 'multiple' }, // single, multiple
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -339,10 +341,19 @@ const image = ref();
 const imageSize = useElementSize(image);
 const isImageVisible = computed(() => imageSize?.width.value > 500);
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 defineExpose({ addTitles });
 </script>
 <template>
-  <div class="lx-visual-picker-wrapper" :class="{ 'read-only': readOnly }" ref="image" :id="id">
+  <div
+    class="lx-visual-picker-wrapper"
+    :class="{ 'read-only': readOnly }"
+    ref="image"
+    :id="id"
+    :aria-labelledby="labelledBy"
+  >
     <LxContentSwitcher
       :items="contentSwitcherItems"
       v-model="contentSwitcherModel"

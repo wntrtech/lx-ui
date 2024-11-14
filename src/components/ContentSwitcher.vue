@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted, inject } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import useLx from '@/hooks/useLx';
 import { useWindowSize } from '@vueuse/core';
@@ -20,6 +20,7 @@ const props = defineProps({
     default: () => useLx().getGlobals()?.iconSet,
   },
   tooltip: { type: String, default: null },
+  labelId: { type: String, default: null },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -77,6 +78,9 @@ const showIconsMode = computed(
     (props.kind === 'default' && !isWideScreen.value)
 );
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 onMounted(() => {
   if (model.value) {
     highlightedItemId.value = model.value;
@@ -110,6 +114,7 @@ function checkIfHihlighted(id) {
       tabindex="-1"
       role="tablist"
       :style="`grid-template-columns: repeat(${props.items.length}, 1fr)`"
+      :aria-labelledby="labelledBy"
     >
       <div
         v-for="(item, index) in items"

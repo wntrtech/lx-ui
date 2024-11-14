@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, useSlots } from 'vue';
+import { computed, ref, watch, onMounted, useSlots, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import { formatValueBool } from '@/utils/formatUtils';
@@ -13,6 +13,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
   tooltip: { type: String, default: null },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -69,6 +70,9 @@ watch(model, () => {
   checkModelState();
 });
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 onMounted(() => {
   if (props.id) {
     idValue.value = props.id;
@@ -88,6 +92,7 @@ onMounted(() => {
       :data-disabled="disabled ? '' : null"
       :data-invalid="invalid ? '' : null"
       :title="tooltipValue"
+      :aria-labelledby="labelledBy"
     >
       <lx-icon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
       <input

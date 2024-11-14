@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, inject, ref } from 'vue';
+import { computed, inject, ref, provide } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -188,6 +188,9 @@ const validatedColumnSpan = computed(() => {
   }
   return res;
 });
+
+const idComputed = computed(() => props.id);
+provide('rowId', idComputed);
 </script>
 <template>
   <div
