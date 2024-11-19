@@ -193,6 +193,7 @@ const accessibleTitle = computed(() => {
       { 'lx-disabled': isDisabled },
       customClass,
     ]"
+    @click="click"
     :title="accessibleTitle"
     :tabindex="tabindex"
     :target="openInNewTab ? '_blank' : null"
