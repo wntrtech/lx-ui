@@ -122,6 +122,7 @@
 .lx .lx-data-grid .lx-cell-header .lx-primary{
   overflow: hidden;
   text-overflow: ellipsis;
+  padding-bottom: 0.1rem;
 }
 
 .lx .lx-data-grid .lx-cell-header .lx-primary,
@@ -489,10 +490,11 @@
   position: sticky;
   top: var(--nav-row-size);
   background-color: var(--color-region);
+  z-index: 2;
 }
 
 .lx-modal .lx-pseudo-grid .lx-labels {
-  top: 0;
+  top: -1rem;
 }
 
 .lx-pseudo-grid .lx-labels label {
