@@ -264,23 +264,27 @@ function selectMultiple(id) {
 
   idModel.value = !idModel.value;
 
+  let res = model.value;
+  if(Array.isArray(model.value)) res = [...model.value]
+  else return 0;
+
   if (idModel.value) {
     // Check if item already exists in model
-    let index = model.value?.indexOf(id);
+    let index = res?.indexOf(id);
     if (!index) {
       index = -1;
     }
     if (index === -1) {
       // Add item to model
-      model.value?.push(id);
+      res?.push(id);
       itemsModel.value[id] = true;
     } else {
       // Remove item from model
-      model.value?.splice(index, 1);
+      res?.splice(index, 1);
     }
 
     // Sort model according to order of items
-    model.value?.sort(
+    res?.sort(
       (a, b) =>
         Object.keys(itemsModel.value)?.indexOf(a?.toString()) -
         Object.keys(itemsModel.value)?.indexOf(b?.toString())
@@ -288,12 +292,13 @@ function selectMultiple(id) {
   } else {
     itemsModel.value[id] = false;
     // Remove item from model
-    const index = model.value?.indexOf(id);
+    const index = res?.indexOf(id);
 
-    if (index > -1 && Array.isArray(model.value)) {
-      model.value?.splice(index, 1);
+    if (index > -1 && Array.isArray(res)) {
+      res?.splice(index, 1);
     }
   }
+  model.value = res;
 }
 
 function attributesSearch(item) {

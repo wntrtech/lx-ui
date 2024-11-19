@@ -621,6 +621,7 @@ test('LxValuePicker default modelValue 2', async () => {
       modelValue: ['one'],
       alwaysAsArray: true,
       kind: 'multiple',
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
     },
   });
 
@@ -645,6 +646,7 @@ test('LxValuePicker default modelValue 3', async () => {
       ],
       modelValue: ['one'],
       kind: 'multiple',
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
     },
   });
 
