@@ -1733,7 +1733,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   margin-left: 0;
 }
 
-.lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all {
+.lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all,
+.lx-autocomplete-default .lx-value-picker-item.select-all {
   border-bottom: 1px solid var(--color-chrome);
   color: var(--color-brand);
   align-items: center;
@@ -1744,6 +1745,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: 1.45rem;
   padding-left: 0.9rem;
   padding-right: 0.2rem;
+}
+
+.lx-autocomplete-default .lx-value-picker-item.select-all > svg{
+  fill: var(--color-brand);
+  height: 1.45rem;
+  padding-right: 0.2rem;
+  margin-left: -0.1rem;
 }
 
 @media (pointer: coarse) {

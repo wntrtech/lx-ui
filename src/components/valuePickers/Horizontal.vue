@@ -439,6 +439,7 @@ function focusNext() {
             : 'checkbox'
         "
         v-if="hasSelectAll && kind === 'multiple'"
+        :disabled="disabled"
         @click="selectAll"
         :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
         :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"

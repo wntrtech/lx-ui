@@ -43,6 +43,7 @@ const props = defineProps({
   // used for preloading items if items is a function and there is need to show items before user starts typing
   preloadedItems: { type: Array, default: null },
   labelId: { type: String, default: null },
+  hasSelectAll: { type: Boolean, default: false },
   texts: {
     type: Object,
     default: () => ({
@@ -56,6 +57,8 @@ const props = defineProps({
       detailsSwitchSelectedItems: 'Izvēlētās vērtības',
       detailsButton: 'Skatīt detaļas',
       detailsModalLabel: 'Izvērstais skats',
+      clearChosen: 'Notīrīt visas izvēlētās vērtības',
+      selectAll: 'Izvēlēties visu'
     }),
   },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
@@ -851,6 +854,46 @@ watch([hasValue, query, menuOpen], ([newHasValue, newQuery, newMenuOpen]) => {
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
+
+const areSomeSelected = computed(() => {
+  let res = false;
+  if(typeof props.items === 'function') return null;
+  props.items.forEach((item) => {
+    if (Array.isArray(model.value) && model.value?.includes(item[props.idAttribute])) res = true;
+    return true;
+  });
+  return res;
+});
+
+const areAllSelected = computed(() => {
+  let res = props.items?.length > 0;
+  if(typeof props.items === 'function') return null;
+  props.items.forEach((item) => {
+    if (Array.isArray(model.value)) {
+      if (!model.value.includes(item[props.idAttribute])) {
+        res = false;
+      }
+    }
+  });
+  return res;
+});
+
+function selectAll() {
+  if (areAllSelected.value || areSomeSelected.value) {
+    model.value = [];
+  } else {
+    if(typeof props.items === 'function') return null;
+    const res = [];
+    const itemModelClone = {...itemsModel.value}
+    allItems.value.forEach(async (item) => {
+      res.push(getIdAttributeString(item));
+      itemModelClone[getIdAttributeString(item)] = true;
+    });
+    model.value = res;
+    itemsModel.value = itemModelClone;
+  }
+}
+
 onMounted(() => {
   activate();
   if (props.id) {
@@ -1132,6 +1175,16 @@ onMounted(() => {
                       @keydown="handleMenuAndInputKeydown"
                     >
                       <template v-if="filteredItems?.length">
+                        <div v-if="hasSelectAll && typeof props.items !== 'function' && selectingKind==='multiple'" 
+                          class="lx-value-picker-item select-all" 
+                          tabindex="-1" 
+                          role="option" 
+                          @click="selectAll" 
+                          :title="areSomeSelected ? texts.clearChosen : texts.selectAll "
+                        >
+                          <LxIcon :value="areSomeSelected ? areAllSelected ? 'checkbox-filled' : 'checkbox-indeterminate' : 'checkbox'" />
+                          <span>{{ areSomeSelected ? texts.clearChosen : texts.selectAll }}</span> 
+                        </div>
                         <template v-for="item in filteredItems" :key="item[idAttribute]">
                           <div
                             @click.prevent="

@@ -526,8 +526,9 @@ const columnReadOnly = computed(() => {
   
   <template v-else>
     <LxAutoComplete
-      v-if="kind === 'single' && hasSearch"
+      v-if="hasSearch"
       v-model="model"
+      :selectingKind="kind"
       :items="itemsDisplay"
       :id-attribute="idAttribute"
       :name-attribute="nameAttribute"
@@ -541,29 +542,7 @@ const columnReadOnly = computed(() => {
       :texts="texts"
       :search-attributes="searchAttributes"
       :labelId="labelId"
-    >
-      <template v-slot:customItem="slotData">
-        <slot name="customItemDropdown" v-bind="slotData" />
-      </template>
-    </LxAutoComplete>
-
-    <LxAutoComplete
-      v-if="kind === 'multiple' && hasSearch"
-      v-model="model"
-      selecting-kind="multiple"
-      :items="itemsDisplay"
-      :id-attribute="idAttribute"
-      :name-attribute="nameAttribute"
-      :placeholder="texts?.searchPlaceholder"
-      :tooltip="tooltip"
-      :readOnly="readOnly"
-      :disabled="disabled"
-      :variant="variantAutoComplete"
-      :invalid="invalid"
-      :invalidation-message="invalidationMessage"
-      :texts="texts"
-      :search-attributes="searchAttributes"
-      :labelId="labelId"
+      :hasSelectAll="hasSelectAll"
     >
       <template v-slot:customItem="slotData">
         <slot name="customItemDropdown" v-bind="slotData" />
