@@ -261,6 +261,17 @@ function validateIfExact(e, type = 'startInput') {
     ) {
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
+
+      const newDay = new Date().getDate();
+      const newMonth = new Date().getMonth();
+      const newYear = new Date().getFullYear();
+
+      const newDateString = inputMask
+        .replace('dd', zeroPad(newDay))
+        .replace('MM', zeroPad(newMonth + 1))
+        .replace('yyyy', newYear);
+
+      e.target.value = props.clearIfNotExact ? null : newDateString;
       return;
     }
 

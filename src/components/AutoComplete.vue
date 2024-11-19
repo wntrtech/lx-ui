@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, watch } from 'vue';
+import { ref, computed, onMounted, nextTick, watch, inject } from 'vue';
 import { onClickOutside, useDebounceFn } from '@vueuse/core';
 import Popper from 'vue3-popper';
 
@@ -42,6 +42,7 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // default, country, state, custom
   // used for preloading items if items is a function and there is need to show items before user starts typing
   preloadedItems: { type: Array, default: null },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -268,6 +269,10 @@ const hasValue = computed(() => {
 
 function getItemId(id) {
   return `${id}---${generateUUID()}`;
+}
+
+function getLabelId(id) {
+  return `${id}-${props.id}-label`;
 }
 
 function initSearchInput() {
@@ -843,6 +848,9 @@ watch([hasValue, query, menuOpen], ([newHasValue, newQuery, newMenuOpen]) => {
   }
 });
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 onMounted(() => {
   activate();
   if (props.id) {
@@ -921,6 +929,7 @@ onMounted(() => {
           :data-invalid="invalid ? '' : null"
           :data-disabled="disabled ? '' : null"
           role="combobox"
+          :aria-labelledby="labelledBy"
           tabindex="-1"
         >
           <Popper
@@ -1159,9 +1168,10 @@ onMounted(() => {
                               :disabled="disabled"
                               :value="item[idAttribute]"
                               tabindex="-1"
+                              :labelId="getLabelId(item[idAttribute])"
                               @click="selectMultiple(item)"
                             />
-                            <label :for="item[idAttribute]">
+                            <label :for="item[idAttribute]" :id="getLabelId(item[idAttribute])">
                               <template v-if="variant === 'country'">
                                 <LxFlagItemDisplay
                                   :value="item"

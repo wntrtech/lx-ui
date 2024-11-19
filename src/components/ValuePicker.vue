@@ -1,5 +1,6 @@
 <script setup>
-import { computed, watch, onMounted } from 'vue';
+import { computed, watch, onMounted, ref, inject } from 'vue';
+import { generateUUID } from '@/utils/stringUtils';
 
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import LxValuePickerDropDown from '@/components/valuePickers/Dropdown.vue';
@@ -18,7 +19,7 @@ const props = defineProps({
   iconSetAttribute: { type: String, default: 'iconSet' },
   categoryAttribute: { type: String, default: 'category' },
   descriptionAttribute: { type: String, default: 'description' },
-  groupId: { type: String, default: null },
+  groupId: { type: String, default: () => generateUUID() },
   variant: { type: String, default: 'default' }, // 'default' || 'dropdown' || 'tiles' || 'tags' || 'rotator' || 'default-custom' || 'dropdown-custom' || 'tiles-custom' || 'tags-custom'|| 'rotator-custom' || 'indicator' || 'horizontal' || 'horizontal-custom'
   kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
@@ -33,6 +34,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -101,6 +103,9 @@ watch(
   }
 );
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 onMounted(() => {
   const updateModelValue = (value) => emits('update:modelValue', value);
 
@@ -156,6 +161,7 @@ onMounted(() => {
       :variant="variant"
       :search-attributes="searchAttributes"
       :hasSelectAll="hasSelectAll"
+      :labelId="labelledBy"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />
@@ -185,6 +191,7 @@ onMounted(() => {
       :variant="variant"
       :search-attributes="searchAttributes"
       :hasSelectAll="hasSelectAll"
+      :labelId="labelledBy"
     >
       <template v-slot:customItemDropdown="slotData">
         <slot name="customItem" v-bind="slotData" />
@@ -219,6 +226,7 @@ onMounted(() => {
       :readOnlyRenderType="readOnlyRenderType"
       :search-attributes="searchAttributes"
       :hasSelectAll="hasSelectAll"
+      :labelId="labelledBy"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />
@@ -247,6 +255,7 @@ onMounted(() => {
       :readOnly="readOnly"
       :readOnlyRenderType="readOnlyRenderType"
       :search-attributes="searchAttributes"
+      :labelId="labelledBy"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />
@@ -279,6 +288,7 @@ onMounted(() => {
       :readOnlyRenderType="readOnlyRenderType"
       :search-attributes="searchAttributes"
       :hasSelectAll="hasSelectAll"
+      :labelId="labelledBy"
     >
       <template v-slot:customItem="slotData" v-if="$slots.customItem">
         <slot name="customItem" v-bind="slotData" />

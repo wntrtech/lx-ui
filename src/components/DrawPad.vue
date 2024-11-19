@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed, inject } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
 import { logError } from '@/utils/devUtils';
 import LxButton from '@/components/Button.vue';
@@ -17,6 +17,7 @@ const props = defineProps({
   showInstruments: { type: Boolean, default: false },
   showColorPicker: { type: Boolean, default: false },
   showClearAll: { type: Boolean, default: false },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -255,6 +256,9 @@ watch(
   }
 );
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 onMounted(() => {
   if (canvas.value) {
     context.value = canvas.value.getContext('2d');
@@ -264,7 +268,7 @@ onMounted(() => {
 
 <template>
   <div class="lx-field-wrapper">
-    <div class="lx-drawpad-wrapper">
+    <div class="lx-drawpad-wrapper" :aria-labelledby="labelledBy">
       <LxToolbar>
         <template #leftArea>
           <LxToolbarGroup v-if="showInstruments" class="left-group">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, watch, nextTick, inject } from 'vue';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
@@ -11,7 +11,7 @@ import { onClickOutside } from '@vueuse/core';
 import Popper from 'vue3-popper';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Array, String, Number], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -32,6 +32,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -208,6 +209,10 @@ function getName(returnPlaceholder = true) {
 
 function getItemId(id) {
   return `${id}---${generateUUID()}`;
+}
+
+function getLabelId(id) {
+  return `${id}-${props.id}-label`;
 }
 
 function selectSingle(id) {
@@ -530,6 +535,7 @@ const columnReadOnly = computed(() => {
       :invalidation-message="invalidationMessage"
       :texts="texts"
       :search-attributes="searchAttributes"
+      :labelId="labelId"
     >
       <template v-slot:customItem="slotData">
         <slot name="customItemDropdown" v-bind="slotData" />
@@ -552,6 +558,7 @@ const columnReadOnly = computed(() => {
       :invalidation-message="invalidationMessage"
       :texts="texts"
       :search-attributes="searchAttributes"
+      :labelId="labelId"
     >
       <template v-slot:customItem="slotData">
         <slot name="customItemDropdown" v-bind="slotData" />
@@ -573,6 +580,7 @@ const columnReadOnly = computed(() => {
       kind="default"
       :placeholder="placeholder"
       :variant="variantDropdown"
+      :labelId="labelId"
     >
       <template v-slot:customItem="slotData">
         <slot name="customItemDropdown" v-bind="slotData" />
@@ -596,6 +604,7 @@ const columnReadOnly = computed(() => {
         :aria-invalid="invalid"
         :aria-expanded="menuOpen"
         aria-controls="popper-id"
+        :aria-labelledby="labelId"
       >
         <Popper
           id="popper-id"
@@ -679,6 +688,7 @@ const columnReadOnly = computed(() => {
                             highlightedItemId && highlightedItemId === getIdAttributeString(item),
                         },
                       ]"
+                    :id="getItemId(item[idAttribute])"
                   >
                     <LxCheckbox
                       v-if="kind === 'multiple'"
@@ -687,6 +697,7 @@ const columnReadOnly = computed(() => {
                       v-model="itemsModel[item[idAttribute]]"
                       :disabled="disabled"
                       :value="item[idAttribute]?.toString()"
+                      :labelId="getLabelId(item[idAttribute])"
                       @click="selectMultiple(item[idAttribute])"
                     />
 

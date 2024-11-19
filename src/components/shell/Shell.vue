@@ -131,6 +131,7 @@ const props = defineProps({
   confirmSecondaryButtonBusy: { type: Boolean, default: false },
   confirmPrimaryButtonDestructive: { type: Boolean, default: false },
   confirmClosesOnPrimary: { type: Boolean, default: true },
+  confirmClosesOnSecondary: { type: Boolean, default: true },
 
   navBarSwitch: { type: Boolean, default: true },
 
@@ -1038,7 +1039,11 @@ const selectedMegaMenuItemModel = computed({
         ? confirmDialogData?.confirm(confirmDialogData?.$state.confirmDialogState.primaryCallback)
         : confirmDialogData?.$state.confirmDialogState.primaryCallback()
     "
-    @secondary-action="confirmDialogData?.$state.confirmDialogState.secondaryCallback"
+    @secondary-action="
+      confirmClosesOnSecondary
+        ? confirmDialogData?.confirm(confirmDialogData?.$state.confirmDialogState.secondaryCallback)
+        : confirmDialogData?.$state.confirmDialogState.secondaryCallback()
+    "
     @closed="confirmModalClosed"
   >
     <p>{{ confirmDialogData?.$state.confirmDialogState.message }}</p>

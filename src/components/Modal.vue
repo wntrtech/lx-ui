@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, nextTick } from 'vue';
-import Button from '@/components/Button.vue';
+import LxButton from '@/components/Button.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 
@@ -111,7 +111,7 @@ defineExpose({ open, close });
         >
           <header>
             <p class="lx-primary" :title="label">{{ label }}</p>
-            <Button icon="close" kind="ghost" @click="close()" v-if="!disableClosing"></Button>
+            <LxButton icon="close" kind="ghost" @click="close()" v-if="!disableClosing" />
           </header>
           <article class="lx-main">
             <slot></slot>
@@ -120,7 +120,7 @@ defineExpose({ open, close });
             class="lx-button-set"
             :class="[{ 'lx-two-buttons': buttonPrimaryVisible && buttonSecondaryVisible }]"
           >
-            <Button
+            <LxButton
               v-if="buttonPrimaryVisible"
               :label="buttonPrimaryLabel"
               :loading="buttonPrimaryLoading"
@@ -128,15 +128,15 @@ defineExpose({ open, close });
               :destructive="buttonPrimaryIsDestructive"
               :disabled="buttonPrimaryDisabled"
               @click="clickPrimary()"
-            ></Button>
-            <Button
+            />
+            <LxButton
               v-if="buttonSecondaryVisible"
               kind="secondary"
               :label="buttonSecondaryLabel"
               :loading="buttonSecondaryLoading"
               :busy="buttonSecondaryBusy"
               @click="clickSecondary()"
-            ></Button>
+            />
           </footer>
         </div>
       </div>
@@ -157,7 +157,7 @@ defineExpose({ open, close });
         >
           <header>
             <p class="lx-primary">{{ label }}</p>
-            <Button icon="close" kind="ghost" @click="close()" v-if="!disableClosing"></Button>
+            <LxButton icon="close" kind="ghost" @click="close()" v-if="!disableClosing" />
           </header>
           <article class="lx-main">
             <slot></slot>
@@ -166,7 +166,7 @@ defineExpose({ open, close });
             class="lx-button-set"
             :class="[{ 'lx-two-buttons': buttonPrimaryVisible && buttonSecondaryVisible }]"
           >
-            <Button
+            <LxButton
               v-if="buttonPrimaryVisible"
               :label="buttonPrimaryLabel"
               :loading="buttonPrimaryLoading"
@@ -174,15 +174,15 @@ defineExpose({ open, close });
               :destructive="buttonPrimaryIsDestructive"
               :disabled="buttonPrimaryDisabled"
               @click="clickPrimary()"
-            ></Button>
-            <Button
+            />
+            <LxButton
               v-if="buttonSecondaryVisible"
               kind="secondary"
               :label="buttonSecondaryLabel"
               :loading="buttonSecondaryLoading"
               :busy="buttonSecondaryBusy"
               @click="clickSecondary()"
-            ></Button>
+            />
           </footer>
         </dialog>
       </div>

@@ -26,6 +26,7 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -267,6 +268,7 @@ const queueItems = computed(() => {
           @keydown.space.prevent="selectSingle(null)"
           @click="selectSingle(null)"
           tabindex="0"
+          :aria-labelledby="labelId"
         >
           <div class="pseudo-input" />
           <TransitionGroup
@@ -274,6 +276,11 @@ const queueItems = computed(() => {
             tag="ul"
             class="lx-rotator-set lx-input-area"
             :class="[{ 'lx-rotator-set-custom': variant === 'rotator-custom' }]"
+            tabindex="0"
+            role="button"
+            aria-live="polite"
+            @keydown.space.prevent="selectSingle(null)"
+            @click="selectSingle(null)"
           >
             <li v-for="item in queueItems" :key="item.key" class="lx-rotator-tag">
               <p class="lx-input-text" v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
