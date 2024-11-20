@@ -864,6 +864,19 @@ watch(
   },
   { deep: true }
 );
+
+watch(
+  () => props.items,
+  () => {
+    if (props.hasSelecting) {
+      Object.keys(selectedRowsRaw.value).forEach((key) => {
+        if (!props.items.find((x) => x[props.idAttribute].toString() === key)) {
+          delete selectedRowsRaw.value[key];
+        }
+      });
+    }
+  }
+);
 </script>
 <template>
   <div class="lx-data-grid-wrapper">
