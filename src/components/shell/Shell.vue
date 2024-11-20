@@ -636,7 +636,11 @@ const selectedMegaMenuItemModel = computed({
     <div
       v-if="mode === 'public'"
       class="lx-layout lx-layout-public"
-      :class="[{ 'lx-collapsed': navBarSwitchBasic }, { 'lx-hide-nav-bar': hideNavBar }]"
+      :class="[
+        { 'lx-collapsed': navBarSwitchBasic },
+        { 'lx-hide-nav-bar': hideNavBar },
+        { 'no-nav-items': !navItems || navItems?.length === 0 },
+      ]"
     >
       <header>
         <LxMainHeader

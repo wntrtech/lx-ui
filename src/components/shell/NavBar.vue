@@ -49,12 +49,21 @@ const props = defineProps({
 const width = ref(useWindowSize().width);
 
 const navItemsPrimary = computed(() =>
-  props.navItems.filter((item) => !item.type || item.type === 'primary')
+  props.navItems?.filter((item) => !item.type || item.type === 'primary')
 );
 const navItemsSecondary = computed(() =>
-  props.navItems.filter((item) => item.type === 'secondary')
+  props.navItems?.filter((item) => item.type === 'secondary')
 );
-const allNavItems = computed(() => [...navItemsPrimary.value, ...navItemsSecondary.value]);
+const allNavItems = computed(() => {
+  const res = [];
+  if (navItemsPrimary.value) {
+    res.push(...navItemsPrimary.value);
+  }
+  if (navItemsSecondary.value) {
+    res.push(...navItemsSecondary.value);
+  }
+  return res;
+});
 
 const emits = defineEmits([
   'nav-toggle',

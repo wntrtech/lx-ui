@@ -355,13 +355,28 @@
 }
 
 .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-toolbar.lx-sticky,
-.lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-sticky {
+.lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>header.lx-sticky,
+.lx-layout.lx-layout-public.no-nav-items .lx-toolbar.lx-sticky,
+.lx-layout.lx-layout-public.no-nav-items .lx-form-grid>header.lx-sticky {
   top: var(--nav-row-size);
 }
 
 .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul,
 .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
   top: calc(var(--nav-row-size) + var(--row-size)*2);
+}
+
+.lx-layout.lx-layout-public.no-nav-items .lx-form-grid>aside.lx-index>ul,
+.lx-layout.lx-layout-public.no-nav-items .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  top: calc(var(--nav-row-size) + var(--row-size));
+}
+
+.lx-layout.lx-layout-public.no-nav-items>nav{
+  display: none;
+}
+
+.lx .lx-layout.lx-layout-public.no-nav-items>header>.lx-header .lx-group.lx-right-group #nav-toggle{
+  display: none;
 }
 
 /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
@@ -380,6 +395,11 @@
   .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>aside.lx-index>ul,
   .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
     top: var(--row-size);
+  }
+
+  .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul,
+  .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+    top: calc(var(--row-size) * 2);
   }
 
   .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul,
@@ -532,5 +552,19 @@
   .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
   .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul {
     top: calc(var(--nav-row-size) + var(--row-size));
+  }
+}
+
+@media (max-width: 500px) {
+  .lx-layout.lx-layout-public.no-nav-items>nav{
+      display: grid;
+  }
+
+  .lx .lx-layout.lx-layout-public.no-nav-items>header>.lx-header .lx-group.lx-right-group #nav-toggle{
+      display: flex;
+  }
+
+  .lx-layout-public.no-nav-items .lx-nav-panel .lx-nav-group ul.header-items:before {
+      content: none;
   }
 }
