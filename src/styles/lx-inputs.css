@@ -4384,18 +4384,18 @@ input[type='range']:hover::-moz-range-thumb {
   width: 100%;
 }
 
-.lx-qr-wrapper {
+.lx-qr-wrapper > svg {
   padding: 0.5rem;
 }
 
-.lx-qr-wrapper > svg > rect{
+.lx-qr-wrapper:not(.lx-ignore-theme) > svg > rect{
   fill: var(--color-region); 
 }
 
-.lx-region .lx-qr-wrapper > svg > rect{
+.lx-region .lx-qr-wrapper:not(.lx-ignore-theme) > svg > rect{
   fill: var(--color-region-2); 
 }
 
-.lx-qr-wrapper > svg > path{
+.lx-qr-wrapper:not(.lx-ignore-theme) > svg > path{
   fill: var(--color-data); 
 }
