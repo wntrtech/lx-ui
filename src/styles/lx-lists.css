@@ -642,7 +642,23 @@
 }
 
 .lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-buttons-small .lx-dropdown-panel {
-  padding: 0;
+  padding: 0.125rem;
+}
+
+.lx-list-wrapper .lx-selection-toolbar .selection-action-buttons-small  .lx-dropdown-panel  .lx-button.lx-button-ghost .lx-button-content>.lx-button-label{
+  color: var(--color-data);
+}
+
+.lx-list-wrapper .lx-selection-toolbar .selection-action-buttons-small .lx-dropdown-panel .lx-button.lx-button-ghost svg{
+  fill: var(--color-data);
+}
+
+.lx-list-wrapper .lx-selection-toolbar .selection-action-buttons-small .lx-dropdown-panel .lx-button.lx-button-ghost:hover svg{
+  fill: var(--color-interactive-hover-foreground);
+}
+
+.lx-list-wrapper .lx-selection-toolbar .selection-action-buttons-small .lx-dropdown-panel .lx-button.lx-button-ghost:hover .lx-button-content>.lx-button-label{
+  color: var(--color-interactive-hover-foreground);
 }
 
 .lx-list-wrapper > .lx-list-toolbar > .left-area .lx-slot-wrapper {

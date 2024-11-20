@@ -656,7 +656,7 @@ function selectRows(arr = null) {
     );
   }
 }
-const isItemSelected = computed(() => (itemId) => !!selectedItemsRaw.value[itemId]);
+const isItemSelected = (itemId) => !!selectedItemsRaw.value[itemId];
 
 function cancelSelection() {
   selectedItemsRaw.value = {};
@@ -889,6 +889,23 @@ watch(
   { deep: true }
 );
 
+watch(
+  () => props.selectingKind,
+  (newVal) => {
+    if (newVal === 'single') {
+      const selectedCount = Object.values(selectedItemsRaw.value).filter(
+        (value) => value === true
+      )?.length;
+      if (selectedCount > 1) {
+        const firstTrueKey = Object.keys(selectedItemsRaw.value).find(
+          (key) => selectedItemsRaw.value[key] === true
+        );
+        selectedItemsRaw.value = { [firstTrueKey]: true };
+      }
+    }
+  }
+);
+
 onMounted(() => {
   const val = validate();
   if (val) {
@@ -993,7 +1010,10 @@ onMounted(() => {
                   @click="selectionActionClick(selectAction.id, selectedItems)"
                 />
               </div>
-              <div class="selection-action-buttons-small">
+              <div
+                class="selection-action-buttons-small"
+                v-if="selectionActionDefinitions?.length > 0"
+              >
                 <LxDropDownMenu>
                   <LxButton icon="menu" />
                   <template #panel>
@@ -1005,6 +1025,7 @@ onMounted(() => {
                       :title="selectAction.name"
                       :destructive="selectAction.destructive"
                       :disabled="selectAction.disabled"
+                      kind="ghost"
                       @click="selectionActionClick(selectAction.id, selectedItems)"
                     />
                   </template>
