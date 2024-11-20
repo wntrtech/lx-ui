@@ -433,11 +433,11 @@
 .lx .lx-data-block p.lx-primary {
   width: 100%;
   font-weight: bold;
-  line-height: 1.1em;
+  line-height: 1.2em;
 }
 
 .lx .lx-data-block header p.lx-primary.lx-title {
-  margin-bottom: 0.25rem;
+  padding: 0.1rem 0 0.2rem 0;
 }
 
 .lx .lx-data-block p.lx-secondary {
@@ -445,6 +445,8 @@
   font-size: var(--small-font-size);
   color: var(--color-label);
   line-height: 1.1em;
+  padding: 0.2rem 0 0.1rem 0;
+  margin-top: -0.2rem;
 }
 
 .lx-data-block-wrapper>.lx-data-block-content {

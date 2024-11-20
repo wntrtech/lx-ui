@@ -48,7 +48,7 @@
     font-size: var(--small-font-size);
     color: var(--color-label);
     line-height: 1.1em;
-    margin-top: 0.05rem;
+    padding-top: 0.05rem;
 }
 
 .lx-master-detail-list {

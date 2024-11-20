@@ -13,6 +13,8 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 | Variable name                                  | Default value                                                 |
 |------------------------------------------------|---------------------------------------------------------------|
 | `--list-button-border-radius`                  | 0                                                             |
+| `--list-button-height`                         | calc(var(--row-size) - 3px)                                   |
+| `--list-button-width`                          | calc(var(--row-size) - 3px)                                   |
 | `--list-category-border-radius`                | 0                                                             |
 | `--list-category-margin`                       | 0.25rem                                                       |
 | `--list-category-width`                        | 0.25rem                                                       |
@@ -29,7 +31,7 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 | `--list-header-padding`                        | 0.35rem 0.35rem 0.2rem 0.5rem                                 |
 | `--list-header-min-height`                     | 2.75rem                                                       |
 | `--list-icon-height`                           | 1.5rem                                                        |
-| `--list-icon-padding`                          | 0.75rem 0.75rem 0 0.75rem                                     |
+| `--list-icon-padding`                          | 0.65rem 0.75rem 0 0.75rem                                     |
 | `--list-icon-width`                            | 1.5rem                                                        |
 | `--list-inner-column-span`                     | 1 / span 4                                                    |
 | `--list-item-border`                           | 2px solid var(--color-list-item-border)                       |
@@ -41,10 +43,14 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 | `--list-primary-font-size`                     | `--font-size`                                                 |
 | `--list-primary-font-weight`                   | bold                                                          |
 | `--list-primary-line-height`                   | 1.2em                                                         |
+| `--list-primary-margin`                        | -0.1rem 0 0 0                                                 |
+| `--list-primary-padding`                       | 0.1rem 0 0.1rem 0                                             |
 | `--list-secondary-font-size`                   | `--small-font-size`                                           |
 | `--list-secondary-font-weight`                 | `--description-font-weight`                                   |
-| `--list-secondary-line-height`                 | 1em                                                           |
-| `--list-selecting-block-padding`               | 0.9rem 0.95rem 0 0.95rem                                      |
+| `--list-secondary-line-height`                 | 1.2em                                                         |
+| `--list-secondary-margin`                      | -0.15rem 0 -0.05rem 0                                         |
+| `--list-secondary-padding`                     | 0.1rem 0 0.05rem 0                                            |
+| `--list-selecting-block-padding`               | 0.85rem 0.95rem 0 0.95rem                                     |
 | `--list-toolbar-gap`                           | `--gap-buttons`                                               |
 | `--list-treelist-child-left-indent`            | `--row-size`                                                  |
 | `--list-treelist-child-right-indent`           | 0                                                             |

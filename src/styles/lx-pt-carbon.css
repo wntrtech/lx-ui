@@ -99,6 +99,8 @@
   --screen-xxxs: 320px;
 
   --list-button-border-radius: 0;
+  --list-button-height: calc(var(--row-size) - 4px);
+  --list-button-width: var(--row-size);
   --list-category-border-radius: 0;
   --list-category-margin: 0.25rem;
   --list-category-width: 0.25rem;
@@ -115,7 +117,7 @@
   --list-header-padding: 0.35rem 0.35rem 0.2rem 0.5rem;
   --list-header-min-height: 2.75rem;
   --list-icon-height: 1.5rem;
-  --list-icon-padding: 0.75rem 0.75rem 0 0.75rem;
+  --list-icon-padding: 0.65rem 0.75rem 0 0.75rem;
   --list-icon-width: 1.5rem;
   --list-inner-column-span: 1 / span 4;
   --list-item-border: 2px solid var(--color-list-item-border);
@@ -127,10 +129,14 @@
   --list-primary-font-size: var(--font-size);
   --list-primary-font-weight: bold;
   --list-primary-line-height: 1.2em;
+  --list-primary-margin: -0.1rem 0 0 0;
+  --list-primary-padding: 0.1rem 0 0.1rem 0;
   --list-secondary-font-size: var(--small-font-size);
   --list-secondary-font-weight: var(--description-font-weight);
-  --list-secondary-line-height: 1em;
-  --list-selecting-block-padding: 0.9rem 0.95rem 0 0.95rem;
+  --list-secondary-line-height: 1.2em;
+  --list-secondary-margin: -0.15rem 0 -0.05rem 0;
+  --list-secondary-padding: 0.1rem 0 0.05rem 0;
+  --list-selecting-block-padding: 0.85rem 0.95rem 0 0.95rem;
   --list-toolbar-gap: var(--gap-buttons);
   --list-treelist-child-left-indent: var(--row-size);
   --list-treelist-child-right-indent: 0;

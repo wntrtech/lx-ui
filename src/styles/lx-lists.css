@@ -102,7 +102,9 @@
   grid-area: actions;
 }
 
-.lx-list-item-actions .lx-button{
+.lx .lx-list-item-actions .lx-button {
+  min-width: var(--list-button-width);
+  height: var(--list-button-height);
   border-radius: var(--list-button-border-radius);
 }
 
@@ -550,16 +552,18 @@
   font-size: var(--list-primary-font-size);
   line-height: var(--list-primary-line-height);
   font-weight: var(--list-primary-font-weight);
-  padding-bottom: 0.05rem;
+  padding: var(--list-primary-padding);
+  margin: var(--list-primary-margin);
 }
 
-.lx-list-item p.lx-secondary {
+.lx-list-item > header > p.lx-secondary {
   flex-grow: 1;
   color: var(--color-list-secondary);
   font-size: var(--list-secondary-font-size);
   line-height: var(--list-secondary-line-height);
   font-weight: var(--list-secondary-font-weight);
-  padding-bottom: 0.15rem;
+  padding: var(--list-secondary-padding);
+  margin: var(--list-secondary-margin);
 }
 
 .lx-list-item p.lx-primary,
