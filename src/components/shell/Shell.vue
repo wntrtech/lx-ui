@@ -1034,6 +1034,7 @@ const selectedMegaMenuItemModel = computed({
     :button-secondary-is-cancel="false"
     :buttonPrimaryIsDestructive="confirmPrimaryButtonDestructive"
     :disableClosing="true"
+    :escEnabled="confirmDialogData?.$state.confirmDialogState.escEnabled"
     @primary-action="
       confirmClosesOnPrimary
         ? confirmDialogData?.confirm(confirmDialogData?.$state.confirmDialogState.primaryCallback)

@@ -4,7 +4,15 @@ export default {
     confirmDialogState: {},
   }),
   actions: {
-    push(title, message, primaryLabel, secondaryLabel, primaryCallback, secondaryCallback) {
+    push(
+      title,
+      message,
+      primaryLabel,
+      secondaryLabel,
+      primaryCallback,
+      secondaryCallback,
+      escEnabled = true
+    ) {
       this.confirmDialogState = {
         title,
         message,
@@ -12,6 +20,7 @@ export default {
         secondaryLabel,
         primaryCallback,
         secondaryCallback,
+        escEnabled,
       };
       this.isOpen = true;
     },

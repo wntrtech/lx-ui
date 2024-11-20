@@ -57,14 +57,20 @@ function open() {
 function close(source = null) {
   if (props.kind === 'default') {
     if (source === 'esc') {
-      if (props.escEnabled) isOpen.value = false;
-    } else isOpen.value = false;
+      if (props.escEnabled) {
+        isOpen.value = false;
+        emits('closed');
+      }
+    } else {
+      isOpen.value = false;
+      emits('closed');
+    }
   } else {
     nativeModal.value.close();
     isOpenModal.value = false;
+    emits('closed');
   }
   deactivate();
-  emits('closed');
 }
 function handleKeyDown(event) {
   if (event.key === 'Escape') {
