@@ -12,6 +12,8 @@ const props = defineProps({
   expandable: { type: Boolean, default: false },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
+  descriptionAttribute: { type: String, default: null },
+  iconAttribute: { type: String, default: null },
   addButtonLabel: { type: String, default: 'Pievienot ierakstu' },
   columnCount: { type: Number, default: 1 },
   kind: { type: String, default: 'default' }, // default || compact
@@ -178,6 +180,8 @@ defineExpose({ clearModel });
         <LxDataBlock
           :id="item[idAttribute]"
           :name="item[nameAttribute]"
+          :description="item[descriptionAttribute]"
+          :icon="item[iconAttribute]"
           :expandable="true"
           v-model="expanded[item?.[idAttribute]]"
           :actionDefinitions="changeActions(allActions, item)"
