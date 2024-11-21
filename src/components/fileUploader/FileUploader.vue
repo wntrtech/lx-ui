@@ -460,7 +460,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       { compact: props.mode === 'compact' },
       { 'lx-disabled': props.disabled },
     ]"
-    :aria-labelledby="labelledBy"
   >
     <template v-if="props.kind === 'single' && !props.readOnly">
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
@@ -470,6 +469,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         type="file"
         ref="fileInput"
         :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
+        :aria-labelledby="labelledBy"
         @change="uploadFiles"
       />
       <div class="lx-draggable-wrapper" v-if="!props.draggable && advancedFilesData.length < 1">
@@ -527,6 +527,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         class="lx-visually-hidden"
         type="file"
         ref="fileInput"
+        :aria-labelledby="labelledBy"
         :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
         @change="uploadFiles"
         multiple

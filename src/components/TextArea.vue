@@ -63,11 +63,7 @@ defineExpose({ focus });
   <div class="lx-field-wrapper">
     <p v-if="props.readOnly" class="lx-data">{{ model }} <span v-if="!model">—</span></p>
     <template v-else>
-      <div
-        class="lx-text-area-wrapper"
-        :data-invalid="invalid ? '' : null"
-        :aria-labelledby="labelledBy"
-      >
+      <div class="lx-text-area-wrapper" :data-invalid="invalid ? '' : null">
         <div
           class="lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
@@ -89,6 +85,7 @@ defineExpose({ focus });
             :disabled="props.disabled"
             :maxlength="props.maxlength"
             :title="props.tooltip"
+            :aria-labelledby="labelledBy"
             @input="triggerResize"
           />
 

@@ -268,7 +268,7 @@ onMounted(() => {
 
 <template>
   <div class="lx-field-wrapper">
-    <div class="lx-drawpad-wrapper" :aria-labelledby="labelledBy">
+    <div class="lx-drawpad-wrapper">
       <LxToolbar>
         <template #leftArea>
           <LxToolbarGroup v-if="showInstruments" class="left-group">
@@ -331,6 +331,7 @@ onMounted(() => {
           class="lx-canvas-element lx-input-area"
           :width="canvasWidth"
           :height="canvasHeight"
+          :aria-labelledby="labelledBy"
           @pointerdown.prevent="startDrawing"
           @pointermove.prevent="draw"
           @pointerup.prevent="stopDrawing"

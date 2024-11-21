@@ -195,7 +195,7 @@ provide('rowId', idComputed);
 <template>
   <div
     class="lx-row"
-    :id="id"
+    :id="`${id}-wrapper`"
     :class="[
       { 'lx-row-column-2': validatedColumnSpan === 2 },
       { 'lx-row-column-3': validatedColumnSpan === 3 },
@@ -214,7 +214,7 @@ provide('rowId', idComputed);
       class="lx-row-header"
       v-if="(rowOrientation === 'horizontal' && !$slots.info) || (!hideLabel && !$slots.info)"
     >
-      <label :title="!$slots.info ? tooltip : ''" :for="inputId" v-if="!hideLabel">
+      <label :title="!$slots.info ? tooltip : ''" :for="inputId" v-if="!hideLabel" :id="id">
         {{ label ? label : '&nbsp;' }}
         <span class="lx-required" v-if="rowRequiredMode === 'required' && required && !hideLabel">
           {{ requiredTexts.required }}
@@ -301,7 +301,7 @@ provide('rowId', idComputed);
       v-if="(rowOrientation === 'horizontal' && $slots.info) || (!hideLabel && $slots.info)"
     >
       <LxInfoWrapper class="lx-info-slot-wrapper" v-if="!hideLabel">
-        <label :title="!$slots.info ? tooltip : ''" :for="inputId">
+        <label :title="!$slots.info ? tooltip : ''" :for="inputId" :id="id">
           {{ label ? label : '&nbsp;' }}
           <span class="lx-required" v-if="rowRequiredMode === 'required' && required && !hideLabel">
             {{ requiredTexts.required }}

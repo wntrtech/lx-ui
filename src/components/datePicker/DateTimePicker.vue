@@ -296,7 +296,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
         :title="tooltip"
-        :aria-labelledby="labelledBy"
       >
         <LxDatePicker
           :id="id"
@@ -316,6 +315,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :clearIfNotExact="clearIfNotExact"
           :cadenceOfMinutes="cadenceOfMinutes"
           :texts="texts"
+          :labelled-by="labelledBy"
         />
       </div>
     </template>

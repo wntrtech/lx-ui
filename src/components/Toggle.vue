@@ -98,7 +98,6 @@ onMounted(() => {
       :data-disabled="disabled ? '' : null"
       :data-invalid="invalid ? '' : null"
       :title="tooltipValue"
-      :aria-labelledby="labelledBy"
     >
       <lx-icon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
       <!-- it's labelled by the label below, or if that's absent, by aria-label -->
@@ -117,6 +116,7 @@ onMounted(() => {
         :aria-label="!(size !== 's' && hasSlots) ? tooltipValue : null"
         role="switch"
         :disabled="disabled"
+        :aria-labelledby="labelledBy"
       />
       <div class="lx-toggle-label-wrapper" :class="{ 'lx-toggle-read-only': readOnly }">
         <template v-if="!readOnly">

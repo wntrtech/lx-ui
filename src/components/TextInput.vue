@@ -365,7 +365,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         { 'lx-disabled': disabled },
       ]"
       :data-invalid="invalid ? '' : null"
-      :aria-labelledby="labelledBy"
       v-if="!readOnly"
     >
       <div v-if="invalid" class="lx-invalidation-icon-wrapper">
@@ -395,6 +394,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         :maxlength="maxLengthValue"
         v-imask="inputMask"
         :title="tooltip"
+        :aria-labelledby="labelledBy"
         @accept="onAccept"
         @blur="onBlur"
       />

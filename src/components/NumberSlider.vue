@@ -71,7 +71,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 <template>
   <div class="lx-field-wrapper">
     <p v-if="readOnly" class="lx-data">{{ model }}</p>
-    <div class="input-slider-container-wrapper" v-if="!readOnly" :aria-labelledby="labelledBy">
+    <div class="input-slider-container-wrapper" v-if="!readOnly">
       <div class="input-slider-range-label">
         <p>{{ props.min }}</p>
       </div>
@@ -87,6 +87,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :id="id"
           :min="props.min"
           :max="props.max"
+          :aria-labelledby="labelledBy"
           @keydown.up="onIncreaseStep"
           @keydown.right="onIncreaseStep"
           @keydown.down="onDecreaseStep"
@@ -108,7 +109,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         <p>{{ props.max }}</p>
       </div>
       <div class="input-slider-range-text" v-show="hasInput">
-        <LxTextInput type="text" v-model="model" mask="integer" />
+        <LxTextInput type="text" v-model="model" mask="integer" :labelId="labelledBy" />
       </div>
     </div>
   </div>

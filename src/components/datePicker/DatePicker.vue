@@ -46,6 +46,7 @@ const props = defineProps({
   clearIfNotExact: { type: Boolean, default: false },
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
   pickerType: { type: String, default: 'single' }, // 'single', 'range'
+  labelledBy: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -823,6 +824,7 @@ onMounted(async () => {
             :tabindex="startInputIndex"
             :maxlength="getMaxLength"
             :aria-invalid="invalid"
+            :aria-labelledby="labelledBy"
             @click="handleOpen('startInput')"
             @keydown.arrow-down.prevent="handleOpen('startInput')"
             @keydown.esc.prevent="handleClose"
@@ -873,6 +875,7 @@ onMounted(async () => {
               :tabindex="endInputIndex"
               :maxlength="getMaxLength"
               :aria-invalid="invalid"
+              :aria-labelledby="labelledBy"
               @click="handleOpen('endInput')"
               @keydown.arrow-down.prevent="handleOpen('endInput')"
               @keydown.esc.prevent="handleClose"

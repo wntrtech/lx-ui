@@ -178,7 +178,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 <template>
   <div
     :class="[{ 'lx-day-input-wrapper': !readOnly }, { 'lx-day-input-readonly-wrapper': readOnly }]"
-    :labelId="labelledBy"
   >
     <p v-if="readOnly" class="lx-data" :title="computedTitle">{{ result }}</p>
 
@@ -194,6 +193,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         :tooltip="texts.inputTooltip"
         :invalid="invalid"
         :invalidationMessage="invalidationMessage"
+        :labelId="labelledBy"
         @update:modelValue="calculateResult"
       />
 
@@ -204,6 +204,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         :tooltip="texts.dropdownTooltip"
         :disabled="disabled"
         :invalid="invalid"
+        :labelId="labelledBy"
         @update:modelValue="calculateResult"
       />
     </template>

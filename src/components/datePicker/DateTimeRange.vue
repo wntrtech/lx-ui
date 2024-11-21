@@ -300,7 +300,6 @@ onBeforeMount(() => {
         ]"
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
-        :aria-labelledby="labelledBy"
       >
         <LxDatePicker
           v-if="kind !== 'legacy'"
@@ -319,6 +318,7 @@ onBeforeMount(() => {
           picker-type="range"
           :clearIfNotExact="clearIfNotExact"
           :texts="texts"
+          :labelled-by="labelledBy"
         />
 
         <div v-if="kind === 'legacy'" class="legacy-pickers-wrapper">
@@ -336,6 +336,7 @@ onBeforeMount(() => {
             :first-day-of-the-week="localeFirstDay"
             :clearIfNotExact="clearIfNotExact"
             :texts="texts"
+            :labelled-by="labelledBy"
           />
 
           <span class="lx-date-time-range-separator">–</span>
@@ -353,6 +354,7 @@ onBeforeMount(() => {
             :first-day-of-the-week="localeFirstDay"
             :clearIfNotExact="clearIfNotExact"
             :texts="texts"
+            :labelled-by="labelledBy"
           />
         </div>
       </div>
