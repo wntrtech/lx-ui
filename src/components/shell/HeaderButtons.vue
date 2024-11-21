@@ -295,6 +295,14 @@ function triggerThemeMenu(e) {
 function triggerShowAllClick() {
   emits('megaMenuShowAllClick');
 }
+
+const dropDownMenu = ref(null);
+
+function triggerUserMenu() {
+  if (dropDownMenu.value) {
+    dropDownMenu.value.openMenu();
+  }
+}
 </script>
 
 <template>
@@ -497,8 +505,13 @@ function triggerShowAllClick() {
     </div>
 
     <div class="lx-user-menu" v-if="userInfo">
-      <LxDropDownMenu :disabled="headerNavDisable">
-        <div class="lx-user-button" tabindex="0">
+      <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
+        <div
+          class="lx-user-button"
+          tabindex="0"
+          @keydown.space.prevent="triggerUserMenu"
+          @keydown.enter.prevent="triggerUserMenu"
+        >
           <div class="lx-avatar" v-if="!hasAvatar">
             <LxIcon
               :value="!selectedContextPersonModel ? 'user' : 'context-person'"
