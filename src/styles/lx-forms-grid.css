@@ -583,6 +583,22 @@ svg .lx-shade {
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-button,
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-horizontal > .lx-button {
   width: 100%;
+}
+
+.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-list-wrapper > .lx-load-more-button > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-list-wrapper > .lx-load-more-button > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-camera > .lx-camera-buttons > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-camera > .lx-camera-buttons > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-master-detail > .lx-master > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-master-detail > .lx-master > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-camera > .lx-camera-error .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-camera > .lx-camera-error .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-appendable-list > div > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-appendable-list > div > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-button {
   max-height: var(--input-height);
 }
 
