@@ -26,6 +26,8 @@ const props = defineProps({
   categoryAttribute: { type: String, default: 'category' },
   selectableAttribute: { type: String, default: 'selectable' },
   hasSearch: { type: Boolean, default: false },
+  areSomeExpandable: { type: Boolean, default: null },
+  query: { type: String, default: '' },
   actionDefinitions: { type: Array, default: null },
   actionsLayout: { type: String, default: 'default' }, // default, vertical
   icon: { type: String, default: 'open' },
@@ -137,7 +139,7 @@ function hasSelectedChildren(id) {
   });
   return res;
 }
-const allNotExpandable = computed(() => props.items.every((item) => !isExpandable(item)));
+const areSomeExpandable = computed(() => props.items.some((item) => isExpandable(item)));
 
 const isSelectable = (item) => {
   const attribute = props.selectableAttribute;
@@ -168,7 +170,8 @@ watch(
       :class="[
         {
           'not-expandable':
-            !isExpandable(item) && (parents.length === 0 ? !allNotExpandable : true),
+            !isExpandable(item) &&
+            (parents.length === 0 ? props.areSomeExpandable || areSomeExpandable : true),
         },
         { 'selected-children': hasSelectedChildren(item[idAttribute]) },
       ]"
@@ -197,6 +200,7 @@ watch(
           :busy="states?.[item[idAttribute]]?.busy"
           :value="item"
           :selected="isItemSelected(item[idAttribute])"
+          :searchString="query"
           @action-click="actionClicked"
           @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
         >

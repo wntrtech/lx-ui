@@ -25,8 +25,11 @@ const props = defineProps({
   categoryAttribute: { type: String, default: 'category' },
   selectableAttribute: { type: String, default: 'selectable' },
   hasSearch: { type: Boolean, default: false },
+  areSomeExpandable: { type: Boolean, default: null },
+  query: { type: String, default: '' },
   actionDefinitions: { type: Array, default: null },
   actionsLayout: { type: String, default: 'default' }, // default, vertical
+  groupDefinitions: { type: Array, default: null },
   icon: { type: String, default: 'open' },
   iconSet: {
     type: String,
@@ -79,10 +82,11 @@ watch(
   () => props.items,
   (newValue, oldValue) => {
     if (
-      Array.isArray(oldValue) &&
-      oldValue?.length === 0 &&
-      Array.isArray(newValue) &&
-      newValue?.length > 0
+      (Array.isArray(oldValue) &&
+        oldValue?.length === 0 &&
+        Array.isArray(newValue) &&
+        newValue?.length > 0) ||
+      props.groupDefinitions
     )
       smallItems.value = props.items;
   },
@@ -173,7 +177,7 @@ const childMap = computed(() => {
   return map;
 });
 
-const allNotExpandable = computed(() => props.items.every((item) => !isExpandable(item)));
+const areSomeExpandable = computed(() => props.items?.some((item) => isExpandable(item)));
 
 const isSelectable = (item) => {
   const attribute = props.selectableAttribute;
@@ -213,6 +217,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         :texts="texts"
         @loadChildren="loadChildren"
         :children="childMap"
+        :query="query"
+        :areSomeExpandable="props.areSomeExpandable || areSomeExpandable"
       >
         <template #customItem="items" v-if="$slots.customItem">
           <slot name="customItem" v-bind="items" />
@@ -245,6 +251,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
             :busy="states?.[parent[idAttribute]]?.busy"
             :value="parent"
             :selected="isItemSelected(parent[idAttribute])"
+            :search-string="query"
             @action-click="actionClicked"
             @click="parent[hrefAttribute] ? null : actionClicked('click', parent[idAttribute])"
           >
@@ -289,7 +296,9 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         :key="item[idAttribute]"
         class="tree-item-small"
         :class="{
-          'not-expandable': !isExpandable(item) && (level === 0 ? !allNotExpandable : true),
+          'not-expandable':
+            !isExpandable(item) &&
+            (level === 0 ? props.areSomeExpandable || areSomeExpandable : true),
         }"
       >
         <LxButton

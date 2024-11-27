@@ -234,24 +234,53 @@ const filteredTreeItems = computed(() => {
   return res;
 });
 
-const treeItems = computed(() => {
+function processTreeItems(items, addGroup = true) {
   const res = [];
-  const queue = [...itemsWithStringIds.value];
+  const queue = [...items];
   while (queue.length > 0) {
     const obj = queue.shift();
-    res.push(obj);
-    if (obj?.[props.childrenAttribute]) {
-      queue.unshift(...obj[props.childrenAttribute]);
+    const newObj = { ...obj };
+
+    if (newObj[props.groupAttribute] == null && obj[props.groupAttribute]) {
+      newObj[props.groupAttribute] = obj[props.groupAttribute];
+    }
+
+    res.push(newObj);
+    if (newObj?.[props.childrenAttribute]) {
+      if (
+        addGroup &&
+        props.groupDefinitions.find(
+          (group) => group.id?.toString() === newObj[props.groupAttribute]?.toString()
+        )
+      ) {
+        newObj[props.childrenAttribute] = newObj[props.childrenAttribute].map((child) => {
+          const newChild = { ...child };
+          newChild[props.groupAttribute] = newObj[props.groupAttribute];
+          return newChild;
+        });
+      }
+      queue.unshift(...newObj[props.childrenAttribute]);
     }
   }
   return res;
-});
+}
+
+const treeItemsWithGroups = computed(() => processTreeItems(itemsWithStringIds.value, true));
+const treeItems = computed(() =>
+  processTreeItems(itemsWithStringIds.value, queryRaw.value.length > 0)
+);
 
 const filteredGroupedItems = computed(() => {
-  if (itemsWithStringIds.value && props.groupDefinitions) {
+  let listItems = itemsWithStringIds.value;
+
+  if (props.kind === 'treelist') {
+    listItems = treeItems.value;
+  }
+
+  if (listItems && props.groupDefinitions) {
     const ret = {};
     props.groupDefinitions?.forEach((group) => {
-      ret[prepareCode(group.id)] = itemsWithStringIds.value.filter(
+      ret[prepareCode(group.id)] = listItems.filter(
         (o) =>
           prepareCode(o[props.groupAttribute]) === prepareCode(group.id) &&
           (isFiltered(o[props.primaryAttribute]) || isFiltered(o[props.secondaryAttribute]))
@@ -273,10 +302,15 @@ function clear() {
 }
 
 function fillItemsArray() {
-  if (!props.groupDefinitions) return itemsWithStringIds.value;
+  let listItems = itemsWithStringIds.value;
+  if (!props.groupDefinitions) return listItems;
+
+  if (props.kind === 'treelist' && queryRaw.value.length > 0) {
+    listItems = treeItems.value;
+  }
 
   const array = props.groupDefinitions.reduce((acc, group) => {
-    const groupItems = itemsWithStringIds.value
+    const groupItems = listItems
       .filter((item) => item.group?.toString() === group.id?.toString())
       .sort((a, b) => a[props.orderAttribute] - b[props.orderAttribute]);
     acc[group.id.toString()] = groupItems;
@@ -284,7 +318,7 @@ function fillItemsArray() {
   }, {});
 
   if (props.includeUnspecifiedGroups) {
-    const nullGroupItems = itemsWithStringIds.value.filter(
+    const nullGroupItems = listItems.filter(
       (item) =>
         !props.groupDefinitions.find((group) => item.group?.toString() === group.id?.toString())
     );
@@ -330,15 +364,19 @@ function searchInItemsArray() {
   if (query.value !== '') {
     itemsArray.value = fillItemsArray();
 
+    let listItems = filteredItems.value;
+    if (props.kind === 'treelist') {
+      listItems = filteredTreeItems.value;
+    }
+
     Object.keys(itemsArray.value).forEach((key) => {
       if (Array.isArray(itemsArray.value[key])) {
         itemsArray.value[key] = itemsArray.value[key].filter((item) =>
-          filteredItems.value.some(
-            (filteredItem) => JSON.stringify(filteredItem) === JSON.stringify(item)
-          )
+          listItems.some((filteredItem) => JSON.stringify(filteredItem) === JSON.stringify(item))
         );
       }
     });
+
     return;
   }
   itemsArray.value = fillItemsArray();
@@ -554,13 +592,17 @@ const dragOptions = computed(() => ({
   ghostClass: 'ghost',
 }));
 
-const filteredUngroupedItems = computed(() =>
-  filteredItems.value.filter((item) =>
+const filteredUngroupedItems = computed(() => {
+  let listItems = filteredItems.value;
+  if (props.kind === 'treelist') {
+    listItems = filteredTreeItems.value;
+  }
+  return listItems.filter((item) =>
     Object.values(filteredGroupedItems.value).every(
       (group) => !group?.some((groupedItem) => groupedItem.id === item.id)
     )
-  )
-);
+  );
+});
 
 const selectedItems = computed(() => {
   const ret = [];
@@ -722,8 +764,12 @@ function loadChildren(id) {
 
 const groupSelectionStatuses = computed(() => {
   const res = {};
+  let listItems = itemsWithStringIds.value;
+  if (props.kind === 'treelist') {
+    listItems = treeItemsWithGroups.value;
+  }
   props.groupDefinitions?.forEach((group) => {
-    const groupItems = itemsWithStringIds.value?.filter(
+    const groupItems = listItems?.filter(
       (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
     );
     const groupItemsIds = groupItems?.map((o) => o[props.idAttribute]);
@@ -742,20 +788,40 @@ const groupSelectionStatuses = computed(() => {
 });
 
 function selectSection(group) {
-  const groupItems = itemsWithStringIds.value.filter(
-    (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
-  );
+  const groupItems =
+    props.kind === 'treelist'
+      ? treeItems.value.filter(
+          (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
+        )
+      : itemsWithStringIds.value.filter(
+          (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
+        );
   const groupItemsIds = groupItems.map((o) => o[props.idAttribute]);
+
+  function selectChildren(item, select = true) {
+    selectedItemsRaw.value[item[props.idAttribute]] = select;
+    if (item[props.childrenAttribute]) {
+      item[props.childrenAttribute].forEach((child) => {
+        if (
+          !child[props.groupAttribute] ||
+          prepareCode(child[props.groupAttribute]) === prepareCode(group.id)
+        ) {
+          selectChildren(child, select);
+        }
+      });
+    }
+  }
   if (groupSelectionStatuses.value?.[group.id] === 'none') {
     groupItemsIds.forEach((id) => {
       const item = groupItems.find((o) => o[props.idAttribute] === id);
       if (isSelectable(item)) {
-        selectedItemsRaw.value[id] = true;
+        selectChildren(item, true);
       }
     });
   } else {
     groupItemsIds.forEach((id) => {
-      selectedItemsRaw.value[id] = false;
+      const item = groupItems.find((o) => o[props.idAttribute] === id);
+      selectChildren(item, false);
     });
   }
 }
@@ -920,6 +986,14 @@ onMounted(() => {
   itemsArray.value = fillItemsArray();
   ungroupedItemsArray.value = setByOrders(filteredItems.value);
 });
+
+function isExpandable(item) {
+  if (props.mode === 'client')
+    return item[props.childrenAttribute] && item?.[props.childrenAttribute].length > 0;
+  return item[props.hasChildrenAttribute];
+}
+
+const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpandable(item)));
 </script>
 
 <template>
@@ -1355,6 +1429,250 @@ onMounted(() => {
         </LxExpander>
       </template>
     </div>
+    <div
+      v-if="
+        kind === 'treelist' &&
+        itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)] &&
+        filteredUngroupedItems &&
+        filteredUngroupedItems.length > 0
+      "
+    >
+      <LxTreeList
+        v-if="queryRaw?.length === 0"
+        :items="itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
+        :idAttribute="idAttribute"
+        :primaryAttribute="primaryAttribute"
+        :secondaryAttribute="secondaryAttribute"
+        :childrenAttribute="childrenAttribute"
+        :hasChildrenAttribute="hasChildrenAttribute"
+        :hrefAttribute="hrefAttribute"
+        :clickableAttribute="clickableAttribute"
+        :iconAttribute="iconAttribute"
+        :iconSetAttribute="iconSetAttribute"
+        :tooltipAttribute="tooltipAttribute"
+        :categoryAttribute="categoryAttribute"
+        :selectable-attribute="selectableAttribute"
+        :action-definitions="actionDefinitions"
+        :actionsLayout="actionsLayout"
+        :groupDefinitions="groupDefinitions"
+        :icon="icon"
+        :iconSet="iconSet"
+        :hasSelecting="hasSelecting"
+        :selectingKind="selectingKind"
+        :query="searchString"
+        :areSomeExpandable="areSomeExpandable"
+        @action-click="actionClicked"
+        v-model:selectedItems="selectedItemsRaw"
+        v-model:itemsStates="states"
+        :mode="mode"
+        :texts="texts"
+        @loadChildren="loadChildren"
+      >
+        <template #customItem="items" v-if="$slots.customItem">
+          <slot name="customItem" v-bind="items" />
+        </template>
+      </LxTreeList>
+      <div class="tree-list-wrapper" v-else-if="queryRaw?.length > 0">
+        <div class="tree-list-search">
+          <div
+            v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
+            :key="item[idAttribute]"
+            class="tree-list-search-item lx-list-item-container"
+          >
+            <lx-list-item
+              :id="item[idAttribute]"
+              :label="item[primaryAttribute]"
+              :description="item[secondaryAttribute]"
+              :value="item"
+              :href="item[hrefAttribute]"
+              :actionDefinitions="actionDefinitions"
+              :actionsLayout="actionsLayout"
+              :icon="item[iconAttribute] ? item[iconAttribute] : icon"
+              :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
+              :tooltip="item[tooltipAttribute]"
+              :searchString="query"
+              :clickable="item[clickableAttribute]"
+              :category="item[categoryAttribute]"
+              :disabled="loading || busy"
+              :selected="isItemSelected(item[idAttribute])"
+              @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+              @action-click="actionClicked"
+            >
+              <template #customItem="item" v-if="$slots.customItem">
+                <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+              </template>
+            </lx-list-item>
+            <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+              <template v-if="isSelectable(item)">
+                <LxRadioButton
+                  v-if="selectingKind === 'single'"
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  @click="selectRow(item[idAttribute])"
+                  :disabled="loading || busy"
+                  :label="item[primaryAttribute]"
+                  :group-id="`selection-${id}`"
+                  :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
+                />
+                <LxCheckbox
+                  v-else
+                  :id="`select-${id}-${item[idAttribute]}`"
+                  v-model="selectedItemsRaw[item[idAttribute]]"
+                  :value="item[idAttribute]"
+                  :disabled="loading || busy"
+                  :label="item[primaryAttribute]"
+                  :group-id="`selection-${id}`"
+                />
+              </template>
+              <p v-else class="lx-checkbox-placeholder"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div v-if="kind === 'treelist' && groupDefinitions && queryRaw?.length === 0">
+      <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
+        <LxExpander
+          v-if="
+            (hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
+            !hideFilteredItems
+          "
+          v-model="group.expanded"
+          :disabled="loading || busy"
+          :badge="group?.badge"
+          :badge-type="group?.badgeType"
+          :label="group.name"
+          :id="group.id"
+          :has-select-button="
+            hasSelecting &&
+            hasSelectableItemsInGroup[prepareCode(group.id)] &&
+            selectingKind === 'multiple'
+          "
+          :select-status="groupSelectionStatuses?.[group.id]"
+          :texts="{ selectWholeGroup: texts.selectWholeGroup, clearSelected: texts.clearSelected }"
+          @select-all="selectSection(group)"
+        >
+          <LxTreeList
+            :items="filteredGroupedItems[prepareCode(group.id)]"
+            :idAttribute="idAttribute"
+            :primaryAttribute="primaryAttribute"
+            :secondaryAttribute="secondaryAttribute"
+            :childrenAttribute="childrenAttribute"
+            :hasChildrenAttribute="hasChildrenAttribute"
+            :hrefAttribute="hrefAttribute"
+            :clickableAttribute="clickableAttribute"
+            :iconAttribute="iconAttribute"
+            :iconSetAttribute="iconSetAttribute"
+            :tooltipAttribute="tooltipAttribute"
+            :categoryAttribute="categoryAttribute"
+            :selectable-attribute="selectableAttribute"
+            :action-definitions="actionDefinitions"
+            :actionsLayout="actionsLayout"
+            :groupDefinitions="groupDefinitions"
+            :icon="icon"
+            :iconSet="iconSet"
+            :hasSelecting="hasSelecting"
+            :selectingKind="selectingKind"
+            :query="searchString"
+            :areSomeExpandable="areSomeExpandable"
+            @action-click="actionClicked"
+            v-model:selectedItems="selectedItemsRaw"
+            v-model:itemsStates="states"
+            :mode="mode"
+            :texts="texts"
+            @loadChildren="loadChildren"
+          >
+            <template #customItem="items" v-if="$slots.customItem">
+              <slot name="customItem" v-bind="items" />
+            </template>
+          </LxTreeList>
+        </LxExpander>
+      </template>
+    </div>
+    <div v-if="kind === 'treelist' && groupDefinitions && queryRaw?.length > 0">
+      <template v-for="group in groupDefinitions" :key="prepareCode(group.id)">
+        <LxExpander
+          v-if="
+            (hideFilteredItems && filteredGroupedItems[prepareCode(group.id)].length > 0) ||
+            !hideFilteredItems
+          "
+          v-model="group.expanded"
+          :disabled="loading || busy"
+          :badge="group?.badge"
+          :badge-type="group?.badgeType"
+          :label="group.name"
+          :id="group.id"
+          :has-select-button="
+            hasSelecting &&
+            hasSelectableItemsInGroup[prepareCode(group.id)] &&
+            selectingKind === 'multiple'
+          "
+          :select-status="groupSelectionStatuses?.[group.id]"
+          :texts="{ selectWholeGroup: texts.selectWholeGroup, clearSelected: texts.clearSelected }"
+          @select-all="selectSection(group)"
+        >
+          <div class="tree-list-wrapper">
+            <div class="tree-list-search">
+              <div
+                v-for="item in filteredGroupedItems[prepareCode(group.id)]"
+                :key="item[idAttribute]"
+                class="tree-list-search-item lx-list-item-container"
+              >
+                <lx-list-item
+                  :id="item[idAttribute]"
+                  :label="item[primaryAttribute]"
+                  :description="item[secondaryAttribute]"
+                  :value="item"
+                  :href="item[hrefAttribute]"
+                  :actionDefinitions="actionDefinitions"
+                  :actionsLayout="actionsLayout"
+                  :icon="item[iconAttribute] ? item[iconAttribute] : icon"
+                  :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
+                  :tooltip="item[tooltipAttribute]"
+                  :searchString="query"
+                  :clickable="item[clickableAttribute]"
+                  :category="item[categoryAttribute]"
+                  :disabled="loading || busy"
+                  :selected="isItemSelected(item[idAttribute])"
+                  @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
+                  @action-click="actionClicked"
+                >
+                  <template #customItem="item" v-if="$slots.customItem">
+                    <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
+                  </template>
+                </lx-list-item>
+                <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+                  <template v-if="isSelectable(item)">
+                    <LxRadioButton
+                      v-if="selectingKind === 'single'"
+                      :id="`select-${id}-${item[idAttribute]}`"
+                      v-model="selectedItemsRaw[item[idAttribute]]"
+                      :value="item[idAttribute]"
+                      @click="selectRow(item[idAttribute])"
+                      :disabled="loading || busy"
+                      :label="item[primaryAttribute]"
+                      :group-id="`selection-${id}`"
+                      :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
+                    />
+                    <LxCheckbox
+                      v-else
+                      :id="`select-${id}-${item[idAttribute]}`"
+                      v-model="selectedItemsRaw[item[idAttribute]]"
+                      :value="item[idAttribute]"
+                      :disabled="loading || busy"
+                      :label="item[primaryAttribute]"
+                      :group-id="`selection-${id}`"
+                    />
+                  </template>
+                  <p v-else class="lx-checkbox-placeholder"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </LxExpander>
+      </template>
+    </div>
     <template v-if="!groupDefinitions && filteredItems && filteredItems.length > 0">
       <ul
         v-if="kind === 'default'"
@@ -1631,7 +1949,13 @@ onMounted(() => {
         </div>
       </LxExpander>
     </template>
-    <div v-if="kind === 'treelist' && (queryRaw?.length === 0 || searchSide === 'server')">
+    <div
+      v-if="
+        kind === 'treelist' &&
+        (queryRaw?.length === 0 || searchSide === 'server') &&
+        !groupDefinitions
+      "
+    >
       <LxTreeList
         :items="items"
         :idAttribute="idAttribute"
@@ -1665,7 +1989,9 @@ onMounted(() => {
       </LxTreeList>
     </div>
     <div
-      v-else-if="kind === 'treelist' && queryRaw?.length > 0 && searchSide === 'client'"
+      v-else-if="
+        kind === 'treelist' && queryRaw?.length > 0 && searchSide === 'client' && !groupDefinitions
+      "
       class="tree-list-search"
     >
       <div
