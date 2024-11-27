@@ -249,7 +249,7 @@ function processTreeItems(items, addGroup = true) {
     if (newObj?.[props.childrenAttribute]) {
       if (
         addGroup &&
-        props.groupDefinitions.find(
+        props.groupDefinitions?.find(
           (group) => group.id?.toString() === newObj[props.groupAttribute]?.toString()
         )
       ) {
@@ -280,7 +280,7 @@ const filteredGroupedItems = computed(() => {
   if (listItems && props.groupDefinitions) {
     const ret = {};
     props.groupDefinitions?.forEach((group) => {
-      ret[prepareCode(group.id)] = listItems.filter(
+      ret[prepareCode(group.id)] = listItems?.filter(
         (o) =>
           prepareCode(o[props.groupAttribute]) === prepareCode(group.id) &&
           (isFiltered(o[props.primaryAttribute]) || isFiltered(o[props.secondaryAttribute]))
@@ -318,7 +318,7 @@ function fillItemsArray() {
   }, {});
 
   if (props.includeUnspecifiedGroups) {
-    const nullGroupItems = listItems.filter(
+    const nullGroupItems = listItems?.filter(
       (item) =>
         !props.groupDefinitions.find((group) => item.group?.toString() === group.id?.toString())
     );
@@ -372,7 +372,7 @@ function searchInItemsArray() {
     Object.keys(itemsArray.value).forEach((key) => {
       if (Array.isArray(itemsArray.value[key])) {
         itemsArray.value[key] = itemsArray.value[key].filter((item) =>
-          listItems.some((filteredItem) => JSON.stringify(filteredItem) === JSON.stringify(item))
+          listItems?.some((filteredItem) => JSON.stringify(filteredItem) === JSON.stringify(item))
         );
       }
     });
@@ -597,7 +597,7 @@ const filteredUngroupedItems = computed(() => {
   if (props.kind === 'treelist') {
     listItems = filteredTreeItems.value;
   }
-  return listItems.filter((item) =>
+  return listItems?.filter((item) =>
     Object.values(filteredGroupedItems.value).every(
       (group) => !group?.some((groupedItem) => groupedItem.id === item.id)
     )
@@ -610,11 +610,11 @@ const selectedItems = computed(() => {
     if (selectedItemsRaw.value[key]) {
       let isKeyValid;
       if (props.kind === 'treelist') {
-        isKeyValid = treeItems.value.some(
+        isKeyValid = treeItems?.value.some(
           (item) => item[props.idAttribute]?.toString() === key?.toString()
         );
       } else {
-        isKeyValid = itemsWithStringIds.value.some((item) => item[props.idAttribute] === key);
+        isKeyValid = itemsWithStringIds?.value.some((item) => item[props.idAttribute] === key);
       }
 
       if (isKeyValid) {
@@ -649,14 +649,20 @@ const isSelectable = (item) => {
   return item?.[attribute] !== false;
 };
 
-const selectableItems = computed(() => itemsWithStringIds.value.filter(isSelectable));
-const selectableTreeItems = computed(() => treeItems.value.filter((item) => isSelectable(item)));
+const selectableItems = computed(() => itemsWithStringIds.value?.filter(isSelectable));
+const selectableTreeItems = computed(() =>
+  treeItemsWithGroups.value?.filter((item) => isSelectable(item))
+);
 
 const hasSelectableItemsInGroup = computed(() => {
   const selectableItemsMap = {};
+  let listItems = itemsWithStringIds.value;
+  if (props.kind === 'treelist') {
+    listItems = treeItemsWithGroups.value;
+  }
 
   props.groupDefinitions?.forEach((group) => {
-    const groupItems = itemsWithStringIds.value?.filter(
+    const groupItems = listItems?.filter(
       (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
     );
     selectableItemsMap[group.id] = groupItems?.some(isSelectable) || false;
@@ -666,8 +672,7 @@ const hasSelectableItemsInGroup = computed(() => {
 });
 
 const selectIcon = computed(() => {
-  const items = props.kind === 'treelist' ? selectableTreeItems.value : selectableItems.value;
-
+  const items = props.kind === 'treelist' ? selectableTreeItems?.value : selectableItems?.value;
   if (selectedItems.value.length === items.length && props.selectingKind === 'multiple') {
     return 'checkbox-filled';
   }
@@ -790,10 +795,10 @@ const groupSelectionStatuses = computed(() => {
 function selectSection(group) {
   const groupItems =
     props.kind === 'treelist'
-      ? treeItems.value.filter(
+      ? treeItemsWithGroups.value?.filter(
           (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
         )
-      : itemsWithStringIds.value.filter(
+      : itemsWithStringIds.value?.filter(
           (o) => prepareCode(o[props.groupAttribute]) === prepareCode(group.id)
         );
   const groupItemsIds = groupItems.map((o) => o[props.idAttribute]);
@@ -1502,7 +1507,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
                 <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
               </template>
             </lx-list-item>
-            <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+            <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
               <template v-if="isSelectable(item)">
                 <LxRadioButton
                   v-if="selectingKind === 'single'"
@@ -1513,7 +1518,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
                   :disabled="loading || busy"
                   :label="item[primaryAttribute]"
                   :group-id="`selection-${id}`"
-                  :tabindex="getGroupedTabIndex(item[idAttribute], group.id)"
+                  :tabindex="getGroupedTabIndex(item[idAttribute], null)"
                 />
                 <LxCheckbox
                   v-else
@@ -1642,7 +1647,10 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
                     <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                   </template>
                 </lx-list-item>
-                <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+                <div
+                  class="selecting-block"
+                  v-if="hasSelecting && selectableTreeItems?.length !== 0"
+                >
                   <template v-if="isSelectable(item)">
                     <LxRadioButton
                       v-if="selectingKind === 'single'"
@@ -2022,7 +2030,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
             <slot name="customItem" v-bind="item" />
           </template>
         </LxListItem>
-        <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
+        <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
           <template v-if="isSelectable(element)">
             <LxRadioButton
               v-if="selectingKind === 'single'"
