@@ -338,6 +338,18 @@
   right: -1px;
 }
 
+.lx .lx-data-grid.lx-scrollable .lx-cell-action {
+  z-index: 1;
+}
+
+.lx .lx-data-grid.lx-scrollable .lx-cell-action:has(.lx-selected) {
+  z-index: 2;
+}
+
+.lx .lx-data-grid.lx-scrollable .lx-cell-action:not(:has(.lx-selected)) {
+  transition: z-index 0.1s ease-in;
+}
+
 .lx:not(.lx-theme-contrast) .lx-cell + .lx-cell-action.show-cell-borders {
   box-shadow: -1px 0 0 0 var(--color-grid-header), 0 -1px 0 0 var(--color-grid-header),
     0 1px 0 0 var(--color-grid-header);
