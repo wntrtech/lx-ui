@@ -655,11 +655,17 @@ function selectRows(arr = null) {
       filterSelectable(arr)?.map((x) => x?.[props.idAttribute]?.toString())
     );
   }
+  nextTick(() => {
+    document.getElementById(`${props.id}-cancel-select-all`)?.focus();
+  });
 }
 const isItemSelected = (itemId) => !!selectedItemsRaw.value[itemId];
 
 function cancelSelection() {
   selectedItemsRaw.value = {};
+  nextTick(() => {
+    document.getElementById(`${props.id}-select-all`)?.focus();
+  });
 }
 
 const selectedLabel = computed(() => {
@@ -983,6 +989,7 @@ onMounted(() => {
               />
             </div>
             <LxButton
+              :id="`${id}-select-all`"
               icon="checkbox"
               kind="ghost"
               v-if="
@@ -1047,6 +1054,7 @@ onMounted(() => {
               />
             </div>
             <LxButton
+              :id="`${id}-cancel-select-all`"
               v-if="hasSelecting && kind !== 'draggable'"
               :icon="selectIcon"
               :title="texts.clearSelected"

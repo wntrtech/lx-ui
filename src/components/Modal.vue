@@ -35,6 +35,7 @@ const isOpenModal = ref(false);
 const modalRef = ref();
 const { activate, deactivate } = useFocusTrap(modalRef, {
   allowOutsideClick: true,
+  initialFocus: false,
 });
 
 function open() {
