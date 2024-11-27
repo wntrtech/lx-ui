@@ -145,6 +145,7 @@ function toggleNavBar(event) {
     !props.navBarSwitch &&
     windowSize.width.value < 1800 &&
     windowSize.width.value > 800 &&
+    event?.target?.parentNode?.parentNode?.id !== 'lx_nav-toggle' &&
     event?.target?.parentNode?.id !== 'lx_nav-toggle' &&
     event?.target?.id !== 'lx_nav-toggle'
   )
