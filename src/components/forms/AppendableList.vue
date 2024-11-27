@@ -74,10 +74,10 @@ const expanded = computed(() => {
   const object = [...model.value];
   const transformedStructure = object?.reduce((result, obj) => {
     const res = result;
-    if (obj[props.expandedAttribute] && typeof obj[props.expandedAttribute] === 'boolean')
-      res[obj?.id] = obj[props.expandedAttribute];
-    else {
-      res[obj?.id] = props.defaultExpanded;
+    if (typeof obj?.[props.expandedAttribute] === 'boolean') {
+      res[obj?.[props.idAttribute]] = obj[props.expandedAttribute];
+    } else {
+      res[obj?.[props.idAttribute]] = props.defaultExpanded;
     }
     return res;
   }, {});
