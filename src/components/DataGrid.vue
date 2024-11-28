@@ -135,6 +135,7 @@ const columnsComputed = computed(() => {
     ret.push({
       id: definition.id ? definition.id : definition.attributeName,
       attributeName: definition.attributeName,
+      attributeDescription: definition.attributeDescription,
       name: definition.name ? definition.name : definition.attributeName,
       title: definition.title,
       dictionary: definition.dictionary,
@@ -219,6 +220,13 @@ function formatTooltip(displayName, title) {
     return trimmedTitle;
   }
   return '';
+}
+
+function getTextTooltip(col, row) {
+  if (col.type === 'tooltip-text') {
+    return row[col.attributeDescription] || row[col.attributeName];
+  }
+  return ['xs', 's', 'm'].includes(col.size) ? row[col.attributeName] : '';
 }
 
 function actionClicked(actionName, rowCode, additionalParam) {
@@ -1077,6 +1085,11 @@ watch(
                   col.type !== 'person' &&
                   col.type !== 'icon'
                 "
+                :title="getTextTooltip(col, row)"
+                :class="{
+                  'lx-cell-tooltip':
+                    col.type === 'tooltip-text' || ['xs', 's', 'm'].includes(col.size),
+                }"
                 :role="col.kind === 'clickable' ? 'link' : null"
                 :tabindex="col.kind === 'clickable' ? 0 : null"
                 @click="

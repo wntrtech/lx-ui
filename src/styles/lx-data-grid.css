@@ -240,6 +240,10 @@
   fill: var(--color-data);
 }
 
+.lx .lx-data-grid span.lx-cell-tooltip {
+  cursor: help;
+}
+
 .lx .lx-data-grid .lx-cell-clickable > span,
 .lx-data-grid-wrapper
   .lx-appendable-list
