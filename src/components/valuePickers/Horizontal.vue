@@ -407,6 +407,14 @@ function handleFocus() {
     const container = document.getElementById(idValue.value);
     const selectedItem = container?.querySelector('.lx-value-picker-horizontal-icon-wrapper.lx-selected');
 
+    setTimeout(() => {
+      selectedItem?.scrollIntoView({
+        behavior: 'smooth', 
+        block: 'nearest',  
+        inline: 'center'
+      });
+    }, 5);
+
     // @ts-ignore
     selectedItem?.focus();
   });
@@ -513,9 +521,9 @@ function focusNext() {
             </div>
             <div class="lx-value-picker-horizontal-icon-wrapper" 
               :class="{ 'lx-selected': itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null)}"
-              @keydown.right="focusNext()"
+              @keydown.right.prevent="focusNext()"
               @keydown.down.prevent="focusNext()"
-              @keydown.left="focusPrevious()"
+              @keydown.left.prevent="focusPrevious()"
               @keydown.up.prevent="focusPrevious()"
               @click="selectSingle(item[idAttribute])"
               :tabindex="getTabIndex(item[idAttribute])">
