@@ -265,34 +265,6 @@ function maskUpdate() {
   }
 }
 
-// Workaround to show readonly values masked
-const forcedMaskedValue = computed(() => {
-  if (model.value === null || model.value === '') {
-    return '';
-  }
-
-  const value = String(model.value);
-  switch (props.mask) {
-    case 'personCodeLv':
-    case 'person-code-lv':
-      return `${value.substring(0, 6)}-${value.substring(6)}`;
-    case 'newbornId':
-    case 'newborn-id':
-      return value[11] !== '/' ? `${value.substring(0, 11)}/${value.substring(11)}` : value;
-    case 'decimal':
-      return value.replace('.', ',');
-    case 'currency':
-      return value.replace('.', ',');
-    case 'gpslat':
-      return value.replace('.', ',');
-    case 'gpslon':
-      return value.replace('.', ',');
-    case 'time':
-      return value.length > 2 ? `${value.substring(0, 2)}:${value.substring(2)}` : value;
-    default:
-      return value;
-  }
-});
 const maxLengthComp = computed(() => 10 ** Number(props.maxlength) - 1);
 
 const config = computed(() => ({
@@ -310,6 +282,35 @@ const config = computed(() => ({
   shouldRound: true,
   focusOnRight: false,
 }));
+
+// Workaround to show readonly values masked
+const forcedMaskedValue = computed(() => {
+  if (model.value === null || model.value === '') {
+    return '';
+  }
+
+  const value = String(model.value);
+  switch (props.mask) {
+    case 'personCodeLv':
+    case 'person-code-lv':
+      return `${value.substring(0, 6)}-${value.substring(6)}`;
+    case 'newbornId':
+    case 'newborn-id':
+      return value[11] !== '/' ? `${value.substring(0, 11)}/${value.substring(11)}` : value;
+    case 'decimal':
+      return value.replace('.', ',');
+    case 'currency':
+      return value.replace('.', ',') + config.value.suffix;
+    case 'gpslat':
+      return value.replace('.', ',');
+    case 'gpslon':
+      return value.replace('.', ',');
+    case 'time':
+      return value.length > 2 ? `${value.substring(0, 2)}:${value.substring(2)}` : value;
+    default:
+      return value;
+  }
+});
 
 const hidePassword = ref(true);
 
@@ -354,7 +355,15 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 <template>
   <div class="lx-field-wrapper">
     <p v-if="readOnly && props.kind !== 'password' && !isReadOnlyEmail()" class="lx-data">
-      {{ forcedMaskedValue }} <span v-if="model === null || model === undefined">—</span>
+      {{ forcedMaskedValue }}
+      <span
+        v-if="
+          model === null ||
+          model === undefined ||
+          (typeof model === 'string' && model?.trim() === '')
+        "
+        >—</span
+      >
     </p>
     <a v-if="isReadOnlyEmail()" :href="`mailto:${model}`">{{ model }}</a>
     <div
