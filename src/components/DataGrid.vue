@@ -858,19 +858,16 @@ function updateGridTemplateColumns() {
 }
 
 watch(
-  columnsComputed,
+  [
+    columnsComputed,
+    () => hasActionButtons.value,
+    () => props.showAllColumns,
+    () => props.hasSelecting,
+  ],
   () => {
     updateGridTemplateColumns();
   },
   { immediate: true }
-);
-
-watch(
-  [() => props.showAllColumns, () => props.hasSelecting],
-  () => {
-    updateGridTemplateColumns();
-  },
-  { deep: true }
 );
 
 watch(
