@@ -235,8 +235,8 @@ const deviceFontsStorageKey = ref(
 
 function applyDeviceFonts(isEnabled) {
   if (isEnabled) {
-    lxElement.style.setProperty('--font-family', 'system-ui, sans-serif');
-    lxElement.style.setProperty('--font-family-mono', 'ui-monospace, monospace, sans-serif');
+    lxElement.style.setProperty('--font-family', 'initial');
+    lxElement.style.setProperty('--font-family-mono', 'initial');
   } else {
     lxElement.style.removeProperty('--font-family');
     lxElement.style.removeProperty('--font-family-mono');
