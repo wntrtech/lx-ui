@@ -73,7 +73,9 @@ defineExpose({ focus });
 const minValueComp = computed(() => 10 ** Number(props.maxlength || 20) - 1);
 const maxLengthValue = computed(() => {
   if (!props.maxlength) return null;
-  return props.mask === 'decimal' && props.signed ? null : Number(props.maxlength);
+  return (props.mask === 'decimal' || props.mask === 'integer') && props.signed
+    ? null
+    : Number(props.maxlength);
 });
 
 const inputMask = computed(() => {
@@ -83,6 +85,7 @@ const inputMask = computed(() => {
         mask: Number,
         scale: 0,
         lazy: false,
+        min: props.signed ? 0 - minValueComp.value : 0,
         max: Number.MAX_SAFE_INTEGER,
         format: () => '',
       };
@@ -214,20 +217,16 @@ watch(
   () => props.modelValue,
   (newValue, oldValue) => {
     if (
-      props.mask === 'decimal' &&
-      props.maxlength &&
-      props.signed &&
-      newValue?.toString()?.charAt(0) === '-' &&
-      newValue?.toString().length > Number(props.maxlength) + 1
-    ) {
-      model.value = oldValue;
-      valueRaw.value = oldValue?.toString().replace('.', ',');
-    } else if (
-      props.mask === 'decimal' &&
-      props.maxlength &&
-      props.signed &&
-      newValue?.toString()?.charAt(0) !== '-' &&
-      newValue?.toString().length > Number(props.maxlength)
+      ((props.mask === 'decimal' || props.mask === 'integer') &&
+        props.maxlength &&
+        props.signed &&
+        newValue?.toString()?.charAt(0) === '-' &&
+        newValue?.toString().length > Number(props.maxlength) + 1) ||
+      ((props.mask === 'decimal' || props.mask === 'integer') &&
+        props.maxlength &&
+        props.signed &&
+        newValue?.toString()?.charAt(0) !== '-' &&
+        newValue?.toString().length > Number(props.maxlength))
     ) {
       model.value = oldValue;
       valueRaw.value = oldValue?.toString().replace('.', ',');
