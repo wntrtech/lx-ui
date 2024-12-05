@@ -261,7 +261,9 @@ function clearSelectedValues() {
   shouldCloseMenu.value = true;
 
   emits('update:modelValue', null);
-  props.setActiveInput('startInput', props.id);
+  if (props.pickerType === 'range') {
+    props.setActiveInput('startInput', props.id);
+  }
 }
 
 function handleDoNotIndicateStart() {
