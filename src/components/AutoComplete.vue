@@ -136,13 +136,17 @@ const mergeItems = (newItems, storedItems) => {
       mergedItems.push(item);
     }
   });
+  mergedItems.sort(
+    (a, b) =>
+      Object.keys(itemsModel.value).indexOf(getIdAttributeString(a)) -
+      Object.keys(itemsModel.value).indexOf(getIdAttributeString(b))
+  );
   return mergedItems;
 };
 
 watch([model, () => allItems.value], ([newModelValue]) => {
   if (newModelValue && (!Array.isArray(newModelValue) || newModelValue.length > 0)) {
     if (Array.isArray(newModelValue) && props.selectingKind === 'multiple') {
-      activate();
       const selectedArray = newModelValue
         .map((id) => findItemById(id, allItems.value))
         .filter(Boolean);
@@ -625,10 +629,13 @@ function activate() {
     }
   }
 }
+activate();
 
 function selectMultiple(item) {
+  activate();
   const idModel = ref(itemsModel.value[getIdAttributeString(item)]);
   idModel.value = !idModel.value;
+  let res = model.value;
 
   if (Array.isArray(model.value)) {
     if (idModel.value) {
@@ -636,12 +643,12 @@ function selectMultiple(item) {
       const index = model.value.indexOf(getIdAttributeString(item));
       if (index === -1) {
         // Add item to model
-        model.value = [...model.value, getIdAttributeString(item)];
+        res = [...model.value, getIdAttributeString(item)];
         itemsModel.value[getIdAttributeString(item)] = true;
       } else {
         // Remove item from model
         const updatedModel = model.value.filter((id) => id !== getIdAttributeString(item));
-        model.value = [...updatedModel];
+        res = [...updatedModel];
       }
     } else {
       itemsModel.value[getIdAttributeString(item)] = false;
@@ -649,15 +656,16 @@ function selectMultiple(item) {
       if (index > -1) {
         // Remove item from model
         const updatedModel = model.value.filter((id) => id !== getIdAttributeString(item));
-        model.value = [...updatedModel];
+        res = [...updatedModel];
       }
     }
     // Sort model according to order of items
-    model.value.sort(
+    res.sort(
       (a, b) =>
         Object.keys(itemsModel.value).indexOf(a.toString()) -
         Object.keys(itemsModel.value).indexOf(b.toString())
     );
+    model.value = res;
   } else {
     // Initialize model.value as an array if it's not already
     model.value = [getIdAttributeString(item)];

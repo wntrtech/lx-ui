@@ -169,7 +169,7 @@ watch(
     return { value, length };
   },
   ({ value, length }) => {
-    if (!value) return
+    if (!value) return;
     activate();
     // TODO need normal solution to avoid v-model = [[]] (v-model = null, variant = dropdown, kind = multiple, alwaysAsArray = true), maybe rework emits
     if (Array.isArray(value) && Array.isArray(value[0])) {
