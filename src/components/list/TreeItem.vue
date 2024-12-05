@@ -164,7 +164,7 @@ watch(
 );
 </script>
 <template>
-  <div class="tree-item" v-for="item in items" :key="item[idAttribute]">
+  <div class="tree-item" v-for="item in items" :key="item[idAttribute]" role="listitem">
     <div
       class="tree-item-body"
       :class="[

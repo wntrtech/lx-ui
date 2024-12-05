@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, nextTick } from 'vue';
+import { ref, computed, watch, onMounted, nextTick, inject } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import draggable from 'vuedraggable/src/vuedraggable';
 
@@ -62,6 +62,7 @@ const props = defineProps({
   itemsStates: { type: Object, default: () => {} },
   mode: { type: String, default: 'client' }, // client, server,
   searchMode: { type: String, default: 'default' }, // default, compact
+  labelId: { type: String, default: null },
 
   texts: {
     type: Object,
@@ -955,6 +956,9 @@ function moveDraggableItem(direction, element, groupType) {
   }
 }
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 watch(
   () => props.items,
   (newVal) => {
@@ -1184,6 +1188,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
         :id="id"
         class="lx-list"
         :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+        :aria-labelledby="labelledBy"
         v-if="kind === 'default'"
       >
         <li
@@ -1262,6 +1267,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
           @end="changeDragging"
           @change="onMoveItem"
           :disabled="loading || busy || draggableIsDisabledByQuery"
+          :aria-labelledby="labelledBy"
         >
           <template #item="{ element }">
             <TransitionGroup
@@ -1371,6 +1377,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
             :id="`${id}-${prepareCode(group.id)}`"
             class="lx-list"
             :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+            :aria-labelledby="labelledBy"
             v-if="
               filteredGroupedItems[prepareCode(group.id)] &&
               filteredGroupedItems[prepareCode(group.id)].length > 0
@@ -1478,11 +1485,12 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
         </template>
       </LxTreeList>
       <div class="tree-list-wrapper" v-else-if="queryRaw?.length > 0">
-        <div class="tree-list-search">
+        <div class="tree-list-search" role="list">
           <div
             v-for="item in itemsArray[prepareCode(UNSPECIFIED_GROUP_CODE)]"
             :key="item[idAttribute]"
             class="tree-list-search-item lx-list-item-container"
+            role="listitem"
           >
             <lx-list-item
               :id="item[idAttribute]"
@@ -1618,11 +1626,12 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
           @select-all="selectSection(group)"
         >
           <div class="tree-list-wrapper">
-            <div class="tree-list-search">
+            <div class="tree-list-search" role="list">
               <div
                 v-for="item in filteredGroupedItems[prepareCode(group.id)]"
                 :key="item[idAttribute]"
                 class="tree-list-search-item lx-list-item-container"
+                role="listitem"
               >
                 <lx-list-item
                   :id="item[idAttribute]"
@@ -1687,6 +1696,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
         :id="id"
         class="lx-list"
         :class="[{ 'lx-list-3': listType === '3' }, { 'lx-list-2': listType === '2' }]"
+        :aria-labelledby="labelledBy"
       >
         <li v-for="item in filteredItems" :key="item[idAttribute]" class="lx-list-item-container">
           <LxListItem
@@ -1759,6 +1769,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
           @end="changeDragging"
           @change="onMoveItem"
           :disabled="loading || busy || draggableIsDisabledByQuery"
+          :aria-labelledby="labelledBy"
         >
           <template #item="{ element }">
             <TransitionGroup
@@ -1875,6 +1886,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
             @end="changeDragging"
             @change="onMoveItem"
             :disabled="loading || busy || draggableIsDisabledByQuery"
+            :aria-labelledby="labelledBy"
           >
             <template #item="{ element }">
               <TransitionGroup
@@ -2001,11 +2013,13 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
         kind === 'treelist' && queryRaw?.length > 0 && searchSide === 'client' && !groupDefinitions
       "
       class="tree-list-search"
+      role="list"
     >
       <div
         v-for="element in filteredTreeItems"
         :key="element?.[idAttribute]"
         class="tree-list-search-item lx-list-item-container"
+        role="listitem"
       >
         <LxListItem
           :id="element[idAttribute]"

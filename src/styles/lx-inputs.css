@@ -190,14 +190,6 @@
   max-height: 0;
 }
 
-h2.lx-section-header + p.lx-invalidation-message {
-  display: block;
-  max-height: inherit;
-  font-size: var(--small-font-size);
-  color: var(--color-bad);
-  margin-top: -1rem;
-}
-
 .lx-field-wrapper:has(.lx-input-wrapper.lx-invalid) .lx-invalidation-message,
 .lx-toggle-wrapper[data-invalid] ~ .lx-invalidation-message {
   display: block;
@@ -3986,6 +3978,7 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-file-upload-wrapper .lx-draggable-upload-wrapper{
   display: flex;
   justify-content: space-between;
+  outline: none;
 }
 
 .lx-file-upload-wrapper .lx-draggable-upload-wrapper > svg{

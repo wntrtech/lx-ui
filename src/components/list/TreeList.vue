@@ -189,7 +189,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
 </script>
 <template>
   <div class="tree-list-wrapper">
-    <div class="tree-list">
+    <div class="tree-list" role="list">
       <LxTreeItem
         :items="items"
         :idAttribute="idAttribute"
@@ -225,8 +225,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         </template>
       </LxTreeItem>
     </div>
-    <div class="tree-list tree-list-small">
-      <div v-if="level > 0" class="tree-item-small tree-item-small-parent">
+    <div class="tree-list tree-list-small" role="list">
+      <div v-if="level > 0" class="tree-item-small tree-item-small-parent" role="listitem">
         <LxButton
           v-if="isExpandable(parent)"
           kind="ghost"
@@ -300,6 +300,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
             !isExpandable(item) &&
             (level === 0 ? props.areSomeExpandable || areSomeExpandable : true),
         }"
+        role="listitem"
       >
         <LxButton
           v-if="isExpandable(item)"

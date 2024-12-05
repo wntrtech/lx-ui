@@ -227,9 +227,9 @@ describe('LxMasterDetail', () => {
       });
 
       const master = wrapper.find('.lx-master');
-      expect(master.html()).toContain('button');
+      expect(master.html()).toContain('lx-master-detail-button');
       await wrapper.setProps({ mode: 'read' });
-      expect(master.html()).not.toContain('button');
+      expect(master.html()).not.toContain('lx-master-detail-button');
     });
   });
 });

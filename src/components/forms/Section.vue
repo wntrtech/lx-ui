@@ -245,9 +245,13 @@ provide('sectionOrientation', sectionOrientation);
         { 'lx-form-section-4': columnCountComputed === 4 },
         { 'lx-form-section-8': columnCountComputed === 8 },
       ]"
+      role="region"
+      :aria-describedby="description ? `${id}-desc` : null"
     >
       <header v-if="description">
-        <p v-if="description" class="lx-description">{{ description }}</p>
+        <legend :id="`${id}-desc`" class="lx-description">
+          {{ description }}
+        </legend>
       </header>
       <slot />
     </section>
@@ -263,11 +267,19 @@ provide('sectionOrientation', sectionOrientation);
       { 'lx-form-section-4': columnCountComputed === 4 },
       { 'lx-form-section-8': columnCountComputed === 8 },
     ]"
+    role="region"
+    :aria-labelledby="label ? `${id}-label` : null"
+    :aria-describedby="description ? `${id}-desc` : null"
   >
     <header v-if="label || description || actionDefinitions?.length > 0">
       <div>
-        <div class="heading-3" v-if="label">{{ label }}</div>
-        <p v-if="description" class="lx-description">{{ description }}</p>
+        <!-- eslint-disable-next-line vuejs-accessibility/role-has-required-aria-props -->
+        <div :id="`${id}-label`" v-if="label" class="heading-3" role="heading">
+          {{ label }}
+        </div>
+        <legend :id="`${id}-desc`" v-if="description" class="lx-description">
+          {{ description }}
+        </legend>
       </div>
       <div v-if="actionDefinitions?.length > 0">
         <LxButton

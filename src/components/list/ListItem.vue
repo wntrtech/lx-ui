@@ -76,6 +76,9 @@ function secureURL(url) {
       :tabindex="href || clickable ? 0 : -1"
       class="lx-list-item"
       @click="performClick()"
+      :role="clickable ? 'button' : null"
+      :aria-labelledby="label && clickable ? `${id}-label` : null"
+      :aria-describedby="description && clickable ? `${id}-desc` : null"
       :aria-invalid="invalid"
       v-on:keyup.enter="performClick()"
       v-on:keyup.space="performClick()"
@@ -120,10 +123,14 @@ function secureURL(url) {
       <header>
         <template v-if="!$slots.customItem">
           <p class="lx-primary">
-            <lx-searchable-text :value="label" :search-string="searchString" />
+            <lx-searchable-text :id="`${id}-label`" :value="label" :search-string="searchString" />
           </p>
           <p class="lx-secondary" v-if="description">
-            <lx-searchable-text :value="description" :search-string="searchString" />
+            <lx-searchable-text
+              :id="`${id}-desc`"
+              :value="description"
+              :search-string="searchString"
+            />
           </p>
         </template>
         <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>
@@ -207,6 +214,9 @@ function secureURL(url) {
     <router-link
       v-if="href"
       class="lx-list-item"
+      :role="clickable ? 'button' : null"
+      :aria-labelledby="label && clickable ? `${id}-label` : null"
+      :aria-describedby="description && clickable ? `${id}-desc` : null"
       :aria-invalid="invalid"
       :to="secureURL(href)"
       :title="tooltip"
@@ -251,10 +261,14 @@ function secureURL(url) {
       <header>
         <template v-if="!$slots.customItem">
           <p class="lx-primary">
-            <lx-searchable-text :value="label" :search-string="searchString" />
+            <lx-searchable-text :id="`${id}-label`" :value="label" :search-string="searchString" />
           </p>
           <p class="lx-secondary" v-if="description">
-            <lx-searchable-text :value="description" :search-string="searchString" />
+            <lx-searchable-text
+              :id="`${id}-desc`"
+              :value="description"
+              :search-string="searchString"
+            />
           </p>
         </template>
         <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>

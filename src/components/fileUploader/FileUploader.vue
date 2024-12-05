@@ -460,17 +460,20 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       { compact: props.mode === 'compact' },
       { 'lx-disabled': props.disabled },
     ]"
+    :aria-labelledBy="labelledBy"
+    role="group"
   >
     <template v-if="props.kind === 'single' && !props.readOnly">
-      <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
       <input
         :id="props.id"
         class="lx-visually-hidden"
         type="file"
         ref="fileInput"
         :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
-        :aria-labelledby="labelledBy"
         @change="uploadFiles"
+        tabindex="-1"
+        aria-hidden="true"
+        role="presentation"
       />
       <div class="lx-draggable-wrapper" v-if="!props.draggable && advancedFilesData.length < 1">
         <LxButton
@@ -505,6 +508,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           @keyup.space="triggerFileUpload"
           @keyup.enter="triggerFileUpload"
           @click="triggerFileUpload"
+          role="button"
+          tabindex="0"
+          :aria-label="props.texts.draggablePlaceholder"
         >
           <p>{{ props.texts.draggablePlaceholder }}</p>
           <LxIcon value="upload" />
@@ -521,16 +527,17 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       </div>
     </template>
     <template v-if="props.kind === 'multiple' && !props.readOnly">
-      <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
       <input
         :id="props.id"
         class="lx-visually-hidden"
         type="file"
         ref="fileInput"
-        :aria-labelledby="labelledBy"
         :accept="allowedFileExtensions.map((ext) => ext.toLowerCase()).join(',')"
         @change="uploadFiles"
         multiple
+        tabindex="-1"
+        aria-hidden="true"
+        role="presentation"
       />
       <div class="lx-draggable-wrapper" v-if="!props.draggable">
         <LxButton
@@ -565,6 +572,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           @keyup.space="triggerFileUpload"
           @keyup.enter="triggerFileUpload"
           @click="triggerFileUpload"
+          role="button"
+          tabindex="0"
+          :aria-label="props.texts.draggablePlaceholder"
         >
           <p>{{ props.texts.draggablePlaceholder }}</p>
           <LxIcon value="upload" />

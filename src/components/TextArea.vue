@@ -69,7 +69,6 @@ defineExpose({ focus });
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
         >
           <div class="pseudo-input" />
-          <label class="lx-visually-hidden" :for="props.id"></label>
           <textarea
             v-model="model"
             ref="textarea"
@@ -90,13 +89,14 @@ defineExpose({ focus });
           />
 
           <!-- Hidden template textarea for height calculation -->
-          <label class="lx-visually-hidden" :for="props.id"></label>
           <textarea
             v-if="props.dynamicHeight"
             ref="shadowTextarea"
             class="lx-text-area lx-text-area-template lx-input-area"
             :id="props.id"
             readonly
+            aria-hidden="true"
+            role="presentation"
             :tabindex="-1"
           />
 

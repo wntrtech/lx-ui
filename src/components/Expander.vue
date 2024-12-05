@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { shallowRef, watch, computed } from 'vue';
+import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -7,7 +8,10 @@ import useLx from '@/hooks/useLx';
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
-  id: { type: String, default: null },
+  id: {
+    type: String,
+    default: () => generateUUID(),
+  },
   label: { type: String, default: null },
   description: { type: String, default: null },
   region: { type: Boolean, default: false },
@@ -97,6 +101,8 @@ function selectExpander(event, id) {
       @keyup.enter.prevent="toggleExpander"
       tabindex="0"
       role="button"
+      :aria-labelledby="label ? `${id}-label` : null"
+      :aria-describedby="description ? `${id}-desc` : null"
       :aria-expanded="isExpandedRaw"
       :aria-invalid="invalid"
       aria-controls="lx-body"
@@ -114,8 +120,12 @@ function selectExpander(event, id) {
             </div>
           </template>
           <div class="lx-header-data">
-            <div class="heading-4" v-if="label">{{ label }}</div>
-            <p v-if="description" class="lx-description">{{ description }}</p>
+            <div :id="`${id}-label`" v-if="label" class="heading-4">
+              {{ label }}
+            </div>
+            <legend :id="`${id}-desc`" v-if="description" class="lx-description">
+              {{ description }}
+            </legend>
           </div>
           <div class="lx-expander-additional-info" v-if="$slots.additionalInfo">
             <LxInfoWrapper :disabled="disabled">

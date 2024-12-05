@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref, inject } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxDataBlock from '@/components/DataBlock.vue';
@@ -26,6 +26,7 @@ const props = defineProps({
   defaultExpanded: { type: Boolean, default: true }, //
   expandedAttribute: { type: String, default: 'extended' },
   selectedValues: { type: Object, default: () => {} },
+  labelId: { type: String, default: null },
   texts: {
     type: Object,
     default: () => ({
@@ -164,17 +165,26 @@ function changeSelecting(value) {
   }
 }
 
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
+
 onMounted(() => {
   model.value = props.modelValue;
 });
 defineExpose({ clearModel });
 </script>
 <template>
-  <div class="lx-appendable-list" :class="[{ 'lx-appendable-list-compact': kind === 'compact' }]">
+  <div
+    class="lx-appendable-list"
+    :class="[{ 'lx-appendable-list-compact': kind === 'compact' }]"
+    :aria-labelledby="labelledBy"
+    role="list"
+  >
     <div
       v-for="(item, index) in model"
       :key="item._lx_appendableKey"
       class="lx-appendable-list-item"
+      role="listitem"
     >
       <template v-if="expandable">
         <LxDataBlock

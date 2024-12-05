@@ -74,6 +74,7 @@ defineExpose({ selectItem });
       <nav class="lx-master" v-if="windowWidth >= 1200 || !activeItemCode" ref="nav">
         <LxButton
           v-if="mode === 'edit'"
+          customClass="lx-master-detail-button"
           icon="add-item"
           kind="tertiary"
           :label="texts?.add"
