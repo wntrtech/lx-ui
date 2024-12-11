@@ -57,7 +57,7 @@ const props = defineProps({
     default: () => ({
       undo: 'Atcelt pēdējo darbību',
       redo: 'Atgriezt atcelto darbību',
-      bold: 'Treknrakts',
+      bold: 'Treknraksts',
       italic: 'Slīpraksts',
       underline: 'Pasvītrojums',
       strikethrough: 'Pārsvītrojums',

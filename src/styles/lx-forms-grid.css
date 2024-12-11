@@ -45,6 +45,10 @@ svg .lx-shade {
   z-index: 10;
 }
 
+.lx-modal .lx-form-grid > header.lx-sticky {
+  top: -1rem;
+}
+
 .lx-form-grid > header > .lx-group {
   display: flex;
   height: var(--row-size);
@@ -117,6 +121,10 @@ svg .lx-shade {
   bottom: 0;
   background-color: var(--color-region);
   z-index: 5;
+}
+
+.lx-modal .lx-form-grid > footer.lx-sticky { 
+  bottom: -2rem;
 }
 
 .lx-form-grid > footer > .lx-group {
