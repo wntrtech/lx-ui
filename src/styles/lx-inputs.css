@@ -4385,8 +4385,16 @@ input[type='range']:hover::-moz-range-thumb {
   fill: var(--color-region); 
 }
 
+.lx-qr-wrapper:not(.lx-ignore-theme){
+  background-color: var(--color-region);
+}
+
 .lx-region .lx-qr-wrapper:not(.lx-ignore-theme) > svg > rect{
   fill: var(--color-region-2); 
+}
+
+.lx-region .lx-qr-wrapper:not(.lx-ignore-theme){
+  background-color: var(--color-region-2);
 }
 
 .lx-qr-wrapper:not(.lx-ignore-theme) > svg > path{

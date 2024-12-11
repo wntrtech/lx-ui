@@ -62,7 +62,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
     <label :for="idValue" class="lx-checkbox-label-wrapper">
       <span class="lx-checkbox-appearance">
         <span class="lx-checkbox-thumb">
-          <LxIcon value="check" />
+          <LxIcon value="check" icon-set="cds" />
         </span>
       </span>
       <span class="lx-checkbox-label" v-if="label">{{ label }}</span>
