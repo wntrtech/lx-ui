@@ -85,6 +85,14 @@ const isInputFocused = ref(false);
 const inputReadonly = ref(false);
 
 const globalEnvironment = useLx().getGlobals()?.environment;
+
+function formatFinalQuery(q) {
+  return q?.trim();
+}
+const finalQuery = computed(() => {
+  return formatFinalQuery(query.value);
+});
+
 const convertBooleanToString = (value) => (typeof value === 'boolean' ? value.toString() : value);
 
 const model = computed({
@@ -95,7 +103,7 @@ const model = computed({
     return null;
   },
   set: (value) => {
-      emit('update:modelValue', value);
+    emit('update:modelValue', value);
   },
 });
 
@@ -122,7 +130,7 @@ const listRef = ref();
 const idValue = ref('');
 
 const findItemById = (id, items) => {
-    return items?.find((item) => id === getIdAttributeString(item));
+  return items?.find((item) => id === getIdAttributeString(item));
 };
 
 const mergeItems = (newItems, storedItems) => {
@@ -237,14 +245,15 @@ watch(
 
     // Proceed with search if props.items is a function
     if (typeof props.items === 'function') {
-      if ((newValue?.length || 0) < props.queryMinLength) {
+      const finalQuery = formatFinalQuery(newValue);
+      if ((finalQuery?.length || 0) < props.queryMinLength) {
         const destroyResults = newValue?.length > oldValue?.length;
         if (destroyResults) {
           allItems.value = [];
         }
         return;
       }
-      await debouncedSearchReq(newValue);
+      await debouncedSearchReq(finalQuery);
     }
   },
   { immediate: true }
@@ -578,9 +587,9 @@ function openDetails() {
     props.hasDetails
   ) {
     if (props.detailMode === 'simple') {
-        emit('openDetails', props.id);
+      emit('openDetails', props.id);
     } else if (props.detailMode === 'detailed') {
-        detailedModeModal.value.open();
+      detailedModeModal.value.open();
     }
   }
 }
@@ -1026,8 +1035,8 @@ onMounted(() => {
                         { emptyModel: model?.length === 0 || !model || selectingKind === 'single' },
                       ]"
                     >
-                      <div 
-                        class="lx-text-input-wrapper lx-input-wrapper" 
+                      <div
+                        class="lx-text-input-wrapper lx-input-wrapper"
                         :class="[
                           { 'lx-disabled': disabled },
                           { 'lx-invalid': invalid },
@@ -1037,15 +1046,15 @@ onMounted(() => {
                         <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag">
                           <div class="lx-tag-label">{{ model?.length }}</div>
                           <div class="lx-tag-button">
-                          <LxButton
-                            id="clearButton"
-                            :title="texts.clear"
-                            :disabled="disabled"
-                            kind="secondary"
-                            variant="icon-only"
-                            icon="remove"
-                            @click.stop="clear"
-                              />
+                            <LxButton
+                              id="clearButton"
+                              :title="texts.clear"
+                              :disabled="disabled"
+                              kind="secondary"
+                              variant="icon-only"
+                              icon="remove"
+                              @click.stop="clear"
+                            />
                           </div>
                         </div>
                         <input
@@ -1189,14 +1198,14 @@ onMounted(() => {
                     >
                       <template v-if="filteredItems?.length">
                         <div v-if="hasSelectAll && typeof props.items !== 'function' && selectingKind==='multiple'" 
-                          class="lx-value-picker-item select-all" 
-                          tabindex="-1" 
-                          role="option" 
-                          @click="selectAll" 
+                          class="lx-value-picker-item select-all"
+                          tabindex="-1"
+                          role="option"
+                          @click="selectAll"
                           :title="areSomeSelected ? texts.clearChosen : texts.selectAll "
                         >
                           <LxIcon :value="areSomeSelected ? areAllSelected ? 'checkbox-filled' : 'checkbox-indeterminate' : 'checkbox'" />
-                          <span>{{ areSomeSelected ? texts.clearChosen : texts.selectAll }}</span> 
+                          <span>{{ areSomeSelected ? texts.clearChosen : texts.selectAll }}</span>
                         </div>
                         <template v-for="item in filteredItems" :key="item[idAttribute]">
                           <div
@@ -1276,8 +1285,8 @@ onMounted(() => {
                       </template>
                       <template
                         v-if="
-                          query &&
-                          query.length >= props.queryMinLength &&
+                          finalQuery &&
+                          finalQuery.length >= props.queryMinLength &&
                           !filteredItems?.length &&
                           !loadingState
                         "
@@ -1295,7 +1304,7 @@ onMounted(() => {
                       <template
                         v-if="
                           queryMinLength !== 0 &&
-                          (!query || query.length < queryMinLength) &&
+                          (!finalQuery || finalQuery.length < queryMinLength) &&
                           (!filteredItems || filteredItems?.length === 0)
                         "
                       >
