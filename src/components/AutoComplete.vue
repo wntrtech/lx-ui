@@ -322,6 +322,10 @@ function handleMenuAndInputKeydown(e) {
   }
 }
 
+function handleTouchStart() {
+  inputReadonly.value = false; // Allow touch input interaction
+}
+
 function openMenu() {
   if (!props.disabled && menuOpen.value === false) {
     if (!menuOpen.value) {
@@ -1057,6 +1061,7 @@ onMounted(() => {
                           @focusout="handleFocusOut"
                           @focus="handleInputFocus"
                           @keydown="handleMenuAndInputKeydown"
+                          @touchstart="handleTouchStart"
                         />
                         <template v-if="shouldShowValuePlaceholder">
                           <div
