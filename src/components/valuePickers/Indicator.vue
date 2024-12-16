@@ -342,9 +342,14 @@ function selectAll() {
   } else if (areSomeSelected.value) {
     model.value = [];
   } else {
+    const res = [];
+    const states = {};
     props.items.forEach((item) => {
-      selectMultiple(item[props.idAttribute]);
+      res.push(item[props.idAttribute]);
+      states[item[props.idAttribute]] = true;
     });
+    model.value = res;
+    itemsModel.value = states;
   }
 }
 function isSelected(item) {

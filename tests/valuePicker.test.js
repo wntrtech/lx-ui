@@ -3,6 +3,7 @@ import LxValuePicker from '@/components/ValuePicker.vue';
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import { mount } from '@vue/test-utils';
 import 'regenerator-runtime/runtime';
+import FlagItemDisplay from '@/components/itemDisplay/FlagItemDisplay.vue';
 
 test('LxValuePicker default', () => {
   expect(LxValuePicker).toBeTruthy();
@@ -1046,4 +1047,64 @@ test('LxValuePicker tiles searchAttributes', async () => {
   items = wrapper.findAll('.lx-value-picker-tile');
   expect(items.length).toBe(1);
   expect(items[0].find('.lx-value-picker-tile-name').text()).toBe('Two');
+});
+
+test('LxValuePicker default hasSelectAll', async () => {
+  expect(LxValuePicker).toBeTruthy();
+
+  const wrapper = mount(LxValuePicker, {
+    props: {
+      items: [
+        { id: 'one', name: 'One', description: 'OneDescription', value: 'OneValue' },
+        { id: 'two', name: 'Two', description: 'TwoDescription', value: 'TwoValue' },
+        { id: 'three', name: 'Three', description: 'ThreeDescription', value: 'ThreeValue' },
+      ],
+      kind: 'multiple',
+      hasSearch: true,
+      hasSelectAll: true,
+      modelValue: [],
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+    global: {
+      stubs: ['router-link'],
+    },
+  });
+
+  expect(wrapper.find('.select-all').exists()).toBe(true);
+  const selectAll = wrapper.find('.select-all').find('.lx-button');
+  await selectAll.trigger('click');
+  expect(wrapper.props('modelValue')).toStrictEqual(['one', 'two', 'three']);
+  await selectAll.trigger('click');
+  expect(wrapper.props('modelValue')).toStrictEqual([]);
+});
+
+test('LxValuePicker dropdown hasSelectAll', async () => {
+  expect(LxValuePicker).toBeTruthy();
+
+  const wrapper = mount(LxValuePicker, {
+    props: {
+      variant: 'dropdown',
+      items: [
+        { id: 'one', name: 'One', description: 'OneDescription', value: 'OneValue' },
+        { id: 'two', name: 'Two', description: 'TwoDescription', value: 'TwoValue' },
+        { id: 'three', name: 'Three', description: 'ThreeDescription', value: 'ThreeValue' },
+      ],
+      kind: 'multiple',
+      hasSearch: true,
+      hasSelectAll: true,
+      modelValue: [],
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+    global: {
+      stubs: ['router-link'],
+    },
+  });
+
+  await wrapper.trigger('click');
+  expect(wrapper.find('.select-all').exists()).toBe(true);
+  const selectAll = wrapper.find('.select-all');
+  await selectAll.trigger('click');
+  expect(wrapper.props('modelValue')).toStrictEqual(['one', 'two', 'three']);
+  await selectAll.trigger('click');
+  expect(wrapper.props('modelValue')).toStrictEqual([]);
 });
