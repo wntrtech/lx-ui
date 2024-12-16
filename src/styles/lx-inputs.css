@@ -734,6 +734,10 @@ h2.lx-section-header + p.lx-invalidation-message,
   cursor: pointer;
 }
 
+.lx-toggle-label-wrapper {
+  font-size: var(--font-size);
+}
+
 .lx-toggle-label-wrapper.lx-toggle-read-only {
   cursor: default;
 }
@@ -900,7 +904,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   cursor: not-allowed;
 }
 
-.lx-toggle-label-wrapper {
+.lx-toggle-label-wrapper:not(.lx-toggle-read-only) {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
@@ -985,7 +989,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   box-sizing: border-box;
 }
 
-.lx-toggle + .lx-toggle-label-wrapper .lx-toggle-text {
+.lx-toggle + .lx-toggle-label-wrapper:not(.lx-toggle-read-only) .lx-toggle-text {
   font-size: var(--small-font-size);
 }
 
@@ -1009,15 +1013,16 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-toggle-text p {
-  font-size: 1rem;
+  font-size: var(--font-size);
   min-height: auto !important;
   height: auto !important;
   font-weight: normal !important;
   color: var(--color-label) !important;
 }
 
-.lx-toggle-text p.lx-data {
-  font-size: 1rem;
+.lx-toggle-text p.lx-data,
+.lx-toggle-read-only {
+  font-size: var(--font-size);
   min-height: auto !important;
   height: auto !important;
   font-weight: 600 !important;

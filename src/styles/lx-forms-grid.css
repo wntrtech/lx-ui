@@ -468,6 +468,8 @@ svg .lx-shade {
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > p.lx-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-field-wrapper p.lx-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-field-wrapper p.lx-data,
+.lx-form-grid > .lx-main .lx-row > div.lx-horizontal .lx-toggle-read-only .lx-toggle-text,
+.lx-form-grid > .lx-main .lx-row > div.lx-vertical .lx-toggle-read-only .lx-toggle-text,
 .lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-field-wrapper > span > p.lx-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-field-wrapper > span > p.lx-data,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row > div.lx-vertical > p.lx-data,

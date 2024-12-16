@@ -120,7 +120,8 @@
 }
 
 .lx-list > li > .selecting-block > .lx-checkbox-placeholder {
-  padding: 0.5rem 1.5rem 0 0.5rem;
+  width: 1rem;
+  height: 1rem;
 }
 
 .lx .lx-layout .first-row .lx-text-input.lx-search-input {
