@@ -14,6 +14,7 @@ const props = defineProps({
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: null },
   iconAttribute: { type: String, default: null },
+  hideRemoveAttribute: { type: String, default: null },
   addButtonLabel: { type: String, default: 'Pievienot ierakstu' },
   columnCount: { type: Number, default: 1 },
   kind: { type: String, default: 'default' }, // default || compact
@@ -58,7 +59,9 @@ const model = computed({
 
 function removeItem(id) {
   const index = model.value.findIndex((x) => x._lx_appendableKey === id);
-  model.value.splice(index, 1);
+  const res = [...model.value];
+  res.splice(index, 1);
+  model.value = res;
 }
 function addItem() {
   let res = [{}];
@@ -219,7 +222,7 @@ defineExpose({ clearModel });
         <div class="appendable-list-remove-button-wrapper">
           <div class="appendable-list-remove">
             <LxButton
-              v-if="!readOnly"
+              v-if="!readOnly && (!hideRemoveAttribute || !item[hideRemoveAttribute])"
               icon="remove-item"
               :title="texts.removeItem"
               :destructive="true"
