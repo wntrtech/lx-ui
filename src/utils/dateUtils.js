@@ -69,7 +69,7 @@ export function formatDate(date, empty = '') {
     if (d.length === 10) {
       d += 'T00:00:00';
     }
-    d = parseJSON(d);
+    d = new Date(date);
   }
   return format(d, dateFormatToUse);
 }
@@ -80,9 +80,11 @@ export function formatDateTime(date, empty = '') {
 
   if (!date) return empty;
   let d = date;
+
   if (typeof d === 'string') {
-    d = parseJSON(date);
+    d = new Date(date);
   }
+
   return format(d, dateTimeFormatToUse);
 }
 
@@ -92,9 +94,11 @@ export function formatFull(date, empty = '') {
 
   if (!date) return empty;
   let d = date;
+
   if (typeof d === 'string') {
-    d = parseJSON(date);
+    d = new Date(date);
   }
+
   return format(d, dateTimeFullFormatToUse);
 }
 
