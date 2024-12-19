@@ -928,7 +928,7 @@ onMounted(() => {
 
 <template>
   <div class="lx-field-wrapper" ref="refRoot">
-    <p v-if="readOnly" class="lx-data">
+    <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
       <template v-if="variant === 'default'">
         <span v-if="displayReadOnlyPlaceholder">—</span>
         <template v-else>

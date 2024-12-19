@@ -277,7 +277,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 <template>
   <div class="lx-field-wrapper">
     <template v-if="readOnly">
-      <p class="lx-data">
+      <p class="lx-data" :aria-labelledby="labelledBy">
         <time :datetime="modelValueIso">
           {{ getName() }}
           <span v-if="model === null || model === undefined">—</span>

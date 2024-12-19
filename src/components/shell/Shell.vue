@@ -848,8 +848,11 @@ const selectedMegaMenuItemModel = computed({
               { 'lx-alert-error': alert?.level === 'error' },
               { 'lx-clickable': alert?.clickable },
             ]"
+            role="alert"
+            aria-live="polite"
             @click="alertItemClicked(alert)"
             @keydown.space="alertItemClicked(alert)"
+            :aria-label="alert?.name"
           >
             <p class="lx-primary">{{ alert?.name }}</p>
             <p class="lx-secondary" v-if="alert?.description">{{ alert?.description }}</p>

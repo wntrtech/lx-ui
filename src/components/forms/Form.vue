@@ -498,6 +498,7 @@ defineExpose({ highlightRow, clearHighlights });
     role="form"
     :class="[{ 'lx-form-grid-stripped': kind === 'stripped' }]"
     ref="form"
+    :aria-labelledby="showHeader && kind !== 'stripped' ? `${id}-header` : null"
     :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
   >
     <aside
@@ -584,7 +585,7 @@ defineExpose({ highlightRow, clearHighlights });
         </div>
       </div>
       <div class="lx-group lx-primary">
-        <div class="lx-toolbar-chip">
+        <div class="lx-toolbar-chip" :id="`${id}-header`">
           <slot name="header" />
         </div>
       </div>
@@ -656,6 +657,7 @@ defineExpose({ highlightRow, clearHighlights });
             kind="ghost"
             variant="icon-only"
             custom-class="additional-button-icon"
+            :label="texts?.otherActions"
           />
           <LxButton
             :icon="index?.length > 0 && props.indexType === 'default' ? 'menu' : 'overflow-menu'"

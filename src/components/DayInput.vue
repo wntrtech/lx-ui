@@ -179,7 +179,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
   <div
     :class="[{ 'lx-day-input-wrapper': !readOnly }, { 'lx-day-input-readonly-wrapper': readOnly }]"
   >
-    <p v-if="readOnly" class="lx-data" :title="computedTitle">{{ result }}</p>
+    <p v-if="readOnly" class="lx-data" :title="computedTitle" :aria-labelledby="labelledBy">
+      {{ result }}
+    </p>
 
     <template v-else>
       <LxTextInput

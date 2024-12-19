@@ -61,7 +61,9 @@ defineExpose({ focus });
 
 <template>
   <div class="lx-field-wrapper">
-    <p v-if="props.readOnly" class="lx-data">{{ model }} <span v-if="!model">—</span></p>
+    <p v-if="props.readOnly" class="lx-data" :aria-labelledby="labelledBy">
+      {{ model }} <span v-if="!model">—</span>
+    </p>
     <template v-else>
       <div class="lx-text-area-wrapper" :data-invalid="invalid ? '' : null">
         <div

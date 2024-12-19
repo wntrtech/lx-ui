@@ -353,7 +353,11 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 <template>
   <div class="lx-field-wrapper">
-    <p v-if="readOnly && props.kind !== 'password' && !isReadOnlyEmail()" class="lx-data">
+    <p
+      v-if="readOnly && props.kind !== 'password' && !isReadOnlyEmail()"
+      class="lx-data"
+      :aria-labelledby="labelledBy"
+    >
       {{ forcedMaskedValue }}
       <span
         v-if="
@@ -364,7 +368,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         >—</span
       >
     </p>
-    <a v-if="isReadOnlyEmail()" :href="`mailto:${model}`">{{ model }}</a>
+    <a v-if="isReadOnlyEmail()" :href="`mailto:${model}`" :aria-labelledby="labelledBy">{{
+      model
+    }}</a>
     <div
       class="lx-text-input-wrapper lx-input-wrapper"
       :class="[

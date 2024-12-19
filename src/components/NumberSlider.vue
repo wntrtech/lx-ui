@@ -70,7 +70,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 <template>
   <div class="lx-field-wrapper">
-    <p v-if="readOnly" class="lx-data">{{ model }}</p>
+    <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">{{ model }}</p>
     <div class="input-slider-container-wrapper" v-if="!readOnly">
       <div class="input-slider-range-label">
         <p>{{ props.min }}</p>
