@@ -141,9 +141,13 @@ function change(event) {
 const name = computed(() => {
   let result = null;
   if (Array.isArray(model.value)) {
-    result = props.items?.find((obj) => obj[props.idAttribute] === model.value[0]);
+    result = props.items?.find(
+      (obj) => obj[props.idAttribute]?.toString() === model.value[0]?.toString()
+    );
   } else {
-    result = props.items?.find((obj) => obj[props.idAttribute] === model.value);
+    result = props.items?.find(
+      (obj) => obj[props.idAttribute]?.toString() === model.value?.toString()
+    );
   }
 
   if (result) {
@@ -251,6 +255,18 @@ function selectSingle(item) {
 }
 const selectedItemStored = ref(null);
 const selectedItem = ref(null);
+
+function isPlaceholderVisible() {
+  return (
+    (props.modelValue === '' ||
+      !props.modelValue ||
+      props.modelValue.length === 0 ||
+      !props.items.some(
+        (item) => item[props.idAttribute]?.toString() === props.modelValue?.toString()
+      )) &&
+    props.variant !== 'state'
+  );
+}
 
 watch(
   () => [selectedIdValue.value, allItems.value],
@@ -421,13 +437,7 @@ onMounted(() => {
                 <div class="lx-dropdown-default-data lx-input-area" :title="tooltip" v-else>
                   <p class="lx-input-text">{{ name }}</p>
                 </div>
-                <div
-                  v-if="
-                    (modelValue === '' || modelValue === null || modelValue === undefined) &&
-                    variant !== 'state'
-                  "
-                  class="lx-placeholder lx-input-area"
-                >
+                <div v-if="isPlaceholderVisible()" class="lx-placeholder lx-input-area">
                   <p class="lx-input-text">{{ placeholder }}</p>
                 </div>
                 <div v-if="invalid" class="lx-invalidation-icon-wrapper">

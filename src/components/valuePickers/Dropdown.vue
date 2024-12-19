@@ -198,7 +198,7 @@ const selectedItems = computed(() => {
 function getName(returnPlaceholder = true) {
   let text = '';
   if (model.value && !Array.isArray(model.value)) {
-    return selectedItems.value[0].name;
+    return selectedItems.value[0]?.name;
   } else if (model.value && model.value.length > 0) {
     text = selectedItems.value?.map((item) => item[props.nameAttribute])?.join(', ');
   } else if (returnPlaceholder) {
@@ -575,7 +575,7 @@ const columnReadOnly = computed(() => {
         <slot name="customItemDropdown" v-bind="slotData" />
       </template>
     </LxDropDown>
-
+    
     <div class="lx-value-picker-dropdown-wrapper" v-if="kind === 'multiple' && !hasSearch" ref="refRoot">
       <div
         class="lx-dropdown-default"
