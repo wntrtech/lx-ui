@@ -19,6 +19,8 @@ function generateInput() {
     'lx-bt-visvaris-finance.css',
     'lx-bt-visvaris-personnel.css',
     'lx-bt-visvaris-property.css',
+    'lx-bt-lvas.css',
+    // add new bundle names here to exclude them from styles folder
   ];
 
   files.forEach((file) => {
@@ -29,6 +31,28 @@ function generateInput() {
   });
 
   return input;
+}
+
+function generateRollupInput(baseDir, extension = '.css') {
+  const cssBundles = [
+    'lx-bt-digives',
+    'lx-bt-eikis',
+    'lx-bt-visvaris-social',
+    'lx-bt-visvaris-misc',
+    'lx-bt-visvaris-client',
+    'lx-bt-visvaris-data',
+    'lx-bt-visvaris-filing',
+    'lx-bt-visvaris-finance',
+    'lx-bt-visvaris-personnel',
+    'lx-bt-visvaris-property',
+    'lx-bt-lvas',
+    // add new bundle names here
+  ];
+
+  return cssBundles.reduce((input, fileName) => {
+    input[fileName] = path.resolve(baseDir, `${fileName}${extension}`);
+    return input;
+  }, {});
 }
 
 /** @type {import('vite').UserConfig} */
@@ -66,24 +90,7 @@ export const cssBundlesConfig = defineConfig({
   build: {
     outDir: 'dist/bundles',
     rollupOptions: {
-      input: {
-        'lx-bt-digives': path.resolve(__dirname, 'src/styles/lx-bt-digives.css'),
-        'lx-bt-eikis': path.resolve(__dirname, 'src/styles/lx-bt-eikis.css'),
-        'lx-bt-visvaris-social': path.resolve(__dirname, 'src/styles/lx-bt-visvaris-social.css'),
-        'lx-bt-visvaris-misc': path.resolve(__dirname, 'src/styles/lx-bt-visvaris-misc.css'),
-        'lx-bt-visvaris-client': path.resolve(__dirname, 'src/styles/lx-bt-visvaris-client.css'),
-        'lx-bt-visvaris-data': path.resolve(__dirname, 'src/styles/lx-bt-visvaris-data.css'),
-        'lx-bt-visvaris-filing': path.resolve(__dirname, 'src/styles/lx-bt-visvaris-filing.css'),
-        'lx-bt-visvaris-finance': path.resolve(__dirname, 'src/styles/lx-bt-visvaris-finance.css'),
-        'lx-bt-visvaris-personnel': path.resolve(
-          __dirname,
-          'src/styles/lx-bt-visvaris-personnel.css'
-        ),
-        'lx-bt-visvaris-property': path.resolve(
-          __dirname,
-          'src/styles/lx-bt-visvaris-property.css'
-        ),
-      },
+      input: generateRollupInput(path.resolve(__dirname, 'src/styles')),
       output: {
         inlineDynamicImports: false,
         assetFileNames: '[name][extname]',
