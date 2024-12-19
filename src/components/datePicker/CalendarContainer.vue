@@ -2902,6 +2902,7 @@ watch(
             'lx-full-layout':
               (mode === 'date' && variant === 'full') ||
               (mode === 'date' && variant === 'full-rows'),
+            'lx-full-rows': mode === 'date' && variant === 'full-rows',
             'lx-full-columns':
               (pickerType === 'single' && mode === 'date' && variant === 'full-columns') ||
               (pickerType === 'range' &&

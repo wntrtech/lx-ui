@@ -120,7 +120,6 @@
   svg {
   width: 1.25rem;
   height: 1.25rem;
-  margin: 0 0.35rem 0 0.5rem;
 }
 
 .lx-datepicker-default
@@ -165,14 +164,16 @@
   .lx-calendar-container
   .lx-calendar-header
   .lx-button.lx-calendar-months-select-button {
-  padding: 0 0.1rem;
+    --button-ghost-padding: 0 0.9rem 0 1rem;
+    --button-ghost-gap: 0.75rem;
 }
 
 .lx-datepicker-default
   .lx-calendar-container
   .lx-calendar-header
   .lx-button.lx-calendar-years-select-button {
-  padding: 0 0.1rem 0 0.8rem;
+  --button-ghost-padding: 0 0.75rem;
+  --button-ghost-gap: 0.75rem;
 }
 
 .lx-datepicker-default
@@ -245,6 +246,9 @@
 
 .lx-datepicker-default .lx-dropdown-panel .lx-calendar-container .lx-calendar-footer.range-buttons .lx-button.min-date-button {
   flex-direction: row;
+  --button-ghost-grid-areas: 'icon content';
+  --button-ghost-grid-template-columns: auto 1fr;
+  --button-ghost-gap: 0;
 }
 
 .lx-datepicker-default .lx-dropdown-panel .lx-calendar-container .lx-calendar-footer.range-buttons.range-buttons-icon .lx-button.min-date-button svg,
@@ -1008,8 +1012,11 @@
   }
 
   .lx-datepicker-default .lx-calendar-container .lx-calendar-header .lx-button.lx-calendar-years-select-button {
-    padding: 0 0 0 0.5rem;
-    margin-right: 1rem;
+    --button-ghost-margin: 0 1rem 0 0;
+  }
+  
+  .lx-datepicker-default .lx-calendar-container:has(.lx-full-rows) .lx-calendar-header {
+    justify-content: flex-start;
   }
 
   .lx-datepicker-default .lx-calendar-time-picker {

@@ -20,8 +20,9 @@
 }
 
 .lx-master-detail .lx-master .lx-button {
-    width: calc(100% - 0.25rem);
-    margin: 0 0.125rem;
+    width: 100%;
+    margin: 0;
+    --button-tertiary-outline-offset: -2px;
 }
 
 .lx-master-detail .lx-master li:last-of-type {

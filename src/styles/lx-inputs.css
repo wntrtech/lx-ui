@@ -603,10 +603,6 @@
   background-color: var(--color-tooltip-background);
 }
 
-.lx-list-wrapper .lx-list li {
-  background-color: var(--color-region);
-}
-
 /*** Icon styles ***/
 
 .lx .lx-invalidation-icon,
@@ -627,6 +623,11 @@
 
 .lx-date-time-picker-wrapper .lx-modifier-icon {
   fill: var(--color-input-date-time-icon);
+}
+
+.lx .lx-input-wrapper .lx-button svg {
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
 }
 
 .lx-input-wrapper .lx-invalidation-icon,
@@ -1348,7 +1349,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   justify-content: top;
   flex-direction: column;
   padding: var(--padding-tile);
-  text-decoration: var(--text-decoration-button);
+  text-decoration: var(--button-text-decoration);
   cursor: pointer;
   border: 2px solid var(--color-chrome);
   margin: 0.5rem;
@@ -1718,16 +1719,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   flex-direction: row;
   gap: 0.65rem;
   padding: 0 0.65rem;
-}
-
-.lx-value-picker-default-wrapper.select-all > .lx-toolbar > .lx-button.lx-button-icon-only,
-.lx-toolbar.lx-value-picker-search.select-all > .lx-button.lx-button-icon-only {
-  gap: 0rem;
-}
-
-.lx-value-picker-default-wrapper.select-all > .lx-toolbar > .lx-button > svg,
-.lx-toolbar.lx-value-picker-search.select-all > .lx-button > svg {
-  margin-left: 0;
 }
 
 .lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all,
@@ -2739,6 +2730,7 @@ input[type='range']:hover::-moz-range-thumb {
   grid-area: button;
   z-index: 1;
 }
+
 /*** QR scanner styles ***/
 
 .lx-qr-scanner-wrapper {
@@ -3993,7 +3985,7 @@ input[type='range']:hover::-moz-range-thumb {
   flex-shrink: 0;
 }
 
-.lx-camera > .lx-component-toolbar .lx-button > svg{ 
+.lx-camera > .lx-component-toolbar .lx-button-content-wrapper svg{ 
   fill: var(--color-data)
 }
 

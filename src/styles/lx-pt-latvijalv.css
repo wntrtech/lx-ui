@@ -6,8 +6,6 @@
   --color-interactive-secondary-background: #d0d5dc;
   --color-interactive-secondary-foreground: #565656;
   --color-interactive-secondary-hover-background: #c9ced3;
-  --color-nav-selected-background: #f6f6f6;
-  --color-nav-selected-foreground: #bf4e2c;
   --color-highlight: #fdcda2;
   --color-bad: #e7231f;
   --color-region: #fff;
@@ -35,10 +33,6 @@
 
   --color-content-switcher-foreground: #565656;
   --color-disabled-foreground: #e6e7ee;
-  --button-flex-direction: row;
-  --margin-button-icon-reverse: 0 1rem 0 0;
-  --margin-button-icon: var(--margin-button-icon-reverse);
-  --button-justify: flex-start;
 
   --font-family: 'UbuntuLX', 'IBM Plex Sans', sans-serif !important;
   --font-weight-data: 600;
@@ -50,6 +44,9 @@
   --radius-1: 100px;
 
   --color-cover-title: var(--color-brand);
+
+  --color-button-nav-selected: #bf4e2c;
+  --color-button-nav-selected-background: #f6f6f6;
 }
 
 .lx.lx-theme-dark {
@@ -61,8 +58,6 @@
   --color-interactive-secondary-background: #d0d5dc;
   --color-interactive-secondary-foreground: #565656;
   --color-interactive-secondary-hover-background: #c9ced3;
-  --color-nav-selected-background: #f6f6f6;
-  --color-nav-selected-foreground: #bf4e2c;
   --color-highlight: #8b4101;
   --color-bad: #d04632;
   --color-region: #202020;
@@ -80,8 +75,6 @@
   --color-nav-foreground: #fff;
   --color-nav-hover-background: #bf4e2c;
   --color-nav-chrome: transparent;
-  --color-nav-selected-foreground: var(--color-label);
-  --color-nav-selected-background: var(--color-background);
   --tab-border: 4px solid transparent;
   --region-border: 1px solid var(--color-chrome);
   --list-item-border: 1px solid var(--color-chrome);
@@ -91,6 +84,9 @@
   --color-toggle-foreground-false: #6e7681;
   --color-content-switcher-foreground: #aaaaaa;
   --color-disabled-foreground: #333333;
+
+  --color-button-nav-selected: #bf4e2c;
+  --color-button-nav-selected-background: var(--color-background);
 }
 
 .lx .lx-notifications-list .lx-notification p.lx-title {

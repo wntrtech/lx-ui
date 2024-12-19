@@ -4,7 +4,6 @@
   --color-interactive-hover-background: #102985;
   --color-background: #eef1f3;
   --color-highlight: #aad0ff;
-  --color-nav-selected-background: #aad0ff;
   --color-layout-background: #000b40;
   --color-nav-hover-background: #010620;
   --color-interactive-secondary-background: #000b40;
@@ -14,4 +13,6 @@
   --color-destructive: #ff4b33;
   --color-good: #0d382c;
   --color-data: #000;
+
+  --color-button-nav-selected-background: #aad0ff;
 }

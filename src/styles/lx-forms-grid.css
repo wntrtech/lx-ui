@@ -595,20 +595,14 @@ svg .lx-shade {
   width: 100%;
 }
 
-.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-list-wrapper > .lx-load-more-button > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-list-wrapper > .lx-load-more-button > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-camera > .lx-camera-buttons > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-camera > .lx-camera-buttons > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-master-detail > .lx-master > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-master-detail > .lx-master > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-camera > .lx-camera-error .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-camera > .lx-camera-error .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-appendable-list > div > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-appendable-list > div > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-button,
-.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-button {
+.lx-form-grid .lx-main .lx-row > div > .lx-file-upload-wrapper > .lx-draggable-wrapper > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-list-wrapper > .lx-load-more-button > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-camera > .lx-camera-buttons > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-master-detail > .lx-master > .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-camera > .lx-camera-error .lx-button,
+.lx-form-grid .lx-main .lx-row > div > .lx-appendable-list > div > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-button,
+.lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-button {
   max-height: var(--input-height);
 }
 
@@ -885,12 +879,9 @@ svg .lx-shade {
   padding-top: 0.5rem;
 }
 
-.lx-appendable-list > .lx-appendable-list-item .appendable-list-remove:hover > .lx-button > svg {
-  fill: var(--color-interactive-hover-foreground);
-}
-
-.lx-appendable-list > .lx-appendable-list-item .appendable-list-remove > .lx-button > svg {
-  fill: var(--color-data);
+.lx-appendable-list-item .appendable-list-remove > .lx-button svg {
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
 }
 
 .lx-person-display-wrapper .lx-info-wrapper {
@@ -1260,14 +1251,14 @@ p .lx-person-display-wrapper {
   justify-content: flex-start;
 }
 
-.lx-row > .lx-row-header > div > .lx-button > svg,
-.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button > svg {
+.lx-row > .lx-row-header > div > .lx-button > .lx-button-content-wrapper svg,
+.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button > .lx-button-content-wrapper svg {
   height: 1.25rem;
   width: 1.25rem;
   fill: var(--color-data);
 }
 
-.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:hover > svg {
+.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:hover > .lx-button-content-wrappersvg {
   fill: var(--color-interactive-hover-foreground);
 }
 
@@ -1437,7 +1428,7 @@ p .lx-person-display-wrapper {
     display: flex;
   }
 
-  .lx-form-grid > footer .responsive-button {
+  .lx .lx-form-grid > footer .responsive-button {
     display: none;
   }
 

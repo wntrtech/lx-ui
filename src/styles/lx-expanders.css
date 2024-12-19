@@ -388,11 +388,6 @@
   margin-left: 0.5rem;
 }
 
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button svg {
-  fill: var(--color-dropdown-button-foreground);
-  margin: var(--margin-button-icon-reverse);
-}
-
 .lx-data-block-wrapper.lx-data-block-expanded>.lx-data-block>.lx-data-block-header>.lx-content>.lx-secondary {
   opacity: 0;
   padding-top: 0.3rem;
@@ -457,16 +452,20 @@
   fill: var(--color-label);
 }
 
-.lx-data-block>.additional-buttons>.lx-context-container .lx-toolbar .lx-button>svg,
-.lx-data-block>.additional-buttons>.lx-button>svg {
+.lx-data-block>.additional-buttons>.lx-context-container .lx-toolbar .lx-button-content-wrapper svg {
   fill: var(--color-data);
+}
+
+.lx-data-block>.additional-buttons>.lx-button svg {
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
 }
 
 .lx-data-block>.additional-buttons>.lx-button>.lx-button-content {
   color: var(--color-data);
 }
 
-.lx-data-block>.additional-buttons>.lx-button:hover>.lx-button-content {
+.lx-data-block>.additional-buttons>.lx-button:hover>.lx-button-content-wrapper .lx-button-content {
   color: var(--color-interactive-hover-foreground);
 }
 

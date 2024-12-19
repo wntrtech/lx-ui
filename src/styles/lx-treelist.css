@@ -92,6 +92,7 @@
 .tree-list .tree-item .tree-item-body > .lx-button{
     grid-area: expander;
     width: var(--list-expander-width);
+    height: var(--list-expander-height);
 }
 
 .lx-theme-contrast .tree-list .tree-item-small-parent .lx-checkbox-wrapper .lx-checkbox:not(:disabled):not(:checked):not(:hover)+.lx-checkbox-label-wrapper .lx-checkbox-appearance {
@@ -142,15 +143,15 @@
 
 .tree-list>.tree-item>.tree-item-invalid>.lx-button svg,
 .tree-list-small>.tree-item-invalid>.lx-button svg,
-.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button>svg,
-.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button>svg {
+.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button > .lx-button-content-wrapper svg,
+.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button > .lx-button-content-wrapper svg {
     fill: var(--color-list-icon);
 }
 
 .tree-list>.tree-item>.tree-item-invalid>.lx-button:hover svg,
 .tree-list-small>.tree-item-invalid>.lx-button:hover svg,
-.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button:hover>svg,
-.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button:hover>svg {
+.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button:hover>.lx-button-content-wrapper svg,
+.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button:hover>.lx-button-content-wrapper svg {
     fill: var(--color-interactive-hover-foreground);
 }
 
@@ -164,7 +165,7 @@
     background-color: var(--color-highlight-background);
 }
 
-.tree-list .tree-item .tree-item-body.selected-children>.lx-button>svg {
+.tree-list .tree-item .tree-item-body.selected-children>.lx-button > .lx-button-content-wrapper svg {
     fill: var(--color-list-expander-selected-icon);
 }
 

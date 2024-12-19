@@ -107,7 +107,13 @@ function getIconSet(item) {
 <template>
   <LxDropDownMenu>
     <div class="lx-toolbar">
-      <LxButton variant="icon-only" kind="ghost" icon="apps" :title="texts.megaMenuTitle" />
+      <LxButton
+        customClass="lx-header-button"
+        variant="icon-only"
+        kind="ghost"
+        icon="apps"
+        :title="texts.megaMenuTitle"
+      />
     </div>
 
     <template v-slot:panel>

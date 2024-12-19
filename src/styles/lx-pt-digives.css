@@ -5,7 +5,6 @@
   --color-interactive-hover-background: #b11d63;
   --color-interactive-secondary-background: #393939;
   --color-interactive-secondary-hover-background: #4c4c4c;
-  --color-nav-selected-background: #fae5d7;
   --body-column-size: 1300px;
   --nav-row-size: 3rem;
   --color-highlight: #fdcda2;
@@ -27,6 +26,8 @@
   --h1-font-size: 2.25rem;
 
   --color-cover-title: var(--color-brand);
+
+  --color-button-nav-selected-background: #fae5d7;
 }
 .lx .lx-notifications-list .lx-notification p.lx-title {
   font-weight: var(--font-weight-data) !important;

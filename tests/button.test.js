@@ -267,16 +267,16 @@ test('LxButton busy', async () => {
   });
   const inputElement = wrapper.find('button');
   expect(inputElement.classes('lx-busy')).toBe(true);
-  expect(inputElement.find('.lx-loader-container').attributes('style')).toBeUndefined();
+  expect(inputElement.find('.lx-loader-container').exists()).toBe(true);
   await wrapper.setProps({ busy: false });
   expect(inputElement.classes('lx-busy')).toBe(false);
-  expect(inputElement.find('.lx-loader-container').attributes('style')).toContain('display: none');
+  expect(inputElement.find('.lx-loader-container').exists()).toBe(false);
 
   await wrapper.setProps({ href: { name: 'test' } });
   const hrefElement = wrapper.find('a');
-  expect(hrefElement.find('.lx-loader-container').attributes('style')).toContain('display: none');
+  expect(hrefElement.find('.lx-loader-container').exists()).toBe(false);
   await wrapper.setProps({ busy: true });
-  expect(hrefElement.find('.lx-loader-container').attributes('style')).toBeUndefined();
+  expect(hrefElement.find('.lx-loader-container').exists()).toBe(true);
 });
 
 test('LxButton badge', async () => {

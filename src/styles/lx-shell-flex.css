@@ -149,13 +149,9 @@
   width: 100%;
 }
 
-.lx-layout-default .lx-nav-panel ul li .lx-combo-button {
-  display: flex;
-}
-
 .lx-layout-default .lx-nav-panel ul li.lx-selected {
-  background-color: var(--color-nav-selected-background);
-  color: var(--color-nav-selected-foreground);
+  background-color: var(--color-button-nav-selected-background);
+  color: var(--color-button-nav-selected);
 }
 
 .lx-layout-default .lx-nav-panel .lx-sub-nav {
@@ -370,10 +366,6 @@ code {
   height: var(--nav-row-size);
 }
 
-.lx-context-container .lx-dropdown-panel .lx-button {
-  width: 100%;
-}
-
 .lx-context-container.lx-selected .lx-group .lx-button,
 .lx-context-container.lx-selected .lx-group .lx-button:hover {
   background-color: var(--color-interactive-active-background);
@@ -464,7 +456,7 @@ code {
   justify-content: space-between;
   flex-direction: column;
   padding: var(--padding-tile);
-  text-decoration: var(--text-decoration-button);
+  text-decoration: var(--button-text-decoration);
   border: 2px solid transparent;
   cursor: pointer;
 }
@@ -496,7 +488,7 @@ code {
 
 .lx .lx-tile header .lx-primary {
   color: var(--color-data);
-  text-decoration: var(--text-decoration-button);
+  text-decoration: var(--button-text-decoration);
 
   font-weight: bold;
   margin-top: 0.75rem;

@@ -5,7 +5,6 @@
   --color-background: #eff2ef;
   --color-region-2: #eff2ef;
   --color-highlight: #78e9b8;
-  --color-nav-selected-background: #78e9b8;
   --color-layout-background: #0d382c;
   --color-nav-hover-background: #0a2921;
   --color-interactive-secondary-background: #0d382c;
@@ -15,6 +14,8 @@
   --color-destructive: #ff4b33;
   --color-good: #0d382c;
   --color-data: #000;
+
+  --color-button-nav-selected-background: #78e9b8;
 }
 
 .lx.lx-theme-dark {
@@ -26,8 +27,9 @@
   --color-region-2: #181a18;
   --color-highlight: #07291a;
   --color-interactive-secondary-background: #001000;
-  --color-nav-selected-background: #07291a;
   --color-layout-background: #051612;
+
+  --color-button-nav-selected-background: #07291a;
 }
 
 .lx-layout.lx-layout-default > header .lx-header .lx-user-button p.lx-secondary {

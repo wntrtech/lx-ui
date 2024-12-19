@@ -126,7 +126,7 @@ function navClick(id) {
   <div class="lx-nav-panel" v-on-click-outside="navToggle">
     <ul class="lx-nav-group">
       <li
-        v-for="item in props.layoutMode === 'public' && width >= 900
+        v-for="(item, index) in props.layoutMode === 'public' && width >= 900
           ? allNavItems
           : navItemsPrimary"
         :key="item.label"
@@ -135,7 +135,15 @@ function navClick(id) {
         <LxButton
           :label="item.label"
           :href="item.to"
-          :icon="item.icon"
+          :icon="
+            (((index === 0 && width >= 900) || width < 900) && props.layoutMode === 'public') ||
+            props.layoutMode !== 'public'
+              ? item.icon
+              : ''
+          "
+          :variant="
+            index === 0 && props.layoutMode === 'public' && width >= 900 ? 'icon-only' : 'default'
+          "
           @click="navClick(item?.id)"
         />
       </li>

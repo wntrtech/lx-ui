@@ -5,7 +5,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 100vh;
+  height: 100dvh;
   z-index: 9000;
   display: flex;
   justify-content: center;
@@ -17,6 +17,8 @@
   justify-content: space-between;
   align-items: center;
   height: auto;
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
 }
 
 .lx-curtain .lx-modal header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-head):not(.lx-list-item header):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky) .lx-primary {
@@ -51,27 +53,6 @@
   max-height: calc(100vh - 10rem);
 }
 
-.lx-modal>footer.lx-button-set {
-  justify-content: stretch;
-  flex-direction: row-reverse;
-  gap: 0;
-}
-
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button) {
-  flex-grow: 1;
-  height: auto;
-  padding-top: 1rem;
-  padding-bottom: 2rem;
-  flex-shrink: 0;
-  justify-content: flex-start;
-  flex-direction: row;
-  border-radius: 0;
-}
-
-.lx-modal>footer.lx-button-set.lx-two-buttons .lx-button {
-  max-width: 50%;
-}
-
 .lx-modal.lx-modal-xs {
   width: var(--aside-size);
 }
@@ -94,14 +75,14 @@
 
 @media (max-width: 800px) {
   .lx-modal {
-    width: 100vw !important;
-    height: 100vh !important;
+    width: 100dvw !important;
+    height: 100dvh !important;
     margin: 0;
   }
 
   .lx-modal .lx-main {
     height: 100%;
-    max-height: calc(100vh - 8.75rem);
+    max-height: calc(100dvh - 8.75rem);
     margin-bottom: 0;
   }
 }
@@ -126,16 +107,18 @@ dialog.lx-modal>header>.lx-primary {
   padding-right: 3rem;
 }
 
-dialog.lx-modal>.lx-button-set>.lx-button {
+.lx dialog.lx-modal>.lx-button-set>.lx-button {
   font-weight: var(--font-weight-interactive);
 }
 
-dialog.lx-modal>header>.lx-button {
+.lx dialog.lx-modal>header>.lx-button {
   border-color: transparent;
   margin: 0;
   position: absolute;
   top: 0;
   right: 0;
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
 }
 
 dialog {

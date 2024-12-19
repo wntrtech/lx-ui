@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, useSlots } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
 import useLx from '@/hooks/useLx';
@@ -90,6 +90,8 @@ const props = defineProps({
   },
 });
 
+const slots = useSlots();
+
 const isDisabled = computed(() => {
   let ret = false;
   if (props.disabled || props.loading || props.busy) {
@@ -112,7 +114,7 @@ const click = (e) => {
 };
 
 const isIconOnly = computed(() =>
-  Boolean(props.variant === 'icon-only' || (!props.label && props.icon))
+  Boolean(props.variant === 'icon-only' || (!props.label && !slots.default && props.icon))
 );
 
 const accessibleTitle = computed(() => {
@@ -135,6 +137,7 @@ const accessibleTitle = computed(() => {
       { 'lx-button-icon-only': isIconOnly },
       { 'lx-destructive': destructive },
       { 'lx-active': active },
+      { 'lx-disabled': isDisabled },
       customClass,
     ]"
     @click="click"
@@ -145,37 +148,43 @@ const accessibleTitle = computed(() => {
     :aria-label="label ? label : null"
     :tabindex="tabindex"
   >
-    <slot />
-    <template v-if="showIcon">
-      <lx-icon
-        v-show="!busy"
-        :value="icon"
-        :icon-set="iconSet"
-        :variant="iconVariant"
-        :title="accessibleTitle"
-        :meaningful="isIconOnly"
-      />
-      <div class="lx-loader-container" v-show="busy">
-        <lx-loader :loading="true" size="s" />
+    <div class="lx-button-content-wrapper">
+      <template v-if="showIcon">
+        <lx-icon
+          v-show="!busy"
+          :value="icon"
+          :icon-set="iconSet"
+          :variant="iconVariant"
+          :title="accessibleTitle"
+          :meaningful="isIconOnly"
+          class="lx-button-icon"
+        />
+        <div class="lx-loader-container" v-if="busy">
+          <lx-loader :loading="true" size="s" />
+        </div>
+      </template>
+      <div v-if="!showIcon"></div>
+      <div
+        class="lx-button-content"
+        v-if="variant !== 'icon-only' && (label?.trim() !== '' || $slots.default)"
+      >
+        <span class="lx-button-label" v-if="label">{{ label }}</span>
+        <slot />
       </div>
-    </template>
-    <div v-if="!showIcon"></div>
-    <div class="lx-button-content" v-if="variant !== 'icon-only'">
-      <span class="lx-button-label" v-if="label">{{ label }}</span>
+      <p
+        class="lx-badge"
+        :class="[
+          { 'lx-badge-empty': badge === ' ' },
+          { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
+          { 'lx-badge-good': badgeType === 'good' },
+          { 'lx-badge-warning': badgeType === 'warning' },
+          { 'lx-badge-important': badgeType === 'important' },
+        ]"
+        v-if="badge"
+      >
+        {{ badge }}
+      </p>
     </div>
-    <p
-      class="lx-badge"
-      :class="[
-        { 'lx-badge-empty': badge === ' ' },
-        { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
-        { 'lx-badge-good': badgeType === 'good' },
-        { 'lx-badge-warning': badgeType === 'warning' },
-        { 'lx-badge-important': badgeType === 'important' },
-      ]"
-      v-if="badge"
-    >
-      {{ badge }}
-    </p>
   </button>
 
   <router-link
@@ -188,7 +197,7 @@ const accessibleTitle = computed(() => {
       { 'lx-button-tertiary': kind === 'tertiary' },
       { 'lx-button-ghost': kind === 'ghost' },
       { 'lx-button-main': kind === 'main' },
-      { 'lx-button-icon-only': variant === 'icon-only' || (!label && icon) },
+      { 'lx-button-icon-only': isIconOnly },
       { 'lx-destructive': destructive },
       { 'lx-active': active },
       { 'lx-disabled': isDisabled },
@@ -199,35 +208,41 @@ const accessibleTitle = computed(() => {
     :tabindex="tabindex"
     :target="openInNewTab ? '_blank' : null"
   >
-    <slot />
-    <template v-if="showIcon">
-      <lx-icon
-        v-show="!busy"
-        :value="icon"
-        :icon-set="iconSet"
-        :variant="iconVariant"
-        :title="accessibleTitle"
-        :meaningful="isIconOnly"
-      />
-      <div class="lx-loader-container" v-show="busy">
-        <lx-loader :loading="true" size="s" />
+    <div class="lx-button-content-wrapper">
+      <template v-if="showIcon">
+        <lx-icon
+          v-show="!busy"
+          :value="icon"
+          :icon-set="iconSet"
+          :variant="iconVariant"
+          :title="accessibleTitle"
+          :meaningful="isIconOnly"
+          class="lx-button-icon"
+        />
+        <div class="lx-loader-container" v-if="busy">
+          <lx-loader :loading="true" size="s" />
+        </div>
+      </template>
+      <div
+        class="lx-button-content"
+        v-if="variant !== 'icon-only' && (label?.trim() !== '' || $slots.default)"
+      >
+        <span class="lx-button-label" v-if="label">{{ label }}</span>
+        <slot />
       </div>
-    </template>
-    <div class="lx-button-content" v-if="variant !== 'icon-only'">
-      <template v-if="label">{{ label }}</template>
+      <p
+        class="lx-badge"
+        :class="[
+          { 'lx-badge-empty': badge === ' ' },
+          { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
+          { 'lx-badge-good': badgeType === 'good' },
+          { 'lx-badge-warning': badgeType === 'warning' },
+          { 'lx-badge-important': badgeType === 'important' },
+        ]"
+        v-if="badge"
+      >
+        {{ badge }}
+      </p>
     </div>
-    <p
-      class="lx-badge"
-      :class="[
-        { 'lx-badge-empty': badge === ' ' },
-        { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
-        { 'lx-badge-good': badgeType === 'good' },
-        { 'lx-badge-warning': badgeType === 'warning' },
-        { 'lx-badge-important': badgeType === 'important' },
-      ]"
-      v-if="badge"
-    >
-      {{ badge }}
-    </p>
   </router-link>
 </template>

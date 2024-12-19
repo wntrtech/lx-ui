@@ -115,7 +115,7 @@
   position: fixed;
 }
 
-.small-nav-bar-button .lx-button.lx-button-ghost > svg {
+.small-nav-bar-button .lx-button.lx-button-ghost > .lx-button-content-wrapper svg {
   fill: var(--color-data);
 }
 
@@ -237,7 +237,8 @@
   > .lx-nav-group
   .e-veseliba-button
   .lx-button
-  > svg {
+  > .lx-button-content-wrapper
+  svg {
   fill: var(--color-interactive-hover-background);
 }
 
@@ -255,7 +256,7 @@
   padding-right: 1rem;
 }
 
-.nav-bar-close .lx-button.lx-button-ghost > svg {
+.nav-bar-close .lx-button.lx-button-ghost > .lx-button-content-wrapper svg {
   fill: var(--color-data);
 }
 
@@ -482,22 +483,18 @@
   justify-content: start;
 }
 
-.lx-layout-digives nav .default-buttons .lx-button>svg{
-  margin: var(--margin-button-icon-reverse);
-}
-
 .lx-layout.lx-layout-default > nav .lx-nav-panel.lx-responsive > .lx-nav-group:last-child .default-buttons .lx-button:hover {
   background-color: var(--color-interactive-hover-background);
   border-color: transparent;
   color: var(--color-interactive-hover-foreground);
 }
 
-.lx-layout.lx-layout-default > nav .lx-nav-panel.lx-responsive > .lx-nav-group:last-child .default-buttons .lx-button:hover > svg{
+.lx-layout.lx-layout-default > nav .lx-nav-panel.lx-responsive > .lx-nav-group:last-child .default-buttons .lx-button:hover > .lx-button-content-wrapper svg{
   fill: var(--color-interactive-hover-foreground);
 }
 
 .lx-layout-digives nav .default-buttons .lower-button-last .lx-button {
-  color: var(--color-navbar-button-foreground);
+  color: var(--color-button-nav);
 }
 
 .lx-layout.lx-layout-digives nav{

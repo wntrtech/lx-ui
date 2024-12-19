@@ -26,10 +26,6 @@
   border-color: var(--color-header-hover-background);
 }
 
-.lx .lx-layout.lx-layout-public>header>.lx-header .lx-group .lx-button:not(.lx-context-container .popper .lx-button):hover>svg {
-  fill: var(--color-header-hover-foreground);
-}
-
 .lx-layout.lx-layout-public>header>.lx-header .lx-button:not(#userMenuButton):hover>.lx-badge {
   border-color: var(--color-header-hover-background);
 }
@@ -228,15 +224,6 @@
   display: none;
 }
 
-.lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-help-button .lx-button>svg,
-.lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-theme-menu .lx-dropdown-toggler .lx-button>svg,
-.lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-alert-menu .lx-dropdown-toggler .lx-button>svg,
-.lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-language-menu .lx-dropdown-toggler .lx-button>svg,
-.lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-mega-menu .lx-button>svg,
-.lx .lx-layout.lx-layout-public .lx-header>.lx-right-group #nav-toggle>svg {
-  fill: var(--color-data);
-}
-
 .lx-layout.lx-layout-public .lx-page-header {
   margin-top: var(--gap);
   margin-bottom: var(--gap);
@@ -286,12 +273,12 @@
 }
 
 .lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-button {
-  color: var(--color-nav-selected-foreground);
-  background-color: var(--color-nav-selected-background);
+  color: var(--color-button-nav-selected);
+  background-color: var(--color-button-nav-selected-background);
 }
 
 .lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-button svg {
-  fill: var(--color-nav-selected-foreground);
+  fill: var(--color-button-nav-selected);
 }
 
 .lx-layout.lx-layout-public>main {
@@ -313,11 +300,11 @@
   margin-bottom: 1rem;
 }
 
-.lx-layout.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton)>.lx-badge {
+.lx-layout.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-button-content-wrapper .lx-badge {
   border-color: var(--color-region);
 }
 
-.lx-layout.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton):hover>.lx-badge {
+.lx-layout.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton):hover > .lx-button-content-wrapper.lx-badge {
   border-color: var(--color-interactive-hover-background);
 }
 
@@ -334,17 +321,6 @@
 
 .lx-layout .lx-alert-menu .lx-alert-clickable {
   cursor: pointer;
-}
-
-.lx .lx-layout .lx-header>.lx-right-group .lx-help-button .lx-button:hover>svg,
-.lx .lx-layout .lx-header>.lx-right-group .lx-theme-menu .lx-dropdown-toggler .lx-button:hover>svg,
-.lx .lx-layout .lx-header>.lx-right-group .lx-alert-menu .lx-dropdown-toggler .lx-button:hover>svg,
-.lx .lx-layout .lx-header>.lx-right-group .lx-language-menu .lx-dropdown-toggler .lx-button:hover>svg,
-.lx .lx-layout .lx-header>.lx-right-group .lx-help-button .lx-button:active>svg,
-.lx .lx-layout .lx-header>.lx-right-group .lx-theme-menu .lx-dropdown-toggler .lx-button:active>svg,
-.lx .lx-layout .lx-header>.lx-right-group .lx-alert-menu .lx-dropdown-toggler .lx-button:active>svg,
-.lx .lx-layout .lx-header>.lx-right-group .lx-language-menu .lx-dropdown-toggler .lx-button:active>svg {
-  fill: var(--color-header-hover-foreground);
 }
 
 .lx-layout.lx-layout-public .lx-toolbar.lx-sticky,
@@ -518,7 +494,8 @@
     right: calc(0px - var(--row-size));
   }
 
-  .lx-layout-public .lx-nav-panel ul li .lx-button {
+  .lx-layout-public .lx-nav-panel ul li > .lx-button,
+  .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button {
     justify-content: left;
     width: 100%;
   }

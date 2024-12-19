@@ -624,8 +624,10 @@
   background-color: var(--color-interactive-background);
 }
 
-.lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar .lx-button label {
-  color: var(--color-focus-foreground);
+/* So that buttons wouldn't shrink */
+.lx-list-toolbar .selection-action-buttons > .lx-button:not(.lx-button-icon-only),
+.lx-list-toolbar .right-area > .lx-button:not(.lx-button-icon-only) {
+  --button-primary-grid-template-columns: minmax(max-content, 1fr) auto;
 }
 
 .lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-buttons,
@@ -644,22 +646,6 @@
 
 .lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-buttons-small .lx-dropdown-panel {
   padding: 0.125rem;
-}
-
-.lx-list-wrapper .lx-selection-toolbar .selection-action-buttons-small  .lx-dropdown-panel  .lx-button.lx-button-ghost .lx-button-content>.lx-button-label{
-  color: var(--color-data);
-}
-
-.lx-list-wrapper .lx-selection-toolbar .selection-action-buttons-small .lx-dropdown-panel .lx-button.lx-button-ghost svg{
-  fill: var(--color-data);
-}
-
-.lx-list-wrapper .lx-selection-toolbar .selection-action-buttons-small .lx-dropdown-panel .lx-button.lx-button-ghost:hover svg{
-  fill: var(--color-interactive-hover-foreground);
-}
-
-.lx-list-wrapper .lx-selection-toolbar .selection-action-buttons-small .lx-dropdown-panel .lx-button.lx-button-ghost:hover .lx-button-content>.lx-button-label{
-  color: var(--color-interactive-hover-foreground);
 }
 
 .lx-list-wrapper > .lx-list-toolbar > .left-area .lx-slot-wrapper {
@@ -726,8 +712,7 @@
   color: var(--color-label);
 }
 
-.lx-list-wrapper .lx-list-toolbar.toolbar-selecting > .first-row > p,
-.lx-list-wrapper .lx-list-toolbar.toolbar-selecting > .first-row .lx-button-content .lx-button-label {
+.lx-list-wrapper .lx-list-toolbar.toolbar-selecting > .first-row > p {
   color: var(--color-list-interactive-foreground);
 }
 
@@ -757,7 +742,7 @@
 
 .lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button svg,
 .lx-list-wrapper .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button:hover svg,
-.lx-list-wrapper .lx-expander .lx-head > .lx-button:hover > svg {
+.lx-list-wrapper .lx-expander .lx-head > .lx-button:hover > .lx-button-content-wrapper svg {
   fill: var(--color-list-interactive-foreground);
 }
 
@@ -794,7 +779,7 @@
   flex-direction: row-reverse;
 }
 
-.lx-list-wrapper > .lx-load-more-button > .lx-button > svg {
+.lx-list-wrapper > .lx-load-more-button > .lx-button > .lx-button-content-wrapper svg {
   display: none;
 }
 
@@ -975,7 +960,7 @@ li .lx-list-item.lx-inactive {
   margin-bottom: 0.75rem;
 }
 
-.lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions .lx-button > svg{
+.lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions .lx-button-content-wrapper svg{
   align-self: center;
 }
 

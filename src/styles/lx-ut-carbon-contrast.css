@@ -19,7 +19,6 @@
   --color-interactive-secondary-hover-foreground: var(--contrast-background);
   --color-interactive-active-background: var(--contrast-hover);
   --color-interactive-active-foreground: var(--contrast-background);
-  --color-navbar-button-foreground: var(--contrast-foreground);
   --color-disabled-background: var(--contrast-background);
   --color-disabled-foreground: var(--contrast-background);
   --color-focus-background: var(--contrast-hover);
@@ -29,12 +28,8 @@
   --color-nav-background: var(--color-layout-background);
   --color-nav-foreground: var(--contrast-foreground);
   --color-nav-chrome: var(--contrast-foreground);
-  --color-nav-selected-background: var(--contrast-foreground);
-  --color-nav-selected-foreground: var(--contrast-background);
   --color-nav-hover-background: var(--contrast-hover);
   --color-nav-hover-foreground: var(--contrast-background);
-  --color-dropdown-button-background: var(--contrast-background);
-  --color-dropdown-button-foreground: var(--contrast-interactive);
   --color-tooltip-background: var(--contrast-interactive);
   --color-tooltip-foreground: var(--contrast-background);
   --color-tile-background: var(--contrast-background);
@@ -146,4 +141,15 @@
   --color-input-disabled-border: var(--contrast-foreground);
   --color-input-outline: var(--contrast-foreground);
   --color-input-selected-range-background: var(--contrast-hover);
+
+  --color-button-dropdown: var(--contrast-interactive);
+  --color-button-dropdown-background: var(--contrast-background);
+  --color-button-dropdown-focus: var(--contrast-background);
+  --color-button-dropdown-hover: var(--contrast-background);
+  --color-button-nav: var(--contrast-foreground);
+  --color-button-nav-icon: var(--color-button-nav);
+  --color-button-nav-selected: var(--contrast-background);
+  --color-button-nav-selected-background: var(--contrast-foreground);
+  --color-button-nav-public-hover: var(--contrast-background);
+  --color-button-nav-public-icon-hover: var(--contrast-background);
 }

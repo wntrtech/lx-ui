@@ -309,6 +309,7 @@ function triggerUserMenu() {
   <div class="lx-group" v-if="!hasNavBar">
     <div class="lx-help-button" v-if="hasHelp">
       <LxButton
+        customClass="lx-header-button"
         kind="ghost"
         icon="help"
         :label="helpLabel"
@@ -322,6 +323,7 @@ function triggerUserMenu() {
       <LxDropDownMenu ref="themeMenu">
         <div class="lx-toolbar">
           <LxButton
+            customClass="lx-header-button"
             variant="icon-only"
             kind="ghost"
             :icon="themeIcon"
@@ -355,6 +357,7 @@ function triggerUserMenu() {
     <div class="lx-alert-menu" v-if="hasAlerts">
       <LxDropDownMenu v-if="alertsKind === 'menu' || alertsKind === 'combo'">
         <LxButton
+          customClass="lx-header-button"
           variant="icon-only"
           kind="ghost"
           icon="notifications"
@@ -463,6 +466,7 @@ function triggerUserMenu() {
 
       <LxButton
         v-if="alertsKind === 'button'"
+        customClass="lx-header-button"
         variant="icon-only"
         kind="ghost"
         icon="notifications"
@@ -476,7 +480,13 @@ function triggerUserMenu() {
 
     <div class="lx-language-menu" v-if="hasLanguagePicker">
       <LxDropDownMenu>
-        <LxButton variant="icon-only" kind="ghost" icon="language" :title="texts.languagesTitle" />
+        <LxButton
+          customClass="lx-header-button"
+          variant="icon-only"
+          kind="ghost"
+          icon="language"
+          :title="texts.languagesTitle"
+        />
 
         <template v-slot:panel>
           <div class="lx-button-set">
@@ -599,6 +609,7 @@ function triggerUserMenu() {
           <LxDropDownMenu>
             <div class="lx-toolbar">
               <LxButton
+                customClass="lx-header-button"
                 :label="texts.languagesTitle"
                 kind="ghost"
                 icon="language"
@@ -625,6 +636,7 @@ function triggerUserMenu() {
           <LxDropDownMenu>
             <div class="lx-toolbar">
               <LxButton
+                customClass="lx-header-button"
                 :label="texts.themeTitle"
                 kind="ghost"
                 :icon="themeIcon"

@@ -2,7 +2,8 @@
   --color-brand: #268707;
   --color-interactive-background: #268707;
   --color-interactive-hover-background: #1c5c07;
-  --color-nav-selected-background: #e3ebe1;
+  
+  --color-button-nav-selected-background: #e3ebe1;
 }
 .lx.lx-theme-dark {
   --color-brand: #67ab51;
