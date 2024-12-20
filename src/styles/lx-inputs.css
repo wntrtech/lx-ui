@@ -2980,7 +2980,27 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-data-grid-wrapper .lx-grid-toolbar {
+  background-color: var(--color-region);
   flex-direction: row;
+  top: var(--nav-row-size);
+}
+
+.lx-data-grid-wrapper.lx-grid-sticky .lx-grid-toolbar {
+  position: sticky;
+  z-index: 4;
+}
+
+.lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper .lx-grid-toolbar {
+  top: var(--public-nav-header-size);
+}
+
+.lx .lx-curtain > .lx-modal > .lx-main .lx-data-grid-wrapper .lx-grid-toolbar {
+  top: -1rem !important; /* 0rem - modal top padding */
+}
+
+.lx .lx-form-grid .lx-data-grid-wrapper .lx-grid-toolbar {
+  top: 0 !important;
+  z-index: 1;
 }
 
 .lx-component-toolbar.lx-selection-toolbar .right-area {

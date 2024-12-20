@@ -36,6 +36,7 @@
 
   --row-size: 3rem;
   --nav-row-size: 3rem;
+  --public-nav-header-size: calc(var(--nav-row-size) + var(--row-size));
   --notification-size: 28rem;
   --body-column-size: 1300px;
   --tile-column-size: 20rem;

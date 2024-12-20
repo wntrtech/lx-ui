@@ -43,9 +43,71 @@
 
 .lx .lx-data-grid .lx-grid-table .lx-grid-row {
   top: var(--nav-row-size);
-  background-color: var(--color-grid-header);
   border-top: var(--region-border);
   z-index: 1;
+}
+
+.lx .lx-data-grid-wrapper.lx-grid-sticky > .lx-grid-header-wrapper {
+  position: sticky;
+  z-index: 3;
+}
+
+.lx .lx-data-grid-wrapper > .lx-grid-header-wrapper .lx-grid-row {
+  display: grid;
+  position: sticky;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.lx .lx-data-grid-wrapper > .lx-grid-header-wrapper {
+  top: var(--nav-row-size);
+}
+
+/* public mode, no toolbar, yes navbar */
+.lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-header-wrapper {
+  top: calc(var(--public-nav-header-size));
+}
+
+/* yes toolbar OR public mode, yes toolbar, no navbar */
+.lx .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper,
+.lx-layout-public.no-nav-items .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper {
+  top: calc(var(--nav-row-size) + var(--row-size));
+}
+
+/* public mode, yes toolbar, yes navbar */
+.lx-layout-public .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper {
+  top: calc(var(--public-nav-header-size) + var(--row-size));
+}
+
+.lx .lx-curtain > .lx-modal > .lx-main .lx-data-grid-wrapper > .lx-grid-header-wrapper {
+  top: -1rem; /* 0rem - modal lx-main top padding */
+}
+
+.lx .lx-curtain > .lx-modal > .lx-main .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper {
+  top: calc(var(--row-size) - 1rem); /* toolbar height - modal top padding */
+}
+
+.lx .lx-form-grid .lx-data-grid-wrapper > div.lx-grid-header-wrapper {
+  top: 0 !important;
+  z-index: 1;
+}
+
+.lx:not(.lx-theme-contrast) .lx-data-grid-wrapper > .lx-grid-header-wrapper::after {
+  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
+  content: '';
+  height: 3rem;
+  position: absolute;
+  top: var(--grid-header-size);
+  left: 0;
+  right: 0;
+  opacity: 0;
+  opacity: var(--grid-top-shadow-opacity);
+  pointer-events: none;
+}
+
+.lx .lx-data-grid-wrapper:has(.lx-data-grid.lx-loading) > .lx-grid-header-wrapper {
+  display: none;
 }
 
 .lx .lx-data-grid .lx-cell {
@@ -55,8 +117,8 @@
   text-overflow: ellipsis;
 }
 
-.lx .lx-data-grid .lx-cell,
-.lx .lx-data-grid .lx-cell-header {
+.lx .lx-data-grid-wrapper .lx-cell,
+.lx .lx-data-grid-wrapper .lx-cell-header {
   text-align: left;
   vertical-align: top;
   border: none;
@@ -64,17 +126,21 @@
   line-height: 1.1em;
 }
 
-.lx .lx-data-grid .lx-cell,
-.lx .lx-data-grid .lx-cell-action,
-.lx .lx-data-grid .lx-cell-header {
+.lx .lx-data-grid-wrapper .lx-cell,
+.lx .lx-data-grid-wrapper .lx-cell-action,
+.lx .lx-data-grid-wrapper div.lx-cell-header {
   border-bottom: 1px solid var(--color-chrome);
 }
 
-.lx .lx-data-grid .lx-grid-row {
+.lx .lx-data-grid-wrapper .lx-grid-row {
   outline-color: var(--color-focus-background);
   color: var(--color-data);
   fill: var(--color-data);
   display: contents;
+}
+
+.lx .lx-data-grid-wrapper > .lx-grid-header-wrapper .lx-grid-row {
+  display: grid;
 }
 
 .lx .lx-data-grid .lx-grid-row.lx-selected .lx-cell-selector {
@@ -97,7 +163,7 @@
   background-color: var(--color-grid-hover-background);
 }
 
-.lx .lx-data-grid .lx-cell-header {
+.lx .lx-data-grid-wrapper .lx-cell-header {
   min-height: var(--row-size);
   background-color: var(--color-grid-header);
   text-align: left;
@@ -105,12 +171,12 @@
   outline-color: var(--color-focus-background);
 }
 
-.lx .lx-data-grid .lx-cell-header div {
+.lx .lx-data-grid-wrapper .lx-cell-header div {
   display: flex;
   justify-content: space-between;
 }
 
-.lx .lx-data-grid .lx-cell-header div svg {
+.lx .lx-data-grid-wrapper .lx-cell-header div svg {
   height: 1.2rem;
   flex-shrink: 0;
   align-self: flex-start;
@@ -119,35 +185,35 @@
   visibility: hidden;
 }
 
-.lx .lx-data-grid .lx-cell-header .lx-primary{
+.lx .lx-data-grid-wrapper .lx-cell-header .lx-primary{
   overflow: hidden;
   text-overflow: ellipsis;
   padding-bottom: 0.1rem;
 }
 
-.lx .lx-data-grid .lx-cell-header .lx-primary,
+.lx .lx-data-grid-wrapper .lx-cell-header .lx-primary,
 .lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-row .lx-vertical {
   color: var(--color-data);
 }
 
-.lx .lx-data-grid .lx-cell-number {
+.lx .lx-data-grid-wrapper .lx-cell-number {
   text-align: right;
 }
 
-.lx .lx-data-grid .lx-cell-number div {
+.lx .lx-data-grid-wrapper .lx-cell-number div {
   justify-content: flex-end;
 }
 
-.lx .lx-data-grid .lx-cell-selector {
+.lx .lx-data-grid-wrapper .lx-cell-selector {
   padding: 0;
 }
 
-.lx .lx-data-grid .lx-cell.lx-cell-selector {
+.lx .lx-data-grid-wrapper .lx-cell.lx-cell-selector {
   text-align: center;
   vertical-align: top;
 }
 
-.lx .lx-data-grid.lx-scrollable .lx-cell-xs {
+.lx .lx-data-grid-wrapper:has(.lx-scrollable) .lx-cell-xs {
   min-width: 4rem;
 }
 
@@ -156,7 +222,7 @@
   max-width: 4rem;
 }
 
-.lx .lx-data-grid.lx-scrollable .lx-cell-s { 
+.lx .lx-data-grid-wrapper:has(.lx-scrollable) .lx-cell-s { 
   min-width: 6rem; 
 }
 
@@ -174,8 +240,8 @@
   max-width: 12rem;
 }
 
-.lx .lx-data-grid.lx-scrollable .lx-cell-stretch,
-.lx .lx-data-grid.lx-scrollable .lx-cell-l {
+.lx .lx-data-grid-wrapper:has(.lx-scrollable) .lx-cell-stretch,
+.lx .lx-data-grid-wrapper:has(.lx-scrollable) .lx-cell-l {
   min-width: 20rem;
 }
 
@@ -184,7 +250,7 @@
   max-width: 20rem;
 }
 
-.lx .lx-data-grid.lx-scrollable .lx-cell-xl {
+.lx .lx-data-grid-wrapper:has(.lx-scrollable) .lx-cell-xl {
   min-width: 30rem;
 }
 
@@ -193,21 +259,21 @@
   max-width: 30rem;
 }
 
-.lx .lx-data-grid .lx-cell-sortable {
+.lx .lx-data-grid-wrapper .lx-cell-sortable {
   cursor: pointer;
 }
 
-.lx .lx-data-grid .lx-cell-sortable div svg {
+.lx .lx-data-grid-wrapper .lx-cell-sortable div svg {
   display: block;
   margin-right: -0.5rem;
 }
 
-.lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-cell-sortable:hover {
+.lx .lx-data-grid-wrapper > .lx-grid-header-wrapper .lx-grid-row > .lx-cell-sortable:hover {
   background-color: var(--color-grid-header-hover-background);
 }
 
-.lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-cell-sortable:hover div svg,
-.lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-cell-sortable.lx-cell-sorted div svg {
+.lx .lx-data-grid-wrapper > .lx-grid-header-wrapper .lx-grid-row > .lx-cell-sortable:hover div svg,
+.lx .lx-data-grid-wrapper > .lx-grid-header-wrapper .lx-grid-row > .lx-cell-sortable.lx-cell-sorted div svg {
   visibility: visible;
 }
 
@@ -260,7 +326,7 @@
   color: var(--color-interactive-hover-background);
 }
 
-.lx .lx-data-grid .lx-cell-extra,
+.lx .lx-data-grid-wrapper .lx-cell-extra,
 .lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-row.lx-cell-extra {
   display: none;
 }
@@ -272,6 +338,7 @@
   display: block;
 }
 
+.lx .lx-data-grid-wrapper:has(.lx-data-grid-full) .lx-cell-extra,
 .lx .lx-data-grid.lx-data-grid-full .lx-cell-extra {
   display: block;
 }
@@ -342,6 +409,12 @@
   right: -1px;
 }
 
+.lx-data-grid-wrapper:has(.lx-scrollable) .lx-cell-header.lx-cell-action {
+  position: sticky;
+  right: -1px;
+  z-index: 1;
+}
+
 .lx .lx-data-grid.lx-scrollable .lx-cell-action {
   z-index: 1;
 }
@@ -371,11 +444,11 @@
   visibility: inherit;
 }
 
-.lx .lx-data-grid .lx-grid-row:hover .lx-cell-action:not(.lx-cell-header) {
+.lx .lx-data-grid .lx-grid-row:hover .lx-cell-action {
   background-color: var(--color-grid-hover-background);
 }
 
-.lx .lx-data-grid .lx-grid-row:hover .lx-cell-action:not(.lx-cell-header) .lx-toolbar {
+.lx .lx-data-grid .lx-grid-row:hover .lx-cell-action .lx-toolbar {
   background-color: var(--color-grid-hover-background);
 }
 
@@ -391,6 +464,14 @@
 
 .lx-data-grid > .lx-grid-table > .lx-grid-content {
   display: contents;
+}
+
+.lx-data-grid .lx-grid-table .lx-grid-header-hidden {
+  display: none;
+}
+
+.lx-data-grid .lx-grid-table .lx-grid-header-hidden {
+  display: none;
 }
 
 .lx-data-grid .lx-cell-action .lx-button svg {
@@ -849,11 +930,16 @@
     display: block;
   }
 
+  .lx .lx-data-grid-wrapper > .lx-grid-toolbar {
+    position: static;
+  }
+
   .lx-data-grid-wrapper:not(:has(.lx-data-grid.lx-loading)) .lx-appendable-list {
     display: flex;
   }
 
-  .lx-data-grid-wrapper > .lx-data-grid:not(.lx-loading) {
+  .lx-data-grid-wrapper > .lx-data-grid:not(.lx-loading),
+  .lx-data-grid-wrapper:not(:has(.lx-data-grid.lx-loading)) > .lx-grid-header-wrapper {
     display: none;
   }
   .lx .lx-data-grid-wrapper {

@@ -1,5 +1,6 @@
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch, nextTick } from 'vue';
+import { useWindowSize, useElementBounding, useElementSize } from '@vueuse/core';
 
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
@@ -52,6 +53,7 @@ const props = defineProps({
   busy: { type: Boolean, default: false },
   skeletonRowCount: { type: Number, default: 10 },
   scrollable: { type: Boolean, default: false },
+  stickyHeader: { type: Boolean, default: true },
   showHeader: { type: Boolean, default: false },
   showToolbar: { type: Boolean, default: false },
   showStatusbar: { type: Boolean, default: true },
@@ -857,6 +859,58 @@ function updateGridTemplateColumns() {
   gridTemplateColumns.value = templateColumns.join(' ');
 }
 
+const header = ref(null);
+const container = ref(null);
+const { width, height } = useWindowSize();
+
+function syncHeaderScroll() {
+  if (header.value && container.value) {
+    header.value.scrollLeft = container.value.scrollLeft;
+  }
+}
+
+function syncColumnWidths() {
+  if (!header.value || !container.value) return;
+
+  if (props.loading) container.value.style.gridTemplateColumns = 'auto';
+
+  const headerColumns = Array.from(header.value.children).filter((col) => col.offsetWidth > 0);
+  const columnWidths = headerColumns.map((col) => `${col.offsetWidth}px`).join(' ');
+
+  container.value.style.gridTemplateColumns = columnWidths;
+}
+
+function calculateOffset(el) {
+  const rowRems = getComputedStyle(el).getPropertyValue('--row-size').trim();
+  const { fontSize } = getComputedStyle(el);
+
+  return parseInt(rowRems, 10) * parseFloat(fontSize);
+}
+
+const bounding = useElementBounding(container);
+const headerSize = useElementSize(header);
+
+const topOutOfBounds = computed(() => {
+  const keyOpacity = '--grid-top-shadow-opacity';
+  const keySize = '--grid-header-size';
+  const limit = 100;
+  const headerHeight = headerSize.height?.value || 0;
+
+  if (!container.value || !header.value) {
+    return `${keyOpacity}: 0; ${keySize}: ${headerHeight}px;`;
+  }
+
+  const v = bounding.top ? bounding.top.value - calculateOffset(container.value) : 0;
+
+  if (v < 0 - limit) {
+    return `${keyOpacity}: 1; ${keySize}: ${headerHeight}px;`;
+  }
+  if (v < 0) {
+    return `${keyOpacity}: ${(0 - v) / limit}; ${keySize}: ${headerHeight}px;`;
+  }
+  return `${keyOpacity}: 0; ${keySize}: ${headerHeight}px;`;
+});
+
 watch(
   [
     columnsComputed,
@@ -866,9 +920,28 @@ watch(
   ],
   () => {
     updateGridTemplateColumns();
+    nextTick(() => {
+      syncColumnWidths();
+    });
   },
   { immediate: true }
 );
+
+watch(
+  [() => props.scrollable, () => props.loading],
+  () => {
+    nextTick(() => {
+      syncColumnWidths();
+    });
+  },
+  { immediate: true }
+);
+
+watch([width, height], () => {
+  nextTick(() => {
+    syncColumnWidths();
+  });
+});
 
 watch(
   () => props.items,
@@ -884,12 +957,17 @@ watch(
 );
 </script>
 <template>
-  <div class="lx-data-grid-wrapper">
+  <div
+    class="lx-data-grid-wrapper"
+    :style="`${topOutOfBounds}`"
+    :class="[{ 'lx-grid-sticky': stickyHeader }]"
+  >
     <header v-if="showHeader">
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
       <p :id="`${id}-description`" class="lx-description">{{ description }}</p>
     </header>
     <LxToolbar
+      v-if="(toolbarActions?.length > 0 || $slots.toolbar) && (props.showToolbar || hasSelecting)"
       :actionDefinitions="toolbarActions"
       :disabled="props.busy"
       :loading="props.loading"
@@ -911,17 +989,98 @@ watch(
         </div>
       </template>
     </LxToolbar>
-
+    <div class="lx-grid-header-wrapper" aria-hidden="true">
+      <div
+        ref="header"
+        class="lx-grid-row"
+        role="row"
+        :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
+      >
+        <div v-if="hasSelecting" class="lx-cell-header lx-cell-selector" role="columnheader"></div>
+        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+        <div
+          v-for="col in columnsComputed"
+          :key="col.id"
+          :title="formatTooltip(col.name, col.title)"
+          role="columnheader"
+          class="lx-cell-header"
+          :aria-sort="getAriaSorting(sortedColumns[col.id])"
+          :aria-label="formatTooltip(col.name, col.title)"
+          tabindex="0"
+          :class="[
+            {
+              'lx-cell-number':
+                col.type === 'number' || col.type === 'decimal' || col.type === 'float',
+            },
+            {
+              'lx-cell-sortable': hasSorting,
+            },
+            {
+              'lx-cell-sorted': sortedColumns[col.id],
+            },
+            {
+              'lx-cell-extra': col.kind === 'extra',
+            },
+            {
+              'lx-cell-xs': col.size === 'xs',
+            },
+            {
+              'lx-cell-s': col.size === 's',
+            },
+            {
+              'lx-cell-m': col.size === 'm',
+            },
+            {
+              'lx-cell-l': col.size === 'l',
+            },
+            {
+              'lx-cell-xl': col.size === 'xl',
+            },
+            {
+              'lx-cell-stretch': col.size === '*',
+            },
+          ]"
+          @click="sortColumn(col.id)"
+          @keyup.space.prevent="sortColumn(col.id)"
+          @keyup.enter="sortColumn(col.id)"
+        >
+          <div>
+            <p class="lx-primary" v-if="col.size !== 'xs'">{{ col.name }}</p>
+            <lx-icon
+              value="sort-down"
+              v-if="sortedColumns[col.id] === 'desc'"
+              :title="formatTooltip(col.name, col.title)"
+            ></lx-icon>
+            <lx-icon
+              value="sort-up"
+              v-if="sortedColumns[col.id] === 'asc'"
+              :title="formatTooltip(col.name, col.title)"
+            ></lx-icon>
+            <lx-icon
+              value="sort-default"
+              v-if="!sortedColumns[col.id]"
+              :title="formatTooltip(col.name, col.title)"
+            ></lx-icon>
+          </div>
+        </div>
+        <div
+          v-if="hasActionButtons"
+          class="lx-cell-header lx-cell-action"
+          role="columnheader"
+          :title="texts?.actions"
+        ></div>
+      </div>
+    </div>
     <article
+      ref="container"
       :id="id"
       class="lx-data-grid"
-      role="presentation"
       :class="[
         { 'lx-scrollable': scrollable },
         { 'lx-data-grid-full': showAllColumns },
         { 'lx-loading': loading },
       ]"
-      :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
+      @scroll="syncHeaderScroll()"
     >
       <div
         class="lx-grid-table"
@@ -930,66 +1089,17 @@ watch(
         :aria-labelledby="`${id}-label`"
         :aria-describedby="`${id}-description`"
       >
-        <div class="lx-grid-row" role="row">
-          <div
-            v-if="hasSelecting"
-            class="lx-cell-header lx-cell-selector"
-            role="columnheader"
-          ></div>
-          <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+        <div class="lx-grid-header-hidden" role="row">
+          <div v-if="hasSelecting" class="lx-cell-header" role="columnheader"></div>
           <div
             v-for="col in columnsComputed"
             :key="col.id"
-            :title="formatTooltip(col.name, col.title)"
-            role="columnheader"
-            class="lx-cell-header"
-            :aria-sort="getAriaSorting(sortedColumns[col.id])"
             :aria-label="formatTooltip(col.name, col.title)"
-            tabindex="0"
-            :class="[
-              {
-                'lx-cell-number':
-                  col.type === 'number' || col.type === 'decimal' || col.type === 'float',
-              },
-              {
-                'lx-cell-sortable': hasSorting,
-              },
-              {
-                'lx-cell-sorted': sortedColumns[col.id],
-              },
-              {
-                'lx-cell-extra': col.kind === 'extra',
-              },
-            ]"
-            @click="sortColumn(col.id)"
-            @keyup.space.prevent="sortColumn(col.id)"
-            @keyup.enter="sortColumn(col.id)"
-          >
-            <div>
-              <p class="lx-primary" v-if="col.size !== 'xs'">{{ col.name }}</p>
-              <lx-icon
-                value="sort-down"
-                v-if="sortedColumns[col.id] === 'desc'"
-                :title="formatTooltip(col.name, col.title)"
-              ></lx-icon>
-              <lx-icon
-                value="sort-up"
-                v-if="sortedColumns[col.id] === 'asc'"
-                :title="formatTooltip(col.name, col.title)"
-              ></lx-icon>
-              <lx-icon
-                value="sort-default"
-                v-if="!sortedColumns[col.id]"
-                :title="formatTooltip(col.name, col.title)"
-              ></lx-icon>
-            </div>
-          </div>
-          <div
-            v-if="hasActionButtons"
-            class="lx-cell-header lx-cell-action"
             role="columnheader"
-            :title="texts?.actions"
-          ></div>
+          >
+            {{ col.name }}
+          </div>
+          <div v-if="hasActionButtons" role="columnheader"></div>
         </div>
         <div class="lx-grid-content">
           <transition-group
