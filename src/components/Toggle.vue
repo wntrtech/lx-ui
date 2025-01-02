@@ -99,7 +99,7 @@ onMounted(() => {
       :data-invalid="invalid ? '' : null"
       :title="tooltipValue"
     >
-      <lx-icon v-show="invalid" customClass="lx-invalidation-icon" value="invalid" />
+      <lx-icon v-show="invalid && !hasSlots" customClass="lx-invalidation-icon" value="invalid" />
       <!-- it's labelled by the label below, or if that's absent, by aria-label -->
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label-->
       <input
