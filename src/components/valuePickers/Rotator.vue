@@ -249,10 +249,12 @@ const queueItems = computed(() => {
       {{ getName(false) }}
       <template v-if="model === null || model === undefined || model?.length < 1">—</template>
     </p>
+
     <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
       <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
     </ul>
   </template>
+
   <template v-else>
     <div
       v-if="rotatorItemsArray"
@@ -265,12 +267,13 @@ const queueItems = computed(() => {
           class="lx-rotator-dropdown-wrapper lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
           :aria-invalid="invalid"
-          @keydown.space.prevent="selectSingle(null)"
-          @click="selectSingle(null)"
           tabindex="0"
           :aria-labelledby="labelId"
+          @click="selectSingle(null)"
+          @keydown.space.prevent="selectSingle(null)"
         >
           <div class="pseudo-input" />
+
           <TransitionGroup
             name="rotator"
             tag="ul"
@@ -279,8 +282,6 @@ const queueItems = computed(() => {
             tabindex="0"
             role="button"
             aria-live="polite"
-            @keydown.space.prevent="selectSingle(null)"
-            @click="selectSingle(null)"
           >
             <li v-for="item in queueItems" :key="item.key" class="lx-rotator-tag">
               <p class="lx-input-text" v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
@@ -289,10 +290,12 @@ const queueItems = computed(() => {
               </template>
             </li>
           </TransitionGroup>
+
           <div class="lx-input-icon-wrapper">
             <LxIcon customClass="lx-modifier-icon thumb" value="rotator" />
           </div>
         </div>
+
         <template #panel>
           <LxButton
             v-for="item in rotatorItemsArray"
@@ -304,6 +307,7 @@ const queueItems = computed(() => {
           />
         </template>
       </LxDropDownMenu>
+
       <div v-if="invalid" class="lx-invalidation-message" @contextmenu.stop>
         {{ invalidationMessage }}
       </div>
