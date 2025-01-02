@@ -46,6 +46,7 @@ function generateRollupInput(baseDir, extension = '.css') {
     'lx-bt-visvaris-personnel',
     'lx-bt-visvaris-property',
     'lx-bt-lvas',
+    'lx-bt-oots',
     // add new bundle names here
   ];
 
