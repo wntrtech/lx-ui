@@ -67,7 +67,14 @@ onMounted(() => {
 });
 
 const itemsModel = ref({});
-const itemsDisplay = computed(() => JSON.parse(JSON.stringify(props.items)));
+const itemsDisplay = computed( () => { 
+    const res = [... props.items];
+    if(props.kind === 'single' && props.nullable)  
+      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: props.texts.notSelected});
+  
+    return res
+  }
+);
 
 const notSelectedId = 'notSelected';
 
@@ -77,21 +84,7 @@ function activate() {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
 
-  if (
-    props.kind === 'single' &&
-    props.nullable &&
-    !itemsDisplay.value.some(
-      (item) =>
-        item[props.idAttribute].toString() === notSelectedId ||
-        item[props.nameAttribute].toString() === props.texts.notSelected
-    )
-  ) {
-    itemsDisplay.value.unshift({
-      [props.idAttribute]: notSelectedId,
-      [props.nameAttribute]: props.texts.notSelected,
-    });
-    itemsModel.value[notSelectedId] = model.value?.length === 0 || !model.value;
-  }
+
 
   // Then set items from model as selected
   if (model.value) {
@@ -108,20 +101,6 @@ function activate() {
 }
 activate();
 
-function deactivate() {
-  if (props.kind === 'single' && !props.nullable) {
-    if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
-  }
-}
-
-watch(
-  () => props.nullable,
-  (newValue) => {
-    if (props.kind !== "single") return
-    if (newValue) activate();
-    else if (!newValue) deactivate();
-  }
-);
 
 watch(
   () => {

@@ -3,7 +3,6 @@ import LxValuePicker from '@/components/ValuePicker.vue';
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import { mount } from '@vue/test-utils';
 import 'regenerator-runtime/runtime';
-import FlagItemDisplay from '@/components/itemDisplay/FlagItemDisplay.vue';
 
 test('LxValuePicker default', () => {
   expect(LxValuePicker).toBeTruthy();
@@ -255,6 +254,39 @@ test('LxValuePicker "default" nullable', () => {
   expect(wrapper.find('.lx-value-picker-default-wrapper').findAll('.lx-radio-button').length).toBe(
     3
   );
+});
+
+test('LxValuePicker default nullable advanced', async () => {
+  expect(LxValuePicker).toBeTruthy();
+
+  const wrapper = mount(LxValuePicker, {
+    props: {
+      items: [
+        { id: 'one', name: 'One', description: 'OneDescription', value: 'OneValue' },
+        { id: 'two', name: 'Two', description: 'TwoDescription', value: 'TwoValue' },
+        { id: 'three', name: 'Three', description: 'ThreeDescription', value: 'ThreeValue' },
+      ],
+      nullable: true,
+      modelValue: [],
+      'onUpdate:modelValue': (e) => wrapper.setProps({ modelValue: e }),
+    },
+    global: {
+      stubs: ['router-link'],
+    },
+  });
+
+  let items = wrapper.findAll('.lx-value-picker-default-item');
+  expect(items.length).toBe(4);
+  await wrapper.setProps({
+    items: [{ id: 'one', name: 'One', description: 'OneDescription', value: 'OneValue' }],
+  });
+  items = wrapper.findAll('.lx-value-picker-default-item');
+  expect(items.length).toBe(2);
+  await wrapper.setProps({
+    nullable: false,
+  });
+  items = wrapper.findAll('.lx-value-picker-default-item');
+  expect(items.length).toBe(1);
 });
 
 /* hasSearch */
