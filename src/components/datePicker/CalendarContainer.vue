@@ -1652,7 +1652,8 @@ const selectHour = (hourObj, isNotSelectable) => {
   if (
     props.mode === 'date-time' &&
     selectedYear.value &&
-    selectedMonth.value &&
+    selectedMonth.value !== null &&
+    selectedMonth.value !== undefined &&
     selectedDay.value &&
     selectedMinute.value !== null &&
     selectedMinute.value !== undefined
@@ -1707,7 +1708,8 @@ const selectMinute = (minuteObj, isNotSelectable) => {
   if (
     props.mode === 'date-time' &&
     selectedYear.value &&
-    selectedMonth.value &&
+    selectedMonth.value !== null &&
+    selectedMonth.value !== undefined &&
     selectedDay.value &&
     selectedHour.value !== null &&
     selectedHour.value !== undefined
@@ -3674,6 +3676,8 @@ watch(
                         minDateRef,
                         maxDateRef,
                         selectedDay,
+                        selectedMonth,
+                        selectedYear,
                         'hour',
                         selectedHour,
                         selectedMinute,
@@ -3689,6 +3693,8 @@ watch(
                     minDateRef,
                     maxDateRef,
                     selectedDay,
+                    selectedMonth,
+                    selectedYear,
                     'hour',
                     selectedHour,
                     selectedMinute,
@@ -3705,6 +3711,8 @@ watch(
                       minDateRef,
                       maxDateRef,
                       selectedDay,
+                      selectedMonth,
+                      selectedYear,
                       'hour',
                       selectedHour,
                       selectedMinute,
@@ -3720,6 +3728,8 @@ watch(
                       minDateRef,
                       maxDateRef,
                       selectedDay,
+                      selectedMonth,
+                      selectedYear,
                       'hour',
                       selectedHour,
                       selectedMinute,
@@ -3787,6 +3797,8 @@ watch(
                         minDateRef,
                         maxDateRef,
                         selectedDay,
+                        selectedMonth,
+                        selectedYear,
                         'minute',
                         selectedHour,
                         selectedMinute,
@@ -3802,6 +3814,8 @@ watch(
                     minDateRef,
                     maxDateRef,
                     selectedDay,
+                    selectedMonth,
+                    selectedYear,
                     'minute',
                     selectedHour,
                     selectedMinute,
@@ -3818,6 +3832,8 @@ watch(
                       minDateRef,
                       maxDateRef,
                       selectedDay,
+                      selectedMonth,
+                      selectedYear,
                       'minute',
                       selectedHour,
                       selectedMinute,
@@ -3833,6 +3849,8 @@ watch(
                       minDateRef,
                       maxDateRef,
                       selectedDay,
+                      selectedMonth,
+                      selectedYear,
                       'minute',
                       selectedHour,
                       selectedMinute,

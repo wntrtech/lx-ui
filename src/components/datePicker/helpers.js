@@ -115,6 +115,8 @@ export function canSelectTime(
   minDate,
   maxDate,
   selectedDay,
+  selectedMonth,
+  selectedYear,
   timeUnit,
   selectedHours,
   selectedMinutes,
@@ -153,7 +155,11 @@ export function canSelectTime(
         minDateParsed &&
         maxDateParsed &&
         selectedDay === minDateParsed.getDate() &&
-        selectedDay !== maxDateParsed.getDate()
+        selectedMonth === minDateParsed.getMonth() &&
+        selectedYear === minDateParsed.getFullYear() &&
+        selectedDay !== maxDateParsed.getDate() &&
+        selectedMonth !== maxDateParsed.getMonth() &&
+        selectedYear !== maxDateParsed.getFullYear()
       ) {
         // If the selected minute is earlier than minDate minute, only allow hours after minDate's hour
         if (selectedMinutes < minDateParsed.getMinutes()) {
@@ -165,7 +171,11 @@ export function canSelectTime(
         minDateParsed &&
         maxDateParsed &&
         selectedDay !== minDateParsed.getDate() &&
-        selectedDay === maxDateParsed.getDate()
+        selectedMonth !== minDateParsed.getMonth() &&
+        selectedYear !== minDateParsed.getFullYear() &&
+        selectedDay === maxDateParsed.getDate() &&
+        selectedMonth === maxDateParsed.getMonth() &&
+        selectedYear === maxDateParsed.getFullYear()
       ) {
         // If the selected minute is later than maxDate minute, only allow hours before maxDate's hour
         if (selectedMinutes > maxDateParsed.getMinutes()) {
@@ -207,14 +217,32 @@ export function canSelectTime(
     }
 
     // Check if it's the same day as minDate
-    if (minDateParsed && selectedDay === minDateParsed.getDate()) {
-      if (hourOrMinuteValue < minDateParsed.getHours()) return false; // Must be after minDate's hour
+    if (
+      minDateParsed &&
+      selectedDay === minDateParsed.getDate() &&
+      selectedMonth === minDateParsed.getMonth() &&
+      selectedYear === minDateParsed.getFullYear()
+    ) {
+      if (hourOrMinuteValue < minDateParsed.getHours()) {
+        // Must be after minDate's hour
+        return false;
+      }
     }
     // Check if it's the same day as maxDate
-    if (maxDateParsed && selectedDay === maxDateParsed.getDate()) {
-      if (hourOrMinuteValue > maxDateParsed.getHours()) return false; // Must be before maxDate's hour
+    if (
+      maxDateParsed &&
+      selectedDay === maxDateParsed.getDate() &&
+      selectedMonth === maxDateParsed.getMonth() &&
+      selectedYear === maxDateParsed.getFullYear()
+    ) {
+      if (hourOrMinuteValue > maxDateParsed.getHours()) {
+        // Must be before maxDate's hour
+        return false;
+      }
     }
-    return true; // Allow all hours otherwise
+
+    // Allow all hours otherwise
+    return true;
   }
 
   // Validate minutes
@@ -226,7 +254,11 @@ export function canSelectTime(
         minDateParsed &&
         maxDateParsed &&
         selectedDay === minDateParsed.getDate() &&
-        selectedDay !== maxDateParsed.getDate()
+        selectedMonth === minDateParsed.getMonth() &&
+        selectedYear === minDateParsed.getFullYear() &&
+        selectedDay !== maxDateParsed.getDate() &&
+        selectedMonth !== maxDateParsed.getMonth() &&
+        selectedYear !== maxDateParsed.getFullYear()
       ) {
         // If the selected hour is the same as minDate hour, validate minutes after minDate minutes
         if (selectedHours === minDateParsed.getHours()) {
@@ -241,7 +273,11 @@ export function canSelectTime(
         minDateParsed &&
         maxDateParsed &&
         selectedDay !== minDateParsed.getDate() &&
-        selectedDay === maxDateParsed.getDate()
+        selectedMonth !== minDateParsed.getMonth() &&
+        selectedYear !== minDateParsed.getFullYear() &&
+        selectedDay === maxDateParsed.getDate() &&
+        selectedMonth === maxDateParsed.getMonth() &&
+        selectedYear === maxDateParsed.getFullYear()
       ) {
         // If the selected hour is the same as maxDate hour, validate minutes before maxDate minutes
         if (selectedHours === maxDateParsed.getHours()) {
@@ -281,6 +317,7 @@ export function canSelectTime(
         return false;
       }
     }
+
     // When the hour is not selected, validate minute by min max
     if (selectedHours === null) {
       // If selecting on minDate and maxDate day
@@ -297,10 +334,12 @@ export function canSelectTime(
         );
       }
     }
-    return true; // Allow all minutes otherwise
+    // Allow all minutes otherwise
+    return true;
   }
 
-  return true; // Allow everything if no unit is specified
+  // Allow everything if no unit is specified
+  return true;
 }
 
 export function isSameMonth(date, comparisonDate) {
