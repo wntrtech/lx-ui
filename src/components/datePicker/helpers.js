@@ -741,6 +741,7 @@ export const getDayTabIndex = (
   ) {
     return '0';
   }
+
   // Case 2: Date from another month, last week of the last month for default and picker variants
   if (
     !isSameMonth(date, month) &&
@@ -751,7 +752,19 @@ export const getDayTabIndex = (
   ) {
     return '0';
   }
-  // Case 3: Date from another month, last week of the last month for full variant
+
+  // Case 3: Date from another month, penultimate week of the last month for default and picker variants
+  if (
+    !isSameMonth(date, month) &&
+    monthsList.flat().length === 1 &&
+    (variant === 'default' || variant === 'picker') &&
+    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 2 === weekIndex &&
+    canSelectDate(date, minDateRef, maxDateRef)
+  ) {
+    return '0';
+  }
+
+  // Case 4: Date from another month, last week of the last month for full variant
   if (
     !isSameMonth(date, month) &&
     monthsList.flat().indexOf(month) === 3 &&
@@ -761,7 +774,19 @@ export const getDayTabIndex = (
   ) {
     return '0';
   }
-  // Case 4: Date from another month, last week of the last month for full-rows, full-columns variants or range pickerType
+
+  // Case 5: Date from another month, penultimate week of the last month for full variant
+  if (
+    !isSameMonth(date, month) &&
+    monthsList.flat().indexOf(month) === 3 &&
+    variant === 'full' &&
+    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 2 === weekIndex &&
+    canSelectDate(date, minDateRef, maxDateRef)
+  ) {
+    return '0';
+  }
+
+  // Case 6: Date from another month, last week of the last month for full-rows, full-columns variants or range pickerType
   if (
     !isSameMonth(date, month) &&
     monthsList.flat().indexOf(month) === 1 &&
@@ -771,10 +796,23 @@ export const getDayTabIndex = (
   ) {
     return '0';
   }
-  // Case 7: Date in the same month and is selectable
+
+  // Case 7: Date from another month, penultimate week of the last month for full-rows, full-columns variants or range pickerType
+  if (
+    !isSameMonth(date, month) &&
+    monthsList.flat().indexOf(month) === 1 &&
+    (variant === 'full-rows' || variant === 'full-columns' || pickerType === 'range') &&
+    getDaysInMonthGrid(month, firstDayOfTheWeek).length - 2 === weekIndex &&
+    canSelectDate(date, minDateRef, maxDateRef)
+  ) {
+    return '0';
+  }
+
+  // Case 8: Date in the same month and is selectable
   if (isSameMonth(date, month) && canSelectDate(date, minDateRef, maxDateRef)) {
     return '0';
   }
+
   // Default case: Not focusable
   return '-1';
 };
