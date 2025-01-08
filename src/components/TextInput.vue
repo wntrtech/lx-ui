@@ -389,10 +389,10 @@ const sanitizedEmail = computed(() => {
       v-if="!readOnly"
     >
       <div v-if="invalid" class="lx-invalidation-icon-wrapper">
-        <lx-icon customClass="lx-invalidation-icon" value="invalid" />
+        <LxIcon customClass="lx-invalidation-icon" value="invalid" />
       </div>
       <div v-if="kind === 'search'" class="lx-input-icon-wrapper">
-        <lx-icon customClass="lx-modifier-icon" value="search" />
+        <LxIcon customClass="lx-modifier-icon" value="search" />
       </div>
       <div class="pseudo-input" />
       <input

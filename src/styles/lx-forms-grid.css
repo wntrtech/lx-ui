@@ -535,7 +535,7 @@ svg .lx-shade {
 .lx-form-grid > .lx-main .lx-row ul.lx-tag-set .lx-tag,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row ul.lx-tag-set .lx-tag {
   color: var(--color-data);
-  height: var(--input-height);
+  height: var(--input-container-height);
   line-height: 1.1em;
 }
 
@@ -603,7 +603,7 @@ svg .lx-shade {
 .lx-form-grid .lx-main .lx-row > div > .lx-appendable-list > div > .lx-button,
 .lx-form-grid .lx-main .lx-row > div.lx-horizontal > .lx-button,
 .lx-form-grid .lx-main .lx-row > div.lx-vertical > .lx-button {
-  max-height: var(--input-height);
+  max-height: var(--input-container-height);
 }
 
 .lx-modal > .lx-main .lx-form-section,

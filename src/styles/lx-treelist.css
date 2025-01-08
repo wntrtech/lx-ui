@@ -5,13 +5,13 @@
 }
 
 .lx-list-wrapper .tree-list .tree-item {
-    padding-top: var(--list-gap);
+    padding-top: var(--list-item-gap);
     min-width: 20rem;
 }
 
 .lx-list-wrapper .tree-list .tree-item>.tree-item {
-    padding-left: var(--list-treelist-child-left-indent);
-    padding-right: var(--list-treelist-child-right-indent);
+    padding-left: var(--list-treelist-indent-child-left);
+    padding-right: var(--list-treelist-indent-child-right);
 }
 
 .lx-list-wrapper .tree-list>.tree-item {
@@ -36,12 +36,12 @@
 }
 
 .lx-list-wrapper .tree-list .tree-item>.tree-item-body.not-expandable .lx-list-item-container {
-    margin-left: var(--list-treelist-left-indent);
-    margin-right: var(--list-treelist-right-indent);
+    margin-left: var(--list-treelist-indent-left);
+    margin-right: var(--list-treelist-indent-right);
 }
 
 .tree-item-small.not-expandable {
-    padding-left: var(--list-treelist-left-indent);
+    padding-left: var(--list-treelist-indent-left);
 }
 
 .tree-item-small>.lx-list-item-wrapper {
@@ -63,6 +63,10 @@
     align-items: center;
     justify-content: space-between;
     background-color: var(--color-list-background);
+}
+
+.tree-list>.tree-item>.tree-item-invalid>.lx-button{
+    height: calc(var(--row-size) - 2px);
 }
 
 .lx-region .tree-list>.tree-item>.tree-item-invalid,
@@ -91,8 +95,9 @@
 
 .tree-list .tree-item .tree-item-body > .lx-button{
     grid-area: expander;
-    width: var(--list-expander-width);
-    height: var(--list-expander-height);
+    height: var(--list-treelist-expander-height);
+    width: var(--list-treelist-expander-width);
+    height: var(--list-treelist-expander-height);
 }
 
 .lx-theme-contrast .tree-list .tree-item-small-parent .lx-checkbox-wrapper .lx-checkbox:not(:disabled):not(:checked):not(:hover)+.lx-checkbox-label-wrapper .lx-checkbox-appearance {
@@ -114,11 +119,11 @@
 }
 
 .tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) p.lx-primary {
-    color: var(--color-list-primary-text-selected);
+    color: var(--color-list-text-primary-selected);
 }
 
 .tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) p.lx-secondary {
-    color: var(--color-list-secondary-text-selected);
+    color: var(--color-list-text-secondary-selected);
 }
 
 .lx .tree-list .tree-item-small-parent:not(:has(.lx-list-item-container)) .lx-list-item-wrapper,
@@ -138,7 +143,7 @@
 
 .lx .tree-item-small-parent:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-list-item-interactive:not(.lx-list-item-disabled):hover),
 .lx .tree-item-small-parent .lx-list-item-container:has(.lx-list-item.lx-list-item-interactive:not(.lx-list-item-disabled):hover) {
-    border-color: var(--color-list-selected-border-hover);
+    border-color: var(--color-list-hover-selected-border);
 }
 
 .tree-list>.tree-item>.tree-item-invalid>.lx-button svg,
@@ -166,7 +171,11 @@
 }
 
 .tree-list .tree-item .tree-item-body.selected-children>.lx-button > .lx-button-content-wrapper svg {
-    fill: var(--color-list-expander-selected-icon);
+    fill: var(--color-data);
+}
+
+.tree-list .tree-item .tree-item-body.selected-children>.lx-button > .lx-button-content-wrapper svg {
+    fill: var(--color-data);
 }
 
 .lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children>.lx-button:hover {

@@ -164,7 +164,7 @@ function secureURL(url) {
                 ? action.disabled
                 : action.enableByAttribute
                 ? !value[action.enableByAttribute]
-                : false
+                : loading || busy || disabled
             "
             @click="actionClicked(action.id, id, $event)"
           />
@@ -177,11 +177,12 @@ function secureURL(url) {
             actionsLayout === 'vertical'
           "
         >
-          <lx-drop-down-menu ref="dropDownMenu">
+          <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
             <div v-if="actionDefinitions.length > 1">
               <lx-button
                 icon="overflow-menu"
                 kind="ghost"
+                :disabled="loading || busy || disabled"
                 @click="openDropDownMenu($event, clickable ? false : true)"
               />
             </div>
@@ -302,7 +303,7 @@ function secureURL(url) {
                 ? action.disabled
                 : action.enableByAttribute
                 ? !value[action.enableByAttribute]
-                : false
+                : loading || busy || disabled
             "
             @click="actionClicked(action.id, id, $event, true)"
           />
@@ -315,11 +316,12 @@ function secureURL(url) {
             actionsLayout === 'vertical'
           "
         >
-          <lx-drop-down-menu ref="dropDownMenu">
+          <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
             <div v-if="actionDefinitions.length > 1">
               <lx-button
                 icon="overflow-menu"
                 kind="ghost"
+                :disabled="loading || busy || disabled"
                 @click="openDropDownMenu($event, true)"
               />
             </div>
@@ -372,7 +374,7 @@ function secureURL(url) {
             ? action.disabled
             : action.enableByAttribute
             ? !value[action.enableByAttribute]
-            : false || loading || busy || disabled
+            : loading || busy || disabled
         "
         @click="actionClicked(action.id, id, $event)"
       />
@@ -385,7 +387,7 @@ function secureURL(url) {
     >
       <lx-drop-down-menu :disabled="loading || busy || disabled">
         <div v-if="actionDefinitions.length > 1">
-          <lx-button icon="overflow-menu" kind="ghost" />
+          <lx-button icon="overflow-menu" kind="ghost" :disabled="loading || busy || disabled" />
         </div>
         <template v-slot:panel>
           <div class="lx-button-set">

@@ -71,8 +71,8 @@
     line-height: 1.1rem;
 }
 
-.lx-master-detail .lx-master li.lx-selected .lx-secondary,
-.lx-master-detail .lx-master li:hover .lx-secondary {
+.lx-master-detail .lx-master .lx-list-item:not(.lx-list-item-disabled) li.lx-selected .lx-secondary,
+.lx-master-detail .lx-master .lx-list-item:not(.lx-list-item-disabled) li:hover .lx-secondary {
     color: var(--color-data);
 }
 
@@ -97,7 +97,7 @@
 }
 
 .lx-master-detail li:hover .lx-list-item .lx-invalidation-icon {
-    fill: var(--color-list-foreground-hover);
+    fill: var(--color-region-hover-foreground);
 }
 
 .lx-master-detail li:focus-visible:has(.lx-list-item.lx-active){

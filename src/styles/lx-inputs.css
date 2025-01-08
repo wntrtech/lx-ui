@@ -3,11 +3,12 @@
   grid-template-areas: var(--input-grid-areas);
   grid-template-columns: var(--input-grid-template-columns);
   align-items: center;
-  height: var(--input-height);
-  width: var(--input-width);
+  height: var(--input-container-height);
+  width: var(--input-container-width);
   border-radius: var(--input-border-radius);
   background-color: var(--color-input-background);
   color: var(--color-input);
+  font-weight: var(--input-text-font-weight);
   overflow: hidden;
 }
 
@@ -106,46 +107,52 @@
 /*** Input padding ***/
 
 .lx .lx-layout div.lx-input-wrapper:not(:has(.lx-input-icon-wrapper)):not(:has(.lx-autocomplete-loader)) .lx-input-area {
-  --input-icon-left-indent: 0rem;
-  --input-icon-right-indent: 0rem;
+  --input-icon-indent-left: 0rem;
+  --input-icon-indent-right: 0rem;
 }
 
 .lx .lx-layout div.lx-input-wrapper:not(:has(.lx-invalidation-icon-wrapper)) .lx-input-area {
-  --input-invalid-left-indent: 0rem;
-  --input-invalid-right-indent: 0rem;
+  --input-invalid-icon-indent-left: 0rem;
+  --input-invalid-icon-indent-right: 0rem;
 }
 
 .lx .lx-layout div.lx-input-wrapper:not(:has(> .lx-button)) .lx-input-area {
-  --input-button-left-indent: 0rem;
-  --input-button-right-indent: 0rem;
+  --input-button-indent-left: 0rem;
+  --input-button-indent-right: 0rem;
 }
 
 /* Multiple, valid */
 
 .lx .lx-layout div.lx-input-wrapper:has(.lx-tag) .lx-input-area {
-  padding-left: max(var(--input-left-padding), calc(var(--input-tag-left-indent) + var(--input-icon-left-indent) + var(--input-button-left-indent)));
-  padding-right: max(var(--input-right-padding), calc(var(--input-tag-right-indent) + var(--input-icon-right-indent) + var(--input-button-right-indent)));
+  padding-left: max(var(--input-container-padding-left), 
+                calc(var(--input-tag-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-container-padding-right), 
+                 calc(var(--input-tag-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
 /* Multiple, invalid */
 
 .lx .lx-layout div.lx-input-wrapper.lx-invalid:has(.lx-tag) .lx-input-area {
-  padding-left: max(var(--input-left-padding), calc(var(--input-tag-left-indent) + var(--input-invalid-left-indent) + var(--input-icon-left-indent) + var(--input-button-left-indent)));
-  padding-right: max(var(--input-right-padding), calc(var(--input-tag-right-indent) + var(--input-invalid-right-indent) + var(--input-icon-right-indent) + var(--input-button-right-indent)));
+  padding-left: max(var(--input-container-padding-left), 
+                calc(var(--input-tag-indent-left) + var(--input-invalid-icon-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-container-padding-right), 
+                 calc(var(--input-tag-indent-right) + var(--input-invalid-icon-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
 /* Single, valid */
 
 .lx .lx-layout div.lx-input-wrapper:not(:has(.lx-tag)) .lx-input-area {
-  padding-left: max(var(--input-left-padding), calc(var(--input-icon-left-indent) + var(--input-button-left-indent)));
-  padding-right: max(var(--input-right-padding), calc(var(--input-icon-right-indent) + var(--input-button-right-indent)));
+  padding-left: max(var(--input-container-padding-left), 
+                calc(var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-container-padding-right), 
+                 calc(var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
 /* Single, invalid */
 
 .lx .lx-layout div.lx-input-wrapper.lx-invalid:not(:has(.lx-tag)) .lx-input-area {
-  padding-left: max(var(--input-left-padding), calc(var(--input-invalid-left-indent) + var(--input-icon-left-indent) + var(--input-button-left-indent)));
-  padding-right: max(var(--input-right-padding), calc(var(--input-invalid-right-indent) + var(--input-icon-right-indent) + var(--input-button-right-indent)));
+  padding-left: max(var(--input-container-padding-left), calc(var(--input-invalid-icon-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
+  padding-right: max(var(--input-container-padding-right), calc(var(--input-invalid-icon-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
 
 /*** Text styles ***/
@@ -155,11 +162,10 @@
 .lx .lx-input-wrapper .lx-date-time-picker::placeholder,
 .lx .lx-input-wrapper .lx-text-area::placeholder,
 .lx .lx-input-wrapper .lx-markdown-text-area::placeholder {
-  line-height: 1.5rem;		
-  font-size: var(--font-size);		
-  font-family: var(--font-family);		
-  font-weight: var(--font-weight);		
-  letter-spacing: 0;		
+  line-height: 1.5rem;
+  font-family: var(--font-family);    
+  font-size: var(--input-text-font-size);   
+  letter-spacing: 0;    
 }
 
 .lx .lx-placeholder,
@@ -177,6 +183,18 @@
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  font-size: var(--input-text-font-size);   
+}
+
+.lx-dropdown-default-data,
+.lx-input-wrapper .lx-input-text,
+.lx-autocomplete-default-panel .lx-value,
+.lx-dropdown-default-data.dropdown-multiple,
+.lx-rotator .lx-rotator-set .lx-rotator-tag > p,
+.lx-autocomplete-default-panel .lx-value .lx-item-display > p,
+.lx-autocomplete-default-panel .lx-value .lx-state > .lx-primary {
+  color: var(--color-input);
+  font-weight: var(--input-text-font-weight);    
 }
 
 .lx-markdown-text-area-wrapper .lx-input-wrapper.lx-disabled ~ .lx-text-length,
@@ -211,7 +229,7 @@
   font-size: var(--small-font-size);
   letter-spacing: var(--letter-spacing-2);
   display: inline-block;
-  color: var(--color-input-text-length);
+  color: var(--color-label);
   font-weight: 400;
   vertical-align: baseline;
   margin-top: 0.1rem;
@@ -261,11 +279,11 @@
   display: flex;
   grid-area: input;
   align-items: center;
-  height: var(--input-height);
+  height: var(--input-container-height);
   width: 100%;
 }
 
-.lx-input-wrapper .lx-placeholder,
+.lx .lx-input-wrapper .lx-placeholder,
 .lx-input-wrapper .lx-placeholder > p,
 .lx-value-picker-placeholder.emptyModel {
   color: var(--color-placeholder);
@@ -280,7 +298,7 @@
 }
 
 .lx-date-time-picker-wrapper.lx-date {
-  width: var(--input-date-width);
+  width: var(--input-container-width-small);
 }
 
 .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.lx-date svg.lx-date-time-icon,
@@ -293,14 +311,14 @@
 }
 
 .lx-date-time-picker-wrapper.lx-time {
-  width: var(--input-time-width);
+  width: var(--input-container-width-small);
 }
 
 .lx-date-time-picker-wrapper.lx-date-time .lx-input-wrapper,
 .lx-date-time-picker-wrapper.lx-date-time,
 .lx-date-picker-dropdown .lx-field-wrapper,
 .lx-date-dropdowns .lx-field-wrapper {
-  width: var(--input-date-time-width);
+  width: var(--input-container-width-large);
 }
 
 .lx-date-time-picker-wrapper.lx-time .vc-popover-content-wrapper .vc-time-date {
@@ -441,9 +459,9 @@
 
 .lx .lx-layout .lx-input-wrapper .lx-input-area.lx-text-area,
 .lx .lx-layout .lx-input-wrapper .lx-input-area.lx-markdown-text-area {
-  height: 100%;
-  min-height: var(--input-text-area-min-height);
-  padding: var(--input-text-area-vertical-padding) 0;
+  --input-container-height: 100%;
+  min-height: var(--input-container-min-height-text-area);
+  padding: var(--input-container-padding-vertical-text-area) 0;
   resize: vertical;
 }
 
@@ -563,8 +581,12 @@
 }
 
 .lx .lx-layout div.lx-input-wrapper.lx-disabled .lx-input-area {
-  border-bottom-color: var(--color-input-disabled-border-bottom);
+  border-bottom-color: var(--color-input-disabled);
   cursor: not-allowed;
+}
+
+.lx.lx-theme-contrast .lx-layout div.lx-input-wrapper.lx-disabled .lx-input-area {
+  border-bottom: var(--input-border);
 }
 
 .lx .lx-layout .lx-input-wrapper.lx-disabled .lx-rotator-tag {
@@ -622,12 +644,12 @@
 }
 
 .lx-date-time-picker-wrapper .lx-modifier-icon {
-  fill: var(--color-input-date-time-icon);
+  fill: var(--color-input);
 }
 
 .lx .lx-input-wrapper .lx-button svg {
-  --color-button-ghost-icon: var(--color-data);
-  --color-button-ghost-icon-focus: var(--color-data);
+  --color-button-ghost-icon: var(--color-input);
+  --color-button-ghost-icon-focus: var(--color-input);
 }
 
 .lx-input-wrapper .lx-invalidation-icon,
@@ -649,7 +671,7 @@
 
 .lx .lx-input-wrapper.lx-disabled .lx-modifier-icon,
 .lx .lx-input-wrapper.lx-disabled svg.thumb {
-  fill: var(--color-input-icon-disabled);
+  fill: var(--color-input-disabled-icon);
 }
 
 h2.lx-section-header + p.lx-invalidation-message,
@@ -663,8 +685,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-markdown-text-area-wrapper .lx-invalidation-icon-wrapper,
 .lx-text-area-wrapper .lx-invalidation-icon-wrapper {
-  padding: var(--input-text-area-vertical-padding) 0;
-  justify-content: var(--input-text-area-justify);
+  padding: var(--input-container-padding-vertical-text-area) 0;
   align-items: flex-start;
   z-index: 1;
 }
@@ -2587,7 +2608,7 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-autocomplete-default-data,
 .lx-rotator .lx-dropdown-toggler,
 .lx-value-picker-dropdown-wrapper > .lx-dropdown-default {
-  height: var(--input-height);
+  height: var(--input-container-height);
 }
 
 .lx-dropdown-default > .inline-block,
@@ -2643,7 +2664,7 @@ input[type='range']:hover::-moz-range-thumb {
 
 .lx .lx-layout div.lx-autocomplete-default {
   background-color: transparent;
-  height: var(--input-height);
+  height: var(--input-container-height);
   cursor: pointer;
 }
 
@@ -2682,13 +2703,18 @@ input[type='range']:hover::-moz-range-thumb {
   grid-area: input;
   grid-column: 1 / -1;
   width: 100%;
-  height: var(--input-height);
+  height: var(--input-container-height);
   padding-bottom: 0.1rem;
   outline: 2px solid transparent;
   outline-offset: -2px;
   border: var(--input-border);
   border-bottom: var(--input-border-bottom);
   border-radius: var(--input-border-radius);
+  font-size: var(--input-text-font-size);
+}
+
+.lx .lx-layout .lx-input-wrapper .lx-input-area::placeholder {
+  font-size: var(--input-text-font-size);
 }
 
 .lx .lx-layout .lx-input-wrapper textarea.lx-input-area,
@@ -2699,7 +2725,7 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .pseudo-input {
-  height: var(--input-height);
+  height: var(--input-container-height);
   width: 100%;
   grid-area: input;
 }
@@ -3169,7 +3195,7 @@ input[type='range']:hover::-moz-range-thumb {
   max-width: 90%;
 }
 
-.lx-archive-content .lx-folder-name {
+.lx .lx-archive-content .lx-folder-name {
   margin-top: 0.5rem
 }
 
@@ -3858,13 +3884,13 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx .lx-layout div.lx-input-wrapper.lx-disabled.lx-rotator-dropdown-wrapper {
-  border-bottom-color: var(--color-input-disabled-border-bottom);
+  border-bottom-color: var(--color-input-disabled);
 }
 
 .lx .lx-layout .lx-rotator div.lx-input-wrapper ul.lx-rotator-set {
   position: relative;
   flex-direction: column;
-  height: var(--input-height);
+  height: var(--input-container-height);
   overflow: hidden;
   justify-content: center;
   list-style: none;
@@ -3894,9 +3920,9 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-rotator svg.thumb {
-  height: var(--input-rotator-icon-height);
-  width: var(--input-rotator-icon-width);
-  fill: var(--color-input-rotator-icon);
+  --input-icon-height: 1.5rem;
+  --input-icon-width: auto;
+  fill: var(--color-input);
   pointer-events: none;
 }
 
@@ -3920,7 +3946,7 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-rotator-set .lx-rotator-tag > p {
-  font-weight: var(--input-rotator-font-weight);
+  --input-text-font-weight: var(--data-weight);
   user-select: none;
 }
 

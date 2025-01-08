@@ -3,7 +3,7 @@
 }
 
 .lx-datepicker-default .lx-datepicker-input-container.range.month-year .lx-date-time-picker {
-  width: var(--input-date-time-width)
+  width: var(--input-container-width-large);
 }
 
 .lx-datepicker-default .lx-context-container .inline-block .popper .lx-dropdown-panel {
@@ -1027,11 +1027,11 @@
   }
 
   .lx-date-time-picker-wrapper.lx-date-time-range-wrapper {
-    width: var(--input-date-width);
+    width: var(--input-container-width-small);
   }
 
   .lx-date-time-picker-wrapper.lx-date-time-range-wrapper.month-year {
-    width: var(--input-date-time-width);
+    width: var(--input-container-width-large);
   }
 
   .lx-datepicker-default .lx-datepicker-input-container.range {

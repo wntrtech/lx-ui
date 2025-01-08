@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   list-style: none;
-  gap: var(--list-gap);
+  gap: var(--list-item-gap);
   padding-inline: 0;
   margin-block: 0;
 }
@@ -19,7 +19,7 @@
 
 .lx-list-item-container .lx-list-item-wrapper {
   grid-template-columns: subgrid;
-  grid-column: var(--list-outer-column-span);
+  grid-column: var(--list-grid-outer-column-span);
   background-color: transparent !important;
   border: none;
   overflow: visible;
@@ -76,8 +76,8 @@
   display: grid;
   grid-template-columns: subgrid;
   grid-template-rows: subgrid;
-  grid-column: var(--list-inner-column-span);
-  border-radius: var(--list-header-border-radius);
+  grid-column: var(--list-grid-inner-column-span);
+  border-radius: var(--list-item-border-radius-inner);
   overflow: hidden;
 }
 
@@ -86,6 +86,7 @@
 }
 
 .lx-list-item-disabled {
+  pointer-events: none;
   cursor: not-allowed;
 }
 
@@ -134,7 +135,7 @@
 }
 
 .lx-list-item-wrapper:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-list-item-actions .lx-dropdown-toggler .lx-button:hover{
-  background-color: var(--color-list-interactive-background);
+  background-color: var(--color-interactive-hover-background);
 }
 
 /*** Selected + hover container styles ***/
@@ -164,7 +165,6 @@
 .lx .list-draggable-area:not(:has(.ghost)) .lx-draggable-group-list-item:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-handle:hover,
 .lx .lx-list-item-interactive:not(.lx-list-item-disabled):hover {
   background-color: var(--color-list-hover-background);
-  border-color: var(--color-list-hover-border);
 }
 
 .lx .list-draggable-area:not(:has(.ghost)) .lx-draggable-group-list-item:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled)) .lx-handle:hover,
@@ -175,7 +175,7 @@
 .lx .list-draggable-area:not(:has(.ghost)) .lx-draggable-group-list-item:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled)) .lx-handle:hover,
 .lx:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item-interactive.lx-selected:not(.lx-list-item-disabled):hover),
 .lx .lx-list-item-container:has(.lx-list-item-interactive.lx-selected:not(.lx-list-item-disabled):hover) {
-  border-color: var(--color-list-selected-border-hover);
+  border-color: var(--color-list-hover-selected-border);
 }
 
 /*** Form + region + modal styles ***/
@@ -215,7 +215,7 @@
 }
 
 .lx-list-wrapper .selecting-block {
-  padding: var(--list-selecting-block-padding);
+  padding: var(--list-item-selecting-block-padding);
   background-color: transparent;
   grid-area: selecting;
 }
@@ -236,21 +236,21 @@
   .lx-checkbox:disabled
   + .lx-checkbox-label-wrapper
   .lx-checkbox-appearance {
-    border-color: var(--color-list-foreground-disabled);
+    border-color: var(--color-disabled);
 }
 
 .lx-list-wrapper .lx-checkbox-wrapper
   .lx-checkbox:disabled
   + .lx-checkbox-label-wrapper
   svg {
-    fill: var(--color-list-foreground-disabled);
+    fill: var(--color-disabled);
 }
 
 .lx-list-wrapper .lx-radio-button-wrapper
   .lx-radio-button:not(:checked):disabled
   + .lx-radio-button-label-wrapper
   .lx-radio-button-appearance {
-    border-color: var(--color-list-foreground-disabled);
+    border-color: var(--color-disabled);
 }
 
 /* Disabled selected item */
@@ -259,15 +259,31 @@
   .lx-checkbox:checked:disabled
   + .lx-checkbox-label-wrapper
   .lx-checkbox-appearance {
-    background-color: var(--color-list-selected-foreground-disabled);
-    border-color: var(--color-list-selected-foreground-disabled);
+    background-color: var(--color-disabled);
+    border-color: var(--color-disabled);
+}
+
+.lx-theme-contrast .lx-list-wrapper
+  .lx-checkbox:checked:disabled
+  + .lx-checkbox-label-wrapper
+  .lx-checkbox-appearance {
+    background-color: var(--contrast-background);
+    border-color: var(--contrast-background);
 }
 
 .lx-list-wrapper .lx-checkbox-wrapper
   .lx-checkbox:checked:disabled
   + .lx-checkbox-label-wrapper
   .lx-checkbox-appearance svg {
-    fill: var(--color-list-checkmark);
+    fill: var(--color-region);
+}
+
+.lx-theme-contrast 
+  .lx-list-wrapper .lx-checkbox-wrapper
+  .lx-checkbox:checked:disabled
+  + .lx-checkbox-label-wrapper
+  .lx-checkbox-appearance svg {
+    fill: var(--contrast-interactive);
 }
 
 /* No hover, unchecked */
@@ -275,23 +291,15 @@
   .lx-checkbox:not(:disabled):not(:checked)
   + .lx-checkbox-label-wrapper
   .lx-checkbox-appearance {
-  background-color: var(--color-list-unchecked-background);
-  border-color: var(--color-list-unchecked-border);
-}
-
-.lx-list-wrapper .lx-radio-button-wrapper
-  .lx-radio-button:not(:disabled):not(:checked)
-  + .lx-radio-button-label-wrapper
-  .lx-radio-button-appearance
-  .lx-radio-thumb {
-  background-color: var(--color-list-unchecked-background);
+  background-color: transparent;
+  border-color: var(--color-data);
 }
 
 .lx-list-wrapper .lx-radio-button-wrapper
   .lx-radio-button:not(:disabled):not(:checked)
   + .lx-radio-button-label-wrapper
   .lx-radio-button-appearance {
-  border-color: var(--color-list-unchecked-border);
+    border-color: var(--color-data);
 }
 
 /* No hover, checked */
@@ -299,15 +307,32 @@
   .lx-checkbox:not(:disabled):checked
   + .lx-checkbox-label-wrapper
   .lx-checkbox-appearance {
-  background-color: var(--color-list-checked-background);
-  border-color: var(--color-list-checked-border);
+  background-color: var(--color-data);
+  border-color: var(--color-data);
+}
+
+.lx-theme-contrast
+  .lx-list-wrapper
+  .lx-checkbox:not(:disabled):checked
+  + .lx-checkbox-label-wrapper
+  .lx-checkbox-appearance {
+  background-color: var(--contrast-background);
+  border-color: var(--contrast-background);
 }
 
 .lx-list-wrapper .lx-radio-button-wrapper
   .lx-radio-button:not(:disabled):checked
   + .lx-radio-button-label-wrapper
   .lx-radio-button-appearance {
-  border-color: var(--color-list-checked-border);
+  border-color: var(--color-data);
+}
+
+.lx-theme-contrast 
+  .lx-list-wrapper .lx-radio-button-wrapper
+  .lx-radio-button:not(:disabled):checked
+  + .lx-radio-button-label-wrapper
+  .lx-radio-button-appearance {
+  border-color: var(--contrast-background);
 }
 
 .lx-list-wrapper .lx-radio-button-wrapper
@@ -315,14 +340,31 @@
   + .lx-radio-button-label-wrapper
   .lx-radio-button-appearance
   .lx-radio-thumb{
-  background-color: var(--color-list-checked-background);
+  background-color: var(--color-data);
+}
+
+.lx-theme-contrast 
+  .lx-list-wrapper .lx-radio-button-wrapper
+  .lx-radio-button:not(:disabled):checked
+  + .lx-radio-button-label-wrapper
+  .lx-radio-button-appearance
+  .lx-radio-thumb{
+  background-color: var(--contrast-background);
 }
 
 .lx-list-wrapper .lx-checkbox-wrapper
   .lx-checkbox:not(:disabled):checked
   + .lx-checkbox-label-wrapper
   .lx-checkbox-appearance svg{
-  fill: var(--color-list-checkmark);
+  fill: var(--color-region);
+}
+
+.lx-theme-contrast
+  .lx-list-wrapper
+  .lx-checkbox:not(:disabled):checked
+  + .lx-checkbox-label-wrapper
+  .lx-checkbox-appearance svg{
+  fill: var(--contrast-foreground);
 }
 
 /* Direct hover on checkbox */
@@ -330,22 +372,22 @@
   .lx-checkbox:not(:disabled)
   + .lx-checkbox-label-wrapper
   .lx-checkbox-appearance {
-  background-color: var(--color-list-interactive-background);
-  border-color: var(--color-list-interactive-background);
+  background-color: var(--color-interactive-hover-background);
+  border-color: var(--color-interactive-hover-background);
 }
 
 .lx-list-wrapper .lx-radio-button-wrapper:hover
   .lx-radio-button:not(:disabled)
   + .lx-radio-button-label-wrapper
   .lx-radio-button-appearance {
-  border-color: var(--color-list-interactive-background);
+  border-color: var(--color-interactive-hover-background);
 }
 
 .lx-list-wrapper .lx-checkbox-wrapper:hover
   .lx-checkbox:not(:disabled)
   + .lx-checkbox-label-wrapper
-  .lx-checkbox-appearance svg{
-  fill: var(--color-list-interactive-foreground);
+  .lx-checkbox-appearance svg {
+  fill: var(--color-focus-foreground);
 }
 
 /*** Icon styles ***/
@@ -369,20 +411,21 @@
   height: 100%;
 }
 
+.lx-list-item-container:has(.lx-list-item-disabled) .lx-handle .lx-icon,
 .lx-list-item-disabled svg {
-  fill: var(--color-list-foreground-disabled);
+  fill: var(--color-list-disabled-foreground);
 }
 
-.lx .lx-list-item-actions .lx-button-ghost svg {
-  fill: var(--color-list-icon);
+.lx.lx-theme-contrast .lx-list-item-wrapper:has(.lx-list-item-disabled) .lx-list-item-actions svg,
+.lx-theme-contrast .lx-list-item-disabled svg {
+  fill: transparent;
 }
 
-.lx .lx-list-item:not(.lx-list-item-disabled) ~ .lx-list-item-actions .lx-button-ghost:active svg {
-  fill: var(--color-interactive-hover-foreground);
-}
-
-.lx .lx-list-item.lx-list-item-disabled ~ .lx-list-item-actions .lx-button-ghost svg {
-  fill: var(--color-list-foreground-disabled);
+.lx .lx-list-item-wrapper .lx-list-item-actions .lx-button-ghost svg {
+  --color-button-ghost-icon: var(--color-list-icon);
+  --color-button-ghost-icon-focus: var(--color-list-icon);
+  --color-button-ghost-icon-disabled: var(--color-list-disabled-foreground);
+  --color-button-ghost-icon-active: var(--color-interactive-hover-foreground);
 }
 
 .lx-list-item-interactive:hover:not(.lx-list-item-disabled)
@@ -396,7 +439,7 @@
   .lx-list-item-actions
   > .lx-button:not(:hover):not(:active)
   svg {
-  fill: var(--color-list-foreground-hover);
+  fill: var(--color-region-hover-foreground);
 }
 
 .lx-list-item-wrapper .lx-list-item.lx-selected:not(.lx-list-item-disabled) .lx-list-icon,
@@ -423,7 +466,7 @@
   .lx-list-item-actions
   > .lx-button:hover
   svg {
-  fill: var(--color-list-interactive-foreground);
+  fill: var(--color-focus-foreground);
 }
 
 .lx.lx-theme-contrast .lx-list-item.lx-invalid.lx-selected .lx-invalidation-icon,
@@ -439,9 +482,9 @@
   justify-content: center;
   align-self: flex-start;
   width: auto;
-  min-height: var(--list-header-min-height);
+  min-height: var(--list-item-header-min-height);
   min-width: 0; /* So that text overflow works */
-  padding: var(--list-header-padding);
+  padding: var(--list-item-header-padding);
   grid-area: content;
 }
 
@@ -550,21 +593,21 @@
 .lx-list-item p.lx-primary {
   flex-grow: 0;
   color: var(--color-list-primary);
-  font-size: var(--list-primary-font-size);
-  line-height: var(--list-primary-line-height);
-  font-weight: var(--list-primary-font-weight);
-  padding: var(--list-primary-padding);
-  margin: var(--list-primary-margin);
+  font-size: var(--list-text-primary-font-size);
+  line-height: var(--list-text-primary-line-height);
+  font-weight: var(--list-text-primary-font-weight);
+  padding: var(--list-text-primary-padding);
+  margin: var(--list-text-primary-margin);
 }
 
 .lx-list-item > header > p.lx-secondary {
   flex-grow: 1;
   color: var(--color-list-secondary);
-  font-size: var(--list-secondary-font-size);
-  line-height: var(--list-secondary-line-height);
-  font-weight: var(--list-secondary-font-weight);
-  padding: var(--list-secondary-padding);
-  margin: var(--list-secondary-margin);
+  font-size: var(--list-text-secondary-font-size);
+  line-height: var(--list-text-secondary-line-height);
+  font-weight: var(--list-text-secondary-font-weight);
+  padding: var(--list-text-secondary-padding);
+  margin: var(--list-text-secondary-margin);
 }
 
 .lx-list-item p.lx-primary,
@@ -574,37 +617,37 @@
 }
 
 .lx-list-item-disabled p.lx-primary,
-.lx-list-item-disabled p.lx-secondary {
-  color: var(--color-list-foreground-disabled);
+.lx .lx-list-item-disabled p.lx-secondary {
+  color: var(--color-list-disabled-foreground);
 }
 
 .lx-list-item-disabled.lx-selected p.lx-primary,
-.lx-list-item-disabled.lx-selected p.lx-secondary {
-  color: var(--color-list-selected-foreground-disabled);
-}
-
-.lx-list-item-wrapper .lx-list-item-interactive:not(.lx-list-item-disabled):hover p.lx-primary,
-.lx-list-item-interactive:not(.lx-list-item-disabled):hover header p {
-  color: var(--color-list-primary-text-hover);
-}
-
-.lx-list-item-wrapper .lx-list-item-interactive:not(.lx-list-item-disabled):hover p.lx-secondary {
-  color: var(--color-list-secondary-text-hover);
+.lx .lx-list-item-disabled.lx-selected p.lx-secondary {
+  color: var(--color-list-disabled-selected-text);
 }
 
 .lx-list-item-wrapper .lx-list-item.lx-selected:not(.lx-list-item-disabled) p.lx-primary,
 .lx-list-item-item.lx-selected:not(.lx-list-item-disabled):hover header p {
-  color: var(--color-list-primary-text-selected);
+  color: var(--color-list-text-primary-selected);
 }
 
 .lx-list-item-wrapper .lx-list-item.lx-selected:not(.lx-list-item-disabled) p.lx-secondary {
-  color: var(--color-list-secondary-text-selected);
+  color: var(--color-list-text-secondary-selected);
+}
+
+.lx-list-item-wrapper .lx-list-item-interactive:not(.lx-list-item-disabled):hover p.lx-primary,
+.lx-list-item-interactive:not(.lx-list-item-disabled):hover header p {
+  color: var(--color-list-hover-text-primary);
+}
+
+.lx-list-item-wrapper .lx-list-item-interactive:not(.lx-list-item-disabled):hover p.lx-secondary {
+  color: var(--color-list-hover-text-secondary);
 }
 
 /*** Toolbar styles ***/
 
 .lx-list-wrapper .lx-list-toolbar {
-  margin-bottom: var(--list-toolbar-gap);
+  margin-bottom: var(--list-item-gap);
 }
 
 .lx .lx-toolbar.lx-search-toolbar.lx-list-toolbar {
@@ -713,7 +756,7 @@
 }
 
 .lx-list-wrapper .lx-list-toolbar.toolbar-selecting > .first-row > p {
-  color: var(--color-list-interactive-foreground);
+  color: var(--color-focus-foreground);
 }
 
 .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button,
@@ -737,13 +780,13 @@
 
 .lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button,
 .lx-list-toolbar .second-row .lx-button:hover {
-  background-color: var(--color-list-interactive-background);
+  background-color: var(--color-interactive-hover-background);
 }
 
 .lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button svg,
 .lx-list-wrapper .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button:hover svg,
 .lx-list-wrapper .lx-expander .lx-head > .lx-button:hover > .lx-button-content-wrapper svg {
-  fill: var(--color-list-interactive-foreground);
+  fill: var(--color-focus-foreground);
 }
 
 .lx-list-toolbar.toolbar-selecting .toolbar-search-button:not(.is-expanded) .lx-button svg {
@@ -786,16 +829,10 @@
 /*** Loader styles ***/
 
 .lx-list-item-wrapper > .lx-list-item-loader {
-  padding: var(--list-icon-padding);
+  padding: var(--list-item-loader-padding);
   height: 100%;
   background-color: transparent;
   grid-area: loader;
-}
-
-.lx-list-item-wrapper:has(.lx-list-item-interactive:not(.lx-list-item-disabled):hover) .lx-loader .lx-loader-stroke,
-.lx-list-item-wrapper:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled)) .lx-loader-stroke,
-.lx-list-wrapper .lx-load-more-button:hover .lx-loader-stroke {
-  stroke: var(--color-list-loader-stroke-interactive);
 }
 
 /*** Draggable styles ***/
@@ -816,29 +853,30 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  width: var(--list-handle-width);
+  width: var(--list-draggable-handle-width);
   background-color: var(--color-list-background);
 }
 
 .lx-handle:not(.handle-disabled):hover .lx-icon {
-  fill: var(--color-list-handle-icon-hover);
+  fill: var(--color-list-hover-handle-icon);
 }
 
 .lx-handle .lx-icon {
   margin-top: 0.5rem;
-  width: var(--list-handle-icon-width);
-  height: var(--list-handle-icon-height);
+  width: var(--list-draggable-handle-icon-width);
+  height: var(--list-draggable-handle-icon-height);
   fill: var(--color-list-handle-icon);
 }
 
 .draggable-list-item-wrapper .lx-list-item-wrapper {
   display: grid;
   grid-template-columns: subgrid;
-  grid-column: var(--list-draggable-outer-column-span);
+  grid-template-areas: none;
+  grid-column: var(--list-draggable-grid-outer-column-span);
 }
 
 .draggable-list-item-wrapper .lx-list-item {
-  grid-column: var(--list-draggable-inner-column-span);
+  grid-column: var(--list-draggable-grid-inner-column-span);
 }
 
 .list-draggable-area {
@@ -865,7 +903,7 @@
   outline: 2px dashed var(--color-focus-background);
 }
 
-.lx-draggable-group-list-item > .lx-context-container {
+.lx-draggable-group-list-item .lx-list-item-container > .lx-context-container {
   grid-area: handle;
 }
 
@@ -897,6 +935,7 @@
 
 .lx .list-draggable-area {
   list-style-type: none;
+  margin-block: 0;
   padding-left: 0;
 }
 
@@ -946,7 +985,7 @@ li .lx-list-item.lx-inactive {
 }
 
 .lx-list-wrapper .lx-list-item-wrapper .compact-actions{
-  grid-column: icon;
+  grid-area: icon;
 }
 
 .lx-list-wrapper .lx-list-item-wrapper .lx-list-item-compact-actions .compact-actions {
