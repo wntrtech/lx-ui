@@ -558,7 +558,10 @@ async function loadPdfFromBase64(base64) {
 function decodeBase64(newValue) {
   try {
     const base64Data = newValue.slice(base64BinaryPrefix.length);
-    binaryText.value = decodeURIComponent(escape(window.atob(base64Data)));
+    const binaryString = window.atob(base64Data);
+    const bytes = new Uint8Array(Array.from(binaryString).map((char) => char.charCodeAt(0)));
+    const decoder = new TextDecoder();
+    binaryText.value = decoder.decode(bytes);
     isFileUploaded.value = true;
   } catch (error) {
     lxDevUtils.logError(`Decode Base64 error, ${error}`, useLx().getGlobals()?.environment);

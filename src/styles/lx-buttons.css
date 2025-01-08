@@ -979,6 +979,7 @@ button.lx-button-ghost:focus:hover {
   line-height: 1em;
   opacity: 0.75;
   margin-top: -0.1rem;
+  inset: var(--button-primary-badge-inset);
 }
 
 .lx-button:not(#userMenuButton) .lx-badge {
@@ -1002,9 +1003,6 @@ button.lx-button-ghost:focus:hover {
   opacity: 1;
 }
 
-.lx-button .lx-badge {
-  inset: var(--button-primary-badge-inset);
-}
 
 .lx-button.lx-button-secondary .lx-badge {
   inset: var(--button-primary-badge-inset);
@@ -1075,17 +1073,16 @@ button.lx-button-ghost:focus:hover {
   margin-right: 1rem;
 }
 
+
 .lx .lx-button.lx-button-main {
   justify-content: flex-start;
   width: var(--aside-size);
-}
-
-.lx .lx-button.lx-button-main {
   background-color: var(--color-nav-background);
   border-color: var(--color-nav-background);
   color: var(--color-nav-foreground);
   height: 100%;
   flex-direction: row;
+  
 }
 
 .lx .lx-button.lx-button-main svg {

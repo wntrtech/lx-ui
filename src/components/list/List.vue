@@ -6,6 +6,7 @@ import draggable from 'vuedraggable/src/vuedraggable';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
@@ -724,7 +725,7 @@ const selectedLabel = computed(() => {
 
   let label = props.texts?.items?.plural;
   let labelStart = props.texts?.selected?.plural;
-  let ret = selectedCountDisplay;
+  let ret = null;
 
   if (selectedCount === 1) {
     label = props.texts?.items?.singular;
@@ -1003,6 +1004,16 @@ function isExpandable(item) {
 }
 
 const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpandable(item)));
+
+function sanitizeHref(href) {
+  if (href && typeof href === 'string') {
+    return sanitizeUrl(href);
+  }
+  if (href instanceof Object) {
+    return href;
+  }
+  return null;
+}
 </script>
 
 <template>
@@ -1201,7 +1212,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
             :label="item[primaryAttribute]"
             :description="item[secondaryAttribute]"
             :value="item"
-            :href="item[hrefAttribute]"
+            :href="sanitizeHref(item[hrefAttribute])"
             :actionDefinitions="actionDefinitions"
             :actionsLayout="actionsLayout"
             :icon="item[iconAttribute] ? item[iconAttribute] : icon"
@@ -1393,7 +1404,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
                 :label="item[primaryAttribute]"
                 :description="item[secondaryAttribute]"
                 :value="item"
-                :href="item[hrefAttribute]"
+                :href="sanitizeHref(item[hrefAttribute])"
                 :actionDefinitions="actionDefinitions"
                 :actionsLayout="actionsLayout"
                 :icon="item[iconAttribute] ? item[iconAttribute] : icon"
@@ -1497,7 +1508,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
               :label="item[primaryAttribute]"
               :description="item[secondaryAttribute]"
               :value="item"
-              :href="item[hrefAttribute]"
+              :href="sanitizeHref(item[hrefAttribute])"
               :actionDefinitions="actionDefinitions"
               :actionsLayout="actionsLayout"
               :icon="item[iconAttribute] ? item[iconAttribute] : icon"
@@ -1638,7 +1649,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
                   :label="item[primaryAttribute]"
                   :description="item[secondaryAttribute]"
                   :value="item"
-                  :href="item[hrefAttribute]"
+                  :href="sanitizeHref(item[hrefAttribute])"
                   :actionDefinitions="actionDefinitions"
                   :actionsLayout="actionsLayout"
                   :icon="item[iconAttribute] ? item[iconAttribute] : icon"
@@ -1704,7 +1715,7 @@ const areSomeExpandable = computed(() => treeItems?.value.some((item) => isExpan
             :label="item[primaryAttribute]"
             :description="item[secondaryAttribute]"
             :value="item"
-            :href="item[hrefAttribute]"
+            :href="sanitizeHref(item[hrefAttribute])"
             :actionDefinitions="actionDefinitions"
             :actionsLayout="actionsLayout"
             :icon="item[iconAttribute] ? item[iconAttribute] : icon"

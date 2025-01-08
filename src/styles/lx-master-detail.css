@@ -6,6 +6,7 @@
 
 .lx-master-detail .lx-master {
     width: var(--aside-size);
+    padding-right: 1rem;
 }
 
 .lx-layout.lx-layout-default.lx-collapsed nav.lx-master,
@@ -75,9 +76,7 @@
     color: var(--color-data);
 }
 
-.lx-master-detail .lx-master{
-    padding-right: 1rem;
-}
+
 
 .lx .lx-master-detail .lx-master .lx-list-item-wrapper:has(.lx-list-item.lx-list-item-active.lx-invalid) {
     border-color: var(--color-list-selected-border);
@@ -122,6 +121,7 @@
 
     .lx-master-detail .lx-detail {
         max-width: 100%;
+        border-left: solid var(--color-chrome) 0.125rem;
     }
 
     .lx-master-detail>nav {
@@ -132,10 +132,6 @@
     .lx-master-detail>nav.lx-master>ul {
         overflow-y: auto;
         height: calc(100% - var(--row-size));
-    }
-
-    .lx-master-detail .lx-detail{
-        border-left: solid var(--color-chrome) 0.125rem;
     }
 
     .lx-master-detail > .lx-master{

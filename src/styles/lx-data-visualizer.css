@@ -72,6 +72,7 @@
     display: flex;
     gap: 1rem;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .lx-data-visualizer .legend-item{
@@ -158,10 +159,6 @@
     width: 0.125rem;
     background-color: var(--color-data);
     z-index: 0;
-}
-
-.lx-data-visualizer .lx-legend {
-    flex-wrap: wrap;
 }
 
 .lx-data-visualizer .lx-bars-horizontal {

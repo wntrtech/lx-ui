@@ -6,6 +6,8 @@ import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import { isEmail } from '@/utils/stringUtils';
 
+import { sanitizeUrl } from '@braintree/sanitize-url';
+
 const props = defineProps({
   id: { type: String, default: null },
   modelValue: { type: [Number, String], default: null },
@@ -350,6 +352,13 @@ function isReadOnlyEmail() {
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+
+const sanitizedEmail = computed(() => {
+  if (isEmail(model.value)) {
+    return sanitizeUrl(`mailto:${model.value}`);
+  }
+  return '';
+});
 </script>
 <template>
   <div class="lx-field-wrapper">
@@ -368,9 +377,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         >—</span
       >
     </p>
-    <a v-if="isReadOnlyEmail()" :href="`mailto:${model}`" :aria-labelledby="labelledBy">{{
-      model
-    }}</a>
+    <a v-if="isReadOnlyEmail()" :href="sanitizedEmail" :aria-labelledby="labelledBy">{{ model }}</a>
     <div
       class="lx-text-input-wrapper lx-input-wrapper"
       :class="[

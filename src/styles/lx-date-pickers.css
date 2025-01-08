@@ -152,18 +152,14 @@
   fill: var(--color-interactive-hover-foreground);
 }
 
-.lx-datepicker-default
-  .lx-calendar-container
-  .lx-calendar-header
-  .lx-button.lx-calendar-months-select-button {
-  min-width: 8rem;
-  justify-content: end;
-}
+
 
 .lx-datepicker-default
   .lx-calendar-container
   .lx-calendar-header
   .lx-button.lx-calendar-months-select-button {
+    min-width: 8rem;
+    justify-content: end;
     --button-ghost-padding: 0 0.9rem 0 1rem;
     --button-ghost-gap: 0.75rem;
 }
@@ -502,7 +498,6 @@
 
 .lx-datepicker-default .lx-calendar-day:focus,
 .lx-datepicker-default .lx-calendar-month:focus,
-.lx-datepicker-default .lx-calendar-month:focus,
 .lx-datepicker-default .lx-calendar-year:focus {
   border-color: transparent;
   outline: 2px solid var(--color-focus-background);
@@ -615,6 +610,7 @@
 
 .lx-datepicker-default .lx-calendar-weeks .lx-calendar-week .lx-info-wrapper {
   cursor: auto;
+  height: 1.8rem;
 }
 
 .lx-datepicker-default .lx-calendar-weeks .lx-calendar-week .lx-info-wrapper:hover {
@@ -785,9 +781,7 @@
   background-color: transparent;
 }
 
-.lx-datepicker-default .lx-calendar-weeks .lx-calendar-week .lx-info-wrapper {
-  height: 1.8rem;
-}
+
 
 .lx-datepicker-default .lx-calendar-day-wrapper {
   display: flex;

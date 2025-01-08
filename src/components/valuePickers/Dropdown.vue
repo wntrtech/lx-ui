@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, nextTick, inject } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
@@ -242,7 +242,7 @@ function selectMultiple(id) {
 
   idModel.value = !idModel.value;
 
-  let res = model.value;
+  let res = null;
   if(Array.isArray(model.value)) res = [...model.value]
   else return 0;
 
