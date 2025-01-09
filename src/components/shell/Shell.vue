@@ -234,12 +234,14 @@ const deviceFontsStorageKey = ref(
 );
 
 function applyDeviceFonts(isEnabled) {
-  if (isEnabled) {
-    lxElement.style.setProperty('--font-family', 'initial');
-    lxElement.style.setProperty('--font-family-mono', 'initial');
-  } else {
-    lxElement.style.removeProperty('--font-family');
-    lxElement.style.removeProperty('--font-family-mono');
+  if (lxElement) {
+    if (isEnabled) {
+      lxElement.style.setProperty('--font-family', 'initial');
+      lxElement.style.setProperty('--font-family-mono', 'initial');
+    } else {
+      lxElement.style.removeProperty('--font-family');
+      lxElement.style.removeProperty('--font-family-mono');
+    }
   }
 }
 
