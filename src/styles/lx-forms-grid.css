@@ -1572,6 +1572,28 @@ p .lx-person-display-wrapper {
   .lx-form-section .lx-placeholder {
     display: none;
   }
+
+  .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container,
+  .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-input-area{
+    background-color: var(--color-region);
+  }
+
+  .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-input-area{
+    border-bottom: none;
+    height: 100%;
+  }
+  
+  .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-dropdown-input-wrapper{
+    height: 100%;
+  }
+
+  .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-dropdown-input-wrapper > .lx-dropdown-default-panel {
+    border-bottom: none;
+  }
+  
+  .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-dropdown-input-wrapper > .lx-dropdown-default-panel .lx-input-text{
+    margin-left: 1rem;
+  }
 }
 
 @media (max-width: 550px) {

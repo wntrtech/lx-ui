@@ -748,6 +748,7 @@ defineExpose({ highlightRow, clearHighlights });
       :value="props.index"
       v-if="props.indexType === 'tabs' && index?.length > 0"
       @click="hideAll"
+      @keydown.enter="hideAll"
       :kind="indexHasIcons ? 'combo' : 'default'"
     >
       <template #body>
