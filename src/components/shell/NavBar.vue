@@ -149,7 +149,7 @@ function navClick(id) {
       </li>
 
       <LxHeaderButtons
-        v-if="width < 500"
+        v-if="width <= 500"
         mode="cover"
         :has-nav-bar="true"
         :has-language-picker="hasLanguagePicker"
