@@ -61,7 +61,7 @@ export function isUrl(value) {
 export function isValidFileName(fileName) {
   // eslint-disable-next-line no-control-regex
   const invalidChars = /[<>:"/\\|?*\u0000-\u001F]/gu;
-  return !invalidChars.test(fileName) && fileName.length > 0;
+  return !invalidChars.test(fileName) && fileName?.length > 0;
 }
 
 export function foldToAscii(v) {

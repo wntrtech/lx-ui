@@ -3004,13 +3004,15 @@ input[type='range']:hover::-moz-range-thumb {
   flex-direction: row-reverse;
 }
 
-.lx-data-grid-wrapper .lx-grid-toolbar {
+.lx-data-grid-wrapper .lx-grid-toolbar,
+.lx-file-viewer .lx-file-viewer-toolbar {
   background-color: var(--color-region);
   flex-direction: row;
   top: var(--nav-row-size);
 }
 
-.lx-data-grid-wrapper.lx-grid-sticky .lx-grid-toolbar {
+.lx-data-grid-wrapper.lx-grid-sticky .lx-grid-toolbar,
+.lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
   position: sticky;
   z-index: 4;
 }
@@ -3664,6 +3666,10 @@ input[type='range']:hover::-moz-range-thumb {
 
 /*** LxFileViewer styles ***/
 
+.lx-file-viewer:not(.lx-file-viewer-fullscreen) {
+  overflow: hidden;
+}
+
 .lx-file-viewer.lx-file-viewer-fullscreen .lx-pdf-canvas-wrapper {
   height: 100vh;
   height: 100dvh;
@@ -3684,7 +3690,6 @@ input[type='range']:hover::-moz-range-thumb {
   grid-template-columns: 1fr;
   justify-content: center;
   align-items: flex-start;
-  overflow: hidden;
 }
 
 .lx-file-viewer .lx-pdf-canvas-wrapper {
@@ -3692,6 +3697,7 @@ input[type='range']:hover::-moz-range-thumb {
   flex-direction: column;
   align-items: center;
   min-height: 600px;
+  gap: var(--gap);
 }
 
 .lx-file-viewer .lx-pdf-wrapper {
@@ -3699,10 +3705,6 @@ input[type='range']:hover::-moz-range-thumb {
   justify-content: safe center;
   overflow: auto;
   background-color: var(--color-preview-backdrop);
-}
-
-.lx-file-viewer .pdf-canvas:not(:last-of-type) {
-  border-bottom: 2px solid var(--color-region) !important;
 }
 
 .lx-file-viewer .lx-pdf-wrapper.lx-pdf-wrapper-scrollable {
@@ -3747,10 +3749,6 @@ input[type='range']:hover::-moz-range-thumb {
   border-color: var(--color-focus-background);
 }
 
-.lx-file-viewer {
-  overflow: hidden;
-}
-
 .lx-file-viewer.lx-file-viewer-fullscreen .lx-file-viewer-toolbar {
   grid-row: 1 / 2;
   position: absolute;
@@ -3761,6 +3759,23 @@ input[type='range']:hover::-moz-range-thumb {
   background-color: var(--color-region);
   background-color: var(--color-background-overlay);
   backdrop-filter: blur(5rem);
+}
+
+/* Printing */
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .lx-binary-wrapper, 
+  .lx-img-wrapper, 
+  .lx-pdf-wrapper, 
+  .lx-binary-wrapper *, 
+  .lx-img-wrapper *, 
+  .lx-pdf-wrapper * {
+    visibility: visible;
+  }
 }
 
 /*** LxVisualPicker styles ***/

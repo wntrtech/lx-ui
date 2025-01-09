@@ -20,6 +20,10 @@ const props = defineProps({
   width: { type: String, default: 'auto' }, // e.g. 'auto', '100%', '100px', 30rem', '50vw'... (any css value, recommended for images and .MD)
   height: { type: String, default: 'auto' }, // e.g. 'auto', '100%', '100px', '30rem', '50vw'... (any css value, recommended for images and .MD)
   fileName: { type: String, default: null },
+  showPrintButton: { type: Boolean, default: false },
+  showFullScreenButton: { type: Boolean, default: true },
+  primaryDownloadButton: { type: Boolean, default: false },
+  stickyHeader: { type: Boolean, default: true },
   texts: {
     type: Object,
     default: () => ({
@@ -28,6 +32,7 @@ const props = defineProps({
       expand: 'Izvērst',
       collapse: 'Samazināt',
       download: 'Lejupielādēt',
+      print: 'Printēt',
       fitToHeight: 'Pielāgot augstumam',
       fitToWidth: 'Pielāgot platumam',
       goToPage: 'Pāriet uz norādīto lapu',
@@ -281,18 +286,29 @@ function delayExecution(ms) {
   });
 }
 
-async function renderAllPages(pages) {
+async function renderAllPages(pages, batchSize = 3, delayBetweenBatches = 200) {
   if (!pdf.value) return;
+
   const renderPageWithDelay = async (pageNum) => {
     await renderPage(pageNum);
-    await delayExecution(300);
+    await delayExecution(50);
   };
 
-  const renderPromises = [];
-  for (let i = 1; i <= pages; i += 1) {
-    renderPromises.push(renderPageWithDelay(i));
-  }
-  await Promise.all(renderPromises);
+  const processBatch = async (start) => {
+    if (start > pages) return;
+
+    const batch = Array.from({ length: Math.min(batchSize, pages - start + 1) }, (_, index) =>
+      renderPageWithDelay(start + index)
+    );
+
+    await Promise.all(batch);
+    await delayExecution(delayBetweenBatches);
+
+    // eslint-disable-next-line consistent-return
+    return processBatch(start + batchSize);
+  };
+
+  await processBatch(1);
 }
 
 const renderingInProgress = computed(
@@ -413,17 +429,19 @@ function debounce(func, delay) {
   };
 }
 
-const debouncedZoomIn = debounce(zoomIn, 150);
-const debouncedZoomOut = debounce(zoomOut, 150);
-function debounecZoom(action) {
+const debouncedZoomIn = debounce(zoomIn, 50);
+const debouncedZoomOut = debounce(zoomOut, 50);
+
+function zoom(action) {
   if (action === 'zoomIn') {
     debouncedZoomIn();
   } else if (action === 'zoomOut') {
     debouncedZoomOut();
   }
 }
-const debouncedPrevPage = debounce(prevPage, 150);
-const debouncedNextPage = debounce(nextPage, 150);
+
+const debouncedPrevPage = debounce(prevPage, 50);
+const debouncedNextPage = debounce(nextPage, 50);
 
 function setupIntersectionObserver() {
   if (!props.scrollable) return;
@@ -592,6 +610,7 @@ watch(
       await loadPdfFromBase64(newValue);
       return;
     }
+
     if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
       if (supportedFileType.value === 'SVG') {
         prepareSVGImage(newValue);
@@ -604,9 +623,11 @@ watch(
       }
       drawImage(imgScale.value);
     }
+
     if (supportedFileType.value === 'Binary') {
       decodeBase64(newValue);
     }
+
     resetPdfViewer();
     clearImgCanvas();
   },
@@ -646,13 +667,25 @@ const isZoomOutDisabled = computed(() => {
 const toolbarActions = computed(() => {
   const buttons = [];
 
-  buttons.push({
-    id: 'download',
-    name: props.texts.download,
-    icon: 'download',
-    groupId: '3',
-    area: 'right',
-  });
+  if (props.showPrintButton) {
+    buttons.push({
+      id: 'print',
+      name: props.texts.print,
+      icon: 'print',
+      groupId: '5',
+      area: 'right',
+    });
+  }
+
+  if (!props.primaryDownloadButton) {
+    buttons.push({
+      id: 'download',
+      name: props.texts.download,
+      icon: 'download',
+      groupId: '3',
+      area: 'right',
+    });
+  }
 
   if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
     buttons.push({
@@ -672,6 +705,7 @@ const toolbarActions = computed(() => {
       area: 'right',
     });
   }
+
   if (
     supportedFileType.value === 'PDF' ||
     supportedFileType.value === 'Image' ||
@@ -696,13 +730,27 @@ const toolbarActions = computed(() => {
     });
   }
 
-  buttons.push({
-    id: 'fullscreen',
-    name: isExpanded.value ? props.texts.collapse : props.texts.expand,
-    icon: isExpanded.value ? 'collapse' : 'expand',
-    groupId: '2',
-    area: 'right',
-  });
+  if (props.showFullScreenButton) {
+    buttons.push({
+      id: 'fullscreen',
+      name: isExpanded.value ? props.texts.collapse : props.texts.expand,
+      icon: isExpanded.value ? 'collapse' : 'expand',
+      groupId: '2',
+      area: 'right',
+    });
+  }
+
+  if (props.primaryDownloadButton) {
+    buttons.push({
+      id: 'download',
+      name: props.texts.download,
+      icon: 'download',
+      groupId: '3',
+      area: 'right',
+      kind: 'primary',
+      label: props.texts.download,
+    });
+  }
 
   return buttons;
 });
@@ -754,7 +802,7 @@ function toolbarActionClick(action) {
     case 'zoomOut':
     case 'zoomIn':
       if (supportedFileType.value === 'PDF') {
-        debounecZoom(action);
+        zoom(action);
       }
       if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
         changeImageSize(action);
@@ -775,6 +823,9 @@ function toolbarActionClick(action) {
       break;
     case 'grabToScroll':
       dragToScrollMode.value = !dragToScrollMode.value;
+      break;
+    case 'print':
+      // TODO: temporary disabled, need custom printing solution
       break;
     default:
       break;
@@ -797,6 +848,7 @@ const inlineSize = computed(() =>
     :class="[
       { 'lx-file-viewer-fullscreen': isExpanded },
       { image: supportedFileType === 'Image' || supportedFileType === 'SVG' },
+      // { 'lx-file-viewer-sticky': stickyHeader && !isExpanded }, TODO: temporary disabled, need placement rework
     ]"
     :style="inlineSize"
   >
@@ -805,6 +857,7 @@ const inlineSize = computed(() =>
       :label="texts.invalidFileUploadedLabel"
       :description="texts.invalidFileUploadedDescription"
     />
+
     <LxToolbar
       v-if="supportedFileType"
       :action-definitions="toolbarActions"
@@ -878,6 +931,7 @@ const inlineSize = computed(() =>
         </LxToolbarGroup>
       </template>
     </LxToolbar>
+
     <div
       v-if="supportedFileType === 'Binary'"
       class="lx-binary-wrapper"
@@ -892,7 +946,7 @@ const inlineSize = computed(() =>
     </div>
     <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
     <div
-      v-show="supportedFileType === 'Image' || supportedFileType === 'SVG'"
+      v-if="supportedFileType === 'Image' || supportedFileType === 'SVG'"
       class="lx-img-wrapper"
       :class="[
         { 'lx-img-wrapper-fullscreen': isExpanded },
@@ -909,6 +963,7 @@ const inlineSize = computed(() =>
     >
       <canvas ref="imgCanvasRef"></canvas>
     </div>
+
     <div
       v-if="showPdf"
       class="lx-pdf-wrapper"
@@ -917,7 +972,7 @@ const inlineSize = computed(() =>
         { 'lx-pdf-wrapper-fullscreen': isExpanded },
       ]"
       :style="
-        props.height === 'auto' || props.height === '100%'
+        isExpanded || props.height === 'auto' || props.height === '100%'
           ? {}
           : { height: `calc(${props.height} - var(--row-size))` }
       "
