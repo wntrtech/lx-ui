@@ -754,6 +754,29 @@
   --button-ghost-grid-template-columns: 1fr;
 }
 
+/*** Text-only styles ***/
+
+.lx .lx-button.lx-button-text-only .lx-button-content-wrapper {
+  gap: 0;
+  --button-primary-grid-areas: 'content';
+  --button-primary-grid-template-columns: 1fr;
+}
+
+.lx-button.lx-button-secondary.lx-button-text-only .lx-button-content-wrapper {
+  --button-secondary-grid-areas: 'content';
+  --button-secondary-grid-template-columns: 1fr;
+}
+
+.lx-button.lx-button-tertiary.lx-button-text-only .lx-button-content-wrapper {
+  --button-tertiary-grid-areas: 'content';
+  --button-tertiary-grid-template-columns: 1fr;
+}
+
+.lx-button.lx-button-ghost.lx-button-text-only .lx-button-content-wrapper {
+  --button-ghost-grid-areas: 'content';
+  --button-ghost-grid-template-columns: 1fr;
+}
+
 
 /*** Active + hover + focus styles ***/
 
@@ -1154,7 +1177,7 @@ button.lx-button-ghost:focus:hover {
 
 /*** Misc styles ***/
 
-.lx .lx-back-button-group .lx-button .lx-button-content-wrapper {
+.lx .lx-back-button-group .lx-button:not(.lx-button-icon-only) .lx-button-content-wrapper {
   --button-ghost-grid-areas: 'icon content';
   --button-ghost-grid-template-columns: 'auto 1fr';
 }

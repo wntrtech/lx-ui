@@ -38,7 +38,7 @@ const props = defineProps({
   },
   variant: {
     type: String,
-    default: 'default',
+    default: 'default', // default, icon-only
   },
   size: {
     type: String,
@@ -117,6 +117,8 @@ const isIconOnly = computed(() =>
   Boolean(props.variant === 'icon-only' || (!props.label && !slots.default && props.icon))
 );
 
+const isTextOnly = computed(() => Boolean((props.label || slots.default) && !props.icon));
+
 const accessibleTitle = computed(() => {
   const tooltip = props.title ? props.title : props.label;
   return props.badge ? `${tooltip} (${props.badge})` : tooltip;
@@ -135,6 +137,7 @@ const accessibleTitle = computed(() => {
       { 'lx-button-main': kind === 'main' },
       { 'lx-busy': busy },
       { 'lx-button-icon-only': isIconOnly },
+      { 'lx-button-text-only': isTextOnly },
       { 'lx-destructive': destructive },
       { 'lx-active': active },
       { 'lx-disabled': isDisabled },
@@ -198,6 +201,7 @@ const accessibleTitle = computed(() => {
       { 'lx-button-ghost': kind === 'ghost' },
       { 'lx-button-main': kind === 'main' },
       { 'lx-button-icon-only': isIconOnly },
+      { 'lx-button-text-only': isTextOnly },
       { 'lx-destructive': destructive },
       { 'lx-active': active },
       { 'lx-disabled': isDisabled },
