@@ -24,7 +24,6 @@
   margin-right: 0.5rem;
   margin-left: -0.1rem;
   fill: var(--color-data);
-  background-color: var(color-warning);
   -webkit-transform: none;
   transform: none;
 }
@@ -56,7 +55,7 @@
 }
 
 .lx-expander[data-disabled] .lx-head {
-  color: var(--color-disabled-background);
+  color: var(--color-disabled-foreground);
   cursor: not-allowed;
 }
 
@@ -75,9 +74,9 @@
   justify-content: center;
 }
 
-.lx-expander[data-disabled]>.lx-head>.lx-chevron-icon,
+.lx-expander[data-disabled]>.lx-head>.lx-chevron-icon svg,
 .lx-expander[data-disabled] .lx-modifier-icon {
-  fill: var(--color-disabled-background);
+  fill: var(--color-disabled-foreground);
 }
 
 .lx-expander .lx-body>.lx-invalidation-message {
