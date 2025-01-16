@@ -173,6 +173,14 @@ function changePerson(item) {
 function navClick(id) {
   emits('navClick', id);
 }
+const contextMenu = ref();
+function triggerContextPersonMenu() {
+  if (contextMenu.value.menuOpen) {
+    contextMenu.value.closeMenu();
+  } else {
+    contextMenu.value.openMenu();
+  }
+}
 </script>
 <template>
   <div
@@ -181,7 +189,13 @@ function navClick(id) {
   >
     <div class="lx-upper-row main-section">
       <div class="header-display-logo">
-        <LxIcon value="digives" icon-set="brand" variant="gradient-brand-vertical" />
+        <LxIcon
+          value="digives"
+          icon-set="brand"
+          variant="gradient-brand-vertical"
+          :title="systemNameShort"
+          :desc="systemSubheader"
+        />
       </div>
       <div class="header-system-title">
         <div
@@ -244,7 +258,11 @@ function navClick(id) {
           :class="[{ 'lx-disabled': headerNavDisable }]"
         >
           <LxDropDownMenu ref="contextMenu" :disabled="headerNavDisable">
-            <div class="selected-person-display">
+            <div
+              class="selected-person-display"
+              tabindex="0"
+              @keydown.enter.prevent="triggerContextPersonMenu"
+            >
               <div
                 v-if="selectedContextPerson?.code !== userInfo?.code"
                 :title="`${selectedContextPerson?.name}\r\n${selectedContextPerson?.description}`"
@@ -264,12 +282,13 @@ function navClick(id) {
                 <div
                   class="lx-button"
                   v-for="item in contextPersonsInfo"
-                  :key="item"
+                  :key="item.code"
                   :class="[{ 'lx-active': selectedContextPersonModel?.code === item?.code }]"
                   @click="changePerson(item)"
+                  tabindex="0"
                   @keydown.enter="changePerson(item)"
                 >
-                  <div class="person-custom-button">
+                  <div class="person-custom-button" role="button">
                     <label>{{ item?.name }}</label>
                     <div class="lx-description">
                       {{ item?.description }}

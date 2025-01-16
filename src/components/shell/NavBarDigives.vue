@@ -144,12 +144,22 @@ function toggleNavBar(event) {
   if (
     !props.navBarSwitch &&
     windowSize.width.value < 1800 &&
-    windowSize.width.value > 800 &&
+    windowSize.width.value > 1000 &&
     event?.target?.parentNode?.parentNode?.id !== 'lx_nav-toggle' &&
     event?.target?.parentNode?.id !== 'lx_nav-toggle' &&
-    event?.target?.id !== 'lx_nav-toggle'
+    event?.target?.id !== 'lx_nav-toggle' &&
+    event?.target?.className !== 'lx-button-label'
   )
     emits('nav-toggle', true);
+}
+
+const contextMenu = ref();
+function triggerContextPersonMenu() {
+  if (contextMenu.value.menuOpen) {
+    contextMenu.value.closeMenu();
+  } else {
+    contextMenu.value.openMenu();
+  }
 }
 </script>
 <template>
@@ -223,7 +233,11 @@ function toggleNavBar(event) {
           :class="[{ 'lx-disabled': headerNavDisable }]"
         >
           <LxDropDownMenu ref="contextMenu" :disabled="headerNavDisable">
-            <div class="selected-person-display">
+            <div
+              class="selected-person-display"
+              tabindex="0"
+              @keydown.enter.prevent="triggerContextPersonMenu"
+            >
               <div
                 v-if="selectedContextPerson?.code !== userInfo?.code"
                 :title="`${selectedContextPerson?.name}\r\n${selectedContextPerson?.description}`"
@@ -243,9 +257,10 @@ function toggleNavBar(event) {
                 <div
                   class="lx-button"
                   v-for="item in contextPersonsInfo"
-                  :key="item"
+                  :key="item.code"
                   :class="[{ 'lx-active': selectedContextPersonModel?.code === item?.code }]"
                   @click="changePerson(item)"
+                  tabindex="0"
                   @keydown.enter="changePerson(item)"
                 >
                   <div class="person-custom-button">

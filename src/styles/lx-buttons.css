@@ -150,6 +150,10 @@
   gap: var(--button-ghost-gap);
 }
 
+.lx-header-digives .lx-lower-row .lower-button > button .lx-button-content-wrapper {
+  grid-template-areas: var(--button-nav-grid-areas);
+}
+
 .lx .lx-button.lx-button-ghost .lx-button-content {
   text-align: var(--button-ghost-text-align);
 }

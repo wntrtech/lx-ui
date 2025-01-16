@@ -526,6 +526,12 @@
   height: auto;
 }
 
+.lx-header-digives > .person-data-section .custom-context-menu .selected-person-display:focus,
+.lx-layout-digives .lx-nav-panel .nav-bar-user-info .custom-context-menu .selected-person-display:focus {
+  outline: 2px solid var(--color-focus-background);
+}
+
+
 .lx-header-digives > .person-data-section .custom-context-menu .selected-person-display .lx-description{
   overflow: hidden;
   white-space: nowrap;
@@ -564,7 +570,7 @@
   }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1000px) {
   .lx .lx-layout-digives {
     --nav-row-size: 6rem;
   }

@@ -141,7 +141,7 @@ function secureURL(url) {
       </div>
       <div class="compact-actions">
         <div class="lx-list-icon-wrapper" v-if="clickable">
-          <lx-icon :value="icon" :iconSet="iconSet" customClass="lx-list-icon" />
+          <lx-icon :value="icon" :iconSet="iconSet" customClass="lx-list-icon" :title="tooltip" />
         </div>
         <div
           class="lx-list-item-actions"
@@ -280,7 +280,7 @@ function secureURL(url) {
       </div>
       <div class="compact-actions">
         <div class="lx-list-icon-wrapper" v-if="href">
-          <lx-icon :value="icon" :icon-set="iconSet" customClass="lx-list-icon" />
+          <lx-icon :value="icon" :icon-set="iconSet" customClass="lx-list-icon" :title="tooltip" />
         </div>
         <div
           class="lx-list-item-actions"

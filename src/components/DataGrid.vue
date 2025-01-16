@@ -231,6 +231,13 @@ function getTextTooltip(col, row) {
   return ['xs', 's', 'm'].includes(col.size) ? row[col.attributeName] : '';
 }
 
+function getAriaLabel(col, row) {
+  if (col.kind === 'clickable') {
+    return row[col.attributeDescription] || row[col.attributeName];
+  }
+  return '';
+}
+
 function actionClicked(actionName, rowCode, additionalParam) {
   if (!props.loading && !props.busy) {
     emits('actionClick', actionName, rowCode, additionalParam);
@@ -1216,6 +1223,7 @@ watch(
                   col.type !== 'person' &&
                   col.type !== 'icon'
                 "
+                :aria-label="getAriaLabel(col, row)"
                 :title="getTextTooltip(col, row)"
                 :class="{
                   'lx-cell-tooltip':
