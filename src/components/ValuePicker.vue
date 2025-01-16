@@ -80,7 +80,7 @@ const model = computed({
       (props.variant === 'dropdown' || props.variant === 'dropdown-custom')
     ) {
       if (value) {
-        emits('update:modelValue', [value]);
+        emits('update:modelValue', props.kind === 'single' ? [value] : value);
       } else {
         emits('update:modelValue', null);
       }
@@ -118,8 +118,8 @@ onMounted(() => {
       props.variant === 'default' ||
       props.variant === 'default-custom' ||
       props.variant === 'tiles' ||
-      props.variant === 'tags' ||
       props.variant === 'tiles-custom' ||
+      props.variant === 'tags' ||
       props.variant === 'tags-custom' ||
       props.variant === 'indicator' ||
       props.variant === 'horizontal' ||
