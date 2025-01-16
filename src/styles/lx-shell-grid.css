@@ -442,7 +442,8 @@
   margin-bottom: var(--gap);
 }
 
-.lx-layout.lx-layout-default > .lx-main .lx-header .lx-toolbar {
+.lx-layout.lx-layout-default > .lx-main .lx-header .lx-toolbar,
+.lx-layout.lx-layout-public > .lx-main .lx-header .lx-toolbar {
   display: grid;
   width: 100%;
   grid-template-columns: auto 1fr auto;
