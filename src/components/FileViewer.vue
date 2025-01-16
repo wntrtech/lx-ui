@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, shallowRef, watch, nextTick, onMounted } from 'vue';
+import { useWindowSize } from '@vueuse/core';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
@@ -96,6 +97,14 @@ const scrollLeft = ref(0);
 const scrollTop = ref(0);
 const fitType = ref(null);
 
+const binaryWrapper = ref(null);
+const imageWrapper = ref(null);
+const canvasWrapper = ref(null);
+const pdfWrapper = ref(null);
+const printInProgress = ref(false);
+
+const windowSize = useWindowSize();
+
 const MAX_ZOOM = {
   pdf: 2.0,
   img: 5.0,
@@ -111,6 +120,7 @@ const supportedFileType = computed(() => {
   if (props.modelValue) {
     const trimmedValue = props.modelValue?.split(',')[0]?.split(':')[1]?.split(';')[0];
     if (!trimmedValue) return null;
+
     switch (trimmedValue) {
       case MIME_TYPES.PDF:
         return 'PDF';
@@ -137,6 +147,7 @@ const supportedFileType = computed(() => {
       case 'image/svg+xml':
         return 'SVG';
       case MIME_TYPES.Binary:
+      case 'text/markdown':
         return 'Binary';
       default:
         return null;
@@ -227,7 +238,7 @@ function stopDragging() {
   isDragging.value = false;
 }
 
-async function renderPage(pageNum) {
+async function renderPage(pageNum, renderForPrint = false) {
   isPageRendering.value = true;
 
   try {
@@ -240,7 +251,7 @@ async function renderPage(pageNum) {
     const viewport = page.getViewport({ scale: scale.value });
     let canvasElement = null;
 
-    if (props.scrollable) {
+    if (renderForPrint || props.scrollable) {
       await new Promise((resolve) => {
         nextTick(() => {
           canvasElement = canvasArray.value[pageNum - 1];
@@ -286,11 +297,16 @@ function delayExecution(ms) {
   });
 }
 
-async function renderAllPages(pages, batchSize = 3, delayBetweenBatches = 200) {
+async function renderAllPages(
+  pages,
+  batchSize = 3,
+  delayBetweenBatches = 200,
+  renderForPrint = false
+) {
   if (!pdf.value) return;
 
   const renderPageWithDelay = async (pageNum) => {
-    await renderPage(pageNum);
+    await renderPage(pageNum, renderForPrint);
     await delayExecution(50);
   };
 
@@ -312,8 +328,13 @@ async function renderAllPages(pages, batchSize = 3, delayBetweenBatches = 200) {
 }
 
 const renderingInProgress = computed(
-  () => isPageRendering.value || (props.scrollable && !allPagesRendered.value)
+  () =>
+    (!printInProgress.value && !props.scrollable && isPageRendering.value) ||
+    (!printInProgress.value && props.scrollable && !allPagesRendered.value) ||
+    printInProgress.value
 );
+
+const windowWidth = computed(() => windowSize.width.value);
 
 function resetPdfViewer() {
   pdf.value = null;
@@ -332,21 +353,64 @@ function resetPdfViewer() {
 async function goToPage() {
   showInput.value = false;
 
+  // Ensure input page is within valid range
   if (inputPage.value < 1 || inputPage.value > totalPages.value) {
     inputPage.value = currentPage.value;
   }
 
+  // Only change the current page if inputPage is different
   if (inputPage.value !== currentPage.value) {
     currentPage.value = inputPage.value;
   }
 
-  if (props.scrollable) {
-    const canvasElement = canvasArray.value[currentPage.value - 1];
-    if (canvasElement) {
-      await nextTick();
-      canvasElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const canvasElement = canvasArray.value[currentPage.value - 1];
+  const container = pdfWrapper.value;
+
+  if (canvasElement) {
+    await nextTick();
+
+    // Dynamically calculate the combined height of lx-header, navigation, and toolbar
+    const header = document.querySelector('.lx-header');
+    const headerDigives = document.querySelector('.lx-header-digives');
+    const navigation = document.querySelector('.lx-nav-panel');
+    const toolbar = document.querySelector('.lx-component-toolbar');
+    const publicMode = document.querySelector('.lx-layout-public');
+
+    const headerHeight = header ? header.offsetHeight : 0;
+    const headerDigivesHeight = headerDigives ? headerDigives.offsetHeight : 0;
+    const navigationHeight =
+      navigation && publicMode && navigation.style.display !== 'none' ? navigation.offsetHeight : 0;
+    const toolbarHeight = toolbar ? toolbar.offsetHeight : 0;
+
+    // Total combined offset height
+    const totalOffsetHeight = headerHeight + headerDigivesHeight + navigationHeight + toolbarHeight;
+
+    // If the container is scrollable, scroll it to the correct canvas
+    if (container && container.scrollHeight > container.clientHeight) {
+      const containerRect = container.getBoundingClientRect();
+      const canvasRect = canvasElement.getBoundingClientRect();
+
+      // Calculate the scroll position relative to the container
+      const scrollTopOffset = canvasRect.top - containerRect.top + container.scrollTop;
+
+      container.scrollTo({
+        top: scrollTopOffset,
+        behavior: 'smooth',
+      });
+    } else {
+      // If container is not scrollable, scroll the window instead
+      const canvasRect = canvasElement.getBoundingClientRect();
+
+      // Calculate the scroll position relative to the window
+      const scrollTopOffset = window.scrollY + canvasRect.top - totalOffsetHeight;
+
+      window.scrollTo({
+        top: scrollTopOffset,
+        behavior: 'smooth',
+      });
     }
   } else {
+    // If canvas element doesn't exist for the current page, fall back to rendering
     renderPage(currentPage.value);
   }
 }
@@ -395,6 +459,8 @@ function toggleExpand() {
 async function zoomIn() {
   if (isNavigating.value || renderingInProgress.value) return;
   isZooming.value = true;
+  isPageRendering.value = true;
+
   scale.value = Math.min(scale.value * 1.1, MAX_ZOOM.pdf);
 
   if (props.scrollable) {
@@ -403,11 +469,14 @@ async function zoomIn() {
     await renderPage(currentPage.value);
   }
   isZooming.value = false;
+  isPageRendering.value = false;
 }
 
 async function zoomOut() {
   if (isNavigating.value || renderingInProgress.value) return;
   isZooming.value = true;
+  isPageRendering.value = true;
+
   scale.value = Math.max(scale.value * 0.9, MIN_ZOOM.pdf);
 
   if (props.scrollable) {
@@ -416,6 +485,7 @@ async function zoomOut() {
     await renderPage(currentPage.value);
   }
   isZooming.value = false;
+  isPageRendering.value = false;
 }
 
 function debounce(func, delay) {
@@ -488,8 +558,9 @@ async function loadPdfFromFile(pdfData) {
   await loadPdfLib();
   const loadingTask = pdfjsLib.value.getDocument({ data: atob(pdfData) });
   pdf.value = await loadingTask.promise;
+
   if (props.scrollable) {
-    renderAllPages(pdf.value.numPages);
+    renderAllPages(pdf.value.numPages, pdf.value.numPages);
     setupIntersectionObserver();
   } else {
     renderPage(1);
@@ -502,7 +573,7 @@ watch(
     if (pdf.value) {
       if (renderingInProgress.value) return;
       if (props.scrollable) {
-        renderAllPages(pdf.value.numPages);
+        renderAllPages(pdf.value.numPages, pdf.value.numPages);
       } else {
         renderPage(currentPage.value);
       }
@@ -517,7 +588,7 @@ watch(
       if (props.scrollable) {
         currentPage.value = 1;
         inputPage.value = 1;
-        renderAllPages(pdf.value.numPages);
+        renderAllPages(pdf.value.numPages, pdf.value.numPages);
         setupIntersectionObserver();
       } else {
         disconnectObserver();
@@ -528,6 +599,7 @@ watch(
     }
   }
 );
+
 function handleClick(event) {
   const wrapperElement = pageInputWrapper.value;
   const isClickInside = wrapperElement.contains(event.target);
@@ -557,7 +629,6 @@ watch(showInput, (newValue) => {
 
 const isLoadingPdf = ref(false);
 const base64PdfPrefix = `data:${MIME_TYPES.PDF};base64,`;
-const base64BinaryPrefix = `data:${MIME_TYPES.Binary};base64,`;
 
 async function loadPdfFromBase64(base64) {
   try {
@@ -575,7 +646,7 @@ async function loadPdfFromBase64(base64) {
 
 function decodeBase64(newValue) {
   try {
-    const base64Data = newValue.slice(base64BinaryPrefix.length);
+    const base64Data = newValue.slice(newValue.indexOf(';base64,') + ';base64,'.length);
     const binaryString = window.atob(base64Data);
     const bytes = new Uint8Array(Array.from(binaryString).map((char) => char.charCodeAt(0)));
     const decoder = new TextDecoder();
@@ -667,26 +738,6 @@ const isZoomOutDisabled = computed(() => {
 const toolbarActions = computed(() => {
   const buttons = [];
 
-  if (props.showPrintButton) {
-    buttons.push({
-      id: 'print',
-      name: props.texts.print,
-      icon: 'print',
-      groupId: '5',
-      area: 'right',
-    });
-  }
-
-  if (!props.primaryDownloadButton) {
-    buttons.push({
-      id: 'download',
-      name: props.texts.download,
-      icon: 'download',
-      groupId: '3',
-      area: 'right',
-    });
-  }
-
   if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
     buttons.push({
       id: 'fitToHeight',
@@ -695,6 +746,7 @@ const toolbarActions = computed(() => {
       active: fitType.value === 'fit-to-height',
       groupId: '4',
       area: 'right',
+      loading: renderingInProgress.value,
     });
     buttons.push({
       id: 'fitToWidth',
@@ -703,6 +755,7 @@ const toolbarActions = computed(() => {
       active: fitType.value === 'fit-to-width',
       groupId: '4',
       area: 'right',
+      loading: renderingInProgress.value,
     });
   }
 
@@ -719,6 +772,7 @@ const toolbarActions = computed(() => {
       groupId: '1',
       area: 'right',
       disabled: isZoomInDisabled.value,
+      loading: renderingInProgress.value,
     });
     buttons.push({
       id: 'zoomOut',
@@ -727,6 +781,29 @@ const toolbarActions = computed(() => {
       groupId: '1',
       area: 'right',
       disabled: isZoomOutDisabled.value,
+      loading: renderingInProgress.value,
+    });
+  }
+
+  if (props.showPrintButton) {
+    buttons.push({
+      id: 'print',
+      name: props.texts.print,
+      icon: 'print',
+      groupId: '5',
+      area: 'right',
+      loading: renderingInProgress.value,
+    });
+  }
+
+  if (!props.primaryDownloadButton) {
+    buttons.push({
+      id: 'download',
+      name: props.texts.download,
+      icon: 'download',
+      groupId: '3',
+      area: 'right',
+      loading: renderingInProgress.value,
     });
   }
 
@@ -737,10 +814,11 @@ const toolbarActions = computed(() => {
       icon: isExpanded.value ? 'collapse' : 'expand',
       groupId: '2',
       area: 'right',
+      loading: renderingInProgress.value,
     });
   }
 
-  if (props.primaryDownloadButton) {
+  if (props.primaryDownloadButton && windowWidth.value > 800) {
     buttons.push({
       id: 'download',
       name: props.texts.download,
@@ -749,6 +827,7 @@ const toolbarActions = computed(() => {
       area: 'right',
       kind: 'primary',
       label: props.texts.download,
+      loading: renderingInProgress.value,
     });
   }
 
@@ -797,6 +876,81 @@ function changeTextSize(action) {
   }
 }
 
+async function printDocument(wrapper) {
+  if (!wrapper) return;
+
+  printInProgress.value = true;
+
+  const iframe = document.createElement('iframe');
+  iframe.style.position = 'absolute';
+  iframe.style.width = '0';
+  iframe.style.height = '0';
+  iframe.style.border = 'none';
+  iframe.style.visibility = 'hidden';
+
+  document.body.appendChild(iframe);
+
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+  iframeDoc.open();
+  iframeDoc.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Print Document</title>
+      <style>
+        body {
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+        canvas {
+          display: block;
+          margin: 0 auto;
+          page-break-inside: avoid;
+          page-break-after: auto;
+        }
+      </style>
+    </head>
+    <body></body>
+    </html>
+  `);
+  iframeDoc.close();
+
+  await new Promise((resolve) => {
+    iframe.onload = resolve;
+  });
+
+  if (supportedFileType.value === 'PDF' && !props.scrollable) {
+    await renderAllPages(pdf.value.numPages, pdf.value.numPages, 200, true);
+  }
+
+  const canvases = wrapper.querySelectorAll('canvas');
+  const element = wrapper.querySelector('article');
+
+  if (supportedFileType.value === 'Binary') {
+    const clonedElement = element.cloneNode(true);
+    iframeDoc.body.appendChild(clonedElement);
+  } else {
+    canvases.forEach((originalCanvas) => {
+      const clonedCanvas = originalCanvas.cloneNode(false);
+
+      const context = clonedCanvas.getContext('2d');
+      context.drawImage(originalCanvas, 0, 0);
+
+      iframeDoc.body.appendChild(clonedCanvas);
+    });
+  }
+
+  iframe.contentWindow.print();
+  document.body.removeChild(iframe);
+  printInProgress.value = false;
+}
+
 function toolbarActionClick(action) {
   switch (action) {
     case 'zoomOut':
@@ -825,7 +979,15 @@ function toolbarActionClick(action) {
       dragToScrollMode.value = !dragToScrollMode.value;
       break;
     case 'print':
-      // TODO: temporary disabled, need custom printing solution
+      if (supportedFileType.value === 'PDF') {
+        printDocument(canvasWrapper.value);
+      }
+      if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
+        printDocument(imageWrapper.value);
+      }
+      if (supportedFileType.value === 'Binary') {
+        printDocument(binaryWrapper.value);
+      }
       break;
     default:
       break;
@@ -840,6 +1002,16 @@ onMounted(() => {
 const inlineSize = computed(() =>
   isExpanded.value ? {} : { width: props.width, height: props.height }
 );
+
+const showToolbarPrimaryDownloadButton = computed(
+  () => props.primaryDownloadButton && windowWidth.value <= 800
+);
+
+function isValidHeight(value) {
+  // Matches only valid CSS length values (e.g., 10px, 5em, 1.5rem, 50vw)
+  const validHeightRegex = /^[0-9]+(\.[0-9]+)?(px|em|rem|vw|vh)$/;
+  return validHeightRegex.test(value);
+}
 </script>
 
 <template>
@@ -848,7 +1020,7 @@ const inlineSize = computed(() =>
     :class="[
       { 'lx-file-viewer-fullscreen': isExpanded },
       { image: supportedFileType === 'Image' || supportedFileType === 'SVG' },
-      // { 'lx-file-viewer-sticky': stickyHeader && !isExpanded }, TODO: temporary disabled, need placement rework
+      { 'lx-file-viewer-sticky': stickyHeader && !isExpanded },
     ]"
     :style="inlineSize"
   >
@@ -873,6 +1045,7 @@ const inlineSize = computed(() =>
             :title="props.texts.firstPage"
             :disabled="isPrevBtnDisabled"
           />
+
           <LxButton
             icon="previous-page"
             @click="debouncedPrevPage"
@@ -880,6 +1053,7 @@ const inlineSize = computed(() =>
             :title="props.texts.prevPage"
             :disabled="isPrevBtnDisabled"
           />
+
           <div class="pdf-page-input" ref="pageInputWrapper">
             <div
               class="placeholder"
@@ -891,35 +1065,56 @@ const inlineSize = computed(() =>
             >
               {{ currentPage }} / {{ totalPages }}
             </div>
+
             <LxTextInput
               v-if="showInput && !renderingInProgress"
               mask="integer"
               v-model.number="inputPage"
               @keydown.enter="goToPage"
             />
+
+            <LxButton
+              icon="arrow-right"
+              @click="goToPage"
+              kind="ghost"
+              :title="props.texts.goToPage"
+              :disabled="!showInput || renderingInProgress"
+            />
           </div>
-          <LxButton
-            icon="arrow-right"
-            @click="goToPage"
-            kind="ghost"
-            :title="props.texts.goToPage"
-            :disabled="!showInput || renderingInProgress"
-          />
+
+          <div class="pdf-page-indicator">
+            <div class="placeholder" :title="props.texts.inputTooltip">
+              {{ currentPage }} / {{ totalPages }}
+            </div>
+          </div>
+
           <LxButton
             icon="next-page"
-            @click="debouncedNextPage"
             kind="ghost"
             :title="props.texts.nextPage"
             :disabled="isNextBtnDisabled"
+            @click="debouncedNextPage"
           />
+
           <LxButton
             icon="last-page"
-            @click="lastPage"
             kind="ghost"
             :title="props.texts.lastPage"
             :disabled="isNextBtnDisabled"
+            @click="lastPage"
+          />
+
+          <LxButton
+            v-if="showToolbarPrimaryDownloadButton"
+            icon="download"
+            kind="primary"
+            :label="windowWidth >= 540 ? props.texts.download : ''"
+            :title="props.texts.download"
+            :disabled="renderingInProgress"
+            @click="downloadFile()"
           />
         </LxToolbarGroup>
+
         <LxToolbarGroup v-if="supportedFileType === 'Image' || supportedFileType === 'SVG'">
           <LxToggle
             v-model="dragToScrollMode"
@@ -941,12 +1136,13 @@ const inlineSize = computed(() =>
       --font-size-binary-wrapper-h2: calc(${fontSizeScale} * 1.75rem);
       --font-size-binary-wrapper-h3: calc(${fontSizeScale} * 1.5rem);
       --font-size-binary-wrapper-h4: calc(${fontSizeScale} * 1.25rem);`"
+      ref="binaryWrapper"
     >
       <LxRichTextDisplay :value="binaryText"></LxRichTextDisplay>
     </div>
     <!-- eslint-disable-next-line vuejs-accessibility/mouse-events-have-key-events -->
     <div
-      v-if="supportedFileType === 'Image' || supportedFileType === 'SVG'"
+      v-show="supportedFileType === 'Image' || supportedFileType === 'SVG'"
       class="lx-img-wrapper"
       :class="[
         { 'lx-img-wrapper-fullscreen': isExpanded },
@@ -956,6 +1152,7 @@ const inlineSize = computed(() =>
         },
         { 'lx-img-wrapper-regular': !isExpanded },
       ]"
+      ref="imageWrapper"
       @mousedown="startDragging"
       @mousemove="drag"
       @mouseup="stopDragging"
@@ -967,27 +1164,36 @@ const inlineSize = computed(() =>
     <div
       v-if="showPdf"
       class="lx-pdf-wrapper"
+      ref="pdfWrapper"
       :class="[
-        { 'lx-pdf-wrapper-scrollable': props.scrollable && !isExpanded },
+        { 'lx-pdf-wrapper-scrollable': scrollable && !isExpanded },
         { 'lx-pdf-wrapper-fullscreen': isExpanded },
       ]"
       :style="
-        isExpanded || props.height === 'auto' || props.height === '100%'
+        isExpanded || height === 'auto' || height === '100%' || !height || !isValidHeight(height)
           ? {}
-          : { height: `calc(${props.height} - var(--row-size))` }
+          : { height: `calc(${height} - var(--row-size))` }
       "
     >
-      <div class="lx-pdf-canvas-wrapper">
-        <canvas v-if="!scrollable" class="pdf-canvas" ref="canvas" />
+      <div v-if="!scrollable" class="lx-pdf-canvas-wrapper">
+        <canvas class="pdf-canvas" ref="canvas" />
+      </div>
+
+      <div
+        ref="canvasWrapper"
+        class="lx-pdf-canvas-wrapper"
+        :class="[{ 'hidden-pdf-canvas': !scrollable }]"
+      >
         <canvas
-          v-else
           v-for="pageNum in totalPages"
           :key="pageNum"
           ref="canvasArray"
           class="pdf-canvas"
+          :class="[{ 'hidden-pdf-canvas': !scrollable }]"
         />
-        <LxLoader class="lx-file-viewer-loader" :loading="renderingInProgress" size="l" />
       </div>
+
+      <LxLoader class="lx-file-viewer-loader" :loading="renderingInProgress" size="l" />
     </div>
   </div>
 </template>
