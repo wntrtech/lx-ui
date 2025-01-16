@@ -161,6 +161,7 @@ const name = computed(() => {
 });
 
 const filteredItems = ref([]);
+
 watch(
   () => props.items,
   () => {
@@ -314,6 +315,11 @@ onMounted(() => {
   }
   idValue.value = idValue.value.replace(idValue.value.charAt(0), 'a');
   filteredItems.value = props.items;
+
+  if (model.value) {
+    const selectedId = model.value;
+    selectedItem.value = allItems?.value?.find((item) => selectedId === getIdAttributeString(item));
+  }
 });
 </script>
 
@@ -323,6 +329,7 @@ onMounted(() => {
       <template v-if="name">{{ name }}</template>
       <span v-else>—</span>
     </p>
+
     <template v-if="props.kind === 'native' && !readOnly">
       <div
         class="lx-dropdown-wrapper lx-input-wrapper"
@@ -370,6 +377,7 @@ onMounted(() => {
       </div>
       <div v-if="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
     </template>
+
     <template v-if="props.kind === 'default' && !readOnly">
       <div
         :id="idValue"
