@@ -149,8 +149,9 @@ function getName(returnPlaceholder = true) {
 }
 
 function getItemId(id) {
-  return `${id}---${generateUUID()}`;
+  return `${props.id}-item-${id}`;
 }
+
 function selectSingle(id) {
   if (props.disabled) return;
 

@@ -146,7 +146,7 @@ function getIconSet(item, iconSetAttribute) {
 }
 
 function getItemId(id) {
-  return `${id}---${generateUUID()}`;
+  return `${props.id}-item-${id}`;
 }
 
 function getLabelId(id) {

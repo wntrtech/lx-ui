@@ -113,6 +113,10 @@ function closeDropDownDefaultOnEsc() {
   });
 }
 
+function getItemId(id) {
+  return `${props.id}-item-${id}`;
+}
+
 function openDropDownDefault() {
   if (!menuOpen.value) {
     menuOpen.value = true;
@@ -462,6 +466,7 @@ onMounted(() => {
                 <template v-if="filteredItems?.length">
                   <template v-for="item in filteredItems" :key="item[idAttribute]">
                     <div
+                      :id="getItemId(getIdAttributeString(item))"
                       role="option"
                       tabindex="-1"
                       :aria-selected="isItemSelected(item)"

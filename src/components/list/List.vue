@@ -1014,6 +1014,10 @@ function sanitizeHref(href) {
   }
   return null;
 }
+
+function getItemId(id) {
+  return `${props.id}-item-${id}`;
+}
 </script>
 
 <template>
@@ -1030,7 +1034,7 @@ function sanitizeHref(href) {
     >
       <div class="first-row">
         <template v-if="autoSearchMode === 'default' && !hasSelecting">
-          <lx-text-input
+          <LxTextInput
             v-if="hasSearch"
             ref="queryInputDefault"
             v-model="queryRaw"
@@ -1040,7 +1044,7 @@ function sanitizeHref(href) {
             role="search"
             @keydown.enter="serverSideSearch()"
           />
-          <lx-button
+          <LxButton
             v-if="searchSide === 'server' && hasSearch"
             icon="search"
             kind="ghost"
@@ -1049,7 +1053,7 @@ function sanitizeHref(href) {
             :title="texts.search"
             @click="serverSideSearch()"
           />
-          <lx-button
+          <LxButton
             v-if="query || queryRaw"
             icon="clear"
             kind="ghost"
@@ -1208,7 +1212,7 @@ function sanitizeHref(href) {
           class="lx-list-item-container"
         >
           <LxListItem
-            :id="item[idAttribute]"
+            :id="getItemId(item[idAttribute])"
             :label="item[primaryAttribute]"
             :description="item[secondaryAttribute]"
             :value="item"
@@ -1324,8 +1328,8 @@ function sanitizeHref(href) {
                         </div>
                       </template>
                     </LxDropDownMenu>
-                    <lx-list-item
-                      :id="element[idAttribute]"
+                    <LxListItem
+                      :id="getItemId(element[idAttribute])"
                       :label="element[primaryAttribute]"
                       :description="element[secondaryAttribute]"
                       :value="element"
@@ -1347,7 +1351,7 @@ function sanitizeHref(href) {
                       <template #customItem="item" v-if="$slots.customItem">
                         <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                       </template>
-                    </lx-list-item>
+                    </LxListItem>
                   </div>
                 </div>
               </div>
@@ -1399,8 +1403,8 @@ function sanitizeHref(href) {
               :key="item[idAttribute]"
               class="lx-list-item-container"
             >
-              <lx-list-item
-                :id="item[idAttribute]"
+              <LxListItem
+                :id="getItemId(item[idAttribute])"
                 :label="item[primaryAttribute]"
                 :description="item[secondaryAttribute]"
                 :value="item"
@@ -1421,7 +1425,7 @@ function sanitizeHref(href) {
                 <template #customItem="item" v-if="$slots.customItem">
                   <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                 </template>
-              </lx-list-item>
+              </LxListItem>
               <div class="selecting-block" v-if="hasSelecting && selectableItems?.length !== 0">
                 <template v-if="isSelectable(item)">
                   <LxRadioButton
@@ -1503,8 +1507,8 @@ function sanitizeHref(href) {
             class="tree-list-search-item lx-list-item-container"
             role="listitem"
           >
-            <lx-list-item
-              :id="item[idAttribute]"
+            <LxListItem
+              :id="getItemId(item[idAttribute])"
               :label="item[primaryAttribute]"
               :description="item[secondaryAttribute]"
               :value="item"
@@ -1525,7 +1529,7 @@ function sanitizeHref(href) {
               <template #customItem="item" v-if="$slots.customItem">
                 <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
               </template>
-            </lx-list-item>
+            </LxListItem>
             <div class="selecting-block" v-if="hasSelecting && selectableTreeItems?.length !== 0">
               <template v-if="isSelectable(item)">
                 <LxRadioButton
@@ -1644,8 +1648,8 @@ function sanitizeHref(href) {
                 class="tree-list-search-item lx-list-item-container"
                 role="listitem"
               >
-                <lx-list-item
-                  :id="item[idAttribute]"
+                <LxListItem
+                  :id="getItemId(item[idAttribute])"
                   :label="item[primaryAttribute]"
                   :description="item[secondaryAttribute]"
                   :value="item"
@@ -1666,7 +1670,7 @@ function sanitizeHref(href) {
                   <template #customItem="item" v-if="$slots.customItem">
                     <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                   </template>
-                </lx-list-item>
+                </LxListItem>
                 <div
                   class="selecting-block"
                   v-if="hasSelecting && selectableTreeItems?.length !== 0"
@@ -1711,7 +1715,7 @@ function sanitizeHref(href) {
       >
         <li v-for="item in filteredItems" :key="item[idAttribute]" class="lx-list-item-container">
           <LxListItem
-            :id="item[idAttribute]"
+            :id="getItemId(item[idAttribute])"
             :label="item[primaryAttribute]"
             :description="item[secondaryAttribute]"
             :value="item"
@@ -1827,8 +1831,8 @@ function sanitizeHref(href) {
                       </template>
                     </LxDropDownMenu>
 
-                    <lx-list-item
-                      :id="element[idAttribute]"
+                    <LxListItem
+                      :id="getItemId(element[idAttribute])"
                       :label="element[primaryAttribute]"
                       :description="element[secondaryAttribute]"
                       :value="element"
@@ -1850,7 +1854,7 @@ function sanitizeHref(href) {
                       <template #customItem="item" v-if="$slots.customItem">
                         <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                       </template>
-                    </lx-list-item>
+                    </LxListItem>
                   </div>
                 </div>
               </div>
@@ -1944,8 +1948,8 @@ function sanitizeHref(href) {
                         </template>
                       </LxDropDownMenu>
 
-                      <lx-list-item
-                        :id="element[idAttribute]"
+                      <LxListItem
+                        :id="getItemId(element[idAttribute])"
                         :label="element[primaryAttribute]"
                         :description="element[secondaryAttribute]"
                         :value="element"
@@ -1970,7 +1974,7 @@ function sanitizeHref(href) {
                         <template #customItem="item" v-if="$slots.customItem">
                           <slot name="customItem" v-bind="item" v-if="$slots.customItem" />
                         </template>
-                      </lx-list-item>
+                      </LxListItem>
                     </div>
                   </div>
                 </div>
@@ -2033,7 +2037,7 @@ function sanitizeHref(href) {
         role="listitem"
       >
         <LxListItem
-          :id="element[idAttribute]"
+          :id="getItemId(element[idAttribute])"
           :label="element[primaryAttribute]"
           :description="element[secondaryAttribute]"
           :value="element"

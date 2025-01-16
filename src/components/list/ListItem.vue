@@ -70,11 +70,12 @@ function secureURL(url) {
 }
 </script>
 <template>
-  <div class="lx-list-item-wrapper" :id="id">
+  <div class="lx-list-item-wrapper">
     <div
       v-if="!href"
       :tabindex="href || clickable ? 0 : -1"
       class="lx-list-item"
+      :id="id"
       @click="performClick()"
       :role="clickable ? 'button' : null"
       :aria-labelledby="label && clickable ? `${id}-label` : null"

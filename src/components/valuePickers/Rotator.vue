@@ -239,6 +239,10 @@ const queueItems = computed(() => {
   return elements;
 });
 
+function getItemId(id) {
+  return `${props.id}-item-${id}`;
+}
+
 // TODO: fix transition bug when there is 3 items, fix also transition bugs with nullable
 // better refactor rotation logic for smarter solution
 </script>
@@ -283,7 +287,12 @@ const queueItems = computed(() => {
             role="button"
             aria-live="polite"
           >
-            <li v-for="item in queueItems" :key="item.key" class="lx-rotator-tag">
+            <li
+              v-for="item in queueItems"
+              :key="item.key"
+              :id="getItemId(item[idAttribute])"
+              class="lx-rotator-tag"
+            >
               <p class="lx-input-text" v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
               <template v-if="variant === 'rotator-custom'">
                 <slot name="customItem" v-bind="item"></slot>

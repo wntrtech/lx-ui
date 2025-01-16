@@ -161,7 +161,7 @@ function getName(returnPlaceholder = true) {
 }
 
 function getItemId(id) {
-  return `${id}---${generateUUID()}`;
+  return `${props.id}-item-${id}`;
 }
 
 function getLabelId(id) {
@@ -389,7 +389,7 @@ function getTabIndex(id) {
           :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
           :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
         />
-        <lx-text-input
+        <LxTextInput
           v-if="hasSearch"
           :disabled="disabled"
           ref="queryInput"
@@ -398,7 +398,7 @@ function getTabIndex(id) {
           role="search"
           :placeholder="texts.searchPlaceholder"
         />
-        <lx-button
+        <LxButton
           v-if="query && hasSearch"
           icon="clear"
           kind="ghost"
@@ -410,9 +410,9 @@ function getTabIndex(id) {
       </div>
 
       <div
-        :id="`${idValue}-${index}`"
-        v-for="(item, index) in itemsDisplay"
         v-if="!readOnly"
+        v-for="(item, index) in itemsDisplay"
+        :id="`${idValue}-${index}`"
         :key="item[idAttribute]"
         class="lx-value-picker-default-item"
         :class="[
@@ -420,7 +420,7 @@ function getTabIndex(id) {
           { 'lx-value-picker-item-disabled': disabled },
         ]"
       >
-        <lx-radio-button
+        <LxRadioButton
           v-if="kind === 'single'"
           :id="getItemId(item[idAttribute])"
           :group-id="groupId"
@@ -448,8 +448,8 @@ function getTabIndex(id) {
               <slot name="customItem" v-bind="item"></slot>
             </div>
           </div>
-        </lx-radio-button>
-        <lx-checkbox
+        </LxRadioButton>
+        <LxCheckbox
           v-if="kind === 'multiple'"
           :id="getItemId(item[idAttribute])"
           :group-id="groupId"
@@ -477,7 +477,7 @@ function getTabIndex(id) {
               <slot name="customItem" v-bind="item"></slot>
             </div>
           </div>
-        </lx-checkbox>
+        </LxCheckbox>
       </div>
 
       <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
