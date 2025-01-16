@@ -52,7 +52,7 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
   skeletonRowCount: { type: Number, default: 10 },
-  scrollable: { type: Boolean, default: false },
+  scrollable: { type: [Boolean, String], default: 'auto' }, // 'auto', true, false
   stickyHeader: { type: Boolean, default: true },
   showHeader: { type: Boolean, default: false },
   showToolbar: { type: Boolean, default: false },
@@ -869,12 +869,36 @@ function syncHeaderScroll() {
   }
 }
 
+const autoScrollable = ref(false);
+
 function syncColumnWidths() {
   if (!header.value || !container.value) return;
 
   if (props.loading) container.value.style.gridTemplateColumns = 'auto';
+  autoScrollable.value = false;
+
+  // without this if, totalWidth will be calculate assuming its possible to scroll and * size columns will be too wide
+  if (props.scrollable === 'auto') {
+    container.value.classList.remove('lx-scrollable');
+  }
+
+  const { children } = header.value;
+  let totalWidth = 0;
+
+  Array.from(children).forEach((child) => {
+    totalWidth += child.offsetWidth;
+  });
+
+  if (totalWidth > container.value.offsetWidth && props.scrollable === 'auto') {
+    autoScrollable.value = true;
+    container.value.style.gridTemplateColumns = 'auto';
+    container.value.classList.add('lx-scrollable');
+  } else {
+    autoScrollable.value = false;
+  }
 
   const headerColumns = Array.from(header.value.children).filter((col) => col.offsetWidth > 0);
+
   const columnWidths = headerColumns.map((col) => `${col.offsetWidth}px`).join(' ');
 
   container.value.style.gridTemplateColumns = columnWidths;
@@ -1076,7 +1100,7 @@ watch(
       :id="id"
       class="lx-data-grid"
       :class="[
-        { 'lx-scrollable': scrollable },
+        { 'lx-scrollable': scrollable === true || autoScrollable === true },
         { 'lx-data-grid-full': showAllColumns },
         { 'lx-loading': loading },
       ]"
@@ -1343,7 +1367,7 @@ watch(
             <div
               class="lx-cell-action"
               role="cell"
-              :class="[{ 'show-cell-borders': scrollable }]"
+              :class="[{ 'show-cell-borders': scrollable === true || autoScrollable === true }]"
               v-if="hasActionButtons"
             >
               <div class="lx-toolbar" v-if="actionDefinitions.length <= 2" role="toolbar">
