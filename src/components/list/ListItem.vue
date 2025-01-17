@@ -12,6 +12,7 @@ const emits = defineEmits(['click', 'actionClick']);
 
 const props = defineProps({
   id: { type: String, default: null },
+  parentId: { type: String, default: null },
   label: { type: String, required: true },
   description: { type: String, default: null },
   value: { type: Object, default: null },
@@ -68,14 +69,18 @@ function secureURL(url) {
   }
   return null;
 }
+
+function getItemId(id, parentId) {
+  return `${parentId}-item-${id}`;
+}
 </script>
 <template>
-  <div class="lx-list-item-wrapper">
+  <div class="lx-list-item-wrapper" :id="id">
     <div
       v-if="!href"
       :tabindex="href || clickable ? 0 : -1"
       class="lx-list-item"
-      :id="id"
+      :id="getItemId(id, parentId)"
       @click="performClick()"
       :role="clickable ? 'button' : null"
       :aria-labelledby="label && clickable ? `${id}-label` : null"

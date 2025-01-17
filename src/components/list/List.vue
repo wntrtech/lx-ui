@@ -1014,10 +1014,6 @@ function sanitizeHref(href) {
   }
   return null;
 }
-
-function getItemId(id) {
-  return `${props.id}-item-${id}`;
-}
 </script>
 
 <template>
@@ -1212,7 +1208,8 @@ function getItemId(id) {
           class="lx-list-item-container"
         >
           <LxListItem
-            :id="getItemId(item[idAttribute])"
+            :id="item[idAttribute]"
+            :parentId="props.id"
             :label="item[primaryAttribute]"
             :description="item[secondaryAttribute]"
             :value="item"
@@ -1329,7 +1326,8 @@ function getItemId(id) {
                       </template>
                     </LxDropDownMenu>
                     <LxListItem
-                      :id="getItemId(element[idAttribute])"
+                      :id="element[idAttribute]"
+                      :parentId="props.id"
                       :label="element[primaryAttribute]"
                       :description="element[secondaryAttribute]"
                       :value="element"
@@ -1404,7 +1402,8 @@ function getItemId(id) {
               class="lx-list-item-container"
             >
               <LxListItem
-                :id="getItemId(item[idAttribute])"
+                :id="item[idAttribute]"
+                :parentId="props.id"
                 :label="item[primaryAttribute]"
                 :description="item[secondaryAttribute]"
                 :value="item"
@@ -1508,7 +1507,8 @@ function getItemId(id) {
             role="listitem"
           >
             <LxListItem
-              :id="getItemId(item[idAttribute])"
+              :id="item[idAttribute]"
+              :parentId="props.id"
               :label="item[primaryAttribute]"
               :description="item[secondaryAttribute]"
               :value="item"
@@ -1649,7 +1649,8 @@ function getItemId(id) {
                 role="listitem"
               >
                 <LxListItem
-                  :id="getItemId(item[idAttribute])"
+                  :id="item[idAttribute]"
+                  :parentId="props.id"
                   :label="item[primaryAttribute]"
                   :description="item[secondaryAttribute]"
                   :value="item"
@@ -1715,7 +1716,8 @@ function getItemId(id) {
       >
         <li v-for="item in filteredItems" :key="item[idAttribute]" class="lx-list-item-container">
           <LxListItem
-            :id="getItemId(item[idAttribute])"
+            :id="item[idAttribute]"
+            :parentId="props.id"
             :label="item[primaryAttribute]"
             :description="item[secondaryAttribute]"
             :value="item"
@@ -1832,7 +1834,8 @@ function getItemId(id) {
                     </LxDropDownMenu>
 
                     <LxListItem
-                      :id="getItemId(element[idAttribute])"
+                      :id="element[idAttribute]"
+                      :parentId="props.id"
                       :label="element[primaryAttribute]"
                       :description="element[secondaryAttribute]"
                       :value="element"
@@ -1949,7 +1952,8 @@ function getItemId(id) {
                       </LxDropDownMenu>
 
                       <LxListItem
-                        :id="getItemId(element[idAttribute])"
+                        :id="element[idAttribute]"
+                        :parentId="props.id"
                         :label="element[primaryAttribute]"
                         :description="element[secondaryAttribute]"
                         :value="element"
@@ -2037,7 +2041,8 @@ function getItemId(id) {
         role="listitem"
       >
         <LxListItem
-          :id="getItemId(element[idAttribute])"
+          :id="element[idAttribute]"
+          :parentId="props.id"
           :label="element[primaryAttribute]"
           :description="element[secondaryAttribute]"
           :value="element"
