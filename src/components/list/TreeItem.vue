@@ -11,7 +11,7 @@ import LxIcon from '@/components/Icon.vue';
 const LxTreeItem = defineAsyncComponent(() => import('@/components/list/TreeItem.vue'));
 
 const props = defineProps({
-  id: { type: String, default: generateUUID() },
+  id: { type: String, default: () => generateUUID() },
   items: { type: Array, default: null },
   idAttribute: { type: String, default: 'id' },
   primaryAttribute: { type: String, default: 'name' },

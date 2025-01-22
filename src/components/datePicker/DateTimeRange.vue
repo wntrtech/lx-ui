@@ -15,7 +15,7 @@ import {
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 
 const props = defineProps({
-  id: { type: String, default: generateUUID() },
+  id: { type: String, default: () => generateUUID() },
   startDate: { type: String, default: null },
   endDate: { type: String, default: null },
   kind: { type: String, default: 'date' }, // 'date', 'month', 'year', 'month-year', 'quarters'

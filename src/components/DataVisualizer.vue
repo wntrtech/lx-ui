@@ -13,7 +13,7 @@ import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 
 const props = defineProps({
-  id: { type: String, default: generateUUID() },
+  id: { type: String, default: () => generateUUID() },
   kind: { type: String, default: 'bars-horizontal' }, // bars-horizontal || latvia
   items: { type: Array, default: () => [] },
   thresholds: { type: Array, default: () => [] },
