@@ -21,7 +21,7 @@
   --color-button-ghost-icon-focus: var(--color-data);
 }
 
-.lx-curtain .lx-modal header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-head):not(.lx-list-item header):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky) .lx-primary {
+.lx-curtain .lx-modal header:not(.lx-pseudo-grid .lx-labels):not(.lx-list-toolbar):not(.lx-head):not(.lx-list-item header):not(.lx-filter header.lx-head):not(.lx-form-grid header.lx-sticky):not(.lx-data-block-header) .lx-primary {
   margin-left: 2rem;
   font-size: var(--h2-font-size);
   font-weight: var(--h2-font-weight);

@@ -75,7 +75,7 @@
 }
 
 .lx-expander[data-disabled]>.lx-head>.lx-chevron-icon svg,
-.lx-expander[data-disabled] .lx-modifier-icon {
+.lx-expander[data-disabled] header .lx-modifier-icon {
   fill: var(--color-disabled-foreground);
 }
 
