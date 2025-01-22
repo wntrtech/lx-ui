@@ -194,6 +194,7 @@ watch(
       } else if (
         newVal?.length > oldVal?.length &&
         oldVal?.includes('@') &&
+        oldVal?.slice(-1) === '.' &&
         oldVal?.lastIndexOf('.') > oldVal?.indexOf('@')
       ) {
         rewriteValue(/[a-zA-Z0-9-]/, oldVal, newVal);
