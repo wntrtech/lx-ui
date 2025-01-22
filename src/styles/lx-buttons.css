@@ -422,7 +422,7 @@
   outline-offset: var(--button-nav-outline-offset);
 }
 
-.lx-layout-default .lx-nav-panel ul li .lx-button-content-wrapper {
+.lx-layout-default .lx-nav-panel ul li .lx-button-content-wrapper:not(.lx-dropdown-panel .lx-button-content-wrapper) {
   grid-template-areas: var(--button-nav-grid-areas);
   grid-template-columns: var(--button-nav-grid-template-columns);
   grid-template-rows: var(--button-nav-grid-template-rows);

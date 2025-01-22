@@ -2166,6 +2166,8 @@ a.lx-tile:hover {
     padding: 0;
     justify-content: center;
     align-items: center;
+    --button-ghost-grid-areas: 'icon';
+    --button-ghost-grid-template-columns: 1fr;
   }
 
   .lx-layout.lx-layout-cover > header .lx-header .lx-group .lx-help-button > button > svg {
