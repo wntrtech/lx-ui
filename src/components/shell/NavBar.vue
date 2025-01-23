@@ -126,7 +126,9 @@ function navClick(id) {
   <div class="lx-nav-panel" v-on-click-outside="navToggle">
     <ul class="lx-nav-group">
       <li
-        v-for="(item, index) in props.layoutMode === 'public' && width >= 900
+        v-for="(item, index) in (props.layoutMode === 'public' ||
+          props.layoutMode === 'latvijalv') &&
+        width >= 900
           ? allNavItems
           : navItemsPrimary"
         :key="item.label"
@@ -136,13 +138,18 @@ function navClick(id) {
           :label="item.label"
           :href="item.to"
           :icon="
-            (((index === 0 && width >= 900) || width < 900) && props.layoutMode === 'public') ||
-            props.layoutMode !== 'public'
+            (((index === 0 && width >= 900) || width < 900) &&
+              (props.layoutMode === 'public' || props.layoutMode === 'latvijalv')) ||
+            (props.layoutMode !== 'public' && props.layoutMode !== 'latvijalv')
               ? item.icon
               : ''
           "
           :variant="
-            index === 0 && props.layoutMode === 'public' && width >= 900 ? 'icon-only' : 'default'
+            index === 0 &&
+            (props.layoutMode === 'public' || props.layoutMode === 'latvijalv') &&
+            width >= 900
+              ? 'icon-only'
+              : 'default'
           "
           @click="navClick(item?.id)"
         />
@@ -164,7 +171,10 @@ function navClick(id) {
       />
     </ul>
 
-    <ul v-if="props.layoutMode !== 'public' || width < 900" class="lx-nav-group">
+    <ul
+      v-if="(props.layoutMode !== 'public' && props.layoutMode !== 'latvijalv') || width < 900"
+      class="lx-nav-group"
+    >
       <li
         v-for="item in navItemsSecondary"
         :key="item.label"

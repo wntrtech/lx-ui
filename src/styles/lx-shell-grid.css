@@ -69,7 +69,8 @@
 }
 
 .lx-layout.lx-layout-default > header .lx-header > .lx-group:last-of-type,
-.lx-layout.lx-layout-public > header .lx-header > .lx-group:last-of-type {
+.lx-layout.lx-layout-public > header .lx-header > .lx-group:last-of-type,
+.lx-layout.lx-layout-latvijalv > header .lx-header > .lx-group:last-of-type {
   justify-content: flex-end;
 }
 
@@ -426,7 +427,8 @@
   --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
-.lx-layout-public #nav-toggle.lx-button .lx-button-content-wrapper svg {
+.lx-layout-public #nav-toggle.lx-button .lx-button-content-wrapper svg,
+.lx-layout-latvijalv #nav-toggle.lx-button .lx-button-content-wrapper svg {
   --color-button-ghost-icon: var(--color-data);
   --color-button-ghost-icon-focus: var(--color-data);
   --color-button-ghost-icon-active: var(--color-header-hover-foreground);
@@ -1523,7 +1525,8 @@ a.lx-tile:hover {
   border-color: var(--color-nav-foreground);
 }
 
-.lx-layout.lx-layout-public .lx-user-button > .lx-avatar-display {
+.lx-layout.lx-layout-public .lx-user-button > .lx-avatar-display,
+.lx-layout.lx-layout-latvijalv .lx-user-button > .lx-avatar-display {
   border-color: var(--color-chrome);
 }
 

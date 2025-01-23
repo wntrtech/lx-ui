@@ -552,6 +552,33 @@ function pickIcon(level) {
 function pickSvgTitle(level) {
   return props.texts[`${level}SvgTitle`] || props.texts.svgTitle;
 }
+
+const closedAlertsKey = ref(`${useLx().getGlobals()?.systemId || 'lx'}-closed-alerts`);
+
+const closedAlerts = ref(JSON.parse(sessionStorage.getItem(closedAlertsKey.value) || '[]'));
+
+function closeAlert(alert) {
+  if (alert && alert.id) {
+    if (!closedAlerts.value.includes(alert.id)) {
+      closedAlerts.value.push(alert.id);
+      sessionStorage.setItem(closedAlertsKey.value, JSON.stringify(closedAlerts.value));
+    }
+  }
+}
+
+const visibleAlerts = computed(() =>
+  props.alerts.filter((alert) => alert && !closedAlerts.value.includes(alert.id))
+);
+
+function lvAlertItemClicked(event, alert) {
+  if (event.target && event.target.closest('.lx-button')) {
+    closeAlert(alert);
+    return;
+  }
+  if (alert && alert.clickable) {
+    emits('alertItemClick', alert);
+  }
+}
 </script>
 <template>
   <transition name="shell-switch">
@@ -744,6 +771,168 @@ function pickSvgTitle(level) {
           :selectedNavItems="navItemsSelected"
         />
       </nav>
+      <main class="lx-main">
+        <LxPageHeader
+          v-if="pageHeaderVisible"
+          :label="pageTitle"
+          :description="pageDescription"
+          :backLabel="pageBackLabel"
+          :backPath="pageBackPath"
+          :show-back-button="pageBackButtonVisible"
+          :breadcrumbs="pageBreadcrumbs"
+          :hide-header-text="hideHeaderText"
+          @go-back="goBack"
+        />
+        <transition name="nav">
+          <slot />
+        </transition>
+        <div class="lx-loader-screen" v-if="navigating">
+          <div class="spinner">
+            <LxLoader :loading="true" />
+          </div>
+        </div>
+      </main>
+      <footer>
+        <div></div>
+        <div>
+          <slot name="footer" />
+        </div>
+        <div></div>
+      </footer>
+    </div>
+    <div
+      v-if="mode === 'latvijalv'"
+      class="lx-layout lx-layout-latvijalv"
+      :class="[
+        { 'lx-collapsed': navBarSwitchBasic },
+        { 'lx-hide-nav-bar': hideNavBar },
+        { 'no-nav-items': !navItems || navItems?.length === 0 },
+      ]"
+    >
+      <header>
+        <LxMainHeader
+          :mode="mode"
+          :userInfo="userInfo"
+          :nav-items="navItems"
+          :nav-bar-switch="navBarSwitchBasic"
+          :hideNavBar="hideNavBar"
+          :systemNameShort="systemNameShort"
+          :systemSubheader="systemSubheader"
+          :page-label="pageTitle"
+          :home-path="pageIndexPath"
+          :backLabel="pageBackLabel"
+          :backPath="pageBackPath"
+          :show-back-button="pageBackButtonVisible"
+          :breadcrumbs="pageBreadcrumbs"
+          :has-language-picker="hasLanguagePicker"
+          :languages="languages"
+          :has-theme-picker="hasThemePicker"
+          :available-themes="availableThemes"
+          :system-icon="systemIcon"
+          :has-alerts="hasAlerts"
+          :alerts-kind="alertsKind"
+          :clickSafeAlerts="clickSafeAlerts"
+          :alerts="alerts"
+          :alert-count="alertCount"
+          :alert-level="alertLevel"
+          :has-help="hasHelp"
+          :environment="environment"
+          :headerNavDisable="headerNavDisable"
+          :has-avatar="hasAvatar"
+          kind="latvijalv"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:theme="themeModel"
+          v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
+          :alternative-profiles-info="alternativeProfilesInfo"
+          :context-persons-info="contextPersonsInfo"
+          v-model:selectedContextPerson="selectedContextPersonModel"
+          v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          @context-person-changed="contextPersonChanged"
+          @alternative-profile-changed="alternativeProfileChanged"
+          @language-changed="languageChanged"
+          @alert-item-click="alertItemClicked"
+          @alerts-click="alertsClicked"
+          @help-click="helpClicked"
+          @go-home="goHome"
+          @go-back="goBack"
+          @log-out="logOut"
+          @nav-toggle="navToggle"
+          :texts="texts"
+        >
+          <template v-if="!systemIcon" #logo>
+            <slot name="logoSmall" />
+          </template>
+          <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
+        </LxMainHeader>
+      </header>
+      <nav aria-label="navigation panel" v-if="!hideNavBar">
+        <LxNavBar
+          layoutMode="latvijalv"
+          :nav-items="navItems"
+          :has-theme-picker="hasThemePicker"
+          :available-themes="availableThemes"
+          :has-language-picker="hasLanguagePicker"
+          :languages="languages"
+          v-model:theme="themeModel"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
+          @nav-toggle="navToggle"
+          @navClick="navClick"
+          :selectedNavItems="navItemsSelected"
+        />
+      </nav>
+      <ul class="lx-latvijalv-alert-list" v-if="alerts?.length > 0 && !hasAlerts">
+        <li
+          v-for="alert in visibleAlerts"
+          :key="alert.id"
+          class="lx-latvijalv-alert"
+          :class="[
+            { 'lx-alert-success': alert?.level === 'success' },
+            { 'lx-alert-info': alert?.level === 'info' },
+            { 'lx-alert-warning': alert?.level === 'warning' },
+            { 'lx-alert-error': alert?.level === 'error' },
+            { 'lx-alert-clickable': alert?.clickable },
+          ]"
+          :role="alert?.level === 'error' || alert?.level === 'warning' ? 'alert' : 'status'"
+          aria-live="polite"
+          @click="lvAlertItemClicked($event, alert)"
+          @keydown.space.prevent="lvAlertItemClicked($event, alert)"
+          @keydown.enter.prevent="lvAlertItemClicked($event, alert)"
+          :aria-label="alert?.name"
+          :aria-labelledby="alert?.name ? `${alert.id}-label` : null"
+          :aria-describedby="alert?.description ? `${alert.id}-desc` : null"
+          :tabindex="alert?.clickable ? '0' : '-1'"
+        >
+          <div class="lx-latvijalv-alert-content-wrapper">
+            <div class="lx-latvijalv-alert-icon">
+              <LxIcon
+                :value="pickIcon(alert.level)"
+                :meaningful="true"
+                :title="pickSvgTitle(alert.level)"
+              />
+            </div>
+            <div class="lx-latvijalv-alert-text">
+              <p class="lx-primary">{{ alert?.name }}</p>
+              <p class="lx-secondary" v-if="alert?.description">{{ alert?.description }}</p>
+            </div>
+            <LxButton
+              icon="close"
+              kind="ghost"
+              variant="icon-only"
+              :title="texts.close"
+              @click="closeAlert(alert)"
+            />
+          </div>
+        </li>
+      </ul>
       <main class="lx-main">
         <LxPageHeader
           v-if="pageHeaderVisible"

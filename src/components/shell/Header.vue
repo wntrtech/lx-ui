@@ -16,7 +16,7 @@ const props = defineProps({
   pageLabel: { type: String, default: null },
   userInfo: { type: Object, default: null }, // firstName, lastName, description, role, institution
   hasAvatar: { type: Boolean, default: false },
-  kind: { type: String, default: 'default' }, // 'default', 'public'
+  kind: { type: String, default: 'default' }, // 'default', 'public', 'latvijalv'
   alternativeProfilesInfo: { type: Array, default: null },
   selectedAlternativeProfile: { type: Object, default: null },
   contextPersonsInfo: { type: Array, default: () => [] },
@@ -340,7 +340,7 @@ const selectedMegaMenuItemModel = computed({
   <div class="lx-header">
     <div class="lx-group">
       <LxButton
-        v-if="!hideNavBar && kind !== 'public'"
+        v-if="!hideNavBar && kind !== 'public' && kind !== 'latvijalv'"
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
         :title="navBarSwitch ? texts.openNavbar : texts.close"
@@ -409,7 +409,7 @@ const selectedMegaMenuItemModel = computed({
     </div>
     <div v-else></div>
 
-    <div class="lx-group lx-right-group" v-if="kind === 'public'">
+    <div class="lx-group lx-right-group" v-if="kind === 'public' || kind === 'latvijalv'">
       <LxHeaderButtons
         :mode="mode"
         :userInfo="userInfo"

@@ -188,11 +188,13 @@
 }
 
 .lx:not(.lx-no-animations) .lx-button,
+.lx-layout-latvijalv .lx-latvijalv-alert-list .lx-alert-clickable,
 .lx:not(.lx-no-animations) .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-badge {
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
 
 .lx:not(.lx-no-animations) .lx-button svg,
+.lx-layout-latvijalv .lx-latvijalv-alert-list .lx-alert-clickable svg,
 .lx:not(.lx-no-animations) .lx-file-wrapper.lx-disabled .lx-list-item .lx-download-icon svg {
   transition: fill 0.1s ease-in;
 }
@@ -538,7 +540,8 @@
 /* lx-shell-flex */
 
 .lx:not(.lx-no-animations) .lx-layout-default .lx-nav-panel,
-.lx:not(.lx-no-animations) .lx-layout-public .lx-nav-panel {
+.lx:not(.lx-no-animations) .lx-layout-public .lx-nav-panel,
+.lx:not(.lx-no-animations) .lx-layout-latvijalv .lx-nav-panel {
   transition: 0.1s ease-in-out width, 0.1s ease-in-out box-shadow;
 }
 

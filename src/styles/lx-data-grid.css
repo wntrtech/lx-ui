@@ -64,19 +64,22 @@
   top: var(--nav-row-size);
 }
 
-/* public mode, no toolbar, yes navbar */
-.lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-header-wrapper {
+/* public / latvijalv mode, no toolbar, yes navbar */
+.lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-header-wrapper,
+.lx-layout-latvijalv:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-header-wrapper {
   top: calc(var(--public-nav-header-size));
 }
 
-/* yes toolbar OR public mode, yes toolbar, no navbar */
+/* yes toolbar OR public / latvijalv mode, yes toolbar, no navbar */
 .lx .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper,
-.lx-layout-public.no-nav-items .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper {
+.lx-layout-public.no-nav-items .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper,
+.lx-layout-latvijalv.no-nav-items .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper {
   top: calc(var(--nav-row-size) + var(--row-size));
 }
 
-/* public mode, yes toolbar, yes navbar */
-.lx-layout-public .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper {
+/* public / latvijalv mode, yes toolbar, yes navbar */
+.lx-layout-public .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper,
+.lx-layout-latvijalv .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper {
   top: calc(var(--public-nav-header-size) + var(--row-size));
 }
 

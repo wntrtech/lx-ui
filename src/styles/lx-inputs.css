@@ -3015,7 +3015,8 @@ input[type='range']:hover::-moz-range-thumb {
   z-index: 4;
 }
 
-.lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper .lx-grid-toolbar {
+.lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper .lx-grid-toolbar,
+.lx-layout-latvijalv:not(.no-nav-items) .lx-data-grid-wrapper .lx-grid-toolbar {
   top: var(--public-nav-header-size);
 }
 

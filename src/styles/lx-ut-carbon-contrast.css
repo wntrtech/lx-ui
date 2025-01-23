@@ -32,6 +32,10 @@
   --color-nav-hover-foreground: var(--contrast-background);
   --color-tooltip-background: var(--contrast-interactive);
   --color-tooltip-foreground: var(--contrast-background);
+  --color-latvijalv-alert-background: var(--contrast-background);
+  --color-latvijalv-alert-foreground: var(--contrast-foreground);
+  --color-latvijalv-alert-hover-foreground: var(--contrast-background);
+  --color-latvijalv-alert-hover-background: var(--contrast-hover);
   --color-tile-background: var(--contrast-background);
   --color-tile-foreground: var(--contrast-foreground);
   --color-tile-hover-background: var(--contrast-hover);

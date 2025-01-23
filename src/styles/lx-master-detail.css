@@ -10,7 +10,8 @@
 }
 
 .lx-layout.lx-layout-default.lx-collapsed nav.lx-master,
-.lx-layout.lx-layout-public.lx-collapsed nav.lx-master{
+.lx-layout.lx-layout-public.lx-collapsed nav.lx-master,
+.lx-layout.lx-layout-latvijalv.lx-collapsed nav.lx-master {
     margin-left: 0;
 }
 

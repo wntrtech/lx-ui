@@ -209,20 +209,25 @@
   fill: var(--color-button-nav-icon-hover);
 }
 
-/* Public nav icon styles */
+/* Public + latvijalv nav icon styles */
 
-.lx-layout-public .lx-nav-panel ul li:first-of-type .lx-button svg {
+.lx-layout-public .lx-nav-panel ul li:first-of-type .lx-button svg,
+.lx-layout-latvijalv .lx-nav-panel ul li:first-of-type .lx-button svg {
   height: var(--button-nav-public-icon-height);
   width: var(--button-nav-public-icon-width);
 }
 
 .lx-layout-public .lx-nav-panel ul li > .lx-button svg,
-.lx-layout-public .lx-nav-panel ul .lx-toolbar .lx-button svg {
+.lx-layout-public .lx-nav-panel ul .lx-toolbar .lx-button svg,
+.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button svg,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar .lx-button svg {
   fill: var(--color-button-nav-public-icon);
 }
 
 .lx-layout-public .lx-nav-panel ul li > .lx-button:hover svg,
-.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button:hover svg {
+.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button:hover svg,
+.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button:hover svg,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button:hover svg {
   fill: var(--color-button-nav-public-icon-hover);
 }
 
@@ -269,7 +274,8 @@
   --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
-.lx-layout-public .lx-header .lx-button.lx-header-button svg {
+.lx-layout-public .lx-header .lx-button.lx-header-button svg,
+.lx-layout-latvijalv .lx-header .lx-button.lx-header-button svg {
   --color-button-ghost-icon: var(--color-data);
   --color-button-ghost-icon-focus: var(--color-data);
   --color-button-ghost-icon-active: var(--color-header-hover-foreground);
@@ -448,10 +454,12 @@
   color: var(--color-button-nav-hover);
 }
 
-/* Public nav styles */
+/* Public + latvijalv nav styles */
 
 .lx-layout-public .lx-nav-panel ul li > .lx-button,
-.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button {
+.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button,
+.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button {
   flex-direction: row;
   justify-content: center;
   padding: var(--button-nav-public-padding);
@@ -470,7 +478,9 @@
 }
 
 .lx-layout-public .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
-.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper {
+.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
+.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper {
   grid-template-areas: var(--button-nav-public-grid-areas);
   grid-template-columns: var(--button-nav-public-grid-template-columns);
   grid-template-rows: var(--button-nav-public-grid-template-rows);
@@ -478,18 +488,23 @@
   gap: var(--button-nav-public-gap);
 }
 
-.lx-layout-public .lx-nav-panel ul li:first-of-type > .lx-button .lx-button-content-wrapper {
+.lx-layout-public .lx-nav-panel ul li:first-of-type > .lx-button .lx-button-content-wrapper,
+.lx-layout-latvijalv .lx-nav-panel ul li:first-of-type > .lx-button .lx-button-content-wrapper {
   --button-nav-public-grid-areas: 'icon';
   --button-nav-public-grid-template-columns: 1fr;
 }
 
 .lx-layout-public .lx-nav-panel ul li > .lx-button .lx-button-content,
-.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content {
+.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content,
+.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button .lx-button-content,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content {
   text-align: var(--button-nav-public-text-align);
 }
 
 .lx-layout-public .lx-nav-panel ul li > .lx-button:hover,
-.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button:hover {
+.lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button:hover,
+.lx-layout-latvijalv .lx-nav-panel ul li > .lx-button:hover,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button:hover {
   background-color: var(--color-button-nav-public-hover-background);
   border-color: var(--color-button-nav-public-hover-border);
   color: var(--color-button-nav-public-hover);
@@ -728,21 +743,21 @@
   min-width: var(--button-primary-icon-only-min-width);
 }
 
-.lx-button.lx-secondary.lx-button-icon-only {
+.lx-button.lx-button-secondary.lx-button-icon-only {
   padding: var(--button-secondary-icon-only-padding);
   height: var(--button-secondary-icon-only-height);
   width: var(--button-secondary-icon-only-width);
   min-width: var(--button-secondary-icon-only-min-width);
 }
 
-.lx-button.lx-tertiary.lx-button-icon-only {
+.lx-button.lx-button-tertiary.lx-button-icon-only {
   padding: var(--button-tertiary-icon-only-padding);
   height: var(--button-tertiary-icon-only-height);
   width: var(--button-tertiary-icon-only-width);
   min-width: var(--button-tertiary-icon-only-min-width);
 }
 
-.lx-button.lx-ghost.lx-button-icon-only {
+.lx-button.lx-button-ghost.lx-button-icon-only {
   padding: var(--button-ghost-icon-only-padding);
   height: var(--button-ghost-icon-only-height);
   width: var(--button-ghost-icon-only-width);
@@ -1254,12 +1269,15 @@ button.lx-button-ghost:focus:hover {
 }
 
 @media (max-width: 900px) {
-  .lx-layout-public .lx-nav-panel ul li .lx-button {
+  .lx-layout-public .lx-nav-panel ul li .lx-button,
+  .lx-layout-latvijalv .lx-nav-panel ul li .lx-button {
     height: var(--row-size);
   }
 
   .lx .lx-layout-public .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
-  .lx .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper {
+  .lx .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
+  .lx .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
+  .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper {
     --button-nav-public-grid-areas: 'icon content';
     --button-nav-public-grid-template-columns: auto 1fr;
     --button-nav-public-text-align: left;
