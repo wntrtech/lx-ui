@@ -49,7 +49,6 @@ const model = computed({
   },
 });
 
-const idValue = ref('');
 const notSelectedId = 'notSelected';
 const currentIndex = ref(0);
 
@@ -198,11 +197,6 @@ const columnReadOnly = computed(() =>
 );
 
 onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
   const initialIndex = rotatorItemsArray.value?.findIndex(
     (item) => item[props.idAttribute] === model.value
   );

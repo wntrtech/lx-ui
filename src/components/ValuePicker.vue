@@ -10,7 +10,7 @@ import LxValuePickerIndicator from '@/components/valuePickers/Indicator.vue';
 import LxValuePickerHorizontal from '@/components/valuePickers/Horizontal.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Array, String, Number], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -140,6 +140,7 @@ onMounted(() => {
     <LxValuePickerDefault
       v-if="variant === 'default' || variant === 'default-custom'"
       :role="kind === 'single' ? 'radiogroup' : 'group'"
+      :id="id"
       v-model="model"
       :items="stringifiedItems"
       :idAttribute="idAttribute"
@@ -170,6 +171,7 @@ onMounted(() => {
 
     <LxValuePickerDropDown
       v-if="variant === 'dropdown' || variant === 'dropdown-custom'"
+      :id="id"
       v-model="model"
       :items="stringifiedItems"
       :idAttribute="idAttribute"
@@ -205,6 +207,7 @@ onMounted(() => {
         variant === 'tiles-custom' ||
         variant === 'tags-custom'
       "
+      :id="id"
       v-model="model"
       :items="stringifiedItems"
       :idAttribute="idAttribute"
@@ -235,6 +238,7 @@ onMounted(() => {
 
     <LxValuePickerRotator
       v-if="variant === 'rotator' || variant === 'rotator-custom'"
+      :id="id"
       v-model="model"
       :items="stringifiedItems"
       :idAttribute="idAttribute"
@@ -264,6 +268,7 @@ onMounted(() => {
 
     <LxValuePickerIndicator
       v-if="variant === 'indicator'"
+      :id="id"
       v-model="model"
       :items="stringifiedItems"
       :idAttribute="idAttribute"
@@ -294,8 +299,10 @@ onMounted(() => {
         <slot name="customItem" v-bind="slotData" />
       </template>
     </LxValuePickerIndicator>
+
     <LxValuePickerHorizontal
       v-if="variant === 'horizontal' || variant === 'horizontal-custom'"
+      :id="id"
       v-model="model"
       :items="stringifiedItems"
       :idAttribute="idAttribute"

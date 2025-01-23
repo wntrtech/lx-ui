@@ -8,7 +8,7 @@ import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Array, String], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -53,14 +53,7 @@ const model = computed({
   },
 });
 
-const idValue = ref('');
-
 onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
   }
@@ -337,7 +330,7 @@ function selectAll() {
 </script>
 
 <template>
-  <div class="lx-value-picker-tile-tag-container">
+  <div class="lx-value-picker-tile-tag-container" :id="id">
     <template v-if="readOnly">
       <p v-if="readOnlyRenderType === 'row'" class="lx-data">
         {{ getName(false) }}

@@ -622,7 +622,7 @@ defineExpose({ highlightRow, clearHighlights });
       >
         <LxButton
           v-for="button in additionalButtons"
-          @click="clickHandler(button.id)"
+          :id="`${id}-action-${button.id}`"
           :key="button.id"
           :label="button.name"
           :destructive="button.destructive"
@@ -636,6 +636,7 @@ defineExpose({ highlightRow, clearHighlights });
           :badge-type="button.badgeType"
           kind="ghost"
           variant="icon-only"
+          @click="clickHandler(button.id)"
         />
       </div>
       <div
@@ -674,7 +675,7 @@ defineExpose({ highlightRow, clearHighlights });
             </p>
             <LxButton
               v-for="button in additionalButtons"
-              @click="clickHandler(button.id)"
+              :id="`${id}-action-${button.id}`"
               :key="button.id"
               :label="button.name"
               :disabled="button.disabled"
@@ -687,6 +688,7 @@ defineExpose({ highlightRow, clearHighlights });
               :badge="button.badge"
               :badge-type="button.badgeType"
               kind="ghost"
+              @click="clickHandler(button.id)"
             />
             <div
               class="responsive-default-index-button"
@@ -725,6 +727,7 @@ defineExpose({ highlightRow, clearHighlights });
             <div
               class="additional-index-button"
               v-for="i in index"
+              :id="`${id}-action-${i.id}`"
               :key="i.id"
               ref="indexItems"
               :class="[
@@ -781,7 +784,7 @@ defineExpose({ highlightRow, clearHighlights });
       <div class="lx-group lx-buttons">
         <LxButton
           v-for="button in primaryButtons"
-          @click="clickHandler(button.id)"
+          :id="`${id}-action-${button.id}`"
           :key="button.id"
           :label="button.name"
           :disabled="button.disabled"
@@ -794,13 +797,14 @@ defineExpose({ highlightRow, clearHighlights });
           :badge="button.badge"
           :badge-type="button.badgeType"
           kind="primary"
+          @click="clickHandler(button.id)"
         />
         <LxDropDownMenu custom-class="responsive-overflow" v-if="notPrimaryButtonCount > 1">
           <LxButton kind="secondary" icon="overflow-menu" :label="texts?.otherActions" />
           <template #panel>
             <LxButton
               v-for="button in secondaryButtons"
-              @click="clickHandler(button.id)"
+              :id="`${id}-action-${button.id}`"
               :key="button.id"
               :label="button.name"
               :disabled="button.disabled"
@@ -813,10 +817,11 @@ defineExpose({ highlightRow, clearHighlights });
               :badge="button.badge"
               :badge-type="button.badgeType"
               kind="ghost"
+              @click="clickHandler(button.id)"
             />
             <LxButton
               v-for="button in tertiaryButtons"
-              @click="clickHandler(button.id)"
+              :id="`${id}-action-${button.id}`"
               :key="button.id"
               :label="button.name"
               :disabled="button.disabled"
@@ -829,15 +834,13 @@ defineExpose({ highlightRow, clearHighlights });
               :badge="button.badge"
               :badge-type="button.badgeType"
               kind="ghost"
+              @click="clickHandler(button.id)"
             />
           </template>
         </LxDropDownMenu>
         <LxButton
           v-for="button in secondaryButtons"
-          @click="clickHandler(button.id)"
-          :custom-class="
-            notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
-          "
+          :id="`${id}-action-${button.id}`"
           :key="button.id"
           :label="button.name"
           :disabled="button.disabled"
@@ -850,13 +853,17 @@ defineExpose({ highlightRow, clearHighlights });
           :badge="button.badge"
           :badge-type="button.badgeType"
           kind="secondary"
+          :custom-class="
+            notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
+          "
+          @click="clickHandler(button.id)"
         />
       </div>
       <div class="lx-group"><slot name="footer" /></div>
       <div class="lx-group lx-responsive-l">
         <LxButton
           v-for="button in tertiaryButtons"
-          @click="clickHandler(button.id)"
+          :id="`${id}-action-${button.id}`"
           :key="button.id"
           :label="button.name"
           :disabled="button.disabled"
@@ -872,6 +879,7 @@ defineExpose({ highlightRow, clearHighlights });
           :badge="button.badge"
           :badge-type="button.badgeType"
           kind="tertiary"
+          @click="clickHandler(button.id)"
         />
       </div>
     </footer>

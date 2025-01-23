@@ -4,12 +4,12 @@ import { IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
-import { isEmail } from '@/utils/stringUtils';
+import { generateUUID, isEmail } from '@/utils/stringUtils';
 
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: [Number, String], default: null },
   placeholder: { type: String, default: null },
   readOnly: { type: Boolean, default: false },

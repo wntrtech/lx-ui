@@ -56,14 +56,7 @@ const model = computed({
   },
 });
 
-const idValue = ref('');
-
 onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
   }
@@ -103,8 +96,6 @@ function activate() {
 }
 activate();
 
-
-
 watch(
   () => {
     const value = model.value;
@@ -120,22 +111,6 @@ watch(
     
   }
 );
-
-const selectedItems = computed(() => {
-  const ret = [];
-  let temp = model.value;
-  if (!Array.isArray(model.value)) {
-    temp = [temp];
-  }
-  temp.forEach((id) => {
-    itemsDisplay.value.forEach((item) => {
-      if (id === item[props.idAttribute]) {
-        ret.push(item);
-      }
-    });
-  });
-  return ret;
-});
 
 function getIcon(item, iconAttribute){
   return item[iconAttribute] ? item[iconAttribute] : 'none';
@@ -394,6 +369,7 @@ const indicatorTooltips = computed(() => {
       class="lx-value-picker-indicators"
       :class="[{ 'lx-invalid': invalid }]"
       v-if="variant === 'indicator'"
+      :id="id"
       :title="tooltip"
       :aria-invalid="invalid"
       :aria-labelledby="labelId"

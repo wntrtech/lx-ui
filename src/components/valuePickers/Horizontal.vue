@@ -54,7 +54,6 @@ const model = computed({
   },
 });
 
-const idValue = ref('');
 const itemsModel = ref({});
 const itemsDisplay = computed( () => { 
     const res = [... props.items];
@@ -68,11 +67,6 @@ const notSelectedId = 'notSelected';
 let currentIndex = 0;
 
 onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
   }
@@ -117,8 +111,6 @@ function activate() {
   }
 }
 activate();
-
-
 
 watch(
   () => {
@@ -381,7 +373,7 @@ function onNext() {
 
 function handleFocus() {
   nextTick(() => {
-    const container = document.getElementById(idValue.value);
+    const container = document.getElementById(props.id);
     const selectedItem = container?.querySelector('.lx-value-picker-horizontal-icon-wrapper.lx-selected');
 
     setTimeout(() => {
@@ -409,7 +401,7 @@ function focusNext() {
 
 </script>
 <template>
-  <div class="lx-value-picker-horizontal-container" :id="idValue">
+  <div class="lx-value-picker-horizontal-container" :id="id">
     <div
       v-if="hasSearch && !readOnly"
       class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
@@ -429,7 +421,7 @@ function focusNext() {
         :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
         :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
       />
-      <lx-text-input
+      <LxTextInput
         v-if="hasSearch"
         :disabled="disabled"
         ref="queryInput"
@@ -438,7 +430,7 @@ function focusNext() {
         role="search"
         :placeholder="texts.searchPlaceholder"
       />
-      <lx-button
+      <LxButton
         v-if="query && hasSearch"
         icon="clear"
         kind="ghost"
@@ -448,6 +440,7 @@ function focusNext() {
         @click="query = ''"
       />
     </div>
+
     <div
       class="lx-value-picker-horizontal-wrapper"
       :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && kind === 'multiple' }]"
@@ -465,9 +458,9 @@ function focusNext() {
 
       <template v-else>
         <div
-          :id="idValue"
           v-for="item in itemsDisplay"
           v-if="!readOnly"
+          :id="`${id}-item-${item[idAttribute]}`"
           :key="item[idAttribute]"
           class="lx-value-picker-horizontal-item"
           :class="[

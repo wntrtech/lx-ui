@@ -28,7 +28,6 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue', 'change']);
 
-const idValue = ref('');
 const container = ref();
 const menuOpen = ref(false);
 const allItems = ref(props.items);
@@ -124,7 +123,7 @@ function openDropDownDefault() {
     activeDropdown.value = container.value;
     nextTick(() => {
       const formElements = document.querySelectorAll(
-        `#${idValue.value} div.lx-dropdown-default-content > div.lx-value-picker-item`
+        `#${props.id} div.lx-dropdown-default-content > div.lx-value-picker-item`
       );
       formElements[highlightedItemId.value - 1]?.focus();
     });
@@ -308,12 +307,6 @@ const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
 onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
-  idValue.value = idValue.value.replace(idValue.value.charAt(0), 'a');
   filteredItems.value = props.items;
 
   if (model.value) {
@@ -340,7 +333,7 @@ onMounted(() => {
         <div class="pseudo-input" />
         <select
           v-model="model"
-          :id="idValue"
+          :id="id"
           :aria-invalid="invalid"
           class="lx-dropdown lx-input-area"
           :class="[
@@ -380,7 +373,7 @@ onMounted(() => {
 
     <template v-if="props.kind === 'default' && !readOnly">
       <div
-        :id="idValue"
+        :id="id"
         class="lx-dropdown-default"
         ref="container"
         :disabled="disabled"

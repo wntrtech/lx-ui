@@ -56,14 +56,7 @@ const model = computed({
   },
 });
 
-const idValue = ref('');
-
 onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
   }
@@ -358,6 +351,7 @@ function getTabIndex(id) {
     :aria-invalid="invalid"
     role="radiogroup"
     :title="tooltip"
+    :id="id"
   >
     <template v-if="readOnly">
       <p v-if="readOnlyRenderType === 'row'" class="lx-data">
@@ -412,7 +406,7 @@ function getTabIndex(id) {
       <div
         v-if="!readOnly"
         v-for="(item, index) in itemsDisplay"
-        :id="`${idValue}-${index}`"
+        :id="`${id}-${index}`"
         :key="item[idAttribute]"
         class="lx-value-picker-default-item"
         :class="[

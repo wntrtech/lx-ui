@@ -50,13 +50,15 @@ describe('LxTextInput', () => {
         expect(inputElement.id).toBeTypeOf('string');
       });
 
-      test('should be empty string when id is not passed', () => {
+      test('should be default GUID string when id is not passed', () => {
         const wrapper = mount(LxTextInput);
         const props = wrapper.props();
 
         const inputElement = wrapper.find('.lx-text-input').element;
-        expect(props.id).toBe(null);
-        expect(inputElement.id).toBe('');
+
+        expect(props.id).toBe(props.id);
+        expect(inputElement.id).toBe(props.id);
+        expect(inputElement.id).toBeTypeOf('string');
       });
     });
 

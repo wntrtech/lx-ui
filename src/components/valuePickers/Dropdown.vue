@@ -47,7 +47,6 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue']);
 
-const idValue = ref('');
 const itemsModel = ref({});
 const notSelectedId = 'notSelected';
 const menuOpen = ref(false);
@@ -332,7 +331,7 @@ function openDropDownDefault() {
     panelWidth.value = container.value?.offsetWidth;
     activeDropdown.value = container.value;
     setTimeout(() => {
-      const formElements = document.querySelectorAll(`#${idValue.value} input.lx-checkbox`);
+      const formElements = document.querySelectorAll(`#${props.id} input.lx-checkbox`);
       formElements[highlightedItemId.value - 1]?.focus()
       }, 150);
   } else if (menuOpen.value) {
@@ -480,12 +479,6 @@ function selectAll() {
 }
 
 onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
-  idValue.value = idValue.value.replace(idValue.value.charAt(0), 'b');
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
   }
@@ -510,6 +503,7 @@ const columnReadOnly = computed(() => {
   <template v-else>
     <LxAutoComplete
       v-if="hasSearch"
+      :id="id"
       v-model="model"
       :selectingKind="kind"
       :items="itemsDisplay"
@@ -534,7 +528,7 @@ const columnReadOnly = computed(() => {
 
     <LxDropDown
       v-if="kind === 'single' && !hasSearch"
-      id="dropdown-component"
+      :id="id"
       v-model="model"
       :items="itemsDisplay"
       :id-attribute="idAttribute"
@@ -557,7 +551,7 @@ const columnReadOnly = computed(() => {
     <div class="lx-value-picker-dropdown-wrapper" v-if="kind === 'multiple' && !hasSearch" ref="refRoot">
       <div
         class="lx-dropdown-default"
-        :id="idValue"
+        :id="id"
         ref="container"
         :disabled="disabled"
         @keydown.esc.prevent="closeDropDownDefault"

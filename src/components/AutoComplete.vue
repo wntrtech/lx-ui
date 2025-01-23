@@ -127,7 +127,6 @@ const selectedItemsStored = ref([]);
 const selectedItem = ref(null);
 const selectedItems = ref([]);
 const listRef = ref();
-const idValue = ref('');
 
 const findItemById = (id, items) => {
   return items?.find((item) => id === getIdAttributeString(item));
@@ -917,12 +916,6 @@ function selectAll() {
 
 onMounted(() => {
   activate();
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
-  idValue.value = idValue.value.replace(idValue.value.charAt(0), 'c');
 });
 </script>
 
@@ -984,7 +977,6 @@ onMounted(() => {
         <div
           class="lx-autocomplete-default"
           ref="refContainer"
-          :id="idValue"
           :class="[
             { 'lx-opened': menuOpen },
             { 'lx-invalid': invalid },
@@ -1060,6 +1052,7 @@ onMounted(() => {
                         <input
                           ref="refQuery"
                           :placeholder="shouldShowInputPlaceholder ? getName() : null"
+                          :id="id"
                           v-model="query"
                           class="lx-text-input lx-value-picker-placeholder lx-input-area"
                           role="search"
