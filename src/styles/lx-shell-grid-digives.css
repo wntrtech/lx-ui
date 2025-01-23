@@ -342,11 +342,25 @@
 }
 
 .lx-main > .lx-digives-alert-list > .lx-digives-alert{
-  padding: 1rem;
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  padding: 0.5rem 0.5rem 0.5rem 0.1rem;
   min-height: 4rem;
   background-color: var(--color-region);
   border: 2px solid transparent;
-  border-left: 4px solid var(--color-highlight);
+  border-left: 4px solid var(--color-chrome);
+}
+
+.lx-digives-alert>svg {
+  grid-row: span 2;
+  justify-self: center;
+  align-self: start;
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.lx-digives-alert.lx-clickable {
+  cursor: pointer;
 }
 
 .lx-main > .lx-digives-alert-list > .lx-digives-alert > .lx-primary{
@@ -354,22 +368,50 @@
 }
 
 .lx-main > .lx-digives-alert-list > .lx-digives-alert.lx-alert-success{
-  background-color: var(--color-green-20);
-  border-left: 4px solid var(--color-green);
+  border: 2px solid var(--color-green-20);
+  border-left: 4px solid var(--color-notification-success-foreground);
+  background-color: var(--color-notification-success-background);
 }
 
 .lx-main > .lx-digives-alert-list > .lx-digives-alert.lx-alert-warning{
-  background-color: var(--color-yellow-20);
-  border-left: 4px solid var(--color-yellow);
+  border: 2px solid var(--color-orange-20);
+  border-left: 4px solid var(--color-notification-warning-foreground);
+  background-color: var(--color-notification-warning-background);
 }
 
 .lx-main > .lx-digives-alert-list > .lx-digives-alert.lx-alert-error{
-  background-color: var(--color-red-20);
-  border-left: 4px solid var(--color-red);
+  border: 2px solid var(--color-red-20);
+  border-left: 4px solid var(--color-notification-error-foreground);
+  background-color: var(--color-notification-error-background);
+}
+
+.lx-digives-alert.lx-alert-success>svg {
+  fill: var(--color-notification-success-foreground);
+}
+
+.lx-digives-alert.lx-alert-warning>svg {
+  fill: var(--color-notification-warning-foreground);
+}
+
+.lx-digives-alert.lx-alert-error>svg {
+  fill: var(--color-notification-error-foreground);
+}
+
+.lx .lx-digives-alert.lx-alert-success .lx-primary {
+  color: var(--color-notification-success-foreground);
+}
+
+.lx .lx-digives-alert.lx-alert-error .lx-primary {
+  color: var(--color-notification-error-foreground);
 }
 
 .lx-main > .lx-digives-alert-list > .lx-digives-alert.lx-clickable:hover{
   border: 2px solid var(--color-brand);
+  padding-left: calc(0.1rem + 2px)
+}
+
+.lx-digives-alert.lx-clickable:focus {
+  outline: 2px solid var(--color-focus-background);
 }
 
 .lx-layout.lx-layout-default.lx-layout-digives > footer{

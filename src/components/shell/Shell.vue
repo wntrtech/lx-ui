@@ -179,6 +179,11 @@ const props = defineProps({
       menu: 'Izvēlne',
       showAllLabel: 'Vairāk',
       megaMenuTitle: 'Lietotnes',
+      successSvgTitle: 'Veiksmīgs paziņojums',
+      warningSvgTitle: 'Brīdinājums',
+      errorSvgTitle: 'Kļūda',
+      infoSvgTitle: 'Informācija',
+      svgTitle: 'Paziņojums',
     }),
   },
 });
@@ -532,6 +537,21 @@ const selectedMegaMenuItemModel = computed({
     emits('update:selectedMegaMenuItem', value);
   },
 });
+
+const iconMap = {
+  success: 'notification-success',
+  warning: 'notification-warning',
+  error: 'notification-error',
+  info: 'notification-info',
+};
+
+function pickIcon(level) {
+  return iconMap[level] || iconMap.info;
+}
+
+function pickSvgTitle(level) {
+  return props.texts[`${level}SvgTitle`] || props.texts.svgTitle;
+}
 </script>
 <template>
   <transition name="shell-switch">
@@ -839,8 +859,8 @@ const selectedMegaMenuItemModel = computed({
       </nav>
 
       <main class="lx-main">
-        <div class="lx-digives-alert-list" v-if="alerts?.length > 0">
-          <div
+        <ul class="lx-digives-alert-list" v-if="alerts?.length > 0">
+          <li
             v-for="alert in alerts"
             :key="alert.id"
             class="lx-digives-alert"
@@ -850,16 +870,25 @@ const selectedMegaMenuItemModel = computed({
               { 'lx-alert-error': alert?.level === 'error' },
               { 'lx-clickable': alert?.clickable },
             ]"
-            role="alert"
+            :role="alert?.level === 'error' || alert?.level === 'warning' ? 'alert' : 'status'"
             aria-live="polite"
             @click="alertItemClicked(alert)"
-            @keydown.space="alertItemClicked(alert)"
+            @keydown.space.prevent="alertItemClicked(alert)"
+            @keydown.enter.prevent="alertItemClicked(alert)"
             :aria-label="alert?.name"
+            :aria-labelledby="alert?.name ? `${alert.id}-label` : null"
+            :aria-describedby="alert?.description ? `${alert.id}-desc` : null"
+            :tabindex="alert?.clickable ? 0 : null"
           >
+            <LxIcon
+              :value="pickIcon(alert.level)"
+              :meaningful="true"
+              :title="pickSvgTitle(alert.level)"
+            />
             <p class="lx-primary">{{ alert?.name }}</p>
             <p class="lx-secondary" v-if="alert?.description">{{ alert?.description }}</p>
-          </div>
-        </div>
+          </li>
+        </ul>
         <LxPageHeader
           v-if="pageHeaderVisible"
           :label="pageTitle"
