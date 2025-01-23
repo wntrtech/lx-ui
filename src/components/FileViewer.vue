@@ -383,7 +383,8 @@ async function goToPage() {
     const toolbarHeight = toolbar ? toolbar.offsetHeight : 0;
 
     // Total combined offset height
-    const totalOffsetHeight = headerHeight + headerDigivesHeight + navigationHeight + toolbarHeight;
+    const totalOffsetHeight =
+      (headerDigivesHeight || headerHeight) + navigationHeight + toolbarHeight;
 
     // If the container is scrollable, scroll it to the correct canvas
     if (container && container.scrollHeight > container.clientHeight) {
@@ -526,6 +527,14 @@ function setupIntersectionObserver() {
       observer.disconnect();
     }
 
+    // Check if the container is scrollable
+    const isScrollable = rootElement.scrollHeight > rootElement.clientHeight;
+
+    const options = {
+      threshold: 0, // Trigger when any part of the canvas is visible
+    };
+
+    // If the container is scrollable, observe the container
     observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -537,8 +546,8 @@ function setupIntersectionObserver() {
         });
       },
       {
-        root: rootElement,
-        threshold: 0.25,
+        root: isScrollable ? rootElement : null, // Use the container if scrollable, otherwise viewport
+        ...options,
       }
     );
 
