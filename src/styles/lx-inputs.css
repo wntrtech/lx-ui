@@ -3666,6 +3666,11 @@ input[type='range']:hover::-moz-range-thumb {
 /*** LxFileViewer styles ***/
 
 .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
+
+}
+
+
+.lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
   max-height: var(--nav-row-size);
 }
 
@@ -3738,7 +3743,9 @@ input[type='range']:hover::-moz-range-thumb {
 
 .lx-file-viewer .lx-file-viewer-loader {
   position: absolute;
-  margin-top: 50px;
+  top: 5rem;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 .lx-file-viewer .pdf-page-input,

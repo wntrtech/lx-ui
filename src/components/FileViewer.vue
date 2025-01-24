@@ -52,20 +52,6 @@ const props = defineProps({
   preloadLibs: { type: Array, default: () => [] },
 });
 
-const pdfjsLib = shallowRef(null);
-
-async function loadPdfLib() {
-  if (!pdfjsLib.value) {
-    // @ts-ignore
-    const pdfjs = await import('pdfjs-dist');
-    // @ts-ignore
-    const workerUrl = await import('pdfjs-dist/build/pdf.worker.mjs?url');
-    pdfjs.GlobalWorkerOptions.workerSrc = workerUrl.default;
-    pdfjsLib.value = pdfjs;
-  }
-  return pdfjsLib.value;
-}
-
 const imgCanvasRef = ref(null);
 let observer = null;
 const scale = ref(1.25);
@@ -102,6 +88,7 @@ const imageWrapper = ref(null);
 const canvasWrapper = ref(null);
 const pdfWrapper = ref(null);
 const printInProgress = ref(false);
+const isLoadingPdf = ref(false);
 
 const windowSize = useWindowSize();
 
@@ -115,6 +102,23 @@ const MIN_ZOOM = {
   img: 0.1,
   font: 0.1,
 };
+
+const pdfjsLib = shallowRef(null);
+const loadingPdfjs = ref(false);
+
+async function loadPdfLib() {
+  if (!pdfjsLib.value) {
+    loadingPdfjs.value = true;
+    // @ts-ignore
+    const pdfjs = await import('pdfjs-dist');
+    // @ts-ignore
+    const workerUrl = await import('pdfjs-dist/build/pdf.worker.mjs?url');
+    pdfjs.GlobalWorkerOptions.workerSrc = workerUrl.default;
+    pdfjsLib.value = pdfjs;
+  }
+  loadingPdfjs.value = false;
+  return pdfjsLib.value;
+}
 
 const supportedFileType = computed(() => {
   if (props.modelValue) {
@@ -287,8 +291,9 @@ async function renderPage(pageNum, renderForPrint = false) {
     }
   } catch (error) {
     isPageRendering.value = false;
+  } finally {
+    isPageRendering.value = false;
   }
-  isPageRendering.value = false;
 }
 
 function delayExecution(ms) {
@@ -330,8 +335,9 @@ async function renderAllPages(
 const renderingInProgress = computed(
   () =>
     (!printInProgress.value && !props.scrollable && isPageRendering.value) ||
-    (!printInProgress.value && props.scrollable && !allPagesRendered.value) ||
-    printInProgress.value
+    (!printInProgress.value && props.scrollable && !allPagesRendered.value && showPdf.value) ||
+    printInProgress.value ||
+    loadingPdfjs.value
 );
 
 const windowWidth = computed(() => windowSize.width.value);
@@ -366,7 +372,7 @@ async function goToPage() {
   const canvasElement = canvasArray.value[currentPage.value - 1];
   const container = pdfWrapper.value;
 
-  if (canvasElement) {
+  if (canvasElement && props.scrollable) {
     await nextTick();
 
     // Dynamically calculate the combined height of lx-header, navigation, and toolbar
@@ -636,7 +642,6 @@ watch(showInput, (newValue) => {
   }
 });
 
-const isLoadingPdf = ref(false);
 const base64PdfPrefix = `data:${MIME_TYPES.PDF};base64,`;
 
 async function loadPdfFromBase64(base64) {
@@ -938,22 +943,34 @@ async function printDocument(wrapper) {
     await renderAllPages(pdf.value.numPages, pdf.value.numPages, 200, true);
   }
 
+  // Adjust for device DPI
+  const dpi = window.devicePixelRatio * 96;
+  const A4_PORTRAIT = { width: 8.27 * dpi, height: 11.69 * dpi };
+  const A4_LANDSCAPE = { width: 11.69 * dpi, height: 8.27 * dpi };
+
   const canvases = wrapper.querySelectorAll('canvas');
-  const element = wrapper.querySelector('article');
 
-  if (supportedFileType.value === 'Binary') {
-    const clonedElement = element.cloneNode(true);
-    iframeDoc.body.appendChild(clonedElement);
-  } else {
-    canvases.forEach((originalCanvas) => {
-      const clonedCanvas = originalCanvas.cloneNode(false);
+  canvases.forEach((originalCanvas) => {
+    const isLandscape = originalCanvas.width > originalCanvas.height;
+    const targetSize = isLandscape ? A4_LANDSCAPE : A4_PORTRAIT;
 
-      const context = clonedCanvas.getContext('2d');
-      context.drawImage(originalCanvas, 0, 0);
+    const clonedCanvas = originalCanvas.cloneNode(false);
+    const context = clonedCanvas.getContext('2d');
 
-      iframeDoc.body.appendChild(clonedCanvas);
-    });
-  }
+    // Retain original resolution by copying the original canvas's dimensions
+    clonedCanvas.width = originalCanvas.width;
+    clonedCanvas.height = originalCanvas.height;
+
+    // Copy the content from the original canvas
+    context.drawImage(originalCanvas, 0, 0);
+
+    // Adjust the display size (style) for A4 without affecting resolution
+    clonedCanvas.style.width = `${targetSize.width}px`;
+    clonedCanvas.style.height = `${targetSize.height}px`;
+
+    // Append the cloned canvas to the iframe's document
+    iframeDoc.body.appendChild(clonedCanvas);
+  });
 
   iframe.contentWindow.print();
   document.body.removeChild(iframe);
@@ -1201,8 +1218,8 @@ function isValidHeight(value) {
           :class="[{ 'hidden-pdf-canvas': !scrollable }]"
         />
       </div>
-
-      <LxLoader class="lx-file-viewer-loader" :loading="renderingInProgress" size="l" />
     </div>
+
+    <LxLoader class="lx-file-viewer-loader" :loading="renderingInProgress" size="l" />
   </div>
 </template>
