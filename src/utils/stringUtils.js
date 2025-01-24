@@ -3,7 +3,7 @@ import CyrillicToTranslit from 'cyrillic-to-translit-js';
 const cyrillicToTranslit = CyrillicToTranslit();
 
 export function generateUUID() {
-  let uuid = '';
+  let uuid = 'LX';
   const hexDigits = '0123456789abcdef';
   const cryptoObj = window.crypto || window.msCrypto;
 
