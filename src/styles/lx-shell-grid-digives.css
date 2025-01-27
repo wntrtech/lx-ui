@@ -334,6 +334,11 @@
   margin-top: calc(var(--row-size) + var(--gap));
 }
 
+ul.lx-digives-alert-list {
+  padding: 0;
+  margin: 0;
+}
+
 .lx-main > .lx-digives-alert-list {
   padding-top: 1rem;
   display: flex;
