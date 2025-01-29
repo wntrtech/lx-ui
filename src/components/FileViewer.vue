@@ -1056,6 +1056,16 @@ function isValidHeight(value) {
   const validHeightRegex = /^[0-9]+(\.[0-9]+)?(px|em|rem|vw|vh)$/;
   return validHeightRegex.test(value);
 }
+
+const inputRef = ref(null);
+
+function handlePlaceholderClick() {
+  showInput.value = true;
+
+  nextTick(() => {
+    inputRef.value?.focus();
+  });
+}
 </script>
 
 <template>
@@ -1102,16 +1112,17 @@ function isValidHeight(value) {
             <div
               class="placeholder"
               v-if="!showInput || renderingInProgress"
-              @click="showInput = true"
-              @keydown.enter="showInput = true"
               tabindex="0"
               :title="props.texts.inputTooltip"
+              @click="handlePlaceholderClick"
+              @keydown.enter="handlePlaceholderClick"
             >
               {{ currentPage }} / {{ totalPages }}
             </div>
 
             <LxTextInput
               v-if="showInput && !renderingInProgress"
+              ref="inputRef"
               mask="integer"
               v-model.number="inputPage"
               @keydown.enter="goToPage"
