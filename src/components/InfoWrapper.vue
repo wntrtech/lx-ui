@@ -3,8 +3,10 @@ import { computed, ref } from 'vue';
 import Popper from 'vue3-popper';
 import { useWindowSize } from '@vueuse/core';
 
+import { generateUUID } from '@/utils/stringUtils';
+
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   placement: { type: String, default: 'bottom' },
   offsetSkid: { type: String, default: null },
   offsetDistance: { type: String, default: '12' },
@@ -64,6 +66,10 @@ const handleMouseEnter = () => {
   calculateOffset();
   showPopper.value = true;
 };
+
+const closePopper = () => {
+  showPopper.value = false;
+};
 </script>
 <template>
   <div class="lx-info-wrapper" ref="container">
@@ -88,11 +94,14 @@ const handleMouseEnter = () => {
         @mouseleave="handleMouseLeave"
         @focusin="handleMouseEnter"
         @focusout="handleMouseLeave"
+        tabindex="0"
+        :aria-describedby="`${id}-description`"
+        @keydown.esc.prevent="closePopper"
       >
         <slot />
       </div>
       <template #content v-if="$slots.panel">
-        <div class="lx-info-wrapper-panel">
+        <div class="lx-info-wrapper-panel" role="tooltip" :id="`${id}-description`">
           <slot name="panel" />
         </div>
       </template>
