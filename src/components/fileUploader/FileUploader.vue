@@ -278,7 +278,7 @@ const isUploading = ref(false);
 async function processFiles(files) {
   const promises = files.map(async (file) => {
     const fileId = generateUUID();
-    const fileExtension = file.name.split('.').pop();
+    const fileExtension = file.name.split('.').pop().toLowerCase();
     if (
       formatExtensions.value.length > 0 &&
       !fileUploaderUtils.checkExtension(fileExtension, formatExtensions.value)
