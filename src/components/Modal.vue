@@ -44,16 +44,22 @@ function open() {
   }
   if (props.kind === 'default') {
     isOpen.value = true;
+    nextTick(() => {
+      activate();
+      modalRef.value.focus();
+    });
   } else {
     isOpenModal.value = true;
-    const dialogId = document.getElementById(props.id);
-    dialogId.showModal();
-    modalRef.value = dialogId;
+    nextTick(() => {
+      const dialogId = document.getElementById(props.id);
+      dialogId.showModal();
+      modalRef.value = dialogId;
+      nextTick(() => {
+        activate();
+        modalRef.value.focus();
+      });
+    });
   }
-  nextTick(() => {
-    activate();
-    modalRef.value.focus();
-  });
 }
 function close(source = null) {
   if (props.kind === 'default') {
@@ -67,7 +73,7 @@ function close(source = null) {
       emits('closed');
     }
   } else {
-    nativeModal.value.close();
+    nativeModal.value?.close();
     isOpenModal.value = false;
     emits('closed');
   }
@@ -97,7 +103,10 @@ function clickSecondary() {
 defineExpose({ open, close });
 </script>
 <template>
-  <transition name="modal">
+  <teleport
+    to="#modals"
+    v-if="(kind === 'default' && isOpen) || (kind === 'native' && isOpenModal)"
+  >
     <div>
       <div
         class="lx-curtain"
@@ -194,5 +203,5 @@ defineExpose({ open, close });
         </dialog>
       </div>
     </div>
-  </transition>
+  </teleport>
 </template>

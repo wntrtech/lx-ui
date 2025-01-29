@@ -1,6 +1,6 @@
 <script setup>
 import { computed, shallowRef, onMounted, watch, ref, nextTick } from 'vue';
-import { useColorMode, usePreferredReducedMotion } from '@vueuse/core';
+import { useColorMode, usePreferredReducedMotion, useMutationObserver } from '@vueuse/core';
 
 import useLx from '@/hooks/useLx';
 
@@ -487,14 +487,11 @@ watch(
   }
 );
 
-watch(
-  () => props.mode,
-  (newValue) => {
-    nextTick(() => {
-      if (newValue === 'cover') defineVars();
-    });
-  }
-);
+const modals = ref(null);
+const header = ref(null);
+const main = ref(null);
+const nav = ref(null);
+const footer = ref(null);
 
 onMounted(() => {
   if (!props.hasThemePicker) {
@@ -523,6 +520,21 @@ onMounted(() => {
   applyDeviceFonts(deviceFontsModel.value);
 
   defineVars();
+
+  useMutationObserver(
+    modals,
+    () => {
+      if (modals.value) {
+        const hasModalChildren = modals.value.hasChildNodes();
+        [header.value, main.value, nav.value, footer.value].forEach((element) => {
+          if (element) {
+            element.setAttribute('aria-hidden', hasModalChildren ? 'true' : 'false');
+          }
+        });
+      }
+    },
+    { childList: true }
+  );
 });
 
 function navClick(id = null) {
@@ -583,7 +595,7 @@ function lvAlertItemClicked(event, alert) {
 <template>
   <transition name="shell-switch">
     <div ref="shell" v-if="mode === 'cover'" class="lx-layout lx-layout-cover">
-      <header>
+      <header ref="header">
         <LxMainHeader
           :mode="mode"
           :alternative-profiles-info="alternativeProfilesInfo"
@@ -630,7 +642,7 @@ function lvAlertItemClicked(event, alert) {
           />
         </LxMainHeader>
       </header>
-      <main class="lx-main">
+      <main ref="main" class="lx-main">
         <div class="lx-cover">
           <slot name="backdrop" />
           <div class="lx-content">
@@ -674,13 +686,14 @@ function lvAlertItemClicked(event, alert) {
           </div>
         </div>
       </main>
-      <footer>
+      <footer ref="footer">
         <div></div>
         <div>
           <slot name="footer" />
         </div>
         <div></div>
       </footer>
+      <div ref="modals" id="modals"></div>
     </div>
     <div
       v-if="mode === 'public'"
@@ -691,7 +704,7 @@ function lvAlertItemClicked(event, alert) {
         { 'no-nav-items': !navItems || navItems?.length === 0 },
       ]"
     >
-      <header>
+      <header ref="header">
         <LxMainHeader
           :mode="mode"
           :userInfo="userInfo"
@@ -754,7 +767,7 @@ function lvAlertItemClicked(event, alert) {
           <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
         </LxMainHeader>
       </header>
-      <nav aria-label="navigation panel" v-if="!hideNavBar">
+      <nav ref="nav" aria-label="navigation panel" v-if="!hideNavBar">
         <LxNavBar
           layoutMode="public"
           :nav-items="navItems"
@@ -771,7 +784,7 @@ function lvAlertItemClicked(event, alert) {
           :selectedNavItems="navItemsSelected"
         />
       </nav>
-      <main class="lx-main">
+      <main ref="main" class="lx-main">
         <LxPageHeader
           v-if="pageHeaderVisible"
           :label="pageTitle"
@@ -792,13 +805,14 @@ function lvAlertItemClicked(event, alert) {
           </div>
         </div>
       </main>
-      <footer>
+      <footer ref="footer">
         <div></div>
         <div>
           <slot name="footer" />
         </div>
         <div></div>
       </footer>
+      <div ref="modals" id="modals"></div>
     </div>
     <div
       v-if="mode === 'latvijalv'"
@@ -809,7 +823,7 @@ function lvAlertItemClicked(event, alert) {
         { 'no-nav-items': !navItems || navItems?.length === 0 },
       ]"
     >
-      <header>
+      <header ref="header">
         <LxMainHeader
           :mode="mode"
           :userInfo="userInfo"
@@ -872,7 +886,7 @@ function lvAlertItemClicked(event, alert) {
           <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
         </LxMainHeader>
       </header>
-      <nav aria-label="navigation panel" v-if="!hideNavBar">
+      <nav ref="nav" aria-label="navigation panel" v-if="!hideNavBar">
         <LxNavBar
           layoutMode="latvijalv"
           :nav-items="navItems"
@@ -933,7 +947,7 @@ function lvAlertItemClicked(event, alert) {
           </div>
         </li>
       </ul>
-      <main class="lx-main">
+      <main ref="main" class="lx-main">
         <LxPageHeader
           v-if="pageHeaderVisible"
           :label="pageTitle"
@@ -954,13 +968,14 @@ function lvAlertItemClicked(event, alert) {
           </div>
         </div>
       </main>
-      <footer>
+      <footer ref="footer">
         <div></div>
         <div>
           <slot name="footer" />
         </div>
         <div></div>
       </footer>
+      <div ref="modals" id="modals"></div>
     </div>
     <div
       v-else-if="mode === 'digives'"
@@ -971,7 +986,7 @@ function lvAlertItemClicked(event, alert) {
         { 'lx-collapsed-null': navBarSwitchModel === null },
       ]"
     >
-      <header>
+      <header ref="header">
         <LxMainHeaderDigives
           :userInfo="userInfo"
           :alternative-profiles-info="alternativeProfilesInfo"
@@ -1026,7 +1041,7 @@ function lvAlertItemClicked(event, alert) {
           @click="navToggleButton()"
         />
       </div>
-      <nav aria-label="navigation panel">
+      <nav ref="nav" aria-label="navigation panel">
         <LxNavBarDigives
           :nav-items="navItems"
           v-model:nav-bar-switch="navBarSwitchModel"
@@ -1047,7 +1062,7 @@ function lvAlertItemClicked(event, alert) {
         />
       </nav>
 
-      <main class="lx-main">
+      <main ref="main" class="lx-main">
         <ul class="lx-digives-alert-list" v-if="alerts?.length > 0">
           <li
             v-for="alert in alerts"
@@ -1098,18 +1113,19 @@ function lvAlertItemClicked(event, alert) {
           </div>
         </div>
       </main>
-      <footer>
+      <footer ref="footer">
         <div>
           <slot name="footer" />
         </div>
       </footer>
+      <div ref="modals" id="modals"></div>
     </div>
     <div
       v-else
       class="lx-layout lx-layout-default"
       :class="[{ 'lx-collapsed': navBarSwitchBasic }]"
     >
-      <header>
+      <header ref="header">
         <LxMainHeader
           :mode="mode"
           :alternative-profiles-info="alternativeProfilesInfo"
@@ -1170,7 +1186,7 @@ function lvAlertItemClicked(event, alert) {
           <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
         </LxMainHeader>
       </header>
-      <nav aria-label="navigation panel" v-if="!hideNavBar">
+      <nav ref="nav" aria-label="navigation panel" v-if="!hideNavBar">
         <LxNavBar
           :nav-items="navItems"
           :has-theme-picker="hasThemePicker"
@@ -1187,7 +1203,7 @@ function lvAlertItemClicked(event, alert) {
         />
       </nav>
 
-      <main class="lx-main">
+      <main ref="main" class="lx-main">
         <LxPageHeader
           v-if="pageHeaderVisible"
           :label="pageTitle"
@@ -1208,13 +1224,14 @@ function lvAlertItemClicked(event, alert) {
           </div>
         </div>
       </main>
-      <footer>
+      <footer ref="footer">
         <div></div>
         <div>
           <slot name="footer" />
         </div>
         <div></div>
       </footer>
+      <div ref="modals" id="modals"></div>
     </div>
   </transition>
   <LxModal

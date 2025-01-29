@@ -93,11 +93,10 @@
     height: 1.1rem;
 }
 
-.tree-list .tree-item .tree-item-body > .lx-button{
+.tree-list .tree-item .tree-item-body > .lx-button {
     grid-area: expander;
     height: var(--list-treelist-expander-height);
     width: var(--list-treelist-expander-width);
-    height: var(--list-treelist-expander-height);
 }
 
 .lx-theme-contrast .tree-list .tree-item-small-parent .lx-checkbox-wrapper .lx-checkbox:not(:disabled):not(:checked):not(:hover)+.lx-checkbox-label-wrapper .lx-checkbox-appearance {
