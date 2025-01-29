@@ -520,6 +520,24 @@ function zoom(action) {
 const debouncedPrevPage = debounce(prevPage, 50);
 const debouncedNextPage = debounce(nextPage, 50);
 
+function calculateThreshold(heightValue) {
+  const numericValue = parseFloat(heightValue);
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+  if (heightValue.endsWith('px')) {
+    const heightInRem = numericValue / rootFontSize;
+    return heightInRem >= 100 ? 1.0 : heightInRem / 100;
+  }
+
+  if (heightValue.endsWith('rem')) {
+    return numericValue >= 100 ? 1.0 : numericValue / 100;
+  }
+
+  return 0.5;
+}
+
+const threshold = computed(() => calculateThreshold(props.height));
+
 function setupIntersectionObserver() {
   if (!props.scrollable) return;
 
@@ -537,7 +555,8 @@ function setupIntersectionObserver() {
     const isScrollable = rootElement.scrollHeight > rootElement.clientHeight;
 
     const options = {
-      threshold: 0, // Trigger when any part of the canvas is visible
+      root: isScrollable ? rootElement : null, // Use the container if scrollable, otherwise viewport
+      threshold: threshold.value,
     };
 
     // If the container is scrollable, observe the container
@@ -547,12 +566,11 @@ function setupIntersectionObserver() {
           if (entry.isIntersecting) {
             const pageNumber = canvasArray.value.indexOf(entry.target) + 1;
             currentPage.value = pageNumber;
-            inputPage.value = currentPage.value;
+            inputPage.value = pageNumber;
           }
         });
       },
       {
-        root: isScrollable ? rootElement : null, // Use the container if scrollable, otherwise viewport
         ...options,
       }
     );
