@@ -359,26 +359,33 @@
     display: grid;
   }
 
-  .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-success .lx-latvijalv-alert-icon > svg {
-    fill: var(--color-green);
-  }
-  
-  .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-warning .lx-latvijalv-alert-icon > svg {
-    fill: var(--color-orange);
-  }
-  
-  .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-error .lx-latvijalv-alert-icon > svg {
-    fill: var(--color-red);
-  }
-  
-  .lx:not(.lx-theme-contrast) .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-success .lx-latvijalv-alert-icon > svg,
-  .lx:not(.lx-theme-contrast) .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-warning .lx-latvijalv-alert-icon > svg,
-  .lx:not(.lx-theme-contrast) .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-error .lx-latvijalv-alert-icon > svg {
-    background-color: var(--color-background);
+  .lx .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-success .lx-latvijalv-alert-icon > svg,
+  .lx .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-warning .lx-latvijalv-alert-icon > svg,
+  .lx .lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-error .lx-latvijalv-alert-icon > svg {
+    padding: 0.25rem;
     border-radius: 50%;
   }
 
-    .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert-list .lx-latvijalv-alert-icon,
+  .lx .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-success .lx-latvijalv-alert-icon > svg {
+    padding: 0.1rem;
+  }
+
+  .lx:not(.lx-theme-contrast) .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-success .lx-latvijalv-alert-icon > svg {
+    background-color: var(--color-green);
+    fill: var(--color-background);
+  }
+  
+  .lx:not(.lx-theme-contrast) .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-warning .lx-latvijalv-alert-icon > svg {
+    background-color: var(--color-red);
+    fill: var(--color-background);
+  }
+  
+  .lx:not(.lx-theme-contrast) .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert.lx-alert-error .lx-latvijalv-alert-icon > svg {
+    background-color: var(--color-red);
+    fill: var(--color-background);
+  }
+
+  .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert-list .lx-latvijalv-alert-icon,
   .lx-layout.lx-layout-latvijalv .lx-latvijalv-alert-list .lx-button {
     align-self: center;
   }

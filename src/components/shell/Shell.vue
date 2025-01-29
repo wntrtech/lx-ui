@@ -551,15 +551,25 @@ const selectedMegaMenuItemModel = computed({
   },
 });
 
-const iconMap = {
+const iconMapLatvijalv = {
+  success: 'check',
+  warning: 'notification-warning',
+  error: 'notification-warning',
+  info: 'notification-info',
+};
+
+const iconMapDigives = {
   success: 'notification-success',
   warning: 'notification-warning',
   error: 'notification-error',
   info: 'notification-info',
 };
 
-function pickIcon(level) {
-  return iconMap[level] || iconMap.info;
+function pickIcon(level, layoutMode) {
+  if (layoutMode === 'latvijalv') {
+    return iconMapLatvijalv[level] || iconMapLatvijalv.info;
+  }
+  return iconMapDigives[level] || iconMapDigives.info;
 }
 
 function pickSvgTitle(level) {
@@ -929,9 +939,10 @@ function lvAlertItemClicked(event, alert) {
           <div class="lx-latvijalv-alert-content-wrapper">
             <div class="lx-latvijalv-alert-icon">
               <LxIcon
-                :value="pickIcon(alert.level)"
+                :value="pickIcon(alert.level, 'latvijalv')"
                 :meaningful="true"
                 :title="pickSvgTitle(alert.level)"
+                :icon-set="alert.iconSet || 'cds'"
               />
             </div>
             <div class="lx-latvijalv-alert-text">
@@ -1086,9 +1097,10 @@ function lvAlertItemClicked(event, alert) {
             :tabindex="alert?.clickable ? 0 : null"
           >
             <LxIcon
-              :value="pickIcon(alert.level)"
+              :value="pickIcon(alert.level, 'digives')"
               :meaningful="true"
               :title="pickSvgTitle(alert.level)"
+              :icon-set="alert.iconSet || 'cds'"
             />
             <p class="lx-primary">{{ alert?.name }}</p>
             <p class="lx-secondary" v-if="alert?.description">{{ alert?.description }}</p>
