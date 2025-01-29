@@ -20,6 +20,7 @@ function generateInput() {
     'lx-bt-visvaris-personnel.css',
     'lx-bt-visvaris-property.css',
     'lx-bt-lvas.css',
+    'lx-bt-digimaks.css',
     // add new bundle names here to exclude them from styles folder
   ];
 
@@ -47,6 +48,7 @@ function generateRollupInput(baseDir, extension = '.css') {
     'lx-bt-visvaris-property',
     'lx-bt-lvas',
     'lx-bt-oots',
+    'lx-bt-digimaks',
     // add new bundle names here
   ];
 

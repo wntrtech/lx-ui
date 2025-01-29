@@ -19,6 +19,7 @@ import LxLoader from '@/components/Loader.vue';
 import LxModal from '@/components/Modal.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import LxAlertWidget from '@/components/AlertWidget.vue';
+import LxMainHeaderDigimaks from '@/components/shell/HeaderDigimaks.vue';
 
 const themeMode = useColorMode({
   selector: '.lx',
@@ -411,7 +412,7 @@ const navBarSwitchModel = computed({
 const navBarSwitchBasic = shallowRef(true);
 
 function navToggle(value) {
-  if (props.mode === 'digives') navBarSwitchModel.value = value;
+  if (props.mode === 'digives' || props.mode === 'digimaks') navBarSwitchModel.value = value;
   else navBarSwitchBasic.value = value;
 }
 function navToggleButton() {
@@ -676,7 +677,7 @@ function lvAlertItemClicked(event, alert) {
                 :alerts="alerts"
                 :nextAlertTitle="texts.nextAlertTitle"
                 :previousAlertTitle="texts.previousAlertTitle"
-              ></LxAlertWidget>
+              />
             </div>
           </div>
         </div>
@@ -1120,6 +1121,93 @@ function lvAlertItemClicked(event, alert) {
       </footer>
       <div ref="modals" id="modals"></div>
     </div>
+    <div v-else-if="mode === 'digimaks'" class="lx-layout lx-layout-digimaks">
+      <main class="lx-main">
+        <LxPageHeader
+          v-if="pageHeaderVisible"
+          :label="pageTitle"
+          :description="pageDescription"
+          :backLabel="pageBackLabel"
+          :backPath="pageBackPath"
+          :show-back-button="pageBackButtonVisible"
+          :breadcrumbs="pageBreadcrumbs"
+          :hide-header-text="hideHeaderText"
+          @go-back="goBack"
+        />
+        <transition name="nav">
+          <slot />
+        </transition>
+        <div class="lx-loader-screen" v-if="navigating">
+          <div class="spinner">
+            <LxLoader :loading="true" />
+          </div>
+        </div>
+      </main>
+      <footer>
+        <div>
+          <slot name="footer" />
+        </div>
+      </footer>
+      <header>
+        <LxMainHeaderDigimaks
+          :userInfo="userInfo"
+          :alternative-profiles-info="alternativeProfilesInfo"
+          :context-persons-info="contextPersonsInfo"
+          :nav-items="navItems"
+          v-model:nav-bar-switch="navBarSwitchModel"
+          :hide-nav-bar="hideNavBar"
+          :systemNameShort="systemNameShort"
+          :systemSubheader="systemSubheader"
+          :system-name-formatted="systemNameFormatted"
+          :page-label="pageTitle"
+          :home-path="pageIndexPath"
+          :backLabel="pageBackLabel"
+          :backPath="pageBackPath"
+          :show-back-button="pageBackButtonVisible"
+          :breadcrumbs="pageBreadcrumbs"
+          :has-language-picker="hasLanguagePicker"
+          :languages="languages"
+          :has-theme-picker="hasThemePicker"
+          :available-themes="availableThemes"
+          :system-icon="systemIcon"
+          :has-alerts="hasAlerts"
+          :alerts-kind="alertsKind"
+          :alerts="alerts"
+          :alert-count="alertCount"
+          :alert-level="alertLevel"
+          :has-help="hasHelp"
+          :environment="environment"
+          kind="public"
+          :headerNavDisable="headerNavDisable"
+          :headerNavReadOnly="headerNavReadOnly"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:selectedContextPerson="selectedContextPersonModel"
+          v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          :selectedNavItems="navItemsSelected"
+          v-model:theme="themeModel"
+          v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          @language-changed="languageChanged"
+          @alert-item-click="alertItemClicked"
+          @alerts-click="alertsClicked"
+          @help-click="helpClicked"
+          @go-home="goHome"
+          @go-back="goBack"
+          @log-out="logOut"
+          @nav-toggle="navToggle"
+          @context-person-changed="contextPersonChanged"
+          @alternative-profile-changed="alternativeProfileChanged"
+          @navClick="navClick"
+          :texts="texts"
+        />
+      </header>
+    </div>
     <div
       v-else
       class="lx-layout lx-layout-default"
@@ -1293,5 +1381,5 @@ function lvAlertItemClicked(event, alert) {
   >
     <p>{{ confirmDialogData?.$state.confirmDialogState.message }}</p>
   </LxModal>
-  <Notification v-model="notificationModel" />
+  <Notification v-model="notificationModel" v-if="mode !== 'digimaks'" />
 </template>

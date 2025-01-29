@@ -292,6 +292,7 @@ const deviceFontsModel = computed({
 function triggerThemeMenu(e) {
   themeMenu.value.preventClose(e);
 }
+
 function triggerShowAllClick() {
   emits('megaMenuShowAllClick');
 }
@@ -565,7 +566,7 @@ function triggerUserMenu() {
             :label="texts.alternativeProfilesButtonLabel"
             icon="switch"
             @click="openAlternativeProfilesModal"
-          ></LxButton>
+          />
 
           <LxButton
             v-if="contextPersonsInfo"
@@ -573,7 +574,7 @@ function triggerUserMenu() {
             :label="texts.contextPersonsButtonLabel"
             icon="context-person"
             @click="openContextPersonModal"
-          ></LxButton>
+          />
 
           <ul class="lx-group" role="group">
             <li v-for="item in navItemsUserMenu" :key="item.label">

@@ -1,0 +1,32 @@
+.lx {
+  --color-brand: #0042BA;
+  --color-background: #EEEAE3;
+  --color-data: #3C402B;
+  --color-chrome: #DADADA;
+  --color-interactive-background: #0042BA;
+  --color-interactive-secondary-background: #3C402B;
+  --color-region: #FFF;
+  --color-label: #3C402B;
+  --color-placeholder: #6C6C6C;
+
+  --font-size: 16px;
+
+  --label-font-size: 0.875rem;
+
+  --h1-font-size: 2rem;
+  --h1-font-weight: 700;
+
+  --h2-font-size: 1.5rem;
+  --h2-font-weight: 400;
+
+  --h3-font-size: 0.875rem;
+  --h3-font-weight: 600;
+
+  --list-item-border-radius: 12px;
+  --list-header-min-height: 3.5rem;
+
+  --input-border: 1px solid var(--color-input);
+  --input-border-bottom: 1px solid var(--color-input);
+  --input-border-radius: 12px;
+  --input-height: 3.5rem;
+}
