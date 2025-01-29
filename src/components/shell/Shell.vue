@@ -1134,7 +1134,7 @@ function lvAlertItemClicked(event, alert) {
       <div ref="modals" id="modals"></div>
     </div>
     <div v-else-if="mode === 'digimaks'" class="lx-layout lx-layout-digimaks">
-      <main class="lx-main">
+      <main class="lx-main" ref="main">
         <LxPageHeader
           v-if="pageHeaderVisible"
           :label="pageTitle"
@@ -1155,12 +1155,12 @@ function lvAlertItemClicked(event, alert) {
           </div>
         </div>
       </main>
-      <footer>
+      <footer ref="footer">
         <div>
           <slot name="footer" />
         </div>
       </footer>
-      <header>
+      <header ref="header">
         <LxMainHeaderDigimaks
           :userInfo="userInfo"
           :alternative-profiles-info="alternativeProfilesInfo"
@@ -1219,6 +1219,7 @@ function lvAlertItemClicked(event, alert) {
           :texts="texts"
         />
       </header>
+      <div ref="modals" id="modals" />
     </div>
     <div
       v-else
