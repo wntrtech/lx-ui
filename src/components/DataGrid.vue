@@ -870,13 +870,19 @@ const header = ref(null);
 const container = ref(null);
 const { width, height } = useWindowSize();
 
+const autoScrollable = ref(false);
+
 function syncHeaderScroll() {
   if (header.value && container.value) {
     header.value.scrollLeft = container.value.scrollLeft;
   }
 }
 
-const autoScrollable = ref(false);
+function restrictScroll(e) {
+  // TEMPORARY FIX: Prevent horizontal scrolling on the header (still scrolls but snaps back)
+  e.preventDefault();
+  syncHeaderScroll();
+}
 
 function syncColumnWidths() {
   if (!header.value || !container.value) return;
@@ -1026,6 +1032,7 @@ watch(
         class="lx-grid-row"
         role="row"
         :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
+        @scroll="restrictScroll"
       >
         <div v-if="hasSelecting" class="lx-cell-header lx-cell-selector" role="columnheader"></div>
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
