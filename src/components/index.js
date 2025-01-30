@@ -36,6 +36,7 @@ export { default as LxLink } from '@/components/Link.vue';
 export { default as LxList } from '@/components/list/List.vue';
 export { default as LxListItem } from '@/components/list/ListItem.vue';
 export { default as LxLoader } from '@/components/Loader.vue';
+export { default as LxLoaderView } from '@/components/LoaderView.vue';
 export { default as LxMap } from '@/components/Map.vue';
 export { default as LxMarkdownTextArea } from '@/components/MarkdownTextArea.vue';
 export { default as LxMasterDetail } from '@/components/MasterDetail.vue';

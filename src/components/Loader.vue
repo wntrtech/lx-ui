@@ -15,6 +15,7 @@ const props = defineProps({
   fakedDuration: { type: Number, default: 2000 },
   faked: { type: Boolean, default: false },
   state: { type: String, default: 'default' },
+  ariaHidden: { type: Boolean, default: false },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -47,10 +48,17 @@ const defaultLoaderValue = computed(
 );
 
 const strokeWidth = computed(() => (props.size === 's' ? 15 : 10));
+
+const loaderAriaHidden = computed(() => {
+  if (props.ariaHidden) {
+    return true;
+  }
+  return !props.label;
+});
 </script>
 
 <template>
-  <div class="lx-loader-wrapper" :id="id">
+  <div class="lx-loader-wrapper" :id="id" :aria-hidden="loaderAriaHidden" :aria-label="props.label">
     <div
       class="lx-loader-indeterminate"
       :class="[{ 'lx-small': size === 's' }, { bar: variant === 'bar' }]"
@@ -112,6 +120,10 @@ const strokeWidth = computed(() => (props.size === 's' ? 15 : 10));
     <div
       v-if="kind === 'progress'"
       class="lx-loader-progress"
+      role="progressbar"
+      :aria-valuenow="model"
+      :aria-valuemin="0"
+      :aria-valuemax="1"
       :class="[{ 'state-error': state === 'error' }, { 'state-success': state === 'success' }]"
     >
       <div class="lx-loader-bar-header" v-if="variant === 'bar'">

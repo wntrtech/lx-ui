@@ -34,8 +34,8 @@
 }
 
 .lx-loader.lx-small {
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .lx-loader.lx-small svg {
@@ -128,8 +128,8 @@
 }
 
 .lx-loader-default-progress.lx-small>svg {
-  width: 1rem;
-  height: 1rem;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .lx-loader-default-progress-default-fill {
