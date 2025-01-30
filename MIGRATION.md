@@ -1,5 +1,22 @@
 # LX/UI Migration Guide
 
+## 1.7 → 1.8
+
+### Layout changes
+
+In the effort of making styles and theming more customizable and accessible, some components have their layouts and styles changed. Normally, you wouldn't notice a difference, but if you're using locally copied components, you might get surprised.
+
+Affected components:
+- LxButton;
+- LxShell;
+
+### Breaking changes
+
+#### LxFileViewer
+
+- `resolution` prop no longer supported.
+
+
 ## 1.6 → 1.7
 
 
@@ -24,12 +41,7 @@ Affected components:
   - LxMarkdownTextArea;
   - LxDrawPad;
 
-
 ### Breaking changes
-
-#### LxFileViewer
-
-- `resolution` prop no longer supported.
 
 #### LxDateTimePicker
 
