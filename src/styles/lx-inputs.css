@@ -3666,11 +3666,6 @@ input[type='range']:hover::-moz-range-thumb {
 /*** LxFileViewer styles ***/
 
 .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
-
-}
-
-
-.lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
   max-height: var(--nav-row-size);
 }
 

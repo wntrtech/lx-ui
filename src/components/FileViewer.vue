@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, shallowRef, watch, nextTick, onMounted } from 'vue';
-import { useWindowSize } from '@vueuse/core';
+import { ref, computed, shallowRef, watch, nextTick, onMounted, onUnmounted } from 'vue';
+import { useWindowSize, useMutationObserver } from '@vueuse/core';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
@@ -16,7 +16,6 @@ import { MIME_TYPES } from '@/constants';
 
 const props = defineProps({
   modelValue: { type: String, default: null },
-  resolution: { type: Number, default: 3 },
   scrollable: { type: Boolean, default: false },
   width: { type: String, default: 'auto' }, // e.g. 'auto', '100%', '100px', 30rem', '50vw'... (any css value, recommended for images and .MD)
   height: { type: String, default: 'auto' }, // e.g. 'auto', '100%', '100px', '30rem', '50vw'... (any css value, recommended for images and .MD)
@@ -25,6 +24,7 @@ const props = defineProps({
   showFullScreenButton: { type: Boolean, default: true },
   primaryDownloadButton: { type: Boolean, default: false },
   stickyHeader: { type: Boolean, default: true },
+  zoomLevel: { type: Number, default: null }, //  50, 75, 100, 125, 150, 175, 200, 250, 300
   texts: {
     type: Object,
     default: () => ({
@@ -44,8 +44,8 @@ const props = defineProps({
       inputTooltip: 'Ievadīt lapaspusi',
       invalidFileUploadedLabel: 'Nav augšupielādēta datne apskatei',
       invalidFileUploadedDescription: 'Augšupielādējiet datni',
-      grabToSrollFalse: 'Iespējot ritināšanu',
-      grabToSrollTrue: 'Atspējot ritināšanu',
+      grabToScrollFalse: 'Iespējot ritināšanu',
+      grabToScrollTrue: 'Atspējot ritināšanu',
     }),
   },
   /** @description list of mime types that should load they library on component initialization, useful when you already know that you will use pdf viewer and want to load it as soon as possible */
@@ -54,6 +54,7 @@ const props = defineProps({
 
 const imgCanvasRef = ref(null);
 let observer = null;
+let resizeObserver = null;
 const scale = ref(1.25);
 const imgScale = ref(1.0);
 const fontSizeScale = ref(1.0);
@@ -89,11 +90,14 @@ const canvasWrapper = ref(null);
 const pdfWrapper = ref(null);
 const printInProgress = ref(false);
 const isLoadingPdf = ref(false);
+const resizeActive = ref(false);
+
+const inputRef = ref(null);
 
 const windowSize = useWindowSize();
 
 const MAX_ZOOM = {
-  pdf: 2.0,
+  pdf: 3.0,
   img: 5.0,
   font: 3.0,
 };
@@ -102,6 +106,8 @@ const MIN_ZOOM = {
   img: 0.1,
   font: 0.1,
 };
+
+const ZOOM_LEVELS = [50, 75, 100, 125, 150, 175, 200, 250, 300];
 
 const pdfjsLib = shallowRef(null);
 const loadingPdfjs = ref(false);
@@ -242,20 +248,37 @@ function stopDragging() {
   isDragging.value = false;
 }
 
-async function renderPage(pageNum, renderForPrint = false) {
+const initializeFitScale = ref(false); // Track if initial scale calculation has been done
+
+async function renderPage(pageNum) {
   isPageRendering.value = true;
 
-  try {
-    // resolution is in the range [1;5], to avoid rendering issues
-    let resolution = props.resolution >= 1 ? props.resolution : 1;
-    resolution = Math.min(resolution, 5);
+  totalPages.value = 0;
+  canvasArray.value = [];
 
+  try {
     const page = await pdf.value.getPage(pageNum);
     totalPages.value = pdf.value.numPages;
-    const viewport = page.getViewport({ scale: scale.value });
+
+    // Calculate and set scale only for the first render
+    if (initializeFitScale.value) {
+      const container = document.querySelector('.lx-pdf-wrapper');
+      const viewport = page.getViewport({ scale: 1 }); // Base viewport to get page width
+
+      if (container) {
+        const containerWidth = container.clientWidth;
+        const pageWidth = viewport.width;
+
+        // Calculate initial scale to fit the container width
+        scale.value = containerWidth / pageWidth;
+      }
+    }
+
+    const adjustedViewport = page.getViewport({ scale: scale.value });
+
     let canvasElement = null;
 
-    if (renderForPrint || props.scrollable) {
+    if (props.scrollable) {
       await new Promise((resolve) => {
         nextTick(() => {
           canvasElement = canvasArray.value[pageNum - 1];
@@ -268,29 +291,25 @@ async function renderPage(pageNum, renderForPrint = false) {
 
     const context = canvasElement.getContext('2d');
 
-    canvasElement.width = viewport.width * resolution;
-    canvasElement.height = viewport.height * resolution;
-    canvasElement.style.width = `${viewport.width * 1.5}px`;
-    canvasElement.style.height = `${viewport.height * 1.5}px`;
+    const scaledWidth = adjustedViewport.width;
+    const scaledHeight = adjustedViewport.height;
+
+    canvasElement.width = scaledWidth;
+    canvasElement.height = scaledHeight;
 
     const renderContext = {
       canvasContext: context,
-      viewport,
-      transform: [resolution, 0, 0, resolution, 0, 0],
+      viewport: adjustedViewport,
     };
 
     await page.render(renderContext).promise;
 
     if (pageNum === pdf.value.numPages) {
       allPagesRendered.value = true;
-      isPageRendering.value = false;
-    }
-
-    if (!props.scrollable) {
-      isPageRendering.value = false;
     }
   } catch (error) {
     isPageRendering.value = false;
+    lxDevUtils.logError(`Page render failed, ${error}`, useLx().getGlobals()?.environment);
   } finally {
     isPageRendering.value = false;
   }
@@ -302,16 +321,11 @@ function delayExecution(ms) {
   });
 }
 
-async function renderAllPages(
-  pages,
-  batchSize = 3,
-  delayBetweenBatches = 200,
-  renderForPrint = false
-) {
+async function renderAllPages(pages, batchSize = 5, delayBetweenBatches = 200) {
   if (!pdf.value) return;
 
   const renderPageWithDelay = async (pageNum) => {
-    await renderPage(pageNum, renderForPrint);
+    await renderPage(pageNum);
     await delayExecution(50);
   };
 
@@ -349,11 +363,13 @@ function resetPdfViewer() {
   scale.value = 1;
   imgScale.value = 1;
   currentPage.value = 1;
+  inputPage.value = 1;
   totalPages.value = 0;
   showPdf.value = false;
   showInput.value = false;
   fitType.value = null;
   dragToScrollMode.value = true;
+  resizeActive.value = false;
 }
 
 async function goToPage() {
@@ -462,78 +478,20 @@ function toggleExpand() {
   if (renderingInProgress.value) return;
   isExpanded.value = !isExpanded.value;
 }
-
-async function zoomIn() {
-  if (isNavigating.value || renderingInProgress.value) return;
-  isZooming.value = true;
-  isPageRendering.value = true;
-
-  scale.value = Math.min(scale.value * 1.1, MAX_ZOOM.pdf);
-
-  if (props.scrollable) {
-    await renderAllPages(pdf.value.numPages);
-  } else {
-    await renderPage(currentPage.value);
-  }
-  isZooming.value = false;
-  isPageRendering.value = false;
-}
-
-async function zoomOut() {
-  if (isNavigating.value || renderingInProgress.value) return;
-  isZooming.value = true;
-  isPageRendering.value = true;
-
-  scale.value = Math.max(scale.value * 0.9, MIN_ZOOM.pdf);
-
-  if (props.scrollable) {
-    await renderAllPages(pdf.value.numPages);
-  } else {
-    await renderPage(currentPage.value);
-  }
-  isZooming.value = false;
-  isPageRendering.value = false;
-}
-
-function debounce(func, delay) {
-  let timer;
-  return function debounced(...args) {
-    const context = this;
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(context, args);
-    }, delay);
-  };
-}
-
-const debouncedZoomIn = debounce(zoomIn, 50);
-const debouncedZoomOut = debounce(zoomOut, 50);
-
-function zoom(action) {
-  if (action === 'zoomIn') {
-    debouncedZoomIn();
-  } else if (action === 'zoomOut') {
-    debouncedZoomOut();
-  }
-}
-
-const debouncedPrevPage = debounce(prevPage, 50);
-const debouncedNextPage = debounce(nextPage, 50);
-
 function calculateThreshold(heightValue) {
   const numericValue = parseFloat(heightValue);
   const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
   if (heightValue.endsWith('px')) {
     const heightInRem = numericValue / rootFontSize;
-    return heightInRem >= 100 ? 1.0 : heightInRem / 100;
+    return heightInRem >= 100 ? 0.8 : heightInRem / 100 - 0.25;
   }
 
   if (heightValue.endsWith('rem')) {
-    return numericValue >= 100 ? 1.0 : numericValue / 100;
+    return numericValue >= 100 ? 0.8 : numericValue / 100 - 0.25;
   }
 
-  return 0.5;
+  return 0.4;
 }
 
 const threshold = computed(() => calculateThreshold(props.height));
@@ -581,9 +539,179 @@ function setupIntersectionObserver() {
   }, 500);
 }
 
+async function setZoomLevel(zoomLevel) {
+  // Ensure the zoomLevel exists in ZOOM_LEVELS
+  if (!ZOOM_LEVELS.includes(zoomLevel)) {
+    lxDevUtils.logError(
+      `Invalid zoom level: ${zoomLevel}. Allowed levels: ${ZOOM_LEVELS.join(', ')}`,
+      useLx().getGlobals()?.environment
+    );
+    return;
+  }
+
+  isZooming.value = true;
+  isPageRendering.value = true;
+
+  // Convert zoom level to scale
+  scale.value = zoomLevel / 100;
+
+  // Re-render based on the updated scale
+  if (props.scrollable) {
+    await renderAllPages(pdf.value.numPages);
+  } else {
+    await renderPage(currentPage.value);
+  }
+
+  isZooming.value = false;
+  isPageRendering.value = false;
+}
+
+// Helper function to find the closest index in ZOOM_LEVELS
+function findClosestZoomIndex(percentage) {
+  let closestIndex = 0;
+  let closestDifference = Infinity;
+
+  ZOOM_LEVELS.forEach((level, index) => {
+    const difference = Math.abs(level - percentage);
+    if (difference < closestDifference) {
+      closestDifference = difference;
+      closestIndex = index;
+    }
+  });
+
+  return closestIndex;
+}
+
+async function zoomIn() {
+  if (isNavigating.value || renderingInProgress.value) return;
+
+  isZooming.value = true;
+  isPageRendering.value = true;
+
+  // Find the current zoom index based on scale.value
+  let currentIndex = ZOOM_LEVELS.indexOf(Math.round(scale.value * 100));
+
+  if (currentIndex === -1) {
+    currentIndex = findClosestZoomIndex(Math.round(scale.value * 100));
+  }
+
+  if (currentIndex < ZOOM_LEVELS.length - 1) {
+    scale.value = ZOOM_LEVELS[currentIndex + 1] / 100; // Convert percentage to scale
+  }
+
+  if (props.scrollable) {
+    await renderAllPages(pdf.value.numPages, pdf.value.numPages);
+    setupIntersectionObserver();
+  } else {
+    await renderPage(currentPage.value);
+  }
+
+  isZooming.value = false;
+  isPageRendering.value = false;
+}
+
+async function zoomOut() {
+  if (isNavigating.value || renderingInProgress.value) return;
+
+  isZooming.value = true;
+  isPageRendering.value = true;
+
+  // Find the current zoom index based on scale.value
+  let currentIndex = ZOOM_LEVELS.indexOf(Math.round(scale.value * 100));
+
+  if (currentIndex === -1) {
+    currentIndex = findClosestZoomIndex(Math.round(scale.value * 100));
+  }
+
+  if (currentIndex > 0) {
+    scale.value = ZOOM_LEVELS[currentIndex - 1] / 100; // Convert percentage to scale
+  }
+
+  if (props.scrollable) {
+    await renderAllPages(pdf.value.numPages, pdf.value.numPages);
+    setupIntersectionObserver();
+  } else {
+    await renderPage(currentPage.value);
+  }
+
+  isZooming.value = false;
+  isPageRendering.value = false;
+}
+
+function debounce(func, delay) {
+  let timer;
+  return function debounced(...args) {
+    const context = this;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
+const debouncedZoomIn = debounce(zoomIn, 200);
+const debouncedZoomOut = debounce(zoomOut, 200);
+
+function zoom(action) {
+  initializeFitScale.value = false;
+
+  if (action === 'zoomIn') {
+    debouncedZoomIn();
+  } else if (action === 'zoomOut') {
+    debouncedZoomOut();
+  }
+}
+
+const debouncedPrevPage = debounce(prevPage, 200);
+const debouncedNextPage = debounce(nextPage, 200);
+
 function disconnectObserver() {
   if (observer) {
     observer.disconnect();
+  }
+}
+
+const handleResize = async () => {
+  if (!resizeActive.value || !initializeFitScale.value) return;
+
+  if (props.scrollable) {
+    await renderAllPages(pdf.value?.numPages, pdf.value?.numPages, 50);
+    setupIntersectionObserver();
+  } else {
+    await renderPage(currentPage.value);
+  }
+};
+
+const debouncedResize = debounce(handleResize, 50);
+
+function setupResizeObserver() {
+  setTimeout(() => {
+    const rootElement = document.querySelector('.lx-pdf-wrapper');
+    if (!rootElement) return;
+
+    if (resizeObserver) {
+      resizeObserver.disconnect();
+      resizeObserver = null;
+    }
+
+    // Initialize ResizeObserver
+    resizeObserver = new ResizeObserver(() => {
+      debouncedResize();
+    });
+
+    resizeObserver.observe(rootElement);
+
+    // Activate resize observer after file is fully loaded & scaled
+    setTimeout(() => {
+      resizeActive.value = true; // Enable resize handling
+    }, 1000);
+  }, 500);
+}
+
+function disconnectResizeObserver() {
+  if (resizeObserver) {
+    resizeObserver.disconnect();
+    resizeObserver = null;
   }
 }
 
@@ -592,6 +720,8 @@ async function loadPdfFromFile(pdfData) {
   const loadingTask = pdfjsLib.value.getDocument({ data: atob(pdfData) });
   pdf.value = await loadingTask.promise;
 
+  setupResizeObserver();
+
   if (props.scrollable) {
     renderAllPages(pdf.value.numPages, pdf.value.numPages);
     setupIntersectionObserver();
@@ -599,39 +729,6 @@ async function loadPdfFromFile(pdfData) {
     renderPage(1);
   }
 }
-
-watch(
-  () => props.resolution,
-  () => {
-    if (pdf.value) {
-      if (renderingInProgress.value) return;
-      if (props.scrollable) {
-        renderAllPages(pdf.value.numPages, pdf.value.numPages);
-      } else {
-        renderPage(currentPage.value);
-      }
-    }
-  }
-);
-
-watch(
-  () => props.scrollable,
-  () => {
-    if (pdf.value) {
-      if (props.scrollable) {
-        currentPage.value = 1;
-        inputPage.value = 1;
-        renderAllPages(pdf.value.numPages, pdf.value.numPages);
-        setupIntersectionObserver();
-      } else {
-        disconnectObserver();
-        currentPage.value = 1;
-        inputPage.value = 1;
-        renderPage(1);
-      }
-    }
-  }
-);
 
 function handleClick(event) {
   const wrapperElement = pageInputWrapper.value;
@@ -648,17 +745,10 @@ function addEventListeners() {
     document.addEventListener('mousedown', handleClick);
   });
 }
+
 function removeEventListeners() {
   document.removeEventListener('mousedown', handleClick);
 }
-
-watch(showInput, (newValue) => {
-  if (newValue) {
-    addEventListeners();
-  } else {
-    removeEventListeners();
-  }
-});
 
 const base64PdfPrefix = `data:${MIME_TYPES.PDF};base64,`;
 
@@ -705,37 +795,6 @@ function prepareSVGImage(newValue) {
       lxDevUtils.logError(`Error loading SVG file, ${error}`, useLx().getGlobals()?.environment);
     });
 }
-
-watch(
-  () => props.modelValue,
-  async (newValue) => {
-    if (newValue?.startsWith(base64PdfPrefix)) {
-      await loadPdfFromBase64(newValue);
-      return;
-    }
-
-    if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
-      if (supportedFileType.value === 'SVG') {
-        prepareSVGImage(newValue);
-      } else {
-        const img = new Image();
-        img.src = newValue;
-        img.onload = () => {
-          originalImageSize.value = { width: img.width, height: img.height };
-        };
-      }
-      drawImage(imgScale.value);
-    }
-
-    if (supportedFileType.value === 'Binary') {
-      decodeBase64(newValue);
-    }
-
-    resetPdfViewer();
-    clearImgCanvas();
-  },
-  { immediate: true }
-);
 
 const isNextBtnDisabled = computed(
   () =>
@@ -908,91 +967,174 @@ function changeTextSize(action) {
   }
 }
 
-async function printDocument(wrapper) {
-  if (!wrapper) return;
+function addPrintStyles(iframe, sizeX, sizeY) {
+  const style = iframe.contentWindow.document.createElement('style');
+  style.textContent = `
+    @page { margin: 0; size: ${sizeX}pt ${sizeY}pt; }
+    body { margin: 0; }
+    canvas { page-break-after: always; page-break-before: avoid; page-break-inside: avoid; }
+  `;
+  iframe.contentWindow.document.head.appendChild(style);
+}
 
+function createPrintIframe(container) {
+  return new Promise((resolve) => {
+    const iframe = document.createElement('iframe');
+    iframe.width = '0';
+    iframe.height = '0';
+    iframe.style.position = 'absolute';
+    iframe.style.top = '0';
+    iframe.style.left = '0';
+    iframe.style.border = 'none';
+    iframe.style.overflow = 'hidden';
+    iframe.onload = () => resolve(iframe);
+    container.appendChild(iframe);
+  });
+}
+
+function releaseChildCanvases(el) {
+  /* eslint-disable no-param-reassign */
+  el.querySelectorAll('canvas').forEach((cnv) => {
+    cnv.width = 1;
+    cnv.height = 1;
+    cnv.getContext('2d')?.clearRect(0, 0, 1, 1);
+  });
+}
+
+/**
+ *
+ * @param {number} dpi - Print resolution.
+ * @param {boolean} allPages - Flag to print all pages.
+ */
+async function print(printType, dpi = 300, allPages = true) {
   printInProgress.value = true;
 
-  const iframe = document.createElement('iframe');
-  iframe.style.position = 'absolute';
-  iframe.style.width = '0';
-  iframe.style.height = '0';
-  iframe.style.border = 'none';
-  iframe.style.visibility = 'hidden';
+  const printUnits = dpi / 72;
+  const styleUnits = 96 / 72;
+  let container;
+  let iframe;
+  let title;
 
-  document.body.appendChild(iframe);
+  try {
+    container = document.createElement('div');
+    container.style.display = 'none';
+    window.document.body.appendChild(container);
+    iframe = await createPrintIframe(container);
 
-  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    switch (printType) {
+      case 'binary': // Handle Binary Printing
+        {
+          const A4_WIDTH = 794; // A4 width in pixels (96 DPI)
+          const A4_HEIGHT = 1123; // A4 height in pixels (96 DPI)
 
-  iframeDoc.open();
-  iframeDoc.write(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Print Document</title>
-      <style>
-        body {
-          margin: 0;
-          padding: 0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
+          const element = binaryWrapper.value.querySelector('article');
+
+          // Clone the element for printing
+          const clonedElement = element.cloneNode(true);
+          iframe.contentWindow.document.body.appendChild(clonedElement);
+
+          addPrintStyles(iframe, A4_WIDTH, A4_HEIGHT);
         }
-        canvas {
-          display: block;
-          margin: 0 auto;
-          page-break-inside: avoid;
-          page-break-after: auto;
+        break;
+      case 'img': // Handle Image Printing
+        {
+          const cnv = document.createElement('canvas');
+          const ctx = cnv.getContext('2d');
+
+          const imgCanvas = imgCanvasRef.value;
+
+          const img = new Image();
+          img.src = imgCanvas.toDataURL('image/png');
+
+          await new Promise((resolve, reject) => {
+            img.onload = () => {
+              // Set canvas dimensions
+              cnv.width = imgCanvas.offsetWidth * printUnits;
+              cnv.height = imgCanvas.offsetHeight * printUnits;
+
+              // Draw image on the canvas
+              ctx.drawImage(img, 0, 0, cnv.width, cnv.height);
+
+              // Add canvas to iframe for printing
+              const canvasClone = cnv.cloneNode();
+              iframe.contentWindow.document.body.appendChild(canvasClone);
+              canvasClone.getContext('2d').drawImage(cnv, 0, 0);
+
+              resolve();
+            };
+            img.onerror = reject;
+          });
+
+          const sizeX = (imgCanvas.offsetWidth * printUnits) / styleUnits;
+          const sizeY = (imgCanvas.offsetHeight * printUnits) / styleUnits;
+
+          addPrintStyles(iframe, sizeX, sizeY);
         }
-      </style>
-    </head>
-    <body></body>
-    </html>
-  `);
-  iframeDoc.close();
+        break;
+      case 'pdf': // Handle PDF Printing
+        {
+          const pageNums =
+            currentPage.value && !allPages
+              ? [currentPage.value]
+              : [...Array(pdf.value.numPages + 1).keys()].slice(1);
 
-  await new Promise((resolve) => {
-    iframe.onload = resolve;
-  });
+          await Promise.all(
+            pageNums.map(async (pageNum, i) => {
+              const page = await pdf.value.getPage(pageNum);
+              const viewport = page.getViewport({ scale: 1 });
 
-  if (supportedFileType.value === 'PDF' && !props.scrollable) {
-    await renderAllPages(pdf.value.numPages, pdf.value.numPages, 200, true);
+              if (i === 0) {
+                const sizeX = (viewport.width * printUnits) / styleUnits;
+                const sizeY = (viewport.height * printUnits) / styleUnits;
+                addPrintStyles(iframe, sizeX, sizeY);
+              }
+
+              const cnv = document.createElement('canvas');
+              cnv.width = viewport.width * printUnits;
+              cnv.height = viewport.height * printUnits;
+              container.appendChild(cnv);
+              const canvasClone = cnv.cloneNode();
+              iframe.contentWindow.document.body.appendChild(canvasClone);
+
+              await page.render({
+                canvasContext: cnv.getContext('2d'),
+                intent: 'print',
+                transform: [printUnits, 0, 0, printUnits, 0, 0],
+                viewport,
+              }).promise;
+
+              canvasClone.getContext('2d').drawImage(cnv, 0, 0);
+            })
+          );
+        }
+        break;
+
+      default:
+        break;
+    }
+
+    if (isValidFileName(props.fileName)) {
+      title = window.document.title;
+      window.document.title = props.fileName;
+    } else {
+      title = window.document.title;
+      window.document.title = generateUUID();
+    }
+
+    iframe.contentWindow.focus();
+    iframe.contentWindow.print();
+  } catch (error) {
+    lxDevUtils.logError(`Printing failed, ${error}`, useLx().getGlobals()?.environment);
+  } finally {
+    if (title) {
+      window.document.title = title;
+    }
+
+    releaseChildCanvases(container);
+    container.parentNode?.removeChild(container);
+
+    printInProgress.value = false;
   }
-
-  // Adjust for device DPI
-  const dpi = window.devicePixelRatio * 96;
-  const A4_PORTRAIT = { width: 8.27 * dpi, height: 11.69 * dpi };
-  const A4_LANDSCAPE = { width: 11.69 * dpi, height: 8.27 * dpi };
-
-  const canvases = wrapper.querySelectorAll('canvas');
-
-  canvases.forEach((originalCanvas) => {
-    const isLandscape = originalCanvas.width > originalCanvas.height;
-    const targetSize = isLandscape ? A4_LANDSCAPE : A4_PORTRAIT;
-
-    const clonedCanvas = originalCanvas.cloneNode(false);
-    const context = clonedCanvas.getContext('2d');
-
-    // Retain original resolution by copying the original canvas's dimensions
-    clonedCanvas.width = originalCanvas.width;
-    clonedCanvas.height = originalCanvas.height;
-
-    // Copy the content from the original canvas
-    context.drawImage(originalCanvas, 0, 0);
-
-    // Adjust the display size (style) for A4 without affecting resolution
-    clonedCanvas.style.width = `${targetSize.width}px`;
-    clonedCanvas.style.height = `${targetSize.height}px`;
-
-    // Append the cloned canvas to the iframe's document
-    iframeDoc.body.appendChild(clonedCanvas);
-  });
-
-  iframe.contentWindow.print();
-  document.body.removeChild(iframe);
-  printInProgress.value = false;
 }
 
 function toolbarActionClick(action) {
@@ -1024,24 +1166,19 @@ function toolbarActionClick(action) {
       break;
     case 'print':
       if (supportedFileType.value === 'PDF') {
-        printDocument(canvasWrapper.value);
+        print('pdf');
       }
       if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
-        printDocument(imageWrapper.value);
+        print('img');
       }
       if (supportedFileType.value === 'Binary') {
-        printDocument(binaryWrapper.value);
+        print('binary');
       }
       break;
     default:
       break;
   }
 }
-onMounted(() => {
-  if (props.preloadLibs?.includes(MIME_TYPES.PDF)) {
-    loadPdfLib();
-  }
-});
 
 const inlineSize = computed(() =>
   isExpanded.value ? {} : { width: props.width, height: props.height }
@@ -1057,8 +1194,6 @@ function isValidHeight(value) {
   return validHeightRegex.test(value);
 }
 
-const inputRef = ref(null);
-
 function handlePlaceholderClick() {
   showInput.value = true;
 
@@ -1066,6 +1201,113 @@ function handlePlaceholderClick() {
     inputRef.value?.focus();
   });
 }
+
+watch(
+  () => props.scrollable,
+  () => {
+    if (pdf.value) {
+      if (props.scrollable) {
+        currentPage.value = 1;
+        inputPage.value = 1;
+        renderAllPages(pdf.value.numPages, pdf.value.numPages);
+        setupIntersectionObserver();
+        setupResizeObserver();
+      } else {
+        disconnectObserver();
+        setupResizeObserver();
+        currentPage.value = 1;
+        inputPage.value = 1;
+        renderPage(1);
+      }
+    }
+  }
+);
+
+watch(showInput, (newValue) => {
+  if (newValue) {
+    addEventListeners();
+  } else {
+    removeEventListeners();
+  }
+});
+
+const fileViewerWrapperRef = ref(null);
+
+useMutationObserver(
+  fileViewerWrapperRef,
+  (mutations) => {
+    const mutation = mutations[0];
+
+    if (mutation && mutation.attributeName === 'style' && mutation.target.style.display === '') {
+      if (props.scrollable) {
+        renderAllPages(pdf.value?.numPages, pdf.value?.numPages);
+        setupIntersectionObserver();
+      } else {
+        renderPage(1);
+      }
+    }
+  },
+  { attributes: true, childList: false }
+);
+
+watch(
+  () => props.modelValue,
+  async (newValue) => {
+    if (newValue?.startsWith(base64PdfPrefix)) {
+      if (!props.zoomLevel) {
+        initializeFitScale.value = true;
+      }
+
+      await loadPdfFromBase64(newValue);
+      return;
+    }
+
+    if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
+      if (supportedFileType.value === 'SVG') {
+        prepareSVGImage(newValue);
+      } else {
+        const img = new Image();
+        img.src = newValue;
+        img.onload = () => {
+          originalImageSize.value = { width: img.width, height: img.height };
+        };
+      }
+      drawImage(imgScale.value);
+    }
+
+    if (supportedFileType.value === 'Binary') {
+      decodeBase64(newValue);
+    }
+
+    resetPdfViewer();
+    clearImgCanvas();
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.zoomLevel,
+  async (newZoomLevel) => {
+    if (newZoomLevel) {
+      await setZoomLevel(newZoomLevel);
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  if (props.preloadLibs?.includes(MIME_TYPES.PDF)) {
+    loadPdfLib();
+  }
+  if (!props.zoomLevel) {
+    initializeFitScale.value = true;
+  }
+});
+
+onUnmounted(() => {
+  disconnectObserver();
+  disconnectResizeObserver();
+});
 </script>
 
 <template>
@@ -1077,6 +1319,7 @@ function handlePlaceholderClick() {
       { 'lx-file-viewer-sticky': stickyHeader && !isExpanded },
     ]"
     :style="inlineSize"
+    ref="fileViewerWrapperRef"
   >
     <LxEmptyState
       v-if="!supportedFileType"
@@ -1174,8 +1417,8 @@ function handlePlaceholderClick() {
           <LxToggle
             v-model="dragToScrollMode"
             :texts="{
-              valueYes: props.texts.grabToSrollTrue,
-              valueNo: props.texts.grabToSrollFalse,
+              valueYes: props.texts.grabToScrollTrue,
+              valueNo: props.texts.grabToScrollFalse,
             }"
           />
         </LxToolbarGroup>
@@ -1234,18 +1477,8 @@ function handlePlaceholderClick() {
         <canvas class="pdf-canvas" ref="canvas" />
       </div>
 
-      <div
-        ref="canvasWrapper"
-        class="lx-pdf-canvas-wrapper"
-        :class="[{ 'hidden-pdf-canvas': !scrollable }]"
-      >
-        <canvas
-          v-for="pageNum in totalPages"
-          :key="pageNum"
-          ref="canvasArray"
-          class="pdf-canvas"
-          :class="[{ 'hidden-pdf-canvas': !scrollable }]"
-        />
+      <div v-else ref="canvasWrapper" class="lx-pdf-canvas-wrapper">
+        <canvas v-for="pageNum in totalPages" :key="pageNum" ref="canvasArray" class="pdf-canvas" />
       </div>
     </div>
 

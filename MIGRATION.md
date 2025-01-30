@@ -27,6 +27,10 @@ Affected components:
 
 ### Breaking changes
 
+#### LxFileViewer
+
+- `resolution` prop no longer supported.
+
 #### LxDateTimePicker
 
 - You should use `lx-date-pickers.css` file instead of ~~`lx-calendars.css`~~.
