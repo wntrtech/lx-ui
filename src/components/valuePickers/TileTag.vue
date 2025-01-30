@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { generateUUID, textSearch } from '@/utils/stringUtils';
+import { textSearch } from '@/utils/stringUtils';
 
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
@@ -8,7 +8,7 @@ import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 
 const props = defineProps({
-  id: { type: String, default: () => generateUUID() },
+  id: { type: String, default: null },
   modelValue: { type: [Array, String], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -37,7 +37,7 @@ const props = defineProps({
       clearChosen: 'Notīrīt visas izvēlētās vērtības',
       notSelected: 'Nav izvēlēts',
       searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-      selectAll: 'Izvēlēties visu'
+      selectAll: 'Izvēlēties visu',
     }),
   },
 });
@@ -60,14 +60,16 @@ onMounted(() => {
 });
 
 const itemsModel = ref({});
-const itemsDisplay = computed( () => { 
-    const res = [... props.items];
-    if(props.kind === 'single' && props.nullable)  
-      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: props.texts.notSelected});
-  
-    return res
-  }
-);
+const itemsDisplay = computed(() => {
+  const res = [...props.items];
+  if (props.kind === 'single' && props.nullable)
+    res.unshift({
+      [props.idAttribute]: 'notSelected',
+      [props.nameAttribute]: props.texts.notSelected,
+    });
+
+  return res;
+});
 
 const notSelectedId = 'notSelected';
 
@@ -76,8 +78,6 @@ function activate() {
   itemsDisplay.value?.forEach((item) => {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
-
-
 
   // Then set items from model as selected
   if (model.value) {
@@ -94,7 +94,6 @@ function activate() {
 }
 activate();
 
-
 watch(
   () => {
     const value = model.value;
@@ -107,7 +106,6 @@ watch(
     if (Array.isArray(value) && length === 0) {
       itemsModel.value.notSelected = true;
     }
-    
   }
 );
 
@@ -170,12 +168,12 @@ watch(
   (newKind) => {
     activate();
     itemsModel.value = {};
-        
+
     if (newKind === 'multiple') {
-         model.value = [];
+      model.value = [];
       if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
     } else if (newKind === 'single') {
-     if (props.nullable) {
+      if (props.nullable) {
         selectSingle(notSelectedId);
       } else {
         selectSingle(itemsDisplay.value[0][props.idAttribute]);
@@ -185,13 +183,11 @@ watch(
 );
 
 function selectMultiple(id) {
-  if (props.disabled) {
-    return;
-  }
+  if (props.disabled) return;
 
   const idModel = ref(itemsModel.value[id]);
-
   idModel.value = !idModel.value;
+
   const res = [...model.value];
 
   if (idModel.value) {
@@ -243,21 +239,18 @@ watch(
   () => {
     hiddenValues.value = [];
     itemsDisplay.value?.forEach((val) => {
-      if(props.searchAttributes){
+      if (props.searchAttributes) {
+        if (!attributesSearch(val) && query.value.length !== 0) {
+          hiddenValues.value.push(val);
+        }
+      } else {
         if (
-        !attributesSearch(val) &&
-        query.value.length !== 0
-      ) {
-        hiddenValues.value.push(val);
-      }
-      }else{
-      if (
-        !textSearch(query.value, val[props.nameAttribute]) &&
-        !textSearch(query.value, val[props.descriptionAttribute]) &&
-        query.value.length !== 0
-      ) {
-        hiddenValues.value.push(val);
-      }
+          !textSearch(query.value, val[props.nameAttribute]) &&
+          !textSearch(query.value, val[props.descriptionAttribute]) &&
+          query.value.length !== 0
+        ) {
+          hiddenValues.value.push(val);
+        }
       }
     });
   }
@@ -384,7 +377,7 @@ function selectAll() {
       </div>
       <div
         class="lx-value-picker-tile-wrapper"
-        :class="[{ 'lx-invalid': invalid }, {'lx-tile-custom': variant === 'tiles-custom'}]"
+        :class="[{ 'lx-invalid': invalid }, { 'lx-tile-custom': variant === 'tiles-custom' }]"
         v-if="variant === 'tiles' || variant === 'tiles-custom'"
         role="radiogroup"
         :aria-invalid="invalid"
@@ -410,8 +403,8 @@ function selectAll() {
             role="radio"
             :aria-checked="
               itemsModel[item[idAttribute]] ||
-                (!alwaysAsArray && item[idAttribute] === model) ||
-                item[idAttribute] === checkNull(model)
+              (!alwaysAsArray && item[idAttribute] === model) ||
+              item[idAttribute] === checkNull(model)
             "
             @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
           >
@@ -424,7 +417,7 @@ function selectAll() {
                   <LxIcon
                     v-if="
                       itemsModel[item[idAttribute]] ||
-                        (!alwaysAsArray && item[idAttribute] === model) ||
+                      (!alwaysAsArray && item[idAttribute] === model) ||
                       item[idAttribute] === checkNull(model)
                     "
                     value="selected"
@@ -437,7 +430,7 @@ function selectAll() {
               </div>
             </template>
             <div class="lx-value-picker-tile-header" v-else-if="variant === 'tiles-custom'">
-                <slot name="customItem" v-bind="item" />
+              <slot name="customItem" v-bind="item" />
               <div class="lx-value-picker-icon">
                 <LxIcon
                   v-if="
@@ -484,7 +477,7 @@ function selectAll() {
             </template>
             <template v-else-if="variant === 'tiles-custom'">
               <div class="lx-value-picker-tile-header">
-                  <slot name="customItem" v-bind="item" />
+                <slot name="customItem" v-bind="item" />
                 <div class="lx-value-picker-icon">
                   <LxIcon v-if="itemsModel[item[idAttribute]]" value="selected" />
                   <LxIcon v-else value="unselected" />
@@ -494,7 +487,7 @@ function selectAll() {
           </div>
         </div>
       </div>
-    
+
       <div
         class="lx-value-picker-tags"
         :class="[{ 'lx-invalid': invalid }]"
@@ -502,7 +495,11 @@ function selectAll() {
         :aria-invalid="invalid"
         :title="tooltip"
       >
-        <ul class="lx-tag-set" v-if="kind === 'single'" :class="[{'lx-tag-custom': variant === 'tags-custom'}]">
+        <ul
+          class="lx-tag-set"
+          v-if="kind === 'single'"
+          :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
+        >
           <li
             v-for="item in itemsDisplay"
             :key="item[idAttribute]"
@@ -524,21 +521,24 @@ function selectAll() {
             role="radio"
             :aria-checked="
               itemsModel[item[idAttribute]] ||
-                (!alwaysAsArray && item[idAttribute] === model) ||
-                item[idAttribute] === checkNull(model)
+              (!alwaysAsArray && item[idAttribute] === model) ||
+              item[idAttribute] === checkNull(model)
             "
-
             @keydown.space.prevent="disabled ? null : selectSingle(item[idAttribute])"
           >
             <template v-if="variant === 'tags'">
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
             </template>
             <template v-else-if="variant === 'tags-custom'">
-                <slot name="customItem" v-bind="item" />
+              <slot name="customItem" v-bind="item" />
             </template>
           </li>
         </ul>
-        <ul class="lx-tag-set" v-if="kind === 'multiple'" :class="[{'lx-tag-custom': variant === 'tags-custom'}]">
+        <ul
+          class="lx-tag-set"
+          v-if="kind === 'multiple'"
+          :class="[{ 'lx-tag-custom': variant === 'tags-custom' }]"
+        >
           <li
             v-for="item in itemsDisplay"
             v-on:focus="onFocus"
@@ -562,7 +562,7 @@ function selectAll() {
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
             </template>
             <template v-else-if="variant === 'tags-custom'">
-                <slot name="customItem" v-bind="item"></slot>
+              <slot name="customItem" v-bind="item"></slot>
             </template>
           </li>
         </ul>

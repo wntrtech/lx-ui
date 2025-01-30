@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { generateUUID, textSearch } from '@/utils/stringUtils';
+import { textSearch } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxButton from '@/components/Button.vue';
@@ -11,7 +11,7 @@ import { onClickOutside } from '@vueuse/core';
 import Popper from 'vue3-popper';
 
 const props = defineProps({
-  id: { type: String, default: () => generateUUID() },
+  id: { type: String, default: null },
   modelValue: { type: [Array, String, Number], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -40,7 +40,7 @@ const props = defineProps({
       clearChosen: 'Notīrīt visas izvēlētās vērtības',
       notSelected: 'Nav izvēlēts',
       searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-      selectAll: 'Izvēlēties visu'
+      selectAll: 'Izvēlēties visu',
     }),
   },
 });
@@ -93,21 +93,22 @@ const getIdAttributeString = (item) => {
   return attribute;
 };
 
-const itemsDisplay = computed( () => { 
-    const res = [... props.items];
-    if(props.kind === 'single' && props.nullable)  
-      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: props.texts.notSelected});
-  
-    return res
-  }
-);
+const itemsDisplay = computed(() => {
+  const res = [...props.items];
+  if (props.kind === 'single' && props.nullable)
+    res.unshift({
+      [props.idAttribute]: 'notSelected',
+      [props.nameAttribute]: props.texts.notSelected,
+    });
+
+  return res;
+});
 
 function activate() {
   // First set all items as not selected
-  itemsDisplay.value.forEach((item) => {
+  itemsDisplay.value?.forEach((item) => {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
-
 
   // Then set items from model as selected
   if (model.value) {
@@ -123,7 +124,6 @@ function activate() {
   }
 }
 activate();
-
 
 function clear(e = { stopPropagation: () => {} }) {
   e?.stopPropagation();
@@ -154,7 +154,6 @@ watch(
     }
   }
 );
-
 
 const selectedItems = computed(() => {
   const ret = [];
@@ -194,7 +193,7 @@ function getLabelId(id) {
 
 function selectSingle(id) {
   if (props.disabled) return;
-  
+
   // Deselect previously selected item
   if (model.value && !Array.isArray(model.value) && model.value !== notSelectedId) {
     itemsModel.value[model.value.toString()] = false;
@@ -222,18 +221,18 @@ watch(
       model.value = [];
       if (itemsDisplay.value[0][props.idAttribute] === notSelectedId) itemsDisplay.value.shift();
     } else if (newKind === 'single') {
-     if (props.nullable) {
+      if (props.nullable) {
         selectSingle(notSelectedId);
       } else {
         selectSingle(itemsDisplay.value[0][props.idAttribute]);
       }
     }
-  },
+  }
 );
 
 function selectMultiple(id) {
   if (props.disabled) return;
-  
+
   if (!model.value) {
     model.value = [];
   }
@@ -242,7 +241,7 @@ function selectMultiple(id) {
   idModel.value = !idModel.value;
 
   let res = null;
-  if(Array.isArray(model.value)) res = [...model.value]
+  if (Array.isArray(model.value)) res = [...model.value];
   else return 0;
 
   if (idModel.value) {
@@ -332,8 +331,8 @@ function openDropDownDefault() {
     activeDropdown.value = container.value;
     setTimeout(() => {
       const formElements = document.querySelectorAll(`#${props.id} input.lx-checkbox`);
-      formElements[highlightedItemId.value - 1]?.focus()
-      }, 150);
+      formElements[highlightedItemId.value - 1]?.focus();
+    }, 150);
   } else if (menuOpen.value) {
     closeDropDownDefault();
   }
@@ -351,7 +350,7 @@ function onEnter() {
     return;
   }
   if (highlightedItemId.value) {
-      selectMultiple(highlightedItemId.value); 
+    selectMultiple(highlightedItemId.value);
   }
 }
 
@@ -365,7 +364,7 @@ function onDown() {
       (x) => getIdAttributeString(x) === highlightedItemId.value
     );
     if (index === -1) {
-      highlightedItemId.value = getIdAttributeString(filteredItems.value[0]); 
+      highlightedItemId.value = getIdAttributeString(filteredItems.value[0]);
     } else if (index < filteredItems.value.length - 1) {
       highlightedItemId.value = getIdAttributeString(filteredItems.value[index + 1]);
     } else {
@@ -492,14 +491,14 @@ const columnReadOnly = computed(() => {
 <template>
   <template v-if="readOnly">
     <p v-if="readOnlyRenderType === 'row'" class="lx-data">
-      {{ getName(false) }} 
-      <template v-if="model === null || model === undefined || model?.length < 1" >—</template>
+      {{ getName(false) }}
+      <template v-if="model === null || model === undefined || model?.length < 1">—</template>
     </p>
     <ul v-if="readOnlyRenderType === 'column'" class="lx-column-read-only-data">
-        <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
+      <li v-for="(item, index) in columnReadOnly" :key="index">{{ item }}</li>
     </ul>
   </template>
-  
+
   <template v-else>
     <LxAutoComplete
       v-if="hasSearch"
@@ -547,8 +546,12 @@ const columnReadOnly = computed(() => {
         <slot name="customItemDropdown" v-bind="slotData" />
       </template>
     </LxDropDown>
-    
-    <div class="lx-value-picker-dropdown-wrapper" v-if="kind === 'multiple' && !hasSearch" ref="refRoot">
+
+    <div
+      class="lx-value-picker-dropdown-wrapper"
+      v-if="kind === 'multiple' && !hasSearch"
+      ref="refRoot"
+    >
       <div
         class="lx-dropdown-default"
         :id="id"
@@ -581,10 +584,7 @@ const columnReadOnly = computed(() => {
           <div
             class="lx-dropdown-default-panel lx-input-wrapper"
             @click="openDropDownDefault"
-            :class="[
-              { 'lx-invalid': invalid && !hasSearch },
-              { 'lx-disabled': disabled },
-            ]"
+            :class="[{ 'lx-invalid': invalid && !hasSearch }, { 'lx-disabled': disabled }]"
             :title="tooltip"
             tabindex="-1"
           >
@@ -604,7 +604,7 @@ const columnReadOnly = computed(() => {
                   />
                 </div>
               </div>
-              
+
               <div
                 class="lx-dropdown-default-data dropdown-multiple lx-input-area"
                 :class="[{ emptyModel: model?.length === 0 }]"
@@ -618,10 +618,7 @@ const columnReadOnly = computed(() => {
                 </div>
               </div>
               <div v-if="invalid" class="lx-invalidation-icon-wrapper">
-                <LxIcon
-                  customClass="lx-invalidation-icon"
-                  value="invalid"
-                />
+                <LxIcon customClass="lx-invalidation-icon" value="invalid" />
               </div>
               <div class="lx-input-icon-wrapper">
                 <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
@@ -632,9 +629,24 @@ const columnReadOnly = computed(() => {
           <template #content>
             <div class="lx-dropdown-default-content" :style="{ width: panelWidth + 'px' }">
               <slot name="panel" @click="closeDropDownDefault()">
-                <div v-if="hasSelectAll" class="lx-value-picker-item select-all" tabindex="-1" role="option" @click="selectAll" :title="areSomeSelected ? texts.clearChosen : texts.selectAll ">
-                  <LxIcon :value="areSomeSelected ? areAllSelected ? 'checkbox-filled' : 'checkbox-indeterminate' : 'checkbox'" />
-                  <span>{{ areSomeSelected ? texts.clearChosen : texts.selectAll }}</span> 
+                <div
+                  v-if="hasSelectAll"
+                  class="lx-value-picker-item select-all"
+                  tabindex="-1"
+                  role="option"
+                  @click="selectAll"
+                  :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
+                >
+                  <LxIcon
+                    :value="
+                      areSomeSelected
+                        ? areAllSelected
+                          ? 'checkbox-filled'
+                          : 'checkbox-indeterminate'
+                        : 'checkbox'
+                    "
+                  />
+                  <span>{{ areSomeSelected ? texts.clearChosen : texts.selectAll }}</span>
                 </div>
                 <template v-for="item in filteredItems" :key="item[idAttribute]">
                   <div
@@ -644,11 +656,11 @@ const columnReadOnly = computed(() => {
                     tabindex="-1"
                     role="option"
                     :class="[
-                        {
-                          'lx-highlighted-item':
-                            highlightedItemId && highlightedItemId === getIdAttributeString(item),
-                        },
-                      ]"
+                      {
+                        'lx-highlighted-item':
+                          highlightedItemId && highlightedItemId === getIdAttributeString(item),
+                      },
+                    ]"
                     :id="getItemId(item[idAttribute])"
                   >
                     <LxCheckbox

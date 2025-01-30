@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { generateUUID, textSearch } from '@/utils/stringUtils';
+import { textSearch } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
 
@@ -11,13 +11,13 @@ import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 
 const props = defineProps({
-  id: { type: String, default: () => generateUUID() },
+  id: { type: String, default: null },
   modelValue: { type: [Array, String], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: 'description' },
-  groupId: { type: String, default: () => generateUUID() },
+  groupId: { type: String, default: null },
   kind: { type: String, default: 'single' }, // 'single' (with radio buttons; can select one item) or 'multiple' (with checkboxes; can select many items)
   nullable: { type: Boolean, default: false }, // Only if kind === 'single'. If true - adds default radio button 'Not selected'. If false - one item must be already selected.
   variant: { type: String, default: 'default' },
@@ -60,6 +60,7 @@ onMounted(() => {
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
   }
+
   if (
     props.items.length === 0 &&
     model.value !== null &&
@@ -75,35 +76,54 @@ onMounted(() => {
 });
 
 const itemsModel = ref({});
-const itemsDisplay = computed( () => { 
-    const res = [... props.items];
-    if(props.kind === 'single' && props.nullable)  
-      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: props.texts.notSelected});
-  
-    return res
-  }
-);
+const itemsDisplay = computed(() => {
+  const res = [...props.items];
+  if (props.kind === 'single' && props.nullable)
+    res.unshift({
+      [props.idAttribute]: 'notSelected',
+      [props.nameAttribute]: props.texts.notSelected,
+    });
+
+  return res;
+});
 
 const notSelectedId = 'notSelected';
 
-function activate() {
-  // First set all items as not selected
-
-  itemsDisplay.value.forEach((item) => {
+function resetSelection() {
+  itemsDisplay.value?.forEach((item) => {
     itemsModel.value[item[props.idAttribute].toString()] = false;
   });
+}
 
-  // Then set items from model as selected
+function updateSelectionFromModel() {
+  if (Array.isArray(model.value)) {
+    model.value.forEach((id) => {
+      if (id) {
+        itemsModel.value[id.toString()] = true;
+      }
+    });
+  } else {
+    itemsModel.value[model.value.toString()] = true;
+  }
+}
+
+function handleNoModel() {
+  if (props.kind === 'single') {
+    const selectedId = props.nullable ? notSelectedId : itemsDisplay.value[0][props.idAttribute];
+    itemsModel.value[selectedId] = true;
+    selectSingle(selectedId);
+  }
+}
+
+function activate() {
+  // Reset all items as not selected
+  resetSelection();
+
+  // Update selection based on the model
   if (model.value) {
-    if (Array.isArray(model.value)) {
-      model.value?.forEach((id) => {
-        if (id) {
-          itemsModel.value[id?.toString()] = true;
-        }
-      });
-    } else {
-      itemsModel.value[model.value?.toString()] = true;
-    }
+    updateSelectionFromModel();
+  } else {
+    handleNoModel();
   }
 }
 activate();
@@ -206,32 +226,32 @@ function selectMultiple(id) {
   const idModel = ref(itemsModel.value[id]);
   idModel.value = !idModel.value;
 
-  const res = [...model.value]
+  const res = [...model.value];
 
   if (idModel.value) {
     // Check if item already exists in model
-    const index = model.value.indexOf(id);
+    const index = res?.indexOf(id);
     if (index === -1) {
       // Add item to model
       res.push(id);
       itemsModel.value[id] = true;
     } else {
       // Remove item from model
-      res.splice(index, 1);
+      res?.splice(index, 1);
     }
 
     // Sort model according to order of items
-    res.sort(
+    res?.sort(
       (a, b) =>
-        Object.keys(itemsModel.value).indexOf(a?.toString()) -
-        Object.keys(itemsModel.value).indexOf(b?.toString())
+        Object.keys(itemsModel.value)?.indexOf(a?.toString()) -
+        Object.keys(itemsModel.value)?.indexOf(b?.toString())
     );
   } else {
     itemsModel.value[id] = false;
     // Remove item from model
-    const index = res.indexOf(id);
+    const index = res?.indexOf(id);
     if (index > -1 && Array.isArray(res)) {
-      res.splice(index, 1);
+      res?.splice(index, 1);
     }
   }
   model.value = res;
@@ -335,14 +355,14 @@ function selectAll() {
 }
 
 function getTabIndex(id) {
-  const isFirstItem = itemsDisplay.value.length > 0 && itemsDisplay.value[0][props.idAttribute] === id;
-  const isValidModel = itemsDisplay.value.find(item => item[props.idAttribute] === model.value);
-  if (model.value === id || (isFirstItem && !(isValidModel))) {
+  const isFirstItem =
+    itemsDisplay.value.length > 0 && itemsDisplay.value[0][props.idAttribute] === id;
+  const isValidModel = itemsDisplay.value.find((item) => item[props.idAttribute] === model.value);
+  if (model.value === id || (isFirstItem && !isValidModel)) {
     return 0;
   }
   return -1;
 }
-
 </script>
 <template>
   <div
@@ -416,17 +436,21 @@ function getTabIndex(id) {
       >
         <LxRadioButton
           v-if="kind === 'single'"
+          v-model="itemsModel[item[idAttribute]]"
           :id="getItemId(item[idAttribute])"
           :group-id="groupId"
-          v-model="itemsModel[item[idAttribute]]"
           :disabled="disabled"
           :value="item[idAttribute].toString()"
-          @click="selectSingle(item[idAttribute])"
           :tabindex="getTabIndex(item[idAttribute])"
           :label-id="`${getLabelId(item[idAttribute])}`"
+          @click="selectSingle(item[idAttribute])"
         >
-          <div class="lx-value-picker-default-item-container" :id="`${getLabelId(item[idAttribute])}`" v-if="variant === 'default'" >
-            <div class="lx-value-picker-default-item-label" >
+          <div
+            class="lx-value-picker-default-item-container"
+            :id="`${getLabelId(item[idAttribute])}`"
+            v-if="variant === 'default'"
+          >
+            <div class="lx-value-picker-default-item-label">
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
             </div>
             <div class="lx-value-picker-default-item-description">
@@ -443,6 +467,7 @@ function getTabIndex(id) {
             </div>
           </div>
         </LxRadioButton>
+
         <LxCheckbox
           v-if="kind === 'multiple'"
           :id="getItemId(item[idAttribute])"
@@ -454,7 +479,11 @@ function getTabIndex(id) {
           @click="selectMultiple(item[idAttribute])"
           @keydown.space.prevent="selectMultiple(item[idAttribute])"
         >
-          <div class="lx-value-picker-default-item-container" :id="`${getLabelId(item[idAttribute])}`" v-if="variant === 'default'" >
+          <div
+            class="lx-value-picker-default-item-container"
+            :id="`${getLabelId(item[idAttribute])}`"
+            v-if="variant === 'default'"
+          >
             <div class="lx-value-picker-default-item-label">
               <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
             </div>

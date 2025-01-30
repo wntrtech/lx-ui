@@ -8,7 +8,7 @@ import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 
 const props = defineProps({
-  id: { type: String, default: () => generateUUID() },
+  id: { type: String, default: null },
   modelValue: { type: [Array, String], default: () => [] },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
