@@ -127,7 +127,9 @@ export default (
         if (AxiosError.ECONNABORTED === err?.code) {
           return;
         }
-        $reset();
+        if (err.response?.status === HttpStatusCode.Unauthorized) {
+          $reset();
+        }
         throw err;
       }
     }
@@ -151,7 +153,9 @@ export default (
         if (AxiosError.ECONNABORTED === err?.code) {
           return null;
         }
-        $reset();
+        if (err.response?.status === HttpStatusCode.Unauthorized) {
+          $reset();
+        }
         throw err;
       }
       return session.value;
