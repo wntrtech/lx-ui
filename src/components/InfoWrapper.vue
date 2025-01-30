@@ -94,7 +94,7 @@ const closePopper = () => {
         @mouseleave="handleMouseLeave"
         @focusin="handleMouseEnter"
         @focusout="handleMouseLeave"
-        tabindex="0"
+        :tabindex="$slots.panel ? '0' : '-1'"
         :aria-describedby="`${id}-description`"
         @keydown.esc.prevent="closePopper"
       >

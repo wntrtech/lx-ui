@@ -398,7 +398,7 @@ function selectSingle(item) {
 
 function focusOnDropDown(e = { target: { id: null }, shiftKey: false, key: '' }) {
   if (e.shiftKey && e.key === 'Tab') {
-    if (!menuOpen.value && e.target && e.target.id !== 'clearButton') {
+    if (!menuOpen.value && e.target && e.target.id !== 'clearButton' && e.target.id !== 'detailsButton') {
       menuOpen.value = true;
       nextTick(() => {
         initSearchInput();
@@ -408,12 +408,12 @@ function focusOnDropDown(e = { target: { id: null }, shiftKey: false, key: '' })
   }
 
   if (e.key === 'Tab') {
-    if (menuOpen.value && e.target && e.target.id !== 'clearButton') {
+    if (menuOpen.value && e.target && e.target.id !== 'clearButton' && e.target.id !== 'detailsButton') {
       closeMenu();
       nextTick(() => {
         refQuery.value.focus();
       });
-    } else if (!menuOpen.value && e.target && e.target.id !== 'clearButton') {
+    } else if (!menuOpen.value && e.target && e.target.id !== 'clearButton' && e.target.id !== 'detailsButton') {
       nextTick(() => {
         openMenu();
       });
@@ -920,7 +920,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="lx-field-wrapper" ref="refRoot">
+  <div class="lx-field-wrapper" ref="refRoot" >
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
       <template v-if="variant === 'default'">
         <span v-if="displayReadOnlyPlaceholder">—</span>
@@ -1146,6 +1146,7 @@ onMounted(() => {
                         />
                         <LxButton
                           v-if="shouldShowDetailsBtn"
+                          id="detailsButton"
                           :disabled="disabled"
                           icon="search-details"
                           kind="ghost"
@@ -1320,7 +1321,7 @@ onMounted(() => {
           </Popper>
         </div>
 
-        <template #panel>
+        <template #panel v-if="props.selectingKind === 'multiple' && displayTooltipItems?.length > 0">
           <ul class="lx-list">
             <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
               <div class="lx-row">
