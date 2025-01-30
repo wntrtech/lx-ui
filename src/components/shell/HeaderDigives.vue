@@ -224,7 +224,9 @@ function triggerContextPersonMenu() {
             </div>
           </template>
           <div class="header-profile-name" v-if="alternativeProfilesInfo">
+            <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
             <LxDropDown
+              :tabindex="1"
               :items="alternativeProfilesComputed"
               v-model="dropDownModelAlternatives"
               :placeholder="texts?.alternativeProfilesLabel"
@@ -258,9 +260,10 @@ function triggerContextPersonMenu() {
           :class="[{ 'lx-disabled': headerNavDisable }]"
         >
           <LxDropDownMenu ref="contextMenu" :disabled="headerNavDisable">
+            <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
             <div
               class="selected-person-display"
-              tabindex="0"
+              :tabindex="2"
               @keydown.enter.prevent="triggerContextPersonMenu"
             >
               <div
@@ -279,13 +282,14 @@ function triggerContextPersonMenu() {
             </div>
             <template v-slot:panel>
               <div class="lx-button-set">
+                <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
                 <div
                   class="lx-button"
                   v-for="item in contextPersonsInfo"
                   :key="item.code"
                   :class="[{ 'lx-active': selectedContextPersonModel?.code === item?.code }]"
                   @click="changePerson(item)"
-                  tabindex="0"
+                  :tabindex="3"
                   @keydown.enter="changePerson(item)"
                 >
                   <div class="person-custom-button" role="button">
@@ -297,8 +301,10 @@ function triggerContextPersonMenu() {
                 </div>
               </div>
               <div class="lx-button-set addition-button">
+                <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
                 <LxButton
                   :label="texts?.contextPersonsOwnData"
+                  :tabindex="3"
                   _active="selectedContextPersonModel === item.code"
                   @click="changePerson()"
                 />
@@ -311,8 +317,10 @@ function triggerContextPersonMenu() {
     <div class="lx-lower-row">
       <div class="defined-buttons">
         <div class="lower-button" v-if="!hideNavBar">
+          <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
           <LxButton
             id="lx_nav-toggle"
+            :tabindex="4"
             icon="menu"
             :label="texts?.menu"
             @click="navToggle"

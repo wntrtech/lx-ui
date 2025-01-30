@@ -24,6 +24,10 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   labelId: { type: String, default: null },
+  tabindex: {
+    type: [Number, String],
+    default: 0,
+  },
 });
 
 const emits = defineEmits(['update:modelValue', 'change']);
@@ -383,7 +387,7 @@ onMounted(() => {
         @keydown.down.prevent="focusNextInputElement"
         @keydown.up.prevent="focusPreviousInputElement"
         @keydown.tab="focusOnDropDown"
-        tabindex="0"
+        :tabindex="tabindex"
         role="combobox"
         :aria-expanded="menuOpen"
         aria-controls="popper-id"

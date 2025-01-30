@@ -1055,12 +1055,11 @@ function lvAlertItemClicked(event, alert) {
       </div>
       <nav ref="nav" aria-label="navigation panel">
         <LxNavBarDigives
-          :nav-items="navItems"
           v-model:nav-bar-switch="navBarSwitchModel"
-          @nav-toggle="navToggle"
-          :selectedNavItems="navItemsSelected"
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          :nav-items="navItems"
+          :selectedNavItems="navItemsSelected"
           :userInfo="userInfo"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
@@ -1071,6 +1070,7 @@ function lvAlertItemClicked(event, alert) {
           @alternative-profile-changed="alternativeProfileChanged"
           @log-out="logOut"
           @navClick="navClick"
+          @nav-toggle="navToggle"
         />
       </nav>
 
@@ -1289,18 +1289,18 @@ function lvAlertItemClicked(event, alert) {
       </header>
       <nav ref="nav" aria-label="navigation panel" v-if="!hideNavBar">
         <LxNavBar
+          v-model:theme="themeModel"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
           :nav-items="navItems"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"
           :has-language-picker="hasLanguagePicker"
           :languages="languages"
-          v-model:theme="themeModel"
-          v-model:selectedLanguage="selectedLanguageModel"
-          v-model:hasAnimations="animationsModel"
-          v-model:hasDeviceFonts="deviceFontsModel"
+          :selectedNavItems="navItemsSelected"
           @nav-toggle="navToggle"
           @navClick="navClick"
-          :selectedNavItems="navItemsSelected"
         />
       </nav>
 

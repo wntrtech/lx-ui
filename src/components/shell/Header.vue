@@ -339,12 +339,14 @@ const selectedMegaMenuItemModel = computed({
 <template>
   <div class="lx-header">
     <div class="lx-group">
+      <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
       <LxButton
         v-if="!hideNavBar && kind !== 'public' && kind !== 'latvijalv'"
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
         :title="navBarSwitch ? texts.openNavbar : texts.close"
         kind="ghost"
+        tabindex="1"
         @click="navToggle"
       />
       <div
@@ -385,7 +387,7 @@ const selectedMegaMenuItemModel = computed({
         </div>
       </div>
     </div>
-    <div id="extra-menu" class="lx-group" v-if="kind === 'default'">
+    <div id="extra-menu" class="lx-group" v-if="kind === 'default'" tabindex="-1">
       <div class="lx-additional-nav-menu" :class="[{ 'lx-active': y > 140 }]">
         <LxButton
           icon="back"

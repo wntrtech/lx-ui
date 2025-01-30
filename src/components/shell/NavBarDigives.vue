@@ -163,14 +163,20 @@ function triggerContextPersonMenu() {
 }
 </script>
 <template>
-  <div class="lx-nav-panel" :class="{ shown: !navBarSwitch }" v-click-away="toggleNavBar">
+  <div
+    class="lx-nav-panel"
+    :class="{ shown: !navBarSwitch }"
+    v-click-away="toggleNavBar"
+    tabindex="-1"
+  >
     <ul class="lx-nav-group">
       <li
         v-for="item in navItemsPrimary"
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)" />
+        <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
+        <LxButton :label="item.label" :href="item.to" :tabindex="5" @click="navClick(item?.id)" />
       </li>
     </ul>
     <ul class="lx-nav-group">
@@ -179,7 +185,8 @@ function triggerContextPersonMenu() {
         :key="item.label"
         :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
       >
-        <LxButton :label="item.label" :href="item.to" @click="navClick(item?.id)" />
+        <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
+        <LxButton :label="item.label" :href="item.to" :tabindex="5" @click="navClick(item?.id)" />
       </li>
     </ul>
   </div>

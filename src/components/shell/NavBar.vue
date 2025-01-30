@@ -118,12 +118,18 @@ const deviceFontsModel = computed({
   },
 });
 
+const getTabIndex = computed(() => {
+  if ((props.layoutMode !== 'default' && props.layoutMode !== 'digives') || width.value > 1900)
+    return 0;
+  return 2;
+});
+
 function navClick(id) {
   emits('navClick', id);
 }
 </script>
 <template>
-  <div class="lx-nav-panel" v-on-click-outside="navToggle">
+  <div class="lx-nav-panel" v-on-click-outside="navToggle" :tabindex="-1">
     <ul class="lx-nav-group">
       <li
         v-for="(item, index) in (props.layoutMode === 'public' ||
@@ -151,6 +157,7 @@ function navClick(id) {
               ? 'icon-only'
               : 'default'
           "
+          :tabindex="getTabIndex"
           @click="navClick(item?.id)"
         />
       </li>
@@ -184,6 +191,7 @@ function navClick(id) {
           :label="item.label"
           :href="item.to"
           :icon="item.icon"
+          :tabindex="getTabIndex"
           @click="navClick(item?.id)"
         />
       </li>
