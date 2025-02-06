@@ -169,6 +169,94 @@ const supportedFileType = computed(() => {
   return '';
 });
 
+function debounce(func, delay) {
+  let timer;
+  return function debounced(...args) {
+    const context = this;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
+function calculateThreshold(heightValue) {
+  const numericValue = parseFloat(heightValue);
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+  if (heightValue.endsWith('px')) {
+    const heightInRem = numericValue / rootFontSize;
+    return heightInRem >= 100 ? 0.8 : heightInRem / 100 - 0.25;
+  }
+
+  if (heightValue.endsWith('rem')) {
+    return numericValue >= 100 ? 0.8 : numericValue / 100 - 0.25;
+  }
+
+  if (scale.value === MAX_ZOOM.pdf) {
+    return 0.25;
+  }
+
+  if (scale.value === MIN_ZOOM.pdf) {
+    return 0.7;
+  }
+
+  return 0.4;
+}
+
+const threshold = computed(() => calculateThreshold(props.height));
+
+function setupIntersectionObserver() {
+  if (!props.scrollable) return;
+
+  setTimeout(() => {
+    const rootElement = document.querySelector('.lx-pdf-wrapper');
+    if (!rootElement || !canvasArray.value.length) {
+      return;
+    }
+
+    if (observer) {
+      observer.disconnect();
+    }
+
+    // Check if the container is scrollable
+    const isScrollable = rootElement.scrollHeight > rootElement.clientHeight;
+
+    const options = {
+      root: isScrollable ? rootElement : null, // Use the container if scrollable, otherwise viewport
+      threshold: threshold.value,
+    };
+
+    // If the container is scrollable, observe the container
+    observer = new IntersectionObserver(
+      (entries) => {
+        if (isNavigating.value) return; // Block observer updates during navigation
+
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const pageNumber = canvasArray.value.indexOf(entry.target) + 1;
+            currentPage.value = pageNumber;
+            inputPage.value = pageNumber;
+          }
+        });
+      },
+      {
+        ...options,
+      }
+    );
+
+    canvasArray.value.forEach((canvasElement) => {
+      observer.observe(canvasElement);
+    });
+  }, 500);
+}
+
+function disconnectObserver() {
+  if (observer) {
+    observer.disconnect();
+  }
+}
+
 function drawImage(providedScale) {
   const imgCanvas = imgCanvasRef.value;
   const ctx = imgCanvas.getContext('2d');
@@ -352,7 +440,11 @@ async function renderAllPages(pages, batchSize = 5, delayBetweenBatches = 200) {
 const renderingInProgress = computed(
   () =>
     (!printInProgress.value && !props.scrollable && isPageRendering.value) ||
-    (!printInProgress.value && props.scrollable && !allPagesRendered.value && showPdf.value) ||
+    (!printInProgress.value &&
+      props.scrollable &&
+      !allPagesRendered.value &&
+      showPdf.value &&
+      !totalPages.value) ||
     printInProgress.value ||
     loadingPdfjs.value
 );
@@ -441,105 +533,63 @@ async function goToPage() {
   }
 }
 
+const debouncedSetupObserver = debounce(() => {
+  setupIntersectionObserver();
+}, 500);
+
 function nextPage() {
   if (isZooming.value || renderingInProgress.value) return;
+
   isNavigating.value = true;
+  disconnectObserver();
+
   if (currentPage.value < totalPages.value) {
     inputPage.value += 1;
-    goToPage();
+    goToPage().then(() => {
+      isNavigating.value = false;
+      debouncedSetupObserver();
+    });
   }
-  isNavigating.value = false;
 }
 
 function prevPage() {
   if (isZooming.value || renderingInProgress.value) return;
+
   isNavigating.value = true;
+  disconnectObserver();
+
   if (currentPage.value > 1) {
     inputPage.value -= 1;
-    goToPage();
+    goToPage().then(() => {
+      isNavigating.value = false;
+      debouncedSetupObserver();
+    });
   }
-  isNavigating.value = false;
 }
 
 function firstPage() {
   if (isZooming.value || renderingInProgress.value) return;
   isNavigating.value = true;
   inputPage.value = 1;
-  goToPage();
-  isNavigating.value = false;
+  goToPage().then(() => {
+    isNavigating.value = false;
+    debouncedSetupObserver();
+  });
 }
 
 function lastPage() {
   if (isZooming.value || renderingInProgress.value) return;
   isNavigating.value = true;
   inputPage.value = totalPages.value;
-  goToPage();
-  isNavigating.value = false;
+  goToPage().then(() => {
+    isNavigating.value = false;
+    debouncedSetupObserver();
+  });
 }
 
 function toggleExpand() {
   if (renderingInProgress.value) return;
   isExpanded.value = !isExpanded.value;
-}
-function calculateThreshold(heightValue) {
-  const numericValue = parseFloat(heightValue);
-  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-  if (heightValue.endsWith('px')) {
-    const heightInRem = numericValue / rootFontSize;
-    return heightInRem >= 100 ? 0.8 : heightInRem / 100 - 0.25;
-  }
-
-  if (heightValue.endsWith('rem')) {
-    return numericValue >= 100 ? 0.8 : numericValue / 100 - 0.25;
-  }
-
-  return 0.4;
-}
-
-const threshold = computed(() => calculateThreshold(props.height));
-
-function setupIntersectionObserver() {
-  if (!props.scrollable) return;
-
-  setTimeout(() => {
-    const rootElement = document.querySelector('.lx-pdf-wrapper');
-    if (!rootElement || !canvasArray.value.length) {
-      return;
-    }
-
-    if (observer) {
-      observer.disconnect();
-    }
-
-    // Check if the container is scrollable
-    const isScrollable = rootElement.scrollHeight > rootElement.clientHeight;
-
-    const options = {
-      root: isScrollable ? rootElement : null, // Use the container if scrollable, otherwise viewport
-      threshold: threshold.value,
-    };
-
-    // If the container is scrollable, observe the container
-    observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const pageNumber = canvasArray.value.indexOf(entry.target) + 1;
-            currentPage.value = pageNumber;
-            inputPage.value = pageNumber;
-          }
-        });
-      },
-      {
-        ...options,
-      }
-    );
-
-    canvasArray.value.forEach((canvasElement) => {
-      observer.observe(canvasElement);
-    });
-  }, 500);
 }
 
 async function setZoomLevel(zoomLevel) {
@@ -641,17 +691,6 @@ async function zoomOut() {
   isPageRendering.value = false;
 }
 
-function debounce(func, delay) {
-  let timer;
-  return function debounced(...args) {
-    const context = this;
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      func.apply(context, args);
-    }, delay);
-  };
-}
-
 const debouncedZoomIn = debounce(zoomIn, 200);
 const debouncedZoomOut = debounce(zoomOut, 200);
 
@@ -665,14 +704,8 @@ function zoom(action) {
   }
 }
 
-const debouncedPrevPage = debounce(prevPage, 200);
-const debouncedNextPage = debounce(nextPage, 200);
-
-function disconnectObserver() {
-  if (observer) {
-    observer.disconnect();
-  }
-}
+const debouncedNextPage = debounce(nextPage, 50);
+const debouncedPrevPage = debounce(prevPage, 50);
 
 const handleResize = async () => {
   if (!resizeActive.value || !initializeFitScale.value) return;
@@ -800,10 +833,9 @@ function prepareSVGImage(newValue) {
 }
 
 const isNextBtnDisabled = computed(
-  () =>
-    currentPage.value === totalPages.value || (currentPage.value === 1 && renderingInProgress.value)
+  () => currentPage.value === totalPages.value || renderingInProgress.value
 );
-const isPrevBtnDisabled = computed(() => currentPage.value === 1);
+const isPrevBtnDisabled = computed(() => currentPage.value === 1 || renderingInProgress.value);
 const isZoomInDisabled = computed(() => {
   if (supportedFileType.value === 'PDF') {
     return scale.value >= MAX_ZOOM.pdf;
