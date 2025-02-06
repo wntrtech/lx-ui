@@ -11,7 +11,8 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // 'default' or 'bar'
   modelValue: { type: [Number, String], default: 0 },
   kind: { type: String, default: 'indeterminate' }, // 'indeterminate' or 'progress'
-  label: { type: String, default: '' },
+  label: { type: String, default: 'Notiek ielāde' },
+  labelDone: { type: String, default: 'Ielāde ir pabeigta' },
   description: { type: String, default: '' },
   fakedDuration: { type: Number, default: 2000 },
   faked: { type: Boolean, default: false },
@@ -44,14 +45,11 @@ watch(
 
 <template>
   <div class="lx-loader-view-wrapper" :id="props.id">
-    <div
-      class="lx-loader-view-loader-wrapper"
-      role="alert"
-      aria-live="assertive"
-      :aria-label="props.label"
-    >
+    <div v-if="props.loading" class="lx-loader-view-loader-wrapper" :aria-label="props.label">
+      <div aria-live="polite" role="status" class="lx-invisible">
+        {{ props.label }} <span v-if="kind === 'progress'">- {{ Number(model) * 100 }}%</span>
+      </div>
       <LxLoader
-        v-if="props.loading"
         :modelValue="model"
         :loading="props.loading"
         :size="props.size"
@@ -62,10 +60,13 @@ watch(
         :faked-duration="props.fakedDuration"
         :faked="props.faked"
         :state="props.state"
-        :aria-hidden="true"
+        :aria-hidden="!props.loading"
       ></LxLoader>
     </div>
-    <div v-show="!props.loading" class="lx-loader-view-content-wrapper" aria-live="polite">
+    <div v-show="!props.loading" class="lx-loader-view-content-wrapper">
+      <div v-if="!props.loading" aria-live="polite" role="status" class="lx-invisible">
+        {{ props.labelDone }}
+      </div>
       <slot />
     </div>
   </div>

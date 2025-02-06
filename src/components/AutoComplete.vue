@@ -1029,6 +1029,7 @@ onMounted(() => {
                     >
                       <div
                         class="lx-text-input-wrapper lx-input-wrapper"
+                        role="search"
                         :class="[
                           { 'lx-disabled': disabled },
                           { 'lx-invalid': invalid },
@@ -1055,7 +1056,7 @@ onMounted(() => {
                           :id="id"
                           v-model="query"
                           class="lx-text-input lx-value-picker-placeholder lx-input-area"
-                          role="search"
+                         
                           :aria-label="getName(false)"
                           :aria-invalid="invalid"
                           tabindex="0"

@@ -182,3 +182,9 @@
 .lx-loader-progress.state-success .lx-loader-bar-progress {
   background-color: var(--color-good);
 }
+
+.lx-invisible {
+  overflow: hidden;
+  height: 0px;
+  width: 0px;
+}
