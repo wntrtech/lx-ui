@@ -3829,7 +3829,7 @@ input[type='range']:hover::-moz-range-thumb {
 
 .lx-visual-picker-wrapper:not(.read-only)
   .europe-map
-  path:not([id^='rect']):not([id$='_lx_safearea']):hover,
+  path:not([id^='rect']):not([id$='-safearea']):hover,
 .lx-visual-picker-wrapper:not(.read-only) .europe-map g:not(#EUROPE_VP1):hover,
 .lx-visual-picker-wrapper:not(.read-only) #skeleton_spine g:hover,
 .lx-visual-picker-wrapper:not(.read-only) #Skeleton_Full g:hover,
@@ -3847,7 +3847,7 @@ input[type='range']:hover::-moz-range-thumb {
 .lx-visual-picker-wrapper .europe-map svg .selected-visual,
 .lx-visual-picker-wrapper svg #skeleton_spine g.selected-visual,
 .lx-visual-picker-wrapper svg #Skeleton_Full g.selected-visual,
-.lx-visual-picker-wrapper svg #LV_Region > g.selected-visual path:not([id$='_lx_safearea']),
+.lx-visual-picker-wrapper svg #LV_Region > g.selected-visual path:not([id$='-safearea']),
 .lx-visual-picker-wrapper svg #LV_Region > path.selected-visual,
 .lx-visual-picker-wrapper svg #Skeleton_Arms g.selected-visual,
 .lx-visual-picker-wrapper svg #Skeleton_RightHand g.selected-visual,

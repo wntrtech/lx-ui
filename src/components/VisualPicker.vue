@@ -122,8 +122,8 @@ function addTitles() {
   if (props.kind === 'spine') {
     items.value.forEach((bone) => {
       const elem = document.getElementById(props.id);
-      const pathElementSide = elem.querySelector(`#${CSS.escape(bone?.id)}_lx_side`);
-      const pathElementFront = elem.querySelector(`#${CSS.escape(bone?.id)}_lx_front`);
+      const pathElementSide = elem.querySelector(`#lx-${bone?.id}-side`);
+      const pathElementFront = elem.querySelector(`#lx-${bone?.id}-front`);
       if (pathElementSide && pathElementFront) {
         const titleElementSide = pathElementSide.querySelector('title');
         const titleElementFront = pathElementFront.querySelector('title');
@@ -143,7 +143,7 @@ function addTitles() {
   } else {
     items.value.forEach((bone) => {
       const elem = document.getElementById(props.id);
-      const pathElement = elem.querySelector(`#${CSS.escape(bone?.id)}`);
+      const pathElement = elem.querySelector(`#lx-${bone?.id}`);
       if (pathElement) {
         const titleElement = pathElement.querySelector('title');
         if (titleElement) {
@@ -177,10 +177,8 @@ watch(
 function mapClick(event) {
   if (!props.readOnly) {
     let countryId = event.target?.id;
-    if (countryId.length !== 2) {
-      countryId = event.target.parentNode?.id;
-    }
-    if (countryId?.includes('_')) countryId = countryId?.split('_')[0];
+    if (countryId.length !== 5) countryId = event.target.parentNode?.id;
+    if (countryId?.includes('-')) countryId = countryId?.split('-')[1];
 
     if (!countryId) return;
 
@@ -202,11 +200,12 @@ function spineClick(event) {
   if (!props.readOnly) {
     let boneId = event.target?.id;
     if (!boneId) boneId = event.target?.parentNode?.id;
-    if (boneId?.includes('_')) boneId = boneId?.split('_')[0];
+    if (boneId?.includes('-')) boneId = boneId?.split('-')[1];
 
     if (boneId && props.kind === 'spine') {
       if (props.selectingKind === 'multiple') {
-        boneId = boneId?.split('_')[0];
+        boneId = boneId?.split('-')[0];
+
         const res = [...model.value];
         const index = res.findIndex((selectedItem) => selectedItem === boneId);
         if (boneId !== 'skeleton') {
@@ -307,9 +306,9 @@ function selectionChanged(selectedValue) {
     });
     selectedValue?.forEach((element) => {
       if (props.kind === 'spine') {
-        elem.querySelector(`#${CSS.escape(element)}_lx_side`)?.classList.add('selected-visual');
-        elem.querySelector(`#${CSS.escape(element)}_lx_front`)?.classList.add('selected-visual');
-      } else elem.querySelector(`#${CSS.escape(element)}`)?.classList.add('selected-visual');
+        elem.querySelector(`#lx-${element}-side`)?.classList.add('selected-visual');
+        elem.querySelector(`#lx-${element}-front`)?.classList.add('selected-visual');
+      } else elem.querySelector(`#lx-${element}`)?.classList.add('selected-visual');
     });
     if (JSON.stringify(model.value) !== JSON.stringify(selectedValue)) {
       if (props.selectingKind === 'single') {

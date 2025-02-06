@@ -122,8 +122,7 @@ function getBarColor(item, grid = false) {
 function colorSvg() {
   const rootElement = document.getElementById('LV_Region');
   Object.entries(latvia)?.forEach(([key, value]) => {
-    const safeKey = CSS.escape(key);
-    const element = rootElement?.querySelector(`#${safeKey}`);
+    const element = rootElement?.querySelector(`#lx-${key}`);
     if (element) {
       element.style.fill = 'inherit';
       const res = element.querySelector('title');
@@ -131,7 +130,7 @@ function colorSvg() {
     }
   });
   props.items.forEach((item) => {
-    const country = document.getElementById(item[props.idAttribute]);
+    const country = document.getElementById(`lx-${item[props.idAttribute]}`);
     const color = getBarColor(item);
     if (country) {
       if (color) country.style.fill = color;
@@ -221,11 +220,8 @@ function gridClick(a, b) {
 function imageClick(event) {
   let element = event.target?.id;
   if (!element) element = event.target?.parentNode?.id;
-  if (element?.includes('_')) element = element?.split('_')[0];
-
-  if (element) {
-    emits('click', element);
-  }
+  if (element?.includes('-')) element = element?.split('-')[1];
+  if (element) emits('click', element);
 }
 
 const contentModel = ref('default');
