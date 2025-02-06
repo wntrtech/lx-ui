@@ -759,6 +759,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-toggle-label-wrapper {
   font-size: var(--font-size);
+  cursor: default;
 }
 
 .lx-toggle-label-wrapper.lx-toggle-read-only {
@@ -947,6 +948,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   justify-content: start;
   padding-left: 0.1rem;
   padding-right: 0.1rem;
+  cursor: pointer;
 }
 
 .lx-toggle:checked + .lx-toggle-label-wrapper .lx-toggle-appearance {
@@ -1020,6 +1022,15 @@ h2.lx-section-header + p.lx-invalidation-message,
   margin-left: 0.5rem;
 }
 
+.lx-toggle:not(:disabled) + .lx-toggle-label-wrapper .lx-toggle-appearance ~ .lx-toggle-text {
+  cursor: pointer;
+}
+
+.lx-toggle:disabled + .lx-toggle-label-wrapper .lx-toggle-appearance,
+.lx-toggle:disabled + .lx-toggle-label-wrapper .lx-toggle-appearance ~ .lx-toggle-text {
+  cursor: not-allowed;
+}
+
 .lx-toggle-wrapper:not([data-disabled]):hover
   .lx-toggle
   + .lx-toggle-label-wrapper
@@ -1041,6 +1052,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: auto !important;
   font-weight: normal !important;
   color: var(--color-label) !important;
+  cursor: pointer;
 }
 
 .lx-toggle-text p.lx-data,
@@ -1051,6 +1063,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   font-weight: 600 !important;
   color: var(--color-data) !important;
   padding-top: 0 !important;
+  cursor: default;
 }
 
 .lx-toggle-wrapper.lx-small > .lx-toggle-label-wrapper > .lx-toggle-appearance::after {

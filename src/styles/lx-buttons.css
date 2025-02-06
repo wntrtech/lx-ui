@@ -14,6 +14,10 @@
   margin: -0.1em -0.5em;
 }
 
+.lx-link-wrapper a {
+  display: inline-block;
+}
+
 /*** General styles ***/
 
 .lx-button-set {
