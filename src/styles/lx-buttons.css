@@ -698,18 +698,6 @@
   border-color: var(--color-button-modal-secondary-focus-border);
 }
 
-/* Modal focus-hover */
-
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):focus:hover {
-  background-color: var(--color-button-modal-primary-hover-background);
-  color: var(--color-button-modal-primary-hover);
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button):focus:hover {
-  background-color: var(--color-button-modal-secondary-hover-background);
-  color: var(--color-button-modal-secondary-hover);
-}
-
 /* Modal active */
 
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):active {
