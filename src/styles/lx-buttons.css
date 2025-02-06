@@ -1258,6 +1258,8 @@ button.lx-button-ghost:focus:hover {
   border-left: 0;
 }
 
+/* Skiplink styles */
+
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-divider {
   border-bottom: 2px solid var(--color-background);
   margin: 1rem;
@@ -1265,6 +1267,38 @@ button.lx-button-ghost:focus:hover {
   margin-top: 0.25rem;
   height: auto;
   width: calc(100% - 2rem);
+}
+
+.lx-skip-link-wrapper {
+  position: relative;
+  z-index: 9999;
+  width: 0px;
+  height: 0px;
+}
+
+.lx .lx-skip-link-wrapper .lx-button {
+  opacity: 0;
+  width: 0px;
+  height: 0px;
+  position: absolute;
+}
+
+.lx .lx-layout>.lx-skip-link-wrapper .lx-button {
+  border: none;
+}
+
+.lx .lx-skip-link-wrapper .lx-button div {
+  overflow: hidden;
+}
+
+.lx .lx-skip-link-wrapper .lx-button:focus {
+  opacity: 1;
+  width: var(--button-primary-width);
+  height: var(--button-primary-height);
+}
+
+.lx .lx-skip-link-wrapper .lx-button:focus div {
+  overflow: visible;
 }
 
 @media (max-width: 1900px) {

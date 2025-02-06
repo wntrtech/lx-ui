@@ -17,6 +17,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxModal from '@/components/Modal.vue';
+import LxSkipLink from '@/components/SkipLink.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import LxAlertWidget from '@/components/AlertWidget.vue';
 import LxMainHeaderDigimaks from '@/components/shell/HeaderDigimaks.vue';
@@ -142,6 +143,8 @@ const props = defineProps({
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
 
+  hasSkipLink: { type: Boolean, default: true },
+
   texts: {
     type: Object,
     default: () => ({
@@ -185,6 +188,8 @@ const props = defineProps({
       errorSvgTitle: 'Kļūda',
       infoSvgTitle: 'Informācija',
       svgTitle: 'Paziņojums',
+      skipLinkLabel: 'Pāriet uz lapas saturu',
+      skipLinkTitle: 'Pāriet uz lapas saturu',
     }),
   },
 });
@@ -602,10 +607,33 @@ function lvAlertItemClicked(event, alert) {
     emits('alertItemClick', alert);
   }
 }
+
+function focusFirstMainFocusableElement() {
+  const mainElement = main.value;
+
+  const focusableSelectors = [
+    'a:not([disabled])',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    '[tabindex="0"]',
+  ];
+  if (mainElement) {
+    const focusableElement = mainElement.querySelector(focusableSelectors.join(', '));
+    if (focusableElement) {
+      focusableElement.focus();
+    }
+  }
+}
 </script>
 <template>
   <transition name="shell-switch">
     <div ref="shell" v-if="mode === 'cover'" class="lx-layout lx-layout-cover">
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="props.texts.skipLinkLabel"
+        :title="props.texts.skipLinkTitle"
+        @click="focusFirstMainFocusableElement"
+      />
       <header ref="header">
         <LxMainHeader
           :mode="mode"
@@ -715,6 +743,12 @@ function lvAlertItemClicked(event, alert) {
         { 'no-nav-items': !navItems || navItems?.length === 0 },
       ]"
     >
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="props.texts.skipLinkLabel"
+        :title="props.texts.skipLinkTitle"
+        @click="focusFirstMainFocusableElement"
+      />
       <header ref="header">
         <LxMainHeader
           :mode="mode"
@@ -834,6 +868,12 @@ function lvAlertItemClicked(event, alert) {
         { 'no-nav-items': !navItems || navItems?.length === 0 },
       ]"
     >
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="props.texts.skipLinkLabel"
+        :title="props.texts.skipLinkTitle"
+        @click="focusFirstMainFocusableElement"
+      />
       <header ref="header">
         <LxMainHeader
           :mode="mode"
@@ -959,6 +999,7 @@ function lvAlertItemClicked(event, alert) {
           </div>
         </li>
       </ul>
+
       <main ref="main" class="lx-main">
         <LxPageHeader
           v-if="pageHeaderVisible"
@@ -998,6 +1039,12 @@ function lvAlertItemClicked(event, alert) {
         { 'lx-collapsed-null': navBarSwitchModel === null },
       ]"
     >
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="props.texts.skipLinkLabel"
+        :title="props.texts.skipLinkTitle"
+        @click="focusFirstMainFocusableElement"
+      />
       <header ref="header">
         <LxMainHeaderDigives
           :userInfo="userInfo"
@@ -1134,6 +1181,12 @@ function lvAlertItemClicked(event, alert) {
       <div ref="modals" id="modals"></div>
     </div>
     <div v-else-if="mode === 'digimaks'" class="lx-layout lx-layout-digimaks">
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="props.texts.skipLinkLabel"
+        :title="props.texts.skipLinkTitle"
+        @click="focusFirstMainFocusableElement"
+      />
       <main class="lx-main" ref="main">
         <LxPageHeader
           v-if="pageHeaderVisible"
@@ -1226,6 +1279,12 @@ function lvAlertItemClicked(event, alert) {
       class="lx-layout lx-layout-default"
       :class="[{ 'lx-collapsed': navBarSwitchBasic }]"
     >
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="props.texts.skipLinkLabel"
+        :title="props.texts.skipLinkTitle"
+        @click="focusFirstMainFocusableElement"
+      />
       <header ref="header">
         <LxMainHeader
           :mode="mode"

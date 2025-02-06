@@ -19,6 +19,7 @@ import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxTreeList from '@/components/list/TreeList.vue';
+import LxSkipLink from '@/components/SkipLink.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -65,6 +66,7 @@ const props = defineProps({
   searchMode: { type: String, default: 'default' }, // default, compact
   labelId: { type: String, default: null },
 
+  hasSkipLink: { type: Boolean, default: false },
   texts: {
     type: Object,
     default: () => ({
@@ -104,6 +106,8 @@ const props = defineProps({
       expand: 'Izvērst elementu',
       openSearch: 'Atvērt meklētāju',
       closeSearch: 'Aizvērt meklētāju',
+      skipLinkLabel: 'Izlaist sarakstu',
+      skipLinkTitle: 'Izlaist sarakstu',
     }),
   },
 });
@@ -1014,10 +1018,77 @@ function sanitizeHref(href) {
   }
   return null;
 }
+
+const listWrapper = ref(null);
+
+function isElementFocusable(element) {
+  return element && element.offsetParent !== null && !element.disabled;
+}
+
+const focusableSelectors = [
+  'a:not([disabled])',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  '[tabindex="0"]',
+];
+
+function findFocusableElement(element) {
+  if (element.matches(focusableSelectors.join(',')) && isElementFocusable(element)) {
+    return element;
+  }
+
+  return Array.from(element.children).map(findFocusableElement).find(Boolean) || null;
+}
+
+function focusNextFocusableElement(startElement) {
+  let currentElement = startElement.nextElementSibling;
+
+  while (currentElement) {
+    const focusable = findFocusableElement(currentElement);
+    if (focusable) {
+      focusable.focus();
+      return;
+    }
+    currentElement = currentElement.nextElementSibling;
+  }
+
+  currentElement = startElement.parentElement;
+  while (currentElement && currentElement !== document.body) {
+    let sibling = currentElement.nextElementSibling;
+    while (sibling) {
+      const focusable = findFocusableElement(sibling);
+      if (focusable) {
+        focusable.focus();
+        return;
+      }
+      sibling = sibling.nextElementSibling;
+    }
+    currentElement = currentElement.parentElement;
+  }
+
+  // If no next focusable element is found, focus the first focusable element in the document
+  const firstFocusableElement = document.querySelector(focusableSelectors.join(', '));
+  if (firstFocusableElement) {
+    firstFocusableElement.focus();
+  }
+}
+
+function focusFirstFocusableElementAfter() {
+  if (listWrapper.value) {
+    focusNextFocusableElement(listWrapper.value);
+  }
+}
 </script>
 
 <template>
-  <div class="lx-list-wrapper">
+  <div ref="listWrapper" class="lx-list-wrapper">
+    <LxSkipLink
+      v-if="props.hasSkipLink"
+      :label="props.texts.skipLinkLabel"
+      :title="props.texts.skipLinkTitle"
+      :tabindex="0"
+      @click="focusFirstFocusableElementAfter"
+    />
     <div
       v-if="
         $slots.toolbar ||
