@@ -58,7 +58,8 @@ const props = defineProps({
       detailsButton: 'Skatīt detaļas',
       detailsModalLabel: 'Izvērstais skats',
       clearChosen: 'Notīrīt visas izvēlētās vērtības',
-      selectAll: 'Izvēlēties visu'
+      selectAll: 'Izvēlēties visu',
+      loadingState: 'Notiek ielāde',
     }),
   },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
@@ -1059,6 +1060,7 @@ onMounted(() => {
                          
                           :aria-label="getName(false)"
                           :aria-invalid="invalid"
+                          :aria-busy="loadingState || loading"
                           tabindex="0"
                           :readonly="inputReadonly"
                           @focusout="handleFocusOut"
@@ -1066,6 +1068,7 @@ onMounted(() => {
                           @keydown="handleMenuAndInputKeydown"
                           @touchstart="handleTouchStart"
                         />
+                        <div class="lx-invisible" aria-live="polite" v-if="loadingState || loading">{{ props.texts.loadingState }}</div>
                         <template v-if="shouldShowValuePlaceholder">
                           <div
                             class="lx-value lx-input-area"
@@ -1157,7 +1160,7 @@ onMounted(() => {
                           @keydown.tab="focusOnDropDown"
                           @keydown.f3.prevent="openDetails"
                         />
-                        <div class="lx-autocomplete-loader" v-if="loadingState || loading">
+                        <div class="lx-autocomplete-loader" v-if="loadingState || loading" :title="props.texts.loadingState">
                           <LxLoader loading size="s" />
                         </div>
                       </div>

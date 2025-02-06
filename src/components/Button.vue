@@ -20,6 +20,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  busyTooltip: {
+    type: String,
+    default: '',
+  },
   icon: {
     type: String,
     default: '',
@@ -120,7 +124,10 @@ const isIconOnly = computed(() =>
 const isTextOnly = computed(() => Boolean((props.label || slots.default) && !props.icon));
 
 const accessibleTitle = computed(() => {
-  const tooltip = props.title ? props.title : props.label;
+  let tooltip = props.title ? props.title : props.label;
+  if (props.busy) {
+    tooltip = props.busyTooltip ? props.busyTooltip : tooltip;
+  }
   return props.badge ? `${tooltip} (${props.badge})` : tooltip;
 });
 </script>
@@ -149,6 +156,7 @@ const accessibleTitle = computed(() => {
     :aria-disabled="isDisabled"
     :aria-pressed="active ? active : null"
     :aria-label="label ? label : null"
+    :aria-busy="busy"
     :tabindex="tabindex"
   >
     <div class="lx-button-content-wrapper">
@@ -210,6 +218,7 @@ const accessibleTitle = computed(() => {
     @click="click"
     :title="accessibleTitle"
     :tabindex="tabindex"
+    :aria-busy="busy"
     :target="openInNewTab ? '_blank' : null"
   >
     <div class="lx-button-content-wrapper">
@@ -249,4 +258,5 @@ const accessibleTitle = computed(() => {
       </p>
     </div>
   </router-link>
+  <div class="lx-invisible" aria-live="polite" v-if="props.busy">{{ props.busyTooltip }}</div>
 </template>
