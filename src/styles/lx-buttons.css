@@ -1189,8 +1189,8 @@ button.lx-button-ghost:focus:hover {
 
 .lx .lx-button .lx-loader-container .lx-loader svg {
   margin: 0;
-  height: 1rem;
-  width: 1rem;
+  height: 1.25rem;
+  width: 1.25rem;
   fill: transparent !important;
 }
 
