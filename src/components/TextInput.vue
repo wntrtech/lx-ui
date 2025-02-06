@@ -52,6 +52,7 @@ const props = defineProps({
   signed: { type: Boolean, default: false },
   kind: { type: String, default: 'default' },
   labelId: { type: String, default: null },
+  autocomplete: { type: String, default: 'off' },
   texts: {
     type: Object,
     default: () => ({
@@ -400,7 +401,7 @@ const sanitizedEmail = computed(() => {
         v-if="mask !== 'currency'"
         ref="input"
         :type="props.kind === 'password' && hidePassword ? 'password' : 'text'"
-        autocomplete="off"
+        :autocomplete="autocomplete"
         class="lx-text-input lx-input-area"
         :class="[
           { 'lx-invalid': invalid },
