@@ -758,7 +758,9 @@ function handleSingleSelection(selectedValue, selectionType, isNotSelectable = f
   const newDate = new Date(currentDate.value);
 
   if (selectionType === 'month') {
+    newDate.setDate(1);
     newDate.setMonth(selectedValue.orderIndex);
+
     currentDate.value = newDate;
 
     if (props.mode === 'month') {
@@ -1139,6 +1141,7 @@ function handleRangeSelection(selectedValue, selectionType, isNotSelectable = fa
   const newDate = new Date(currentDate.value);
 
   if (selectionType === 'month') {
+    newDate.setDate(1);
     newDate.setMonth(selectedValue.orderIndex);
     if (props.mode === 'date') currentDate.value = newDate;
 
