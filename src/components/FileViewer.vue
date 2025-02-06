@@ -92,6 +92,8 @@ const printInProgress = ref(false);
 const isLoadingPdf = ref(false);
 const resizeActive = ref(false);
 
+const downloadInProgress = ref(false);
+
 const inputRef = ref(null);
 
 const windowSize = useWindowSize();
@@ -895,6 +897,7 @@ const toolbarActions = computed(() => {
       groupId: '3',
       area: 'right',
       loading: renderingInProgress.value,
+      busy: downloadInProgress.value,
     });
   }
 
@@ -919,6 +922,7 @@ const toolbarActions = computed(() => {
       kind: 'primary',
       label: props.texts.download,
       loading: renderingInProgress.value,
+      busy: downloadInProgress.value,
     });
   }
 
@@ -947,10 +951,16 @@ function changeFitType(action) {
 }
 
 function downloadFile() {
+  downloadInProgress.value = true;
+
   const link = document.createElement('a');
   link.href = props.modelValue;
   link.download = isValidFileName(props.fileName) ? props.fileName : generateUUID();
   link.click();
+
+  setTimeout(() => {
+    downloadInProgress.value = false;
+  }, 2000);
 }
 
 function changeTextSize(action) {
