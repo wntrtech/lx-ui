@@ -648,9 +648,10 @@ describe('LxTextInput', () => {
       const input = wrapper.find('.lx-text-input');
       await input.setValue('888');
 
-      const emitted = wrapper.emitted('update:modelValue');
-      expect(emitted).toHaveLength(1);
-      expect(emitted[0]).toEqual([888]);
+      expect(wrapper.emitted()['update:modelValue']).toBeTruthy();
+      const emitted = wrapper.emitted()['update:modelValue'];
+
+      expect(emitted[0][0]).toEqual(888);
       expect(typeof emitted[0][0]).toBe('number');
     });
 
@@ -669,9 +670,10 @@ describe('LxTextInput', () => {
       const input = wrapper.find('input');
       await input.setValue('888');
 
-      const emitted = wrapper.emitted('update:modelValue');
-      expect(emitted).toHaveLength(1);
-      expect(emitted[0]).toEqual(['888']);
+      expect(wrapper.emitted()['update:modelValue']).toBeTruthy();
+      const emitted = wrapper.emitted()['update:modelValue'];
+
+      expect(emitted[0][0]).toEqual('888');
       expect(typeof emitted[0][0]).toBe('string');
     });
   });

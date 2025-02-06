@@ -52,15 +52,18 @@ describe('LxPersonDisplay', () => {
     test('should accept provided values', () => {
       const wrapper = mount(LxPersonDisplay, {
         props: {
-          value: 'custom-id',
+          value: {
+            customId: 'customId',
+            customName: 'customName',
+          },
           name: 'Custom name',
           size: 's',
           variant: 'icon-only',
           description: 'Custom description',
           role: 'Custom role',
           institution: 'Custom institution',
-          icon: 'Custom icon',
-          iconSet: 'Custom icon set',
+          icon: 'accept',
+          iconSet: 'material',
           idAttribute: 'customId',
           nameAttribute: 'customName',
           firstNameAttribute: 'customFirstName',
@@ -90,15 +93,20 @@ describe('LxPersonDisplay', () => {
 
       const props = wrapper.props();
 
-      expect(props.value).toBe('custom-id').toBeTypeOf('string');
+      expect(props.value)
+        .toStrictEqual({
+          customId: 'customId',
+          customName: 'customName',
+        })
+        .toBeTypeOf('object');
       expect(props.name).toBe('Custom name').toBeTypeOf('string');
       expect(props.size).toBe('s').toBeTypeOf('string');
       expect(props.variant).toBe('icon-only').toBeTypeOf('string');
       expect(props.description).toBe('Custom description').toBeTypeOf('string');
       expect(props.role).toBe('Custom role').toBeTypeOf('string');
       expect(props.institution).toBe('Custom institution').toBeTypeOf('string');
-      expect(props.icon).toBe('Custom icon').toBeTypeOf('string');
-      expect(props.iconSet).toBe('Custom icon set').toBeTypeOf('string');
+      expect(props.icon).toBe('accept').toBeTypeOf('string');
+      expect(props.iconSet).toBe('material').toBeTypeOf('string');
       expect(props.idAttribute).toBe('customId').toBeTypeOf('string');
       expect(props.nameAttribute).toBe('customName').toBeTypeOf('string');
       expect(props.firstNameAttribute).toBe('customFirstName').toBeTypeOf('string');

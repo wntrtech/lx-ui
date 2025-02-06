@@ -186,79 +186,17 @@ function rewriteValue(regEx, oldVal, newVal) {
   }
 }
 
-watch(
-  () => model.value,
-  (newVal, oldVal) => {
-    if (props.mask === 'email' && newVal !== oldVal) {
-      if (newVal?.length > oldVal?.length && !oldVal?.includes('@')) {
-        rewriteValue(/[a-zA-Z0-9.!@#$%&'*+/=?^_`{|}~-]/, oldVal, newVal);
-      } else if (
-        newVal?.length > oldVal?.length &&
-        oldVal?.includes('@') &&
-        oldVal?.slice(-1) === '.' &&
-        oldVal?.lastIndexOf('.') > oldVal?.indexOf('@')
-      ) {
-        rewriteValue(/[a-zA-Z0-9-]/, oldVal, newVal);
-      } else if (newVal?.length > oldVal?.length && oldVal?.includes('@')) {
-        rewriteValue(/[a-zA-Z0-9-.]/, oldVal, newVal);
-      }
-    }
-  }
-);
-
 function onAccept(e) {
   const maskRef = e.detail;
   let v = maskRef.unmaskedValue;
 
   v = convertValue(v);
+
   valueRaw.value = maskRef.value;
   if (props.mask !== 'decimal' || maskRef.value.slice(-1) !== ',') {
     model.value = v;
   }
 }
-
-watch(
-  () => props.modelValue,
-  (newValue, oldValue) => {
-    if (
-      ((props.mask === 'decimal' || props.mask === 'integer') &&
-        props.maxlength &&
-        props.signed &&
-        newValue?.toString()?.charAt(0) === '-' &&
-        newValue?.toString().length > Number(props.maxlength) + 1) ||
-      ((props.mask === 'decimal' || props.mask === 'integer') &&
-        props.maxlength &&
-        props.signed &&
-        newValue?.toString()?.charAt(0) !== '-' &&
-        newValue?.toString().length > Number(props.maxlength))
-    ) {
-      model.value = oldValue;
-      valueRaw.value = oldValue?.toString().replace('.', ',');
-    }
-    if (maxLengthValue.value && newValue?.toString().length > Number(maxLengthValue.value)) {
-      model.value = oldValue;
-    } else if (convertValue(newValue) !== convertValue(oldValue)) {
-      if (props.mask === 'decimal') {
-        valueRaw.value = model.value?.toString().replace('.', ',');
-      } else if (props.mask === 'time') {
-        let res = '';
-        if (newValue?.toString()?.length === 1) res = `${newValue}_:__`;
-        else if (newValue?.toString()?.length === 2) res = `${newValue}:__`;
-        else if (newValue?.toString()?.length === 3)
-          res = `${newValue?.toString().slice(0, 2)}:${newValue?.toString().slice(2)}_`;
-
-        if (res !== valueRaw.value) {
-          valueRaw.value = model.value;
-        }
-      } else if (props.mask === 'currency-2') {
-        const res = `${newValue} €`;
-        if (res?.replace('.', ',') !== valueRaw.value) {
-          valueRaw.value = model.value;
-        }
-      } else valueRaw.value = model.value;
-    }
-  }
-);
 
 function maskUpdate() {
   const mask = input?.value?.maskRef;
@@ -321,27 +259,6 @@ function showPasswordChange() {
   hidePassword.value = !hidePassword.value;
 }
 
-onMounted(() => {
-  maskUpdate();
-  if (props.mask === 'decimal') valueRaw.value = props.modelValue?.toString()?.replace('.', ',');
-  else valueRaw.value = props.modelValue;
-
-  if (
-    model.value &&
-    maxLengthValue.value &&
-    model.value.toString().length > Number(maxLengthValue.value)
-  ) {
-    model.value = model.value.toString().substring(0, Number(maxLengthValue.value));
-  }
-});
-
-watch(
-  () => props.readOnly,
-  (newValue) => {
-    if (!newValue) maskUpdate();
-  }
-);
-
 function onBlur() {
   if (props.mask === 'decimal' && model.value === '-0') model.value = '0';
   else if (props.mask === 'decimal' && model.value === 0 && valueRaw.value === '-0')
@@ -360,6 +277,104 @@ const sanitizedEmail = computed(() => {
     return sanitizeUrl(`mailto:${model.value}`);
   }
   return '';
+});
+
+watch(
+  () => model.value,
+  (newVal, oldVal) => {
+    if (props.mask === 'email' && newVal !== oldVal) {
+      if (newVal?.length > oldVal?.length && !oldVal?.includes('@')) {
+        rewriteValue(/[a-zA-Z0-9.!@#$%&'*+/=?^_`{|}~-]/, oldVal, newVal);
+      } else if (
+        newVal?.length > oldVal?.length &&
+        oldVal?.includes('@') &&
+        oldVal?.slice(-1) === '.' &&
+        oldVal?.lastIndexOf('.') > oldVal?.indexOf('@')
+      ) {
+        rewriteValue(/[a-zA-Z0-9-]/, oldVal, newVal);
+      } else if (newVal?.length > oldVal?.length && oldVal?.includes('@')) {
+        rewriteValue(/[a-zA-Z0-9-.]/, oldVal, newVal);
+      }
+    }
+  }
+);
+
+watch(
+  () => props.modelValue,
+  (newValue, oldValue) => {
+    if (
+      ((props.mask === 'decimal' || props.mask === 'integer') &&
+        props.maxlength &&
+        props.signed &&
+        newValue?.toString()?.charAt(0) === '-' &&
+        newValue?.toString().length > Number(props.maxlength) + 1) ||
+      ((props.mask === 'decimal' || props.mask === 'integer') &&
+        props.maxlength &&
+        props.signed &&
+        newValue?.toString()?.charAt(0) !== '-' &&
+        newValue?.toString().length > Number(props.maxlength))
+    ) {
+      model.value = oldValue;
+      valueRaw.value = oldValue?.toString().replace('.', ',');
+    }
+    if (maxLengthValue.value && newValue?.toString().length > Number(maxLengthValue.value)) {
+      model.value = oldValue;
+    } else if (convertValue(newValue) !== convertValue(oldValue)) {
+      if (props.mask === 'decimal') {
+        valueRaw.value = model.value?.toString().replace('.', ',');
+      } else if (props.mask === 'time') {
+        let res = '';
+        if (newValue?.toString()?.length === 1) res = `${newValue}_:__`;
+        else if (newValue?.toString()?.length === 2) res = `${newValue}:__`;
+        else if (newValue?.toString()?.length === 3)
+          res = `${newValue?.toString().slice(0, 2)}:${newValue?.toString().slice(2)}_`;
+
+        if (res !== valueRaw.value) {
+          valueRaw.value = model.value;
+        }
+      } else if (props.mask === 'currency') {
+        const res = `${newValue} €`;
+        if (res?.replace('.', ',') !== valueRaw.value) {
+          valueRaw.value = model.value;
+        }
+      } else valueRaw.value = model.value;
+    }
+  }
+);
+
+watch(
+  () => props.readOnly,
+  (newValue) => {
+    if (!newValue) maskUpdate();
+  }
+);
+
+watch(
+  () => [props.mask, input.value],
+  (newValue) => {
+    const [newMask, newInputValue] = newValue;
+
+    if (newMask && newInputValue?.value) {
+      if (newMask !== 'currency') {
+        maskUpdate();
+        model.value = newInputValue?.value;
+      }
+    }
+  }
+);
+
+onMounted(() => {
+  maskUpdate();
+  if (props.mask === 'decimal') valueRaw.value = props.modelValue?.toString()?.replace('.', ',');
+  else valueRaw.value = props.modelValue;
+
+  if (
+    model.value &&
+    maxLengthValue.value &&
+    model.value.toString().length > Number(maxLengthValue.value)
+  ) {
+    model.value = model.value.toString().substring(0, Number(maxLengthValue.value));
+  }
 });
 </script>
 <template>
@@ -399,6 +414,7 @@ const sanitizedEmail = computed(() => {
       <div class="pseudo-input" />
       <input
         v-if="mask !== 'currency'"
+        v-imask="inputMask"
         ref="input"
         :type="props.kind === 'password' && hidePassword ? 'password' : 'text'"
         :autocomplete="autocomplete"
@@ -415,7 +431,6 @@ const sanitizedEmail = computed(() => {
         :aria-label="placeholder"
         :disabled="disabled"
         :maxlength="maxLengthValue"
-        v-imask="inputMask"
         :title="tooltip"
         :aria-labelledby="labelledBy"
         @accept="onAccept"
@@ -423,8 +438,8 @@ const sanitizedEmail = computed(() => {
       />
       <LxButton
         variant="icon-only"
-        :icon="hidePassword ? 'visible' : 'hidden'"
         kind="ghost"
+        :icon="hidePassword ? 'visible' : 'hidden'"
         :disabled="disabled"
         :title="hidePassword ? props.texts.showPassword : props.texts.hidePassword"
         v-if="props.kind === 'password'"
