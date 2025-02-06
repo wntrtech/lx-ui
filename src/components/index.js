@@ -51,6 +51,7 @@ export { default as LxRatings } from '@/components/Ratings.vue';
 export { default as LxRadioButton } from '@/components/RadioButton.vue';
 export { default as LxRichTextDisplay } from '@/components/RichTextDisplay.vue';
 export { default as LxSearchableText } from '@/components/SearchableText.vue';
+export { default as LxSiteMap } from '@/components/SiteMap.vue';
 export { default as LxStateDisplay } from '@/components/StateDisplay.vue';
 export { default as LxSteps } from '@/components/Steps.vue';
 export { default as LxTabControl } from '@/components/TabControl.vue';

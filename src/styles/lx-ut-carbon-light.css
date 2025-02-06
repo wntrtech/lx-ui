@@ -76,6 +76,7 @@
   --color-tab-selected-foreground: var(--color-data);
   --color-region-2: #eee;
   --color-chrome: #e0e0e0;
+  --color-footer-label: #979797;
   --color-label: #6c6c6c;
   --color-data: var(--color-foreground);
   --color-disabled: #888;

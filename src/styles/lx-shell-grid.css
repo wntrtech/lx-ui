@@ -1940,6 +1940,26 @@ a.lx-tile:hover {
   }
 }
 
+@media (max-width: 1350px) {
+  .lx-layout.lx-layout-default {
+    grid-template-areas:
+      'header header header'
+      'nav main aside'
+      'nav footer footer';
+  }
+  
+  .lx-layout.lx-layout-default > footer {
+    grid-template-columns: 1fr minmax(1fr, var(--body-column-size)) 1fr;
+  }
+}
+
+@media (min-width: 1350px) and (max-width: 1400px) {
+  .lx-layout.lx-layout-default,
+  .lx-layout.lx-layout-default footer {
+    grid-template-columns: var(--row-size) var(--body-column-size) 1fr;
+  }
+}
+
 @media (max-width: 1200px) {
   .lx-dashboard {
     grid-template-columns: 1fr 1fr 1fr;

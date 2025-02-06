@@ -1198,6 +1198,40 @@ button.lx-button-ghost:focus:hover {
   opacity: 1;
 }
 
+/*** SiteMap styles ***/
+
+.lx-sitemap-wrapper {
+ display: grid;
+ row-gap: 0.25rem;
+ grid-template-rows: auto 1fr;
+}
+
+.lx-sitemap-wrapper .lx-sitemap {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lx-layout > footer .lx-sitemap-wrapper .lx-sitemap-label {
+  color: var(--color-footer-label);
+}
+
+.lx-sitemap-wrapper .lx-sitemap .lx-sitemap-item {
+  margin: 0.25rem 0;
+}
+
+.lx-sitemap-wrapper .lx-sitemap .lx-sitemap-link {
+  text-decoration: none;
+}
+
+.lx-layout > footer .lx-sitemap .lx-sitemap-link {
+  color: var(--color-nav-foreground);
+}
+
+.lx-layout > footer .lx-sitemap .lx-sitemap-link:hover {
+  color: var(--color-interactive-hover-foreground);
+}
+
 /*** Misc styles ***/
 
 .lx .lx-back-button-group .lx-button:not(.lx-button-icon-only) .lx-button-content-wrapper {

@@ -297,10 +297,6 @@
   grid-template-columns: 1fr var(--body-column-size) 1fr;
 }
 
-.lx-layout.lx-layout-public>footer p {
-  margin-bottom: 1rem;
-}
-
 .lx-layout.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-button-content-wrapper .lx-badge {
   border-color: var(--color-region);
 }
@@ -437,7 +433,7 @@
   .lx-layout.lx-layout-public {
     column-gap: 0;
     --nav-row-size: 3rem;
-    grid-template-rows: var(--nav-row-size) 1fr var(--nav-row-size);
+    grid-template-rows: var(--nav-row-size) 1fr auto;
     grid-template-areas:
       'header header header'
       'aside main nav'

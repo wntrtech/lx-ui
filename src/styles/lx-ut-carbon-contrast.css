@@ -78,6 +78,7 @@
   --color-tab-selected-foreground: var(--contrast-background);
   --color-region-2: var(--contrast-background);
   --color-chrome: var(--contrast-foreground);
+  --color-footer-label: var(--contrast-foreground);
   --color-label: var(--contrast-foreground);
   --color-data: var(--color-foreground);
   --color-disabled: var(--color-foreground);
