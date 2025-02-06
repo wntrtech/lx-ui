@@ -672,7 +672,7 @@ const userInfoMenu = ref(false);
             </li>
           </ul>
           <ul v-if="hasLanguagePicker || hasThemePicker">
-            <li v-if="hasLanguagePicker" class="lx-user-menu-item">
+            <li v-if="hasLanguagePicker" class="lx-user-menu-item language-picker">
               <LxDropDownMenu>
                 <LxButton
                   customClass="lx-header-button"
@@ -696,7 +696,7 @@ const userInfoMenu = ref(false);
                 </template>
               </LxDropDownMenu>
             </li>
-            <li v-if="hasThemePicker" class="lx-user-menu-item">
+            <li v-if="hasThemePicker" class="lx-user-menu-item theme-picker">
               <LxDropDownMenu ref="themeMenu">
                 <LxButton
                   customClass="lx-header-button"
@@ -729,7 +729,7 @@ const userInfoMenu = ref(false);
             </li>
           </ul>
           <ul v-if="userInfo">
-            <li class="lx-user-menu-item">
+            <li class="lx-user-menu-item logout-button">
               <LxButton
                 kind="ghost"
                 icon="logout"

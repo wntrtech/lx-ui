@@ -1394,5 +1394,5 @@ function lvAlertItemClicked(event, alert) {
   >
     <p>{{ confirmDialogData?.$state.confirmDialogState.message }}</p>
   </LxModal>
-  <Notification v-model="notificationModel" v-if="mode !== 'digimaks'" />
+  <Notification v-model="notificationModel" />
 </template>
