@@ -236,7 +236,7 @@ function selectNextSlide() {
   currentDate.value = nextMonthOrYear;
 }
 
-function clearSelectedValues() {
+function clearSelectedValues(handleActiveInputSwitch = true) {
   selectedDate.value = null;
   selectedDay.value = null;
   selectedMonth.value = null;
@@ -261,7 +261,8 @@ function clearSelectedValues() {
   shouldCloseMenu.value = true;
 
   emits('update:modelValue', null);
-  if (props.pickerType === 'range') {
+
+  if (props.pickerType === 'range' && handleActiveInputSwitch) {
     props.setActiveInput('startInput', props.id);
   }
 }
@@ -2459,7 +2460,7 @@ watch(
       (newValue === null || newValue === undefined || (!newValue.start && !newValue.end)) &&
       props.pickerType === 'range'
     ) {
-      clearSelectedValues();
+      clearSelectedValues(false);
       emits('update:modelValue', null);
       return;
     }

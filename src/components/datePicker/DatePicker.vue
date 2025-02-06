@@ -860,7 +860,6 @@ onMounted(async () => {
             <div class="pseudo-input" />
             <input
               :ref="(el) => (endInputRefs[id] = el)"
-              ref="endInputRef"
               type="text"
               class="lx-date-time-picker lx-input-area"
               :class="[{ 'lx-invalid': invalid }, { 'input-active': activeInput === 'endInput' }]"
