@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, inject } from 'vue';
 import { Editor, EditorContent } from '@tiptap/vue-3';
+import { Heading } from '@tiptap/extension-heading';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
@@ -31,6 +32,7 @@ import LxToolbar from '@/components/Toolbar.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
+import LxLoader from '@/components/Loader.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -93,6 +95,42 @@ const props = defineProps({
 });
 const emits = defineEmits(['update:modelValue', 'notification', 'preparedImage']);
 
+const loading = ref(true);
+
+let headingCounter = 0;
+const CustomHeadingWithAutoId = Heading.extend({
+  levels: [1, 2, 3, 4, 5, 6],
+
+  onCreate() {
+    headingCounter = 0;
+  },
+
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      id: {
+        default: null,
+        parseHTML: (element) => {
+          // When parsing existing content, maintain the counter
+          const currentId = element.getAttribute('id');
+          if (currentId && currentId.startsWith('markdown-section-')) {
+            const num = parseInt(currentId.split('-').pop(), 10);
+            headingCounter = Math.max(headingCounter, num);
+          }
+          return currentId;
+        },
+
+        renderHTML: (attributes) => {
+          if (!attributes.id) {
+            headingCounter += 1;
+            return { id: `markdown-section-${props.id}-${headingCounter}` };
+          }
+          return { id: attributes.id };
+        },
+      },
+    };
+  },
+});
 const editor = ref(null);
 const text = ref(null);
 const maxlengthExceeded = ref(false);
@@ -179,7 +217,7 @@ watch(model, (newText) => {
   if (newText !== textInEditor) {
     editor.value.commands.setContent(newText);
   }
-
+  loading.value = false;
   if (props.maxlength) {
     const remainingCount = props.maxlength - (characterCount.value || 0);
     maxlengthExceeded.value = remainingCount < 0;
@@ -203,6 +241,7 @@ function createEditorExtensions() {
     TextStyle,
     Color,
     ImageComponent,
+    CustomHeadingWithAutoId,
     HiddenIdNode,
     Underline,
     Link.configure({
@@ -234,7 +273,7 @@ function createEditorExtensions() {
     editable: !isDisabled.value,
     extensions: ext,
   });
-
+  loading.value = false;
   editor.value.on('update', () => {
     text.value = editor.value.storage.markdown.getMarkdown();
     emits('update:modelValue', text.value);
@@ -496,9 +535,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 
 <template>
-  <div class="lx-field-wrapper" ref="markdownWrapper">
+  <div :id="props.id" class="lx-field-wrapper" ref="markdownWrapper">
     <div
-      v-show="!readOnly"
+      v-if="!readOnly"
       class="lx-markdown-text-area-wrapper"
       @click="focus()"
       @keydown="focus()"
@@ -920,6 +959,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         {{ invalidationMessage }}
       </div>
     </div>
-    <LxRichTextDisplay v-if="readOnly" :value="model" />
+    <article id="test-id-loader" v-if="loading" class="lx-article">
+      <LxLoader :loading="loading" />
+    </article>
+    <LxRichTextDisplay v-if="readOnly" :id="props.id" :value="model" />
   </div>
 </template>
