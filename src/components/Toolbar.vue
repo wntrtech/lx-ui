@@ -3,9 +3,10 @@ import { computed, ref } from 'vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   actionDefinitions: { type: Array, default: () => [] },
   noBorders: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
@@ -97,6 +98,7 @@ function actionClicked(id) {
               !action.nestedGroupId &&
               !isNested(action.groupId, 'left')
             "
+            :id="`${id}-action-${action.id}`"
             :kind="action?.kind || 'ghost'"
             :tabindex="0"
             :icon="action?.icon"
@@ -113,6 +115,7 @@ function actionClicked(id) {
           <LxDropDownMenu v-if="action?.groupId === group.id && action.nestedGroupId">
             <LxButton
               v-if="action?.groupId === group.id && action.nestedGroupId"
+              :id="`${id}-action-${action.id}`"
               :kind="action?.kind || 'ghost'"
               :tabindex="0"
               :icon="action?.icon || 'menu'"
@@ -128,6 +131,7 @@ function actionClicked(id) {
               <template v-for="button in leftActions" :key="button.id">
                 <LxButton
                   v-if="action?.nestedGroupId === button.groupId"
+                  :id="`${id}-action-${button.id}`"
                   :kind="button?.kind || 'ghost'"
                   :tabindex="0"
                   :icon="button?.icon"
@@ -153,6 +157,7 @@ function actionClicked(id) {
             <template v-for="button in leftActions" :key="button.id">
               <LxButton
                 v-if="!button?.nestedGroupId"
+                :id="`${id}-action-${button.id}`"
                 :kind="button?.kind || 'ghost'"
                 :tabindex="0"
                 :icon="button?.icon"
@@ -171,6 +176,7 @@ function actionClicked(id) {
         </LxDropDownMenu>
         <LxButton
           v-else-if="leftActions?.length === 1 && !leftActions?.[0]?.nestedGroupId"
+          :id="`${id}-action-${leftActions?.[0].id}`"
           :kind="leftActions?.[0]?.kind || 'ghost'"
           :tabindex="0"
           :icon="leftActions?.[0]?.icon"
@@ -204,6 +210,7 @@ function actionClicked(id) {
               !action.nestedGroupId &&
               !isNested(action.groupId, 'right')
             "
+            :id="`${id}-action-${action.id}`"
             :kind="action?.kind || 'ghost'"
             :tabindex="0"
             :icon="action?.icon"
@@ -220,6 +227,7 @@ function actionClicked(id) {
           <LxDropDownMenu v-if="action?.groupId === group.id && action.nestedGroupId">
             <LxButton
               v-if="action?.groupId === group.id && action.nestedGroupId"
+              :id="`${id}-action-${action.id}`"
               :kind="action?.kind || 'ghost'"
               :tabindex="0"
               :icon="action?.icon || 'menu'"
@@ -235,6 +243,7 @@ function actionClicked(id) {
               <template v-for="button in rightActions" :key="button.id">
                 <LxButton
                   v-if="action?.nestedGroupId === button.groupId"
+                  :id="`${id}-action-${button.id}`"
                   :kind="button?.kind || 'ghost'"
                   :tabindex="0"
                   :icon="button?.icon"
@@ -260,6 +269,7 @@ function actionClicked(id) {
             <template v-for="button in rightActions" :key="button.id">
               <LxButton
                 v-if="!button?.nestedGroupId"
+                :id="`${id}-action-${button.id}`"
                 :kind="button?.kind || 'ghost'"
                 :tabindex="0"
                 :icon="button?.icon"
@@ -278,6 +288,7 @@ function actionClicked(id) {
         </LxDropDownMenu>
         <LxButton
           v-else-if="rightActions?.length === 1 && !rightActions?.[0]?.nestedGroupId"
+          :id="`${id}-action-${ightActions?.[0].id}`"
           :kind="rightActions?.[0]?.kind || 'ghost'"
           :tabindex="0"
           :icon="rightActions?.[0]?.icon"

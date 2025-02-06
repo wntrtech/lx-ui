@@ -138,6 +138,7 @@ defineExpose({ open, close });
           >
             <LxButton
               v-if="buttonPrimaryVisible"
+              :id="`${id}-action-primary`"
               :label="buttonPrimaryLabel"
               :loading="buttonPrimaryLoading"
               :busy="buttonPrimaryBusy"
@@ -147,6 +148,7 @@ defineExpose({ open, close });
             />
             <LxButton
               v-if="buttonSecondaryVisible"
+              :id="`${id}-action-secondary`"
               kind="secondary"
               :label="buttonSecondaryLabel"
               :loading="buttonSecondaryLoading"
@@ -184,6 +186,7 @@ defineExpose({ open, close });
           >
             <LxButton
               v-if="buttonPrimaryVisible"
+              :id="`${id}-action-primary`"
               :label="buttonPrimaryLabel"
               :loading="buttonPrimaryLoading"
               :busy="buttonPrimaryBusy"
@@ -193,6 +196,7 @@ defineExpose({ open, close });
             />
             <LxButton
               v-if="buttonSecondaryVisible"
+              :id="`${id}-action-secondary`"
               kind="secondary"
               :label="buttonSecondaryLabel"
               :loading="buttonSecondaryLoading"

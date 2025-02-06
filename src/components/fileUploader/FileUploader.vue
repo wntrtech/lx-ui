@@ -477,6 +477,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       />
       <div class="lx-draggable-wrapper" v-if="!props.draggable && advancedFilesData.length < 1">
         <LxButton
+          :id="`${id}-action-file-upload`"
           :label="props.texts.buttonLabel"
           kind="tertiary"
           icon="upload"
@@ -497,6 +498,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       </div>
       <div class="lx-draggable-wrapper" v-if="props.draggable && advancedFilesData.length < 1">
         <div
+          :id="`${id}-action-file-upload`"
           class="lx-draggable-upload-wrapper"
           :class="[
             { 'lx-dragging': isDragging },
@@ -541,6 +543,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       />
       <div class="lx-draggable-wrapper" v-if="!props.draggable">
         <LxButton
+          :id="`${id}-action-file-upload`"
           :label="props.texts.buttonLabel"
           kind="tertiary"
           icon="upload"
@@ -561,6 +564,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       </div>
       <div class="lx-draggable-wrapper" v-else>
         <div
+          :id="`${id}-action-file-upload`"
           class="lx-draggable-upload-wrapper"
           :class="[
             { 'lx-dragging': isDragging },

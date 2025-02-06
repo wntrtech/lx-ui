@@ -7,11 +7,12 @@ import { sanitizeUrl } from '@braintree/sanitize-url';
 import useLx from '@/hooks/useLx';
 import LxLoader from '@/components/Loader.vue';
 import { ref } from 'vue';
+import { generateUUID } from '@/utils/stringUtils';
 
 const emits = defineEmits(['click', 'actionClick']);
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   parentId: { type: String, default: null },
   label: { type: String, required: true },
   description: { type: String, default: null },
@@ -154,6 +155,7 @@ function getItemId(id, parentId) {
         >
           <lx-button
             v-for="action in actionDefinitions"
+            :id="`${id}-action-${action.id}`"
             :key="action.id"
             kind="ghost"
             :tabindex="0"
@@ -182,6 +184,7 @@ function getItemId(id, parentId) {
           <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
             <div v-if="actionDefinitions.length > 1">
               <lx-button
+                :id="`${id}-action-open-menu`"
                 icon="overflow-menu"
                 kind="ghost"
                 :disabled="loading || busy || disabled"
@@ -192,6 +195,7 @@ function getItemId(id, parentId) {
               <div class="lx-button-set">
                 <lx-button
                   v-for="action in actionDefinitions"
+                  :id="`${id}-action-${action.id}`"
                   :key="action.id"
                   :icon="action.icon"
                   :icon-set="action.iconSet"
@@ -293,6 +297,7 @@ function getItemId(id, parentId) {
         >
           <lx-button
             v-for="action in actionDefinitions"
+            :id="`${id}-action-${action.id}`"
             :key="action.id"
             kind="ghost"
             :tabindex="0"
@@ -321,6 +326,7 @@ function getItemId(id, parentId) {
           <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
             <div v-if="actionDefinitions.length > 1">
               <lx-button
+                :id="`${id}-action-open-menu`"
                 icon="overflow-menu"
                 kind="ghost"
                 :disabled="loading || busy || disabled"
@@ -331,6 +337,7 @@ function getItemId(id, parentId) {
               <div class="lx-button-set">
                 <lx-button
                   v-for="action in actionDefinitions"
+                  :id="`${id}-action-${action.id}`"
                   :key="action.id"
                   :icon="action.icon"
                   :icon-set="action.iconSet"
@@ -364,6 +371,7 @@ function getItemId(id, parentId) {
     >
       <lx-button
         v-for="action in actionDefinitions"
+        :id="`${id}-action-${action.id}`"
         :key="action.id"
         kind="ghost"
         :tabindex="0"
@@ -395,6 +403,7 @@ function getItemId(id, parentId) {
           <div class="lx-button-set">
             <lx-button
               v-for="action in actionDefinitions"
+              :id="`${id}-action-${action.id}`"
               :key="action.id"
               :icon="action.icon"
               :icon-set="action.iconSet"

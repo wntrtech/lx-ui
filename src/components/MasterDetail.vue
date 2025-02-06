@@ -4,10 +4,12 @@ import LxButton from '@/components/Button.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxListItem from '@/components/list/ListItem.vue';
 import { useWindowSize, useElementSize } from '@vueuse/core';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
   modelValue: { type: Array, default: () => [] },
   mode: { type: String, default: 'edit' }, // 'read' or 'edit'
+  id: { type: String, default: () => generateUUID() },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: null },
@@ -73,6 +75,7 @@ defineExpose({ selectItem });
     <Transition :name="windowWidth < 1200 ? 'master-detail-slide-right' : ''">
       <nav class="lx-master" v-if="windowWidth >= 1200 || !activeItemCode" ref="nav">
         <LxButton
+          :id="`${id}-action-add-item`"
           v-if="mode === 'edit'"
           customClass="lx-master-detail-button"
           icon="add-item"
@@ -101,6 +104,7 @@ defineExpose({ selectItem });
     </Transition>
 
     <LxButton
+      :id="`${id}-action-back`"
       icon="back"
       @click="activeItemCode = null"
       v-if="windowWidth < 1200 && activeItemCode"

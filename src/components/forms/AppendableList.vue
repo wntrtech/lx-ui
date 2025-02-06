@@ -236,6 +236,7 @@ defineExpose({ clearModel });
 
     <div>
       <LxButton
+        :id="`${id}-action-add-item`"
         kind="tertiary"
         :label="addButtonLabel"
         icon="add-item"

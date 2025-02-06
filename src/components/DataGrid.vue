@@ -1388,6 +1388,7 @@ watch(
               <div class="lx-toolbar" v-if="actionDefinitions.length <= 2" role="toolbar">
                 <lx-button
                   v-for="action in actionDefinitions"
+                  :id="`${id}-${row[idAttribute]}-action-${action.id}`"
                   :key="action.id"
                   kind="ghost"
                   tabindex="0"
@@ -1403,6 +1404,7 @@ watch(
               </div>
               <div class="lx-toolbar" v-if="actionDefinitions.length > 2" role="toolbar">
                 <lx-button
+                  :id="`${id}-${row[idAttribute]}-action-${actionDefinitions?.[0]?.id}`"
                   kind="ghost"
                   tabindex="0"
                   :icon="actionDefinitions?.[0]?.icon"
@@ -1425,6 +1427,7 @@ watch(
                 <lx-dropdown-menu placement="left-start">
                   <div class="lx-toolbar">
                     <lx-button
+                      :id="`${id}-${row[idAttribute]}-action`"
                       icon="overflow-menu"
                       kind="ghost"
                       :disabled="isDisabled"
@@ -1436,6 +1439,7 @@ watch(
                     <div class="lx-button-set">
                       <lx-button
                         v-for="action in actionDefinitionsGroup"
+                        :id="`${id}-${row[idAttribute]}-action-${action.id}`"
                         :key="action.id"
                         :icon="action.icon"
                         :label="action.name"
@@ -1698,6 +1702,7 @@ watch(
       </div>
       <div class="lx-group lx-group-paging" v-if="hasPaging && !loading">
         <lx-button
+          :id="`${id}-action-first-page`"
           kind="ghost"
           icon="first-page"
           :label="texts.firstPage"
@@ -1707,6 +1712,7 @@ watch(
         ></lx-button>
         <div class="lx-divider"></div>
         <lx-button
+          :id="`${id}-action-previous-page`"
           kind="ghost"
           icon="previous-page"
           :label="texts.previousPage"
@@ -1716,6 +1722,7 @@ watch(
         ></lx-button>
         <div class="lx-divider"></div>
         <lx-button
+          :id="`${id}-action-next-page`"
           kind="ghost"
           icon="next-page"
           :label="texts.nextPage"

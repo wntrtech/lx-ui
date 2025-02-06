@@ -15,6 +15,7 @@ import useLx from '@/hooks/useLx';
 import { MIME_TYPES } from '@/constants';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: String, default: null },
   scrollable: { type: Boolean, default: false },
   width: { type: String, default: 'auto' }, // e.g. 'auto', '100%', '100px', 30rem', '50vw'... (any css value, recommended for images and .MD)
@@ -1346,6 +1347,7 @@ onUnmounted(() => {
       <template #rightArea>
         <LxToolbarGroup v-if="pdf">
           <LxButton
+            :id="`${id}-action-first-page`"
             icon="first-page"
             @click="firstPage"
             kind="ghost"
@@ -1354,6 +1356,7 @@ onUnmounted(() => {
           />
 
           <LxButton
+            :id="`${id}-action-previous-page`"
             icon="previous-page"
             @click="debouncedPrevPage"
             kind="ghost"
@@ -1382,6 +1385,7 @@ onUnmounted(() => {
             />
 
             <LxButton
+              :id="`${id}-action-selected-page`"
               icon="arrow-right"
               @click="goToPage"
               kind="ghost"
@@ -1397,6 +1401,7 @@ onUnmounted(() => {
           </div>
 
           <LxButton
+            :id="`${id}-action-next-page`"
             icon="next-page"
             kind="ghost"
             :title="props.texts.nextPage"
@@ -1405,6 +1410,7 @@ onUnmounted(() => {
           />
 
           <LxButton
+            :id="`${id}-action-last-page`"
             icon="last-page"
             kind="ghost"
             :title="props.texts.lastPage"
@@ -1414,6 +1420,7 @@ onUnmounted(() => {
 
           <LxButton
             v-if="showToolbarPrimaryDownloadButton"
+            :id="`${id}-action-download`"
             icon="download"
             kind="primary"
             :label="windowWidth >= 540 ? props.texts.download : ''"
