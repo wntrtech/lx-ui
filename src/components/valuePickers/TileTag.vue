@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch } from '@/utils/stringUtils';
 
 import LxIcon from '@/components/Icon.vue';
@@ -57,6 +57,7 @@ onMounted(() => {
   if (!model.value && props.kind === 'multiple') {
     model.value = [];
   }
+  nextTick(() => updateDescriptionTabIndexes(props.items));
 });
 
 const itemsModel = ref({});
@@ -320,6 +321,31 @@ function selectAll() {
     itemsModel.value = states;
   }
 }
+
+function getDescriptionElement(itemId) {
+  const parent = document.getElementById(getItemId(itemId));
+  if (!parent) return null;
+  return parent.querySelector(".lx-value-picker-description") as HTMLElement;
+}
+
+function shouldFocusDescription(itemId) {
+  const description = getDescriptionElement(itemId);
+  if (!description) return false;
+
+  // For browser pixel differences (Firefox)
+  const pixelTolerance = 1;
+
+  return description.scrollHeight - description.clientHeight > pixelTolerance;
+}
+
+function updateDescriptionTabIndexes(items) {
+  items.forEach((item) => {
+    const description = getDescriptionElement(item[props.idAttribute]);
+    if (description) {
+      description.tabIndex = shouldFocusDescription(item[props.idAttribute]) ? 0 : -1;
+    }
+  });
+}
 </script>
 
 <template>
@@ -425,7 +451,10 @@ function selectAll() {
                   <LxIcon v-else value="unselected" />
                 </div>
               </div>
-              <div class="lx-value-picker-description">
+              <div
+                class="lx-value-picker-description"
+                :tabindex="shouldFocusDescription(item[idAttribute]) ? '0' : '-1'"
+              >
                 <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
               </div>
             </template>
@@ -471,7 +500,10 @@ function selectAll() {
                   <LxIcon v-else value="unselected" />
                 </div>
               </div>
-              <div class="lx-value-picker-description">
+              <div
+                class="lx-value-picker-description"
+                :tabindex="shouldFocusDescription(item[idAttribute]) ? '0' : '-1'"
+              >
                 <LxSearchableText :value="item[descriptionAttribute]" :search-string="query" />
               </div>
             </template>

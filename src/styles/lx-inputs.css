@@ -1359,7 +1359,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   font-size: 1rem !important;
   max-width: 100%;
   color: var(--color-label);
-  overflow: hidden;
+  overflow-y: auto;
 }
 
 .lx-value-picker-tile-tag-container {
@@ -1439,6 +1439,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   overflow: hidden;
   text-overflow: ellipsis;
   overflow-y: scroll;
+  height: 100%;
 }
 
 .lx-value-picker-tile-selected {
