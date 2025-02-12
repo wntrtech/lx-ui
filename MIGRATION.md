@@ -16,6 +16,35 @@ Affected components:
 
 - `resolution` prop no longer supported.
 
+#### vue-i18n
+
+If your project uses the latest versions of the `vue-i18n` library, make sure to carefully check the correctness of translations with variables, such as here [AutoComplete.vue#L52](https://git.zzdats.lv/lx/ui/src/branch/master/src/components/AutoComplete.vue#L52)  
+and here [Shell.vue#L168](https://git.zzdats.lv/lx/ui/src/branch/master/src/components/shell/Shell.vue#L168).  
+
+Some projects have reported that when passing text via translation into a prop, if the text contains curly braces (e.g., `{0}` or `{count}`), they are replaced with an empty value.  
+
+In such cases, it is recommended to use variables. For example, instead of:  
+
+```js
+texts: {
+    ...
+    tryEndingWith1: translate.t('pages.autocomplete.try1')
+    ...
+}
+```
+Use: 
+```js
+texts: {
+    ...
+    tryEndingWith1: translate.t('pages.autocomplete.try1', ['{0}'])
+    ...
+}
+```
+Or other options (see the list [here](https://vue-i18n.intlify.dev/guide/essentials/syntax) Vue I18n Syntax ).
+
+This will replace the variable correctly in the component resolving the issue.
+
+
 
 ## 1.6 → 1.7
 
