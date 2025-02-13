@@ -28,6 +28,7 @@ const props = defineProps({
   dictionary: { type: Object, default: null },
   groupId: { type: String, default: null },
   queryMinLength: { type: Number, default: 0 },
+  queryMaxLength: { type: Number, default: null },
   queryDebounce: { type: [String, Number], default: 200 },
   placeholder: { type: String, default: null },
   tooltip: { type: String, default: null },
@@ -1061,6 +1062,7 @@ onMounted(() => {
                           :aria-label="getName(false)"
                           :aria-invalid="invalid"
                           :aria-busy="loadingState || loading"
+                          :maxlength="queryMaxLength || null"
                           tabindex="0"
                           :readonly="inputReadonly"
                           @focusout="handleFocusOut"
