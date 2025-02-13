@@ -197,14 +197,46 @@ function calculateThreshold(heightValue) {
     return 0.25;
   }
 
-  if (scale.value === MIN_ZOOM.pdf) {
-    return 0.7;
+  if (scale.value <= 1) {
+    return 0.9;
   }
 
   return 0.4;
 }
 
 const threshold = computed(() => calculateThreshold(props.height));
+
+const rootMargin = computed(() => {
+  // Dynamically calculate the combined height of lx-header, navigation, and toolbar
+  const header = document.querySelector('.lx-header');
+  const headerDigives = document.querySelector('.lx-header-digives');
+  const navigation = document.querySelector('.lx-nav-panel');
+  const toolbar = document.querySelector('.lx-component-toolbar');
+  const publicMode = document.querySelector('.lx-layout-public');
+
+  const headerHeight = header ? header.offsetHeight : 0;
+  const headerDigivesHeight = headerDigives ? headerDigives.offsetHeight : 0;
+  const navigationHeight =
+    navigation && publicMode && navigation.style.display !== 'none' ? navigation.offsetHeight : 0;
+  const toolbarHeight = toolbar ? toolbar.offsetHeight : 0;
+
+  const elemHeigh = canvasArray.value[0].clientHeight || 0;
+
+  const totalOffsetTopHeight = !isExpanded.value
+    ? (headerDigivesHeight || headerHeight) + navigationHeight + toolbarHeight
+    : 0;
+
+  const viewportHeight = window.innerHeight;
+  const correction = 50;
+
+  const totalOffsetBottomHeight = viewportHeight - totalOffsetTopHeight - elemHeigh - correction;
+
+  if (scale.value <= 1) {
+    return `-${totalOffsetTopHeight}px 0px -${totalOffsetBottomHeight}px 0px`;
+  }
+
+  return '0px 0px 0px 0px';
+});
 
 function setupIntersectionObserver() {
   if (!props.scrollable) return;
@@ -225,6 +257,7 @@ function setupIntersectionObserver() {
     const options = {
       root: isScrollable ? rootElement : null, // Use the container if scrollable, otherwise viewport
       threshold: threshold.value,
+      rootMargin: rootMargin.value,
     };
 
     // If the container is scrollable, observe the container
@@ -534,8 +567,9 @@ async function goToPage() {
 }
 
 const debouncedSetupObserver = debounce(() => {
+  isNavigating.value = false;
   setupIntersectionObserver();
-}, 500);
+}, 1000);
 
 function nextPage() {
   if (isZooming.value || renderingInProgress.value) return;
@@ -545,10 +579,8 @@ function nextPage() {
 
   if (currentPage.value < totalPages.value) {
     inputPage.value += 1;
-    goToPage().then(() => {
-      isNavigating.value = false;
-      debouncedSetupObserver();
-    });
+    goToPage();
+    debouncedSetupObserver();
   }
 }
 
@@ -560,10 +592,8 @@ function prevPage() {
 
   if (currentPage.value > 1) {
     inputPage.value -= 1;
-    goToPage().then(() => {
-      isNavigating.value = false;
-      debouncedSetupObserver();
-    });
+    goToPage();
+    debouncedSetupObserver();
   }
 }
 
@@ -571,25 +601,26 @@ function firstPage() {
   if (isZooming.value || renderingInProgress.value) return;
   isNavigating.value = true;
   inputPage.value = 1;
-  goToPage().then(() => {
-    isNavigating.value = false;
-    debouncedSetupObserver();
-  });
+  goToPage();
+  debouncedSetupObserver();
 }
 
 function lastPage() {
   if (isZooming.value || renderingInProgress.value) return;
   isNavigating.value = true;
   inputPage.value = totalPages.value;
-  goToPage().then(() => {
-    isNavigating.value = false;
-    debouncedSetupObserver();
-  });
+  goToPage();
+  debouncedSetupObserver();
 }
 
-function toggleExpand() {
+async function toggleExpand() {
   if (renderingInProgress.value) return;
   isExpanded.value = !isExpanded.value;
+
+  if (props.scrollable) {
+    await renderAllPages(pdf.value.numPages, pdf.value.numPages);
+    setupIntersectionObserver();
+  }
 }
 
 async function setZoomLevel(zoomLevel) {
