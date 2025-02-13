@@ -1720,6 +1720,10 @@ a.lx-tile:hover {
   --color-button-ghost-icon-focus: var(--color-data);
 }
 
+.lx-alert-button.lx-alert-clickable:focus {
+  outline: 2px solid var(--color-focus-background);
+}
+
 .lx .lx-nav-group .lx-language-picker > .lx-language-menu > .lx-context-container > .inline-block,
 .lx .lx-nav-group .lx-theme-picker > .lx-theme-menu > .lx-context-container > .inline-block {
   width: 100%;

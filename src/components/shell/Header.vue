@@ -1,6 +1,6 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
-import { useScroll } from '@vueuse/core';
+import { computed, ref, watch, nextTick, onMounted } from 'vue';
+import { useScroll, useWindowSize } from '@vueuse/core';
 
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -94,6 +94,8 @@ const props = defineProps({
 });
 
 const { y } = useScroll(window);
+
+const { width } = useWindowSize();
 
 const emits = defineEmits([
   'nav-toggle',
@@ -335,6 +337,26 @@ const selectedMegaMenuItemModel = computed({
     emits('update:selectedMegaMenuItem', value);
   },
 });
+
+const navBarShortMode = ref(false);
+
+watch(width, () => {
+  nextTick(() => {
+    if (width.value <= 1900) {
+      navBarShortMode.value = true;
+    } else {
+      navBarShortMode.value = false;
+    }
+  });
+});
+
+onMounted(() => {
+  if (width.value <= 1900) {
+    navBarShortMode.value = true;
+  } else {
+    navBarShortMode.value = false;
+  }
+});
 </script>
 <template>
   <div class="lx-header">
@@ -346,7 +368,7 @@ const selectedMegaMenuItemModel = computed({
         :icon="navBarSwitch ? 'menu' : 'close'"
         :title="navBarSwitch ? texts.openNavbar : texts.close"
         kind="ghost"
-        tabindex="1"
+        :tabindex="navBarShortMode ? 1 : -1"
         @click="navToggle"
       />
       <div

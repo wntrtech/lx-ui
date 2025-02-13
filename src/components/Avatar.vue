@@ -46,6 +46,7 @@ const shape = computed(() => {
 <template>
   <div
     class="lx-avatar-display"
+    :aria-hidden="true"
     :class="[
       { 'lx-avatar-display-s': size === 's' },
       { 'lx-avatar-display-l': size === 'l' },

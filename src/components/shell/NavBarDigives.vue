@@ -242,6 +242,9 @@ function triggerContextPersonMenu() {
           <LxDropDownMenu ref="contextMenu" :disabled="headerNavDisable">
             <div
               class="selected-person-display"
+              role="combobox"
+              :aria-expanded="contextMenu?.menuOpen"
+              aria-controls="popper-id"
               tabindex="0"
               @keydown.enter.prevent="triggerContextPersonMenu"
             >

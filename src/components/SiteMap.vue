@@ -10,12 +10,15 @@ const props = defineProps({
   translator: { type: [Function, Object], default: null },
 });
 
-const visibleRoutes = computed(() =>
-  props.routes.filter(
+const visibleRoutes = computed(() => {
+  const filteredRoutes = props.routes.filter(
     (route) =>
-      !route.meta?.hideFromIndex && (!props.category || props.category === route.meta?.category)
-  )
-);
+      !route.meta?.hideFromIndex &&
+      (!props.category || props.category === route.meta?.category) &&
+      !route.aliasOf
+  );
+  return filteredRoutes;
+});
 
 function getRouteTitle(route) {
   const title = route.meta?.title;

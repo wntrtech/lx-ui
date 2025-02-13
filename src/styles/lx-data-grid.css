@@ -1159,3 +1159,7 @@
 .lx-row.lx-responsive-grid-icons-row .lx-cell-extra {
   display: none;
 }
+
+.lx .lx-data-grid .lx-cell-clickable > span.lx-cell-clickable-button {
+  text-decoration: none;
+}

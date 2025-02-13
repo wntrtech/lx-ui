@@ -1,5 +1,5 @@
 <script setup>
-import { computed, shallowRef, onMounted, watch, ref, nextTick } from 'vue';
+import { computed, shallowRef, onMounted, watch, ref } from 'vue';
 import { useColorMode, usePreferredReducedMotion, useMutationObserver } from '@vueuse/core';
 
 import useLx from '@/hooks/useLx';
@@ -36,7 +36,6 @@ const themeMode = useColorMode({
   },
 });
 
-const { system } = themeMode;
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 
 const emits = defineEmits([
@@ -617,10 +616,15 @@ function focusFirstMainFocusableElement() {
     'input:not([disabled])',
     '[tabindex="0"]',
   ];
+
   if (mainElement) {
-    const focusableElement = mainElement.querySelector(focusableSelectors.join(', '));
-    if (focusableElement) {
-      focusableElement.focus();
+    const focusableElements = Array.from(
+      mainElement.querySelectorAll(focusableSelectors.join(', '))
+    );
+    const firstVisibleElement = focusableElements.find((element) => element.offsetParent !== null);
+
+    if (firstVisibleElement) {
+      firstVisibleElement.focus();
     }
   }
 }

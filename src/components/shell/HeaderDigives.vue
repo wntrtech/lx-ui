@@ -263,6 +263,9 @@ function triggerContextPersonMenu() {
             <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
             <div
               class="selected-person-display"
+              role="combobox"
+              :aria-expanded="contextMenu?.menuOpen"
+              aria-controls="popper-id"
               :tabindex="2"
               @keydown.enter.prevent="triggerContextPersonMenu"
             >

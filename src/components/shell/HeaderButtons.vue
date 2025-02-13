@@ -385,6 +385,7 @@ function triggerUserMenu() {
               :aria-labelledby="`alert-${item?.id}-name`"
               :aria-describedby="`alert-${item?.id}-desc`"
               class="lx-alert-button"
+              :tabindex="item?.clickable ? 0 : null"
               :role="item?.clickable ? 'button' : null"
               :class="[
                 { 'lx-alert-success': item?.level === 'success' },
@@ -433,6 +434,7 @@ function triggerUserMenu() {
               :aria-labelledby="`alert-${item?.id}-name`"
               :aria-describedby="`alert-${item?.id}-desc`"
               class="lx-alert-button"
+              :tabindex="item?.clickable ? 0 : null"
               :role="item?.clickable ? 'button' : null"
               :class="[
                 { 'lx-alert-success': item?.level === 'success' },

@@ -72,6 +72,7 @@ const props = defineProps({
   selectionActionDefinitions: { type: Array, default: () => [] },
   emptyStateActionDefinitions: { type: Array, default: null },
   emptyStateIcon: { type: String, default: '' },
+  clickableRole: { type: String, default: 'link' }, // 'link' or 'button'
   texts: {
     type: Object,
     default: () => ({
@@ -1244,8 +1245,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :class="{
                   'lx-cell-tooltip':
                     col.type === 'tooltip-text' || ['xs', 's', 'm'].includes(col.size),
+                  'lx-cell-clickable-button':
+                    props.clickableRole === 'button' && col.kind === 'clickable',
                 }"
-                :role="col.kind === 'clickable' ? 'link' : null"
+                :role="col.kind === 'clickable' ? props.clickableRole : null"
                 :tabindex="col.kind === 'clickable' ? 0 : null"
                 @click="
                   defaultActionName && col.kind === 'clickable' && !isDisabled
