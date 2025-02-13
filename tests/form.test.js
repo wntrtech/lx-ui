@@ -1,4 +1,4 @@
-import { test, expect } from 'vitest';
+import { test, expect, afterEach } from 'vitest';
 import LxForm from '@/components/forms/Form.vue';
 import LxSection from '@/components/forms/Section.vue';
 import LxRow from '@/components/forms/Row.vue';
@@ -6,11 +6,19 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { mount } from '@vue/test-utils';
 import 'regenerator-runtime/runtime';
 
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
+
 /* Header and Footer tests */
 test('LxForm with no header', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -21,7 +29,7 @@ test('LxForm with no header', () => {
 
 test('LxForm with no footer', () => {
   expect(LxForm).toBeTruthy();
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showFooter: false,
     },
@@ -31,7 +39,7 @@ test('LxForm with no footer', () => {
 
 test('LxForm not sticky header', () => {
   expect(LxForm).toBeTruthy();
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       stickyHeader: false,
     },
@@ -42,7 +50,7 @@ test('LxForm not sticky header', () => {
 
 test('LxForm not sticky footer', () => {
   expect(LxForm).toBeTruthy();
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       stickyFooter: false,
     },
@@ -53,7 +61,7 @@ test('LxForm not sticky footer', () => {
 
 test('LxForm compact kind', () => {
   expect(LxForm).toBeTruthy();
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       kind: 'compact',
     },
@@ -65,7 +73,7 @@ test('LxForm compact kind', () => {
 test('LxForm stripped kind', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       kind: 'stripped',
     },
@@ -79,7 +87,7 @@ test('LxForm stripped kind', () => {
 test('LxForm columnCount 2 test', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       columnCount: 2,
     },
@@ -92,7 +100,7 @@ test('LxForm columnCount 2 test', () => {
 test('LxForm columnCount 3 test', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       columnCount: 3,
     },
@@ -105,7 +113,7 @@ test('LxForm columnCount 3 test', () => {
 test('LxForm columnCount 4 test', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       columnCount: 4,
     },
@@ -119,7 +127,7 @@ test('LxForm columnCount 4 test', () => {
 test('LxForm buttons test', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       actionDefinitions: [
         { id: 'one', name: 'one', kind: 'primary' },
@@ -136,7 +144,7 @@ test('LxForm buttons test', () => {
 test('LxForm with 2 buttons test', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       actionDefinitions: [
         { id: 'one', name: 'one', kind: 'primary' },
@@ -155,7 +163,7 @@ test('LxForm with 2 buttons test', () => {
 test('LxForm button click emit', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       actionDefinitions: [{ id: 'one', name: 'one', kind: 'primary' }],
     },
@@ -170,7 +178,7 @@ test('LxForm button click emit', () => {
 test('LxForm button click emit 3 times', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       actionDefinitions: [
         { id: 'one', name: 'one', kind: 'primary' },
@@ -194,7 +202,7 @@ test('LxForm button click emit 3 times', () => {
 test('LxForm button destructive', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       actionDefinitions: [{ id: 'one', name: 'one', kind: 'secondary', destructive: true }],
     },
@@ -209,7 +217,7 @@ test('LxForm button destructive', () => {
 test('LxForm button disabled', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       actionDefinitions: [
         { id: 'two', name: 'two', kind: 'primary' },
@@ -228,7 +236,7 @@ test('LxForm button disabled', () => {
 test('LxForm button label', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       actionDefinitions: [
         { id: 'one', name: 'one', kind: 'primary' },
@@ -246,7 +254,7 @@ test('LxForm button label', () => {
 
 test('LxForm actionDefinitions is []', () => {
   expect(LxForm).toBeTruthy();
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       actionDefinitions: [],
     },
@@ -260,7 +268,7 @@ test('LxForm actionDefinitions is []', () => {
 
 test('LxForm actionDefinitions is null', () => {
   expect(LxForm).toBeTruthy();
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       actionDefinitions: null,
     },
@@ -276,7 +284,7 @@ test('LxForm actionDefinitions is null', () => {
 test('LxForm header slot', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {},
     slots: {
       header: '<h1>Header</h1>',
@@ -289,7 +297,7 @@ test('LxForm header slot', () => {
 test('LxForm default slot test', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {},
     global: {
       components: {
@@ -309,7 +317,7 @@ test('LxForm sections slot with one section', () => {
 
   // const section = mount(LxSection, { slots: { default: 'Default' } });
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {},
     slots: {
       sections: '<LxSection>Default</LxSection>',
@@ -328,7 +336,7 @@ test('LxForm sections slot with one section', () => {
 test('LxForm sections class test', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       columnCount: 3,
     },
@@ -350,7 +358,7 @@ test('LxForm sections class test', () => {
 test('LxForm pre,post header slots', () => {
   expect(LxForm).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       'pre-header': 'preHeader',
       'post-header': 'postHeader',
@@ -367,7 +375,7 @@ test('LxForm pre,post header slots', () => {
 
 test('LxForm indexes', () => {
   expect(LxForm).toBeTruthy();
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       index: [
         { id: 'one', name: 'one' },

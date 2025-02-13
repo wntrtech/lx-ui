@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -28,11 +28,16 @@ const props = defineProps({
 
 const emits = defineEmits(['update:modelValue', 'newItemAdded', 'selectionChanged']);
 
+const activeItemCode = ref('');
+const navRef = ref();
+const detailRef = ref();
+const isNavBigger = ref(false);
+
+const navSize = useElementSize(navRef);
+const detailSize = useElementSize(detailRef);
 const windowSize = useWindowSize();
 
 const windowWidth = computed(() => windowSize.width.value);
-
-const activeItemCode = ref('');
 
 const model = computed({
   get() {
@@ -58,14 +63,12 @@ function addItem() {
   emits('newItemAdded');
 }
 
-const nav = ref();
-const detail = ref();
-
-const isNavBigger = computed(() => {
-  if (nav.value && detail.value) {
-    return useElementSize(nav).height.value > useElementSize(detail).height.value;
+watch([navSize.height, detailSize.height], ([navHeight, detailHeight]) => {
+  if (navHeight > 0 && detailHeight > 0) {
+    requestAnimationFrame(() => {
+      isNavBigger.value = navHeight > detailHeight;
+    });
   }
-  return false;
 });
 
 defineExpose({ selectItem });
@@ -73,7 +76,7 @@ defineExpose({ selectItem });
 <template>
   <div class="lx-master-detail" :class="[{ 'nav-border': isNavBigger }]">
     <Transition :name="windowWidth < 1200 ? 'master-detail-slide-right' : ''">
-      <nav class="lx-master" v-if="windowWidth >= 1200 || !activeItemCode" ref="nav">
+      <nav class="lx-master" v-if="windowWidth >= 1200 || !activeItemCode" ref="navRef">
         <LxButton
           :id="`${id}-action-add-item`"
           v-if="mode === 'edit'"
@@ -112,7 +115,7 @@ defineExpose({ selectItem });
       kind="ghost"
     />
     <Transition :name="windowWidth < 1200 ? 'master-detail-slide-left' : ''">
-      <div class="lx-detail" v-if="windowWidth >= 1200 || activeItemCode" ref="detail">
+      <div class="lx-detail" v-if="windowWidth >= 1200 || activeItemCode" ref="detailRef">
         <LxEmptyState
           v-if="!activeItemCode"
           :label="texts?.noData"

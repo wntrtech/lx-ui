@@ -267,15 +267,11 @@ function getItemId(id, parentId) {
       <div class="lx-category-displayer" />
       <header>
         <template v-if="!$slots.customItem">
-          <p class="lx-primary">
-            <LxSearchableText :id="`${id}-label`" :value="label" :search-string="searchString" />
+          <p :id="`${id}-label`" class="lx-primary">
+            <LxSearchableText :value="label" :search-string="searchString" />
           </p>
-          <p class="lx-secondary" v-if="description">
-            <LxSearchableText
-              :id="`${id}-desc`"
-              :value="description"
-              :search-string="searchString"
-            />
+          <p :id="`${id}-desc`" class="lx-secondary" v-if="description">
+            <LxSearchableText :value="description" :search-string="searchString" />
           </p>
         </template>
         <slot name="customItem" v-bind="value" v-if="value && $slots.customItem"></slot>

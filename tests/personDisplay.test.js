@@ -1,17 +1,25 @@
 // @ts-nocheck
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import 'regenerator-runtime/runtime';
 
 describe('LxPersonDisplay', () => {
+  let wrapper;
+
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount();
+    }
+  });
+
   test('should be a valid component', () => {
     expect(LxPersonDisplay).toBeTruthy();
   });
 
   describe('Props', () => {
     test('should have default values', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         global: {
           provide: {
             sectionMode: 'sectionMode',
@@ -50,7 +58,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('should accept provided values', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: {
             customId: 'customId',
@@ -126,7 +134,7 @@ describe('LxPersonDisplay', () => {
 
   describe('Computed Properties and Methods', () => {
     test('formatName should return formatted name', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe' },
         },
@@ -146,7 +154,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('computed name should return formatted name', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe' },
         },
@@ -165,7 +173,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('showMultiple should return true for multiple values', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: [
             { firstName: 'John', lastName: 'Doe' },
@@ -187,7 +195,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('description should return provided description', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', description: 'Developer' },
         },
@@ -206,7 +214,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('role should return provided role', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', role: 'Engineer' },
         },
@@ -225,7 +233,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('institution should return provided institution', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', institution: 'Tech Inc.' },
         },
@@ -244,7 +252,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('icon should return provided icon', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', icon: 'flash' },
         },
@@ -263,7 +271,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('iconSet should return provided iconSet', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', iconSet: 'cds' },
         },
@@ -282,7 +290,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('filteredValues should return filtered array based on attributes', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: [
             { firstName: 'John', lastName: 'Doe', description: 'Developer' },
@@ -314,7 +322,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('displayItems should return array of items limited by maxLength', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: [
             { firstName: 'John', lastName: 'Doe' },
@@ -342,7 +350,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('tooltipItems should return array of items', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: [
             { firstName: 'John', lastName: 'Doe' },
@@ -367,7 +375,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('showDescription should return true if description is set and size is l', () => {
-      const wrapper = mount(LxPersonDisplay, {
+      wrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', description: 'Developer' },
           size: 'l',
