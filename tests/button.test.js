@@ -1,11 +1,19 @@
-import { test, expect } from 'vitest';
+import { test, expect, afterEach } from 'vitest';
 import LxButton from '@/components/Button.vue';
 import { mount, RouterLinkStub } from '@vue/test-utils';
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 test('LxButton label', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       label: 'Test label',
     },
@@ -26,7 +34,7 @@ test('LxButton label', async () => {
 test('LxButton title', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       title: 'Test title',
     },
@@ -47,7 +55,7 @@ test('LxButton title', async () => {
 test('LxButton id', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       id: 'Test id',
     },
@@ -68,7 +76,7 @@ test('LxButton id', async () => {
 test('LxButton icon', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       icon: 'add',
       iconSet: 'cds',
@@ -90,7 +98,7 @@ test('LxButton icon', async () => {
 test('LxButton kind', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       kind: '',
     },
@@ -123,7 +131,7 @@ test('LxButton kind', async () => {
 test('LxButton icon-only', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       variant: 'icon-only',
     },
@@ -155,7 +163,7 @@ test('LxButton icon-only', async () => {
 test('LxButton destructive', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       destructive: true,
     },
@@ -180,7 +188,7 @@ test('LxButton destructive', async () => {
 test('LxButton href', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       href: { name: 'test' },
     },
@@ -200,7 +208,7 @@ test('LxButton href', async () => {
 test('LxButton disabled', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       disabled: true,
     },
@@ -227,7 +235,7 @@ test('LxButton disabled', async () => {
 test('LxButton loading', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       loading: true,
     },
@@ -254,7 +262,7 @@ test('LxButton loading', async () => {
 test('LxButton busy', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       busy: true,
       icon: 'add',
@@ -281,7 +289,7 @@ test('LxButton busy', async () => {
 
 test('LxButton badge', async () => {
   expect(LxButton).toBeTruthy();
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       badge: 'Test badge',
       badgeType: 'default',
@@ -323,7 +331,7 @@ test('LxButton badge', async () => {
 test('LxButton active', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       active: true,
     },
@@ -348,7 +356,7 @@ test('LxButton active', async () => {
 test('LxButton tabindex', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       tabindex: 1,
     },
@@ -369,7 +377,7 @@ test('LxButton tabindex', async () => {
 test('LxButton custom class', async () => {
   expect(LxButton).toBeTruthy();
 
-  const wrapper = mount(LxButton, {
+  wrapper = mount(LxButton, {
     props: {
       customClass: 'test-class',
     },

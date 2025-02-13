@@ -1,14 +1,19 @@
-import { test, expect } from 'vitest';
+import { test, expect, afterEach } from 'vitest';
 import LxList from '@/components/list/List.vue';
 import { mount, RouterLinkStub } from '@vue/test-utils';
-import { h } from 'vue';
-import LxTextInput from '@/components/TextInput.vue';
-import LxTextArea from '@/components/TextArea.vue';
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 test('LxList default elements', () => {
   expect(LxList).toBeTruthy();
 
-  const wrapper = mount(LxList, {
+  wrapper = mount(LxList, {
     props: {
       items: [
         {

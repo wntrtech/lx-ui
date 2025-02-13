@@ -1,16 +1,24 @@
 // @ts-nocheck
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe, afterEach } from 'vitest';
 import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
 import { mount } from '@vue/test-utils';
 
 // Simple single tests
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 test.skip('LxDateTimePicker placeholder', () => {
   expect(LxDateTimePicker).toBeTruthy();
   // Stop all further tests after this one
   process.exit(0);
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       placeholder: '02.02.2022',
     },
@@ -22,7 +30,7 @@ test.skip('LxDateTimePicker placeholder', () => {
 test.skip('LxDateTimePicker tooltip', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       tooltip: 'Tooltip text',
     },
@@ -39,7 +47,7 @@ describe.each([
   test.skip(`LxDateTimePicker kind ${kind}`, () => {
     expect(LxDateTimePicker).toBeTruthy();
 
-    const wrapper = mount(LxDateTimePicker, {
+    wrapper = mount(LxDateTimePicker, {
       props: {
         kind,
       },
@@ -65,7 +73,7 @@ function readOnlyTest(wrapper) {
 test.skip('LxDateTimePicker readOnly', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       readOnly: true,
       modelValue: '2002-02-18',
@@ -82,7 +90,7 @@ function disabledTest(wrapper) {
 test.skip('LxDateTimePicker disabled', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       disabled: true,
     },
@@ -103,7 +111,7 @@ function invalidTest(wrapper) {
 test.skip('LxDateTimePicker invalid', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       invalid: true,
       invalidationMessage: 'Invalid input',
@@ -117,7 +125,7 @@ test.skip('LxDateTimePicker invalid', () => {
 test.skip('LxDateTimePicker modelValue', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
     },
@@ -129,7 +137,7 @@ test.skip('LxDateTimePicker modelValue', async () => {
 test.skip('LxDateTimePicker texts.todayButton', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
       variant: 'picker',
@@ -151,7 +159,7 @@ test.skip('LxDateTimePicker texts.todayButton', () => {
 test.skip('LxDateTimePicker texts.clearButton', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
       variant: 'picker',
@@ -175,7 +183,7 @@ test.skip('LxDateTimePicker texts.clearButton', () => {
 test.skip('LxDateTimePicker texts.clear', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '00:00',
       variant: 'default',
@@ -208,7 +216,7 @@ describe.each([
   test.skip(`LxDateTimePicker variant ${variant}`, () => {
     expect(LxDateTimePicker).toBeTruthy();
 
-    const wrapper = mount(LxDateTimePicker, {
+    wrapper = mount(LxDateTimePicker, {
       props: {
         kind: 'date',
         variant,
@@ -242,7 +250,7 @@ describe.each([
 test.skip('LxDateTimePicker max/min', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
       minDate: '2002-02-01',
@@ -268,7 +276,7 @@ test.skip('LxDateTimePicker max/min', async () => {
 // test.skip('LxDateTimePicker kind: default, variant: picker, specialDates, dictionary', async () => {
 //   expect(LxDateTimePicker).toBeTruthy();
 
-//   const wrapper = mount(LxDateTimePicker, {
+//   wrapper = mount(LxDateTimePicker, {
 //     props: {
 //       modelValue: '2024-02-07',
 //       variant: 'picker',
@@ -304,7 +312,7 @@ test.skip('LxDateTimePicker max/min', async () => {
 test.skip('LxDateTimepicker locale.locale ENG', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
       variant: 'picker',
@@ -323,7 +331,7 @@ test.skip('LxDateTimepicker locale.locale ENG', () => {
 test.skip('LxDateTimepicker locale.locale LV', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
       variant: 'picker',
@@ -344,7 +352,7 @@ test.skip('LxDateTimepicker locale.locale LV', () => {
 test.skip('LxDateTimePicker modelValue change', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
     },
@@ -359,7 +367,7 @@ test.skip('LxDateTimePicker modelValue change', async () => {
 test.skip('LxDateTimePicker modelValue change to null', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
     },
@@ -372,7 +380,7 @@ test.skip('LxDateTimePicker modelValue change to null', async () => {
 test.skip('LxDateTimePicker modelValue change to empty string', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
     },
@@ -385,7 +393,7 @@ test.skip('LxDateTimePicker modelValue change to empty string', async () => {
 test.skip('LxDateTimePicker modelValue change to undefined', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
     },
@@ -398,7 +406,7 @@ test.skip('LxDateTimePicker modelValue change to undefined', async () => {
 test.skip('LxDateTimePicker modelValue change to undefined and back to date', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
     },
@@ -413,7 +421,7 @@ test.skip('LxDateTimePicker modelValue change to undefined and back to date', as
 test.skip('LxDateTimePicker modelValue change to null and back to date', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
     },
@@ -428,7 +436,7 @@ test.skip('LxDateTimePicker modelValue change to null and back to date', async (
 test.skip('LxDateTimePicker modelValue change to empty string and back to empty string', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '',
     },
@@ -446,7 +454,7 @@ test.skip('LxDateTimePicker modelValue change to empty string and back to empty 
 test.skip('LxDateTimePicker kind: date, variant: picker', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
       variant: 'picker',
@@ -465,7 +473,7 @@ test.skip('LxDateTimePicker kind: date, variant: picker', async () => {
 test.skip('LxDateTimePicker date click', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
       variant: 'picker',
@@ -484,7 +492,7 @@ test.skip('LxDateTimePicker date click', async () => {
 test.skip('LxDateTimePicker clear click', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
-  const wrapper = mount(LxDateTimePicker, {
+  wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
       variant: 'picker',
@@ -506,7 +514,7 @@ test.skip('LxDateTimePicker clear click', async () => {
 // test.skip('LxDateTimePicker today click', async () => {
 //   expect(LxDateTimePicker).toBeTruthy();
 
-//   const wrapper = mount(LxDateTimePicker, {
+//   wrapper = mount(LxDateTimePicker, {
 //     props: {
 //       modelValue: '2002-02-18',
 //       variant: 'picker',

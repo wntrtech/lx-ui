@@ -1,7 +1,15 @@
 // @ts-nocheck
 import { mount } from '@vue/test-utils';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, afterEach } from 'vitest';
 import LxTextArea from '@/components/TextArea.vue';
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 describe('MyComponent', () => {
   test('should be a valid component', () => {
@@ -10,7 +18,7 @@ describe('MyComponent', () => {
 
   describe('Props', () => {
     test('should have the correct default props', () => {
-      const wrapper = mount(LxTextArea);
+      wrapper = mount(LxTextArea);
 
       expect(wrapper.props().id).toBe(null);
       expect(wrapper.props().modelValue).toBe(null);
@@ -26,7 +34,7 @@ describe('MyComponent', () => {
     });
 
     test('should accept valid prop values with valid types', () => {
-      const wrapper = mount(LxTextArea, {
+      wrapper = mount(LxTextArea, {
         props: {
           id: 'test-id',
           modelValue: 'test-value',

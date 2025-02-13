@@ -1,7 +1,15 @@
 // @ts-nocheck
 import { mount } from '@vue/test-utils';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, afterEach } from 'vitest';
 import LxToggle from '@/components/Toggle.vue';
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 describe('LxToggle', () => {
   test('should be a valid component', () => {
@@ -10,7 +18,7 @@ describe('LxToggle', () => {
 
   describe('Props', () => {
     test('should have the correct default props', () => {
-      const wrapper = mount(LxToggle);
+      wrapper = mount(LxToggle);
       const props = wrapper.props();
 
       expect(props.id).toBe(null);
@@ -26,7 +34,7 @@ describe('LxToggle', () => {
     });
 
     test('should accept provided prop values', () => {
-      const wrapper = mount(LxToggle, {
+      wrapper = mount(LxToggle, {
         props: {
           id: 'custom-id',
           modelValue: true,

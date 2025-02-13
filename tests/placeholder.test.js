@@ -1,13 +1,21 @@
-import { test, expect } from 'vitest';
+import { test, expect, afterEach } from 'vitest';
 import LxForm from '@/components/forms/Form.vue';
 import { mount } from '@vue/test-utils';
 import { h } from 'vue';
 import LxPlaceholder from '@/components/forms/Placeholder.vue';
 
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
+
 test('LxPlaceholder id', () => {
   expect(LxPlaceholder).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: h(LxPlaceholder, { id: 'placeholder' }),
     },
@@ -25,7 +33,7 @@ test('LxPlaceholder id', () => {
 test('LxPlaceholder columnSpan', () => {
   expect(LxPlaceholder).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: h(LxPlaceholder, { columnSpan: 2 }),
     },
@@ -43,7 +51,7 @@ test('LxPlaceholder columnSpan', () => {
 test('LxPlaceholder columnSpan 2', () => {
   expect(LxPlaceholder).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: [h(LxPlaceholder, { columnSpan: 2 }), h(LxPlaceholder, { columnSpan: '3' })],
     },
@@ -62,7 +70,7 @@ test('LxPlaceholder columnSpan 2', () => {
 test('LxPlaceholder rowSpan', () => {
   expect(LxPlaceholder).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: h(LxPlaceholder, { rowSpan: 4 }),
     },
@@ -80,7 +88,7 @@ test('LxPlaceholder rowSpan', () => {
 test('LxPlaceholder columnSpan, rowSpan', () => {
   expect(LxPlaceholder).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: [
         h(LxPlaceholder, { columnSpan: 2, rowSpan: 3 }),

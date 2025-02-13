@@ -1,30 +1,36 @@
 // @ts-nocheck
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import LxTextInput from '@/components/TextInput.vue';
 
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
+
 // Testing helper functions
-function readOnlyTest(wrapper) {
-  expect(wrapper.find('.lx-text-input-wrapper').exists()).toBe(false);
-  expect(wrapper.find('.lx-data').exists()).toBe(true);
-  expect(wrapper.find('.lx-data').text()).toBe('Test model value');
-  expect(wrapper.find('.lx-data').text()).toBeTypeOf('string', 'number');
-  expect(wrapper.find('.lx-data .lx-text-input-wrapper .password-mask').exists()).toBe(false);
+function readOnlyTest(wrp) {
+  expect(wrp.find('.lx-text-input-wrapper').exists()).toBe(false);
+  expect(wrp.find('.lx-data').exists()).toBe(true);
+  expect(wrp.find('.lx-data').text()).toBe('Test model value');
+  expect(wrp.find('.lx-data').text()).toBeTypeOf('string', 'number');
+  expect(wrp.find('.lx-data .lx-text-input-wrapper .password-mask').exists()).toBe(false);
 }
 
-function invalidTest(wrapper) {
-  expect(wrapper.find('.lx-text-input.lx-invalid').isVisible()).toBe(true);
-  expect(wrapper.find('.lx-invalidation-icon').isVisible()).toBe(true);
-  const invalidationMessageElement = wrapper
-    .find('.lx-field-wrapper')
-    .find('.lx-invalidation-message');
+function invalidTest(wrp) {
+  expect(wrp.find('.lx-text-input.lx-invalid').isVisible()).toBe(true);
+  expect(wrp.find('.lx-invalidation-icon').isVisible()).toBe(true);
+  const invalidationMessageElement = wrp.find('.lx-field-wrapper').find('.lx-invalidation-message');
   expect(invalidationMessageElement.isVisible()).toBe(true);
   expect(invalidationMessageElement.text()).toBe('Invalidation Message');
 }
 
-function disabledTest(wrapper) {
-  expect(wrapper.props().disabled).toBe(true);
-  expect(wrapper.find('.lx-text-input').attributes('disabled')).toBeDefined();
+function disabledTest(wrp) {
+  expect(wrp.props().disabled).toBe(true);
+  expect(wrp.find('.lx-text-input').attributes('disabled')).toBeDefined();
 }
 
 // Tests
@@ -36,7 +42,7 @@ describe('LxTextInput', () => {
   describe('Props', () => {
     describe('id', () => {
       test('should be string with value', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             id: 'Custom id',
           },
@@ -51,7 +57,7 @@ describe('LxTextInput', () => {
       });
 
       test('should be default GUID string when id is not passed', () => {
-        const wrapper = mount(LxTextInput);
+        wrapper = mount(LxTextInput);
         const props = wrapper.props();
 
         const inputElement = wrapper.find('.lx-text-input').element;
@@ -64,7 +70,7 @@ describe('LxTextInput', () => {
 
     describe('modelValue', () => {
       test('should have value with type "string"', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             modelValue: 'Custom model value',
           },
@@ -78,7 +84,7 @@ describe('LxTextInput', () => {
 
     describe('placeholder', () => {
       test('should be string with value', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             placeholder: 'Custom placeholder',
           },
@@ -93,7 +99,7 @@ describe('LxTextInput', () => {
       });
 
       test('placeholder with new text', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             placeholder: 'Test text',
           },
@@ -108,7 +114,7 @@ describe('LxTextInput', () => {
 
     describe('readOnly', () => {
       test('should be true and modelValue should be displayed', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             readOnly: true,
             modelValue: 'Test model value',
@@ -119,7 +125,7 @@ describe('LxTextInput', () => {
       });
 
       test('elements should be invisible when true and kind is "password"', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             readOnly: true,
             kind: 'password',
@@ -135,7 +141,7 @@ describe('LxTextInput', () => {
       });
 
       test('readOnly and kind="password" hides data, password mask, and invalidation message', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             readOnly: true,
             kind: 'password',
@@ -152,7 +158,7 @@ describe('LxTextInput', () => {
       });
 
       test('readOnly and kind="default" shows data and hides invalidation message', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             readOnly: true,
             kind: 'default',
@@ -170,7 +176,7 @@ describe('LxTextInput', () => {
 
     describe('disabled', () => {
       test('should be true and have disabled attribute', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             disabled: true,
           },
@@ -180,7 +186,7 @@ describe('LxTextInput', () => {
       });
 
       test('invalidation message with icon should be visible when disabled is true', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             disabled: true,
             invalid: true,
@@ -193,7 +199,7 @@ describe('LxTextInput', () => {
       });
 
       test('disabled with new text', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             disabled: true,
             modelValue: 'one',
@@ -207,14 +213,14 @@ describe('LxTextInput', () => {
 
     describe('uppercase', () => {
       test('should provide default value', () => {
-        const wrapper = mount(LxTextInput);
+        wrapper = mount(LxTextInput);
         const props = wrapper.props();
 
         expect(props.uppercase).toBe(false);
       });
 
       test('should have attribute with value', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             uppercase: true,
           },
@@ -228,7 +234,7 @@ describe('LxTextInput', () => {
 
     describe('invalid and invalidationMessage', () => {
       test('should be visible and have invalidation message text', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             invalid: true,
             invalidationMessage: 'Invalidation Message',
@@ -242,7 +248,7 @@ describe('LxTextInput', () => {
 
     describe('maxlength', () => {
       test('should truncate modelValue to maxlength when set', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             maxlength: 3,
             modelValue: '123',
@@ -262,7 +268,7 @@ describe('LxTextInput', () => {
 
     describe('tooltip', () => {
       test('should have attribute with value', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             tooltip: 'Tooltip text',
           },
@@ -272,7 +278,7 @@ describe('LxTextInput', () => {
       });
 
       test('tooltip with new text', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             tooltip: 'Tooltip text',
           },
@@ -286,7 +292,7 @@ describe('LxTextInput', () => {
 
     describe('mask', () => {
       test('default', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'default',
             modelValue: 'One',
@@ -298,7 +304,7 @@ describe('LxTextInput', () => {
       });
 
       test('time', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'time',
             modelValue: '1455',
@@ -310,7 +316,7 @@ describe('LxTextInput', () => {
       });
 
       test('personCodeLv', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'personCodeLv',
             modelValue: '12345612345',
@@ -322,7 +328,7 @@ describe('LxTextInput', () => {
       });
 
       test('newbornId', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'newbornId',
             modelValue: '1122334455612345678',
@@ -334,7 +340,7 @@ describe('LxTextInput', () => {
       });
 
       test('currency', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'currency',
             modelValue: '1234',
@@ -346,7 +352,7 @@ describe('LxTextInput', () => {
       });
 
       test('default > time', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'default',
             modelValue: 'One',
@@ -360,7 +366,7 @@ describe('LxTextInput', () => {
       });
 
       test('time > default', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'time',
             modelValue: '1455',
@@ -374,7 +380,7 @@ describe('LxTextInput', () => {
       });
 
       test('time > personCodeLv', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'time',
             modelValue: '1455',
@@ -388,7 +394,7 @@ describe('LxTextInput', () => {
       });
 
       test('personCodeLv > time', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'personCodeLv',
             modelValue: 'a12345612345',
@@ -402,7 +408,7 @@ describe('LxTextInput', () => {
       });
 
       test('personCodeLv > default', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'personCodeLv',
             modelValue: 'a23456123456',
@@ -416,7 +422,7 @@ describe('LxTextInput', () => {
       });
 
       test('default > personCodeLv', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'default',
             modelValue: '123456a89123456789',
@@ -430,7 +436,7 @@ describe('LxTextInput', () => {
       });
 
       test('default > integer', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'default',
             modelValue: 'one1two2three3',
@@ -444,7 +450,7 @@ describe('LxTextInput', () => {
       });
 
       test('default > decimal', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'default',
             modelValue: 'one1,1',
@@ -458,7 +464,7 @@ describe('LxTextInput', () => {
       });
 
       test('default > newbornId', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'default',
             modelValue: 'one123456789123456789123456789',
@@ -472,7 +478,7 @@ describe('LxTextInput', () => {
       });
 
       test('default > gpslat', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'default',
             modelValue: 'one12,0123456789',
@@ -486,7 +492,7 @@ describe('LxTextInput', () => {
       });
 
       test('default > gpslon', async () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             mask: 'default',
             modelValue: 'qwert78zxcv9',
@@ -502,7 +508,7 @@ describe('LxTextInput', () => {
 
     describe('scale', () => {
       test('should have default value as number', () => {
-        const wrapper = mount(LxTextInput);
+        wrapper = mount(LxTextInput);
         const props = wrapper.props();
 
         expect(props.scale).toBe(2);
@@ -510,7 +516,7 @@ describe('LxTextInput', () => {
       });
 
       test('should accept provided value as number', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             scale: 5,
           },
@@ -522,7 +528,7 @@ describe('LxTextInput', () => {
       });
 
       test('should accept provided value as string', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             scale: '7',
           },
@@ -536,7 +542,7 @@ describe('LxTextInput', () => {
 
     describe('signed', () => {
       test('should have default value as boolean', () => {
-        const wrapper = mount(LxTextInput);
+        wrapper = mount(LxTextInput);
         const props = wrapper.props();
 
         expect(props.signed).toBe(false);
@@ -544,7 +550,7 @@ describe('LxTextInput', () => {
       });
 
       test('should accept provided value as boolean', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             signed: true,
           },
@@ -558,7 +564,7 @@ describe('LxTextInput', () => {
 
     describe('kind', () => {
       test('kind:default - input wrapper should exist', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             kind: 'default',
             modelValue: 'Custom model value',
@@ -574,7 +580,7 @@ describe('LxTextInput', () => {
       });
 
       test('kind:search - text-input and search-input wrapper should exist', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             kind: 'search',
             modelValue: 'Custom model value',
@@ -590,7 +596,7 @@ describe('LxTextInput', () => {
       });
 
       test('kind:password - input type should be "password"', () => {
-        const wrapper = mount(LxTextInput, {
+        wrapper = mount(LxTextInput, {
           props: {
             kind: 'password',
             modelValue: 'Custom model value',
@@ -614,7 +620,7 @@ describe('LxTextInput', () => {
 
   describe('Emits', () => {
     test('should emit event after mask prop changes', async () => {
-      const wrapper = mount(LxTextInput, {
+      wrapper = mount(LxTextInput, {
         props: {
           mask: 'default',
           modelValue: 'one1234',
@@ -634,7 +640,7 @@ describe('LxTextInput', () => {
     });
 
     test('should emit number when convertToString is false', async () => {
-      const wrapper = mount(LxTextInput, {
+      wrapper = mount(LxTextInput, {
         props: {
           modelValue: 777,
           mask: 'integer',
@@ -656,7 +662,7 @@ describe('LxTextInput', () => {
     });
 
     test('should emit string when convertToString is true', async () => {
-      const wrapper = mount(LxTextInput, {
+      wrapper = mount(LxTextInput, {
         props: {
           modelValue: 777,
           mask: 'integer',

@@ -1,8 +1,16 @@
 // @ts-nocheck
 import { mount } from '@vue/test-utils';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, afterEach } from 'vitest';
 import LxDayInput from '@/components/DayInput.vue';
 import 'regenerator-runtime/runtime';
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 describe('LxDayInput', () => {
   test('should be a valid component', () => {
@@ -12,13 +20,13 @@ describe('LxDayInput', () => {
   describe('Props', () => {
     describe('modelValue', () => {
       test('should have the correct default value', () => {
-        const wrapper = mount(LxDayInput);
+        wrapper = mount(LxDayInput);
         const props = wrapper.props();
         expect(props.modelValue).toBe(null);
       });
 
       test('should accept provided value', () => {
-        const wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDayInput, {
           props: {
             modelValue: 365,
             readOnly: true,
@@ -33,13 +41,13 @@ describe('LxDayInput', () => {
 
     describe('disabled', () => {
       test('should have the correct default value', () => {
-        const wrapper = mount(LxDayInput);
+        wrapper = mount(LxDayInput);
         const props = wrapper.props();
         expect(props.disabled).toBe(false);
       });
 
       test('should accept provided value', () => {
-        const wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDayInput, {
           props: { disabled: true },
         });
         const props = wrapper.props();
@@ -50,13 +58,13 @@ describe('LxDayInput', () => {
 
     describe('readOnly', () => {
       test('should have the correct default value', () => {
-        const wrapper = mount(LxDayInput);
+        wrapper = mount(LxDayInput);
         const props = wrapper.props();
         expect(props.readOnly).toBe(false);
       });
 
       test('should accept provided value', () => {
-        const wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDayInput, {
           props: { readOnly: true },
         });
         const props = wrapper.props();
@@ -67,13 +75,13 @@ describe('LxDayInput', () => {
 
     describe('kind', () => {
       test('should have the correct default value', () => {
-        const wrapper = mount(LxDayInput);
+        wrapper = mount(LxDayInput);
         const props = wrapper.props();
         expect(props.kind).toBe('label');
       });
 
       test('should accept provided value', () => {
-        const wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDayInput, {
           props: { kind: 'icon' },
         });
         const props = wrapper.props();
@@ -84,13 +92,13 @@ describe('LxDayInput', () => {
 
     describe('invalid', () => {
       test('should have the correct default value', () => {
-        const wrapper = mount(LxDayInput);
+        wrapper = mount(LxDayInput);
         const props = wrapper.props();
         expect(props.invalid).toBe(false);
       });
 
       test('should accept provided value', () => {
-        const wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDayInput, {
           props: { invalid: true },
         });
         const props = wrapper.props();
@@ -101,13 +109,13 @@ describe('LxDayInput', () => {
 
     describe('invalidationMessage', () => {
       test('should have the correct default value', () => {
-        const wrapper = mount(LxDayInput);
+        wrapper = mount(LxDayInput);
         const props = wrapper.props();
         expect(props.invalidationMessage).toBe(null);
       });
 
       test('should accept provided value', () => {
-        const wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDayInput, {
           props: { invalidationMessage: 'Custom invalidation message' },
         });
         const props = wrapper.props();
@@ -118,7 +126,7 @@ describe('LxDayInput', () => {
 
     describe('texts', () => {
       test('should have the correct default value', () => {
-        const wrapper = mount(LxDayInput);
+        wrapper = mount(LxDayInput);
         const props = wrapper.props().texts;
 
         expect(props.inputDaysPlaceholder).toBe('Ievadiet dienu skaitu');
@@ -130,7 +138,7 @@ describe('LxDayInput', () => {
       });
 
       test('should accept provided values', () => {
-        const wrapper = mount(LxDayInput, {
+        wrapper = mount(LxDayInput, {
           props: {
             texts: {
               inputDaysPlaceholder: 'Custom days placeholder',

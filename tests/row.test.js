@@ -1,4 +1,4 @@
-import { test, expect } from 'vitest';
+import { test, expect, afterEach } from 'vitest';
 import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxSection from '@/components/forms/Section.vue';
@@ -7,10 +7,18 @@ import { h } from 'vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxTextArea from '@/components/TextArea.vue';
 
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
+
 test('LxRow label', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: h(LxRow, { label: 'Label' }),
     },
@@ -28,7 +36,7 @@ test('LxRow label', () => {
 test('LxRow hideLabel', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: h(LxRow, { hideLabel: true }),
     },
@@ -46,7 +54,7 @@ test('LxRow hideLabel', () => {
 test('LxRow description', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: h(LxRow, { label: 'Label', description: 'Description' }),
     },
@@ -64,7 +72,7 @@ test('LxRow description', () => {
 test('LxRow columnSpan', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       columnCount: 2,
     },
@@ -85,7 +93,7 @@ test('LxRow columnSpan', () => {
 test('LxRow columnSpan 2', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       columnCount: 8,
     },
@@ -113,7 +121,7 @@ test('LxRow columnSpan 2', () => {
 test('LxRow rowSpan', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: [
         h(LxRow, { rowSpan: 2 }),
@@ -140,7 +148,7 @@ test('LxRow rowSpan', () => {
 test('LxRow rowSpan, columnSpan', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       columnCount: 8,
     },
@@ -169,7 +177,7 @@ test('LxRow rowSpan, columnSpan', () => {
 test('LxRow required', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {},
     slots: {
       default: [
@@ -193,7 +201,7 @@ test('LxRow required', () => {
 test('LxRow required 2', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       requiredMode: 'required',
     },
@@ -219,7 +227,7 @@ test('LxRow required 2', () => {
 test('LxRow required 3', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       requiredMode: 'required-asterisk',
     },
@@ -245,7 +253,7 @@ test('LxRow required 3', () => {
 test('LxRow required 4', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       requiredMode: 'optional',
     },
@@ -271,7 +279,7 @@ test('LxRow required 4', () => {
 test('LxRow required 5', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       requiredMode: 'required',
       texts: { required: '(super required)', optional: '(very optional)' },
@@ -300,7 +308,7 @@ test('LxRow required 5', () => {
 test('LxRow required 6', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       requiredMode: 'optional',
       texts: { required: '(super required)', optional: '(very optional)' },
@@ -328,7 +336,7 @@ test('LxRow required 6', () => {
 test('LxRow required 7', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       requiredMode: 'optional',
       texts: { required: '(super required)', optional: '(very optional)' },
@@ -374,7 +382,7 @@ test('LxRow required 7', () => {
 test('LxRow default slot', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: h(LxRow, {}, { default: () => 'Default slot' }),
     },
@@ -391,7 +399,7 @@ test('LxRow default slot', () => {
 test('LxRow default slot 2', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: h(LxRow, {}, { default: () => h(LxTextInput) }),
     },
@@ -409,7 +417,7 @@ test('LxRow default slot 2', () => {
 test('LxRow default slot 3', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: [
         h(LxRow, {}, { default: () => h(LxTextInput) }),
@@ -433,7 +441,7 @@ test('LxRow default slot 3', () => {
 test('LxRow inputId', () => {
   expect(LxRow).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       default: h(
         LxRow,
@@ -457,7 +465,7 @@ test('LxRow inputId', () => {
 // test('LxRow info slot', () => {
 //   expect(LxRow).toBeTruthy();
 
-//   const wrapper = mount(LxForm, {
+//   wrapper = mount(LxForm, {
 //     slots: {
 //       default: h(LxRow, { label: 'Name' }, { default: () => '22', info: () => 'aaa' }),
 //     },

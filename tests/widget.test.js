@@ -1,7 +1,15 @@
 // @ts-nocheck
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import LxWidget from '@/components/Widget.vue';
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 describe('LxWidget', () => {
   test('should be a valid component', () => {
@@ -10,7 +18,7 @@ describe('LxWidget', () => {
 
   describe('Props', () => {
     test('should have default values', () => {
-      const wrapper = mount(LxWidget, {
+      wrapper = mount(LxWidget, {
         global: {
           stubs: ['router-link'],
         },
@@ -40,7 +48,7 @@ describe('LxWidget', () => {
     });
 
     test('should accept provided values', () => {
-      const wrapper = mount(LxWidget, {
+      wrapper = mount(LxWidget, {
         props: {
           id: 'custom-id',
           label: 'Custom Label',

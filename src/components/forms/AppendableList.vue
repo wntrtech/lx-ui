@@ -63,6 +63,7 @@ function removeItem(id) {
   res.splice(index, 1);
   model.value = res;
 }
+
 function addItem() {
   let res = [{}];
   if (props.modelValue) {
@@ -74,6 +75,7 @@ function addItem() {
   }
   model.value = res;
 }
+
 const expanded = computed(() => {
   const object = [...model.value];
   const transformedStructure = object?.reduce((result, obj) => {
@@ -174,6 +176,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 onMounted(() => {
   model.value = props.modelValue;
 });
+
 defineExpose({ clearModel });
 </script>
 <template>
@@ -191,23 +194,24 @@ defineExpose({ clearModel });
     >
       <template v-if="expandable">
         <LxDataBlock
+          v-model="expanded[item?.[idAttribute]]"
+          v-model:selected="selectedValues[item?.[idAttribute]]"
           :id="item[idAttribute]"
           :name="item[nameAttribute]"
           :description="item[descriptionAttribute]"
           :icon="item[iconAttribute]"
           :expandable="true"
-          v-model="expanded[item?.[idAttribute]]"
-          :actionDefinitions="changeActions(allActions, item)"
+          :actionDefinitions="changeActions([...allActions], item)"
           :forceUppercase="forceUppercase"
           :hasSelecting="hasSelecting"
           :selectingKind="selectingKind"
           @actionClick="(val) => actionClick(val, item._lx_appendableKey, item[idAttribute])"
           @selectingClick="changeSelecting"
-          v-model:selected="selectedValues[item?.[idAttribute]]"
         >
           <LxForm kind="stripped" :columnCount="columnCount" :required-mode="props.requiredMode">
             <slot name="customItem" v-bind="{ item }" />
           </LxForm>
+
           <template #customHeader v-if="$slots.customHeader">
             <slot name="customHeader" v-bind="item" />
           </template>

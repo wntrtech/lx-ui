@@ -1,9 +1,17 @@
 // @ts-nocheck
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import LxMasterDetail from '@/components/MasterDetail.vue';
 import 'regenerator-runtime/runtime';
 import { directive } from 'vue3-click-away';
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 describe('LxMasterDetail', () => {
   test('should be a valid component', () => {
@@ -12,7 +20,7 @@ describe('LxMasterDetail', () => {
 
   describe('Props', () => {
     test('should have default values', () => {
-      const wrapper = mount(LxMasterDetail, {
+      wrapper = mount(LxMasterDetail, {
         global: {
           stubs: ['router-link'],
           directives: {
@@ -37,7 +45,7 @@ describe('LxMasterDetail', () => {
     });
 
     test('should accept provided values', () => {
-      const wrapper = mount(LxMasterDetail, {
+      wrapper = mount(LxMasterDetail, {
         props: {
           modelValue: [
             {
@@ -110,7 +118,7 @@ describe('LxMasterDetail', () => {
 
   describe('Computed properties and methods', () => {
     test('model computed property should get and set modelValue correctly', async () => {
-      const wrapper = mount(LxMasterDetail, {
+      wrapper = mount(LxMasterDetail, {
         props: {
           modelValue: [{ id: '1', name: 'Item 1' }],
         },
@@ -133,7 +141,7 @@ describe('LxMasterDetail', () => {
     });
 
     test('selectItem method should update activeItemCode and emit selectionChanged', () => {
-      const wrapper = mount(LxMasterDetail, {
+      wrapper = mount(LxMasterDetail, {
         props: {
           modelValue: [{ id: '1', name: 'Item 1' }],
         },
@@ -151,7 +159,7 @@ describe('LxMasterDetail', () => {
     });
 
     test('addItem method should emit newItemAdded', () => {
-      const wrapper = mount(LxMasterDetail, {
+      wrapper = mount(LxMasterDetail, {
         props: {
           modelValue: [],
         },
@@ -168,7 +176,7 @@ describe('LxMasterDetail', () => {
     });
 
     test('invalid items test', () => {
-      const wrapper = mount(LxMasterDetail, {
+      wrapper = mount(LxMasterDetail, {
         props: {
           modelValue: [
             { id: '1', name: 'Item 1', invalid: true },
@@ -189,7 +197,7 @@ describe('LxMasterDetail', () => {
     });
 
     test('item category test', () => {
-      const wrapper = mount(LxMasterDetail, {
+      wrapper = mount(LxMasterDetail, {
         props: {
           categoryAttribute: 'type',
           modelValue: [
@@ -213,7 +221,7 @@ describe('LxMasterDetail', () => {
     });
 
     test('mode prop test', async () => {
-      const wrapper = mount(LxMasterDetail, {
+      wrapper = mount(LxMasterDetail, {
         props: {
           modelValue: [{ id: '1', name: 'Item 1' }],
           mode: 'edit',

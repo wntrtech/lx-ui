@@ -1,7 +1,15 @@
 // @ts-nocheck
 import { mount } from '@vue/test-utils';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, afterEach } from 'vitest';
 import LxCheckbox from '@/components/Checkbox.vue';
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 describe('LxCheckbox', () => {
   test('should be a valid component', () => {
@@ -10,7 +18,7 @@ describe('LxCheckbox', () => {
 
   describe('Props', () => {
     test('should have the correct default props', () => {
-      const wrapper = mount(LxCheckbox);
+      wrapper = mount(LxCheckbox);
       const props = wrapper.props();
 
       expect(props.id).toBe(null);
@@ -22,7 +30,7 @@ describe('LxCheckbox', () => {
     });
 
     test('should accept provided prop values', () => {
-      const wrapper = mount(LxCheckbox, {
+      wrapper = mount(LxCheckbox, {
         props: {
           id: 'custom-id',
           groupId: 'custom-group-id',
@@ -51,7 +59,7 @@ describe('LxCheckbox', () => {
 
   describe('Emits', () => {
     test('should emit event after modelValue changes', async () => {
-      const wrapper = mount(LxCheckbox, {
+      wrapper = mount(LxCheckbox, {
         props: {
           modelValue: false,
         },

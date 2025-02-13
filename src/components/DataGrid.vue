@@ -711,12 +711,6 @@ function changeItemsPerPage(value) {
   emits('itemsPerPageChanged', value);
 }
 
-onMounted(() => {
-  if (props.items && !props.idAttribute) {
-    throw new Error('"idAttribute" prop is required on DataGrid Component');
-  }
-});
-
 function arrayToObject(arr) {
   const ret = {};
   arr.forEach((o) => {
@@ -817,8 +811,6 @@ function toolbarClick(action) {
 }
 
 const actionDefinitionsGroup = computed(() => props.actionDefinitions?.slice(1));
-
-defineExpose({ cancelSelection, selectRows, sortBy });
 
 function emptyStateActionClicked(actionName) {
   emits('emptyStateActionClick', actionName);
@@ -997,6 +989,14 @@ watch(
     }
   }
 );
+
+onMounted(() => {
+  if (props.items && !props.idAttribute) {
+    throw new Error('"idAttribute" prop is required on DataGrid Component');
+  }
+});
+
+defineExpose({ cancelSelection, selectRows, sortBy });
 </script>
 <template>
   <div
@@ -1008,6 +1008,7 @@ watch(
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
       <p :id="`${id}-description`" class="lx-description">{{ description }}</p>
     </header>
+
     <LxToolbar
       v-if="(toolbarActions?.length > 0 || $slots.toolbar) && (props.showToolbar || hasSelecting)"
       :actionDefinitions="toolbarActions"
@@ -1022,6 +1023,7 @@ watch(
       <template #leftArea v-if="hasSelecting && selectedRows && selectedRows.length !== 0">
         <p>{{ selectedLabel }}</p>
       </template>
+
       <template
         #rightArea
         v-if="(!hasSelecting && props.showToolbar) || (hasSelecting && selectedRows.length === 0)"
@@ -1031,6 +1033,7 @@ watch(
         </div>
       </template>
     </LxToolbar>
+
     <div class="lx-grid-header-wrapper" aria-hidden="true">
       <div
         ref="header"
@@ -1089,21 +1092,21 @@ watch(
         >
           <div>
             <p class="lx-primary" v-if="col.size !== 'xs'">{{ col.name }}</p>
-            <lx-icon
+            <LxIcon
               value="sort-down"
               v-if="sortedColumns[col.id] === 'desc'"
               :title="formatTooltip(col.name, col.title)"
-            ></lx-icon>
-            <lx-icon
+            />
+            <LxIcon
               value="sort-up"
               v-if="sortedColumns[col.id] === 'asc'"
               :title="formatTooltip(col.name, col.title)"
-            ></lx-icon>
-            <lx-icon
+            />
+            <LxIcon
               value="sort-default"
               v-if="!sortedColumns[col.id]"
               :title="formatTooltip(col.name, col.title)"
-            ></lx-icon>
+            />
           </div>
         </div>
         <div
@@ -1144,8 +1147,9 @@ watch(
           </div>
           <div v-if="hasActionButtons" role="columnheader"></div>
         </div>
+
         <div class="lx-grid-content">
-          <transition-group
+          <TransitionGroup
             tag="div"
             name="data-grid"
             class="lx-grid-row"
@@ -1158,14 +1162,14 @@ watch(
             @dblclick="defaultActionClicked(row[idAttribute], row)"
           >
             <div v-if="hasSelecting" class="lx-cell lx-cell-selector" role="cell">
-              <lx-checkbox
+              <LxCheckbox
                 v-if="selectingKind === 'multiple'"
                 :id="`select-${id}-${row[idAttribute]}`"
                 v-model="selectedRowsRaw[row[idAttribute]]"
                 :value="row[idAttribute]?.toString()"
                 :disabled="isDisabled"
               />
-              <lx-radio-button
+              <LxRadioButton
                 v-if="selectingKind === 'single'"
                 :id="`select-${id}-${row[idAttribute]}`"
                 v-model="selectedRowsRaw[row[idAttribute]]"
@@ -1258,12 +1262,12 @@ watch(
                 {{ formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) }}
               </span>
 
-              <lx-state-display
+              <LxStateDisplay
                 v-if="col.type === 'state'"
                 :value="row[col?.attributeName]"
                 :dictionary="col?.dictionary ? col?.dictionary : col?.options"
               />
-              <lx-rating
+              <LxRating
                 v-if="col.type === 'rating'"
                 :disabled="props.busy"
                 mode="read"
@@ -1350,7 +1354,7 @@ watch(
                 size="s"
               />
               <template v-if="col.type === 'array'">
-                <lx-info-wrapper
+                <LxInfoWrapper
                   v-if="
                     row[col.attributeName] &&
                     row[col.attributeName].length >
@@ -1371,7 +1375,7 @@ watch(
                       </li>
                     </ul>
                   </template>
-                </lx-info-wrapper>
+                </LxInfoWrapper>
                 <template
                   v-else
                   v-for="i in formatValue(
@@ -1384,6 +1388,7 @@ watch(
                 >
               </template>
             </div>
+
             <div
               class="lx-cell-action"
               role="cell"
@@ -1391,7 +1396,7 @@ watch(
               v-if="hasActionButtons"
             >
               <div class="lx-toolbar" v-if="actionDefinitions.length <= 2" role="toolbar">
-                <lx-button
+                <LxButton
                   v-for="action in actionDefinitions"
                   :id="`${id}-${row[idAttribute]}-action-${action.id}`"
                   :key="action.id"
@@ -1408,7 +1413,7 @@ watch(
                 />
               </div>
               <div class="lx-toolbar" v-if="actionDefinitions.length > 2" role="toolbar">
-                <lx-button
+                <LxButton
                   :id="`${id}-${row[idAttribute]}-action-${actionDefinitions?.[0]?.id}`"
                   kind="ghost"
                   tabindex="0"
@@ -1429,9 +1434,10 @@ watch(
                     )
                   "
                 />
-                <lx-dropdown-menu placement="left-start">
+
+                <LxDropdownMenu placement="left-start">
                   <div class="lx-toolbar">
-                    <lx-button
+                    <LxButton
                       :id="`${id}-${row[idAttribute]}-action`"
                       icon="overflow-menu"
                       kind="ghost"
@@ -1440,9 +1446,10 @@ watch(
                       variant="icon-only"
                     />
                   </div>
+
                   <template v-slot:panel>
                     <div class="lx-button-set">
-                      <lx-button
+                      <LxButton
                         v-for="action in actionDefinitionsGroup"
                         :id="`${id}-${row[idAttribute]}-action-${action.id}`"
                         :key="action.id"
@@ -1462,10 +1469,10 @@ watch(
                       />
                     </div>
                   </template>
-                </lx-dropdown-menu>
+                </LxDropdownMenu>
               </div>
             </div>
-          </transition-group>
+          </TransitionGroup>
         </div>
       </div>
 
@@ -1483,6 +1490,7 @@ watch(
           <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
           <div class="lx-cell-header"><div class="lx-skeleton-placeholder"></div></div>
         </div>
+
         <div class="lx-grid-row" v-for="index in props.skeletonRowCount" :key="index">
           <div class="lx-cell lx-cell-s"><div class="lx-skeleton-placeholder"></div></div>
           <div class="lx-cell lx-cell-m"><div class="lx-skeleton-placeholder"></div></div>
@@ -1490,6 +1498,7 @@ watch(
         </div>
       </div>
     </article>
+
     <LxEmptyState
       v-if="items?.length < 1 && !(loading || busy)"
       :label="texts?.noItems"
@@ -1498,8 +1507,9 @@ watch(
       :actionDefinitions="emptyStateActionDefinitions"
       @empty-state-action-click="emptyStateActionClicked"
     />
+
     <LxAppendableList
-      v-model="rows"
+      :modelValue="rows"
       :expandable="true"
       :nameAttribute="primaryColumn()?.attributeName"
       kind="compact"
@@ -1520,6 +1530,7 @@ watch(
         <template v-if="$slots.customResponsiveItem">
           <slot name="customResponsiveItem" v-bind="{ item }" />
         </template>
+
         <template v-else>
           <LxRow
             :label="col.name"
@@ -1570,7 +1581,7 @@ watch(
               {{ formatValue(item[col.attributeName], col.type, col.options?.fractionDigits) }}
             </div>
 
-            <lx-state-display
+            <LxStateDisplay
               v-else-if="col.type === 'state'"
               :value="item[col?.attributeName]"
               :dictionary="col?.dictionary ? col?.dictionary : col?.options"
@@ -1610,6 +1621,7 @@ watch(
               size="s"
             />
           </LxRow>
+
           <LxRow
             v-if="shouldShowIconRow"
             class="lx-responsive-grid-icons-row"
@@ -1677,20 +1689,21 @@ watch(
         </template>
       </template>
     </LxAppendableList>
+
     <footer class="lx-statusbar" v-if="showStatusbar">
       <div
         class="lx-group lx-group-paging count-selector"
         v-if="hasPaging && showItemsCountSelector && !loading"
       >
         {{ texts.itemsPerPage }}
-        <lx-dropdown-menu>
+        <LxDropdownMenu>
           <div class="lx-chip">
             {{ itemsPerPage }}
-            <lx-icon value="chevron-down" />
+            <LxIcon value="chevron-down" />
           </div>
           <template #panel>
             <div class="lx-button-set">
-              <lx-button
+              <LxButton
                 v-for="i in itemsCountSelector"
                 :key="i"
                 :label="`${i.toString()} ${texts.itemsPerPageLabel}`"
@@ -1700,13 +1713,15 @@ watch(
               />
             </div>
           </template>
-        </lx-dropdown-menu>
+        </LxDropdownMenu>
       </div>
+
       <div class="lx-group count-display" v-if="!loading">
         {{ itemsLabel }}
       </div>
+
       <div class="lx-group lx-group-paging" v-if="hasPaging && !loading">
-        <lx-button
+        <LxButton
           :id="`${id}-action-first-page`"
           kind="ghost"
           icon="first-page"
@@ -1714,9 +1729,9 @@ watch(
           variant="icon-only"
           :disabled="pageCurrent < 1 || isDisabled"
           @click="selectFirstPage()"
-        ></lx-button>
+        />
         <div class="lx-divider"></div>
-        <lx-button
+        <LxButton
           :id="`${id}-action-previous-page`"
           kind="ghost"
           icon="previous-page"
@@ -1724,9 +1739,9 @@ watch(
           variant="icon-only"
           :disabled="pageCurrent < 1 || isDisabled"
           @click="selectPreviousPage"
-        ></lx-button>
+        />
         <div class="lx-divider"></div>
-        <lx-button
+        <LxButton
           :id="`${id}-action-next-page`"
           kind="ghost"
           icon="next-page"
@@ -1734,7 +1749,7 @@ watch(
           variant="icon-only"
           :disabled="Number(pageCurrent) + 1 >= Number(pagesTotal) || isDisabled"
           @click="selectNextPage"
-        ></lx-button>
+        />
       </div>
     </footer>
   </div>

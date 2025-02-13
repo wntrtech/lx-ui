@@ -4,6 +4,14 @@ import { mount } from '@vue/test-utils';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import 'regenerator-runtime/runtime';
 
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
+
 describe('LxPersonDisplay', () => {
   let wrapper;
 

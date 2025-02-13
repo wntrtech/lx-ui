@@ -1,14 +1,22 @@
-import { test, expect } from 'vitest';
+import { test, expect, afterEach } from 'vitest';
 import LxForm from '@/components/forms/Form.vue';
 import LxSection from '@/components/forms/Section.vue';
 import LxRow from '@/components/forms/Row.vue';
 import { mount } from '@vue/test-utils';
 import { h } from 'vue';
 
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
+
 test('LxSection id', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(LxSection, { id: 'section' }),
     },
@@ -27,7 +35,7 @@ test('LxSection id', () => {
 test('LxSection columnCount', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(LxSection, { columnCount: 4 }),
     },
@@ -45,7 +53,7 @@ test('LxSection columnCount', () => {
 test('LxSection columnCount 2', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: [
         h(LxSection, { columnCount: 2 }),
@@ -73,7 +81,7 @@ test('LxSection columnCount 2', () => {
 test('LxSection columnCount default', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(LxSection),
     },
@@ -91,7 +99,7 @@ test('LxSection columnCount default', () => {
 test('LxSection label', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(LxSection, { id: 'one', label: 'Section one' }),
     },
@@ -109,7 +117,7 @@ test('LxSection label', () => {
 test('LxSection description', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(LxSection, { id: 'one', description: 'Section one description' }),
     },
@@ -127,7 +135,7 @@ test('LxSection description', () => {
 test('LxSection default slot', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(
         LxSection,
@@ -150,7 +158,7 @@ test('LxSection default slot', () => {
 test('LxSection requiredMode "none"', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(
         LxSection,
@@ -183,7 +191,7 @@ test('LxSection requiredMode "none"', () => {
 test('LxSection requiredMode "required"', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(
         LxSection,
@@ -217,7 +225,7 @@ test('LxSection requiredMode "required"', () => {
 test('LxSection requiredMode "required-asterisk"', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(
         LxSection,
@@ -251,7 +259,7 @@ test('LxSection requiredMode "required-asterisk"', () => {
 test('LxSection requiredMode "optional"', () => {
   expect(LxSection).toBeTruthy();
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     slots: {
       sections: h(
         LxSection,

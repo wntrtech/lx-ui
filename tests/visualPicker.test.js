@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import LxVisualPicker from '@/components/VisualPicker.vue';
 
@@ -11,6 +11,14 @@ import LxVisualPicker from '@/components/VisualPicker.vue';
 // A watch source can only be a getter/effect function, a ref,
 // a reactive object, or an array of these types.
 
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
+
 describe('LxVisualPicker', () => {
   test('should be a valid component', () => {
     expect(LxVisualPicker).toBeTruthy();
@@ -18,7 +26,7 @@ describe('LxVisualPicker', () => {
 
   describe('Props', () => {
     test.todo('should have default values', () => {
-      const wrapper = mount(LxVisualPicker, {
+      wrapper = mount(LxVisualPicker, {
         global: {
           stubs: ['router-link'],
         },
@@ -44,7 +52,7 @@ describe('LxVisualPicker', () => {
     });
 
     test.todo('should accept provided values with kind:europe', () => {
-      const wrapper = mount(LxVisualPicker, {
+      wrapper = mount(LxVisualPicker, {
         props: {
           id: 'custom-id',
           kind: 'europe',
@@ -92,7 +100,7 @@ describe('LxVisualPicker', () => {
     });
 
     test.todo('should accept provided values with kind skeleton', () => {
-      const wrapper = mount(LxVisualPicker, {
+      wrapper = mount(LxVisualPicker, {
         props: {
           kind: 'skeleton',
           modelValue: ['60413009', '272679001'],
@@ -123,7 +131,7 @@ describe('LxVisualPicker', () => {
     });
 
     test.todo('should accept provided values with kind spine', () => {
-      const wrapper = mount(LxVisualPicker, {
+      wrapper = mount(LxVisualPicker, {
         props: {
           kind: 'spine',
           modelValue: ['278915007', '699698002'],
@@ -154,7 +162,7 @@ describe('LxVisualPicker', () => {
     });
 
     test.todo('should accept provided values with kind arms', () => {
-      const wrapper = mount(LxVisualPicker, {
+      wrapper = mount(LxVisualPicker, {
         props: {
           kind: 'arms',
           modelValue: ['734355008', '734354007'],
@@ -185,7 +193,7 @@ describe('LxVisualPicker', () => {
     });
 
     test.todo('should accept provided values with kind left-hand', () => {
-      const wrapper = mount(LxVisualPicker, {
+      wrapper = mount(LxVisualPicker, {
         props: {
           kind: 'left-hand',
           modelValue: ['737403003', '764825000'],
@@ -216,7 +224,7 @@ describe('LxVisualPicker', () => {
     });
 
     test.todo('should accept provided values with kind right-hand', () => {
-      const wrapper = mount(LxVisualPicker, {
+      wrapper = mount(LxVisualPicker, {
         props: {
           kind: 'right-hand',
           modelValue: ['737404009', '764824001'],
@@ -247,7 +255,7 @@ describe('LxVisualPicker', () => {
     });
 
     test.todo('should accept provided values with kind latvia', () => {
-      const wrapper = mount(LxVisualPicker, {
+      wrapper = mount(LxVisualPicker, {
         props: {
           kind: 'latvia',
           modelValue: ['0001000', '0002000'],

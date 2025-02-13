@@ -1,11 +1,19 @@
-import { test, expect } from 'vitest';
+import { test, expect, afterEach } from 'vitest';
 import LxDataVisualizer from '@/components/DataVisualizer.vue';
 import { mount } from '@vue/test-utils';
+
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
 
 test('LxDataVisualizer items', () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', name: 'one', value: 1 },
@@ -23,7 +31,7 @@ test('LxDataVisualizer items', () => {
 test('LxDataVisualizer nameAttribute, valueAttribute', () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', realName: 'one', valueInt: 1 },
@@ -44,7 +52,7 @@ test('LxDataVisualizer nameAttribute, valueAttribute', () => {
 test('LxDataVisualizer colorAttribute', () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', name: 'one', value: 1, colorValue: 'red' },
@@ -64,7 +72,7 @@ test('LxDataVisualizer colorAttribute', () => {
 test('LxDataVisualizer showValues', async () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', name: 'one', value: 1 },
@@ -89,7 +97,7 @@ test('LxDataVisualizer showValues', async () => {
 test('LxDataVisualizer showLegend', async () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', name: 'one', value: 1 },
@@ -112,7 +120,7 @@ test('LxDataVisualizer showLegend', async () => {
 test('LxDataVisualizer legend content', () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [{ id: 'one', name: 'one', value: 1 }],
       thresholds: [
@@ -134,7 +142,7 @@ test('LxDataVisualizer legend content', () => {
 test('LxDataVisualizer threshold coloring 1', () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', name: 'one', value: 10 },
@@ -158,7 +166,7 @@ test('LxDataVisualizer threshold coloring 1', () => {
 test('LxDataVisualizer threshold coloring 2', () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', name: 'one', value: 200 },
@@ -182,7 +190,7 @@ test('LxDataVisualizer threshold coloring 2', () => {
 test('LxDataVisualizer threshold coloring 3', () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', name: 'one', value: 200 },
@@ -206,7 +214,7 @@ test('LxDataVisualizer threshold coloring 3', () => {
 test('LxDataVisualizer texts', () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', name: 'one', value: 200 },
@@ -225,7 +233,7 @@ test('LxDataVisualizer texts', () => {
 test('LxDataVisualizer contentSwitcher', async () => {
   expect(LxDataVisualizer).toBeTruthy();
 
-  const wrapper = mount(LxDataVisualizer, {
+  wrapper = mount(LxDataVisualizer, {
     props: {
       items: [
         { id: 'one', name: 'one', value: 200 },

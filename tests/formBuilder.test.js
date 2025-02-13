@@ -1,12 +1,20 @@
-import { test, expect } from 'vitest';
+import { test, expect, afterEach } from 'vitest';
 import LxForm from '@/components/forms/Form.vue';
 import LxFormBuilder from '@/components/forms/FormBuilder.vue';
 import { mount } from '@vue/test-utils';
 import { h } from 'vue';
 
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
+
 test('LxFormBuilder with one row', () => {
   const schema = { type: 'object', properties: { name: { type: 'string' } } };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -29,7 +37,7 @@ test('LxFormBuilder LxRow label', async () => {
     properties: { name: { type: 'string', label: 'name' } },
   };
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -56,7 +64,7 @@ test('LxFormBuilder order', () => {
     },
   };
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -86,7 +94,7 @@ test('LxFormBuilder order 2', () => {
     },
   };
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -104,7 +112,7 @@ test('LxFormBuilder order 2', () => {
 // Input component tests
 test('LxFormBuilder with LxTextInput', () => {
   const schemaValue = { type: 'object', properties: { name: { type: 'string' } } };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -120,7 +128,7 @@ test('LxFormBuilder with LxTextArea', () => {
     type: 'object',
     properties: { name: { type: 'string', lx: { kind: 'multiline' } } },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -136,7 +144,7 @@ test.skip('LxFormBuilder with LxDateTimePicker', () => {
     type: 'object',
     properties: { name: { type: 'string', format: 'date' } },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -152,7 +160,7 @@ test.skip('LxFormBuilder with LxDateTimePicker time', () => {
     type: 'object',
     properties: { name: { type: 'string', format: 'time' } },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -168,7 +176,7 @@ test.skip('LxFormBuilder with LxDateTimePicker dateTime', () => {
     type: 'object',
     properties: { name: { type: 'string', format: 'date-time' } },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -184,7 +192,7 @@ test('LxFormBuilder with LxToggle', () => {
     type: 'object',
     properties: { name: { type: 'boolean' } },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -211,7 +219,7 @@ test('LxFormBuilder with LxValuePicker default', () => {
       },
     },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -238,7 +246,7 @@ test('LxFormBuilder with LxValuePicker tags', () => {
       },
     },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -264,7 +272,7 @@ test('LxFormBuilder with LxValuePicker multiple', () => {
       },
     },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -294,7 +302,7 @@ test('LxFormBuilder with LxValuePicker 4 items', () => {
       },
     },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -317,7 +325,7 @@ test('LxFormBuilder with LxValuePicker 4 items using enum', () => {
       },
     },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -341,7 +349,7 @@ test('LxFormBuilder with LxDataBlock', () => {
     },
   };
   const modelValue = { one: { name: 'one' } };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -367,7 +375,7 @@ test('LxFormBuilder with LxPlaceholder', () => {
       },
     },
   });
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -387,7 +395,7 @@ test('LxFormBuilder with LxPlaceholder', () => {
 //       },
 //     },
 //   };
-//   const wrapper = mount(LxForm, {
+//   wrapper = mount(LxForm, {
 //     props: {
 //       showHeader: false,
 //     },
@@ -425,7 +433,7 @@ test('LxFormBuilder with LxAppendableList', () => {
     },
   };
 
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },
@@ -451,7 +459,7 @@ test('LxFormBuilder with LxAppendableListSimple', () => {
       },
     },
   };
-  const wrapper = mount(LxForm, {
+  wrapper = mount(LxForm, {
     props: {
       showHeader: false,
     },

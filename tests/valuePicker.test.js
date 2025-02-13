@@ -1,13 +1,21 @@
-import { test, expect } from 'vitest';
+import { test, expect, afterEach } from 'vitest';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import { mount } from '@vue/test-utils';
 import 'regenerator-runtime/runtime';
 
+let wrapper;
+
+afterEach(() => {
+  if (wrapper) {
+    wrapper.unmount();
+  }
+});
+
 test('LxValuePicker default', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
     },
@@ -19,7 +27,7 @@ test('LxValuePicker default', () => {
 test('LxValuePicker dropdown', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
       modelValue: 'one',
@@ -32,7 +40,7 @@ test('LxValuePicker dropdown', () => {
 test('LxValuePicker tiles', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
     },
@@ -43,7 +51,7 @@ test('LxValuePicker tiles', () => {
 test('LxValuePicker tags', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
     },
@@ -54,7 +62,7 @@ test('LxValuePicker tags', () => {
 test('LxValuePicker default items count', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       items: [
@@ -71,7 +79,7 @@ test('LxValuePicker default items count', () => {
 test('LxValuePicker default items labels', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       items: [
@@ -91,7 +99,7 @@ test('LxValuePicker default items labels', () => {
 test('LxValuePicker dropdown items labels', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       items: [
@@ -110,7 +118,7 @@ test('LxValuePicker dropdown items labels', () => {
 test('LxValuePicker tags items labels', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       items: [
@@ -130,7 +138,7 @@ test('LxValuePicker tags items labels', () => {
 test('LxValuePicker tiles items labels, descriptions', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       items: [
@@ -154,7 +162,7 @@ test('LxValuePicker tiles items labels, descriptions', () => {
 test('LxValuePicker idAttribute, nameAttribute, descriptionAttribute', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       idAttribute: 'ID',
@@ -202,7 +210,7 @@ test('LxValuePicker idAttribute, nameAttribute, descriptionAttribute', () => {
 test('LxValuePicker kind "single"', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       kind: 'single',
       items: [
@@ -222,7 +230,7 @@ test('LxValuePicker kind "single"', () => {
 test('LxValuePicker kind "multiple"', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       kind: 'multiple',
       items: [
@@ -242,7 +250,7 @@ test('LxValuePicker kind "multiple"', () => {
 test('LxValuePicker "default" nullable', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       items: [
         { id: 'one', name: 'One' },
@@ -259,7 +267,7 @@ test('LxValuePicker "default" nullable', () => {
 test('LxValuePicker default nullable advanced', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       items: [
         { id: 'one', name: 'One', description: 'OneDescription', value: 'OneValue' },
@@ -294,7 +302,7 @@ test('LxValuePicker default nullable advanced', async () => {
 test('LxValuePicker default hasSearch', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       hasSearch: true,
@@ -309,7 +317,7 @@ test('LxValuePicker default hasSearch', () => {
 test('LxValuePicker dropdown hasSearch', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
 
@@ -326,7 +334,7 @@ test('LxValuePicker dropdown hasSearch', () => {
 test('LxValuePicker tags hasSearch', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       hasSearch: true,
@@ -339,7 +347,7 @@ test('LxValuePicker tags hasSearch', () => {
 test('LxValuePicker tiles hasSearch', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       hasSearch: true,
@@ -353,7 +361,7 @@ test('LxValuePicker tiles hasSearch', () => {
 test('LxValuePicker default tooltip', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       tooltip: 'Tooltip text',
@@ -371,7 +379,7 @@ test('LxValuePicker default tooltip', () => {
 test('LxValuePicker dropdown tooltip', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
       tooltip: 'Tooltip text',
@@ -391,7 +399,7 @@ test('LxValuePicker dropdown tooltip', () => {
 test('LxValuePicker tags tooltip', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       tooltip: 'Tooltip text',
@@ -410,7 +418,7 @@ test('LxValuePicker tags tooltip', () => {
 test('LxValuePicker tiles tooltip', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       tooltip: 'Tooltip text',
@@ -430,7 +438,7 @@ test('LxValuePicker tiles tooltip', () => {
 test('LxValuePicker default readOnly', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       readOnly: true,
@@ -445,7 +453,7 @@ test('LxValuePicker default readOnly', () => {
 test('LxValuePicker dropdown readOnly', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
       readOnly: true,
@@ -460,7 +468,7 @@ test('LxValuePicker dropdown readOnly', () => {
 test('LxValuePicker tags readOnly', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       readOnly: true,
@@ -475,7 +483,7 @@ test('LxValuePicker tags readOnly', () => {
 test('LxValuePicker tiles readOnly', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       readOnly: true,
@@ -492,7 +500,7 @@ test('LxValuePicker tiles readOnly', () => {
 test('LxValuePicker default disabled', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       disabled: true,
@@ -508,7 +516,7 @@ test('LxValuePicker default disabled', () => {
 test('LxValuePicker dropdown disabled', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
       disabled: true,
@@ -523,7 +531,7 @@ test('LxValuePicker dropdown disabled', () => {
 test('LxValuePicker tags disabled', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       disabled: true,
@@ -537,7 +545,7 @@ test('LxValuePicker tags disabled', () => {
 test('LxValuePicker tiles disabled', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       disabled: true,
@@ -558,7 +566,7 @@ test('LxValuePicker tiles disabled', () => {
 test('LxValuePicker default invalid', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       invalid: true,
       invalidationMessage: 'Invalid input',
@@ -574,7 +582,7 @@ test('LxValuePicker default invalid', () => {
 test('LxValuePicker dropdown invalid', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
       invalid: true,
@@ -591,7 +599,7 @@ test('LxValuePicker dropdown invalid', () => {
 test('LxValuePicker tags invalid', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       invalid: true,
@@ -606,7 +614,7 @@ test('LxValuePicker tags invalid', () => {
 test('LxValuePicker tiles invalid', () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       invalid: true,
@@ -622,7 +630,7 @@ test('LxValuePicker tiles invalid', () => {
 test('LxValuePicker default modelValue', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       items: [
@@ -644,7 +652,7 @@ test('LxValuePicker default modelValue', async () => {
 test('LxValuePicker default modelValue 2', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       items: [
@@ -670,7 +678,7 @@ test('LxValuePicker default modelValue 2', async () => {
 test('LxValuePicker default modelValue 3', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       items: [
@@ -696,7 +704,7 @@ test('LxValuePicker default modelValue 3', async () => {
 test('LxValuePicker dropdown modelValue', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
       items: [
@@ -718,7 +726,7 @@ test('LxValuePicker dropdown modelValue', async () => {
 test('LxValuePicker dropdown modelValue 2', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
       items: [
@@ -746,7 +754,7 @@ test('LxValuePicker dropdown modelValue 2', async () => {
 test('LxValuePicker tags modelValue', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       items: [
@@ -769,7 +777,7 @@ test('LxValuePicker tags modelValue', async () => {
 test('LxValuePicker tags modelValue 2', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       items: [
@@ -794,7 +802,7 @@ test('LxValuePicker tags modelValue 2', async () => {
 test('LxValuePicker tiles modelValue', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       items: [
@@ -817,7 +825,7 @@ test('LxValuePicker tiles modelValue', async () => {
 test('LxValuePicker tiles modelValue 2', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       items: [
@@ -844,7 +852,7 @@ test('LxValuePicker tiles modelValue 2', async () => {
 test('LxValuePicker default search', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       items: [
@@ -873,7 +881,7 @@ test('LxValuePicker default search', async () => {
 test('LxValuePicker default search 2', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       items: [
@@ -902,7 +910,7 @@ test('LxValuePicker default search 2', async () => {
 test('LxValuePicker dropdown search', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
       items: [
@@ -928,7 +936,7 @@ test('LxValuePicker dropdown search', async () => {
 test('LxValuePicker tags search', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       items: [
@@ -957,7 +965,7 @@ test('LxValuePicker tags search', async () => {
 test('LxValuePicker tiles search', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       items: [
@@ -985,7 +993,7 @@ test('LxValuePicker tiles search', async () => {
 test('LxValuePicker default searchAttributes', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'default',
       items: [
@@ -1019,7 +1027,7 @@ test('LxValuePicker default searchAttributes', async () => {
 test('LxValuePicker tags searchAttributes', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tags',
       items: [
@@ -1052,7 +1060,7 @@ test('LxValuePicker tags searchAttributes', async () => {
 test('LxValuePicker tiles searchAttributes', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'tiles',
       items: [
@@ -1084,7 +1092,7 @@ test('LxValuePicker tiles searchAttributes', async () => {
 test('LxValuePicker default hasSelectAll', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       items: [
         { id: 'one', name: 'One', description: 'OneDescription', value: 'OneValue' },
@@ -1113,7 +1121,7 @@ test('LxValuePicker default hasSelectAll', async () => {
 test('LxValuePicker dropdown hasSelectAll', async () => {
   expect(LxValuePicker).toBeTruthy();
 
-  const wrapper = mount(LxValuePicker, {
+  wrapper = mount(LxValuePicker, {
     props: {
       variant: 'dropdown',
       items: [
