@@ -228,6 +228,11 @@ function getTextTooltip(col, row) {
   if (col.type === 'tooltip-text') {
     return row[col.attributeDescription] || row[col.attributeName];
   }
+
+  if (col.type === 'bool' || col.type === 'boolean') {
+    return formatBoolean(row[col.attributeName]);
+  }
+
   return ['xs', 's', 'm'].includes(col.size) ? row[col.attributeName] : '';
 }
 
