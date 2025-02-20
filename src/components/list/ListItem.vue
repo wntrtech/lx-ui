@@ -393,7 +393,12 @@ function getItemId(id, parentId) {
     >
       <lx-drop-down-menu :disabled="loading || busy || disabled">
         <div v-if="actionDefinitions.length > 1">
-          <lx-button icon="overflow-menu" kind="ghost" :disabled="loading || busy || disabled" />
+          <lx-button
+            :id="`${id}-action-overflow-menu`"
+            icon="overflow-menu"
+            kind="ghost"
+            :disabled="loading || busy || disabled"
+          />
         </div>
         <template v-slot:panel>
           <div class="lx-button-set">
