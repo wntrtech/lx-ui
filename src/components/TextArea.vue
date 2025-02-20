@@ -49,6 +49,15 @@ watch(
   { immediate: true }
 );
 
+watch(
+  () => props.dynamicHeight,
+  (newValue) => {
+    if (newValue) {
+      nextTick(triggerResize);
+    }
+  }
+);
+
 function focus() {
   if (textarea.value !== null && textarea.value !== undefined) textarea.value.focus();
 }
