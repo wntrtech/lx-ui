@@ -26,6 +26,7 @@ const props = defineProps({
   primaryDownloadButton: { type: Boolean, default: false },
   stickyHeader: { type: Boolean, default: true },
   zoomLevel: { type: Number, default: null }, //  50, 75, 100, 125, 150, 175, 200, 250, 300
+  downloadType: { type: String, default: 'default' }, // "default" - component will start download, "emit" - component will emit download event
   texts: {
     type: Object,
     default: () => ({
@@ -114,6 +115,8 @@ const ZOOM_LEVELS = [50, 75, 100, 125, 150, 175, 200, 250, 300];
 
 const pdfjsLib = shallowRef(null);
 const loadingPdfjs = ref(false);
+
+const emits = defineEmits(['download']);
 
 async function loadPdfLib() {
   if (!pdfjsLib.value) {
@@ -1014,14 +1017,29 @@ function changeFitType(action) {
   }
 }
 
+function setDownloadInProgress(value) {
+  downloadInProgress.value = value;
+}
+defineExpose({ setDownloadInProgress });
+
 function downloadFile() {
+  if (props.downloadType === 'emit') {
+    emits('download', { fileName: props.fileName });
+    return;
+  }
   downloadInProgress.value = true;
 
-  const link = document.createElement('a');
-  link.href = props.modelValue;
-  link.download = isValidFileName(props.fileName) ? props.fileName : generateUUID();
-  link.click();
+  fetch(props.modelValue)
+    .then((response) => response.blob())
+    .then((blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = isValidFileName(props.fileName) ? props.fileName : generateUUID();
 
+      link.click();
+      URL.revokeObjectURL(url);
+    });
   setTimeout(() => {
     downloadInProgress.value = false;
   }, 2000);
