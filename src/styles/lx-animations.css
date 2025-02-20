@@ -701,6 +701,7 @@
 }
 
 /*LxMasterDetail slide transition*/
+
 .lx:not(.lx-no-animations) .master-detail-slide-left-enter-from{
   transform: translateX(-100%);
 }
@@ -721,16 +722,23 @@
 
 /*LxDataVisualizer*/
 
-.lx:not(.lx-no-animations) .lx-data-visualizer .bar-wrapper .bar{
+.lx:not(.lx-no-animations) .lx-data-visualizer .lx-bars-horizontal .bar-wrapper .bar {
   transition: width 0.4s ease-in-out; 
 }
 
-.lx:not(.lx-no-animations)  .lx-data-visualizer .bar > p{
+.lx:not(.lx-no-animations) .lx-data-visualizer .lx-bars-vertical .bar-wrapper .bar {
+  transition: height 0.4s ease-in-out; 
+}
+
+.lx:not(.lx-no-animations)  .lx-data-visualizer .lx-bars-horizontal .bar > p {
   transition: padding-left 0.4s ease-in-out; 
+}
+
+.lx:not(.lx-no-animations)  .lx-data-visualizer .lx-bars-vertical .bar > p {
+  transition: padding-bottom 0.4s ease-in-out; 
 }
 
 .lx:not(.lx-no-animations) .primary-menu-tile,
 .lx:not(.lx-no-animations) .secondary-menu-item {
   transition: background-color .1s ease-in, color .1s ease-in, border-color .1s ease-in;
-  
 }

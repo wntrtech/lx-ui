@@ -14,7 +14,7 @@ import useLx from '@/hooks/useLx';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  kind: { type: String, default: 'bars-horizontal' }, // bars-horizontal || latvia
+  kind: { type: String, default: 'bars-horizontal' }, // bars-horizontal || bars-vertical || latvia
   items: { type: Array, default: () => [] },
   thresholds: { type: Array, default: () => [] },
   showValues: { type: String, default: 'default' }, // default || always || never
@@ -47,6 +47,7 @@ const maxValue = computed(() => {
   const maxItemValue = Math.max(...props.items.map((item) => item?.[props.valueAttribute]));
   const maxTargetValue = Math.max(...props.targets);
   const maxCombinedValue = Math.max(maxItemValue, maxTargetValue);
+
   if (props.maxValue) {
     if (props.maxValue >= maxCombinedValue) return props.maxValue + props.maxValue * 0.05;
     logWarn('maxValue is smaller than the biggest value in items and targets', globalEnvironment);
@@ -57,6 +58,10 @@ const maxValue = computed(() => {
 
 function getBarWidth(item) {
   return `--bar-width: ${(item[props.valueAttribute] / maxValue.value) * 100}%`;
+}
+
+function getBarHeight(item) {
+  return `--bar-height: ${(item[props.valueAttribute] / maxValue.value) * 100}%`;
 }
 
 function getTargetPosition(item) {
@@ -110,13 +115,17 @@ function getBarColor(item, grid = false) {
   }
 
   if (color) {
-    return props.kind === 'bars-horizontal' ? `--bar-color: ${color}` : color;
+    return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
+      ? `--bar-color: ${color}`
+      : color;
   }
   if (item[props.colorAttribute])
-    return props.kind === 'bars-horizontal'
+    return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
       ? `--bar-color: var(--color-${item[props.colorAttribute]})`
       : `var(--color-${item[props.colorAttribute]})`;
-  return props.kind === 'bars-horizontal' ? '--bar-color: var(--color-data)' : 'var(--color-data)';
+  return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
+    ? '--bar-color: var(--color-data)'
+    : 'var(--color-data)';
 }
 
 function colorSvg() {
@@ -142,28 +151,49 @@ function colorSvg() {
   });
 }
 
-function calculateWidths(obj) {
-  const res = [];
+function calculateDimensions(obj) {
+  const res = {};
   Object.entries(obj)?.forEach(([key, value]) => {
-    const { width } = useElementSize(value);
-    res[key] = width;
+    const { width, height } = useElementSize(value);
+    res[key] = { width, height };
   });
   return res;
 }
 
-const modalRefs = ref({});
-const elementWidths = computed(() => calculateWidths(modalRefs.value));
+const horizontalModalRefs = ref({});
+const verticalModalRefs = ref({});
+const horizontalTextRefs = ref({});
+const verticalTextRefs = ref({});
 
-const textRefs = ref({});
-const textElementWidths = computed(() => calculateWidths(textRefs.value));
+const horizontalElemDimensions = computed(() => calculateDimensions(horizontalModalRefs.value));
+const verticalElemDimensions = computed(() => calculateDimensions(verticalModalRefs.value));
+const horizontalTextElemDimensions = computed(() => calculateDimensions(horizontalTextRefs.value));
+const verticalTextElemDimensions = computed(() => calculateDimensions(verticalTextRefs.value));
 
 function isTextOutside(index) {
-  return (
-    elementWidths.value?.[index]?.value > 0 &&
-    textElementWidths.value?.[index]?.value > 0 &&
+  if (
+    props.kind === 'bars-horizontal' &&
+    horizontalElemDimensions.value?.[index]?.width?.value > 0 &&
+    horizontalTextElemDimensions.value?.[index]?.width?.value > 0 &&
     // eslint-disable-next-line no-unsafe-optional-chaining
-    textElementWidths.value?.[index]?.value + 8 >= elementWidths.value?.[index]?.value
-  );
+    horizontalTextElemDimensions.value?.[index]?.width?.value + 12 >=
+      horizontalElemDimensions.value?.[index]?.width?.value
+  ) {
+    return true;
+  }
+
+  if (
+    props.kind === 'bars-vertical' &&
+    verticalElemDimensions.value?.[index]?.height?.value > 0 &&
+    verticalTextElemDimensions.value?.[index]?.width?.value > 0 &&
+    // eslint-disable-next-line no-unsafe-optional-chaining
+    verticalTextElemDimensions.value?.[index]?.width?.value + 12 >=
+      verticalElemDimensions.value?.[index]?.height?.value
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 const columnDef = computed(() => {
@@ -275,9 +305,11 @@ async function getImage() {
   }
 }
 
-const barsOnly = ref();
+const horizontalBarsOnly = ref();
+const verticalBarsOnly = ref();
 
-const barsOnlyWidth = computed(() => useElementSize(barsOnly).width);
+const barsOnlyWidth = computed(() => useElementSize(horizontalBarsOnly).width);
+const barsOnlyHeight = computed(() => useElementSize(verticalBarsOnly).height);
 
 const targetsComputed = computed(() => {
   const objArray = [...props.targets]
@@ -287,14 +319,26 @@ const targetsComputed = computed(() => {
   const res = [];
 
   for (let i = 0, j = 0; i < objArray.length; i += 1) {
-    const location = (objArray[i].value / maxValue.value) * barsOnlyWidth.value.value; // item location in px
+    let location;
+    if (props.kind === 'bars-horizontal') {
+      // item location in px
+      location = (objArray[i].value / maxValue.value) * barsOnlyWidth.value.value;
+    }
+    if (props.kind === 'bars-vertical') {
+      // item location in px
+      location = (objArray[i].value / maxValue.value) * barsOnlyHeight.value.value;
+    }
 
     // if gap smaller than 48px(3rem), than marge
     if (res[j - 1]?.value && location - res[j - 1].value < 48) {
-      res[j - 1].value = (res[j - 1].value + location) / 2; // value of items in px for comparison
-      res[j - 1].count += 1; // count of items in this location
-      res[j - 1].absoluteValue = (res[j - 1].absoluteValue + objArray[i].value) / 2; // absolute value of items in this location
-      res[j - 1].list.push(objArray[i].value); // list of items in this location
+      // value of items in px for comparison
+      res[j - 1].value = (res[j - 1].value + location) / 2;
+      // count of items in this location
+      res[j - 1].count += 1;
+      // absolute value of items in this location
+      res[j - 1].absoluteValue = (res[j - 1].absoluteValue + objArray[i].value) / 2;
+      // list of items in this location
+      res[j - 1].list.push(objArray[i].value);
     } else {
       res.push({
         value: location,
@@ -361,7 +405,8 @@ watch(
           {{ item?.[nameAttribute] }}
         </data>
       </div>
-      <div class="bar-wrapper bars-only" ref="barsOnly">
+
+      <div class="bar-wrapper bars-only" ref="horizontalBarsOnly">
         <div
           class="bar"
           :class="[
@@ -375,7 +420,7 @@ watch(
               ? `${item?.[nameAttribute]}`
               : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute])}`
           "
-          :ref="(el) => (modalRefs[index] = el)"
+          :ref="(el) => (horizontalModalRefs[index] = el)"
           @click="$emit('click', item?.[idAttribute])"
           @keydown.space="$emit('click', item?.[idAttribute])"
           v-for="(item, index) in items"
@@ -384,12 +429,13 @@ watch(
         >
           <p
             v-if="showValues === 'always'"
-            :ref="(el) => (textRefs[index] = el)"
-            :style="`--outside-padding: ${elementWidths?.[index]?.value}px`"
+            :ref="(el) => (horizontalTextRefs[index] = el)"
+            :style="`--outside-padding: ${horizontalElemDimensions?.[index]?.width?.value}px`"
           >
             {{ item?.[valueAttribute] }}
           </p>
         </div>
+
         <div
           class="lx-target-wrapper"
           v-for="target in targetsComputed"
@@ -417,6 +463,97 @@ watch(
             </div>
           </div>
           <div class="lx-target" />
+        </div>
+      </div>
+    </div>
+
+    <div
+      v-else-if="kind === 'bars-vertical' && contentModel === 'default'"
+      class="lx-bars-vertical-container"
+      :class="[{ 'show-legend': showLegend }]"
+    >
+      <div
+        class="lx-bars-vertical"
+        :class="[{ 'show-legend': showLegend }, { 'has-targets': targets?.length > 0 }]"
+        :style="`--item-count: ${items?.length}`"
+      >
+        <div class="bar-wrapper bars-only" ref="verticalBarsOnly">
+          <div
+            class="bar"
+            :class="[
+              {
+                'text-outside': isTextOutside(index),
+              },
+            ]"
+            :style="`${getBarHeight(item)}; ${getBarColor(item)}`"
+            :title="
+              showValues === 'never'
+                ? `${item?.[nameAttribute]}`
+                : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute])}`
+            "
+            :ref="(el) => (verticalModalRefs[index] = el)"
+            @click="$emit('click', item?.[idAttribute])"
+            @keydown.space="$emit('click', item?.[idAttribute])"
+            v-for="(item, index) in items"
+            :key="item[idAttribute]"
+            :aria-labelledby="`${id}-${item[idAttribute]}`"
+          >
+            <p
+              v-if="showValues === 'always'"
+              :ref="(el) => (verticalTextRefs[index] = el)"
+              :style="`--outside-padding: ${verticalElemDimensions?.[index]?.height?.value}px`"
+            >
+              {{ item?.[valueAttribute] }}
+            </p>
+          </div>
+
+          <div
+            class="lx-target-wrapper"
+            v-for="target in targetsComputed"
+            :key="target?.value"
+            :style="`${getTargetPosition(target.absoluteValue)}`"
+            :class="[{ 'lx-target-wrapper-multiple': target.list?.length > 1 }]"
+          >
+            <div class="lx-target-header" v-if="showValues !== 'never' || target.list?.length > 1">
+              <div
+                class="target-value"
+                v-if="target.list?.length == 1"
+                :title="target.absoluteValue"
+              >
+                {{ target.absoluteValue }}
+              </div>
+
+              <div class="target-value-multiple" v-else>
+                <LxInfoWrapper offsetDistance="8">
+                  <div>
+                    {{ target.count }}
+                  </div>
+                  <template #panel>
+                    <div>
+                      <div v-for="item in target.list" :key="item">
+                        {{ item }}
+                      </div>
+                    </div>
+                  </template>
+                </LxInfoWrapper>
+              </div>
+            </div>
+
+            <div class="lx-target" />
+          </div>
+        </div>
+
+        <div class="bar-wrapper legends">
+          <data
+            :id="`${id}-${item[idAttribute]}`"
+            class="bar-name"
+            :title="item?.[nameAttribute]"
+            v-for="item in items"
+            :key="item[idAttribute]"
+            :value="item?.[valueAttribute]"
+          >
+            {{ item?.[nameAttribute] }}
+          </data>
         </div>
       </div>
     </div>
@@ -460,7 +597,7 @@ watch(
         contentModel === 'table' &&
         targets?.length > 0 &&
         showValues !== 'never' &&
-        kind === 'bars-horizontal'
+        (kind === 'bars-horizontal' || kind === 'bars-vertical')
       "
     >
       <LxListItem
