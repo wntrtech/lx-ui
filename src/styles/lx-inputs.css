@@ -4200,6 +4200,53 @@ input[type='range']:hover::-moz-range-thumb {
   top: var(--row-size);
 }
 
+
+.lx-text-input-wrapper > .lx-input-flag-wrapper{
+  grid-area: tag;
+  padding-left: 0.5rem;
+  height: var(--input-container-height);
+}
+
+.lx-text-input-wrapper .lx-input-flag-wrapper .lx-flag{
+  display: flex;
+  align-items: center;
+  height: 2rem;
+}
+
+.lx-text-input-wrapper .lx-text-input.lx-phone-input{
+  --input-container-padding-left: 3rem;
+}
+
+.lx-text-input-wrapper .multiple-flags{
+  position: relative;
+  width: 2rem;
+}
+
+.lx-text-input-wrapper .multiple-flags > .lx-flag{
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.lx-text-input-wrapper .multiple-flags > .lx-flag:first-child > span{
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
+
+.lx-text-input-wrapper .multiple-flags > .lx-flag:last-child{
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.lx-text-input-wrapper .multiple-flags > .lx-flag:last-child > span{
+  clip-path: polygon(0 0, 100% 0%, 100% 100%);
+}
+
+.lx-text-input-wrapper .lx-input-flag-wrapper .lx-flag .flag{
+  scale: 0.8;
+}
+
+
 @media (max-width: 300px) {
   .lx .lx-uploaded-file-preview-wrapper {
     grid-template-columns: 1fr;

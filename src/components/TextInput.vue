@@ -5,6 +5,8 @@ import { Money3Component } from 'v-money3';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import { generateUUID, isEmail } from '@/utils/stringUtils';
+import { flagMap } from '@/utils/flagUtils';
+import LxFlag from '@/components/Flag.vue';
 
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
@@ -50,9 +52,13 @@ const props = defineProps({
   },
   scale: { type: [Number, String], default: 2 },
   signed: { type: Boolean, default: false },
-  kind: { type: String, default: 'default' },
+  kind: { type: String, default: 'default' }, // default, password, search, phone
   labelId: { type: String, default: null },
   autocomplete: { type: String, default: 'off' },
+  options: {
+    type: Object,
+    default: () => ({ phone: 'lv' }),
+  },
   texts: {
     type: Object,
     default: () => ({
@@ -61,6 +67,11 @@ const props = defineProps({
     }),
   },
 });
+
+// Russia (+7) and Kazakhstan (+7) share the same country code
+// The United States (+1) shares its code with Canada and many Caribbean nations.
+
+const flags = flagMap;
 
 const input = shallowRef();
 const valueRaw = ref();
@@ -82,6 +93,11 @@ const maxLengthValue = computed(() => {
 });
 
 const inputMask = computed(() => {
+  if (props.kind === 'phone')
+    return {
+      mask: /^[\d()+-]+$/,
+    };
+
   switch (props.mask) {
     case 'integer':
       return {
@@ -281,6 +297,7 @@ const sanitizedEmail = computed(() => {
 
 const inputFieldType = computed(() => {
   if (props.mask === 'email') return 'email';
+  if (props.kind === 'phone') return 'tel';
   return props.kind === 'password' && hidePassword.value ? 'password' : 'text';
 });
 
@@ -342,6 +359,11 @@ watch(
         if (res?.replace('.', ',') !== valueRaw.value) {
           valueRaw.value = model.value;
         }
+      } else if (props.kind === 'phone') {
+        const res = newValue?.toString()?.replace(/[()-]/g, '');
+        if (res !== valueRaw.value) {
+          valueRaw.value = model.value;
+        }
       } else valueRaw.value = model.value;
     }
   }
@@ -367,6 +389,17 @@ watch(
     }
   }
 );
+
+const matchedFlags = computed(() => {
+  const result = [];
+  Object.entries(flags)?.forEach(([key, value]) => {
+    if (valueRaw.value?.toString()?.startsWith(key)) {
+      if (!Array.isArray(value)) result.push(value);
+      else value.forEach((val) => result.push(val));
+    }
+  });
+  return result;
+});
 
 onMounted(() => {
   maskUpdate();
@@ -416,6 +449,18 @@ onMounted(() => {
       <div v-if="kind === 'search'" class="lx-input-icon-wrapper">
         <LxIcon customClass="lx-modifier-icon" value="search" />
       </div>
+      <div v-if="kind === 'phone'" class="lx-input-flag-wrapper">
+        <div
+          v-if="matchedFlags?.length > 0"
+          :class="[{ 'multiple-flags': matchedFlags?.length > 1 }]"
+        >
+          <LxFlag v-for="flag in matchedFlags" :key="flag" :value="flag" />
+        </div>
+        <div v-else>
+          <LxFlag :value="options?.phone" />
+        </div>
+      </div>
+
       <div class="pseudo-input" />
       <input
         v-if="mask !== 'currency'"
@@ -427,6 +472,7 @@ onMounted(() => {
         :class="[
           { 'lx-invalid': invalid },
           { 'lx-search-input': kind === 'search' },
+          { 'lx-phone-input': kind === 'phone' },
           { 'lx-uppercase': uppercase },
         ]"
         :id="id"
