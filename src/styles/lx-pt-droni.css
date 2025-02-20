@@ -1,0 +1,17 @@
+.lx {
+	--color-brand: #00597f;
+	--color-interactive-background: #00597f;
+	--color-interactive-hover-background: #004766;
+	--color-background: #f3f4f6;
+	--color-layout-background: #002C3F;
+	--color-data: #111827;
+	--color-label: #4D5359;
+	--color-tooltip-background: #374151;
+	--color-focus-background: #2792c4;
+}
+
+.lx.lx-theme-dark {
+  --color-brand: #3BABDF;
+  --color-interactive-background: #3BABDF;
+  --color-interactive-hover-background: #00597F;
+}
