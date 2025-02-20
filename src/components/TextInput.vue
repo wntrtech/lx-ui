@@ -279,6 +279,11 @@ const sanitizedEmail = computed(() => {
   return '';
 });
 
+const inputFieldType = computed(() => {
+  if (props.mask === 'email') return 'email';
+  return props.kind === 'password' && hidePassword.value ? 'password' : 'text';
+});
+
 watch(
   () => model.value,
   (newVal, oldVal) => {
@@ -416,7 +421,7 @@ onMounted(() => {
         v-if="mask !== 'currency'"
         v-imask="inputMask"
         ref="input"
-        :type="props.kind === 'password' && hidePassword ? 'password' : 'text'"
+        :type="inputFieldType"
         :autocomplete="autocomplete"
         class="lx-text-input lx-input-area"
         :class="[

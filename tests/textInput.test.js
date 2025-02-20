@@ -684,3 +684,15 @@ describe('LxTextInput', () => {
     });
   });
 });
+
+test('LxTextInput email mask', async () => {
+  wrapper = mount(LxTextInput, {
+    props: {
+      mask: 'email',
+    },
+  });
+  const input = wrapper.find('.lx-text-input').element;
+  expect(input.type).toBe('email');
+  await wrapper.setProps({ mask: 'decimal' });
+  expect(input.type).toBe('text');
+});
