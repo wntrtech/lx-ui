@@ -1,6 +1,7 @@
 import { formatDate, formatDateTime } from '@/utils/dateUtils';
 import { cutString, shortenUserName } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
+import { countryCodeToName } from '@/utils/countryCodeUtils';
 
 const EMPTY_VALUE = '—';
 
@@ -292,4 +293,10 @@ export function formatDecimal(value, precision = 2) {
         minimumFractionDigits: precision,
         maximumFractionDigits: precision,
       }).format(value);
+}
+
+// Source: https://www.iso.org/iso-3166-country-codes.html
+// Used in translation to LV: https://lv.wikipedia.org/wiki/ISO_3166-1
+export function formatCountryCode(value, language = 'lv', notExistsValue = null) {
+  return countryCodeToName(value, language) || notExistsValue;
 }
