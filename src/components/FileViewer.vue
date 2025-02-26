@@ -377,6 +377,10 @@ function stopDragging() {
 
 const initializeFitScale = ref(false); // Track if initial scale calculation has been done
 
+const windowWidth = computed(() => windowSize.width.value);
+
+const devicePixelRatio = ref(window.devicePixelRatio || 1);
+
 async function renderPage(pageNum) {
   isPageRendering.value = true;
 
@@ -401,7 +405,8 @@ async function renderPage(pageNum) {
       }
     }
 
-    const adjustedViewport = page.getViewport({ scale: scale.value });
+    const upscaleFactor = windowWidth.value < 800 ? devicePixelRatio.value : 1;
+    const adjustedViewport = page.getViewport({ scale: scale.value * upscaleFactor });
 
     let canvasElement = null;
 
@@ -423,6 +428,9 @@ async function renderPage(pageNum) {
 
     canvasElement.width = scaledWidth;
     canvasElement.height = scaledHeight;
+
+    canvasElement.style.width = `${scaledWidth / upscaleFactor}px`;
+    canvasElement.style.height = `${scaledHeight / upscaleFactor}px`;
 
     const renderContext = {
       canvasContext: context,
@@ -484,8 +492,6 @@ const renderingInProgress = computed(
     printInProgress.value ||
     loadingPdfjs.value
 );
-
-const windowWidth = computed(() => windowSize.width.value);
 
 function resetPdfViewer() {
   pdf.value = null;
