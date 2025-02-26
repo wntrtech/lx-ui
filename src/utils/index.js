@@ -9,5 +9,6 @@ export * as lxArrayUtils from '@/utils/arrayUtils';
 export * as lxDevUtils from '@/utils/devUtils';
 export * as lxFileUtils from '@/utils/fileUtils';
 export * as lxSiteMapUtils from '@/utils/siteMapUtils';
+export * as lxLogoUtils from '@/utils/logoUtils';
 
 // Other components you plan to publish go here
