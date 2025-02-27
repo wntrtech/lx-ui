@@ -44,12 +44,17 @@ const latvia = getTexts('latvia');
 const globalEnvironment = useLx().getGlobals()?.environment;
 
 const maxValue = computed(() => {
-  const maxItemValue = Math.max(...props.items.map((item) => item?.[props.valueAttribute]));
-  const maxTargetValue = Math.max(...props.targets);
+  const flattenedItems = props.items.flatMap((item) =>
+    Array.isArray(item?.[props.valueAttribute]) ? item?.[props.valueAttribute] : [item]
+  );
+  const maxItemValue = Math.max(...flattenedItems.map((item) => item?.[props.valueAttribute] || 0));
+  const maxTargetValue = Math.max(...props.targets, 0);
   const maxCombinedValue = Math.max(maxItemValue, maxTargetValue);
 
   if (props.maxValue) {
-    if (props.maxValue >= maxCombinedValue) return props.maxValue + props.maxValue * 0.05;
+    if (props.maxValue >= maxCombinedValue) {
+      return props.maxValue + props.maxValue * 0.05;
+    }
     logWarn('maxValue is smaller than the biggest value in items and targets', globalEnvironment);
   }
 
@@ -57,15 +62,20 @@ const maxValue = computed(() => {
 });
 
 function getBarWidth(item) {
-  return `--bar-width: ${(item[props.valueAttribute] / maxValue.value) * 100}%`;
+  return `--bar-width: ${(item[props.valueAttribute] / maxValue.value) * 100 || 100}%`;
 }
 
 function getBarHeight(item) {
-  return `--bar-height: ${(item[props.valueAttribute] / maxValue.value) * 100}%`;
+  return `--bar-height: ${(item[props.valueAttribute] / maxValue.value) * 100 || 100}%`;
 }
 
 function getTargetPosition(item) {
   return `--target-position: ${(item / maxValue.value) * 100}%`;
+}
+
+function getSubItemCount(subItems) {
+  if (!Array.isArray(subItems)) return '';
+  return `--sub-item-count: ${subItems?.length}`;
 }
 
 function checkValue(item, cloneThreshold, grid) {
@@ -100,15 +110,24 @@ function checkValue(item, cloneThreshold, grid) {
 
 function getBarColor(item, grid = false) {
   let color = null;
-  props.thresholds?.forEach((threshold) => {
-    const cloneThreshold = { ...threshold };
-    if (!cloneThreshold.min) cloneThreshold.min = Number.MIN_SAFE_INTEGER;
-    if (!cloneThreshold.max) cloneThreshold.max = Number.MAX_SAFE_INTEGER;
-    const res = checkValue(item, cloneThreshold, grid);
-    if (res) {
-      color = res;
+
+  if (!props.thresholds || props.thresholds.length === 0) {
+    if (grid && item[props.colorAttribute]) {
+      color = item[props.colorAttribute];
     }
-  });
+  } else {
+    props.thresholds.forEach((threshold) => {
+      const cloneThreshold = { ...threshold };
+      if (!cloneThreshold.min) cloneThreshold.min = Number.MIN_SAFE_INTEGER;
+      if (!cloneThreshold.max) cloneThreshold.max = Number.MAX_SAFE_INTEGER;
+
+      const res = checkValue(item, cloneThreshold, grid);
+
+      if (res) {
+        color = res;
+      }
+    });
+  }
 
   if (color && grid) {
     return color;
@@ -119,10 +138,12 @@ function getBarColor(item, grid = false) {
       ? `--bar-color: ${color}`
       : color;
   }
+
   if (item[props.colorAttribute])
     return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
       ? `--bar-color: var(--color-${item[props.colorAttribute]})`
       : `var(--color-${item[props.colorAttribute]})`;
+
   return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
     ? '--bar-color: var(--color-data)'
     : 'var(--color-data)';
@@ -139,6 +160,8 @@ function colorSvg() {
     }
   });
   props.items.forEach((item) => {
+    if (Array.isArray(item?.[props.valueAttribute])) return;
+
     const country = document.getElementById(`lx-${item[props.idAttribute]}`);
     const color = getBarColor(item);
     if (country) {
@@ -165,10 +188,26 @@ const verticalModalRefs = ref({});
 const horizontalTextRefs = ref({});
 const verticalTextRefs = ref({});
 
+const horizontalSubModalRefs = ref({});
+const verticalSubModalRefs = ref({});
+const horizontalSubTextRefs = ref({});
+const verticalSubTextRefs = ref({});
+
 const horizontalElemDimensions = computed(() => calculateDimensions(horizontalModalRefs.value));
 const verticalElemDimensions = computed(() => calculateDimensions(verticalModalRefs.value));
 const horizontalTextElemDimensions = computed(() => calculateDimensions(horizontalTextRefs.value));
 const verticalTextElemDimensions = computed(() => calculateDimensions(verticalTextRefs.value));
+
+const horizontalSubElemDimensions = computed(() =>
+  calculateDimensions(horizontalSubModalRefs.value)
+);
+const verticalSubElemDimensions = computed(() => calculateDimensions(verticalSubModalRefs.value));
+const horizontalTextSubElemDimensions = computed(() =>
+  calculateDimensions(horizontalSubTextRefs.value)
+);
+const verticalTextSubElemDimensions = computed(() =>
+  calculateDimensions(verticalSubTextRefs.value)
+);
 
 function isTextOutside(index) {
   if (
@@ -181,7 +220,6 @@ function isTextOutside(index) {
   ) {
     return true;
   }
-
   if (
     props.kind === 'bars-vertical' &&
     verticalElemDimensions.value?.[index]?.height?.value > 0 &&
@@ -192,38 +230,78 @@ function isTextOutside(index) {
   ) {
     return true;
   }
-
   return false;
 }
 
+function isSubTextOutside(index) {
+  if (
+    props.kind === 'bars-horizontal' &&
+    horizontalSubElemDimensions.value?.[index]?.width?.value > 0 &&
+    horizontalTextSubElemDimensions.value?.[index]?.width?.value > 0 &&
+    // eslint-disable-next-line no-unsafe-optional-chaining
+    horizontalTextSubElemDimensions.value?.[index]?.width?.value + 12 >=
+      horizontalSubElemDimensions.value?.[index]?.width?.value
+  ) {
+    return true;
+  }
+  if (
+    props.kind === 'bars-vertical' &&
+    verticalSubElemDimensions.value?.[index]?.height?.value > 0 &&
+    verticalTextSubElemDimensions.value?.[index]?.width?.value > 0 &&
+    // eslint-disable-next-line no-unsafe-optional-chaining
+    verticalTextSubElemDimensions.value?.[index]?.width?.value + 12 >=
+      verticalSubElemDimensions.value?.[index]?.height?.value
+  ) {
+    return true;
+  }
+  return false;
+}
+
+const hasSubBars = computed(() =>
+  props.items.some((item) => Array.isArray(item?.[props.valueAttribute]))
+);
+
 const columnDef = computed(() => {
-  const res = [
-    {
-      id: 'name',
-      name: 'Nosaukums',
-      attributeName: 'name',
-      title: 'Nosaukums',
+  const res = [];
+  res.push({
+    id: 'name',
+    name: 'Nosaukums',
+    attributeName: 'name',
+    title: 'Nosaukums',
+    type: 'primary',
+    kind: 'clickable',
+    size: '*',
+  });
+
+  if (hasSubBars.value) {
+    res.push({
+      id: 'group',
+      name: 'Grupa',
+      attributeName: 'group',
+      title: 'Grupa',
       type: 'primary',
-      kind: 'clickable',
       size: '*',
-    },
-    {
-      id: 'value',
-      name: 'Vērtība',
-      attributeName: 'value',
-      title: 'Vērtība',
-      type: 'decimal',
-      size: 's',
-    },
-    {
-      id: 'icon',
-      name: ' ',
-      attributeName: 'icon',
-      title: 'Icon',
-      type: 'icon',
-      size: 'xs',
-    },
-  ];
+    });
+  }
+
+  res.push({
+    id: 'value',
+    name: 'Vērtība',
+    attributeName: 'value',
+    title: 'Vērtība',
+    type: 'decimal',
+    size: 's',
+  });
+
+  res.push({
+    id: 'icon',
+    name: ' ',
+    attributeName: 'icon',
+    title: 'Icon',
+    type: 'icon',
+    size: 'xs',
+  });
+
   if (props.showValues === 'never') {
     res.splice(1, 1);
   }
@@ -231,16 +309,40 @@ const columnDef = computed(() => {
 });
 
 const dataGridItems = computed(() =>
-  props.items.map((item) => ({
-    id: item[props.idAttribute],
-    name: item[props.nameAttribute],
-    value: item[props.valueAttribute],
-    icon: {
-      icon: 'status-default',
-      category: getBarColor(item, true),
-      label: item[props.valueAttribute]?.toString(),
-    },
-  }))
+  props.items.flatMap((item) => {
+    const itemWithSubBars = Array.isArray(item?.[props.valueAttribute]);
+
+    // If kind is 'latvia', exclude items that have sub-bars
+    if (props.kind === 'latvia' && itemWithSubBars) return [];
+
+    if (itemWithSubBars) {
+      const valueArray = item[props.valueAttribute];
+
+      return valueArray.map((subItem) => ({
+        id: subItem[props.idAttribute],
+        name: subItem[props.nameAttribute],
+        value: subItem[props.valueAttribute],
+        group: item[props.nameAttribute],
+        icon: {
+          icon: 'status-default',
+          category: getBarColor(subItem, true),
+          label: subItem[props.valueAttribute]?.toString(),
+        },
+      }));
+    }
+
+    return {
+      id: item[props.idAttribute],
+      name: item[props.nameAttribute],
+      value: item[props.valueAttribute],
+      group: null,
+      icon: {
+        icon: 'status-default',
+        category: getBarColor(item, true),
+        label: item[props.valueAttribute]?.toString(),
+      },
+    };
+  })
 );
 
 function gridClick(a, b) {
@@ -267,6 +369,7 @@ function loadImage() {
   return new Promise((resolve, reject) => {
     imagePath.value = defineAsyncComponent({
       loader: () =>
+        // @ts-ignore
         import('@/components/visualPickerPictures/Latvia.vue')
           .then(async (component) => {
             resolve(component);
@@ -361,6 +464,20 @@ const targetsList = computed(() => {
   return res;
 });
 
+const isRegularBar = (index) => !Array.isArray(props.items[index]?.[props.valueAttribute]);
+
+const hasSubBarBefore = (index) => {
+  if (!isRegularBar(index)) return false;
+  return index > 0 && Array.isArray(props.items[index - 1]?.[props.valueAttribute]);
+};
+
+const hasSubBarAfter = (index) => {
+  if (!isRegularBar(index)) return false;
+  return (
+    index < props.items.length - 1 && Array.isArray(props.items[index + 1]?.[props.valueAttribute])
+  );
+};
+
 watch(
   () => props.kind,
   async (newValue) => {
@@ -394,51 +511,131 @@ watch(
       :style="`--item-count: ${items?.length}`"
     >
       <div class="bar-wrapper">
-        <data
-          :id="`${id}-${item[idAttribute]}`"
-          class="bar-name"
-          :title="item?.[nameAttribute]"
-          v-for="item in items"
-          :key="item[idAttribute]"
-          :value="item?.[valueAttribute]"
-        >
-          {{ item?.[nameAttribute] }}
-        </data>
+        <template v-for="(item, index) in items" :key="item[idAttribute]">
+          <!-- If item has sub-items, render each subItem as its own <data> tag -->
+          <div class="lx-bar-group" v-if="Array.isArray(item?.[valueAttribute])">
+            <label
+              v-if="Array.isArray(item?.[valueAttribute])"
+              class="lx-bar-group-label"
+              :title="item?.[nameAttribute]"
+            >
+              {{ item?.[nameAttribute] }}
+            </label>
+
+            <data
+              v-for="subItem in item[valueAttribute]"
+              :key="subItem[idAttribute]"
+              :id="`${id}-${subItem[idAttribute]}`"
+              class="bar-name sub-bar"
+              :title="subItem?.[nameAttribute]"
+              :value="subItem?.[valueAttribute]"
+            >
+              {{ subItem?.[nameAttribute] }}
+            </data>
+          </div>
+
+          <!-- If item does not have sub-items, render normally -->
+          <data
+            v-else
+            :id="`${id}-${item[idAttribute]}`"
+            class="bar-name"
+            :class="[
+              {
+                'sub-bar-before': hasSubBarBefore(index),
+                'sub-bar-after': hasSubBarAfter(index),
+              },
+            ]"
+            :title="item?.[nameAttribute]"
+            :value="item?.[valueAttribute]"
+          >
+            {{ item?.[nameAttribute] }}
+          </data>
+        </template>
       </div>
 
       <div class="bar-wrapper bars-only" ref="horizontalBarsOnly">
         <div
+          v-for="(item, index) in items"
+          :key="item[idAttribute]"
+          :ref="(el) => (horizontalModalRefs[index] = el)"
           class="bar"
           :class="[
             {
               'text-outside': isTextOutside(index),
+              'with-sub-bars': Array.isArray(item?.[valueAttribute]),
+              'sub-bar-before': hasSubBarBefore(index),
+              'sub-bar-after': hasSubBarAfter(index),
             },
           ]"
-          :style="`${getBarWidth(item)}; ${getBarColor(item)}`"
+          :style="`${getBarWidth(item)}; ${getBarColor(item)}; ${getSubItemCount(
+            item?.[valueAttribute]
+          )}`"
           :title="
-            showValues === 'never'
+            Array.isArray(item?.[valueAttribute])
+              ? null
+              : showValues === 'never'
               ? `${item?.[nameAttribute]}`
               : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute])}`
           "
-          :ref="(el) => (horizontalModalRefs[index] = el)"
-          @click="$emit('click', item?.[idAttribute])"
-          @keydown.space="$emit('click', item?.[idAttribute])"
-          v-for="(item, index) in items"
-          :key="item[idAttribute]"
           :aria-labelledby="`${id}-${item[idAttribute]}`"
+          @click="
+            !Array.isArray(item?.[valueAttribute]) ? $emit('click', item?.[idAttribute]) : null
+          "
+          @keydown.space="
+            !Array.isArray(item?.[valueAttribute]) ? $emit('click', item?.[idAttribute]) : null
+          "
         >
-          <p
-            v-if="showValues === 'always'"
-            :ref="(el) => (horizontalTextRefs[index] = el)"
-            :style="`--outside-padding: ${horizontalElemDimensions?.[index]?.width?.value}px`"
-          >
-            {{ item?.[valueAttribute] }}
-          </p>
+          <!-- Check if item value is an array -->
+          <template v-if="Array.isArray(item?.[valueAttribute])">
+            <div class="sub-bar-wrapper bars-only">
+              <div
+                v-for="(subItem, subIndex) in item?.[valueAttribute]"
+                :key="subItem[idAttribute]"
+                :ref="(el) => (horizontalSubModalRefs[`${index}-${subIndex}`] = el)"
+                class="sub-bar"
+                :class="[
+                  {
+                    'text-outside': isSubTextOutside(`${index}-${subIndex}`),
+                  },
+                ]"
+                :style="`${getBarWidth(subItem)}; ${getBarColor(subItem)}`"
+                :title="
+                  showValues === 'never'
+                    ? `${subItem?.[nameAttribute]}`
+                    : `${subItem?.[nameAttribute]} \n${formatDecimal(subItem?.[valueAttribute])}`
+                "
+                :aria-labelledby="`${id}-${subItem[idAttribute]}`"
+                @click="$emit('click', subItem?.[idAttribute])"
+                @keydown.space="$emit('click', subItem?.[idAttribute])"
+              >
+                <p
+                  v-if="showValues === 'always'"
+                  :ref="(el) => (horizontalSubTextRefs[`${index}-${subIndex}`] = el)"
+                  :style="`--outside-padding: ${
+                    horizontalSubElemDimensions?.[`${index}-${subIndex}`]?.width?.value
+                  }px`"
+                >
+                  {{ subItem?.[valueAttribute] }}
+                </p>
+              </div>
+            </div>
+          </template>
+
+          <!-- If it's a regular value, render it normally -->
+          <template v-else>
+            <p
+              v-if="showValues === 'always'"
+              :ref="(el) => (horizontalTextRefs[index] = el)"
+              :style="`--outside-padding: ${horizontalElemDimensions?.[index]?.width?.value}px`"
+            >
+              {{ item?.[valueAttribute] }}
+            </p>
+          </template>
         </div>
 
         <div
-          class="lx-target-wrapper"
           v-for="target in targetsComputed"
+          class="lx-target-wrapper"
           :key="target?.value"
           :style="`${getTargetPosition(target.absoluteValue)}`"
           :class="[{ 'lx-target-wrapper-multiple': target.list?.length > 1 }]"
@@ -479,32 +676,82 @@ watch(
       >
         <div class="bar-wrapper bars-only" ref="verticalBarsOnly">
           <div
+            v-for="(item, index) in items"
+            :key="item[idAttribute]"
+            :ref="(el) => (verticalModalRefs[index] = el)"
             class="bar"
             :class="[
               {
                 'text-outside': isTextOutside(index),
+                'with-sub-bars': Array.isArray(item?.[valueAttribute]),
+                'sub-bar-before': hasSubBarBefore(index),
+                'sub-bar-after': hasSubBarAfter(index),
               },
             ]"
-            :style="`${getBarHeight(item)}; ${getBarColor(item)}`"
+            :style="`${getBarHeight(item)}; ${getBarColor(item)}; ${getSubItemCount(
+              item?.[valueAttribute]
+            )}`"
             :title="
-              showValues === 'never'
+              Array.isArray(item?.[valueAttribute])
+                ? null
+                : showValues === 'never'
                 ? `${item?.[nameAttribute]}`
                 : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute])}`
             "
-            :ref="(el) => (verticalModalRefs[index] = el)"
-            @click="$emit('click', item?.[idAttribute])"
-            @keydown.space="$emit('click', item?.[idAttribute])"
-            v-for="(item, index) in items"
-            :key="item[idAttribute]"
             :aria-labelledby="`${id}-${item[idAttribute]}`"
+            @click="
+              !Array.isArray(item?.[valueAttribute]) ? $emit('click', item?.[idAttribute]) : null
+            "
+            @keydown.space="
+              !Array.isArray(item?.[valueAttribute]) ? $emit('click', item?.[idAttribute]) : null
+            "
           >
-            <p
-              v-if="showValues === 'always'"
-              :ref="(el) => (verticalTextRefs[index] = el)"
-              :style="`--outside-padding: ${verticalElemDimensions?.[index]?.height?.value}px`"
-            >
-              {{ item?.[valueAttribute] }}
-            </p>
+            <!-- Check if item value is an array -->
+            <template v-if="Array.isArray(item?.[valueAttribute])">
+              <div class="sub-bar-wrapper bars-only">
+                <div
+                  v-for="(subItem, subIndex) in item?.[valueAttribute]"
+                  :key="subItem[idAttribute]"
+                  :ref="(el) => (verticalSubModalRefs[`${index}-${subIndex}`] = el)"
+                  class="sub-bar"
+                  :class="[
+                    {
+                      'text-outside': isSubTextOutside(`${index}-${subIndex}`),
+                    },
+                  ]"
+                  :style="`${getBarHeight(subItem)}; ${getBarColor(subItem)}`"
+                  :title="
+                    showValues === 'never'
+                      ? `${subItem?.[nameAttribute]}`
+                      : `${subItem?.[nameAttribute]} \n${formatDecimal(subItem?.[valueAttribute])}`
+                  "
+                  :aria-labelledby="`${id}-${subItem[idAttribute]}`"
+                  @click="$emit('click', subItem?.[idAttribute])"
+                  @keydown.space="$emit('click', subItem?.[idAttribute])"
+                >
+                  <p
+                    v-if="showValues === 'always'"
+                    :ref="(el) => (verticalSubTextRefs[`${index}-${subIndex}`] = el)"
+                    :style="`--outside-padding: ${
+                      verticalSubElemDimensions?.[`${index}-${subIndex}`]?.height?.value
+                    }px`"
+                  >
+                    {{ subItem?.[valueAttribute] }}
+                  </p>
+                </div>
+              </div>
+            </template>
+
+            <!-- If it's a regular value, render it normally -->
+            <template v-else>
+              <p
+                v-if="showValues === 'always'"
+                :ref="(el) => (verticalTextRefs[index] = el)"
+                :style="`--outside-padding: ${verticalElemDimensions?.[index]?.height?.value}px`"
+              >
+                {{ item?.[valueAttribute] }}
+              </p>
+            </template>
           </div>
 
           <div
@@ -544,16 +791,46 @@ watch(
         </div>
 
         <div class="bar-wrapper legends">
-          <data
-            :id="`${id}-${item[idAttribute]}`"
-            class="bar-name"
-            :title="item?.[nameAttribute]"
-            v-for="item in items"
-            :key="item[idAttribute]"
-            :value="item?.[valueAttribute]"
-          >
-            {{ item?.[nameAttribute] }}
-          </data>
+          <template v-for="(item, index) in items" :key="item[idAttribute]">
+            <!-- If item has sub-items, render each subItem as its own <data> tag -->
+            <div class="lx-bar-group" v-if="Array.isArray(item?.[valueAttribute])">
+              <label
+                v-if="Array.isArray(item?.[valueAttribute])"
+                class="lx-bar-group-label"
+                :title="item?.[nameAttribute]"
+              >
+                {{ item?.[nameAttribute] }}
+              </label>
+
+              <data
+                v-for="subItem in item[valueAttribute]"
+                :key="subItem[idAttribute]"
+                :id="`${id}-${subItem[idAttribute]}`"
+                class="bar-name sub-bar"
+                :title="subItem?.[nameAttribute]"
+                :value="subItem?.[valueAttribute]"
+              >
+                {{ subItem?.[nameAttribute] }}
+              </data>
+            </div>
+
+            <!-- If item does not have sub-items, render normally -->
+            <data
+              v-else
+              :id="`${id}-${item[idAttribute]}`"
+              class="bar-name"
+              :class="[
+                {
+                  'sub-bar-before': hasSubBarBefore(index),
+                  'sub-bar-after': hasSubBarAfter(index),
+                },
+              ]"
+              :title="item?.[nameAttribute]"
+              :value="item?.[valueAttribute]"
+            >
+              {{ item?.[nameAttribute] }}
+            </data>
+          </template>
         </div>
       </div>
     </div>

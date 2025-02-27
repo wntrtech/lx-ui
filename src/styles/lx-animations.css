@@ -346,7 +346,6 @@
   transition: transform 200ms ease-out;
 }
 
-
 /* lx-expanders */
 
 .lx:not(.lx-no-animations) .lx-expander .lx-head {
@@ -702,43 +701,61 @@
 
 /*LxMasterDetail slide transition*/
 
-.lx:not(.lx-no-animations) .master-detail-slide-left-enter-from{
+.lx:not(.lx-no-animations) .master-detail-slide-left-enter-from {
   transform: translateX(-100%);
 }
 
-.lx:not(.lx-no-animations) .master-detail-slide-right-enter-from{
+.lx:not(.lx-no-animations) .master-detail-slide-right-enter-from {
   transform: translateX(100%);
 }
 
 .lx:not(.lx-no-animations) .master-detail-slide-left-enter-to,
-.lx:not(.lx-no-animations) .master-detail-slide-right-enter-to{
+.lx:not(.lx-no-animations) .master-detail-slide-right-enter-to {
   transform: translateX(0);
 }
 
 .lx:not(.lx-no-animations) .master-detail-slide-left-enter-active,
-.lx:not(.lx-no-animations) .master-detail-slide-right-enter-active{
+.lx:not(.lx-no-animations) .master-detail-slide-right-enter-active {
   transition: transform 0.2s ease-out;
 }
 
 /*LxDataVisualizer*/
 
-.lx:not(.lx-no-animations) .lx-data-visualizer .lx-bars-horizontal .bar-wrapper .bar {
-  transition: width 0.4s ease-in-out; 
+.lx:not(.lx-no-animations) .lx-data-visualizer .lx-bars-horizontal .bar-wrapper .bar,
+.lx:not(.lx-no-animations)
+  .lx-data-visualizer
+  .lx-bars-horizontal
+  .bar-wrapper
+  .bar
+  .sub-bar-wrapper
+  .sub-bar {
+  transition: width 0.4s ease-in-out;
 }
 
-.lx:not(.lx-no-animations) .lx-data-visualizer .lx-bars-vertical .bar-wrapper .bar {
-  transition: height 0.4s ease-in-out; 
+.lx:not(.lx-no-animations) .lx-data-visualizer .lx-bars-vertical .bar-wrapper .bar,
+.lx:not(.lx-no-animations)
+  .lx-data-visualizer
+  .lx-bars-vertical
+  .bar-wrapper
+  .bar
+  .sub-bar-wrapper
+  .sub-bar {
+  transition: height 0.4s ease-in-out;
 }
 
-.lx:not(.lx-no-animations)  .lx-data-visualizer .lx-bars-horizontal .bar > p {
-  transition: padding-left 0.4s ease-in-out; 
+.lx:not(.lx-no-animations) .lx-data-visualizer .lx-bars-horizontal .bar > p {
+  transition: padding-left 0.4s ease-in-out;
 }
 
-.lx:not(.lx-no-animations)  .lx-data-visualizer .lx-bars-vertical .bar > p {
-  transition: padding-bottom 0.4s ease-in-out; 
+.lx:not(.lx-no-animations) .lx-data-visualizer .lx-bars-vertical .bar > p {
+  transition: padding-bottom 0.4s ease-in-out;
+}
+
+.lx:not(.lx-no-animations) .lx-data-visualizer .lx-bars-vertical .sub-bar > p {
+  transition: padding-top 0.4s ease-in-out;
 }
 
 .lx:not(.lx-no-animations) .primary-menu-tile,
 .lx:not(.lx-no-animations) .secondary-menu-item {
-  transition: background-color .1s ease-in, color .1s ease-in, border-color .1s ease-in;
+  transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
