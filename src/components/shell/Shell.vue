@@ -1,5 +1,5 @@
 <script setup>
-import { computed, shallowRef, onMounted, watch, ref } from 'vue';
+import { computed, shallowRef, onMounted, watch, ref, nextTick } from 'vue';
 import { useColorMode, usePreferredReducedMotion, useMutationObserver } from '@vueuse/core';
 
 import useLx from '@/hooks/useLx';
@@ -489,6 +489,15 @@ watch(
   () => computedBackgrounds,
   () => {
     defineVars();
+  }
+);
+
+watch(
+  () => props.mode,
+  (newValue) => {
+    nextTick(() => {
+      if (newValue === 'cover') defineVars();
+    });
   }
 );
 
