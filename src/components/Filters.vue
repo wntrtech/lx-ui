@@ -68,11 +68,17 @@ const filterSize = useElementSize(filterBody);
 
 const labelText = computed(() => (props.label ? props.label : props.texts.filters));
 
-defineExpose({ toggleExpander });
+const expander = ref();
+function focus() {
+  expander.value.focus();
+}
+
+defineExpose({ toggleExpander, focus });
 </script>
 <template>
   <div class="lx-filter-wrapper">
     <lx-expander
+      ref="expander"
       :id="id"
       :label="labelText"
       :description="description"

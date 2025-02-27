@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, watch, computed } from 'vue';
+import { shallowRef, watch, computed, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
@@ -75,6 +75,13 @@ function selectExpander(event, id) {
   event.stopPropagation();
   emits('selectAll', id);
 }
+const expanderHeader = ref();
+
+function focus() {
+  expanderHeader.value.focus();
+}
+
+defineExpose({ focus });
 </script>
 
 <template>
@@ -93,6 +100,7 @@ function selectExpander(event, id) {
     :data-disabled="disabled ? '' : null"
   >
     <header
+      ref="expanderHeader"
       :class="[{ 'lx-head': !$slots.customHeader }, { 'lx-custom-header': $slots.customHeader }]"
       :for="id"
       :title="tooltip"
