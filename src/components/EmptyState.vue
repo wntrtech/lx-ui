@@ -68,5 +68,8 @@ function actionClicked(actionName) {
         </LxDropDownMenu>
       </div>
     </div>
+    <div aria-live="polite" role="status" class="lx-invisible">
+      {{ label }}
+    </div>
   </div>
 </template>

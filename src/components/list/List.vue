@@ -138,6 +138,9 @@ const queryInputCompact = ref();
 const queryInputDefault = ref();
 const searchField = ref(false);
 
+const showInvisibleBlock = ref(false);
+let invisibleBlockTimeout;
+
 const modelSearchString = computed({
   get() {
     return props.searchString;
@@ -398,6 +401,32 @@ watch(
       draggableIsDisabledByQuery.value = false;
     } else {
       draggableIsDisabledByQuery.value = true;
+    }
+
+    clearTimeout(invisibleBlockTimeout);
+    showInvisibleBlock.value = false;
+    invisibleBlockTimeout = setTimeout(() => {
+      showInvisibleBlock.value = true;
+    }, 1000);
+  },
+  { immediate: true }
+);
+
+watch(
+  [filteredItems, filteredTreeItems],
+  () => {
+    if (
+      queryRaw.value &&
+      ((props.kind !== 'treelist' && filteredItems.value.length === 0) ||
+        (props.kind === 'treelist' && filteredTreeItems.value.length === 0))
+    ) {
+      clearTimeout(invisibleBlockTimeout);
+      showInvisibleBlock.value = false;
+      invisibleBlockTimeout = setTimeout(() => {
+        showInvisibleBlock.value = true;
+      }, 1000);
+    } else {
+      showInvisibleBlock.value = false;
     }
   },
   { immediate: true }
@@ -2179,6 +2208,9 @@ function focusFirstFocusableElementAfter() {
           (props.kind === 'treelist' && filteredTreeItems?.length === 0))
       "
     >
+      <div aria-live="polite" role="status" class="lx-invisible" v-if="showInvisibleBlock">
+        {{ texts.notFoundSearch }} {{ JSON.stringify(query) }}
+      </div>
       <p>{{ texts.notFoundSearch }} {{ JSON.stringify(query) }}</p>
     </div>
     <div class="lx-load-more-button" v-if="showLoadMore">
