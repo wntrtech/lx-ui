@@ -166,7 +166,8 @@ a.lx-sitemap-link {
 /*** Icon styles ***/
 
 .lx .lx-button svg,
-.lx a.lx-button svg {
+.lx a.lx-button svg,
+.lx button svg {
   height: var(--button-primary-icon-height);
   width: var(--button-primary-icon-width);
   fill: var(--color-button-primary-icon);
@@ -178,6 +179,7 @@ a.lx-sitemap-link {
 }
 
 .lx-button.lx-button-secondary svg,
+a.lx-button.lx-button-secondary svg,
 .lx button.lx-button-secondary svg {
   height: var(--button-secondary-icon-height);
   width: var(--button-secondary-icon-width);
@@ -185,6 +187,7 @@ a.lx-sitemap-link {
 }
 
 .lx-button.lx-button-tertiary svg,
+a.lx-button.lx-button-tertiary svg,
 .lx button.lx-button-tertiary svg {
   height: var(--button-tertiary-icon-height);
   width: var(--button-tertiary-icon-width);
@@ -192,6 +195,7 @@ a.lx-sitemap-link {
 }
 
 .lx-button.lx-button-ghost svg,
+a.lx-button.lx-button-ghost svg,
 .lx button.lx-button-ghost svg {
   height: var(--button-ghost-icon-height);
   width: var(--button-ghost-icon-width);

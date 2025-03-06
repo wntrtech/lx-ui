@@ -92,7 +92,30 @@ onMounted(() => {
 
 <template>
   <div class="lx-field-wrapper">
+    <div v-if="readOnly" class="lx-toggle-label-wrapper lx-toggle-read-only">
+      <span
+        class="lx-toggle-text"
+        v-if="!$slots.on && !$slots.off && !$slots.indeterminate && !$slots.default"
+      >
+        <p class="lx-data">{{ formatValueBool(modelValue, booleanTexts) }}</p>
+      </span>
+      <span class="lx-toggle-text" v-else>
+        <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate">
+          <p class="lx-data"><slot />: {{ formatValueBool(modelValue, booleanTexts) }}</p>
+        </span>
+        <span v-show="model === null">
+          <slot name="indeterminate" />
+        </span>
+        <span v-show="model === false">
+          <slot name="off" />
+        </span>
+        <span v-show="model === true">
+          <slot name="on" />
+        </span>
+      </span>
+    </div>
     <div
+      v-else
       class="lx-toggle-wrapper"
       :class="{ 'lx-small': size === 's' }"
       :data-disabled="disabled ? '' : null"
@@ -118,48 +141,24 @@ onMounted(() => {
         :disabled="disabled"
         :aria-labelledby="labelledBy"
       />
-      <div class="lx-toggle-label-wrapper" :class="{ 'lx-toggle-read-only': readOnly }">
-        <template v-if="!readOnly">
-          <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
-          <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
-          <span class="lx-toggle-appearance" @click="toggleValue" role="presentation" />
-          <label class="lx-toggle-text" v-if="size !== 's' && hasSlots" :for="idValue">
-            <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate"> <slot /> </span>
-            <span v-show="model === null">
-              <slot name="indeterminate" />
-            </span>
-            <span v-show="model === false">
-              <slot name="off" />
-            </span>
-            <span v-show="model === true">
-              <slot name="on" />
-            </span>
-          </label>
-        </template>
-        <template v-else>
-          <span
-            class="lx-toggle-text"
-            v-if="!$slots.on && !$slots.off && !$slots.indeterminate && !$slots.default"
-          >
-            <p class="lx-data">{{ formatValueBool(modelValue, booleanTexts) }}</p>
+      <div class="lx-toggle-label-wrapper">
+        <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
+        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
+        <span class="lx-toggle-appearance" @click="toggleValue" role="presentation" />
+        <label class="lx-toggle-text" v-if="size !== 's' && hasSlots" :for="idValue">
+          <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate"> <slot /> </span>
+          <span v-show="model === null">
+            <slot name="indeterminate" />
           </span>
-          <span class="lx-toggle-text" v-else>
-            <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate">
-              <p class="lx-data"><slot />: {{ formatValueBool(modelValue, booleanTexts) }}</p>
-            </span>
-            <span v-show="model === null">
-              <slot name="indeterminate" />
-            </span>
-            <span v-show="model === false">
-              <slot name="off" />
-            </span>
-            <span v-show="model === true">
-              <slot name="on" />
-            </span>
+          <span v-show="model === false">
+            <slot name="off" />
           </span>
-        </template>
+          <span v-show="model === true">
+            <slot name="on" />
+          </span>
+        </label>
       </div>
     </div>
-    <div class="lx-invalidation-message">{{ invalidationMessage }}</div>
+    <div v-if="invalid && !readOnly" class="lx-invalidation-message">{{ invalidationMessage }}</div>
   </div>
 </template>
