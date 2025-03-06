@@ -306,16 +306,16 @@ watch(
   (newVal, oldVal) => {
     if (props.mask === 'email' && newVal !== oldVal) {
       if (newVal?.length > oldVal?.length && !oldVal?.includes('@')) {
-        rewriteValue(/[a-zA-Z0-9.!@#$%&'*+/=?^_`{|}~-]/, oldVal, newVal);
+        rewriteValue(/[a-zA-Z0-9\u00C0-\u017E.!@#$%&'*+/=?^_`{|}~-]/, oldVal, newVal);
       } else if (
         newVal?.length > oldVal?.length &&
         oldVal?.includes('@') &&
         oldVal?.slice(-1) === '.' &&
         oldVal?.lastIndexOf('.') > oldVal?.indexOf('@')
       ) {
-        rewriteValue(/[a-zA-Z0-9-]/, oldVal, newVal);
+        rewriteValue(/[a-zA-Z0-9\u00C0-\u017E-]/, oldVal, newVal);
       } else if (newVal?.length > oldVal?.length && oldVal?.includes('@')) {
-        rewriteValue(/[a-zA-Z0-9-.]/, oldVal, newVal);
+        rewriteValue(/[a-zA-Z0-9\u00C0-\u017E-.]/, oldVal, newVal);
       }
     }
   }

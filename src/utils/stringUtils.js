@@ -45,7 +45,9 @@ export function isPhone(value) {
 }
 
 export function isEmail(value) {
-  return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/.test(value);
+  return /^[a-zA-Z0-9\u00C0-\u017E.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9\u00C0-\u017E-]+(?:\.[a-zA-Z0-9\u00C0-\u017E-]+)+$/.test(
+    value
+  );
 }
 
 export function isUrl(value) {
