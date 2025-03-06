@@ -147,7 +147,7 @@ function getName(returnPlaceholder = true) {
   let text = '';
 
   if (model.value && !Array.isArray(model.value)) {
-    return selectedItems.value[0].name;
+    return selectedItems.value[0]?.[props.nameAttribute];
   } else if (model.value && model.value.length > 0) {
     text = selectedItems.value?.map((item) => item[props.nameAttribute])?.join(', ');
   } else if (returnPlaceholder) {
