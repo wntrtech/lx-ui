@@ -837,9 +837,10 @@ function focusFirstMainFocusableElement() {
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          :selectedNavItems="navItemsSelected"
+          :texts="texts"
           @nav-toggle="navToggle"
           @navClick="navClick"
-          :selectedNavItems="navItemsSelected"
         />
       </nav>
       <main ref="main" class="lx-main">
@@ -962,9 +963,10 @@ function focusFirstMainFocusableElement() {
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          :selectedNavItems="navItemsSelected"
+          :texts="texts"
           @nav-toggle="navToggle"
           @navClick="navClick"
-          :selectedNavItems="navItemsSelected"
         />
       </nav>
       <ul class="lx-latvijalv-alert-list" v-if="alerts?.length > 0 && !hasAlerts">
@@ -1371,6 +1373,7 @@ function focusFirstMainFocusableElement() {
           :has-language-picker="hasLanguagePicker"
           :languages="languages"
           :selectedNavItems="navItemsSelected"
+          :texts="texts"
           @nav-toggle="navToggle"
           @navClick="navClick"
         />
