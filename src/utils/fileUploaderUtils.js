@@ -1,6 +1,7 @@
 import mime from 'mime';
 import useLx from '@/hooks/useLx';
-import { lxDateUtils, lxDevUtils } from '@/utils';
+import { formatFull, formatDateTime } from '@/utils/dateUtils';
+import { log } from '@/utils/devUtils';
 import { getTexts } from '@/utils/visualPickerUtils';
 
 const DASH = '—';
@@ -21,6 +22,13 @@ async function loadJSZip() {
   return JSZip;
 }
 
+async function loadPdfLib() {
+  const pdfjs = await import('pdfjs-dist');
+  const workerUrl = await import('pdfjs-dist/build/pdf.worker.mjs?url');
+  pdfjs.GlobalWorkerOptions.workerSrc = workerUrl.default;
+  return pdfjs;
+}
+
 async function loadC2paComponents() {
   const { createC2pa } = await import('c2pa');
   const { selectProducer } = await import('c2pa');
@@ -31,6 +39,28 @@ async function loadC2paComponents() {
   const { default: workerSrc } = await import('c2pa/dist/c2pa.worker.js?url');
 
   return { createC2pa, selectProducer, wasmSrc, workerSrc };
+}
+
+export function getFileExtension(name) {
+  if (name.includes('.')) {
+    const mimeType = mime.getType(name);
+
+    if (mimeType) {
+      const extension = mime.getExtension(mimeType);
+      if (extension) {
+        return extension.toUpperCase();
+      }
+    }
+  }
+  const parts = name.split('.');
+  if (parts.length === 1 || parts[0] === '') {
+    return log(
+      `Cannot determine extension for file: ${name}`,
+      useLx().getGlobals()?.environment,
+      'error'
+    );
+  }
+  return parts.pop().toUpperCase();
 }
 
 export function acceptedMimeImage(name) {
@@ -76,7 +106,7 @@ export function acceptedMimeOffice(name) {
 
 export function acceptedESignedDocument(name) {
   const fileExtension = name?.split('.').pop();
-  const validMimeTypes = ['edoc', 'asice'];
+  const validMimeTypes = ['edoc', 'asice', 'sce'];
   return validMimeTypes.includes(fileExtension);
 }
 
@@ -108,6 +138,7 @@ export function convertBytesToFormattedString(bytes) {
 
 function addFileToArchive(archive, zipEntry, size) {
   const parts = zipEntry.name.split('/');
+
   let currentLevel = archive;
 
   parts.forEach((part, index) => {
@@ -119,6 +150,7 @@ function addFileToArchive(archive, zipEntry, size) {
         path: parts.slice(0, index + 1).join('/'),
         size: index === parts.length - 1 && !zipEntry.dir ? size : 0,
         children: index === parts.length - 1 && !zipEntry.dir ? null : [],
+        extension: getFileExtension(part),
       };
 
       currentLevel.push(existingPart);
@@ -150,6 +182,7 @@ function getArchiveContentData(archive) {
       size: file.size,
       children: file.children ? getArchiveContentData(file.children) : null,
       category: file.children ? null : 'blue',
+      extension: file.extension,
     };
   });
 }
@@ -161,14 +194,16 @@ function getEDocContentData(files) {
   return files.map((file) => ({
     id: file.signatureId,
     nameAndSurname: file.signerInfo?.nameAndSurname,
+    organizationName: file.signerInfo?.organizationName,
     country: {
       name: countries[file.signerInfo?.countryName],
       code: file.signerInfo?.countryName,
     },
-    personalCode: file.signerInfo?.personalCode,
+    personalCodeOrIdentifier: file.signerInfo?.personalCodeOrIdentifier,
     eSignIssuer: file.signerInfo?.eSignIssuer,
     eSignDate: file.signerInfo?.eSignDate,
     isAIGenerated: file.isAIGenerated || null,
+    eSignFileType: file.signerInfo.eSignFileType,
     eSignType: file.signerInfo.eSignType,
   }));
 }
@@ -204,7 +239,7 @@ function extractCertData(certString) {
   return map;
 }
 
-async function extractSignerInfoFromCertificate(base64Cert, signingTimeValue) {
+async function extractSignerInfoFromCertificate(base64Cert, signingTimeValue, extension) {
   const pemCert = `-----BEGIN CERTIFICATE-----\n${base64Cert}\n-----END CERTIFICATE-----`;
   const X509 = await loadX509();
   const c = new X509();
@@ -216,18 +251,25 @@ async function extractSignerInfoFromCertificate(base64Cert, signingTimeValue) {
   const issuerString = c.getIssuerString();
   const issuerObj = extractCertData(issuerString);
 
-  const cleanedPersonalCode = subjectObj.serialNumber.split('PNOLV-').join('');
+  const { serialNumber, organizationIdentifier, CN, GN, SN, C } = subjectObj;
+  const { O } = issuerObj;
+
+  const cleanedPersonalCode = serialNumber?.split('PNOLV-').join('');
+  const cleanedOrgIdentifier = organizationIdentifier?.split('NTRLV-').join('');
 
   const signerInfo = {
-    nameAndSurname: subjectObj.CN || DASH,
-    name: subjectObj.GN || DASH,
-    surname: subjectObj.SN || DASH,
-    countryName: subjectObj.C || DASH,
-    personalCode: cleanedPersonalCode || DASH,
-    eSignIssuer: issuerObj.O || DASH,
-    eSignDate: lxDateUtils.formatFull(signingTimeValue) || DASH,
-    eSignType: 'edoc',
+    nameAndSurname: serialNumber ? CN : null,
+    organizationName: organizationIdentifier ? CN : null,
+    name: GN || DASH,
+    surname: SN || DASH,
+    countryName: C || DASH,
+    personalCodeOrIdentifier: cleanedPersonalCode || cleanedOrgIdentifier || DASH,
+    eSignIssuer: O || DASH,
+    eSignDate: formatFull(signingTimeValue) || DASH,
+    eSignFileType: extension,
+    eSignType: cleanedOrgIdentifier ? 'e-seal' : 'e-sign',
   };
+
   return signerInfo;
 }
 
@@ -279,7 +321,7 @@ export async function extractC2paMetadata(arrayBuffer, fileType) {
         nameAndSurname: selectProducer(activeManifest)?.name, // producer
         eSignIssuer: activeManifest.signatureInfo?.issuer, // signatureIssuer
         eSignDate: activeManifest.signatureInfo?.time // signatureDate
-          ? lxDateUtils.formatFull(activeManifest.signatureInfo?.time)
+          ? formatFull(activeManifest.signatureInfo?.time)
           : '',
       },
     };
@@ -306,6 +348,7 @@ export async function getMeta(file, texts) {
         const acceptedArchiveTypes = acceptedMimeArchive(file.name);
         const acceptedOfficeTypes = acceptedMimeOffice(file.name);
         const acceptedESginedDocs = acceptedESignedDocument(file.name);
+        const acceptedPdfFile = file.type === 'application/pdf';
 
         // Handle image files with ExifReader
         if (acceptedImageTypes) {
@@ -377,19 +420,22 @@ export async function getMeta(file, texts) {
         if (acceptedESginedDocs) {
           const JSZip = await loadJSZip();
           const zip = await JSZip.loadAsync(arrayBuffer);
+          const extension = getFileExtension(file.name) || DASH;
 
           const promises = [];
           meta.eSignMeta = {};
           meta.eSigned = true;
           meta.eSignArchive = [];
           meta.additionalInfo = texts.metaAdditionalInfoeSigned;
+          meta.signType = '';
 
           const allSignerInfos = [];
 
           zip.forEach((relativePath, zipEntry) => {
             if (
-              relativePath.startsWith('META-INF/edoc-signatures-S') &&
-              relativePath.endsWith('.xml')
+              (relativePath.startsWith('META-INF/edoc-signatures-S') &&
+                relativePath.endsWith('.xml')) ||
+              (relativePath.startsWith('META-INF/signatures') && relativePath.endsWith('.xml'))
             ) {
               const edicSignatureXmlContentPromise = zipEntry
                 .async('string')
@@ -397,6 +443,7 @@ export async function getMeta(file, texts) {
                   const edicSignatureXml = parseXML(edicSignatureXmlContent);
 
                   const signatureId = relativePath.split('/').pop().replace('.xml', '');
+
                   meta.eSignMeta[signatureId] = {};
 
                   // Extract signer information from X.509 certificates
@@ -410,7 +457,8 @@ export async function getMeta(file, texts) {
 
                   const signerInfo = await extractSignerInfoFromCertificate(
                     base64Cert,
-                    signingTimeValue
+                    signingTimeValue,
+                    extension
                   );
 
                   allSignerInfos.push({
@@ -435,7 +483,39 @@ export async function getMeta(file, texts) {
           meta.eSignMeta = allSignerInfos;
           meta.eSignArchive = getArchiveContentData(meta.eSignArchive);
         }
-        // Add new meta... types here
+
+        // Handle PDF files
+        if (acceptedPdfFile) {
+          const pdfjs = await loadPdfLib();
+          const uint8Array = new Uint8Array(arrayBuffer);
+
+          meta.eSigned = false;
+          meta.pdfMeta = {};
+          meta.additionalInfo = '';
+
+          const loadingTask = pdfjs.getDocument({ data: uint8Array });
+          const pdf = await loadingTask.promise;
+
+          // Extract metadata
+          const metadata = await pdf.getMetadata();
+
+          meta.eSigned = metadata.info?.IsSignaturesPresent;
+          meta.pdfMeta = {
+            title: metadata.info?.Title,
+            author: metadata.info?.Author,
+            subject: metadata.info?.Subject,
+            keywords: metadata.info?.Keywords,
+            creator: metadata.info?.Creator,
+            producer: metadata.info?.Producer,
+            created: metadata.info?.CreationDate,
+            modified: metadata.info?.ModDate,
+          };
+
+          if (metadata.info?.IsSignaturesPresent) {
+            meta.additionalInfo = texts.metaAdditionalInfoeSigned;
+          }
+        }
+        // ADD NEW META TYPES HERE
 
         resolve(meta);
       } catch (error) {
@@ -537,31 +617,32 @@ export function getExtraParameter(meta, texts) {
   }
 }
 
-export function getFileExtension(name) {
-  if (name.includes('.')) {
-    const mimeType = mime.getType(name);
-
-    if (mimeType) {
-      const extension = mime.getExtension(mimeType);
-      if (extension) {
-        return extension.toUpperCase();
-      }
-    }
-  }
-  const parts = name.split('.');
-  if (parts.length === 1 || parts[0] === '') {
-    return lxDevUtils.log(
-      `Cannot determine extension for file: ${name}`,
-      useLx().getGlobals()?.environment,
-      'error'
-    );
-  }
-  return parts.pop().toUpperCase();
-}
-
 function getFormatTime(timeStomp) {
   if (!timeStomp) return null;
-  return lxDateUtils.formatDateTime(new Date(timeStomp));
+  return formatDateTime(new Date(timeStomp));
+}
+
+function parsePdfDate(pdfDate) {
+  if (!pdfDate) return null;
+  const match = pdfDate.match(
+    /^D:(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})([+-Z])?(\d{2})?'?(\d{2})?'?$/
+  );
+
+  if (!match) return null; // Invalid date format
+
+  const [, year, month, day, hours, minutes, seconds, tzSign, tzHours, tzMinutes] =
+    match.map(Number);
+
+  // Convert to UTC timestamp
+  let date = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+
+  // Apply timezone offset if available
+  if (tzSign && tzSign !== 'Z') {
+    const offset = (tzHours * 60 + tzMinutes) * (tzSign === '+' ? -1 : 1);
+    date = new Date(date.getTime() + offset * 60 * 1000);
+  }
+
+  return formatDateTime(new Date(date));
 }
 
 function stringToDate(dateString) {
@@ -628,6 +709,54 @@ function getOfficeFileMainData(advancedFile, texts) {
   const lastChanges = getFormatTime(advancedFile.meta?.officeMeta?.core?.modified) || DASH;
   const title = advancedFile.meta?.officeMeta?.core?.title || DASH;
   const description = advancedFile.meta?.officeMeta?.core?.description || DASH;
+  const mainData = {
+    author: {
+      label: texts.metaMainAuthor,
+      value: author,
+    },
+    format: {
+      label: texts.metaMainFormat,
+      value: format,
+    },
+    size: {
+      label: texts.metaMainDataSize,
+      value: size,
+    },
+    creationDate: {
+      label: texts.metaMainDateCreated,
+      value: creationDate,
+    },
+    lastChanges: {
+      label: texts.metaMainLastModified,
+      value: lastChanges,
+    },
+    title: {
+      label: texts.metaMainTitle,
+      value: title,
+    },
+    description: {
+      label: texts.metaMainDescription,
+      value: description,
+    },
+  };
+
+  return mainData;
+}
+
+function getPdfFileMainData(advancedFile, texts) {
+  const authorString = advancedFile.meta?.pdfMeta?.author || null;
+  const author = authorString
+    ?.split(/[,;]/)
+    .map((a) => a.trim())
+    .filter(Boolean);
+
+  const format = getFileExtension(advancedFile.name) || DASH;
+  const size = convertBytesToFormattedString(advancedFile.meta.size) || DASH;
+  const creationDate = parsePdfDate(advancedFile.meta?.pdfMeta?.created) || DASH;
+  const lastChanges = parsePdfDate(advancedFile.meta?.pdfMeta?.modified) || DASH;
+  const title = advancedFile.meta?.officeMeta?.title || DASH;
+  const description = advancedFile.meta?.officeMeta?.description || DASH;
+
   const mainData = {
     author: {
       label: texts.metaMainAuthor,
@@ -857,6 +986,8 @@ function getIconForExtension(extension) {
       return 'file-slides';
     case 'EDOC':
       return 'file-edoc';
+    case 'PDF':
+      return 'file-pdf';
     default:
       return 'file';
   }
@@ -874,6 +1005,7 @@ export function provideDefaultIcon(advancedFile) {
     const acceptedArchiveTypes = acceptedMimeArchive(advancedFile.meta?.name);
     const acceptedOfficeTypes = acceptedMimeOffice(advancedFile.meta?.name);
     const acceptedESginedDocs = acceptedESignedDocument(advancedFile.meta?.name);
+    const acceptedPdfFile = advancedFile.meta?.type === 'application/pdf';
 
     switch (true) {
       case acceptedImageTypes:
@@ -888,6 +1020,8 @@ export function provideDefaultIcon(advancedFile) {
         return 'file-rich-text';
       case acceptedESginedDocs:
         return 'file-edoc';
+      case acceptedPdfFile:
+        return 'file-pdf';
       default:
         return 'file';
     }
@@ -936,6 +1070,12 @@ export function getDetails(advancedFile, base64String, texts, additionalIconAndT
       details.mainData = getDefaultMainData(advancedFile, texts);
       details.edocContentData = getEDocContentData(advancedFile.meta.eSignMeta);
       details.archiveContentData = getArchiveContentData(advancedFile.meta.eSignArchive);
+      return details;
+    }
+
+    // If it's a PDF file
+    case Object.prototype.hasOwnProperty.call(advancedFile.meta, 'pdfMeta'): {
+      details.mainData = getPdfFileMainData(advancedFile, texts);
       return details;
     }
 

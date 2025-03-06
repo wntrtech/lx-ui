@@ -215,7 +215,7 @@ svg .lx-shade {
 
 .lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-default-icon-wrapper {
   height: 1.9rem;
-  padding: 0.3rem 0.5rem 0 0;
+  padding: .3rem 0.7rem 0 0.3rem;
 }
 
 .lx-form-grid > .lx-main > .lx-expander.lx-edoc-signs-list-section > .lx-body > .lx-form-section .lx-list .lx-list-item-wrapper .lx-avatar-wrapper .lx-avatar-display .lx-avatar-display-l,

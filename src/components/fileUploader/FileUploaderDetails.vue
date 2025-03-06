@@ -111,7 +111,10 @@ const archiveContentSectionlabel = computed(() => {
 
 const customEsignSectionClass = computed(() => {
   if (props.value?.edocContentData && props.value?.edocContentData?.length !== 0) {
-    if (props.value?.edocContentData[0].eSignType === 'edoc') {
+    if (
+      props.value?.edocContentData[0].eSignType === 'e-sign' ||
+      props.value?.edocContentData[0].eSignType === 'e-seal'
+    ) {
       return 'edocBadgeIcon';
     }
     if (props.value?.edocContentData[0].eSignType === 'c2pa') {
@@ -201,20 +204,28 @@ const nomalizedIconAndType = computed(() => {
         <LxRow :column-span="1">
           <LxList list-type="1" :items="props.value?.edocContentData">
             <template
-              #customItem="{ nameAndSurname, personalCode, eSignDate, eSignIssuer, country }"
+              #customItem="{
+                nameAndSurname,
+                organizationName,
+                personalCodeOrIdentifier,
+                eSignDate,
+                eSignIssuer,
+                country,
+              }"
             >
               <div v-if="nameAndSurname" class="lx-avatar-wrapper">
                 <LxAvatar :value="safeString(nameAndSurname)" size="m" />
               </div>
+
               <div v-else class="lx-default-icon-wrapper">
-                <LxIcon value="user" />
+                <LxIcon :value="organizationName ? 'seal' : 'user'" />
               </div>
 
               <div class="lx-edoc-description-wrapper">
                 <p class="lx-primary">
-                  {{ nameAndSurname || '—' }}
-                  <span v-if="personalCode" class="lx-edoc-description-code">
-                    {{ `(${personalCode})` }}
+                  {{ nameAndSurname || organizationName || '—' }}
+                  <span v-if="personalCodeOrIdentifier" class="lx-edoc-description-code">
+                    {{ `(${personalCodeOrIdentifier})` }}
                   </span>
                 </p>
                 <p class="lx-secondary">
