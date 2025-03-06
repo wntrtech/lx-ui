@@ -147,6 +147,7 @@
   --color-list-disabled-selected-text: var(--color-disabled);
   --color-list-icon-selected: var(--color-data);
   --color-list-region-selected-background: var(--color-list-region-background);
+  --color-list-region-selected-border: var(--color-list-selected-border);
   --color-list-text-primary-selected: var(--color-list-primary);
   --color-list-text-secondary-selected: var(--color-list-secondary);
   --color-list-selected-background: var(--color-list-background);

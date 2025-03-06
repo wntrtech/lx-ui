@@ -663,7 +663,7 @@ function triggerUserMenu() {
               </div>
               <div class="lx-fonts-controller">
                 <p>{{ texts.fonts }}</p>
-                <LxToggle v-model="deviceFontsModel" @click="triggerThemeMenu"></LxToggle>
+                <LxToggle v-model="deviceFontsModel"></LxToggle>
               </div>
             </template>
           </LxDropDownMenu>

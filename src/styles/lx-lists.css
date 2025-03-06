@@ -151,15 +151,25 @@
 .lx-list:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
 .tree-item:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
 .tree-list:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
-.lx .lx-list-item-container:has(.lx-list-item.lx-selected) {
+.lx-layout .lx-list-item-container:has(.lx-list-item.lx-selected) {
   background-color: var(--color-list-selected-background);
   border-color: var(--color-list-selected-border);
 }
 
-.lx .lx-region .lx-draggable-group-list-item:has(.lx-list-item.lx-selected) .lx-handle,
-.lx .lx-region .lx-list-item-container:has(.lx-list-item.lx-selected),
-.lx .lx-region .lx-list-item-wrapper:has(.lx-list-item.lx-selected) {
+.lx-layout .lx-region .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
+.lx-layout .lx-region .lx-list-item-container:has(.lx-list-item.lx-selected),
+.lx-layout .lx-region .lx-draggable-group-list-item:has(.lx-list-item.lx-selected) .lx-handle,
+.lx-layout .lx-region .lx-master-detail-list .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
+.lx-layout .lx-form-grid .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
+.lx-layout .lx-form-grid .lx-list-item-container:has(.lx-list-item.lx-selected),
+.lx-layout .lx-form-grid .lx-draggable-group-list-item:has(.lx-list-item.lx-selected) .lx-handle,
+.lx-layout .lx-form-grid .lx-master-detail-list .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
+.lx-layout .lx-modal .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
+.lx-layout .lx-modal .lx-list-item-container:has(.lx-list-item.lx-selected),
+.lx-layout .lx-curtain .lx-modal .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
+.lx-layout .lx-curtain .lx-modal .lx-list-item-container:has(.lx-list-item.lx-selected) {
   background-color: var(--color-list-region-selected-background);
+  border-color: var(--color-list-region-selected-border);
 }
 
 .lx .list-draggable-area:not(:has(.ghost)) .lx-draggable-group-list-item:has(.lx-list-item:not(.lx-list-item-disabled)) .lx-handle:hover,
@@ -194,15 +204,6 @@
 .lx .lx-layout .lx-form-grid .draggable-list-item-wrapper .lx-handle,
 .lx .lx-layout .lx-region .draggable-list-item-wrapper .lx-handle {
   background-color: var(--color-list-region-background);
-}
-
-.lx .lx-modal .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
-.lx .lx-modal .lx-list-item-container:has(.lx-list-item.lx-selected),
-.lx .lx-curtain .lx-modal .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
-.lx .lx-curtain .lx-modal .lx-list-item-container:has(.lx-list-item.lx-selected),
-.lx .lx-modal .draggable-list-item-wrapper:has(.lx-list-item.lx-selected) .lx-handle,
-.lx .lx-curtain .lx-modal .draggable-list-item-wrapper:has(.lx-list-item.lx-selected) .lx-handle{ 
-  background-color: var(--color-list-region-selected-background);
 }
 
 /*** Checkbox + radio button styles ***/
