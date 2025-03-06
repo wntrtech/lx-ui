@@ -3689,6 +3689,10 @@ input[type='range']:hover::-moz-range-thumb {
   z-index: 4;
 }
 
+.lx-modal .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
+  top: 0;
+}
+
 .lx-file-viewer .lx-empty-state-wrapper {
   max-height: 6rem;
 }
@@ -3743,6 +3747,10 @@ input[type='range']:hover::-moz-range-thumb {
   justify-content: safe center;
   overflow: auto;
   background-color: var(--color-preview-backdrop);
+}
+
+.lx-modal .lx-file-viewer .lx-pdf-wrapper {
+  max-height: calc(100vh - 10rem);
 }
 
 .lx-file-viewer .lx-pdf-wrapper.lx-pdf-wrapper-fullscreen {

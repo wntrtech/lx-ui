@@ -183,7 +183,7 @@ function debounce(func, delay) {
   };
 }
 
-function calculateThreshold(heightValue) {
+function calculateThreshold(heightValue, isLandscape) {
   const numericValue = parseFloat(heightValue);
   const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
@@ -196,18 +196,15 @@ function calculateThreshold(heightValue) {
     return numericValue >= 100 ? 0.8 : numericValue / 100 - 0.25;
   }
 
-  if (scale.value === MAX_ZOOM.pdf) {
-    return 0.25;
-  }
+  if (scale.value >= 2.5) return 0.25;
+  if (scale.value <= 1) return 0.9;
 
-  if (scale.value <= 1) {
-    return 0.9;
-  }
+  if (isLandscape && scale.value >= 2) return 0.6;
+  if (isLandscape && scale.value >= 1.5) return 0.7;
+  if (isLandscape) return 0.9;
 
-  return 0.4;
+  return 0.5;
 }
-
-const threshold = computed(() => calculateThreshold(props.height));
 
 const rootMargin = computed(() => {
   // Dynamically calculate the combined height of lx-header, navigation, and toolbar
@@ -232,7 +229,9 @@ const rootMargin = computed(() => {
   const viewportHeight = window.innerHeight;
   const correction = 50;
 
-  const totalOffsetBottomHeight = viewportHeight - totalOffsetTopHeight - elemHeigh - correction;
+  const totalOffsetBottomHeight = Math.abs(
+    viewportHeight - totalOffsetTopHeight - elemHeigh - correction
+  );
 
   if (scale.value <= 1) {
     return `-${totalOffsetTopHeight}px 0px -${totalOffsetBottomHeight}px 0px`;
@@ -246,9 +245,13 @@ function setupIntersectionObserver() {
 
   setTimeout(() => {
     const rootElement = document.querySelector('.lx-pdf-wrapper');
-    if (!rootElement || !canvasArray.value.length) {
+    const canvasElement = document.querySelector('.pdf-canvas');
+
+    if (!rootElement || !canvasElement || !canvasArray.value.length) {
       return;
     }
+
+    const isLandscape = canvasElement.clientHeight < canvasElement.clientWidth;
 
     if (observer) {
       observer.disconnect();
@@ -259,7 +262,7 @@ function setupIntersectionObserver() {
 
     const options = {
       root: isScrollable ? rootElement : null, // Use the container if scrollable, otherwise viewport
-      threshold: threshold.value,
+      threshold: calculateThreshold(props.height, isLandscape),
       rootMargin: rootMargin.value,
     };
 
@@ -405,7 +408,7 @@ async function renderPage(pageNum) {
       }
     }
 
-    const upscaleFactor = windowWidth.value < 800 ? devicePixelRatio.value : 1;
+    const upscaleFactor = windowWidth.value < 1024 ? devicePixelRatio.value : 1;
     const adjustedViewport = page.getViewport({ scale: scale.value * upscaleFactor });
 
     let canvasElement = null;

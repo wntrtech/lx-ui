@@ -124,7 +124,7 @@
   },
   "pnpm": {
     "overrides": {
-      "vue-dompurify-html>dompurify": "3.1.3",
+      "vue-dompurify-html>dompurify": "3.2.4",
       "cross-spawn": "7.0.6"
     }
   },
