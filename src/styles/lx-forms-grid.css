@@ -1615,6 +1615,22 @@ p .lx-person-display-wrapper {
     display: flex;
     align-items: stretch;
   }
+  
+  .lx-form-grid > .lx-main > .lx-form-section,
+  .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section,
+  .lx-data-block-content > .lx-main > .lx-form-section,
+  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section {
+    padding: var(--gap-form-small);
+  }
+
+  .lx-form-grid > footer {
+    padding: var(--gap) var(--gap-form-small-side);
+  }
+
+  .lx-form-grid > header > .lx-group.lx-primary .lx-toolbar-chip {
+    margin-left: 0;
+    padding-left: var(--gap-form-small-side);
+  }
 }
 
 @media (max-width: 700px) {

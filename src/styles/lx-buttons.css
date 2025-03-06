@@ -14,7 +14,8 @@
   margin: -0.1em -0.5em;
 }
 
-.lx-link-wrapper a {
+.lx-link-wrapper a,
+a.lx-sitemap-link {
   display: inline-block;
 }
 

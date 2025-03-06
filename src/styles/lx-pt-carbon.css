@@ -34,6 +34,9 @@
   --gap-form: 2rem;
   --gap-buttons: 0.5rem;
 
+  --gap-form-small-side: 1rem;
+  --gap-form-small: 2rem var(--gap-form-small-side) 1rem var(--gap-form-small-side);
+
   --row-size: 3rem;
   --nav-row-size: 3rem;
   --public-nav-header-size: calc(var(--nav-row-size) + var(--row-size));
