@@ -324,8 +324,10 @@
 .lx-layout.lx-layout-public .lx-form-grid>header.lx-sticky,
 .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>aside.lx-index>ul,
 .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky,
 .lx-layout.lx-layout-public.no-nav-items .lx-form-grid>aside.lx-index>ul,
 .lx-layout.lx-layout-public.no-nav-items .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-public.no-nav-items .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky,
 .lx-layout.lx-layout-public .lx-file-viewer-sticky .lx-file-viewer-toolbar {
   top: var(--public-nav-header-size);
 }
@@ -339,7 +341,8 @@
 }
 
 .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul,
-.lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+.lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout.lx-layout-public .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky {
   top: calc(var(--public-nav-header-size) + var(--row-size));
 }
 
@@ -372,18 +375,21 @@
   .lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper > .lx-grid-header-wrapper,
   .lx-layout.lx-layout-public .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar,
   .lx-layout-public.no-nav-items .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper,
-  .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky {
     top: var(--row-size);
   }
 
   .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul,
   .lx-layout-public:not(.no-nav-items) .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper,
-  .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky {
     top: calc(var(--row-size) * 2);
   }
 
   .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul,
-  .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+  .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky {
     top: calc(var(--row-size) * 2);
   }
 
@@ -399,7 +405,8 @@
 
     .lx .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul,
     .lx .lx-layout-public .lx-data-grid-wrapper .lx-grid-toolbar + div.lx-grid-header-wrapper,
-    .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+    .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+    .lx .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky {
       top: var(--row-size);
     }
   }
@@ -538,6 +545,7 @@
   }
 
   .lx-layout.lx-layout-public .lx-form-grid>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout.lx-layout-public .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky,
   .lx-layout-public .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper,
   .lx-layout.lx-layout-public .lx-form-grid>aside.lx-index>ul {
     top: calc(var(--nav-row-size) + var(--row-size));

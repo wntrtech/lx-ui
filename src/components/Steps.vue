@@ -8,6 +8,7 @@ const props = defineProps({
   id: { type: String, default: null },
   modelValue: { type: String, default: null },
   items: { type: Array, required: true },
+  kind: { type: String, default: 'default' }, // 'default', 'compact'
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
   descriptionAttribute: { type: String, default: 'description' },
@@ -44,8 +45,8 @@ const color = ref('--color-brand');
 </script>
 
 <template>
-  <div class="lx-steps-container-wrapper">
-    <div class="lx-steps-slider">
+  <div class="lx-steps-container-wrapper" :class="{ 'lx-steps-compact': kind === 'compact' }">
+    <div v-if="kind === 'default'" class="lx-steps-slider">
       <div
         class="lx-steps-filled-slider"
         :style="`width: ${fillingUp}%; background-color: var(${color})`"
@@ -87,10 +88,13 @@ const color = ref('--color-brand');
         </div>
 
         <div>
-          <div class="lx-steps-label">
+          <div
+            class="lx-steps-label"
+            v-if="kind === 'default' || (kind === 'compact' && item[idAttribute] === model)"
+          >
             <strong>{{ item?.[nameAttribute] }} </strong>
           </div>
-          <div class="lx-steps-description">
+          <div class="lx-steps-description" v-if="kind === 'default'">
             <p class="lx-description">{{ item?.[descriptionAttribute] }}</p>
           </div>
         </div>
@@ -138,7 +142,7 @@ const color = ref('--color-brand');
             <div class="lx-steps-label">
               <strong>{{ item?.[nameAttribute] }} </strong>
             </div>
-            <div class="lx-steps-description">
+            <div class="lx-steps-description" v-if="kind === 'default'">
               <p class="lx-description">{{ item?.[descriptionAttribute] }}</p>
             </div>
           </div>

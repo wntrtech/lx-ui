@@ -11,6 +11,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxSection from '@/components/forms/Section.vue';
 import LxTabControl from '@/components/TabControl.vue';
+import LxWizard from '@/components/Wizard.vue';
 import LxIcon from '@/components/Icon.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxSkipLink from '@/components/SkipLink.vue';
@@ -191,7 +192,7 @@ const props = defineProps({
    */
   indexType: {
     type: String,
-    default: 'default', // 'default' or 'tabs' or 'expanders'
+    default: 'default', // 'default' or 'tabs' or 'expanders' or 'wizard'
   },
   /**
    * An array of buttons for the form.
@@ -244,6 +245,8 @@ const props = defineProps({
       optional: '(neobligāts)',
       skipLinkLabel: 'Izlaist formu',
       skipLinkTitle: 'Izlaist formu',
+      previous: 'Iepriekšējais',
+      next: 'Nākamais',
     }),
   },
 });
@@ -340,16 +343,79 @@ provide('formIndexType', indexTypeRef);
 provide('formIndex', indexRef);
 provide('formOrientation', formOrientation);
 
+const wizardModel = ref(null);
+const itemsCopy = ref([...props.index]);
+
+const currentStepIndex = computed(() => itemsCopy.value.findIndex((item) => item.isCurrentStep));
+const currentStepId = computed(() => props.index?.[currentStepIndex.value]?.id || null);
+
+const actionDefinitionsWizardSteps = computed(() => [
+  {
+    id: '_lx_prev_step',
+    icon: 'back',
+    name: props.texts.previous,
+    kind: 'primary',
+    disabled: currentStepIndex.value === 0,
+  },
+  {
+    id: '_lx_next_step',
+    icon: 'next',
+    name: props.texts.next,
+    kind: 'primary',
+    disabled: currentStepIndex.value === props.index.length - 1,
+  },
+]);
+function nextStep() {
+  const currentIndex = currentStepIndex.value;
+  if (currentIndex < props.index.length - 1) {
+    if (itemsCopy.value[currentIndex].state !== 'invalid') {
+      itemsCopy.value[currentIndex].state = 'complete';
+    }
+    itemsCopy.value[currentIndex].isCurrentStep = false;
+
+    itemsCopy.value[currentIndex + 1].isCurrentStep = true;
+
+    if (itemsCopy.value[currentIndex + 1].state !== 'invalid') {
+      itemsCopy.value[currentIndex + 1].state = 'current';
+    }
+  }
+}
+
+function prevStep() {
+  const currentIndex = currentStepIndex.value;
+  if (currentIndex > 0) {
+    itemsCopy.value[currentIndex].isCurrentStep = false;
+
+    if (itemsCopy.value[currentIndex].state === 'current') {
+      itemsCopy.value[currentIndex].state = undefined;
+    }
+
+    itemsCopy.value[currentIndex - 1].isCurrentStep = true;
+
+    if (itemsCopy.value[currentIndex - 1].state === 'complete') {
+      itemsCopy.value[currentIndex - 1].state = 'current';
+    }
+  }
+}
+
 const primaryButtons = computed(() => {
+  if (indexTypeRef.value === 'wizard') {
+    return actionDefinitionsWizardSteps.value;
+  }
   const ret = props.actionDefinitions?.filter((x) => x.kind === 'primary');
   if (ret?.length > 2) {
     return ret.slice(0, 2);
   }
   return ret;
 });
-const secondaryButtons = computed(() =>
-  props.actionDefinitions?.filter((x) => x.kind === 'secondary')
-);
+const secondaryButtons = computed(() => {
+  if (indexTypeRef.value === 'wizard') {
+    return props.actionDefinitions
+      ?.map((x) => (x.kind === 'primary' ? { ...x, kind: 'secondary' } : x))
+      .filter((x) => x.kind === 'secondary');
+  }
+  return props.actionDefinitions?.filter((x) => x.kind === 'secondary');
+});
 const tertiaryButtons = computed(() =>
   props.actionDefinitions?.filter((x) => x.kind === 'tertiary')
 );
@@ -369,12 +435,16 @@ const sectionLocations = ref({});
 const visibilities = ref({});
 
 const clickHandler = (actionName) => {
+  if (props.indexType === 'wizard') {
+    if (actionName === '_lx_next_step') nextStep();
+    else if (actionName === '_lx_prev_step') prevStep();
+  }
   emits('buttonClick', actionName);
 };
 
 watch(
   () => props.index,
-  () => {
+  (value) => {
     nextTick(() => {
       const elementForm = document.getElementById(props.id);
       props.index?.forEach((o) => {
@@ -383,9 +453,11 @@ watch(
         visibilities.value[o.id] = visible;
       });
     });
+    itemsCopy.value = value;
   }
 );
 const tabControl = ref();
+const wizard = ref();
 const selectedSection = computed(() => {
   const ret = [];
   Object.keys(visibilities.value).forEach((key) => {
@@ -401,29 +473,46 @@ function findIfSectionSelected(id) {
   return res !== undefined;
 }
 
+watch(
+  () => currentStepId.value,
+  (value) => {
+    wizardModel.value = value;
+  },
+  { immediate: true }
+);
+
 const selectedTabValue = computed(() => {
   let res = props.index[0]?.id;
   props.index?.forEach((o) => {
-    if (tabControl.value?.isActiveTab(o.id)) {
+    if (
+      (tabControl.value?.isActiveTab(o.id) && props.indexType === 'tabs') ||
+      (wizardModel.value === o.id && props.indexType === 'wizard')
+    ) {
       res = o.id;
     }
   });
   return res;
 });
 
-// Hides all sections in the form. Necessary for indexType 'tabs'
+// Hides all sections in the form. Necessary for indexType 'tabs' & 'wizard'
 function hideAll() {
   const idValue = document.getElementById(props.id);
-  const allElements = idValue.querySelectorAll(`.lx-tab-body > div.lx-main > .lx-form-section`);
-
+  let allElements = null;
+  if (props.indexType === 'tabs') {
+    allElements = idValue.querySelectorAll(`.lx-tab-body > div.lx-main > .lx-form-section`);
+  } else if (props.indexType === 'wizard') {
+    allElements = idValue.querySelectorAll(`.lx-wizard-body > div.lx-main > .lx-form-section`);
+  }
   for (let i = 0; i < allElements.length; i += 1) {
     allElements[i].style.display = 'none';
     allElements[i].style.gridTemplateColumns = 'none';
   }
   const selectedForm = document.getElementById(props.id);
   const selectedElement = selectedForm?.querySelector(`#${selectedTabValue.value}`);
-  selectedElement.style.display = 'grid';
-  selectedElement.style.gridTemplateColumns = '1fr';
+  if (selectedElement) {
+    selectedElement.style.display = 'grid';
+    selectedElement.style.gridTemplateColumns = '1fr';
+  }
 }
 
 watch(
@@ -490,6 +579,38 @@ const indexHasIcons = computed(() =>
   props.index.some((obj) => Object.prototype.hasOwnProperty.call(obj, 'icon'))
 );
 
+function setInitialWizardStates(currentStep) {
+  let currentItem = currentStep;
+
+  // If there's no current step, set the first item as the current one & give it 'current' state...
+  // ('invalid' state is never overriden)
+  if (!currentItem && itemsCopy.value[0]) {
+    const [firstItem] = itemsCopy.value;
+    firstItem.isCurrentStep = true;
+    currentItem = firstItem;
+    if (firstItem.state !== 'invalid') {
+      firstItem.state = 'current';
+    }
+  }
+  // ...otherwise give current step 'current' state
+  else if (currentItem && currentItem.state !== 'invalid') {
+    currentItem.state = 'current';
+  }
+
+  for (let i = 0; i < itemsCopy.value.length; i += 1) {
+    // All valid step states before current step are set to 'complete'
+    if (i < itemsCopy.value.indexOf(currentItem) && itemsCopy.value[i].state !== 'invalid') {
+      itemsCopy.value[i].state = 'complete';
+    } else if (
+      (itemsCopy.value[i].state === 'current' && itemsCopy.value[i] !== currentItem) || // If item has 'current' state, but it's not the current step OR...
+      (itemsCopy.value[i].state === 'complete' && i > itemsCopy.value.indexOf(currentItem)) // ...if item has state 'complete', but it comes after the current step...
+    ) {
+      itemsCopy.value[i].state = undefined; // ...reset the item's state
+      itemsCopy.value[i].isCurrentStep = undefined;
+    }
+  }
+}
+
 onMounted(() => {
   const elementForm = document.getElementById(props.id);
   props.index?.forEach((o) => {
@@ -497,7 +618,14 @@ onMounted(() => {
     const visible = useElementVisibility(el);
     visibilities.value[o.id] = visible;
   });
-  if (props.indexType === 'tabs') hideAll();
+
+  const currentStep = itemsCopy.value.find((item) => item.isCurrentStep === true);
+  setInitialWizardStates(currentStep);
+
+  if (currentStepId.value) {
+    wizardModel.value = currentStepId.value;
+  }
+  if (props.indexType === 'tabs' || props.indexType === 'wizard') hideAll();
 });
 defineExpose({ highlightRow, clearHighlights });
 
@@ -642,6 +770,7 @@ function focusFirstFocusableElementAfter() {
         { 'lx-sticky': stickyHeader },
         { 'lx-simple': slots['pre-header'] === undefined },
         { 'lx-form-with-tabs': props.indexType === 'tabs' },
+        { 'lx-form-with-steps': props.indexType === 'wizard' },
         { 'lx-form-with-aside': props.indexType === 'default' && index?.length > 0 },
       ]"
       v-if="showHeader && kind !== 'stripped'"
@@ -841,6 +970,25 @@ function focusFirstFocusableElementAfter() {
         </div>
       </template>
     </LxTabControl>
+    <LxWizard
+      ref="wizard"
+      v-model="wizardModel"
+      :items="props.index"
+      @update:modelValue="hideAll"
+      v-else-if="props.indexType === 'wizard' && index?.length > 0"
+    >
+      <template #body>
+        <div
+          class="lx-main"
+          :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
+        >
+          <LxSection id="default" :column-count="columnCount">
+            <slot />
+          </LxSection>
+          <slot name="sections" />
+        </div>
+      </template>
+    </LxWizard>
     <div
       class="lx-main"
       v-else
@@ -852,7 +1000,11 @@ function focusFirstFocusableElementAfter() {
       <slot name="sections" />
     </div>
     <footer
-      :class="[{ 'lx-sticky': stickyFooter }]"
+      :class="[
+        { 'lx-sticky': stickyFooter },
+        { 'crowded-primary-buttons': primaryButtons?.length > 1 },
+        { 'crowded-not-primary-buttons': notPrimaryButtonCount > 2 },
+      ]"
       v-if="showFooter && kind !== 'stripped'"
       ref="formFooter"
     >
@@ -934,7 +1086,9 @@ function focusFirstFocusableElementAfter() {
           @click="clickHandler(button.id)"
         />
       </div>
-      <div class="lx-group"><slot name="footer" /></div>
+      <div :class="$slots.footer ? 'lx-group lx-footer-slot' : 'lx-group'">
+        <slot name="footer" />
+      </div>
       <div class="lx-group lx-responsive-l">
         <LxButton
           v-for="button in tertiaryButtons"

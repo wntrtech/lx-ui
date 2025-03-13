@@ -851,6 +851,20 @@
   pointer-events: none;
 }
 
+.lx-wizard .lx-dropdown-container::after {
+  background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
+  content: '';
+  height: 3rem;
+  position: absolute;
+  top: var(--row-size);
+  top: var(--wizard-header-size);
+  left: 0;
+  right: 0;
+  opacity: 0;
+  opacity: var(--wizard-shadow-opacity);
+  pointer-events: none;
+}
+
 .lx-tab-control .lx-dropdown-container .lx-dropdown-default-data {
   padding-left: 1.9rem;
 }

@@ -645,7 +645,8 @@ ul.lx-digives-alert-list {
   min-height: var(--row-size);
 }
 
-.lx-layout-digives .lx-form-grid > .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+.lx-layout-digives .lx-form-grid > .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx-layout-digives .lx-form-grid > .lx-wizard header.lx-toolbar.lx-sticky {
   top: calc(var(--nav-row-size) + var(--row-size));
 }
 
@@ -766,7 +767,8 @@ ul.lx-digives-alert-list {
   }
 
   .lx-layout-digives .lx-form-grid > aside.lx-index > ul,
-  .lx-layout-digives .lx-form-grid > .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar){
+  .lx-layout-digives .lx-form-grid > .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-layout-digives .lx-form-grid > .lx-wizard header.lx-toolbar.lx-sticky {
     top: calc(var(--nav-row-size) + var(--row-size));
   }
 

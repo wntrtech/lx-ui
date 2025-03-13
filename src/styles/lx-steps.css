@@ -1,7 +1,6 @@
 .lx .lx-steps-container-wrapper {
     width: auto;
     position: relative;
-    align-items: left;
     justify-content: left;
     display: flex;
     flex-direction: column;
@@ -44,6 +43,23 @@
     align-items: top;
     width: 100%;
     height: auto;
+}
+
+.lx-steps-compact .lx-steps-data {
+    overflow-x: auto;
+    gap: 1rem;
+}
+
+.lx-steps-compact .lx-steps-data-block {
+    width: auto;
+}
+
+.lx-steps-compact .lx-steps-data-block-small .lx-info-wrapper-content {
+    display: flex;
+}
+
+.lx-steps-container-wrapper .lx-steps-label { 
+    margin-top: 0.1rem;
 }
 
 .lx-steps-icon {
