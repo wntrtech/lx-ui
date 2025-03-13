@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, nextTick } from 'vue';
+import { watchOnce } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -8,6 +9,7 @@ import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxTreeItem from '@/components/list/TreeItem.vue';
+import { lxDevUtils } from '@/utils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -72,11 +74,50 @@ const states = computed({
   },
 });
 
-function loadChildren(id) {
-  emits('loadChildren', id);
-}
-
 const smallItems = ref(props.items);
+const level = ref(0);
+const parent = ref(null);
+const parentArray = ref([props.items]);
+
+function loadChildren(id) {
+  return new Promise((resolve, reject) => {
+    emits('loadChildren', id);
+
+    const parentItem = props.items.find((x) => x[props.idAttribute] === id);
+    if (!parentItem) {
+      reject(new Error(`Parent not found for ID: ${id}`));
+      return;
+    }
+
+    if (
+      Array.isArray(parentItem[props.childrenAttribute]) &&
+      parentItem[props.childrenAttribute].length > 0
+    ) {
+      resolve();
+      return;
+    }
+
+    nextTick(() => {
+      watchOnce(
+        () => parentItem[props.childrenAttribute],
+        (newChildren) => {
+          if (Array.isArray(newChildren) && newChildren.length > 0) {
+            smallItems.value = [...newChildren];
+            parent.value = parentItem;
+            if (parent.value) {
+              parentArray.value.push(parent.value);
+            }
+
+            resolve();
+          } else {
+            reject(new Error(`No children found for ID: ${id}`));
+          }
+        },
+        { deep: true }
+      );
+    });
+  });
+}
 
 watch(
   () => props.items,
@@ -97,11 +138,7 @@ function selectRow(id) {
   selected.value = { [id]: true };
 }
 
-const level = ref(0);
-const parent = ref(null);
-const parentArray = ref([props.items]);
-
-function goTo(id, element) {
+async function goTo(id, element) {
   parent.value = smallItems.value.find((x) => id === x[props.idAttribute]);
   parentArray.value.push(parent.value);
   smallItems.value = smallItems.value.find((x) => id === x[props.idAttribute])[
@@ -112,11 +149,21 @@ function goTo(id, element) {
     props.mode === 'server' &&
     (!element?.[props.childrenAttribute] || element?.[props.childrenAttribute]?.length === 0)
   ) {
-    loadChildren(id);
     states.value[id] = {
       ...states.value?.[id],
       busy: true,
     };
+
+    try {
+      await loadChildren(id);
+    } catch (error) {
+      lxDevUtils.logError(
+        `Error loading treelist children, ${error}`,
+        useLx().getGlobals().environment
+      );
+    } finally {
+      states.value[id].busy = false;
+    }
   }
 }
 
