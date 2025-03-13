@@ -104,6 +104,10 @@
     --color-button-primary-icon: var(--color-button-nav-icon);
 }
 
+.lx-layout-digimaks .lx-nav-panel ul li .lx-button:focus svg {
+    fill: var(--color-button-nav-icon);
+}
+
 .lx-nav-panel .lx-nav-group ul.header-items {
     list-style-type: none;
     padding-inline-start: 0;
@@ -182,7 +186,7 @@
     height: var(--nav-row-size);
     display: flex;
     justify-content: space-between;
-    padding: 0 1rem;
+    padding: 0 0.75rem;
     align-items: center;
 }
 

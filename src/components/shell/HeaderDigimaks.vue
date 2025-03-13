@@ -402,9 +402,11 @@ const contextPersonFullName = computed(() => {
 });
 
 const navItemsPrimary = computed(() =>
-  props.navItems?.filter(
-    (item) => !item.type || item.type === 'primary' || item.type === 'secondary'
-  )
+  props.navItems?.filter((item) => !item.type || item.type === 'primary')
+);
+
+const navItemsSecondary = computed(() =>
+  props.navItems?.filter((item) => item.type === 'secondary')
 );
 
 const navItemsUserMenu = computed(() =>
@@ -595,6 +597,15 @@ const userInfoMenu = ref(false);
             </li>
           </ul>
           <ul class="lx-nav-group">
+            <li
+              v-for="item in navItemsSecondary"
+              :key="item?.id"
+              :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
+              @click="navToggle"
+              @keydown.enter="navToggle"
+            >
+              <LxButton :icon="item?.icon" :label="item?.label" :href="item?.to" />
+            </li>
             <li
               @click="() => (userInfoMenu = !userInfoMenu)"
               @keydown.space="() => (userInfoMenu = !userInfoMenu)"
