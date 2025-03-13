@@ -141,7 +141,8 @@
 
 /* Single, valid */
 
-.lx .lx-layout div.lx-input-wrapper:not(:has(.lx-tag)) .lx-input-area {
+.lx .lx-layout div.lx-input-wrapper:not(:has(.lx-tag)) .lx-input-area,
+.lx-input-wrapper .lx-markdown-text-area .ProseMirror {
   padding-left: max(var(--input-container-padding-left), 
                 calc(var(--input-icon-indent-left) + var(--input-button-indent-left)));
   padding-right: max(var(--input-container-padding-right), 
@@ -150,7 +151,8 @@
 
 /* Single, invalid */
 
-.lx .lx-layout div.lx-input-wrapper.lx-invalid:not(:has(.lx-tag)) .lx-input-area {
+.lx .lx-layout div.lx-input-wrapper.lx-invalid:not(:has(.lx-tag)) .lx-input-area,
+.lx-input-wrapper.lx-invalid .lx-markdown-text-area .ProseMirror {
   padding-left: max(var(--input-container-padding-left), calc(var(--input-invalid-icon-indent-left) + var(--input-icon-indent-left) + var(--input-button-indent-left)));
   padding-right: max(var(--input-container-padding-right), calc(var(--input-invalid-icon-indent-right) + var(--input-icon-indent-right) + var(--input-button-indent-right)));
 }
@@ -447,6 +449,15 @@
 .lx-markdown-text-area .ProseMirror:focus,
 .lx-markdown-text-area .ProseMirror-focused {
   outline: none;
+}
+
+.lx-markdown-text-area .ProseMirror {
+  width: 100%;
+  padding: var(--input-container-padding-vertical-text-area) 0;
+}
+
+.lx .lx-layout .lx-field-wrapper .lx-markdown-text-area-wrapper .lx-input-wrapper .lx-markdown-text-area.lx-input-area {
+  padding: 0;
 }
 
 .lx-markdown-text-area .ProseMirror p.is-editor-empty:first-child::before {

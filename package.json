@@ -68,7 +68,7 @@
     "@vueuse/core": "^10.7.2",
     "@vueuse/integrations": "^11.0.3",
     "avvvatars-vue": "^1.0.2",
-    "axios": "^1.7.4",
+    "axios": "^1.8.2",
     "c2pa": "^0.22.3",
     "cyrillic-to-translit-js": "^3.2.1",
     "date-fns": "^3.3.1",
@@ -125,7 +125,8 @@
   "pnpm": {
     "overrides": {
       "vue-dompurify-html>dompurify": "3.2.4",
-      "cross-spawn": "7.0.6"
+      "cross-spawn": "7.0.6",
+      "imask>@babel/runtime-corejs3": "7.26.10"
     }
   },
   "peerDependencies": {

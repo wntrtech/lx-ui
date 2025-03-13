@@ -3,6 +3,7 @@ lockfileVersion: '6.0'
 overrides:
   vue-dompurify-html>dompurify: 3.2.4
   cross-spawn: 7.0.6
+  imask>@babel/runtime-corejs3: 7.26.10
 
 dependencies:
   '@braintree/sanitize-url':
@@ -64,13 +65,13 @@ dependencies:
     version: 10.7.2(vue@3.4.15)
   '@vueuse/integrations':
     specifier: ^11.0.3
-    version: 11.0.3(axios@1.7.4)(focus-trap@7.0.0)(vue@3.4.15)
+    version: 11.0.3(axios@1.8.2)(focus-trap@7.0.0)(vue@3.4.15)
   avvvatars-vue:
     specifier: ^1.0.2
     version: 1.0.2(vue@3.4.15)
   axios:
-    specifier: ^1.7.4
-    version: 1.7.4
+    specifier: ^1.8.2
+    version: 1.8.2
   c2pa:
     specifier: ^0.22.3
     version: 0.22.3
@@ -518,8 +519,8 @@ packages:
       '@babel/helper-plugin-utils': 7.26.5
     dev: true
 
-  /@babel/runtime-corejs3@7.26.7:
-    resolution: {integrity: sha512-55gRV8vGrCIYZnaQHQrD92Lo/hYE3Sj5tmbuf0hhHR7sj2CWhEhHU89hbq+UVDXvFG1zUVXJhUkEq1eAfqXtFw==}
+  /@babel/runtime-corejs3@7.26.10:
+    resolution: {integrity: sha512-uITFQYO68pMEYR46AHgQoyBg7KPPJDAbGn4jUTIRgCFJIp88MIBUianVOplhZDEec07bp9zIyr4Kp0FCyQzmWg==}
     engines: {node: '>=6.9.0'}
     dependencies:
       core-js-pure: 3.40.0
@@ -2271,7 +2272,7 @@ packages:
       - vue
     dev: false
 
-  /@vueuse/integrations@11.0.3(axios@1.7.4)(focus-trap@7.0.0)(vue@3.4.15):
+  /@vueuse/integrations@11.0.3(axios@1.8.2)(focus-trap@7.0.0)(vue@3.4.15):
     resolution: {integrity: sha512-w6CDisaxs19S5Fd+NPPLFaA3GoX5gxuxrbTTBu0EYap7oH13w75L6C/+7e9mcoF9akhcR6GyYajwVMQEjdapJg==}
     peerDependencies:
       async-validator: ^4
@@ -2314,7 +2315,7 @@ packages:
     dependencies:
       '@vueuse/core': 11.0.3(vue@3.4.15)
       '@vueuse/shared': 11.0.3(vue@3.4.15)
-      axios: 1.7.4
+      axios: 1.8.2
       focus-trap: 7.0.0
       vue-demi: 0.14.10(vue@3.4.15)
     transitivePeerDependencies:
@@ -2609,8 +2610,8 @@ packages:
     engines: {node: '>=4'}
     dev: true
 
-  /axios@1.7.4:
-    resolution: {integrity: sha512-DukmaFRnY6AzAALSH4J2M3k6PkaC+MfaAGdEERRWcC9q3/TWQwLpHR8ZRLKTdQ3aBDL64EdluRDjJqKw+BPZEw==}
+  /axios@1.8.2:
+    resolution: {integrity: sha512-ls4GYBm5aig9vWx8AWDSGLpnpDQRtWAfrjU+EuytuODrFBkqesN2RkOQCBzrA1RQNHw1SmRMSDDDSwzNAYQ6Rg==}
     dependencies:
       follow-redirects: 1.15.9
       form-data: 4.0.1
@@ -4266,7 +4267,7 @@ packages:
     resolution: {integrity: sha512-sJlIFM7eathUEMChTh9Mrfw/IgiWgJqBKq2VNbyXvBZ7ev/IlO6/KQTKlV/Fm+viQMLrFLG/zCuudrLIwgK2dg==}
     engines: {npm: '>=4.0.0'}
     dependencies:
-      '@babel/runtime-corejs3': 7.26.7
+      '@babel/runtime-corejs3': 7.26.10
     dev: false
 
   /immediate@3.0.6:

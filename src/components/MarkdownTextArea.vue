@@ -244,13 +244,16 @@ function createEditorExtensions() {
     CustomHeadingWithAutoId,
     HiddenIdNode,
     Underline,
+
     Link.configure({
       autolink: false,
       validate: (href) => /^https?:\/\//.test(href),
     }),
+
     Placeholder.configure({
       placeholder: props.placeholder,
     }),
+
     CharacterCount.configure({
       limit: props.maxlength,
     }),
@@ -272,8 +275,11 @@ function createEditorExtensions() {
     content: model.value,
     editable: !isDisabled.value,
     extensions: ext,
+    injectCSS: false,
   });
+
   loading.value = false;
+
   editor.value.on('update', () => {
     text.value = editor.value.storage.markdown.getMarkdown();
     emits('update:modelValue', text.value);
@@ -420,14 +426,6 @@ function setImage() {
   closeImageModal();
 }
 
-onMounted(() => {
-  createEditorExtensions();
-});
-
-onBeforeUnmount(() => {
-  editor.value.destroy();
-});
-
 function updateEditorExtensions() {
   editor.value.destroy();
   createEditorExtensions();
@@ -532,6 +530,14 @@ const imageInputTypes = [
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
+
+onMounted(() => {
+  createEditorExtensions();
+});
+
+onBeforeUnmount(() => {
+  editor.value.destroy();
+});
 </script>
 
 <template>
@@ -547,7 +553,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       <LxToolbar v-if="editor">
         <template #leftArea>
           <LxToolbarGroup class="left-group">
-            <lx-button
+            <LxButton
               icon="undo"
               kind="ghost"
               variant="icon-only"
@@ -555,7 +561,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
               @click="editor.chain().focus().undo().run()"
               :disabled="!editor.can().undo() || isDisabled"
             />
-            <lx-button
+            <LxButton
               icon="redo"
               kind="ghost"
               variant="icon-only"
@@ -566,7 +572,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           </LxToolbarGroup>
 
           <LxToolbarGroup class="left-group">
-            <lx-button
+            <LxButton
               icon="text-bold"
               kind="ghost"
               variant="icon-only"
@@ -575,7 +581,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('bold')"
             />
-            <lx-button
+            <LxButton
               icon="text-italic"
               kind="ghost"
               variant="icon-only"
@@ -584,7 +590,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('italic')"
             />
-            <lx-button
+            <LxButton
               v-if="showUnderlineToggle"
               icon="text-underline"
               kind="ghost"
@@ -594,7 +600,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('underline')"
             />
-            <lx-button
+            <LxButton
               icon="text-strikethrough"
               kind="ghost"
               variant="icon-only"
@@ -605,7 +611,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
             />
 
             <LxDropDownMenu v-if="showColorPicker">
-              <lx-button
+              <LxButton
                 icon="color"
                 kind="ghost"
                 variant="icon-only"
@@ -751,7 +757,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 
           <LxToolbarGroup class="left-group">
             <LxDropDownMenu v-if="showHeadingPicker">
-              <lx-button
+              <LxButton
                 icon="text-heading"
                 kind="ghost"
                 variant="icon-only"
@@ -781,7 +787,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
               </template>
             </LxDropDownMenu>
 
-            <lx-button
+            <LxButton
               icon="list-bulleted"
               kind="ghost"
               variant="icon-only"
@@ -790,7 +796,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
               :disabled="isDisabled"
               :active="editor.isActive('bulletList')"
             />
-            <lx-button
+            <LxButton
               icon="list-numbered"
               kind="ghost"
               variant="icon-only"
@@ -800,8 +806,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
               :active="editor.isActive('orderedList')"
             />
           </LxToolbarGroup>
+
           <LxToolbarGroup v-if="props.showLinkEditor || props.showImagePicker" class="left-group">
-            <lx-button
+            <LxButton
               v-if="props.showLinkEditor"
               icon="link"
               kind="ghost"
@@ -811,7 +818,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('link')"
             />
-            <lx-modal
+            <LxModal
               ref="editUrlModal"
               :label="texts.modalLabel"
               size="s"
@@ -826,17 +833,17 @@ const labelledBy = computed(() => props.labelId || rowId.value);
               :button-secondary-is-cancel="false"
             >
               <p class="lx-description">{{ texts.modalDescription }}</p>
-              <lx-text-input
+              <LxTextInput
                 ref="inputLinkField"
                 v-model="inputLink"
                 :invalid="isNotLink"
                 :invalidation-message="InvalidMessage"
               >
-              </lx-text-input>
-            </lx-modal>
+              </LxTextInput>
+            </LxModal>
 
             <div v-if="props.showImagePicker" class="lx-toolbar-group">
-              <lx-button
+              <LxButton
                 icon="image"
                 kind="ghost"
                 variant="icon-only"
@@ -845,7 +852,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
                 :active="editor.isActive('image')"
                 @click="openImage()"
               />
-              <lx-modal
+              <LxModal
                 id="imageModal"
                 ref="markdownImageModal"
                 :label="texts.imageModalLabel"
@@ -865,15 +872,16 @@ const labelledBy = computed(() => props.labelId || rowId.value);
                     :label="texts.imageModalLinkDescription"
                     v-if="imageModalInputType === 'url'"
                   >
-                    <lx-text-input
+                    <LxTextInput
                       id="inputImageField"
                       ref="inputImageField"
                       v-model="inputImage"
                       :invalid="isNotImage"
                       :invalidation-message="texts.invalidImageLink"
                     >
-                    </lx-text-input>
+                    </LxTextInput>
                   </LxRow>
+
                   <LxRow
                     :label="texts.imageModalFileDescription"
                     v-if="imageModalInputType === 'fileUploader'"
@@ -889,16 +897,19 @@ const labelledBy = computed(() => props.labelId || rowId.value);
                       @onError="onError"
                     />
                   </LxRow>
+
                   <LxRow :label="texts.imageModalAltDescription">
                     <LxTextInput id="inputAltField" v-model="inputAlt" />
                   </LxRow>
+
                   <LxRow :label="texts.imageModalTitleDescription">
                     <LxTextInput id="inputTitleField" v-model="inputTitle" />
                   </LxRow>
                 </LxForm>
-              </lx-modal>
+              </LxModal>
             </div>
           </LxToolbarGroup>
+
           <LxToolbarGroup v-if="props.showPlaceholderPicker" class="left-group">
             <LxDropDownMenu>
               <LxButton
@@ -930,6 +941,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           </LxToolbarGroup>
         </template>
       </LxToolbar>
+
       <div
         class="lx-input-wrapper"
         :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
@@ -944,10 +956,12 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :aria-invalid="invalid"
           :aria-labelledby="labelledBy"
         />
+
         <div v-if="invalid" class="lx-invalidation-icon-wrapper">
           <LxIcon customClass="lx-invalidation-icon" value="invalid" />
         </div>
       </div>
+
       <div
         v-if="editor && maxlength"
         class="lx-text-length"
@@ -959,9 +973,11 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         {{ invalidationMessage }}
       </div>
     </div>
+
     <article id="test-id-loader" v-if="loading" class="lx-article">
       <LxLoader :loading="loading" />
     </article>
+
     <LxRichTextDisplay v-if="readOnly" :id="props.id" :value="model" />
   </div>
 </template>
