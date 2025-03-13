@@ -457,8 +457,6 @@
   fill: var(--color-list-icon-selected);
 }
 
-.lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar svg,
-.lx-list-wrapper > .toolbar-selecting > .first-row > .right-area > .lx-button svg,
 .lx-list-item-wrapper:has(.lx-list-item.lx-selected:not(.lx-list-item-disabled))
   .lx-list-item-actions
   .lx-dropdown-toggler
@@ -662,7 +660,7 @@
   grid-column-start: 2;
 }
 
-.lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar {
+.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -670,26 +668,25 @@
 }
 
 /* So that buttons wouldn't shrink */
-.lx-list-toolbar .selection-action-buttons > .lx-button:not(.lx-button-icon-only),
-.lx-list-toolbar .right-area > .lx-button:not(.lx-button-icon-only) {
+.lx-list-toolbar .selection-action-buttons > .lx-button:not(.lx-button-icon-only) {
   --button-primary-grid-template-columns: minmax(max-content, 1fr) auto;
 }
 
-.lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-buttons,
-.lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-text {
+.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons,
+.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-text {
   display: flex;
   align-items: center;
 }
 
-.lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-buttons-small {
+.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons-small {
   display: none;
 }
 
-.lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-text p {
+.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-text p {
   color: var(--color-focus-foreground);
 }
 
-.lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-buttons-small .lx-dropdown-panel {
+.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons-small .lx-dropdown-panel {
   padding: 0.125rem;
 }
 
@@ -720,7 +717,7 @@
   border-bottom: none;
 }
 
-.lx-list-toolbar.toolbar-selecting > .first-row {
+.lx-list-toolbar.lx-selection-toolbar > .first-row {
   background-color: var(--color-brand);
   border-bottom: 0;
   justify-content: space-between;
@@ -757,8 +754,8 @@
   color: var(--color-label);
 }
 
-.lx-list-wrapper .lx-list-toolbar.toolbar-selecting > .first-row > p {
-  color: var(--color-focus-foreground);
+.lx-list-wrapper .lx-list-toolbar.lx-selection-toolbar > .first-row > p {
+  color: var(--color-interactive-foreground);
 }
 
 .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button,
@@ -786,13 +783,13 @@
 }
 
 .lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button svg,
-.lx-list-wrapper .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button:hover svg,
 .lx-list-wrapper .lx-expander .lx-head > .lx-button:hover > .lx-button-content-wrapper svg {
   fill: var(--color-focus-foreground);
 }
 
-.lx-list-toolbar.toolbar-selecting .toolbar-search-button:not(.is-expanded) .lx-button svg {
-  fill: var(--color-interactive-hover-foreground);
+.lx-list-wrapper .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button {
+  --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
+  --color-button-toolbar-ghost-icon-hover: var(--color-button-toolbar-ghost-icon);
 }
 
 .lx-list-wrapper .tree-list-search > .tree-list-search-item > .lx-list-item-wrapper,
@@ -1028,11 +1025,11 @@ li .lx-list-item.lx-inactive {
     flex-direction: column;
   }
 
-  .lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-buttons {
+  .lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons {
     display: none;
   }
 
-  .lx-list-wrapper > .lx-list-toolbar .lx-selection-toolbar > .selection-action-buttons-small {
+  .lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons-small {
     display: flex;
   }
 }

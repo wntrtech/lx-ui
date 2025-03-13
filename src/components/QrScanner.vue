@@ -184,7 +184,7 @@ onMounted(async () => {
     :aria-labelledby="labelledBy"
   >
     <div
-      class="lx-toolbar"
+      class="lx-toolbar lx-qr-scanner-toolbar"
       v-if="camerasList?.length > 1 || hasFileUploader || hasFlashlightToggle"
     >
       <LxToggle

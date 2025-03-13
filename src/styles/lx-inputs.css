@@ -3029,7 +3029,7 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-data-grid-wrapper .lx-grid-toolbar {
-  background-color: var(--color-background);
+  background-color: var(--color-region);
   flex-direction: row;
   top: var(--nav-row-size);
 }
@@ -4115,7 +4115,7 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-camera>.lx-component-toolbar .lx-toggle-wrapper{
-  padding-left: 0.4rem;
+  padding: 0 0.4rem;
 }
 
 .lx-camera>.lx-component-toolbar .right-area .lx-group > .lx-group:has(.lx-toggle-wrapper){

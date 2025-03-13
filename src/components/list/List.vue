@@ -1126,7 +1126,7 @@ function focusFirstFocusableElementAfter() {
         hasSearch
       "
       class="lx-list-toolbar"
-      :class="[{ 'toolbar-selecting': hasSelecting && selectedItems?.length > 0 }]"
+      :class="[{ 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 }]"
     >
       <div class="first-row">
         <template v-if="autoSearchMode === 'default' && !hasSelecting">
@@ -1198,7 +1198,7 @@ function focusFirstFocusableElementAfter() {
             />
           </template>
           <template v-if="selectedItems?.length > 0">
-            <div class="lx-selection-toolbar" v-if="hasSelecting">
+            <div class="selection-action-button-toolbar" v-if="hasSelecting">
               <div class="selection-action-buttons">
                 <LxButton
                   v-for="selectAction in selectionActionDefinitions"
@@ -1208,6 +1208,7 @@ function focusFirstFocusableElementAfter() {
                   :title="selectAction.name"
                   :destructive="selectAction.destructive"
                   :disabled="selectAction.disabled"
+                  kind="ghost"
                   @click="selectionActionClick(selectAction.id, selectedItems)"
                 />
               </div>
@@ -1216,7 +1217,7 @@ function focusFirstFocusableElementAfter() {
                 v-if="selectionActionDefinitions?.length > 0"
               >
                 <LxDropDownMenu>
-                  <LxButton icon="menu" />
+                  <LxButton icon="menu" kind="ghost" />
                   <template #panel>
                     <LxButton
                       v-for="selectAction in selectionActionDefinitions"
@@ -1252,6 +1253,7 @@ function focusFirstFocusableElementAfter() {
               v-if="hasSelecting && kind !== 'draggable'"
               :icon="selectIcon"
               :title="texts.clearSelected"
+              kind="ghost"
               @click="cancelSelection()"
             />
           </template>
@@ -1262,7 +1264,7 @@ function focusFirstFocusableElementAfter() {
         v-if="hasSearch && searchField && autoSearchMode === 'compact'"
         :class="[{ 'second-row-selecting': hasSelecting }]"
       >
-        <lx-text-input
+        <LxTextInput
           v-if="hasSearch"
           ref="queryInputCompact"
           v-model="queryRaw"
@@ -1273,7 +1275,7 @@ function focusFirstFocusableElementAfter() {
           @keydown.enter="serverSideSearch()"
         />
         <div class="lx-group lx-slot-wrapper">
-          <lx-button
+          <LxButton
             v-if="searchSide === 'server' && hasSearch"
             icon="search"
             kind="ghost"
@@ -1282,7 +1284,7 @@ function focusFirstFocusableElementAfter() {
             :title="texts.search"
             @click="serverSideSearch()"
           />
-          <lx-button
+          <LxButton
             v-if="query || queryRaw"
             icon="clear"
             kind="ghost"

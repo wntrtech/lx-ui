@@ -792,12 +792,6 @@
   flex-direction: row;
 }
 
-.lx-data-grid-wrapper .lx-grid-toolbar > .lx-group.lx-slot-wrapper {
-  display: flex;
-  flex-direction: row-reverse;
-  flex-grow: 1;
-}
-
 .lx .lx-data-grid-wrapper .lx-statusbar .lx-chip {
   display: flex;
   align-items: center;
@@ -850,29 +844,13 @@
   color: var(--color-interactive-foreground);
 }
 
-.lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .action-definitions-group > .lx-button.lx-button-ghost svg,
-.lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .action-definitions-small > .lx-button.lx-button-ghost svg,
-.lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-dropdown-toggler > .lx-button.lx-button-ghost svg {
-  --color-button-ghost-icon: var(--color-focus-foreground);
-  --color-button-ghost-icon-focus: var(--color-focus-foreground);
-}
-
-.lx-data-grid-wrapper
-  .lx-component-toolbar.lx-selection-toolbar
-  .action-definitions-group
-  > .lx-button.lx-button-ghost
-  .lx-button-content
-  > .lx-button-label {
-  color: var(--color-focus-foreground);
-}
-
 .lx-data-grid-wrapper .lx-component-toolbar .left-area .lx-group,
 .lx-data-grid-wrapper .lx-component-toolbar .right-area .lx-group {
   border: none;
 }
 
 .lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .lx-group > p {
-  color: var(--color-focus-foreground);
+  color: var(--color-button-toolbar-selection);
   padding-left: 1rem;
 }
 
