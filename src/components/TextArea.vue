@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, nextTick, inject } from 'vue';
+import { useResizeObserver } from '@vueuse/core';
 import LxIcon from '@/components/Icon.vue';
 
 const props = defineProps({
@@ -30,6 +31,7 @@ const model = computed({
 
 const textarea = ref(null);
 const shadowTextarea = ref(null);
+const wrapperRef = ref();
 
 function triggerResize() {
   if (!textarea.value || !shadowTextarea.value) return;
@@ -38,6 +40,13 @@ function triggerResize() {
   const newHeight = `${shadowTextarea.value.scrollHeight}px`;
   textarea.value.style.height = newHeight;
 }
+
+function focus() {
+  if (textarea.value !== null && textarea.value !== undefined) textarea.value.focus();
+}
+
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
 
 watch(
   model,
@@ -58,18 +67,20 @@ watch(
   }
 );
 
-function focus() {
-  if (textarea.value !== null && textarea.value !== undefined) textarea.value.focus();
-}
+useResizeObserver(wrapperRef, (entries) => {
+  const entry = entries[0];
+  const { height } = entry.contentRect;
 
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
+  if (height !== 0 && props.dynamicHeight) {
+    nextTick(triggerResize);
+  }
+});
 
 defineExpose({ focus });
 </script>
 
 <template>
-  <div class="lx-field-wrapper">
+  <div class="lx-field-wrapper" ref="wrapperRef">
     <p v-if="props.readOnly" class="lx-data" :aria-labelledby="labelledBy">
       {{ model }} <span v-if="!model">—</span>
     </p>
