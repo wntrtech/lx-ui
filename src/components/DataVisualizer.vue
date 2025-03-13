@@ -62,11 +62,27 @@ const maxValue = computed(() => {
 });
 
 function getBarWidth(item) {
-  return `--bar-width: ${(item[props.valueAttribute] / maxValue.value) * 100 || 100}%`;
+  const value = item[props.valueAttribute];
+
+  if (Array.isArray(value)) {
+    return '--bar-width: 100%;';
+  }
+
+  return `--bar-width: ${
+    value !== undefined && !Number.isNaN(value) ? (value / maxValue.value) * 100 : 0
+  }%;`;
 }
 
 function getBarHeight(item) {
-  return `--bar-height: ${(item[props.valueAttribute] / maxValue.value) * 100 || 100}%`;
+  const value = item[props.valueAttribute];
+
+  if (Array.isArray(value)) {
+    return '--bar-height: 100%;';
+  }
+
+  return `--bar-height: ${
+    value !== undefined && !Number.isNaN(value) ? (value / maxValue.value) * 100 : 0
+  }%;`;
 }
 
 function getTargetPosition(item) {
@@ -575,7 +591,7 @@ watch(
               ? null
               : showValues === 'never'
               ? `${item?.[nameAttribute]}`
-              : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute])}`
+              : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute] ?? 0)}`
           "
           :aria-labelledby="`${id}-${item[idAttribute]}`"
           @click="
@@ -602,7 +618,9 @@ watch(
                 :title="
                   showValues === 'never'
                     ? `${subItem?.[nameAttribute]}`
-                    : `${subItem?.[nameAttribute]} \n${formatDecimal(subItem?.[valueAttribute])}`
+                    : `${subItem?.[nameAttribute]} \n${formatDecimal(
+                        subItem?.[valueAttribute] ?? 0
+                      )}`
                 "
                 :aria-labelledby="`${id}-${subItem[idAttribute]}`"
                 @click="$emit('click', subItem?.[idAttribute])"
@@ -696,7 +714,7 @@ watch(
                 ? null
                 : showValues === 'never'
                 ? `${item?.[nameAttribute]}`
-                : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute])}`
+                : `${item?.[nameAttribute]} \n${formatDecimal(item?.[valueAttribute] ?? 0)}`
             "
             :aria-labelledby="`${id}-${item[idAttribute]}`"
             @click="
@@ -723,7 +741,9 @@ watch(
                   :title="
                     showValues === 'never'
                       ? `${subItem?.[nameAttribute]}`
-                      : `${subItem?.[nameAttribute]} \n${formatDecimal(subItem?.[valueAttribute])}`
+                      : `${subItem?.[nameAttribute]} \n${formatDecimal(
+                          subItem?.[valueAttribute] ?? 0
+                        )}`
                   "
                   :aria-labelledby="`${id}-${subItem[idAttribute]}`"
                   @click="$emit('click', subItem?.[idAttribute])"
