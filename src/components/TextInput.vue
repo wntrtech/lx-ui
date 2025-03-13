@@ -41,6 +41,7 @@ const props = defineProps({
             'newborn-id',
             'currency',
             'email',
+            'numeric',
             'custom',
           ].includes(value)
         : true;
@@ -156,6 +157,10 @@ const inputMask = computed(() => {
     case 'email':
       return {
         mask: /^\S*@?\S*$/,
+      };
+    case 'numeric':
+      return {
+        mask: /^\d+$/,
       };
     case 'custom':
       return {
@@ -295,10 +300,29 @@ const sanitizedEmail = computed(() => {
   return '';
 });
 
-const inputFieldType = computed(() => {
-  if (props.mask === 'email') return 'email';
+const inputMode = computed(() => {
   if (props.kind === 'phone') return 'tel';
-  return props.kind === 'password' && hidePassword.value ? 'password' : 'text';
+  switch (props.mask) {
+    case 'email':
+      return 'email';
+    case 'phone':
+      return 'tel';
+    case 'decimal':
+    case 'currency':
+      return 'decimal';
+    case 'integer':
+    case 'gpslat':
+    case 'gpslon':
+    case 'time':
+    case 'personCodeLv':
+    case 'person-code-lv':
+    case 'newbornId':
+    case 'newborn-id':
+    case 'numeric':
+      return 'numeric';
+    default:
+      return 'text';
+  }
 });
 
 watch(
@@ -466,7 +490,7 @@ onMounted(() => {
         v-if="mask !== 'currency'"
         v-imask="inputMask"
         ref="input"
-        :type="inputFieldType"
+        :type="props.kind === 'password' && hidePassword ? 'password' : 'text'"
         :autocomplete="autocomplete"
         class="lx-text-input lx-input-area"
         :class="[
@@ -484,6 +508,7 @@ onMounted(() => {
         :maxlength="maxLengthValue"
         :title="tooltip"
         :aria-labelledby="labelledBy"
+        :inputmode="inputMode"
         @accept="onAccept"
         @blur="onBlur"
       />

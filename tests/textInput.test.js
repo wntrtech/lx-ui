@@ -691,8 +691,36 @@ test('LxTextInput email mask', async () => {
       mask: 'email',
     },
   });
+
   const input = wrapper.find('.lx-text-input').element;
-  expect(input.type).toBe('email');
+  expect(input.inputmode).toBe('email');
   await wrapper.setProps({ mask: 'decimal' });
-  expect(input.type).toBe('text');
+  expect(input.inputmode).toBe('decimal');
+});
+
+test('LxTextInput numeric mask', async () => {
+  wrapper = mount(LxTextInput, {
+    props: {
+      mask: 'default',
+      modelValue: 'test test1234',
+    },
+  });
+  const input = wrapper.find('.lx-text-input').element;
+  await wrapper.setProps({ mask: 'numeric' });
+  expect(input.value).toBe('1234');
+});
+
+test('LxTextInput numeric mask 2', async () => {
+  wrapper = mount(LxTextInput, {
+    props: {
+      mask: 'default',
+      modelValue: 'aa001234',
+    },
+  });
+  const input = wrapper.find('.lx-text-input').element;
+  expect(input.value).toBe('aa001234');
+  await wrapper.setProps({ mask: 'numeric' });
+  expect(input.value).toBe('001234');
+  await wrapper.setProps({ mask: 'integer' });
+  expect(input.value).toBe('1234');
 });
