@@ -181,6 +181,9 @@ export function formatLocalizedDate(localeId, date) {
 }
 
 export function getMonthYearString(localeId, month, year) {
+  if (month === null || month === undefined) return null;
+  if (year === null || year === undefined) return null;
+
   const formatter = new Intl.DateTimeFormat(localeId, {
     year: 'numeric',
     month: 'long',

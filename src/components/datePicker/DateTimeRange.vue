@@ -2,7 +2,13 @@
 import { computed, onBeforeMount, ref, inject } from 'vue';
 
 import useLx from '@/hooks/useLx';
-import { formatDateJSON, formatDate, parseDate } from '@/utils/dateUtils';
+import {
+  formatDateJSON,
+  formatDate,
+  parseDate,
+  getMonthNames,
+  getMonthYearString,
+} from '@/utils/dateUtils';
 import { generateUUID } from '@/utils/stringUtils';
 
 import {
@@ -11,6 +17,7 @@ import {
   extractQuarterFromDate,
   extractYearFromDate,
   extractYearMonthFromDate,
+  getMonthNameByOrder,
 } from '@/components/datePicker/helpers';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 
@@ -227,13 +234,69 @@ const model = computed({
 });
 
 function getNameStart() {
-  if (props.startDate && props.kind === 'date') return formatDate(new Date(props.startDate));
-  return props.startDate;
+  switch (props.kind) {
+    case 'date':
+    case 'legacy':
+      if (props.startDate) {
+        return formatDate(new Date(props.startDate));
+      }
+      break;
+
+    case 'month':
+      if (props.startDate) {
+        const monthsList = getMonthNames(localeComputed.value);
+        return getMonthNameByOrder(monthsList, new Date(props.startDate)?.getMonth(), true);
+      }
+      break;
+
+    case 'month-year':
+      if (props.startDate) {
+        return getMonthYearString(
+          localeComputed.value,
+          new Date(props.startDate)?.getMonth(),
+          new Date(props.startDate)?.getFullYear()
+        );
+      }
+      break;
+
+    default:
+      return props.startDate;
+  }
+
+  return null;
 }
 
 function getNameEnd() {
-  if (props.endDate && props.kind === 'date') return formatDate(new Date(props.endDate));
-  return props.endDate;
+  switch (props.kind) {
+    case 'date':
+    case 'legacy':
+      if (props.endDate) {
+        return formatDate(new Date(props.endDate));
+      }
+      break;
+
+    case 'month':
+      if (props.endDate) {
+        const monthsList = getMonthNames(localeComputed.value);
+        return getMonthNameByOrder(monthsList, new Date(props.endDate)?.getMonth(), true);
+      }
+      break;
+
+    case 'month-year':
+      if (props.endDate) {
+        return getMonthYearString(
+          localeComputed.value,
+          new Date(props.endDate)?.getMonth(),
+          new Date(props.endDate)?.getFullYear()
+        );
+      }
+      break;
+
+    default:
+      return props.endDate;
+  }
+
+  return null;
 }
 
 const rowId = inject('rowId', ref(null));

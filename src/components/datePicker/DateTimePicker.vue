@@ -9,6 +9,8 @@ import {
   formatDateJSON,
   isDateValid,
   isTimeValid,
+  getMonthYearString,
+  getMonthNames,
 } from '@/utils/dateUtils';
 import { lxDateUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
@@ -18,6 +20,7 @@ import {
   extractQuarterFromDate,
   extractYearFromDate,
   extractYearMonthFromDate,
+  getMonthNameByOrder,
 } from '@/components/datePicker/helpers';
 import { generateUUID } from '@/utils/stringUtils';
 
@@ -194,6 +197,34 @@ function getName() {
       }
       if (typeof props.modelValue !== 'string') {
         return formatDateTime(props.modelValue);
+      }
+      break;
+
+    case 'month':
+      if (typeof props.modelValue === 'string') {
+        const monthsList = getMonthNames(localeComputed.value);
+        return getMonthNameByOrder(monthsList, new Date(props.modelValue)?.getMonth(), true);
+      }
+      if (typeof props.modelValue !== 'string') {
+        const monthsList = getMonthNames(localeComputed.value);
+        return getMonthNameByOrder(monthsList, props.modelValue?.getMonth(), true);
+      }
+      break;
+
+    case 'month-year':
+      if (typeof props.modelValue === 'string') {
+        return getMonthYearString(
+          localeComputed.value,
+          new Date(props.modelValue)?.getMonth(),
+          new Date(props.modelValue)?.getFullYear()
+        );
+      }
+      if (typeof props.modelValue !== 'string') {
+        return getMonthYearString(
+          localeComputed.value,
+          props.modelValue?.getMonth(),
+          props.modelValue?.getFullYear()
+        );
       }
       break;
 
