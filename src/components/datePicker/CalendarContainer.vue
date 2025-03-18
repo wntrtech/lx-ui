@@ -61,7 +61,7 @@ const props = defineProps({
       todayButton: 'Šodiena',
       clearStart: 'Notīrīt sākuma vērtību',
       clearEnd: 'Notīrīt beigu vērtību',
-      next: 'Nākošais',
+      next: 'Nākamais',
       previous: 'Iepriekšējais',
       doNotIndicateStart: 'Nenorādīt sākumu',
       doNotIndicateEnd: 'Nenorādīt beigas',

@@ -175,63 +175,65 @@ watch(
 );
 
 function mapClick(event) {
-  if (!props.readOnly) {
-    let countryId = event.target?.id;
-    if (countryId.length !== 5) countryId = event.target.parentNode?.id;
-    if (countryId?.includes('-')) countryId = countryId?.split('-')[1];
+  if (props.readOnly) return;
 
-    if (!countryId) return;
+  let countryId = event.target?.id;
+  if (countryId.length !== 5) countryId = event.target.parentNode?.id;
+  if (countryId?.includes('-')) countryId = countryId?.split('-')[1];
 
-    if (props.selectingKind === 'multiple') {
-      const res = [...model.value];
+  if (!countryId) return;
 
-      const index = res.findIndex((selectedItem) => selectedItem === countryId);
-      if (index !== -1) res.splice(index, 1);
-      else res.push(countryId);
+  if (props.selectingKind === 'multiple') {
+    const res = [...model.value];
 
-      model.value = res;
-    } else {
-      model.value = model.value === countryId ? null : countryId;
-    }
+    const index = res.findIndex((selectedItem) => selectedItem === countryId);
+    if (index !== -1) res.splice(index, 1);
+    else res.push(countryId);
+
+    model.value = res;
+  } else {
+    model.value = model.value === countryId ? null : countryId;
   }
 }
 
 function spineClick(event) {
-  if (!props.readOnly) {
-    let boneId = event.target?.id;
-    if (!boneId) boneId = event.target?.parentNode?.id;
-    if (boneId?.includes('-')) boneId = boneId?.split('-')[1];
+  if (props.readOnly) return;
 
-    if (boneId && props.kind === 'spine') {
-      if (props.selectingKind === 'multiple') {
-        boneId = boneId?.split('-')[0];
+  let boneId = event.target?.id;
+  if (!boneId) boneId = event.target?.parentNode?.id;
+  if (boneId?.includes('-')) boneId = boneId?.split('-')[1];
 
-        const res = [...model.value];
-        const index = res.findIndex((selectedItem) => selectedItem === boneId);
-        if (boneId !== 'skeleton') {
-          if (index !== -1) res.splice(index, 1);
-          else res.push(boneId);
+  if (!boneId) return;
 
-          model.value = res;
-        }
-      } else if (boneId !== 'skeleton') {
-        if (model.value === boneId) model.value = null;
-        else model.value = boneId;
+  if (props.kind === 'spine') {
+    if (props.selectingKind === 'multiple') {
+      boneId = boneId?.split('-')[0];
+
+      const res = [...model.value];
+      const index = res.findIndex((selectedItem) => selectedItem === boneId);
+      if (boneId !== 'skeleton') {
+        if (index !== -1) res.splice(index, 1);
+        else res.push(boneId);
+
+        model.value = res;
       }
-    } else if (boneId && props.kind !== 'spine') {
-      if (props.selectingKind === 'multiple') {
-        const res = [...model.value];
-        const index = res.findIndex((selectedItem) => selectedItem === boneId);
-        if (boneId !== 'skeleton' && boneId !== 'LV') {
-          if (index !== -1) res.splice(index, 1);
-          else res.push(boneId);
+    } else if (boneId !== 'skeleton') {
+      if (model.value === boneId) model.value = null;
+      else model.value = boneId;
+    }
+  } else if (props.kind !== 'spine') {
+    if (props.selectingKind === 'multiple') {
+      const res = [...model.value];
+      const index = res.findIndex((selectedItem) => selectedItem === boneId);
+      if (boneId !== 'skeleton' && boneId !== 'LV') {
+        if (index !== -1) res.splice(index, 1);
+        else res.push(boneId);
 
-          model.value = res;
-        }
-      } else if (boneId !== 'skeleton' && boneId !== 'LV') {
-        if (model.value === boneId) model.value = null;
-        else model.value = boneId;
+        model.value = res;
       }
+    } else if (boneId !== 'skeleton' && boneId !== 'LV') {
+      if (model.value === boneId) model.value = null;
+      else model.value = boneId;
     }
   }
 }

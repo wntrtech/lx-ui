@@ -52,7 +52,7 @@ const props = defineProps({
       clear: 'Attīrīt',
       todayButton: 'Šodiena',
       clearButton: 'Attīrīt vērtību',
-      next: 'Nākošais',
+      next: 'Nākamais',
       previous: 'Iepriekšējais',
     }),
   },

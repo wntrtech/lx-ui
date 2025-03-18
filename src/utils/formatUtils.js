@@ -126,12 +126,11 @@ function shortenInteger(value, maxChars) {
   }
 
   // Prevent showing undefined suffix
-  const shouldHideSuffix3 =
-    Number(maxChars) === 3 && (absValue >= 1e46 || (absValue >= 1e45 && isNegative));
-  const shouldHideSuffix4 =
-    Number(maxChars) === 4 && (absValue >= 1e47 || (absValue >= 1e46 && isNegative));
+  const shouldHideSuffix =
+    (Number(maxChars) === 3 && absValue >= (isNegative ? 1e45 : 1e46)) ||
+    (Number(maxChars) === 4 && absValue >= (isNegative ? 1e46 : 1e47));
 
-  if (absValue >= 1e48 || shouldHideSuffix3 || shouldHideSuffix4) {
+  if (absValue >= 1e48 || shouldHideSuffix) {
     // Prevent showing exponent if not enough space
     if (maxChars > 17) {
       return `${isNegative ? '-' : ''}${cutString(valueStr, 17)}`;

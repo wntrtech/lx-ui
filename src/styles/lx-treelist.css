@@ -173,10 +173,6 @@
     fill: var(--color-data);
 }
 
-.tree-list .tree-item .tree-item-body.selected-children>.lx-button > .lx-button-content-wrapper svg {
-    fill: var(--color-data);
-}
-
 .lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children>.lx-button:hover {
     background-color: var(--color-interactive-hover-background)
 }

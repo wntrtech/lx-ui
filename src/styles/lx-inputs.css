@@ -454,6 +454,7 @@
 .lx-markdown-text-area .ProseMirror {
   width: 100%;
   padding: var(--input-container-padding-vertical-text-area) 0;
+  z-index: 2;
 }
 
 .lx .lx-layout .lx-field-wrapper .lx-markdown-text-area-wrapper .lx-input-wrapper .lx-markdown-text-area.lx-input-area {
@@ -3693,9 +3694,6 @@ input[type='range']:hover::-moz-range-thumb {
 
 .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
   max-height: var(--nav-row-size);
-}
-
-.lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
   position: sticky;
   top: var(--nav-row-size);
   background-color: var(--color-region);

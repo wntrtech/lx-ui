@@ -57,10 +57,6 @@
   width: 100%;
 }
 
-.lx-data-visualizer .lx-bars-vertical {
-  min-height: var(--form-column-size);
-}
-
 .lx-data-visualizer .lx-bars-horizontal.show-legend,
 .lx-data-visualizer .lx-latvia-visualizer.show-legend {
   padding-bottom: 1rem;
@@ -77,11 +73,6 @@
   position: relative;
   min-width: 0.25rem;
   z-index: 1;
-}
-
-.lx-data-visualizer .lx-bars-vertical .bar-wrapper .bar {
-  min-width: unset;
-  min-height: 0.25rem;
 }
 
 .lx-data-visualizer .bar-wrapper .bar:not(.with-sub-bars) {
@@ -102,6 +93,7 @@
   margin: 0 0.1rem;
   align-items: end;
   min-height: 0.25rem;
+  min-width: unset;
 }
 
 .lx-data-visualizer .bar-wrapper .bar:hover {
@@ -299,6 +291,7 @@
   grid-template-columns: repeat(var(--item-count), 0fr);
   grid-template-rows: minmax(var(--aside-size), 1fr) minmax(1rem, 12rem);
   justify-content: center;
+  min-height: var(--form-column-size);
 }
 
 .lx-data-visualizer .lx-bars-horizontal.has-targets .bar-wrapper {
@@ -447,9 +440,6 @@
 
 .lx-data-visualizer .lx-bars-vertical .bar-wrapper .lx-bar-group {
   text-align: right;
-}
-
-.lx-data-visualizer .lx-bars-vertical .bar-wrapper .lx-bar-group {
   writing-mode: vertical-lr;
   margin: 0 auto;
   transform: rotate(180deg);

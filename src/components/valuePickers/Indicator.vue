@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
-import { generateUUID, textSearch } from '@/utils/stringUtils';
+import { textSearch } from '@/utils/stringUtils';
 
 import useLx from '@/hooks/useLx';
 import LxIcon from '@/components/Icon.vue';

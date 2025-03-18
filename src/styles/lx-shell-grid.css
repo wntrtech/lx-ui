@@ -453,7 +453,7 @@
 }
 
 .lx-layout.lx-layout-default > .lx-main .lx-header .lx-description {
-  font-size: var(--small-font-size);
+  font-size: var(--font-size);
   color: var(--color-label);
 }
 

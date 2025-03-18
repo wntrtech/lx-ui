@@ -1938,6 +1938,7 @@ p .lx-person-display-wrapper {
   .lx-form-grid > footer {
     grid-template-columns: 1fr;
     gap: calc(var(--gap-buttons) / 2);
+    padding: var(--gap) var(--gap-form-small-side);
   }
 
   .lx-form-grid > footer:has(.footer-slot) {
@@ -1963,10 +1964,6 @@ p .lx-person-display-wrapper {
   .lx-data-block-content > .lx-main > .lx-form-section,
   .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section {
     padding: var(--gap-form-small);
-  }
-
-  .lx-form-grid > footer {
-    padding: var(--gap) var(--gap-form-small-side);
   }
 
   .lx-form-grid > header > .lx-group.lx-primary .lx-toolbar-chip {
