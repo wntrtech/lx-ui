@@ -729,8 +729,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-radio-button-wrapper,
 .lx-checkbox-wrapper {
-  /* Do not remove 'position: relative'! It is required to prevent unintended scrolling up on item selection */
-  position: relative; 
   margin: 0.4rem 0;
 }
 
@@ -738,7 +736,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-checkbox,
 .lx-toggle {
   position: absolute;
-  top: 0;
   overflow: hidden;
   width: 1px;
   height: 1px;
