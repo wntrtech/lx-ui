@@ -517,7 +517,7 @@ onMounted(() => {
         kind="ghost"
         :icon="hidePassword ? 'visible' : 'hidden'"
         :disabled="disabled"
-        :title="hidePassword ? props.texts.showPassword : props.texts.hidePassword"
+        :label="hidePassword ? props.texts.showPassword : props.texts.hidePassword"
         v-if="props.kind === 'password'"
         @click="showPasswordChange()"
       />

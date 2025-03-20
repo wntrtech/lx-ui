@@ -105,6 +105,7 @@ const props = defineProps({
       maxProperties: 'Objektam jābut ne vairāk kā {0} atribūtiem',
       addElement: 'Pievienot elementu',
       saveElement: 'Pievienot elementu sarakstam',
+      addObject: 'Pievienot objektu',
     }),
   },
 });
@@ -945,9 +946,10 @@ defineExpose({ validateModel, clearValidations });
             @action-click="deleteObject(name)"
             @click="openObjectModal(id + '-' + name, name)"
           />
+
           <LxButton
             v-if="componentSelect(row, name) === 'objectButton'"
-            label="Izveidot objektu"
+            :label="texts.addObject"
             icon="add-item"
             @click="openObjectModal(id + '-' + name, name)"
             kind="ghost"

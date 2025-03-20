@@ -54,6 +54,8 @@ const props = defineProps({
       clearButton: 'Attīrīt vērtību',
       next: 'Nākamais',
       previous: 'Iepriekšējais',
+      scrollUp: 'Ritināt uz augšu',
+      scrollDown: 'Ritināt uz leju',
     }),
   },
 });

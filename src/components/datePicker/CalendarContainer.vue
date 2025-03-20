@@ -65,6 +65,8 @@ const props = defineProps({
       previous: 'Iepriekšējais',
       doNotIndicateStart: 'Nenorādīt sākumu',
       doNotIndicateEnd: 'Nenorādīt beigas',
+      scrollUp: 'Ritināt uz augšu',
+      scrollDown: 'Ritināt uz leju',
     }),
   },
 });
@@ -2886,7 +2888,7 @@ watch(
         kind="ghost"
         icon="reset"
         variant="icon-only"
-        :title="texts.todayButton"
+        :label="texts.todayButton"
         :disabled="disabled"
         @click.stop.prevent="returnToToday"
       />
@@ -2926,7 +2928,7 @@ watch(
         <LxButton
           v-if="(isMobileScreen && !mobileTimeLayout) || (mode !== 'month' && !isMobileScreen)"
           customClass="lx-previous-slide-button"
-          :title="texts.previous"
+          :label="texts.previous"
           kind="ghost"
           :icon="variant === 'full-rows' ? 'caret-up' : 'previous-page'"
           variant="icon-only"
@@ -3611,7 +3613,7 @@ watch(
         <LxButton
           v-if="(isMobileScreen && !mobileTimeLayout) || (mode !== 'month' && !isMobileScreen)"
           customClass="lx-next-slide-button"
-          :title="texts.next"
+          :label="texts.next"
           kind="ghost"
           :icon="variant === 'full-rows' ? 'caret-down' : 'next-page'"
           variant="icon-only"
@@ -3639,6 +3641,7 @@ watch(
             icon="caret-up"
             variant="icon-only"
             :disabled="disabled"
+            :label="texts.scrollUp"
             @click.stop.prevent="onScrollClick(-1, 'hours')"
           />
 
@@ -3752,6 +3755,7 @@ watch(
             icon="caret-down"
             variant="icon-only"
             :disabled="disabled"
+            :label="texts.scrollDown"
             @click.stop.prevent="onScrollClick(1, 'hours')"
           />
         </div>
@@ -3764,6 +3768,7 @@ watch(
             icon="caret-up"
             variant="icon-only"
             :disabled="disabled"
+            :label="texts.scrollUp"
             @click.stop.prevent="onScrollClick(-1, 'minutes')"
           />
 
@@ -3873,6 +3878,7 @@ watch(
             icon="caret-down"
             variant="icon-only"
             :disabled="disabled"
+            :label="texts.scrollDown"
             @click.stop.prevent="onScrollClick(1, 'minutes')"
           />
         </div>
@@ -3908,7 +3914,6 @@ watch(
       <LxButton
         v-if="pickerType === 'range'"
         custom-class="min-date-button"
-        :title="texts.doNotIndicateStart"
         :label="texts.doNotIndicateStart"
         kind="ghost"
         icon="min-date"
@@ -3942,7 +3947,6 @@ watch(
       <LxButton
         v-if="pickerType === 'range'"
         custom-class="max-date-button"
-        :title="texts.doNotIndicateEnd"
         :label="texts.doNotIndicateEnd"
         kind="ghost"
         icon="max-date"

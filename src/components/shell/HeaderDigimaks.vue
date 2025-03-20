@@ -397,7 +397,7 @@ const userInfoMenu = ref(false);
         v-if="!hideNavBar"
         customClass="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
-        :title="navBarSwitch ? texts.openNavbar : texts.close"
+        :label="navBarSwitch ? texts.openNavbar : texts.close"
         kind="ghost"
         :badge="hasAlerts && alerts && navBarSwitch ? alerts?.length?.toString() : ''"
         :badgeType="alertLevelToBadgeType"
@@ -412,7 +412,7 @@ const userInfoMenu = ref(false);
           <LxButton
             customClass="nav-toggle"
             :icon="navBarSwitch ? 'menu' : 'close'"
-            :title="navBarSwitch ? texts.openNavbar : texts.close"
+            :label="navBarSwitch ? texts.openNavbar : texts.close"
             kind="ghost"
             :badge="hasAlerts && alerts && navBarSwitch ? alerts?.length?.toString() : ''"
             :badgeType="alertLevelToBadgeType"
@@ -424,10 +424,10 @@ const userInfoMenu = ref(false);
             <div v-if="hasHelp">
               <LxButton
                 icon="help"
-                :title="texts.helpTitle"
+                :label="texts.helpTitle"
                 kind="ghost"
-                @click="helpClicked"
                 variant="icon-only"
+                @click="helpClicked"
               />
             </div>
 
@@ -439,7 +439,7 @@ const userInfoMenu = ref(false);
                 <LxButton
                   customClass="lx-header-button"
                   icon="notifications"
-                  :title="texts.alertsTitle"
+                  :label="texts.alertsTitle"
                   :badge="alerts ? alerts?.length?.toString() : ''"
                   :disabled="headerNavDisable"
                   :badgeType="alertLevelToBadgeType"
@@ -453,7 +453,6 @@ const userInfoMenu = ref(false);
                       v-if="alertsKind === 'combo'"
                       kind="ghost"
                       :label="texts.openAlerts"
-                      :title="texts.openAlerts"
                       :disabled="headerNavDisable"
                       icon="open"
                       @click="alertsClicked"
@@ -502,7 +501,6 @@ const userInfoMenu = ref(false);
                       v-if="alertsKind === 'combo'"
                       kind="ghost"
                       :label="texts.openAlerts"
-                      :title="texts.openAlerts"
                       :disabled="headerNavDisable"
                       icon="open"
                       @click="alertsClicked"
@@ -667,7 +665,6 @@ const userInfoMenu = ref(false);
                   :label="texts.languagesTitle"
                   kind="ghost"
                   icon="language"
-                  :title="texts.languagesTitle"
                 />
 
                 <template v-slot:panel>
@@ -691,7 +688,6 @@ const userInfoMenu = ref(false);
                   :label="texts.themeTitle"
                   kind="ghost"
                   :icon="themeIcon"
-                  :title="texts.themeTitle"
                 />
                 <template v-slot:panel>
                   <div class="lx-button-set">

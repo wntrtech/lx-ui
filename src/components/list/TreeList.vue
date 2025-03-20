@@ -278,7 +278,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           v-if="isExpandable(parent)"
           kind="ghost"
           icon="collapse-left"
-          :title="texts?.collapse"
+          variant="icon-only"
+          :label="texts?.collapse"
           @click="goBack()"
         />
         <div class="lx-list-item-container">
@@ -334,7 +335,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         <LxButton
           kind="ghost"
           icon="refresh"
-          :title="texts?.reload"
+          variant="icon-only"
+          :label="texts?.reload"
           @click="reloadItem(parent[idAttribute])"
         />
       </div>
@@ -353,7 +355,8 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           v-if="isExpandable(item)"
           kind="ghost"
           icon="collapse-right"
-          :title="texts?.expand"
+          variant="icon-only"
+          :label="texts?.expand"
           @click="goTo(item[idAttribute], item)"
         />
         <div class="lx-list-item-container">

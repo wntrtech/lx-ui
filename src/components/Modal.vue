@@ -25,6 +25,7 @@ const props = defineProps({
   disableClosing: { default: false, type: Boolean },
   kind: { default: 'default', type: String }, // default or native
   escEnabled: { default: true, type: Boolean },
+  buttonCloseLabel: { default: 'Aizvērt', type: String },
 });
 
 const emits = defineEmits(['closed', 'primaryAction', 'secondaryAction']);
@@ -127,10 +128,17 @@ defineExpose({ open, close });
         >
           <header>
             <p class="lx-primary" :title="label">{{ label }}</p>
-            <LxButton icon="close" kind="ghost" @click="close()" v-if="!disableClosing" />
+            <LxButton
+              v-if="!disableClosing"
+              icon="close"
+              kind="ghost"
+              :label="buttonCloseLabel"
+              variant="icon-only"
+              @click="close()"
+            />
           </header>
           <article class="lx-main">
-            <slot></slot>
+            <slot />
           </article>
           <footer
             class="lx-button-set"
@@ -175,10 +183,18 @@ defineExpose({ open, close });
         >
           <header>
             <p class="lx-primary">{{ label }}</p>
-            <LxButton icon="close" kind="ghost" @click="close()" v-if="!disableClosing" />
+
+            <LxButton
+              v-if="!disableClosing"
+              icon="close"
+              kind="ghost"
+              :label="buttonCloseLabel"
+              variant="icon-only"
+              @click="close()"
+            />
           </header>
           <article class="lx-main">
-            <slot></slot>
+            <slot />
           </article>
           <footer
             class="lx-button-set"

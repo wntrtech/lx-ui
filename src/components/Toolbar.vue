@@ -109,7 +109,8 @@ function actionClicked(id) {
             :active="action?.active"
             :destructive="action?.destructive"
             :disabled="action?.disabled || props.disabled || props.loading"
-            :label="action?.label"
+            :label="action?.label || action?.name"
+            :variant="action?.label ? 'default' : 'icon-only'"
             @click="actionClicked(action.id)"
           />
           <LxDropDownMenu v-if="action?.groupId === group.id && action.nestedGroupId">
@@ -123,7 +124,8 @@ function actionClicked(id) {
               :busy="action?.busy"
               :loading="action?.loading"
               :active="action?.active"
-              :title="action?.name"
+              :label="action?.name"
+              variant="icon-only"
               :destructive="action?.destructive"
               :disabled="action?.disabled || props.disabled || props.loading"
             />
@@ -138,7 +140,6 @@ function actionClicked(id) {
                   :icon-set="button?.iconSet"
                   :busy="button?.busy"
                   :loading="button?.loading"
-                  :title="button?.name"
                   :active="action?.active"
                   :label="button?.name"
                   :destructive="button?.destructive"
@@ -152,7 +153,13 @@ function actionClicked(id) {
       </LxToolbarGroup>
       <LxToolbarGroup class="action-definitions-small" v-if="leftActions?.length > 0">
         <LxDropDownMenu v-if="leftActions?.length > 1">
-          <LxButton kind="ghost" :tabindex="0" icon="menu" title="Papildus darbības" />
+          <LxButton
+            kind="ghost"
+            :tabindex="0"
+            icon="menu"
+            label="Papildus darbības"
+            variant="icon-only"
+          />
           <template #panel>
             <template v-for="button in leftActions" :key="button.id">
               <LxButton
@@ -164,7 +171,6 @@ function actionClicked(id) {
                 :icon-set="button?.iconSet"
                 :busy="button?.busy"
                 :loading="button?.loading"
-                :title="button?.name"
                 :active="action?.active"
                 :label="button?.name"
                 :destructive="button?.destructive"
@@ -184,7 +190,8 @@ function actionClicked(id) {
           :busy="leftActions?.[0].busy"
           :loading="leftActions?.[0].loading"
           :active="action?.active"
-          :title="leftActions?.[0]?.name"
+          variant="icon-only"
+          :label="leftActions?.[0]?.name"
           :destructive="leftActions?.[0]?.destructive"
           :disabled="leftActions?.[0]?.disabled || props.disabled || props.loading"
           @click="actionClicked(leftActions?.[0].id)"
@@ -221,7 +228,8 @@ function actionClicked(id) {
             :title="action?.name"
             :destructive="action?.destructive"
             :disabled="action?.disabled || props.disabled || props.loading"
-            :label="action?.label"
+            :label="action?.label || action?.name"
+            :variant="action?.label ? 'default' : 'icon-only'"
             @click="actionClicked(action.id)"
           />
           <LxDropDownMenu v-if="action?.groupId === group.id && action.nestedGroupId">
@@ -235,7 +243,8 @@ function actionClicked(id) {
               :busy="action?.busy"
               :loading="action?.loading"
               :active="action?.active"
-              :title="action?.name"
+              variant="icon-only"
+              :label="action?.name"
               :destructive="action?.destructive"
               :disabled="action?.disabled || props.disabled || props.loading"
             />
@@ -250,7 +259,6 @@ function actionClicked(id) {
                   :icon-set="button?.iconSet"
                   :busy="button?.busy"
                   :loading="button?.loading"
-                  :title="button?.name"
                   :active="action?.active"
                   :label="button?.name"
                   :destructive="button?.destructive"
@@ -264,7 +272,13 @@ function actionClicked(id) {
       </LxToolbarGroup>
       <LxToolbarGroup class="action-definitions-small" v-if="rightActions?.length > 0">
         <LxDropDownMenu v-if="rightActions?.length > 1">
-          <LxButton kind="ghost" :tabindex="0" icon="menu" title="Papildus darbības" />
+          <LxButton
+            kind="ghost"
+            :tabindex="0"
+            icon="menu"
+            label="Papildus darbības"
+            variant="icon-only"
+          />
           <template #panel>
             <template v-for="button in rightActions" :key="button.id">
               <LxButton
@@ -276,7 +290,6 @@ function actionClicked(id) {
                 :icon-set="button?.iconSet"
                 :busy="button?.busy"
                 :loading="button?.loading"
-                :title="button?.name"
                 :active="action?.active"
                 :label="button?.name"
                 :destructive="button?.destructive"
@@ -295,7 +308,8 @@ function actionClicked(id) {
           :icon-set="rightActions?.[0]?.iconSet"
           :busy="rightActions?.[0]?.busy"
           :loading="rightActions?.[0]?.loading"
-          :title="rightActions?.[0]?.name"
+          variant="icon-only"
+          :label="rightActions?.[0]?.name"
           :active="action?.active"
           :destructive="rightActions?.[0]?.destructive"
           :disabled="rightActions?.[0]?.disabled || props.disabled || props.loading"

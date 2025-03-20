@@ -147,7 +147,11 @@ const sectionRequiredMode = inject('sectionMode', ref('none'));
 const formRequiredMode = inject('formMode', ref('none'));
 const requiredTexts = inject(
   'rowRequiredTexts',
-  ref({ required: '(obligāts)', optional: '(neobligāts)' })
+  ref({
+    required: '(obligāts)',
+    optional: '(neobligāts)',
+    overflowMenu: 'Atvērt papildus iespējas',
+  })
 );
 const sectionColumnCount = inject('sectionColumnCount', 1);
 const formOrientation = inject('formOrientation', ref(null));
@@ -249,7 +253,8 @@ provide('rowId', idComputed);
           <LxButton
             v-else
             kind="ghost"
-            :title="actionDefinitions?.[0]?.name"
+            variant="icon-only"
+            :label="actionDefinitions?.[0]?.name"
             :icon="actionDefinitions?.[0]?.icon"
             :disabled="actionDefinitions?.[0]?.disabled"
             :loading="actionDefinitions?.[0]?.loading"
@@ -260,7 +265,12 @@ provide('rowId', idComputed);
         </template>
 
         <LxDropDownMenu ref="actionDropDown" v-else-if="actionDefinitions?.length > 1">
-          <LxButton icon="overflow-menu" kind="ghost" />
+          <LxButton
+            icon="overflow-menu"
+            kind="ghost"
+            :label="requiredTexts?.overflowMenu"
+            variant="icon-only"
+          />
           <template #panel>
             <div class="lx-action-controller" v-for="action in actionDefinitions" :key="action.id">
               <div class="lx-action-toggle" v-if="action?.kind === 'toggle'">
@@ -281,7 +291,6 @@ provide('rowId', idComputed);
               <LxButton
                 v-else
                 kind="ghost"
-                :title="action?.name"
                 :label="action?.name"
                 :icon="action?.icon"
                 :disabled="action?.disabled"
@@ -341,7 +350,8 @@ provide('rowId', idComputed);
           <LxButton
             v-else
             kind="ghost"
-            :title="actionDefinitions?.[0]?.name"
+            variant="icon-only"
+            :label="actionDefinitions?.[0]?.name"
             :icon="actionDefinitions?.[0]?.icon"
             :disabled="actionDefinitions?.[0]?.disabled"
             :loading="actionDefinitions?.[0]?.loading"
@@ -352,7 +362,12 @@ provide('rowId', idComputed);
         </template>
 
         <LxDropDownMenu ref="actionDropDown" v-else-if="actionDefinitions?.length > 1">
-          <LxButton icon="overflow-menu" kind="ghost" />
+          <LxButton
+            icon="overflow-menu"
+            kind="ghost"
+            :label="requiredTexts?.overflowMenu"
+            variant="icon-only"
+          />
           <template #panel>
             <div class="lx-action-controller" v-for="action in actionDefinitions" :key="action.id">
               <div class="lx-action-toggle" v-if="action?.kind === 'toggle'">
@@ -373,7 +388,6 @@ provide('rowId', idComputed);
               <LxButton
                 v-else
                 kind="ghost"
-                :title="action?.name"
                 :label="action?.name"
                 :icon="action?.icon"
                 :disabled="action?.disabled"

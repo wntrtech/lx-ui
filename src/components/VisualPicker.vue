@@ -391,8 +391,9 @@ defineExpose({ addTitles });
               v-if="!readOnly"
               icon="close"
               kind="ghost"
+              variant="icon-only"
+              :label="texts.removeCountry"
               @click="removeItem(item?.id)"
-              :title="texts.removeCountry"
             />
           </div>
         </div>

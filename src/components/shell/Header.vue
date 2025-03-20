@@ -366,7 +366,8 @@ onMounted(() => {
         v-if="!hideNavBar && kind !== 'public' && kind !== 'latvijalv'"
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
-        :title="navBarSwitch ? texts.openNavbar : texts.close"
+        variant="icon-only"
+        :label="navBarSwitch ? texts.openNavbar : texts.close"
         kind="ghost"
         :tabindex="navBarShortMode ? 1 : -1"
         @click="navToggle"
@@ -412,10 +413,11 @@ onMounted(() => {
     <div id="extra-menu" class="lx-group" v-if="kind === 'default'" tabindex="-1">
       <div class="lx-additional-nav-menu" :class="[{ 'lx-active': y > 140 }]">
         <LxButton
+          v-if="showBackButton"
           icon="back"
           kind="ghost"
-          v-if="showBackButton"
-          :title="goBackLabel"
+          variant="icon-only"
+          :label="goBackLabel"
           :disabled="y <= 140"
           @click="goBack"
         />
@@ -477,7 +479,8 @@ onMounted(() => {
         v-if="!hideNavBar"
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
-        :title="navBarSwitch ? texts.openNavbar : texts.close"
+        variant="icon-only"
+        :label="navBarSwitch ? texts.openNavbar : texts.close"
         kind="ghost"
         @click="navToggle"
       />

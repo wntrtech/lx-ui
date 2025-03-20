@@ -171,7 +171,8 @@ defineExpose({ focus });
               ? 'checkbox-indeterminate'
               : 'checkbox'
           "
-          :title="selectStatus === 'none' ? texts.selectWholeGroup : texts.clearSelected"
+          variant="icon-only"
+          :label="selectStatus === 'none' ? texts.selectWholeGroup : texts.clearSelected"
           @click="selectExpander($event, id)"
         />
       </template>

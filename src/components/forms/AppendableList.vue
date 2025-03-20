@@ -228,7 +228,8 @@ defineExpose({ clearModel });
             <LxButton
               v-if="!readOnly && (!hideRemoveAttribute || !item[hideRemoveAttribute])"
               icon="remove-item"
-              :title="texts.removeItem"
+              variant="icon-only"
+              :label="texts.removeItem"
               :destructive="true"
               kind="ghost"
               @click="removeItem(item._lx_appendableKey)"
@@ -240,12 +241,12 @@ defineExpose({ clearModel });
 
     <div>
       <LxButton
+        v-if="!readOnly && canAddItems"
         :id="`${id}-action-add-item`"
         kind="tertiary"
         :label="addButtonLabel"
         icon="add-item"
         @click="addItem"
-        v-if="!readOnly && canAddItems"
       />
     </div>
   </div>

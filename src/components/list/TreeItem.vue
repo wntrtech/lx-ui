@@ -180,7 +180,8 @@ watch(
         v-if="isExpandable(item)"
         kind="ghost"
         :icon="isExpanded(item?.[idAttribute]) ? 'chevron-up' : 'chevron-down'"
-        :title="isExpanded(item?.[idAttribute]) ? texts?.collapse : texts?.expand"
+        variant="icon-only"
+        :label="isExpanded(item?.[idAttribute]) ? texts?.collapse : texts?.expand"
         @click="collapse(item?.[idAttribute], item)"
       />
       <div class="lx-list-item-container">
@@ -236,7 +237,8 @@ watch(
       <LxButton
         kind="ghost"
         icon="refresh"
-        :title="texts?.reload"
+        variant="icon-only"
+        :label="texts?.reload"
         @click="reloadItem(item[idAttribute])"
       />
     </div>

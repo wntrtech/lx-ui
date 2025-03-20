@@ -593,9 +593,9 @@ const columnReadOnly = computed(() => {
               <div v-if="model?.length > 0" class="lx-tag">
                 <div class="lx-tag-label">{{ model?.length }}</div>
                 <div class="lx-tag-button">
-                  <lx-button
+                  <LxButton
                     id="clearButton"
-                    :title="texts.clearChosen"
+                    :label="texts.clearChosen"
                     :disabled="disabled"
                     kind="secondary"
                     variant="icon-only"

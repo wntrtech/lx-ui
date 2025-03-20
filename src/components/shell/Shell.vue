@@ -1008,7 +1008,7 @@ function focusFirstMainFocusableElement() {
               icon="close"
               kind="ghost"
               variant="icon-only"
-              :title="texts.close"
+              :label="texts.close"
               @click="closeAlert(alert)"
             />
           </div>
@@ -1112,6 +1112,13 @@ function focusFirstMainFocusableElement() {
           :icon="navBarSwitchModel === null ? 'menu' : navBarSwitchModel ? 'menu' : 'close'"
           variant="icon-only"
           kind="ghost"
+          :label="
+            navBarSwitchModel === null
+              ? texts.openNavbar
+              : navBarSwitchModel
+              ? texts.openNavbar
+              : texts.close
+          "
           @click="navToggleButton()"
         />
       </div>

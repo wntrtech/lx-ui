@@ -15,6 +15,7 @@ const props = defineProps({
   label: {
     type: String,
     default: '',
+    required: true,
   },
   title: {
     type: String,

@@ -42,6 +42,12 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  texts: {
+    type: Object,
+    default: () => ({
+      overflowMenu: 'Atvērt papildus iespējas',
+    }),
+  },
 });
 const emits = defineEmits(['actionClick']);
 
@@ -61,29 +67,34 @@ function actionClicked(actionName) {
     <header v-if="showHeader">
       <p>{{ label }}</p>
       <div class="lx-widget-toolbar-button" v-if="actions && actions?.length === 1">
-        <lx-button
+        <LxButton
           v-for="action in actions"
           :key="action.actionName"
           kind="ghost"
           tabindex="0"
           :icon="action.icon"
-          :title="action.label"
+          variant="icon-only"
+          :label="action.label"
           :destructive="action.isDestructive"
           @click="actionClicked(action.actionName)"
         />
       </div>
       <LxDropDownMenu v-if="actions && actions?.length > 1">
         <div class="lx-widget-toolbar-button">
-          <lx-button icon="overflow-menu" kind="ghost" />
+          <LxButton
+            icon="overflow-menu"
+            kind="ghost"
+            :label="texts.overflowMenu"
+            variant="icon-only"
+          />
         </div>
         <template v-slot:panel>
           <div class="lx-button-set">
-            <lx-button
+            <LxButton
               v-for="action in actions"
               :key="action.actionName"
               :icon="action.icon"
               :label="action.label"
-              :title="action.label"
               tabindex="0"
               :destructive="action.isDestructive"
               @click="actionClicked(action.actionName)"
@@ -95,7 +106,7 @@ function actionClicked(actionName) {
     <article class="lx-main">
       <slot />
     </article>
-    <footer v-if="showFooter"></footer>
+    <footer v-if="showFooter" />
   </div>
   <router-link
     :id="id"
@@ -109,6 +120,6 @@ function actionClicked(actionName) {
     <article class="lx-main">
       <slot />
     </article>
-    <footer v-if="showFooter"></footer>
+    <footer v-if="showFooter" />
   </router-link>
 </template>

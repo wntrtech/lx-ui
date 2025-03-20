@@ -491,7 +491,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           customClass="camera-button"
           icon="camera"
           kind="tertiary"
-          :title="texts.useCamera"
+          variant="icon-only"
+          :label="texts.useCamera"
           :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
@@ -522,7 +523,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           customClass="camera-button"
           icon="camera"
           kind="tertiary"
-          :title="texts.useCamera"
+          variant="icon-only"
+          :label="texts.useCamera"
           :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
@@ -557,7 +559,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           customClass="camera-button"
           icon="camera"
           kind="tertiary"
-          :title="texts.useCamera"
+          variant="icon-only"
+          :label="texts.useCamera"
           :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
@@ -588,7 +591,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           customClass="camera-button"
           icon="camera"
           kind="tertiary"
-          :title="texts.useCamera"
+          variant="icon-only"
+          :label="texts.useCamera"
           :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />

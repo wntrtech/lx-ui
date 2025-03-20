@@ -108,6 +108,7 @@ const props = defineProps({
       closeSearch: 'Aizvērt meklētāju',
       skipLinkLabel: 'Izlaist sarakstu',
       skipLinkTitle: 'Izlaist sarakstu',
+      overflowMenu: 'Atvērt papildus iespējas',
     }),
   },
 });
@@ -1146,7 +1147,8 @@ function focusFirstFocusableElementAfter() {
             kind="ghost"
             :busy="busy"
             :disabled="loading"
-            :title="texts.search"
+            variant="icon-only"
+            :label="texts.search"
             @click="serverSideSearch()"
           />
           <LxButton
@@ -1154,7 +1156,7 @@ function focusFirstFocusableElementAfter() {
             icon="clear"
             kind="ghost"
             variant="icon-only"
-            :title="texts.clear"
+            :label="texts.clear"
             :disabled="loading || busy"
             @click="clear()"
           />
@@ -1177,7 +1179,8 @@ function focusFirstFocusableElementAfter() {
               <LxButton
                 kind="ghost"
                 :icon="searchField ? 'close' : 'search'"
-                :title="searchField ? texts.closeSearch : texts.openSearch"
+                variant="icon-only"
+                :label="searchField ? texts.closeSearch : texts.openSearch"
                 @click="toggleSearch"
                 v-if="hasSearch"
               />
@@ -1192,9 +1195,10 @@ function focusFirstFocusableElementAfter() {
                 selectingKind === 'multiple' &&
                 kind !== 'draggable'
               "
-              @click="selectRows()"
               :disabled="loading || busy"
-              :title="texts.selectAllRows"
+              variant="icon-only"
+              :label="texts.selectAllRows"
+              @click="selectRows()"
             />
           </template>
           <template v-if="selectedItems?.length > 0">
@@ -1205,7 +1209,6 @@ function focusFirstFocusableElementAfter() {
                   :key="selectAction.id"
                   :icon="selectAction.icon"
                   :label="selectAction.name"
-                  :title="selectAction.name"
                   :destructive="selectAction.destructive"
                   :disabled="selectAction.disabled"
                   kind="ghost"
@@ -1217,14 +1220,18 @@ function focusFirstFocusableElementAfter() {
                 v-if="selectionActionDefinitions?.length > 0"
               >
                 <LxDropDownMenu>
-                  <LxButton icon="menu" kind="ghost" />
+                  <LxButton
+                    icon="menu"
+                    kind="ghost"
+                    :label="texts.overflowMenu"
+                    variant="icon-only"
+                  />
                   <template #panel>
                     <LxButton
                       v-for="selectAction in selectionActionDefinitions"
                       :key="selectAction.id"
                       :icon="selectAction.icon"
                       :label="selectAction.name"
-                      :title="selectAction.name"
                       :destructive="selectAction.destructive"
                       :disabled="selectAction.disabled"
                       kind="ghost"
@@ -1240,19 +1247,22 @@ function focusFirstFocusableElementAfter() {
               v-if="autoSearchMode === 'compact'"
             >
               <LxButton
+                v-if="hasSearch"
                 class="toolbar-search-button"
                 :class="[{ 'is-expanded': searchField }]"
                 kind="ghost"
                 :icon="searchField ? 'close' : 'search'"
+                :label="searchField ? texts.closeSearch : texts.openSearch"
+                variant="icon-only"
                 @click="toggleSearch"
-                v-if="hasSearch"
               />
             </div>
             <LxButton
               :id="`${id}-cancel-select-all`"
               v-if="hasSelecting && kind !== 'draggable'"
               :icon="selectIcon"
-              :title="texts.clearSelected"
+              variant="icon-only"
+              :label="texts.clearSelected"
               kind="ghost"
               @click="cancelSelection()"
             />
@@ -1281,7 +1291,8 @@ function focusFirstFocusableElementAfter() {
             kind="ghost"
             :busy="busy"
             :disabled="loading"
-            :title="texts.search"
+            variant="icon-only"
+            :label="texts.search"
             @click="serverSideSearch()"
           />
           <LxButton
@@ -1289,7 +1300,7 @@ function focusFirstFocusableElementAfter() {
             icon="clear"
             kind="ghost"
             variant="icon-only"
-            :title="texts.clear"
+            :label="texts.clear"
             :disabled="loading || busy"
             @click="clear()"
           />
@@ -1326,6 +1337,7 @@ function focusFirstFocusableElementAfter() {
             :category="item[categoryAttribute]"
             :disabled="loading || busy"
             :selected="isItemSelected(item[idAttribute])"
+            :texts="texts"
             @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
             @action-click="actionClicked"
           >
@@ -1420,7 +1432,6 @@ function focusFirstFocusableElementAfter() {
                             :key="button.id"
                             :icon="button.icon"
                             :label="button.title"
-                            :title="button.title"
                             :disabled="button.disabled"
                             @click="moveDraggableItem(button.id, element, 'grouped')"
                           />
@@ -1443,6 +1454,7 @@ function focusFirstFocusableElementAfter() {
                       :clickable="element[clickableAttribute]"
                       :category="element[categoryAttribute]"
                       :disabled="loading || busy"
+                      :texts="texts"
                       @click="
                         element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
                       "
@@ -1520,6 +1532,7 @@ function focusFirstFocusableElementAfter() {
                 :category="item[categoryAttribute]"
                 :disabled="loading || busy"
                 :selected="isItemSelected(item[idAttribute])"
+                :texts="texts"
                 @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
                 @action-click="actionClicked"
               >
@@ -1625,6 +1638,7 @@ function focusFirstFocusableElementAfter() {
               :category="item[categoryAttribute]"
               :disabled="loading || busy"
               :selected="isItemSelected(item[idAttribute])"
+              :texts="texts"
               @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
               @action-click="actionClicked"
             >
@@ -1767,6 +1781,7 @@ function focusFirstFocusableElementAfter() {
                   :category="item[categoryAttribute]"
                   :disabled="loading || busy"
                   :selected="isItemSelected(item[idAttribute])"
+                  :texts="texts"
                   @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
                   @action-click="actionClicked"
                 >
@@ -1834,6 +1849,7 @@ function focusFirstFocusableElementAfter() {
             :category="item[categoryAttribute]"
             :disabled="loading || busy"
             :selected="isItemSelected(item[idAttribute])"
+            :texts="texts"
             @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
             @action-click="actionClicked"
           >
@@ -1927,7 +1943,6 @@ function focusFirstFocusableElementAfter() {
                             :key="button.id"
                             :icon="button.icon"
                             :label="button.title"
-                            :title="button.title"
                             :disabled="button.disabled"
                             @click="moveDraggableItem(button.id, element, 'ungrouped')"
                           />
@@ -1951,6 +1966,7 @@ function focusFirstFocusableElementAfter() {
                       :clickable="element[clickableAttribute]"
                       :category="element[categoryAttribute]"
                       :disabled="loading || busy"
+                      :texts="texts"
                       @click="
                         element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
                       "
@@ -2045,7 +2061,6 @@ function focusFirstFocusableElementAfter() {
                               :key="button.id"
                               :icon="button.icon"
                               :label="button.title"
-                              :title="button.title"
                               :disabled="button.disabled"
                               @click="moveDraggableItem(button.id, element, 'grouped')"
                             />
@@ -2070,6 +2085,7 @@ function focusFirstFocusableElementAfter() {
                         :category="element[categoryAttribute]"
                         :disabled="loading || busy"
                         :selected="isItemSelected(element[idAttribute])"
+                        :texts="texts"
                         @click="
                           element[hrefAttribute]
                             ? null
@@ -2159,6 +2175,7 @@ function focusFirstFocusableElementAfter() {
           :category="element[categoryAttribute]"
           :disabled="loading || busy"
           :selected="isItemSelected(element[idAttribute])"
+          :texts="texts"
           @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
           @action-click="actionClicked"
         >

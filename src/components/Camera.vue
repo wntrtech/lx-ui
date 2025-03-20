@@ -242,13 +242,15 @@ onUnmounted(() => {
             v-if="camerasList?.length > 1 && cameraSwitcherMode === 'toggle'"
             icon="camera-switch"
             kind="ghost"
-            :title="texts.changeCamera"
+            variant="icon-only"
+            :label="texts.changeCamera"
             :disabled="error || loading"
             @click="switchCamera()"
           />
           <LxDropDownMenu v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'">
             <LxButton
-              :title="texts.changeCamera"
+              :label="texts.changeCamera"
+              variant="icon-only"
               kind="ghost"
               icon="menu"
               :disabled="error || loading"

@@ -112,7 +112,7 @@ function getIconSet(item) {
         variant="icon-only"
         kind="ghost"
         icon="apps"
-        :title="texts.megaMenuTitle"
+        :label="texts.megaMenuTitle"
       />
     </div>
 

@@ -193,7 +193,8 @@ onMounted(async () => {
         :tooltip="texts.toggleFlashlight"
       />
       <LxButton
-        :title="texts.scanFile"
+        variant="icon-only"
+        :label="texts.scanFile"
         kind="ghost"
         icon="documents"
         :disabled="refreshError || accepted || error"
@@ -204,11 +205,12 @@ onMounted(async () => {
         v-if="camerasList?.length > 1 && cameraSwitcherMode === 'toggle'"
         icon="camera-switch"
         kind="ghost"
-        :title="texts.changeCamera"
+        variant="icon-only"
+        :label="texts.changeCamera"
         @click="switchCamera()"
       />
       <LxDropDownMenu v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'">
-        <lx-button :title="texts.changeCamera" kind="ghost" icon="menu" />
+        <LxButton :label="texts.changeCamera" variant="icon-only" kind="ghost" icon="menu" />
         <template #panel>
           <LxButton
             v-for="camera in camerasList"

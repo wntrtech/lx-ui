@@ -328,13 +328,20 @@ onUnmounted(() => {
       <template #leftArea v-if="showSearch">
         <div class="lx-map-search">
           <LxTextInput v-model="searchValue" @keydown.enter="emitSearch()" />
-          <LxButton icon="search" @click="emitSearch()" kind="ghost" :title="texts.search" />
           <LxButton
-            icon="clear"
-            @click="clearSearch()"
+            icon="search"
             kind="ghost"
+            variant="icon-only"
+            :label="texts.search"
+            @click="emitSearch()"
+          />
+          <LxButton
             v-if="searchValue"
-            :title="texts.clear"
+            icon="clear"
+            kind="ghost"
+            variant="icon-only"
+            :label="texts.clear"
+            @click="clearSearch()"
           />
         </div>
       </template>
@@ -348,14 +355,20 @@ onUnmounted(() => {
               @update:model-value="grayscaleToggle()"
             />
             <LxButton
-              icon="location-current"
-              @click="centerLocation"
-              kind="ghost"
-              :title="texts.currentLocation"
               v-if="hasUserLocation"
+              icon="location-current"
+              kind="ghost"
+              variant="icon-only"
+              :label="texts.currentLocation"
+              @click="centerLocation"
             />
             <LxDropDownMenu>
-              <LxButton icon="overflow-menu" kind="ghost" :title="texts.moreOptions" />
+              <LxButton
+                icon="overflow-menu"
+                kind="ghost"
+                :label="texts.moreOptions"
+                variant="icon-only"
+              />
               <template #clickSafePanel>
                 <p class="lx-menu-label">{{ texts.grayscale }}:</p>
                 <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" />

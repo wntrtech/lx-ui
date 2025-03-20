@@ -107,12 +107,13 @@ defineExpose({ selectItem });
     </Transition>
 
     <LxButton
+      v-if="windowWidth < 1200 && activeItemCode"
       :id="`${id}-action-back`"
       icon="back"
-      @click="activeItemCode = null"
-      v-if="windowWidth < 1200 && activeItemCode"
-      :title="texts.back"
+      variant="icon-only"
+      :label="texts.back"
       kind="ghost"
+      @click="activeItemCode = null"
     />
     <Transition :name="windowWidth < 1200 ? 'master-detail-slide-left' : ''">
       <div class="lx-detail" v-if="windowWidth >= 1200 || activeItemCode" ref="detailRef">

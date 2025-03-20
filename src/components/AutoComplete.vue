@@ -1044,7 +1044,7 @@ onMounted(() => {
                           <div class="lx-tag-button">
                             <LxButton
                               id="clearButton"
-                              :title="texts.clear"
+                              :label="texts.clear"
                               :disabled="disabled"
                               kind="secondary"
                               variant="icon-only"
@@ -1134,7 +1134,8 @@ onMounted(() => {
                           :disabled="disabled"
                           icon="close"
                           kind="ghost"
-                          :title="texts.clear"
+                          variant="icon-only"
+                          :label="texts.clear"
                           @click="clear"
                         />
                         <LxButton
@@ -1148,7 +1149,8 @@ onMounted(() => {
                           :disabled="disabled"
                           icon="close"
                           kind="ghost"
-                          :title="texts.clear"
+                          variant="icon-only"
+                          :label="texts.clear"
                           @click="clear"
                         />
                         <LxButton
@@ -1157,7 +1159,8 @@ onMounted(() => {
                           :disabled="disabled"
                           icon="search-details"
                           kind="ghost"
-                          :title="texts.detailsButton"
+                          variant="icon-only"
+                          :label="texts.detailsButton"
                           @click="openDetails"
                           @keydown.enter="openDetails"
                           @keydown.tab="focusOnDropDown"

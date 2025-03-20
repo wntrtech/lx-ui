@@ -247,6 +247,8 @@ const props = defineProps({
       skipLinkTitle: 'Izlaist formu',
       previous: 'Iepriekšējais',
       next: 'Nākamais',
+      overflowMenu: 'Atvērt papildus iespējas',
+      additionalActions: 'Papildus darbības',
     }),
   },
 });
@@ -332,6 +334,7 @@ const indexRef = computed(() => props.index);
 const textsComp = computed(() => ({
   required: props.texts.required,
   optional: props.texts.optional,
+  overflowMenu: props.texts.overflowMenu,
 }));
 const requiredMode = computed(() => props.requiredMode);
 const formOrientation = computed(() => props.orientation);
@@ -864,10 +867,12 @@ function focusFirstFocusableElementAfter() {
             custom-class="additional-button-icon"
             :label="texts?.otherActions"
           />
+
           <LxButton
             :icon="index?.length > 0 && props.indexType === 'default' ? 'menu' : 'overflow-menu'"
             kind="ghost"
             variant="icon-only"
+            :label="texts.overflowMenu"
             custom-class="additional-button-icon-menu"
           />
           <template #panel>
@@ -875,7 +880,7 @@ function focusFirstFocusableElementAfter() {
               class="lx-description additional-buttons-label"
               v-if="index?.length > 0 && props.indexType === 'default'"
             >
-              Papildus darbības
+              {{ texts.additionalActions }}
             </p>
             <LxButton
               v-for="button in additionalButtons"
@@ -926,7 +931,7 @@ function focusFirstFocusableElementAfter() {
         v-if="additionalButtons?.length === 0 && props.indexType === 'default' && index?.length > 0"
       >
         <LxDropDownMenu>
-          <LxButton icon="menu" kind="ghost" variant="icon-only" />
+          <LxButton icon="menu" kind="ghost" variant="icon-only" :label="texts.overflowMenu" />
           <template #panel>
             <div
               class="additional-index-button"
@@ -951,12 +956,13 @@ function focusFirstFocusableElementAfter() {
       </div>
     </header>
     <LxTabControl
+      v-if="props.indexType === 'tabs' && index?.length > 0"
       ref="tabControl"
       :value="props.index"
-      v-if="props.indexType === 'tabs' && index?.length > 0"
+      :kind="indexHasIcons ? 'combo' : 'default'"
+      :texts="texts"
       @click="hideAll"
       @keydown.enter="hideAll"
-      :kind="indexHasIcons ? 'combo' : 'default'"
     >
       <template #body>
         <div

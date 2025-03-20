@@ -1441,7 +1441,8 @@ onUnmounted(() => {
             icon="first-page"
             @click="firstPage"
             kind="ghost"
-            :title="props.texts.firstPage"
+            variant="icon-only"
+            :label="props.texts.firstPage"
             :disabled="isPrevBtnDisabled"
           />
 
@@ -1450,7 +1451,8 @@ onUnmounted(() => {
             icon="previous-page"
             @click="debouncedPrevPage"
             kind="ghost"
-            :title="props.texts.prevPage"
+            variant="icon-only"
+            :label="props.texts.prevPage"
             :disabled="isPrevBtnDisabled"
           />
 
@@ -1459,7 +1461,8 @@ onUnmounted(() => {
               class="placeholder"
               v-if="!showInput || renderingInProgress"
               tabindex="0"
-              :title="props.texts.inputTooltip"
+              variant="icon-only"
+              :label="props.texts.inputTooltip"
               @click="handlePlaceholderClick"
               @keydown.enter="handlePlaceholderClick"
             >
@@ -1479,7 +1482,8 @@ onUnmounted(() => {
               icon="arrow-right"
               @click="goToPage"
               kind="ghost"
-              :title="props.texts.goToPage"
+              variant="icon-only"
+              :label="props.texts.goToPage"
               :disabled="!showInput || renderingInProgress"
             />
           </div>
@@ -1494,7 +1498,8 @@ onUnmounted(() => {
             :id="`${id}-action-next-page`"
             icon="next-page"
             kind="ghost"
-            :title="props.texts.nextPage"
+            variant="icon-only"
+            :label="props.texts.nextPage"
             :disabled="isNextBtnDisabled"
             @click="debouncedNextPage"
           />
@@ -1503,7 +1508,8 @@ onUnmounted(() => {
             :id="`${id}-action-last-page`"
             icon="last-page"
             kind="ghost"
-            :title="props.texts.lastPage"
+            variant="icon-only"
+            :label="props.texts.lastPage"
             :disabled="isNextBtnDisabled"
             @click="lastPage"
           />
@@ -1513,8 +1519,8 @@ onUnmounted(() => {
             :id="`${id}-action-download`"
             icon="download"
             kind="primary"
-            :label="windowWidth >= 540 ? props.texts.download : ''"
-            :title="props.texts.download"
+            :label="props.texts.download"
+            :variant="windowWidth >= 540 ? 'default' : 'icon-only'"
             :disabled="renderingInProgress"
             @click="downloadFile()"
           />

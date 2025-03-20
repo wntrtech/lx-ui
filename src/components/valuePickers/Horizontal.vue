@@ -407,6 +407,7 @@ function focusNext() {
       class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
     >
       <LxButton
+        v-if="hasSelectAll && kind === 'multiple'"
         kind="ghost"
         :icon="
           areSomeSelected
@@ -415,11 +416,10 @@ function focusNext() {
               : 'checkbox-indeterminate'
             : 'checkbox'
         "
-        v-if="hasSelectAll && kind === 'multiple'"
         :disabled="disabled"
-        @click="selectAll"
         :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
         :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+        @click="selectAll"
       />
       <LxTextInput
         v-if="hasSearch"
@@ -436,7 +436,7 @@ function focusNext() {
         kind="ghost"
         variant="icon-only"
         :disabled="disabled"
-        :title="texts.clearQuery"
+        :label="texts.clearQuery"
         @click="query = ''"
       />
     </div>

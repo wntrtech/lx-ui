@@ -83,14 +83,14 @@ function pickwidget(level) {
       </div>
       <div class="lx-cover-alert-right-group" v-if="alerts.length > 1">
         <LxButton
-          :title="previousAlertTitle"
+          :label="previousAlertTitle"
           @click="changeCurrentAlert('previous')"
           variant="icon-only"
           icon="chevron-up"
           kind="ghost"
         />
         <LxButton
-          :title="nextAlertTitle"
+          :label="nextAlertTitle"
           @click="changeCurrentAlert('next')"
           variant="icon-only"
           icon="chevron-down"

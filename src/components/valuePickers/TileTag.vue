@@ -367,6 +367,7 @@ function updateDescriptionTabIndexes(items) {
         :class="[{ 'select-all': hasSelectAll && kind === 'multiple' }]"
       >
         <LxButton
+          v-if="hasSelectAll && kind === 'multiple'"
           kind="ghost"
           :icon="
             areSomeSelected
@@ -375,13 +376,12 @@ function updateDescriptionTabIndexes(items) {
                 : 'checkbox-indeterminate'
               : 'checkbox'
           "
-          v-if="hasSelectAll && kind === 'multiple'"
           :disabled="disabled"
-          @click="selectAll"
           :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
           :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+          @click="selectAll"
         />
-        <lx-text-input
+        <LxTextInput
           v-if="hasSearch"
           :disabled="disabled"
           ref="queryInput"
@@ -391,12 +391,12 @@ function updateDescriptionTabIndexes(items) {
           role="search"
           :aria-labelledby="labelId"
         />
-        <lx-button
+        <LxButton
           v-if="query && hasSearch"
           icon="clear"
           kind="ghost"
           variant="icon-only"
-          :title="texts.clearQuery"
+          :label="texts.clearQuery"
           :disabled="disabled"
           @click="query = ''"
         />

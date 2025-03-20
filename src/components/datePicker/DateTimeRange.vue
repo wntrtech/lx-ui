@@ -53,6 +53,8 @@ const props = defineProps({
       previous: 'Iepriekšējais',
       doNotIndicateStart: 'Nenorādīt sākumu',
       doNotIndicateEnd: 'Nenorādīt beigas',
+      scrollUp: 'Ritināt uz augšu',
+      scrollDown: 'Ritināt uz leju',
     }),
   },
 });

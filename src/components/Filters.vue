@@ -106,7 +106,7 @@ defineExpose({ toggleExpander, focus });
         <slot v-else-if="kind === 'default'" />
 
         <div class="lx-button-set">
-          <lx-button
+          <LxButton
             id="filter-search-button"
             :kind="filterButtonKind"
             :label="texts.search"
@@ -142,7 +142,7 @@ defineExpose({ toggleExpander, focus });
             :label="fastFilters[0][fastNameAttribute]"
             @click="fastFilterClick(fastFilters[0][fastIdAttribute])"
           />
-          <lx-button
+          <LxButton
             id="filter-clear-button"
             kind="tertiary"
             :label="texts.clear"

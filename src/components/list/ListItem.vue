@@ -36,6 +36,12 @@ const props = defineProps({
   tooltip: { type: String, default: '' },
   actionDefinitions: { type: Array, default: () => [] },
   actionsLayout: { type: String, default: 'default' }, // default, vertical
+  texts: {
+    type: Object,
+    default: () => ({
+      overflowMenu: 'Atvērt papildus iespējas',
+    }),
+  },
 });
 
 function performClick() {
@@ -153,7 +159,7 @@ function getItemId(id, parentId) {
             actionsLayout === 'vertical'
           "
         >
-          <lx-button
+          <LxButton
             v-for="action in actionDefinitions"
             :id="`${id}-action-${action.id}`"
             :key="action.id"
@@ -161,7 +167,8 @@ function getItemId(id, parentId) {
             :tabindex="0"
             :icon="action.icon"
             :icon-set="action.iconSet"
-            :title="action.name"
+            variant="icon-only"
+            :label="action.name"
             :destructive="action.destructive"
             :disabled="
               action.disabled != null
@@ -183,24 +190,25 @@ function getItemId(id, parentId) {
         >
           <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
             <div v-if="actionDefinitions.length > 1">
-              <lx-button
+              <LxButton
                 :id="`${id}-action-open-menu`"
                 icon="overflow-menu"
                 kind="ghost"
                 :disabled="loading || busy || disabled"
+                :label="texts.overflowMenu"
+                variant="icon-only"
                 @click="openDropDownMenu($event, clickable ? false : true)"
               />
             </div>
             <template v-slot:panel>
               <div class="lx-button-set">
-                <lx-button
+                <LxButton
                   v-for="action in actionDefinitions"
                   :id="`${id}-action-${action.id}`"
                   :key="action.id"
                   :icon="action.icon"
                   :icon-set="action.iconSet"
                   :label="action.name"
-                  :title="action.name"
                   :tabindex="0"
                   :destructive="action.destructive"
                   :disabled="
@@ -291,7 +299,7 @@ function getItemId(id, parentId) {
             actionsLayout === 'vertical'
           "
         >
-          <lx-button
+          <LxButton
             v-for="action in actionDefinitions"
             :id="`${id}-action-${action.id}`"
             :key="action.id"
@@ -299,7 +307,8 @@ function getItemId(id, parentId) {
             :tabindex="0"
             :icon="action.icon"
             :icon-set="action.iconSet"
-            :title="action.name"
+            variant="icon-only"
+            :label="action.name"
             :destructive="action.destructive"
             :disabled="
               action.disabled != null
@@ -321,24 +330,25 @@ function getItemId(id, parentId) {
         >
           <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
             <div v-if="actionDefinitions.length > 1">
-              <lx-button
+              <LxButton
                 :id="`${id}-action-open-menu`"
                 icon="overflow-menu"
                 kind="ghost"
                 :disabled="loading || busy || disabled"
+                :label="texts.overflowMenu"
+                variant="icon-only"
                 @click="openDropDownMenu($event, true)"
               />
             </div>
             <template v-slot:panel>
               <div class="lx-button-set">
-                <lx-button
+                <LxButton
                   v-for="action in actionDefinitions"
                   :id="`${id}-action-${action.id}`"
                   :key="action.id"
                   :icon="action.icon"
                   :icon-set="action.iconSet"
                   :label="action.name"
-                  :title="action.name"
                   :tabindex="0"
                   :destructive="action.destructive"
                   :disabled="
@@ -365,7 +375,7 @@ function getItemId(id, parentId) {
         actionDefinitions?.length && actionDefinitions?.length === 1 && actionsLayout !== 'vertical'
       "
     >
-      <lx-button
+      <LxButton
         v-for="action in actionDefinitions"
         :id="`${id}-action-${action.id}`"
         :key="action.id"
@@ -373,7 +383,8 @@ function getItemId(id, parentId) {
         :tabindex="0"
         :icon="action.icon"
         :icon-set="action.iconSet"
-        :title="action.name"
+        variant="icon-only"
+        :label="action.name"
         :destructive="action.destructive"
         :disabled="
           action.disabled != null
@@ -393,23 +404,24 @@ function getItemId(id, parentId) {
     >
       <lx-drop-down-menu :disabled="loading || busy || disabled">
         <div v-if="actionDefinitions.length > 1">
-          <lx-button
+          <LxButton
             :id="`${id}-action-overflow-menu`"
             icon="overflow-menu"
             kind="ghost"
+            :label="texts.overflowMenu"
+            variant="icon-only"
             :disabled="loading || busy || disabled"
           />
         </div>
         <template v-slot:panel>
           <div class="lx-button-set">
-            <lx-button
+            <LxButton
               v-for="action in actionDefinitions"
               :id="`${id}-action-${action.id}`"
               :key="action.id"
               :icon="action.icon"
               :icon-set="action.iconSet"
               :label="action.name"
-              :title="action.name"
               :tabindex="0"
               :destructive="action.destructive"
               :disabled="

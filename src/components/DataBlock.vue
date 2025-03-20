@@ -28,6 +28,12 @@ const props = defineProps({
   hasSelecting: { type: Boolean, default: false },
   selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   selected: { type: Boolean, default: false },
+  texts: {
+    type: Object,
+    default: () => ({
+      overflowMenu: 'Atvērt papildus iespējas',
+    }),
+  },
 });
 
 const emits = defineEmits([
@@ -151,10 +157,10 @@ const selected = computed({
             v-for="action in actionDefinitions"
             :key="action.id"
             kind="ghost"
-            variant="default"
+            variant="icon-only"
             tabindex="0"
             :icon="action.icon"
-            :title="action.title ? action.title : action.name"
+            :label="action.title ? action.title : action.name"
             :destructive="action.destructive"
             :disabled="isDisabled || action.disabled"
             @click="actionClicked(action.id, props.id)"
@@ -162,7 +168,13 @@ const selected = computed({
         </template>
         <LxDropDownMenu>
           <div class="lx-toolbar" v-if="actionDefinitions.length >= 2">
-            <LxButton icon="overflow-menu" kind="ghost" :disabled="isDisabled" />
+            <LxButton
+              icon="overflow-menu"
+              kind="ghost"
+              :disabled="isDisabled"
+              :label="texts.overflowMenu"
+              variant="icon-only"
+            />
           </div>
           <template #panel>
             <div class="lx-button-set">
@@ -171,7 +183,6 @@ const selected = computed({
                 :key="action.id"
                 :icon="action.icon"
                 :label="action.name"
-                :title="action.name"
                 tabindex="0"
                 :destructive="action.destructive"
                 :disabled="isDisabled || action.disabled"

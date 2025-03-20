@@ -326,9 +326,9 @@ function triggerContextPersonMenu() {
             :tabindex="4"
             icon="menu"
             :label="texts?.menu"
-            @click="navToggle"
             kind="ghost"
             iconVariant="gradient-brand"
+            @click="navToggle"
           />
         </div>
         <div class="lower-button" v-for="items in navItemsUserMenu" :key="items.label">

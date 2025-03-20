@@ -147,7 +147,11 @@ const sectionIndexType = inject('formIndexType', 'default');
 const formIndex = inject('formIndex', null);
 const requiredTexts = inject(
   'requiredTexts',
-  ref({ required: '(obligāts)', optional: '(neobligāts)' })
+  ref({
+    required: '(obligāts)',
+    optional: '(neobligāts)',
+    overflowMenu: 'Atvērt papildus iespējas',
+  })
 );
 const formOrientation = inject('formOrientation', ref(null));
 
@@ -169,6 +173,7 @@ const rowRequiredTexts = computed(() => {
   const res = {
     required: requiredTexts.value.required,
     optional: requiredTexts.value.optional,
+    overflowMenu: requiredTexts.value.overflowMenu,
   };
   if (props.texts.required !== '(obligāts)' && props.texts.required) {
     res.required = props.texts.required;
@@ -283,14 +288,20 @@ provide('sectionOrientation', sectionOrientation);
         <LxButton
           v-if="actionDefinitions?.length === 1"
           :icon="actionDefinitions?.[0]?.icon"
-          :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.name"
+          variant="icon-only"
+          :label="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.name"
           :disabled="actionDefinitions?.[0]?.disabled"
           :destructive="actionDefinitions?.[0]?.destructive"
           kind="ghost"
           @click="emits('actionClick', actionDefinitions?.[0]?.id)"
         />
         <LxDropDownMenu v-else>
-          <LxButton icon="overflow-menu" kind="ghost" />
+          <LxButton
+            icon="overflow-menu"
+            kind="ghost"
+            :label="rowRequiredTexts.overflowMenu"
+            variant="icon-only"
+          />
           <template #panel>
             <div class="lx-button-set">
               <LxButton
@@ -298,8 +309,9 @@ provide('sectionOrientation', sectionOrientation);
                 :key="action?.id"
                 :icon="action?.icon"
                 :icon-set="action?.iconSet"
-                :label="action?.name"
+                :label="action?.name || action?.title"
                 :title="action?.title || action?.name"
+                :variant="action?.name ? 'default' : 'icon-only'"
                 :destructive="action?.destructive"
                 :disabled="action?.disabled"
                 kind="ghost"

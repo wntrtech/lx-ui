@@ -346,7 +346,7 @@ const indicatorTooltips = computed(() => {
         :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
         :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
       />
-      <lx-text-input
+      <LxTextInput
         v-if="hasSearch"
         :disabled="disabled"
         ref="queryInput"
@@ -355,12 +355,12 @@ const indicatorTooltips = computed(() => {
         :placeholder="texts.searchPlaceholder"
         role="search"
       />
-      <lx-button
+      <LxButton
         v-if="query && hasSearch"
         icon="clear"
         kind="ghost"
         variant="icon-only"
-        :title="texts.clearQuery"
+        :label="texts.clearQuery"
         :disabled="disabled"
         @click="query = ''"
       />

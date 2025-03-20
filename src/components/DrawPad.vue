@@ -276,7 +276,7 @@ onMounted(() => {
               icon="brush"
               kind="ghost"
               variant="icon-only"
-              :title="textsRef.paintbrush"
+              :label="textsRef.paintbrush"
               :disabled="disabled"
               :active="selectedInstrument === 'brush'"
               @click="updatedInstrument('brush')"
@@ -288,7 +288,7 @@ onMounted(() => {
               icon="color"
               kind="ghost"
               variant="icon-only"
-              :title="textsRef.color"
+              :label="textsRef.color"
               :disabled="props.disabled"
             />
             <template #panel>
@@ -319,7 +319,7 @@ onMounted(() => {
             icon="reset"
             kind="ghost"
             variant="icon-only"
-            :title="textsRef.clear"
+            :label="textsRef.clear"
             :disabled="disabled"
             @click="clearCanvas"
           />

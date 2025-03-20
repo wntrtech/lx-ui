@@ -59,9 +59,10 @@ onMounted(() => {
       <div class="appendable-list-remove-button-wrapper">
         <div class="appendable-list-remove">
           <LxButton
-            icon="remove-item"
-            :title="texts.removeItem"
             v-if="!readOnly"
+            icon="remove-item"
+            variant="icon-only"
+            :label="texts.removeItem"
             :destructive="true"
             kind="ghost"
             @click="removeItem(index)"
@@ -71,11 +72,11 @@ onMounted(() => {
     </div>
     <div>
       <LxButton
+        v-if="!readOnly && canAddItems"
         kind="tertiary"
         :label="addButtonLabel"
         icon="add-item"
         @click="addItem"
-        v-if="!readOnly && canAddItems"
       />
     </div>
   </div>

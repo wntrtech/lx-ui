@@ -418,7 +418,7 @@ function getTabIndex(id) {
           kind="ghost"
           variant="icon-only"
           :disabled="disabled"
-          :title="texts.clearQuery"
+          :label="texts.clearQuery"
           @click="query = ''"
         />
       </div>

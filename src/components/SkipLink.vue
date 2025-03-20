@@ -24,6 +24,6 @@ const props = defineProps({
       :title="props.title"
       :tabindex="props.tabindex"
       @click="click"
-    ></LxButton>
+    />
   </div>
 </template>

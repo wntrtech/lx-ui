@@ -9,6 +9,13 @@ const props = defineProps({
   value: { type: Array, default: () => [] },
   level: { type: Number, default: 1 },
   kind: { type: String, default: 'default' }, // 'default', 'icon-only', 'combo'
+  texts: {
+    type: Object,
+    default: () => ({
+      previous: 'Iepriekšējais solis',
+      next: 'Nākamais solis',
+    }),
+  },
 });
 
 const activeItemCode = ref('');
@@ -101,17 +108,21 @@ defineExpose({ setActiveTab, isActiveTab });
         </div>
       </div>
       <div class="lx-group">
-        <lx-button
-          @click="setPreviousTab"
+        <LxButton
           icon="previous-page"
           kind="ghost"
+          :label="texts.previous"
+          variant="icon-only"
           :disabled="isActiveTab(value[0].id)"
+          @click="setPreviousTab"
         />
-        <lx-button
-          @click="setNextTab"
+        <LxButton
           icon="next-page"
           kind="ghost"
+          :label="texts.next"
+          variant="icon-only"
           :disabled="isActiveTab(value[value.length - 1].id)"
+          @click="setNextTab"
         />
       </div>
 

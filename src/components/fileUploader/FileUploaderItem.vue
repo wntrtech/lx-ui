@@ -130,13 +130,13 @@ const additionalInfoTitle = computed(() => {
           kind="ghost"
           variant="icon-only"
           icon="remove"
-          :title="props.texts.clear"
-          @click="removeFile(props.customItem.id)"
+          :label="props.texts.clear"
           :destructive="true"
           :disabled="props.disabled"
           :loading="props.loading"
           :busy="props.busy"
-        ></LxButton>
+          @click="removeFile(props.customItem.id)"
+        />
       </div>
     </div>
     <div class="lx-file-additional-part" v-if="props.mode === 'default'">
@@ -193,7 +193,6 @@ const additionalInfoTitle = computed(() => {
                 :busy="props.busy"
                 icon="info"
                 :variant="infoButtonVariant"
-                :title="props.texts.infoButton"
                 @click="openModal(props.customItem.id)"
               />
             </div>
@@ -232,7 +231,6 @@ const additionalInfoTitle = computed(() => {
               :busy="props.busy"
               icon="info"
               :variant="infoButtonVariant"
-              :title="props.texts.infoButton"
               @click="openModal(props.customItem.id)"
             />
           </div>

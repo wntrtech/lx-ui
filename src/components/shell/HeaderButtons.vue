@@ -313,7 +313,8 @@ function triggerUserMenu() {
         customClass="lx-header-button"
         kind="ghost"
         icon="help"
-        :label="helpLabel"
+        :label="helpLabel || texts.helpTitle"
+        :variant="mode === 'cover' ? 'default' : 'icon-only'"
         :disabled="headerNavDisable"
         :title="texts.helpTitle"
         @click="helpClicked"
@@ -329,7 +330,7 @@ function triggerUserMenu() {
             kind="ghost"
             :icon="themeIcon"
             :disabled="headerNavDisable"
-            :title="texts.themeTitle"
+            :label="texts.themeTitle"
           />
         </div>
         <template v-slot:panel>
@@ -362,7 +363,7 @@ function triggerUserMenu() {
           variant="icon-only"
           kind="ghost"
           icon="notifications"
-          :title="texts.alertsTitle"
+          :label="texts.alertsTitle"
           :badge="alertsCount"
           :disabled="headerNavDisable"
           :badgeType="alertLevelToBadgeType"
@@ -374,7 +375,6 @@ function triggerUserMenu() {
               v-if="alertsKind === 'combo'"
               kind="ghost"
               :label="texts.openAlerts"
-              :title="texts.openAlerts"
               :disabled="headerNavDisable"
               icon="open"
               @click="alertsClicked"
@@ -423,7 +423,6 @@ function triggerUserMenu() {
               v-if="alertsKind === 'combo'"
               kind="ghost"
               :label="texts.openAlerts"
-              :title="texts.openAlerts"
               :disabled="headerNavDisable"
               icon="open"
               @click="alertsClicked"
@@ -474,7 +473,7 @@ function triggerUserMenu() {
         kind="ghost"
         icon="notifications"
         :disabled="headerNavDisable"
-        :title="texts.alertsTitle"
+        :label="texts.alertsTitle"
         :badge="alertsCount"
         :badgeType="alertLevelToBadgeType"
         @click="alertsClicked"
@@ -488,7 +487,7 @@ function triggerUserMenu() {
           variant="icon-only"
           kind="ghost"
           icon="language"
-          :title="texts.languagesTitle"
+          :label="texts.languagesTitle"
         />
 
         <template v-slot:panel>
@@ -616,7 +615,6 @@ function triggerUserMenu() {
                 :label="texts.languagesTitle"
                 kind="ghost"
                 icon="language"
-                :title="texts.languagesTitle"
               />
             </div>
             <template v-slot:panel>
@@ -643,7 +641,6 @@ function triggerUserMenu() {
                 :label="texts.themeTitle"
                 kind="ghost"
                 :icon="themeIcon"
-                :title="texts.themeTitle"
               />
             </div>
             <template v-slot:panel>
@@ -659,11 +656,11 @@ function triggerUserMenu() {
               </div>
               <div class="lx-animations-controller">
                 <p>{{ texts.animations }}</p>
-                <LxToggle v-model="animationsModel"></LxToggle>
+                <LxToggle v-model="animationsModel" />
               </div>
               <div class="lx-fonts-controller">
                 <p>{{ texts.fonts }}</p>
-                <LxToggle v-model="deviceFontsModel"></LxToggle>
+                <LxToggle v-model="deviceFontsModel" />
               </div>
             </template>
           </LxDropDownMenu>

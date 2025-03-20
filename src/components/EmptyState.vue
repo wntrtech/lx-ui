@@ -10,6 +10,12 @@ defineProps({
   description: { type: String, default: '' },
   icon: { type: String, default: '' },
   actionDefinitions: { type: Array, default: null },
+  texts: {
+    type: Object,
+    default: () => ({
+      overflowMenu: 'Atvērt papildus iespējas',
+    }),
+  },
 });
 
 function actionClicked(actionName) {
@@ -33,7 +39,6 @@ function actionClicked(actionName) {
           kind="tertiary"
           :tabindex="0"
           :icon="action?.icon"
-          :title="action?.name"
           :label="action?.name"
           :destructive="action?.destructive"
           :disabled="action?.disabled"
@@ -47,7 +52,12 @@ function actionClicked(actionName) {
         v-if="actionDefinitions?.length && actionDefinitions?.length > 3"
       >
         <LxDropDownMenu>
-          <LxButton icon="overflow-menu" kind="tertiary" />
+          <LxButton
+            icon="overflow-menu"
+            kind="tertiary"
+            :label="texts.overflowMenu"
+            variant="icon-only"
+          />
           <template v-slot:panel>
             <div class="lx-button-set">
               <LxButton
@@ -55,7 +65,6 @@ function actionClicked(actionName) {
                 :key="action?.id"
                 :icon="action?.icon"
                 :label="action?.name"
-                :title="action?.name"
                 :tabindex="0"
                 :destructive="action?.destructive"
                 :disabled="action?.disabled"
