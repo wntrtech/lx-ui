@@ -1384,14 +1384,14 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-value-picker-tile {
   flex: 1 0 auto;
-  width: var(--tile-column-size);
+  width: var(--tile-width);
   background-color: var(--color-tile-background);
-  height: var(--tile-row-size);
+  height: var(--tile-min-height);
   flex-shrink: 0;
   display: flex;
   justify-content: top;
   flex-direction: column;
-  padding: var(--padding-tile);
+  padding: var(--tile-padding);
   text-decoration: var(--button-text-decoration);
   cursor: pointer;
   border: 2px solid var(--color-chrome);

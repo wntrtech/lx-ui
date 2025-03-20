@@ -42,9 +42,6 @@
   --public-nav-header-size: calc(var(--nav-row-size) + var(--row-size));
   --notification-size: 28rem;
   --body-column-size: 1300px;
-  --tile-column-size: 20rem;
-  --tile-column-x2-size: calc(var(--tile-column-size) * 2 + 1rem);
-  --tile-row-size: 12rem;
   --form-column-size: 30rem;
   --aside-size: 16rem;
   --grid-primary-button-size: 12rem;
@@ -64,7 +61,6 @@
   --notification-border: 0px 0px 0px 4px;
 
   --padding: 0.5rem;
-  --padding-tile: 1rem;
   --padding-dropdown: 0.5rem;
   --padding-cell: 0.75rem 1rem;
   --padding-grid-header: 1rem;
@@ -94,6 +90,42 @@
   --screen-xxs: 672px;
   --screen-xxxs: 320px;
 
+  --tile-width: 20rem;
+  --tile-width-x2-size: calc(var(--tile-width) * 2 + 1rem);
+  --tile-min-height: 12rem;
+  --tile-mini-min-height: 3rem;
+
+  --tile-grid-areas: 'icon-loader' 'content' 'custom-content';
+  --tile-grid-template-columns: 1fr;
+  --tile-grid-template-rows: auto 1fr auto;
+  --tile-mini-grid-areas: 'icon-loader content';
+  --tile-mini-grid-template-columns: auto 1fr;
+  --tile-mini-grid-template-rows: 1fr;
+  --tile-header-min-height: var(--list-item-header-min-height);
+  --tile-mini-header-min-height: 2.25rem;
+  --tile-border: var(--list-item-border);
+  --tile-border-radius: var(--list-item-border-radius);
+  --tile-border-radius-inner: var(--tile-border-radius);
+  --tile-icon-padding: 0;
+  --tile-mini-icon-padding: var(--tile-icon-padding);
+  --tile-icon-height: var(--icon-size);
+  --tile-icon-width: var(--icon-size);
+  --tile-loader-padding: 0.4rem 0rem 0.35rem 0rem;
+  --tile-mini-loader-padding: 0 0.75rem 0 0;
+  --tile-header-padding: 0;
+  --tile-padding: 1rem;
+  --tile-text-primary-font-size: var(--list-text-primary-font-size);
+  --tile-text-primary-line-height: var(--list-text-primary-line-height);
+  --tile-text-primary-font-weight: var(--list-text-primary-font-weight);
+  --tile-text-primary-padding: 0;
+  --tile-text-primary-margin: 1.45rem 0 0 0;
+  --tile-mini-text-primary-margin: 0 0 0 1rem;
+  --tile-text-secondary-font-size: var(--list-text-secondary-font-size);
+  --tile-text-secondary-line-height: var(--list-text-secondary-line-height);
+  --tile-text-secondary-font-weight: var(--list-text-secondary-font-weight);
+  --tile-text-secondary-padding: 0;
+  --tile-text-secondary-margin: 1.2rem 0 0 0;
+
   --list-button-border-radius: 0;
   --list-button-height: calc(var(--row-size) - 4px);
   --list-button-width: var(--row-size);
@@ -112,6 +144,7 @@
   --list-item-border-radius-inner: var(--list-item-border-radius);
   --list-item-loader-padding: 0.85rem 1rem 0 1rem;
   --list-item-selecting-block-padding: 0.8rem 0.95rem 0 0.95rem;
+  --list-item-width: auto;
   --list-grid-areas: 'category content invalid-icon icon loader actions selecting';
   --list-grid-inner-column-span: 1 / span 4;
   --list-grid-outer-column-span: 1 / span 6;
@@ -183,6 +216,7 @@
   --button-icon-justify: center;
   --button-icon-margin: 0 -0.4rem; /* For better icon placement regardless of grid-areas. */
   --button-set-gap: 0.5rem;
+  --button-text-decoration: none;
   --button-dropdown-align: center;
   --button-dropdown-border: 2px solid var(--color-button-dropdown-background);
   --button-dropdown-border-radius: var(--radius-default);
@@ -203,7 +237,6 @@
   --button-dropdown-text-align: left;
   --button-dropdown-text-decoration: none;
   --button-dropdown-width: 100%;
-
   --button-toolbar-group-gap: 0;
   --button-toolbar-gap: 0;
   --button-toolbar-primary-align: center;

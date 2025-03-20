@@ -121,6 +121,8 @@
 
   --list-item-border: 2px solid var(--color-foreground);
 
+  --color-tile-hover-text-secondary: var(--contrast-background);
+
   --color-list-category-contrast: transparent;
   --color-list-icon-selected: var(--contrast-background);
   --color-list-text-primary-selected: var(--contrast-background);

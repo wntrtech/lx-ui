@@ -18,6 +18,8 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 | `--list-category-border-radius`           | 0                                                             |
 | `--list-category-margin`                  | 0.25rem                                                       |
 | `--list-category-width`                   | 0.25rem                                                       |
+| `--list-item-border`                      | 2px solid transparent                                         |
+| `--list-item-border-radius`               | 0                                                             |
 | `--list-item-border-radius-inner`         | `--list-item-border-radius`                                   |
 | `--list-item-gap`                         | 0.5rem                                                        |
 | `--list-item-header-padding`              | 0.35rem 0.35rem 0.2rem 0.5rem                                 |
@@ -27,8 +29,7 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 | `--list-icon-width`                       | 1.5rem                                                        |
 | `--list-item-loader-padding`              | 0.85rem 1rem 0 1rem                                           |
 | `--list-item-selecting-block-padding`     | 0.8rem 0.95rem 0 0.95rem                                      |
-| `--list-item-border`                      | 2px solid transparent                                         |
-| `--list-item-border-radius`               | 0                                                             |
+| `--list-item-width`                       | auto                                                          |
 | `--list-item-min-height`                  | `--row-size`                                                  |
 | `--list-grid-areas`                       | 'category content invalid-icon icon loader actions selecting' |
 | `--list-grid-template-columns`            | auto 1fr auto auto auto auto auto                             |
@@ -62,7 +63,6 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 
 
 ### Color
-
 
 | Variable name                                | Light mode value                          | Dark mode value                           |
 |----------------------------------------------|-------------------------------------------|-------------------------------------------|
@@ -99,6 +99,72 @@ Customized values for contrast mode:
 | `--color-list-selected-background`           | `--contrast-foreground`                   |
 | `--color-list-hover-selected-border`         | `--contrast-foreground`                   |
 | `--color-list-disabled-selected-text`        | `--contrast-background`                   |
+
+
+## LxTile
+
+It is worth noting that most LxTile tokens use LxList tokens as default values, so any changes to token values should be made with caution to avoid unintended effects.
+
+### Layout
+
+| Variable name                       | Default value                            |
+|-------------------------------------|------------------------------------------|
+| `--tile-width`                      | 20rem                                    |
+| `--tile-width-x2-size`              | calc(var(--tile-width) * 2 + 1rem)       |
+| `--tile-min-height`                 | 12rem                                    |
+| `--tile-mini-min-height`            | 3rem                                     |
+| `--tile-mini-grid-areas`            | 'icon-loader content'                    |
+| `--tile-mini-grid-template-columns` | auto 1fr                                 |
+| `--tile-mini-grid-template-rows`    | 1fr                                      |
+| `--tile-header-min-height`          | `--list-item-header-min-height`          |
+| `--tile-mini-header-min-height`     | 2.25rem                                  |
+| `--tile-grid-areas`                 | 'icon-loader' 'content' 'custom-content' |
+| `--tile-grid-template-columns`      | 1fr                                      |
+| `--tile-grid-template-rows`         | auto 1fr auto                            |
+| `--tile-border`                     | `--list-item-border`                     |
+| `--tile-border-radius`              | `--list-item-border-radius`              |
+| `--tile-border-radius-inner`        | `--tile-border-radius`                   |
+| `--tile-icon-padding`               | 0                                        |
+| `--tile-mini-icon-padding`          | `--tile-icon-padding`                    |
+| `--tile-icon-height`                | `--icon-size`                            |
+| `--tile-icon-width`                 | `--icon-size`                            |
+| `--tile-loader-padding`             | 0.4rem 0rem 0.35rem 0rem                 |
+| `--tile-mini-loader-padding`        | 0 0.75rem 0 0                            |
+| `--tile-header-padding`             | 0                                        |
+| `--tile-padding`                    | 1rem                                     |
+| `--tile-text-primary-font-size`     | `--list-text-primary-font-size`          |
+| `--tile-text-primary-line-height`   | `--list-text-primary-line-height`        |
+| `--tile-text-primary-font-weight`   | `--list-text-primary-font-weight`        |
+| `--tile-text-primary-padding`       | 0                                        |
+| `--tile-text-primary-margin`        | 1.45rem 0 0 0                            |
+| `--tile-text-secondary-font-size`   | `--list-text-secondary-font-size`        |
+| `--tile-text-secondary-line-height` | `--list-text-secondary-line-height`      |
+| `--tile-text-secondary-font-weight` | `--list-text-secondary-font-weight`      |
+| `--tile-text-secondary-padding`     | 0                                        |
+| `--tile-text-secondary-margin`      | 1.2rem 0 0 0                             |
+
+
+### Color
+
+| Variable name                       | Light mode value                    | Dark mode value                     |
+|-------------------------------------|-------------------------------------|-------------------------------------|
+| `--color-tile-background`           | `--color-list-background`           | `--color-list-background`           |
+| `--color-tile-disabled-foreground`  | `--color-list-disabled-foreground`  | `--color-list-disabled-foreground`  |
+| `--color-tile-hover-background`     | `--color-list-hover-background`     | `--color-list-hover-background`     |
+| `--color-tile-icon`                 | `--color-list-icon`                 | `--color-list-icon`                 |
+| `--color-tile-icon-hover`           | `--color-list-icon-hover`           | `--color-list-icon-hover`           |
+| `--color-tile-primary`              | `--color-tile-primary`              | `--color-tile-primary`              |
+| `--color-tile-secondary`            | `--color-list-secondary`            | `--color-list-secondary`            |
+| `--color-tile-hover-text-primary`   | `--color-list-hover-text-primary`   | `--color-list-hover-text-primary`   |
+| `--color-tile-hover-text-secondary` | `--color-list-hover-text-secondary` | `--color-list-hover-text-secondary` |
+
+
+<br>
+Customized value for contrast mode:
+
+| Variable name                       | Contrast mode value     |
+|-------------------------------------|-------------------------|
+| `--color-tile-hover-text-secondary` | `--contrast-background` |
 
 ## Inputs 
 

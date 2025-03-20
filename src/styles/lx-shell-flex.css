@@ -449,13 +449,13 @@ code {
 
 .lx .lx-tile {
   background-color: var(--color-tile-background);
-  height: var(--tile-row-size);
-  width: var(--tile-column-size);
+  height: var(--tile-min-height);
+  width: var(--tile-width);
   flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  padding: var(--padding-tile);
+  padding: var(--tile-padding);
   text-decoration: var(--button-text-decoration);
   border: 2px solid transparent;
   cursor: pointer;
@@ -470,7 +470,7 @@ code {
 .lx .lx-tile:hover,
 .lx a.lx-tile:hover {
   margin: 0;
-  padding: var(--padding-tile);
+  padding: var(--tile-padding);
   background-color: var(--color-tile-hover-background);
   border-color: var(--color-interactive-hover-background);
 }
@@ -548,7 +548,7 @@ code {
 
 .lx-widget {
   background-color: var(--color-region);
-  width: var(--tile-column-size);
+  width: var(--tile-width);
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -576,7 +576,7 @@ code {
   justify-content: space-between;
   display: flex;
   align-items: center;
-  padding: var(--padding-tile);
+  padding: var(--tile-padding);
   font-size: var(--h2-font-size);
   font-weight: var(--h2-font-weight);
   color: var(--color-data);
@@ -611,13 +611,13 @@ code {
 }
 
 .lx-widget.lx-widget-m-s {
-  width: var(--tile-column-x2-size);
-  height: var(--tile-row-size);
+  width: var(--tile-width-x2-size);
+  height: var(--tile-min-height);
 }
 
 .lx-widget.lx-widget-m-l {
-  width: var(--tile-column-x2-size);
-  height: calc(var(--tile-row-size) * 3 + 2rem);
+  width: var(--tile-width-x2-size);
+  height: calc(var(--tile-min-height) * 3 + 2rem);
 }
 
 .lx-illustration {
@@ -672,7 +672,7 @@ code {
 }
 
 .lx-dashboard .lx-dashboard-column-m {
-  width: var(--tile-column-x2-size);
+  width: var(--tile-width-x2-size);
 }
 
 .lx-widget-welcome {
