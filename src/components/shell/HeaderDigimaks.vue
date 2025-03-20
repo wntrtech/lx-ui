@@ -12,12 +12,7 @@ import LxAvatar from '@/components/Avatar.vue';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
-  systemNameShort: { type: String, default: null },
-  systemNameFull: { type: String, default: null },
-  systemSubheader: { type: String, default: null },
-  pageLabel: { type: String, default: null },
   userInfo: { type: Object, default: null }, // firstName, lastName, description, role, institution
-  hasAvatar: { type: Boolean, default: false },
   alternativeProfilesInfo: { type: Array, default: null },
   selectedAlternativeProfile: { type: Object, default: null },
   contextPersonsInfo: { type: Array, default: () => [] },
@@ -25,13 +20,9 @@ const props = defineProps({
   navItems: { type: Array, default: null },
   navBarSwitch: { type: Boolean, default: true },
   hideNavBar: { type: Boolean, default: false },
-  showBackButton: { type: Boolean, default: false },
-  backLabel: { type: String, required: false, default: null },
-  backPath: { type: [Object, String], required: false, default: null },
   hasLanguagePicker: { type: Boolean, default: false },
   languages: { type: Array, default: () => [] },
   selectedLanguage: { type: Object, default: null },
-  systemIcon: { type: String, default: null },
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
@@ -41,34 +32,18 @@ const props = defineProps({
   alertsKind: { type: String, default: 'menu' },
   clickSafeAlerts: { type: Boolean, default: false },
   alerts: { type: Array, default: () => [] },
-  alertCount: { type: Number, default: null },
   alertLevel: { type: String, default: null },
   hasHelp: { type: Boolean, default: false },
-  environment: { type: Object, default: () => {} },
   headerNavDisable: { type: Boolean, default: false },
-  breadcrumbs: {
-    type: Array,
-    required: false,
-    default: () => [], // { to: '{ name: 'aaa'}', label: 'Home' }],
-  },
-  homePath: {
-    type: [Object, String],
-    default: () => {
-      'home';
-    },
-  },
-
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
   megaMenuHasShowAll: { type: Boolean, default: false },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
-
   selectedNavItems: {
     type: Object,
     default: () => ({}),
   },
-
   texts: {
     type: Object,
     required: false,
