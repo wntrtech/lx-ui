@@ -47,6 +47,48 @@
 
   --color-button-nav-selected: #bf4e2c;
   --color-button-nav-selected-background: #f6f6f6;
+
+  --button-modal-primary-border-radius: 100px;
+  --button-modal-primary-padding: 0rem 0rem 0rem 0rem;
+  --button-modal-primary-height: 3rem;
+  --button-modal-primary-min-width: 15rem;
+  --button-modal-primary-width: auto;
+
+  --button-modal-secondary-border-radius: 100px;
+  --button-modal-secondary-padding: 0rem 0rem 0rem 0rem;
+  --button-modal-secondary-height: 3rem;
+  --button-modal-secondary-min-width: 15rem;
+  --button-modal-secondary-width: auto;
+
+  --button-modal-set-margin: 1rem 8rem 1rem 0rem;
+
+  --button-modal-secondary-text-align: center;
+  --button-modal-primary-text-align: center;
+
+  --button-primary-text-align: center;
+  --button-secondary-text-align: center;
+  --button-tertiary-text-align: center;
+  --button-ghost-text-align: center;
+
+  --button-primary-grid-areas: 'icon content';
+  --button-secondary-grid-areas: 'icon content';
+  --button-tertiary-grid-areas: 'icon content';
+  --button-ghost-grid-areas: 'icon content';
+
+  --button-primary-grid-template-columns: auto 1fr;
+  --button-secondary-grid-template-columns: auto 1fr;
+  --button-tertiary-grid-template-columns: auto 1fr;
+  --button-ghost-grid-template-columns: auto 1fr;
+
+  --input-container-height: 3rem;
+}
+
+.lx-button-content-wrapper .lx-button-icon {
+  --button-icon-justify: left;
+}
+
+.lx-button.lx-button-icon-only .lx-button-icon {
+  --button-icon-justify: center;
 }
 
 .lx.lx-theme-dark {
@@ -99,4 +141,11 @@
 .patient-data .lx-loader.lx-small {
   width: 1.25rem;
   height: 1.25rem;
+}
+
+.lx-autocomplete-default-panel .lx-value,
+.lx-autocomplete-default-panel .lx-placeholder,
+.lx-autocomplete-default-panel .lx-value .lx-item-display > p,
+.lx-autocomplete-default-panel .lx-value .lx-state > .lx-primary {
+  overflow-x: unset;
 }
