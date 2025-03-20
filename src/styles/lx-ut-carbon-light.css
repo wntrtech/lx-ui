@@ -179,8 +179,8 @@
   --color-input-region-background: var(--color-region-2);
   --color-input-selected-range-background: #bfdbfe;
 
-  --color-button-active-mode: var(--color-interactive-hover-foreground);
-  --color-button-active-mode-background: var(--color-interactive-hover-background);
+  --color-button-active-mode: var(--color-data);
+  --color-button-active-mode-background: var(--color-highlight);
   --color-button-active-mode-border: var(--color-button-active-mode-background);
   --color-button-active-mode-icon: var(--color-button-active-mode);
   --color-button-destructive: var(--color-interactive-hover-foreground);

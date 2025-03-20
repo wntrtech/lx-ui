@@ -564,8 +564,8 @@ Customized values for contrast mode:
 
 | Variable name                                          | Light mode value                                       | Dark mode value                                        |
 |--------------------------------------------------------|--------------------------------------------------------|--------------------------------------------------------|
-| `--color-button-active-mode`                           | `--color-interactive-hover-foreground`                 | `--color-interactive-hover-foreground`                 |
-| `--color-button-active-mode-background`                | `--color-interactive-hover-background`                 | `--color-interactive-hover-background`                 |
+| `--color-button-active-mode`                           | `--color-data`                                         | `--color-data`                                         |
+| `--color-button-active-mode-background`                | `--color-highlight`                                    | `--color-highlight`                                    |
 | `--color-button-active-mode-border`                    | `--color-button-active-background`                     | `--color-button-active-background`                     |
 | `--color-button-active-mode-icon`                      | `--color-button-active-mode`                           | `--color-button-active-mode`                           |
 | `--color-button-destructive`                           | `--color-interactive-hover-foreground`                 | `--color-interactive-hover-foreground`                 |
@@ -817,6 +817,7 @@ Customized values for contrast mode:
 
 | Variable name                            | Contrast mode value      |
 |------------------------------------------|--------------------------|
+| `--color-button-active-mode`             | `--contrast-background`  |
 | `--color-button-dropdown`                | `--contrast-interactive` |
 | `--color-button-dropdown-background`     | `--contrast-background`  |
 | `--color-button-dropdown-focus`          | `--contrast-background`  |

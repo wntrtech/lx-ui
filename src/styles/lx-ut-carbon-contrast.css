@@ -138,6 +138,7 @@
   --color-input-disabled: var(--contrast-foreground);
   --color-input-selected-range-background: var(--contrast-hover);
 
+  --color-button-active-mode: var(--contrast-background);
   --color-button-dropdown: var(--contrast-interactive);
   --color-button-dropdown-background: var(--contrast-background);
   --color-button-dropdown-focus: var(--contrast-background);
