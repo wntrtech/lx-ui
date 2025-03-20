@@ -333,17 +333,19 @@ function triggerContextPersonMenu() {
         </div>
         <div class="lower-button" v-for="items in navItemsUserMenu" :key="items.label">
           <LxButton
+            v-if="items.type === 'helper'"
             :icon="items.icon"
             :label="items.label"
-            @click="navToggle"
+            :iconSet="items?.iconSet"
             kind="ghost"
-            v-if="items.type === 'helper'"
+            @click="navToggle"
           />
           <LxButton
             v-else
             :icon="items.icon"
             :label="items.label"
             :href="items.to"
+            :iconSet="items?.iconSet"
             kind="ghost"
             iconVariant="gradient-brand"
           />
@@ -358,6 +360,7 @@ function triggerContextPersonMenu() {
           <LxButton
             :icon="items.icon"
             :label="items.label"
+            :iconSet="items?.iconSet"
             kind="ghost"
             @click="navClick(items?.id)"
           />
@@ -370,6 +373,7 @@ function triggerContextPersonMenu() {
           <LxButton
             :icon="items.icon"
             :label="items.label"
+            :iconSet="items?.iconSet"
             kind="ghost"
             iconVariant="gradient-brand"
             @click="logOut"

@@ -310,6 +310,7 @@ function triggerContextPersonMenu() {
           :label="item.label"
           :href="item.to"
           :icon="item.icon"
+          :iconSet="item?.iconSet"
           @click="navClick(item?.id)"
           icon-variant="gradient-brand-vertical"
         />
@@ -330,6 +331,7 @@ function triggerContextPersonMenu() {
           <LxButton
             :icon="items.icon"
             :label="items.label"
+            :iconSet="items?.iconSet"
             kind="ghost"
             @click="navClick(items?.id)"
           />
@@ -342,6 +344,7 @@ function triggerContextPersonMenu() {
           <LxButton
             :icon="items.icon"
             :label="items.label"
+            :iconSet="items?.iconSet"
             kind="ghost"
             iconVariant="gradient-brand"
             @click="logOut"

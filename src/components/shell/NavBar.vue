@@ -150,6 +150,7 @@ function navClick(id) {
               ? item.icon
               : ''
           "
+          :iconSet="item?.iconSet"
           :variant="
             index === 0 &&
             (props.layoutMode === 'public' || props.layoutMode === 'latvijalv') &&
@@ -191,6 +192,7 @@ function navClick(id) {
           :label="item.label"
           :href="item.to"
           :icon="item.icon"
+          :iconSet="item?.iconSet"
           :tabindex="getTabIndex"
           @click="navClick(item?.id)"
         />
