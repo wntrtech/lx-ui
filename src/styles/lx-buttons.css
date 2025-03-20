@@ -384,34 +384,34 @@ a.lx-button.lx-button-ghost svg,
 
 /* Toolbar selection icon styles */
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button) svg,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost svg {
   height: var(--button-toolbar-selection-icon-height);
   width: var(--button-toolbar-selection-icon-width);
   fill: var(--color-button-toolbar-selection-icon);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button):hover svg,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):hover svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:hover svg {
   fill: var(--color-button-toolbar-selection-icon-hover);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button):focus svg,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):focus svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:focus svg {
   fill: var(--color-button-toolbar-selection-icon-focus);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button:not(.is-expanded .lx-button):focus:hover svg,
+.lx-selection-toolbar .first-row .lx-button:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):focus:hover svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button:focus:hover svg {
   fill: var(--color-button-toolbar-selection-icon-hover);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button):active svg,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):active svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:active svg {
   fill: var(--color-button-toolbar-selection-icon-active);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button:not(.is-expanded .lx-button).lx-disabled svg,
+.lx-selection-toolbar .first-row .lx-button:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button).lx-disabled svg,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-disabled svg {
   fill: var(--color-button-toolbar-selection-icon-disabled);
 }
@@ -1009,7 +1009,7 @@ a.lx-button.lx-button-ghost svg,
 
 /* Selection toolbar button styles */
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button),
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button),
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost {
   padding: var(--button-toolbar-selection-padding);
   margin: var(--button-toolbar-selection-margin);
@@ -1026,7 +1026,7 @@ a.lx-button.lx-button-ghost svg,
   outline-offset: var(--button-toolbar-selection-outline-offset);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button) > .lx-button-content-wrapper,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) > .lx-button-content-wrapper,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost > .lx-button-content-wrapper {
   grid-template-areas: var(--button-toolbar-selection-grid-areas);
   grid-template-columns: var(--button-toolbar-selection-grid-template-columns);
@@ -1035,39 +1035,39 @@ a.lx-button.lx-button-ghost svg,
   gap: var(--button-toolbar-selection-gap);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button) .lx-button-content,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) .lx-button-content,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost .lx-button-content {
   text-align: var(--button-toolbar-selection-text-align);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button):hover,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):hover,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:hover {
   background-color: var(--color-button-toolbar-selection-hover-background);
   border-color: var(--color-button-toolbar-selection-hover-border);
   color: var(--color-button-toolbar-selection-hover);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button):focus,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):focus,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:focus {
   background-color: var(--color-button-toolbar-selection-focus-background);
   border-color: var(--color-button-toolbar-selection-focus-border);
   color: var(--color-button-toolbar-selection-focus);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button:focus:not(.is-expanded .lx-button):hover,
+.lx-selection-toolbar .first-row .lx-button:focus:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):hover,
 .lx-component-toolbar.lx-selection-toolbar .lx-button:focus:hover {
   background-color: var(--color-button-toolbar-selection-hover-background);
   color: var(--color-button-toolbar-selection-hover);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button):active,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):active,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:active {
   background-color: var(--color-button-toolbar-selection-active-background);
   border-color: var(--color-button-toolbar-selection-active-border);
   color: var(--color-button-toolbar-selection-active);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-ghost:not(.is-expanded .lx-button).lx-disabled,
+.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button).lx-disabled,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost.lx-disabled {
   background-color: var(--color-button-toolbar-selection-disabled-background);
   color: var(--color-button-toolbar-selection-disabled);
@@ -1109,7 +1109,7 @@ a.lx-button.lx-button-ghost svg,
   min-width: var(--button-toolbar-ghost-icon-only-min-width);
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-icon-only.lx-button-ghost:not(.is-expanded .lx-button),
+.lx-selection-toolbar .first-row .lx-button.lx-button-icon-only.lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button),
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-icon-only.lx-button-ghost {
   padding: var(--button-toolbar-selection-icon-only-padding);
   height: var(--button-toolbar-selection-icon-only-height);
@@ -1143,7 +1143,7 @@ a.lx-button.lx-button-ghost svg,
   --button-toolbar-ghost-grid-template-columns: 1fr;
 }
 
-.lx-list-toolbar.lx-selection-toolbar .first-row .lx-button.lx-button-icon-only.lx-button-ghost:not(.is-expanded .lx-button) .lx-button-content-wrapper,
+.lx-selection-toolbar .first-row .lx-button.lx-button-icon-only.lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) .lx-button-content-wrapper,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-icon-only.lx-button-ghost .lx-button-content-wrapper {
   --button-toolbar-selection-grid-areas: 'icon';
   --button-toolbar-selection-grid-template-columns: 1fr;

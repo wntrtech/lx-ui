@@ -686,10 +686,6 @@
   color: var(--color-focus-foreground);
 }
 
-.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons-small .lx-dropdown-panel {
-  padding: 0.125rem;
-}
-
 .lx-list-wrapper > .lx-list-toolbar > .left-area .lx-slot-wrapper {
   width: auto;
 }
