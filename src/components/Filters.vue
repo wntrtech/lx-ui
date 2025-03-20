@@ -77,7 +77,7 @@ defineExpose({ toggleExpander, focus });
 </script>
 <template>
   <div class="lx-filter-wrapper">
-    <lx-expander
+    <LxExpander
       ref="expander"
       :id="id"
       :label="labelText"
@@ -152,7 +152,7 @@ defineExpose({ toggleExpander, focus });
           />
         </div>
       </div>
-    </lx-expander>
+    </LxExpander>
     <div class="shortlist-wrapper" v-if="$slots.shortlist && filterSize.height.value === 0">
       <LxForm
         kind="compact"

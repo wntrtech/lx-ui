@@ -5,7 +5,8 @@
   outline: 2px solid transparent;
   outline-offset: -2px;
   cursor: pointer;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
 }
 
 .lx-expander .lx-head h4,
@@ -45,7 +46,7 @@
   color: var(--color-region-hover-foreground);
 }
 
-.lx-expander:not([data-disabled]) .lx-head:hover svg {
+.lx-expander:not([data-disabled]) .lx-head:hover svg:not(.lx-button-ghost .lx-button-icon) {
   fill: var(--color-region-hover-foreground);
 }
 
@@ -481,6 +482,7 @@
 
 .lx-expander header.lx-head>div:not(.lx-chevron-icon) {
   width: 100%;
+  overflow: hidden;
 }
 
 .lx .lx-expander header.lx-head .lx-group .lx-header-data {
