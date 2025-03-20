@@ -68,6 +68,11 @@
 .lx-grid-row .lx-cell-secondary .lx-ratings svg {
     opacity: 0.25;
 }
+
+.lx-theme-contrast .lx-grid-row .lx-cell-secondary .lx-ratings svg {
+    opacity: 1;
+}
+
 .lx-grid-row:hover .lx-cell-secondary .lx-ratings svg {
     opacity: 1;
 }

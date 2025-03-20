@@ -36,6 +36,7 @@
   --color-tile-hover-background: var(--color-region-hover);
   --color-tile-hover-foreground: var(--color-data);
   --color-grid-header: var(--color-chrome);
+  --color-grid-selected-background: var(--color-button-nav-selected-background);
   --color-grid-hover-background: var(--color-tile-hover-background);
   --color-grid-header-hover-background: #252525;
   --color-highlight: #124c58;

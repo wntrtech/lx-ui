@@ -41,7 +41,8 @@
   --color-tile-hover-background: var(--contrast-hover);
   --color-tile-hover-foreground: var(--contrast-background);
   --color-grid-header: var(--contrast-background);
-  --color-grid-hover-background: var(--contrast-background);
+  --color-grid-selected-background: var(--contrast-interactive);
+  --color-grid-hover-background: var(--contrast-hover);
   --color-grid-header-hover-background: var(--contrast-background);
   --color-highlight: var(--contrast-interactive);
   --color-highlight-background: var(--color-highlight);

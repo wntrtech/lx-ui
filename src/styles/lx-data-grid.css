@@ -142,10 +142,8 @@
   display: contents;
 }
 
-
-
 .lx .lx-data-grid .lx-grid-row.lx-selected .lx-cell-selector {
-  background-color: var(--color-button-nav-selected-background);
+  background-color: var(--color-grid-selected-background);
 }
 
 .lx .lx-data-grid .lx-grid-row .lx-cell-selector .lx-checkbox-wrapper,
@@ -156,12 +154,132 @@
 
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell,
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell-action {
-  background-color: var(--color-button-nav-selected-background);
+  background-color: var(--color-grid-selected-background);
 }
 
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .flag-column p,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell-action,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-grid-icon-text,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell-clickable>span,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-person-display-name,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .flag-column p,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-action,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-grid-icon-text,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-clickable>span,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-person-display-name {
+  color: var(--contrast-background);
+}
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-flag .small-flag,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-flag .small-flag {
+  border-color: var(--contrast-background);
+}
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected svg.lx-grid-column-icon,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-ratings svg,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover svg.lx-grid-column-icon,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-ratings svg {
+  fill: var(--contrast-background);
+}
+
+/*** Contrast checkbox & radio button styles ***/
+
+/* Selected/hover on row + no hover on checkbox */
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected 
+  .lx-checkbox+
+  .lx-checkbox-label-wrapper 
+  .lx-checkbox-appearance,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover 
+  .lx-checkbox+
+  .lx-checkbox-label-wrapper 
+  .lx-checkbox-appearance {
+  background-color: var(--contrast-background);
+  border-color: var(--contrast-background);
+}
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row
+  .lx-checkbox+
+  .lx-checkbox-label-wrapper 
+  .lx-checkbox-appearance 
+  .lx-checkbox-thumb svg {
+  fill: var(--contrast-foreground);
+}
+
+/* Hover on checkbox */
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row 
+  .lx-checkbox-wrapper:hover 
+  .lx-checkbox+
+  .lx-checkbox-label-wrapper 
+  .lx-checkbox-appearance {
+  background-color: var(--contrast-hover);
+  border-color: var(--contrast-background);
+}
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row 
+  .lx-checkbox-wrapper:hover 
+  .lx-checkbox:checked+
+  .lx-checkbox-label-wrapper 
+  .lx-checkbox-appearance 
+  .lx-checkbox-thumb svg {
+  fill: var(--contrast-background);
+}
+
+/* Selected/hover on row + no hover on radio button */
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected
+  .lx-radio-button-wrapper 
+  .lx-radio-button+
+  .lx-radio-button-label-wrapper 
+  .lx-radio-button-appearance,
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover
+  .lx-radio-button-wrapper 
+  .lx-radio-button+
+  .lx-radio-button-label-wrapper 
+  .lx-radio-button-appearance {
+  border-color: var(--contrast-background);
+  background-color: var(--contrast-background);
+}
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row
+  .lx-radio-button:checked+
+  .lx-radio-button-label-wrapper 
+  .lx-radio-button-appearance 
+  .lx-radio-thumb {
+  background-color: var(--contrast-background);
+}
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row
+  .lx-radio-button-wrapper
+  .lx-radio-button:checked+
+  .lx-radio-button-label-wrapper 
+  .lx-radio-button-appearance {
+  background-color: transparent;
+}
+
+/* Hover on radio button */
+
+.lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row 
+  .lx-radio-button-wrapper:hover 
+  .lx-radio-button+
+  .lx-radio-button-label-wrapper 
+  .lx-radio-button-appearance {
+  background-color: var(--contrast-hover);
+}
+
+/*** Contrast checkbox & radio button styles END ***/
+
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover,
-.lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell{
+.lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell {
   background-color: var(--color-grid-hover-background);
+}
+
+.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-cell-action .lx-toolbar > .lx-button:hover,
+.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-cell-action .lx-toolbar > .lx-context-container .lx-toolbar > .lx-button:hover {
+  --color-button-ghost-hover-border: var(--contrast-background);
 }
 
 .lx .lx-data-grid-wrapper .lx-cell-header {
@@ -473,6 +591,12 @@
 .lx-data-grid .lx-cell-action .lx-button svg {
   --color-button-ghost-icon: var(--color-data);
   --color-button-ghost-icon-focus: var(--color-data);
+}
+
+.lx-theme-contrast .lx-data-grid .lx-grid-row.lx-selected .lx-cell-action .lx-button svg,
+.lx-theme-contrast .lx-data-grid .lx-grid-row:hover .lx-cell-action .lx-button svg {
+  --color-button-ghost-icon: var(--contrast-background);
+  --color-button-ghost-icon-focus: var(--contrast-background);
 }
 
 .lx .lx-data-grid .lx-toolbar .lx-button {
