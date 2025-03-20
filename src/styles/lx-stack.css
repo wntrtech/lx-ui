@@ -1,0 +1,183 @@
+.lx-stack{
+    display: flex;
+    gap: var(--stack-gap);
+    height: 100%;
+    width: 100%;
+}
+
+/* orientation */
+
+.lx-stack.lx-stack-orientation-vertical{
+    flex-direction: column;
+}
+
+.lx-stack.lx-stack-orientation-horizontal{
+    flex-direction: row;
+}
+
+/* kind */
+
+.lx-stack.lx-stack-kind-compact{
+    gap: var(--stack-gap-compact);
+}
+
+/* mode */
+
+.lx-stack.lx-stack-mode-grid.lx-stack-orientation-vertical{
+    display: grid;
+    grid-auto-flow: row;
+    grid-auto-rows: 1fr;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-orientation-horizontal{
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+}
+
+/* horizontal alignment */
+
+.lx-stack.lx-stack-horizontal-alignment-leading{
+    align-items: flex-start;
+}
+
+.lx-stack.lx-stack-horizontal-alignment-trailing{
+    align-items: flex-end;
+}
+
+.lx-stack.lx-stack-horizontal-alignment-center{
+    align-items: center;
+}
+
+.lx-stack.lx-stack-horizontal-alignment-leading.lx-stack-mode-grid{
+    justify-content: start;
+}
+
+.lx-stack.lx-stack-horizontal-alignment-trailing.lx-stack-mode-grid{
+    justify-content: end;
+}
+
+.lx-stack.lx-stack-horizontal-alignment-center.lx-stack-mode-grid{
+    justify-content: center;
+}
+
+.lx-stack.lx-stack-horizontal-alignment-leading.lx-stack-orientation-horizontal{
+    justify-content: flex-start;
+}
+
+.lx-stack.lx-stack-horizontal-alignment-trailing.lx-stack-orientation-horizontal{
+    justify-content: flex-end;
+}
+
+.lx-stack.lx-stack-horizontal-alignment-center.lx-stack-orientation-horizontal{
+    justify-content: center;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-horizontal-alignment-leading{
+    justify-content: flex-start;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-horizontal-alignment-trailing{
+    justify-content: flex-end;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-horizontal-alignment-center{
+    justify-content: center;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-horizontal-alignment-leading.lx-stack-orientation-horizontal{
+    justify-items: flex-start;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-horizontal-alignment-trailing.lx-stack-orientation-horizontal{
+    justify-items: flex-end;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-horizontal-alignment-center.lx-stack-orientation-horizontal{
+    justify-items: center;
+}
+
+/* vertical alignment */
+
+.lx-stack.lx-stack-vertical-alignment-leading{
+    justify-content: flex-start;
+}
+
+.lx-stack.lx-stack-vertical-alignment-trailing{
+    justify-content: flex-end;
+}
+
+.lx-stack.lx-stack-vertical-alignment-center{
+    justify-content: center;
+}
+
+.lx-stack.lx-stack-vertical-alignment-leading.lx-stack-orientation-horizontal{
+    align-items: flex-start;
+}
+
+.lx-stack.lx-stack-vertical-alignment-trailing.lx-stack-orientation-horizontal{
+    align-items: flex-end;
+}
+
+.lx-stack.lx-stack-vertical-alignment-center.lx-stack-orientation-horizontal{
+    align-items: center;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-vertical-alignment-leading{
+    align-items: flex-start;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-vertical-alignment-trailing{
+    align-items: flex-end;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-vertical-alignment-center{
+    align-items: center;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-vertical-alignment-leading.lx-stack-orientation-horizontal{
+    align-items: flex-start;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-vertical-alignment-trailing.lx-stack-orientation-horizontal{
+    align-items: flex-end;
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-vertical-alignment-center.lx-stack-orientation-horizontal{
+    align-items: center;
+}
+
+/* orientation = overlay */
+
+.lx-stack.lx-stack-orientation-overlay{
+    position: relative;
+    display: flex;
+}
+
+.lx-stack.lx-stack-orientation-overlay > *{
+    position: absolute;
+}
+
+.lx-stack.lx-stack-orientation-overlay.lx-stack-horizontal-alignment-leading{
+    justify-content: flex-start;
+}
+
+.lx-stack.lx-stack-orientation-overlay.lx-stack-horizontal-alignment-trailing{
+    justify-content: flex-end;
+}
+
+.lx-stack.lx-stack-orientation-overlay.lx-stack-horizontal-alignment-center{
+    justify-content: center;
+}
+
+.lx-stack.lx-stack-orientation-overlay.lx-stack-vertical-alignment-leading{
+    align-items: flex-start;
+}
+
+.lx-stack.lx-stack-orientation-overlay.lx-stack-vertical-alignment-trailing{
+    align-items: flex-end;
+}
+
+.lx-stack.lx-stack-orientation-overlay.lx-stack-vertical-alignment-center{
+    align-items: center;    
+}

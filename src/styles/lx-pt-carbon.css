@@ -486,4 +486,6 @@
   --button-ghost-icon-only-min-width: var(--button-ghost-min-width);
   --button-ghost-icon-only-padding: 0;
   --button-ghost-icon-only-width: auto;
+  --stack-gap: var(--gap-buttons);
+  --stack-gap-compact: 0rem;
 }
