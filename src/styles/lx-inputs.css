@@ -4114,7 +4114,7 @@ input[type='range']:hover::-moz-range-thumb {
   margin-top: calc(var(--row-size) + 2px);
 }
 
-.lx-camera>.lx-component-toolbar .lx-toggle-wrapper{
+.lx-camera > .lx-component-toolbar > .right-area > .lx-group .lx-field-wrapper:has(.lx-toggle) {
   padding: 0 0.4rem;
 }
 

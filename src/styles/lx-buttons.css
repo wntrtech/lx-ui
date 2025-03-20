@@ -420,6 +420,7 @@ a.lx-button.lx-button-ghost svg,
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button svg,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button svg,
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button svg,
 .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button svg {
   height: var(--button-dropdown-icon-height);
   width: var(--button-dropdown-icon-width);
@@ -428,24 +429,28 @@ a.lx-button.lx-button-ghost svg,
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:hover svg,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover svg,
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:hover svg,
 .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:hover svg {
   fill: var(--color-button-dropdown-icon-hover);
 }
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:active svg,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:active svg,
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:active svg,
 .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:active svg {
   fill: var(--color-button-dropdown-icon-active);
 }
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:focus svg,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:focus svg,
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:focus svg,
 .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:focus svg {
   fill: var(--color-button-dropdown-icon-focus);
 }
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-disabled svg,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled svg,
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button.lx-disabled svg,
 .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button.lx-disabled svg {
   fill: var(--color-button-dropdown-icon-disabled);
 }
@@ -1166,6 +1171,7 @@ a.lx-button.lx-button-ghost svg,
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button,
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button,
 .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button {
   padding: var(--button-dropdown-padding);
   margin: var(--button-dropdown-margin);
@@ -1184,6 +1190,7 @@ a.lx-button.lx-button-ghost svg,
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button-content-wrapper,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button-content-wrapper,
+.lx-context-container .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper,
 .lx-context-container .lx-dropdown-panel > .lx-button .lx-button-content-wrapper {
   grid-template-areas: var(--button-dropdown-grid-areas);
   grid-template-columns: var(--button-dropdown-grid-template-columns);
@@ -1194,12 +1201,14 @@ a.lx-button.lx-button-ghost svg,
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button-content,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button-content,
+.lx-context-container .lx-dropdown-panel > div > .lx-button .lx-button-content,
 .lx-context-container .lx-dropdown-panel > .lx-button .lx-button-content {
   text-align: var(--button-dropdown-text-align);
 }
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:hover,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover,
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:hover,
 .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:hover {
   background-color: var(--color-button-dropdown-hover-background);
   border-color: var(--color-button-dropdown-hover-border);
@@ -1208,6 +1217,7 @@ a.lx-button.lx-button-ghost svg,
 
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:active,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:active,
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:active,
 .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:active {
   background-color: var(--color-button-dropdown-active-background);
   border-color: var(--color-button-dropdown-active-border);
@@ -1216,6 +1226,7 @@ a.lx-button.lx-button-ghost svg,
 
 .lx-layout .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:focus,
 .lx-layout .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:focus,
+.lx-layout .lx-context-container .popper .lx-dropdown-panel > div > .lx-button:focus,
 .lx-layout .lx-context-container .popper .lx-dropdown-panel > .lx-button:focus {
   background-color: var(--color-button-dropdown-focus-background);
   border-color: var(--color-button-dropdown-focus-border);
@@ -1224,6 +1235,7 @@ a.lx-button.lx-button-ghost svg,
 
 .lx-layout .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-disabled,
 .lx-layout .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
+.lx-layout .lx-context-container .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
 .lx-layout .lx-context-container .popper .lx-dropdown-panel > .lx-button.lx-disabled {
   background-color: var(--color-button-dropdown-disabled-background);
   color: var(--color-button-dropdown-disabled);
