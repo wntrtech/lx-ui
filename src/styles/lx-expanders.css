@@ -298,6 +298,10 @@
   width: auto;
 }
 
+.lx-data-block-expanded>.lx-data-block>.lx-data-block-header>.lx-content>.lx-primary{
+  padding-right: 0rem;
+}
+
 .lx-data-block-wrapper.lx-data-block-expanded>.lx-data-block>.lx-data-block-header>.lx-content>.lx-primary {
   padding-top: 0.5rem;
   padding-left: 0;
