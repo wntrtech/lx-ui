@@ -57,6 +57,8 @@ export default (
       secondsToLive: null,
       secondsToCountdown: null,
       isSessionExtendable: false,
+      phone_number: null,
+      email: null,
     };
     const returnPath = useStorage('returnPath', null, sessionStorage);
     const session = useStorage('lx-auth-session', { ...initState }, storage(), {
@@ -90,6 +92,8 @@ export default (
       session.value.secondsToCountdown = resp.secondsToCountdown;
       session.value.isSessionExtendable = resp.isSessionExtendable;
       session.value.org_id = resp.org_id;
+      session.value.phone_number = resp.phone_number;
+      session.value.email = resp.email;
     }
 
     async function setSessionKey(key) {
