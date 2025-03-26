@@ -15,7 +15,7 @@ test('LxButton label', async () => {
 
   wrapper = mount(LxButton, {
     props: {
-      label: 'Test label',
+      label: 'Required test label',
     },
     global: {
       stubs: {
@@ -25,10 +25,10 @@ test('LxButton label', async () => {
   });
 
   const inputElement = wrapper.find('.lx-button-label').text();
-  expect(inputElement).toBe('Test label');
+  expect(inputElement).toBe('Required test label');
   // after setting href, element changes from 'button' to 'a' so we need to check again
   await wrapper.setProps({ href: { name: 'test' } });
-  expect(inputElement).toBe('Test label');
+  expect(inputElement).toBe('Required test label');
 });
 
 test('LxButton title', async () => {
@@ -36,6 +36,7 @@ test('LxButton title', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       title: 'Test title',
     },
     global: {
@@ -58,6 +59,7 @@ test('LxButton id', async () => {
   wrapper = mount(LxButton, {
     props: {
       id: 'Test id',
+      label: 'Required test label',
     },
     global: {
       stubs: {
@@ -78,6 +80,7 @@ test('LxButton icon', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       icon: 'add',
       iconSet: 'cds',
     },
@@ -100,6 +103,7 @@ test('LxButton kind', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       kind: '',
     },
     global: {
@@ -109,7 +113,7 @@ test('LxButton kind', async () => {
     },
   });
   const inputElement = wrapper.find('button');
-  expect(inputElement.classes()).toMatchObject(['lx-button']);
+  expect(inputElement.classes()).toMatchObject(['lx-button', 'lx-button-text-only']);
   await wrapper.setProps({ kind: 'secondary' });
   expect(inputElement.classes('lx-button-secondary')).toBe(true);
   await wrapper.setProps({ kind: 'tertiary' });
@@ -125,7 +129,7 @@ test('LxButton kind', async () => {
   await wrapper.setProps({ kind: 'tertiary' });
   expect(hrefElement.classes('lx-button-tertiary')).toBe(true);
   await wrapper.setProps({ kind: '' });
-  expect(hrefElement.classes()).toMatchObject(['lx-button']);
+  expect(hrefElement.classes()).toMatchObject(['lx-button', 'lx-button-text-only']);
 });
 
 test('LxButton icon-only', async () => {
@@ -133,6 +137,7 @@ test('LxButton icon-only', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       variant: 'icon-only',
     },
     global: {
@@ -165,6 +170,7 @@ test('LxButton destructive', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       destructive: true,
     },
     global: {
@@ -190,6 +196,7 @@ test('LxButton href', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       href: { name: 'test' },
     },
     global: {
@@ -210,6 +217,7 @@ test('LxButton disabled', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       disabled: true,
     },
     global: {
@@ -237,6 +245,7 @@ test('LxButton loading', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       loading: true,
     },
     global: {
@@ -264,6 +273,7 @@ test('LxButton busy', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       busy: true,
       icon: 'add',
     },
@@ -291,6 +301,7 @@ test('LxButton badge', async () => {
   expect(LxButton).toBeTruthy();
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       badge: 'Test badge',
       badgeType: 'default',
     },
@@ -333,6 +344,7 @@ test('LxButton active', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       active: true,
     },
     global: {
@@ -358,6 +370,7 @@ test('LxButton tabindex', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       tabindex: 1,
     },
     global: {
@@ -379,6 +392,7 @@ test('LxButton custom class', async () => {
 
   wrapper = mount(LxButton, {
     props: {
+      label: 'Required test label',
       customClass: 'test-class',
     },
     global: {

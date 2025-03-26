@@ -179,7 +179,8 @@ function convertValue(v) {
       props.mask === 'integer' ||
       props.mask === 'decimal' ||
       props.mask === 'gpslat' ||
-      props.mask === 'gpslon'
+      props.mask === 'gpslon' ||
+      props.mask === 'numeric'
     ) {
       return v?.length ? Number(v) : null;
     }
@@ -290,6 +291,17 @@ function isReadOnlyEmail() {
   return props.mask === 'email' && props.readOnly && isEmail(model.value);
 }
 
+const matchedFlags = computed(() => {
+  const result = [];
+  Object.entries(flags)?.forEach(([key, value]) => {
+    if (valueRaw.value?.toString()?.startsWith(key)) {
+      if (!Array.isArray(value)) result.push(value);
+      else value.forEach((val) => result.push(val));
+    }
+  });
+  return result;
+});
+
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
@@ -381,16 +393,17 @@ watch(
       } else if (props.mask === 'currency') {
         const res = `${newValue} €`;
         if (res?.replace('.', ',') !== valueRaw.value) {
-          valueRaw.value = model.value;
+          valueRaw.value = model.value?.toString();
         }
       } else if (props.kind === 'phone') {
         const res = newValue?.toString()?.replace(/[()-]/g, '');
         if (res !== valueRaw.value) {
-          valueRaw.value = model.value;
+          valueRaw.value = model.value?.toString();
         }
-      } else valueRaw.value = model.value;
+      } else valueRaw.value = model.value?.toString();
     }
-  }
+  },
+  { immediate: true }
 );
 
 watch(
@@ -408,27 +421,17 @@ watch(
     if (newMask && newInputValue?.value) {
       if (newMask !== 'currency') {
         maskUpdate();
-        model.value = newInputValue?.value;
+        model.value = convertValue(newInputValue?.value);
       }
     }
-  }
+  },
+  { immediate: true }
 );
-
-const matchedFlags = computed(() => {
-  const result = [];
-  Object.entries(flags)?.forEach(([key, value]) => {
-    if (valueRaw.value?.toString()?.startsWith(key)) {
-      if (!Array.isArray(value)) result.push(value);
-      else value.forEach((val) => result.push(val));
-    }
-  });
-  return result;
-});
 
 onMounted(() => {
   maskUpdate();
   if (props.mask === 'decimal') valueRaw.value = props.modelValue?.toString()?.replace('.', ',');
-  else valueRaw.value = props.modelValue;
+  else valueRaw.value = props.modelValue?.toString();
 
   if (
     model.value &&
@@ -456,7 +459,9 @@ onMounted(() => {
         >—</span
       >
     </p>
+
     <a v-if="isReadOnlyEmail()" :href="sanitizedEmail" :aria-labelledby="labelledBy">{{ model }}</a>
+
     <div
       class="lx-text-input-wrapper lx-input-wrapper"
       :class="[
@@ -470,9 +475,11 @@ onMounted(() => {
       <div v-if="invalid" class="lx-invalidation-icon-wrapper">
         <LxIcon customClass="lx-invalidation-icon" value="invalid" />
       </div>
+
       <div v-if="kind === 'search'" class="lx-input-icon-wrapper">
         <LxIcon customClass="lx-modifier-icon" value="search" />
       </div>
+
       <div v-if="kind === 'phone'" class="lx-input-flag-wrapper">
         <div
           v-if="matchedFlags?.length > 0"
@@ -512,6 +519,7 @@ onMounted(() => {
         @accept="onAccept"
         @blur="onBlur"
       />
+
       <LxButton
         variant="icon-only"
         kind="ghost"
@@ -521,6 +529,7 @@ onMounted(() => {
         v-if="props.kind === 'password'"
         @click="showPasswordChange()"
       />
+
       <Money3Component
         v-if="mask === 'currency'"
         v-model="model"
@@ -532,6 +541,7 @@ onMounted(() => {
         :class="[{ 'lx-invalid': invalid }, { 'lx-search-input': props.kind === 'search' }]"
       />
     </div>
+
     <div class="lx-invalidation-message" v-if="invalid && !readOnly">{{ invalidationMessage }}</div>
   </div>
 </template>

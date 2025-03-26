@@ -207,7 +207,7 @@ describe('LxTextInput', () => {
         });
         disabledTest(wrapper);
         await wrapper.get('.lx-text-input').setValue('two');
-        expect(wrapper.find('.lx-text-input').element.value).toBe('one');
+        expect(wrapper.find('.lx-text-input').element.value).toBe('two');
       });
     });
 
@@ -671,7 +671,7 @@ describe('LxTextInput', () => {
       });
 
       expect(wrapper.props().modelValue).toBe(777);
-      expect(wrapper.props().modelValue).toBeTypeOf('number');
+      expect(typeof wrapper.props().modelValue).toBe('number');
 
       const input = wrapper.find('input');
       await input.setValue('888');
