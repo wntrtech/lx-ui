@@ -90,38 +90,26 @@ function getTargetPosition(item) {
 }
 
 function getSubItemCount(subItems) {
-  if (!Array.isArray(subItems)) return '';
-  return `--sub-item-count: ${subItems?.length}`;
+  return Array.isArray(subItems) ? `--sub-item-count: ${subItems.length}` : '';
 }
 
 function checkValue(item, cloneThreshold, grid) {
-  let res = null;
-  if (!cloneThreshold?.excludes) {
-    if (
-      item[props.valueAttribute] >= cloneThreshold.min &&
-      item[props.valueAttribute] <= cloneThreshold.max
-    )
-      res = !grid ? `var(--color-${cloneThreshold.color})` : cloneThreshold.color;
-  } else if (cloneThreshold?.excludes === 'max') {
-    if (
-      item[props.valueAttribute] >= cloneThreshold.min &&
-      item[props.valueAttribute] < cloneThreshold.max
-    )
-      res = !grid ? `var(--color-${cloneThreshold.color})` : cloneThreshold.color;
-  } else if (cloneThreshold?.excludes === 'min') {
-    if (
-      item[props.valueAttribute] > cloneThreshold.min &&
-      item[props.valueAttribute] <= cloneThreshold.max
-    )
-      res = !grid ? `var(--color-${cloneThreshold.color})` : cloneThreshold.color;
-  } else if (cloneThreshold?.excludes === 'both') {
-    if (
-      item[props.valueAttribute] > cloneThreshold.min &&
-      item[props.valueAttribute] < cloneThreshold.max
-    )
-      res = !grid ? `var(--color-${cloneThreshold.color})` : cloneThreshold.color;
+  if (!cloneThreshold) return null;
+
+  const { excludes, min, max, color } = cloneThreshold;
+  const value = item[props.valueAttribute];
+  const getColor = () => (!grid ? `var(--color-${color})` : color);
+
+  if (
+    (!excludes && value >= min && value <= max) ||
+    (excludes === 'max' && value >= min && value < max) ||
+    (excludes === 'min' && value > min && value <= max) ||
+    (excludes === 'both' && value > min && value < max)
+  ) {
+    return getColor();
   }
-  return res;
+
+  return null;
 }
 
 function getBarColor(item, grid = false) {

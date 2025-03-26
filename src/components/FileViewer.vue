@@ -83,7 +83,7 @@ const isDragging = ref(false);
 const startX = ref(0);
 const startY = ref(0);
 const scrollLeft = ref(0);
-const scrollTop = ref(0);
+const scrollTopRef = ref(0);
 const fitType = ref(null);
 
 const binaryWrapper = ref(null);
@@ -359,7 +359,7 @@ function startDragging(event) {
   startX.value = event.pageX - imgCanvasRef.value.offsetLeft;
   startY.value = event.pageY - imgCanvasRef.value.offsetTop;
   scrollLeft.value = imgCanvasRef.value.parentElement.scrollLeft;
-  scrollTop.value = imgCanvasRef.value.parentElement.scrollTop;
+  scrollTopRef.value = imgCanvasRef.value.parentElement.scrollTop;
 }
 
 function drag(event) {
@@ -371,7 +371,7 @@ function drag(event) {
   const walkX = (x - startX.value) * 1;
   const walkY = (y - startY.value) * 1;
   imgCanvasRef.value.parentElement.scrollLeft = scrollLeft.value - walkX;
-  imgCanvasRef.value.parentElement.scrollTop = scrollTop.value - walkY;
+  imgCanvasRef.value.parentElement.scrollTop = scrollTopRef.value - walkY;
 }
 
 function stopDragging() {
@@ -512,70 +512,70 @@ function resetPdfViewer() {
   resizeActive.value = false;
 }
 
+function getHeaderOffset() {
+  const getHeight = (selector) => document.querySelector(selector)?.offsetHeight || 0;
+
+  const headerHeight = getHeight('.lx-header');
+  const headerDigivesHeight = getHeight('.lx-header-digives');
+  const navigationHeight =
+    document.querySelector('.lx-nav-panel')?.style.display !== 'none'
+      ? getHeight('.lx-nav-panel')
+      : 0;
+  const toolbarHeight = getHeight('.lx-component-toolbar');
+
+  return (headerDigivesHeight || headerHeight) + navigationHeight + toolbarHeight;
+}
+
+function scrollToWindow(canvasElement) {
+  const totalOffsetHeight = getHeaderOffset();
+  const { top: canvasTop } = canvasElement.getBoundingClientRect();
+
+  window.scrollTo({
+    top: window.scrollY + canvasTop - totalOffsetHeight,
+    behavior: 'smooth',
+  });
+}
+
+function scrollToContainer(canvasElement) {
+  const container = pdfWrapper.value;
+  if (!container || container.scrollHeight <= container.clientHeight) {
+    scrollToWindow(canvasElement);
+    return;
+  }
+
+  const { top: containerTop, scrollTop } = container.getBoundingClientRect();
+  const { top: canvasTop } = canvasElement.getBoundingClientRect();
+
+  container.scrollTo({
+    top: canvasTop - containerTop + scrollTop,
+    behavior: 'smooth',
+  });
+}
+
 async function goToPage() {
   showInput.value = false;
 
   // Ensure input page is within valid range
-  if (inputPage.value < 1 || inputPage.value > totalPages.value) {
-    inputPage.value = currentPage.value;
-  }
+  inputPage.value = Math.min(Math.max(inputPage.value, 1), totalPages.value);
 
-  // Only change the current page if inputPage is different
+  // Update current page if necessary
   if (inputPage.value !== currentPage.value) {
     currentPage.value = inputPage.value;
   }
 
   const canvasElement = canvasArray.value[currentPage.value - 1];
-  const container = pdfWrapper.value;
-
-  if (canvasElement && props.scrollable) {
-    await nextTick();
-
-    // Dynamically calculate the combined height of lx-header, navigation, and toolbar
-    const header = document.querySelector('.lx-header');
-    const headerDigives = document.querySelector('.lx-header-digives');
-    const navigation = document.querySelector('.lx-nav-panel');
-    const toolbar = document.querySelector('.lx-component-toolbar');
-    const publicMode = document.querySelector('.lx-layout-public');
-
-    const headerHeight = header ? header.offsetHeight : 0;
-    const headerDigivesHeight = headerDigives ? headerDigives.offsetHeight : 0;
-    const navigationHeight =
-      navigation && publicMode && navigation.style.display !== 'none' ? navigation.offsetHeight : 0;
-    const toolbarHeight = toolbar ? toolbar.offsetHeight : 0;
-
-    // Total combined offset height
-    const totalOffsetHeight =
-      (headerDigivesHeight || headerHeight) + navigationHeight + toolbarHeight;
-
-    // If the container is scrollable, scroll it to the correct canvas
-    if (container && container.scrollHeight > container.clientHeight) {
-      const containerRect = container.getBoundingClientRect();
-      const canvasRect = canvasElement.getBoundingClientRect();
-
-      // Calculate the scroll position relative to the container
-      const scrollTopOffset = canvasRect.top - containerRect.top + container.scrollTop;
-
-      container.scrollTo({
-        top: scrollTopOffset,
-        behavior: 'smooth',
-      });
-    } else {
-      // If container is not scrollable, scroll the window instead
-      const canvasRect = canvasElement.getBoundingClientRect();
-
-      // Calculate the scroll position relative to the window
-      const scrollTopOffset = window.scrollY + canvasRect.top - totalOffsetHeight;
-
-      window.scrollTo({
-        top: scrollTopOffset,
-        behavior: 'smooth',
-      });
-    }
-  } else {
-    // If canvas element doesn't exist for the current page, fall back to rendering
+  if (!canvasElement) {
     renderPage(currentPage.value);
+    return;
   }
+
+  if (!props.scrollable) {
+    scrollToWindow(canvasElement);
+    return;
+  }
+
+  await nextTick();
+  scrollToContainer(canvasElement);
 }
 
 const debouncedSetupObserver = debounce(() => {

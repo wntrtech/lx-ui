@@ -87,71 +87,137 @@ async function stopStream() {
   }
 }
 
+function initializeSwitching() {
+  error.value = false;
+  loading.value = true;
+}
+
+function getCameraConstraints(val) {
+  if (props.cameraSwitcherMode === 'list') {
+    selectedCamera.value = val || camerasList.value?.[0];
+    return {
+      video: selectedCamera.value?.deviceId ? { deviceId: selectedCamera.value.deviceId } : true,
+    };
+  }
+
+  if (props.cameraSwitcherMode === 'toggle') {
+    selectedCamera.value =
+      !selectedCamera.value?.facingMode || selectedCamera.value?.facingMode === 'environment'
+        ? { facingMode: 'user' }
+        : { facingMode: 'environment' };
+
+    return { video: { facingMode: selectedCamera.value?.facingMode || 'environment' } };
+  }
+
+  return { video: true };
+}
+
+function saveCameraSettings(constraints) {
+  localStorage.setItem(
+    `${system}-${props.preferencesId}`,
+    JSON.stringify({ camera: constraints?.video, flashlight: flashlight.value })
+  );
+}
+
+async function startCameraStream(constraints) {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia(constraints);
+    video.value.srcObject = stream;
+    saveCameraSettings(constraints);
+  } catch {
+    error.value = true;
+  }
+}
+
+function applyStreamSettings(track, capabilities) {
+  if (props.imageSize === 'max') {
+    canvas.value.width = capabilities.width.max;
+    canvas.value.height = capabilities.height.max;
+  }
+
+  if (props.hasFlashlightToggle) {
+    cameraHasFlashlight.value = capabilities.torch || false;
+    if (cameraHasFlashlight.value) {
+      track.applyConstraints({ advanced: [{ torch: flashlight.value }] });
+    }
+  }
+}
+
+async function updateCameraSettings() {
+  if (camerasList.value?.length <= 1) await getCameraDevices();
+  if (!stream || (!props.hasFlashlightToggle && props.imageSize !== 'max')) return;
+
+  const track = stream.getVideoTracks()[0];
+  const capabilities = track.getCapabilities();
+
+  applyStreamSettings(track, capabilities);
+}
+
+function handleCameraError() {
+  error.value = true;
+  lxDevUtils.logError('Error switching cameras', useLx().getGlobals()?.environment);
+}
+
 async function switchCamera(val) {
   await stopStream();
-
   await getCameraDevices();
 
   try {
-    error.value = false;
-    loading.value = true;
+    initializeSwitching();
 
-    let constraints = {};
-    if (props.cameraSwitcherMode === 'list') {
-      selectedCamera.value = val || camerasList.value?.[0];
-
-      constraints = {
-        video: selectedCamera.value?.deviceId ? { deviceId: selectedCamera.value.deviceId } : true,
-      };
-    } else if (props.cameraSwitcherMode === 'toggle') {
-      if (!selectedCamera.value?.facingMode || selectedCamera.value?.facingMode === 'environment') {
-        selectedCamera.value = { facingMode: 'user' };
-      } else selectedCamera.value = { facingMode: 'environment' };
-
-      constraints = {
-        video: {
-          facingMode: selectedCamera.value?.facingMode || 'environment',
-        },
-      };
-    }
-    try {
-      stream = await navigator.mediaDevices.getUserMedia(constraints);
-      video.value.srcObject = stream;
-      localStorage.setItem(
-        `${system}-${props.preferencesId}`,
-        JSON.stringify({ camera: constraints?.video, flashlight: flashlight.value })
-      );
-    } catch (errorVal) {
-      error.value = true;
-    }
-
-    if (camerasList.value?.length <= 1) await getCameraDevices();
-
-    if (stream && (props.hasFlashlightToggle || props.imageSize === 'max')) {
-      const [track] = stream.getVideoTracks();
-      const capabilities = track.getCapabilities();
-
-      if (props.imageSize === 'max') {
-        canvas.value.width = capabilities.width.max;
-        canvas.value.height = capabilities.height.max;
-      }
-
-      if (props.hasFlashlightToggle) {
-        if (capabilities.torch) {
-          track.applyConstraints({ advanced: [{ torch: flashlight.value }] });
-          cameraHasFlashlight.value = true;
-        } else {
-          cameraHasFlashlight.value = false;
-        }
-      }
-    }
+    const constraints = getCameraConstraints(val);
+    await startCameraStream(constraints);
+    await updateCameraSettings();
   } catch (errorVal) {
-    error.value = true;
-    lxDevUtils.logError('Error switching cameras', useLx().getGlobals()?.environment);
+    handleCameraError();
   } finally {
     loading.value = false;
   }
 }
+
+function actionClicked(actionId) {
+  if (actionId === 'refresh') {
+    localStorage.removeItem(`${system}-${props.preferencesId}`);
+    window.location.reload();
+  }
+}
+
+function isSingleInvalidCamera() {
+  return camerasList.value?.length === 1 && camerasList.value[0].deviceId === '';
+}
+
+function setCameraError() {
+  loading.value = false;
+  error.value = true;
+}
+
+function getStoredCameraSettings() {
+  const settings = localStorage.getItem(`${system}-${props.preferencesId}`);
+  return settings ? JSON.parse(settings) : null;
+}
+
+function determineCameraMode(settingsObj) {
+  selectedCamera.value =
+    settingsObj?.camera?.facingMode === 'user'
+      ? { facingMode: 'environment' }
+      : { facingMode: 'user' };
+}
+
+async function initializeCameraSettings(settingsObj) {
+  if (!settingsObj?.camera?.facingMode) {
+    await switchCamera(settingsObj?.camera);
+  } else {
+    determineCameraMode(settingsObj);
+    await switchCamera();
+  }
+
+  if (settingsObj?.flashlight) {
+    flashlight.value = true;
+  }
+}
+
+const rowId = inject('rowId', ref(null));
+const labelledBy = computed(() => props.labelId || rowId.value);
 
 watch(
   () => flashlight.value,
@@ -192,38 +258,19 @@ watch(
   }
 );
 
-function actionClicked(actionId) {
-  if (actionId === 'refresh') {
-    localStorage.removeItem(`${system}-${props.preferencesId}`);
-    window.location.reload();
-  }
-}
-
 onMounted(async () => {
-  if (camerasList.value?.length === 1 && camerasList.value[0].deviceId === '') {
-    loading.value = false;
-    error.value = true;
+  if (isSingleInvalidCamera()) {
+    setCameraError();
+    return;
+  }
+
+  const settings = getStoredCameraSettings();
+  if (settings) {
+    await initializeCameraSettings(settings);
   } else {
-    const settings = localStorage.getItem(`${system}-${props.preferencesId}`);
-    const settingsObj = JSON.parse(settings);
-    if (settings) {
-      if (!settingsObj?.camera?.facingMode) {
-        await switchCamera(settingsObj?.camera);
-      } else {
-        if (settingsObj?.camera?.facingMode === 'user')
-          selectedCamera.value = { facingMode: 'environment' };
-        else selectedCamera.value = { facingMode: 'user' };
-        await switchCamera();
-      }
-      if (settingsObj?.flashlight) flashlight.value = true;
-    } else {
-      await switchCamera();
-    }
+    await switchCamera();
   }
 });
-
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
 
 onUnmounted(() => {
   stopStream();

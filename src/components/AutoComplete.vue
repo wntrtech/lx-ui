@@ -502,72 +502,80 @@ function onUp() {
   }
 }
 
+
+function sortModel() {
+  model.value.sort((a, b) => {
+    return Object.keys(itemsModel.value).indexOf(a.toString()) -
+           Object.keys(itemsModel.value).indexOf(b.toString());
+  });
+}
+
+function handleSelection(selectedValue) {
+  const idModel = ref(itemsModel.value[selectedValue]);
+  idModel.value = !idModel.value;
+
+  if (!Array.isArray(model.value)) {
+    model.value = [selectedValue];
+    itemsModel.value[selectedValue] = true;
+    return;
+  }
+
+  updateModel(selectedValue, idModel.value);
+  sortModel();
+}
+
 function onEnter() {
+  if (handleClearButton()) return;
+  if (handleMenuOpening()) return;
+
+  const selectedValue = getSelectedValue();
+  if (!selectedValue) {
+    focusOnDropDown();
+    return;
+  }
+
+  if (props.selectingKind === 'multiple') {
+    handleSelection(selectedValue);
+  } else {
+    model.value = selectedValue;
+    closeMenu();
+  }
+}
+
+function handleClearButton() {
   if (document.activeElement?.id === 'clearButton') {
     clear();
     closeMenu();
     openMenu();
-    return;
+    return true;
   }
+  return false;
+}
 
+function handleMenuOpening() {
   if (!menuOpen.value) {
     openMenu();
-    return;
+    return true;
   }
+  return false;
+}
 
-  let selectedValue;
-
-  if (highlightedItemId.value) {
-    selectedValue = highlightedItemId.value;
-  } else if (filteredItems.value.length > 0 && query.value && query.value.trim() !== '') {
-    selectedValue = filteredItems.value[0][props.idAttribute];
+function getSelectedValue() {
+  if (highlightedItemId.value) return highlightedItemId.value;
+  if (filteredItems.value.length > 0 && query.value?.trim()) {
+    return filteredItems.value[0][props.idAttribute];
   }
+  return null;
+}
 
-  if (selectedValue) {
-    if (props.selectingKind === 'multiple') {
-      const idModel = ref(itemsModel.value[selectedValue]);
-      idModel.value = !idModel.value;
-
-      if (Array.isArray(model.value)) {
-        if (idModel.value) {
-          // Check if item already exists in model
-          const index = model.value.indexOf(selectedValue);
-          if (index === -1) {
-            // Add item to model
-            model.value = [...model.value, selectedValue];
-            itemsModel.value[selectedValue] = true;
-          } else {
-            // Remove item from model
-            const updatedModel = model.value.filter((id) => id !== selectedValue);
-            model.value = [...updatedModel];
-          }
-        } else {
-          itemsModel.value[selectedValue] = false;
-          const index = model.value.indexOf(selectedValue);
-          if (index > -1) {
-            // Remove item from model
-            const updatedModel = model.value.filter((id) => id !== selectedValue);
-            model.value = [...updatedModel];
-          }
-        }
-
-        // Sort model according to order of items
-        model.value.sort(
-          (a, b) =>
-            Object.keys(itemsModel.value).indexOf(a.toString()) -
-            Object.keys(itemsModel.value).indexOf(b.toString())
-        );
-      } else {
-        // Initialize model.value as an array if it's not already
-        model.value = [selectedValue];
-        itemsModel.value[selectedValue] = true;
-      }
-    } else {
-      model.value = selectedValue;
-      closeMenu();
-    }
-  } else {
-    focusOnDropDown();
+function updateModel(selectedValue, isSelected) {
+  const index = model.value.indexOf(selectedValue);
+  if (isSelected && index === -1) {
+    model.value = [...model.value, selectedValue];
+    itemsModel.value[selectedValue] = true;
+  } else if (!isSelected && index !== -1) {
+    model.value = model.value.filter((id) => id !== selectedValue);
+    itemsModel.value[selectedValue] = false;
   }
 }
 
