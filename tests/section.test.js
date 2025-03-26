@@ -17,6 +17,9 @@ test('LxSection id', () => {
   expect(LxSection).toBeTruthy();
 
   wrapper = mount(LxForm, {
+    props: {
+      id: 'custom-test-id',
+    },
     slots: {
       sections: h(LxSection, { id: 'section' }),
     },
@@ -26,9 +29,9 @@ test('LxSection id', () => {
       },
     },
   });
-  // process.stdout.write(`${wrapper.html()}\n`);
+
   const section = wrapper.findAll('section');
-  expect(section[0].attributes('id')).toBe('default');
+  expect(section[0].attributes('id')).toBe('custom-test-id-default');
   expect(section[1].attributes('id')).toBe('section');
 });
 

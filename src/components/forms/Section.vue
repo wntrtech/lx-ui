@@ -228,7 +228,7 @@ provide('sectionOrientation', sectionOrientation);
 </script>
 <template>
   <LxExpander
-    v-if="sectionIndexType === 'expanders' && id !== 'default'"
+    v-if="sectionIndexType === 'expanders' && !id.endsWith('default')"
     :label="label"
     v-model="expandedValue"
     :invalid="exactIndex?.invalid"
@@ -259,6 +259,7 @@ provide('sectionOrientation', sectionOrientation);
       <slot />
     </section>
   </LxExpander>
+
   <section
     v-else
     :id="id"

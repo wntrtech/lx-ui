@@ -253,10 +253,18 @@ const props = defineProps({
   },
 });
 
+function normalizeId(id) {
+  if (id === 'default') {
+    return `${props.id}-default`;
+  }
+  return id;
+}
+
 // Scrolls to the element with the specified ID
 function scrollTo(id) {
+  const sectionId = normalizeId(id);
   const elementForm = document.getElementById(props.id);
-  const element = elementForm?.querySelector(`#${id}`);
+  const element = elementForm?.querySelector(`#${sectionId}`);
   const topPosition =
     element && element.getBoundingClientRect()
       ? element.getBoundingClientRect().top + window.scrollY
@@ -368,6 +376,7 @@ const actionDefinitionsWizardSteps = computed(() => [
     disabled: currentStepIndex.value === props.index.length - 1,
   },
 ]);
+
 function nextStep() {
   const currentIndex = currentStepIndex.value;
   if (currentIndex < props.index.length - 1) {
@@ -411,6 +420,7 @@ const primaryButtons = computed(() => {
   }
   return ret;
 });
+
 const secondaryButtons = computed(() => {
   if (indexTypeRef.value === 'wizard') {
     return props.actionDefinitions
@@ -419,15 +429,19 @@ const secondaryButtons = computed(() => {
   }
   return props.actionDefinitions?.filter((x) => x.kind === 'secondary');
 });
+
 const tertiaryButtons = computed(() =>
   props.actionDefinitions?.filter((x) => x.kind === 'tertiary')
 );
+
 const additionalButtons = computed(() =>
   props.actionDefinitions?.filter((x) => x.kind === 'additional')
 );
+
 const hasPreHeaderInfoSlot = computed(
   () => props.showPreHeaderInfo && slots['pre-header-info'] !== undefined
 );
+
 const hasPostHeaderInfoSlot = computed(
   () => props.showPostHeaderInfo && slots['post-header-info'] !== undefined
 );
@@ -445,22 +459,9 @@ const clickHandler = (actionName) => {
   emits('buttonClick', actionName);
 };
 
-watch(
-  () => props.index,
-  (value) => {
-    nextTick(() => {
-      const elementForm = document.getElementById(props.id);
-      props.index?.forEach((o) => {
-        const el = elementForm?.querySelector(`#${o.id}`);
-        const visible = useElementVisibility(el);
-        visibilities.value[o.id] = visible;
-      });
-    });
-    itemsCopy.value = value;
-  }
-);
 const tabControl = ref();
 const wizard = ref();
+
 const selectedSection = computed(() => {
   const ret = [];
   Object.keys(visibilities.value).forEach((key) => {
@@ -472,26 +473,19 @@ const selectedSection = computed(() => {
 });
 
 function findIfSectionSelected(id) {
-  const res = selectedSection.value?.find((x) => x === id);
+  const sectionId = normalizeId(id);
+  const res = selectedSection.value?.find((x) => x === sectionId);
   return res !== undefined;
 }
 
-watch(
-  () => currentStepId.value,
-  (value) => {
-    wizardModel.value = value;
-  },
-  { immediate: true }
-);
-
 const selectedTabValue = computed(() => {
-  let res = props.index[0]?.id;
+  let res = normalizeId(props.index[0]?.id);
   props.index?.forEach((o) => {
     if (
       (tabControl.value?.isActiveTab(o.id) && props.indexType === 'tabs') ||
       (wizardModel.value === o.id && props.indexType === 'wizard')
     ) {
-      res = o.id;
+      res = normalizeId(o.id);
     }
   });
   return res;
@@ -510,39 +504,15 @@ function hideAll() {
     allElements[i].style.display = 'none';
     allElements[i].style.gridTemplateColumns = 'none';
   }
+
   const selectedForm = document.getElementById(props.id);
+
   const selectedElement = selectedForm?.querySelector(`#${selectedTabValue.value}`);
   if (selectedElement) {
     selectedElement.style.display = 'grid';
     selectedElement.style.gridTemplateColumns = '1fr';
   }
 }
-
-watch(
-  () => props.indexType,
-  (newValue) => {
-    if (newValue === 'default' || newValue === 'expanders') {
-      const allElements = document
-        .getElementById(props.id)
-        .getElementsByClassName('lx-form-section');
-      for (let i = 0; i < allElements.length; i += 1) {
-        allElements[i].style.display = 'grid';
-      }
-      nextTick(() => {
-        const elementForm = document.getElementById(props.id);
-        props.index?.forEach((o) => {
-          const el = elementForm?.querySelector(`#${o.id}`);
-          const visible = useElementVisibility(el);
-          visibilities.value[o.id] = visible;
-        });
-      });
-    } else {
-      nextTick(() => {
-        hideAll();
-      });
-    }
-  }
-);
 
 const notPrimaryButtonCount = computed(() => {
   const secondary = secondaryButtons.value?.length ? secondaryButtons.value?.length : 0;
@@ -614,23 +584,7 @@ function setInitialWizardStates(currentStep) {
   }
 }
 
-onMounted(() => {
-  const elementForm = document.getElementById(props.id);
-  props.index?.forEach((o) => {
-    const el = elementForm?.querySelector(`#${o.id}`);
-    const visible = useElementVisibility(el);
-    visibilities.value[o.id] = visible;
-  });
-
-  const currentStep = itemsCopy.value.find((item) => item.isCurrentStep === true);
-  setInitialWizardStates(currentStep);
-
-  if (currentStepId.value) {
-    wizardModel.value = currentStepId.value;
-  }
-  if (props.indexType === 'tabs' || props.indexType === 'wizard') hideAll();
-});
-defineExpose({ highlightRow, clearHighlights });
+const defaultSectionId = computed(() => `${props.id}-default`);
 
 function isElementFocusable(element) {
   return element && element.offsetParent !== null && !element.disabled;
@@ -689,6 +643,77 @@ function focusFirstFocusableElementAfter() {
     focusNextFocusableElement(form.value);
   }
 }
+
+watch(
+  () => props.index,
+  (value) => {
+    nextTick(() => {
+      const elementForm = document.getElementById(props.id);
+      props.index?.forEach((o) => {
+        const sectionId = normalizeId(o.id);
+        const el = elementForm?.querySelector(`#${sectionId}`);
+        const visible = useElementVisibility(el);
+        visibilities.value[sectionId] = visible;
+      });
+    });
+    itemsCopy.value = value;
+  }
+);
+
+watch(
+  () => currentStepId.value,
+  (value) => {
+    wizardModel.value = value;
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.indexType,
+  (newValue) => {
+    if (newValue === 'default' || newValue === 'expanders') {
+      const allElements = document
+        .getElementById(props.id)
+        .getElementsByClassName('lx-form-section');
+      for (let i = 0; i < allElements.length; i += 1) {
+        allElements[i].style.display = 'grid';
+      }
+      nextTick(() => {
+        const elementForm = document.getElementById(props.id);
+        props.index?.forEach((o) => {
+          const sectionId = normalizeId(o.id);
+          const el = elementForm?.querySelector(`#${sectionId}`);
+          const visible = useElementVisibility(el);
+          visibilities.value[sectionId] = visible;
+        });
+      });
+    } else {
+      nextTick(() => {
+        hideAll();
+      });
+    }
+  }
+);
+
+onMounted(() => {
+  const elementForm = document.getElementById(props.id);
+  props.index?.forEach((o) => {
+    const sectionId = normalizeId(o.id);
+    const el = elementForm?.querySelector(`#${sectionId}`);
+    const visible = useElementVisibility(el);
+    visibilities.value[sectionId] = visible;
+  });
+
+  const currentStep = itemsCopy.value.find((item) => item.isCurrentStep === true);
+  setInitialWizardStates(currentStep);
+
+  if (currentStepId.value) {
+    wizardModel.value = currentStepId.value;
+  }
+  if (props.indexType === 'tabs' || props.indexType === 'wizard') hideAll();
+});
+
+defineExpose({ highlightRow, clearHighlights });
 </script>
 <template>
   <article
@@ -707,10 +732,11 @@ function focusFirstFocusableElementAfter() {
       :tabindex="0"
       @click="focusFirstFocusableElementAfter"
     />
+
     <aside
+      v-if="props.indexType === 'default' && index?.length > 0"
       class="lx-index"
       aria-label="navigation block"
-      v-if="props.indexType === 'default' && index?.length > 0"
     >
       <ul>
         <li
@@ -728,17 +754,18 @@ function focusFirstFocusableElementAfter() {
             :class="{ 'lx-invalid': i?.invalid }"
             :title="i.invalid ? i.invalidationMessage : ''"
           >
-            {{ sectionLocations[i.id] }}
+            {{ sectionLocations[normalizeId(i.id)] }}
             <p>{{ i.name }}</p>
             <LxIcon value="invalid" v-if="i?.invalid" />
           </div>
         </li>
       </ul>
     </aside>
+
     <aside
+      v-if="props.indexType === 'default' && index?.length > 0"
       class="lx-index lx-index-small"
       aria-label="navigation block"
-      v-if="props.indexType === 'default' && index?.length > 0"
     >
       <ul>
         <li
@@ -757,7 +784,7 @@ function focusFirstFocusableElementAfter() {
             :title="i.invalid ? i.invalidationMessage : ''"
           >
             <div class="inner-text">
-              {{ sectionLocations[i.id] }}
+              {{ sectionLocations[normalizeId(i.id)] }}
 
               {{ index + 1 }}
               <span class="index-hide-collapsed">&nbsp;{{ i.name }} </span>
@@ -767,6 +794,7 @@ function focusFirstFocusableElementAfter() {
         </li>
       </ul>
     </aside>
+
     <header
       ref="formHeader"
       :class="[
@@ -787,15 +815,18 @@ function focusFirstFocusableElementAfter() {
             <slot name="pre-header-info" />
           </template>
         </LxInfoWrapper>
+
         <div class="lx-toolbar-chip" v-else>
           <slot name="pre-header" />
         </div>
       </div>
+
       <div class="lx-group lx-primary">
         <div class="lx-toolbar-chip" :id="`${id}-header`">
           <slot name="header" />
         </div>
       </div>
+
       <div class="lx-group post-header-group">
         <LxInfoWrapper v-if="hasPostHeaderInfoSlot" placement="bottom-end">
           <div class="lx-toolbar-chip">
@@ -805,10 +836,12 @@ function focusFirstFocusableElementAfter() {
             <slot name="post-header-info" />
           </template>
         </LxInfoWrapper>
+
         <div class="lx-toolbar-chip" v-else>
           <slot name="post-header" />
         </div>
       </div>
+
       <div class="responsive-overflow-header">
         <div class="overflow-icon-container">
           <LxInfoWrapper v-if="slots['pre-header'] || slots['post-header']">
@@ -822,6 +855,7 @@ function focusFirstFocusableElementAfter() {
           </LxInfoWrapper>
         </div>
       </div>
+
       <div
         class="lx-group"
         :class="[{ 'lx-single-header-button': props.indexType === 'default' }]"
@@ -846,6 +880,7 @@ function focusFirstFocusableElementAfter() {
           @click="clickHandler(button.id)"
         />
       </div>
+
       <div
         class="lx-group"
         :class="[
@@ -926,6 +961,7 @@ function focusFirstFocusableElementAfter() {
           </template>
         </LxDropDownMenu>
       </div>
+
       <div
         class="responsive-default-index-button"
         v-if="additionalButtons?.length === 0 && props.indexType === 'default' && index?.length > 0"
@@ -955,6 +991,7 @@ function focusFirstFocusableElementAfter() {
         </LxDropDownMenu>
       </div>
     </header>
+
     <LxTabControl
       v-if="props.indexType === 'tabs' && index?.length > 0"
       ref="tabControl"
@@ -969,13 +1006,14 @@ function focusFirstFocusableElementAfter() {
           class="lx-main"
           :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
         >
-          <LxSection id="default" :column-count="columnCount">
+          <LxSection :id="defaultSectionId" :column-count="columnCount">
             <slot />
           </LxSection>
           <slot name="sections" />
         </div>
       </template>
     </LxTabControl>
+
     <LxWizard
       ref="wizard"
       v-model="wizardModel"
@@ -988,23 +1026,25 @@ function focusFirstFocusableElementAfter() {
           class="lx-main"
           :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
         >
-          <LxSection id="default" :column-count="columnCount">
+          <LxSection :id="defaultSectionId" :column-count="columnCount">
             <slot />
           </LxSection>
           <slot name="sections" />
         </div>
       </template>
     </LxWizard>
+
     <div
       class="lx-main"
       v-else
       :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
     >
-      <LxSection id="default" :column-count="columnCount">
+      <LxSection :id="defaultSectionId" :column-count="columnCount">
         <slot />
       </LxSection>
       <slot name="sections" />
     </div>
+
     <footer
       :class="[
         { 'lx-sticky': stickyFooter },
