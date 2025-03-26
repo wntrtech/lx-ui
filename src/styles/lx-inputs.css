@@ -3179,7 +3179,8 @@ input[type='range']:hover::-moz-range-thumb {
 }
 
 .lx-file-upload-wrapper .lx-list-item .lx-file-indicators .lx-invalidation-icon,
-.lx-file-upload-wrapper .lx-list-item .lx-file-indicators .lx-loader svg {
+.lx-file-upload-wrapper .lx-list-item .lx-file-indicators .lx-loader svg,
+.lx-file-upload-wrapper .lx-list-item .lx-file-indicators .lx-loader.lx-small {
   height: 1rem;
   width: 1rem;
   margin: 0;
@@ -3333,8 +3334,9 @@ input[type='range']:hover::-moz-range-thumb {
   display: flex;
 }
 
-.lx .lx-upload-buttons .lx-button svg {
-  fill: var(--color-data);
+.lx .lx-upload-buttons .lx-button {
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
 }
 
 .lx-file-main-additional-info {

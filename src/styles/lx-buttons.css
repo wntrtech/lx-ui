@@ -527,7 +527,7 @@ a.lx-button.lx-button-ghost svg,
 
 /* Focus-hover icon styles */
 
-.lx .lx-button:focus:hover svg,
+.lx-button:focus:hover svg,
 .lx button:focus:hover svg {
   fill: var(--color-button-primary-icon-hover);
 }
@@ -554,18 +554,18 @@ a.lx-button.lx-button-ghost svg,
   fill: var(--color-button-primary-icon-active);
 }
 
-.lx-button.lx-button-secondary:active svg,
-.lx button.lx-button-secondary:active svg {
+.lx .lx-button.lx-button-secondary:active svg,
+.lx .lx-layout button.lx-button-secondary:active svg {
   fill: var(--color-button-secondary-icon-active);
 }
 
-.lx-button.lx-button-tertiary:active svg,
-.lx button.lx-button-tertiary:active svg {
+.lx .lx-button.lx-button-tertiary:active svg,
+.lx .lx-layout button.lx-button-tertiary:active svg {
   fill: var(--color-button-tertiary-icon-active);
 }
 
-.lx-button.lx-button-ghost:active svg,
-.lx button.lx-button-ghost:active svg {
+.lx .lx-button.lx-button-ghost:active svg,
+.lx .lx-layout button.lx-button-ghost:active svg {
   fill: var(--color-button-ghost-icon-active);
 }
 

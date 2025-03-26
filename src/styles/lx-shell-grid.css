@@ -1478,61 +1478,39 @@
   border-top: 1px solid var(--color-chrome);
 }
 
-.lx
-  .lx-cover
-  > .lx-content
-  .cover-main-area
-  > .lx-button-set
-  .lx-button.lx-button.lx-button-secondary {
-  background-color: var(--color-region);
-  border-color: var(--color-region);
-  color: var(--color-interactive-background);
+.lx-cover
+> .lx-content
+.cover-main-area
+> .lx-button-set
+.lx-button.lx-button.lx-button-secondary {
+  --color-button-secondary: var(--color-interactive-background);
+  --color-button-secondary-background: var(--color-region);
+  --button-secondary-border: 2px solid var(--color-region);
+  --color-button-secondary-icon: var(--color-interactive-background);
+  --color-button-secondary-focus: var(--color-interactive-background);
+  --color-button-secondary-focus-background: var(--color-region);
+  --color-button-secondary-focus-border: var(--color-focus-background);
+  --color-button-secondary-icon-focus: var(--color-interactive-background);
+  --color-button-secondary-active: var(--color-interactive-hover-background);
+  --color-button-secondary-active-background: var(--color-grid-hover-background);
+  --color-button-secondary-active-border: var(--color-interactive-hover-background);
+  --color-button-secondary-icon-active: var(--color-interactive-hover-background);
+  --color-button-secondary-hover: var(--color-interactive-hover-background);
+  --color-button-secondary-hover-background: var(--color-grid-hover-background);
+  --color-button-secondary-hover-border: var(--color-interactive-hover-background);
+  --color-button-secondary-icon-hover: var(--color-interactive-hover-background);
 }
 
-.lx
-  .lx-cover
-  > .lx-content
-  .cover-main-area
-  > .lx-button-set
-  .lx-button.lx-button.lx-button-secondary
-  svg {
-  fill: var(--color-interactive-background);
-}
-
-.lx
-  .lx-cover
-  > .lx-content
-  .cover-main-area
-  > .lx-button-set
-  .lx-button.lx-button.lx-button-secondary:focus,
-.lx
-  .lx-cover
-  > .lx-content
-  .cover-main-area
-  > .lx-button-set
-  .lx-button.lx-button.lx-button-secondary:focus-visible {
-  border-color: var(--color-focus-background);
-}
-
-.lx
-  .lx-cover
-  > .lx-content
-  .cover-main-area
-  > .lx-button-set
-  .lx-button.lx-button.lx-button-secondary:hover {
-  background-color: var(--color-grid-hover-background);
-  border-color: var(--color-interactive-hover-background);
-  color: var(--color-interactive-hover-background);
-}
-
-.lx
-  .lx-cover
-  > .lx-content
-  .cover-main-area
-  > .lx-button-set
-  .lx-button.lx-button.lx-button-secondary:hover
-  svg {
-  fill: var(--color-interactive-hover-background);
+.lx-theme-contrast
+.lx-cover
+> .lx-content
+.cover-main-area
+> .lx-button-set
+.lx-button.lx-button.lx-button-secondary {
+  --color-button-secondary-hover: var(--contrast-background);
+  --color-button-secondary-icon-hover: var(--contrast-background);
+  --color-button-secondary-active: var(--color-interactive-hover-foreground);
+  --color-button-secondary-icon-active: var(--color-interactive-hover-foreground);
 }
 
 .lx-cover-alert {
