@@ -1,5 +1,24 @@
 # LX/UI Vite Plugins
 
+### ESLint Configuration
+
+Add to `.eslintrc.js`:
+
+```js
+module.exports = {
+  settings: {
+    'import/resolver': {
+      alias: {
+        map: [
+          ['@wntr/lx-ui/vite', './node_modules/@wntr/lx-ui/dist/vite/wntr-lx-ui-vite.es.js'],
+        ],
+      },
+    },
+  },
+  // other ESLint config...
+};
+```
+
 ## LX Vite Secure Headers Plugin
 
 Enhances application security by adding secure headers, focusing on Content Security Policy (CSP).
@@ -39,25 +58,6 @@ export default defineConfig((command) => ({
   ],
   // other config...
 }));
-```
-
-### ESLint Configuration
-
-Add to `.eslintrc.js`:
-
-```js
-module.exports = {
-  settings: {
-    'import/resolver': {
-      alias: {
-        map: [
-          ['@wntr/lx-ui/vite', './node_modules/@wntr/lx-ui/dist/vite/wntr-lx-ui-vite.es.js'],
-        ],
-      },
-    },
-  },
-  // other ESLint config...
-};
 ```
 
 ### Notes
@@ -106,3 +106,72 @@ lxViteSecureHeadersPlugin({
 ```
 
 This allows for fine-grained control over your Content Security Policy while still benefiting from nonce-based security.
+
+## LX Vite Portal Version Plugin
+
+Generates version.json on portal build to handle version check when new portal version get deployed
+
+### Usage
+
+In `vite.config.js`:
+
+```js
+import { defineConfig } from 'vite';
+import { lxVitePortalVersionPlugin } from '@wntr/lx-ui/vite';
+
+export default defineConfig((command) => ({
+  plugins: [
+      lxVitePortalVersionPlugin({
+        outDir: 'public'     // Optional custom output directory (default: uses Vite's build.outDir or 'dist')
+      }),
+    // other plugins...
+  ],
+  // other config...
+}));
+```
+
+In `MainLayout.vue`:
+
+```js
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { lxVersionCheckUtils } from '@wntr/lx-ui';
+import useNotifyStore from '@/stores/useNotifyStore';
+
+const notify = useNotifyStore();
+
+// Start monitoring for version changes every 10 seconds  
+// Uses the default notification text and checks `version.json` in the base path `/` 
+lxVersionCheckUtils.isAppVersionChanged(notify, '', true, 10000); 
+
+onMounted(() => {
+  // On mount restore route and notify the user with default text if necessary
+  lxVersionCheckUtils.restoreRouteAndNotify(router, notify, '');
+});
+```
+
+In `event.js`:
+
+```js
+import useAuthStore from '@/stores/useAuthStore';
+import useAppStore from '@/stores/useAppStore';
+import { lxFlowUtils, lxNavigationStateUtils } from '@wntr/lx-ui';
+
+export default (router) => {
+  router.beforeEach(async (to, from, next) => {
+    const authStore = useAuthStore();
+    const appStore = useAppStore();
+    await lxFlowUtils.beforeEach(to, from, next, appStore, authStore);
+
+    // Track navigation state for version checking
+    lxNavigationStateUtils.trackNavigationState(to);
+  });
+  router.afterEach(async (to, from) => {
+    const appStore = useAppStore();
+    await lxFlowUtils.afterEach(to, from, appStore);
+
+    // Reset navigation tracking after route change
+    lxNavigationStateUtils.resetNavigationTracking();
+  });
+};
+```

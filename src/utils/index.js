@@ -7,9 +7,10 @@ export * as lxFlowUtils from '@/utils/flowUtils';
 export * as lxDecorationUtils from '@/utils/decorationUtils';
 export * as lxArrayUtils from '@/utils/arrayUtils';
 export * as lxDevUtils from '@/utils/devUtils';
+export * as lxVersionCheckUtils from '@/utils/versionCheckUtils';
+export * as lxNavigationStateUtils from '@/utils/navigationState';
 export * as lxFileUtils from '@/utils/fileUtils';
 export * as lxSiteMapUtils from '@/utils/siteMapUtils';
 export * as lxLogoUtils from '@/utils/logoUtils';
 export * as lxFileUploaderUtils from '@/utils/fileUploaderUtils';
-
-// Other components you plan to publish go here
+// Other utils you plan to export go here

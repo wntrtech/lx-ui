@@ -19,7 +19,7 @@ dependencies:
     specifier: 2.1.16
     version: 2.1.16(@tiptap/core@2.11.3)(@tiptap/extension-text-style@2.1.16)
   '@tiptap/extension-heading':
-    specifier: ^2.11.3
+    specifier: 2.11.3
     version: 2.11.3(@tiptap/core@2.11.3)
   '@tiptap/extension-image':
     specifier: 2.2.2

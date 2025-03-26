@@ -19,7 +19,7 @@ const pluginConfig = defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: ['vite', 'crypto'],
+      external: ['vite', 'crypto', 'fs', 'path'],
       output: {
         exports: 'named',
         format: 'module',
