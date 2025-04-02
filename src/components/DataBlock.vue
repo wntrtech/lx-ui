@@ -111,8 +111,8 @@ const selected = computed({
         class="lx-data-block-header"
         :for="id"
         @click="toggleExpander"
-        @keyup.space="toggleExpander"
-        tabindex="0"
+        @keydown.space.prevent="toggleExpander"
+        :tabindex="expandable ? 0 : -1"
       >
         <slot name="customHeader" v-if="$slots.customHeader" />
         <template v-else>
