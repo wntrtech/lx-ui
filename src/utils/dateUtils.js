@@ -66,9 +66,6 @@ export function formatDate(date, empty = '') {
   if (!date) return empty;
   let d = date;
   if (typeof d === 'string') {
-    if (d.length === 10) {
-      d += 'T00:00:00';
-    }
     d = new Date(date);
   }
   return format(d, dateFormatToUse);

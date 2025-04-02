@@ -751,6 +751,20 @@ function handleRangeDifferentCaseValidation(date) {
   }
 }
 
+function checkCadence(cadence, filteredIndexParameter, minutesValue) {
+  let filteredIndex = filteredIndexParameter;
+  // Check if cadence is 5 and filteredMinutes length is 12
+  if (cadence === 5 && filteredMinutes.value.length === 12) {
+    filteredIndex = filteredMinutes.value.findIndex((item) => Number(item.value) === minutesValue);
+  }
+  // Check if cadence is 15 and filteredMinutes length is 16
+  else if (cadence === 15 && filteredMinutes.value.length === 16) {
+    filteredIndex = filteredMinutes.value.findIndex((item) => Number(item.value) === minutesValue);
+  }
+
+  return filteredIndex;
+}
+
 function handleSingleSelection(selectedValue, selectionType, isNotSelectable = false) {
   if (props.disabled) return;
   if (isNotSelectable) return;
@@ -1004,18 +1018,7 @@ function handleSingleSelection(selectedValue, selectionType, isNotSelectable = f
           const minutesValue = selectedMinute.value;
           let filteredIndex = -1;
 
-          // Check if cadence is 5 and filteredMinutes length is 12
-          if (cadence === 5 && filteredMinutes.value.length === 12) {
-            filteredIndex = filteredMinutes.value.findIndex(
-              (item) => Number(item.value) === minutesValue
-            );
-          }
-          // Check if cadence is 15 and filteredMinutes length is 16
-          else if (cadence === 15 && filteredMinutes.value.length === 16) {
-            filteredIndex = filteredMinutes.value.findIndex(
-              (item) => Number(item.value) === minutesValue
-            );
-          }
+          filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
 
           // Use fallback index (0) if filteredIndex is invalid
           currentMinuteIndex.value =
@@ -1048,19 +1051,7 @@ function handleSingleSelection(selectedValue, selectionType, isNotSelectable = f
           const cadence = props.cadenceOfMinutes;
           const minutesValue = selectedMinute.value;
           let filteredIndex = -1;
-
-          // Check if cadence is 5 and filteredMinutes length is 12
-          if (cadence === 5 && filteredMinutes.value.length === 12) {
-            filteredIndex = filteredMinutes.value.findIndex(
-              (item) => Number(item.value) === minutesValue
-            );
-          }
-          // Check if cadence is 15 and filteredMinutes length is 16
-          else if (cadence === 15 && filteredMinutes.value.length === 16) {
-            filteredIndex = filteredMinutes.value.findIndex(
-              (item) => Number(item.value) === minutesValue
-            );
-          }
+          filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
 
           // Use fallback index (0) if filteredIndex is invalid
           currentMinuteIndex.value =
@@ -2366,18 +2357,7 @@ watch(
           const minutesValue = selectedMinute.value;
           let filteredIndex = -1;
 
-          // Check if cadence is 5 and filteredMinutes length is 12
-          if (cadence === 5 && filteredMinutes.value.length === 12) {
-            filteredIndex = filteredMinutes.value.findIndex(
-              (item) => Number(item.value) === minutesValue
-            );
-          }
-          // Check if cadence is 15 and filteredMinutes length is 16
-          else if (cadence === 15 && filteredMinutes.value.length === 16) {
-            filteredIndex = filteredMinutes.value.findIndex(
-              (item) => Number(item.value) === minutesValue
-            );
-          }
+          filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
 
           // Use fallback index (0) if filteredIndex is invalid
           currentMinuteIndex.value =
@@ -2497,18 +2477,7 @@ watch(
         const minutesValue = newValue.getMinutes();
         let filteredIndex = -1;
 
-        // Check if cadence is 5 and filteredMinutes length is 12
-        if (cadence === 5 && filteredMinutes.value.length === 12) {
-          filteredIndex = filteredMinutes.value.findIndex(
-            (item) => Number(item.value) === minutesValue
-          );
-        }
-        // Check if cadence is 15 and filteredMinutes length is 16
-        else if (cadence === 15 && filteredMinutes.value.length === 16) {
-          filteredIndex = filteredMinutes.value.findIndex(
-            (item) => Number(item.value) === minutesValue
-          );
-        }
+        filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
 
         // Use fallback index (0) if filteredIndex is invalid
         currentMinuteIndex.value =
@@ -2542,18 +2511,7 @@ watch(
         const minutesValue = newValue.getMinutes();
         let filteredIndex = -1;
 
-        // Check if cadence is 5 and filteredMinutes length is 12
-        if (cadence === 5 && filteredMinutes.value.length === 12) {
-          filteredIndex = filteredMinutes.value.findIndex(
-            (item) => Number(item.value) === minutesValue
-          );
-        }
-        // Check if cadence is 15 and filteredMinutes length is 16
-        else if (cadence === 15 && filteredMinutes.value.length === 16) {
-          filteredIndex = filteredMinutes.value.findIndex(
-            (item) => Number(item.value) === minutesValue
-          );
-        }
+        filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
 
         // Use fallback index (0) if filteredIndex is invalid
         currentMinuteIndex.value =

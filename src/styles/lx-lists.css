@@ -967,7 +967,6 @@
   border: var(--tile-border);
   border-radius: var(--tile-border-radius);
   min-height: var(--tile-min-height);
-  width: var(--tile-width);
   overflow: hidden;
   justify-self: stretch;
   width: auto;
@@ -1007,10 +1006,6 @@
 .lx-tile.lx-disabled p.lx-primary,
 .lx .lx-tile.lx-disabled p.lx-secondary {
   color: var(--color-tile-disabled-foreground);
-}
-
-.lx-tile-wrapper .lx-tile:not(.lx-disabled):hover p.lx-secondary {
-  color: var(--color-list-hover-text-secondary);
 }
 
 .lx-tile-wrapper .lx-tile:not(.lx-disabled):hover p.lx-primary,

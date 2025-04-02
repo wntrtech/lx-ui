@@ -47,7 +47,6 @@
 .lx-data-visualizer .lx-bars-vertical .bar-wrapper .bar-name:not(.sub-bar) {
   writing-mode: vertical-lr;
   max-height: 10rem;
-  /* margin: 0 auto; */
   transform: rotate(180deg);
 }
 

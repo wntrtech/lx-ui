@@ -261,14 +261,12 @@ watch(
         if (!attributesSearch(val) && query.value.length !== 0) {
           hiddenValues.value.push(val);
         }
-      } else {
-        if (
-          !textSearch(query.value, val[props.nameAttribute]) &&
-          !textSearch(query.value, val[props.descriptionAttribute]) &&
-          query.value.length !== 0
-        ) {
-          hiddenValues.value.push(val);
-        }
+      } else if (
+        !textSearch(query.value, val[props.nameAttribute]) &&
+        !textSearch(query.value, val[props.descriptionAttribute]) &&
+        query.value.length !== 0
+      ) {
+        hiddenValues.value.push(val);
       }
     });
   }

@@ -376,53 +376,89 @@ function formatSize(size) {
 
 defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
 
+function updateAltText(alt, isBase64) {
+  return alt === '' || (isBase64 && inputAlt.value) ? inputAlt.value : alt;
+}
+
+function updateTitleText(title, isBase64) {
+  return title === '' || (isBase64 && inputTitle.value) ? inputTitle.value : title;
+}
+
+function isBase64Image(src) {
+  return /^data:image\/.{0,11};base64,/.test(src);
+}
+
+function formatImageUrl(src) {
+  const idx = src.indexOf('?');
+  const formattedUrl = formatUrl(src.slice(0, idx === -1 ? undefined : idx));
+  return isUrl(formattedUrl) ? formattedUrl : null;
+}
+
+function calculateAspectRatio(width, height) {
+  return formatSize(width) / formatSize(height) || 4 / 3;
+}
+
+function determineLoaderClass(width, height, containerElementSize) {
+  if ((height && formatSize(height) < 30) || (width && formatSize(width) < 30)) {
+    return { loaderClass: 'image-loader no-loader', height, width };
+  }
+  if ((height && formatSize(height) < 100) || (width && formatSize(width) < 100)) {
+    return { loaderClass: 'image-loader small', height, width };
+  }
+  if (width && formatSize(width) > containerElementSize.width.value) {
+    return {
+      loaderClass: 'image-loader large',
+      height: 'auto',
+      width: `${containerElementSize.width.value - 35}px`,
+    };
+  }
+  return { loaderClass: 'image-loader default', height, width };
+}
+
 function setImage() {
-  let { src, alt, title, width, height } = getImageSource();
-  const { isBase64 } = getImageSource();
+  const { src, alt, title, width, height, isBase64 } = getImageSource();
   const containerElementSize = useElementSize(markdownWrapper);
-  let loaderClass = 'image-loader default';
-  const aspect = formatSize(width) / formatSize(height) || 4 / 3;
+  const aspect = calculateAspectRatio(width, height);
+  const loaderVisualData = determineLoaderClass(width, height, containerElementSize);
 
   if (!src) {
     emitNotification('noImageGiven');
     return;
   }
 
-  if (alt === '' || (isBase64 && inputAlt.value)) {
-    alt = inputAlt.value;
-  }
-  if (title === '' || (isBase64 && inputTitle.value)) {
-    title = inputTitle.value;
-  }
+  const updatedAlt = updateAltText(alt, isBase64);
+  const updatedTitle = updateTitleText(title, isBase64);
 
-  if ((height && formatSize(height) < 30) || (width && formatSize(width) < 30)) {
-    loaderClass = 'image-loader no-loader';
-  } else if ((height && formatSize(height) < 100) || (width && formatSize(width) < 100)) {
-    loaderClass = 'image-loader small';
-  } else if (width && formatSize(width) > containerElementSize.width.value) {
-    width = `${containerElementSize.width.value - 35}px`;
-    height = 'auto';
-    loaderClass = 'image-loader large';
-  }
-  const idx = src.indexOf('?');
-  const fUrl = formatUrl(src.slice(0, idx === -1 ? undefined : idx));
-  if (/^data:image\/.{0,11};base64,/.test(src)) {
-    createImageLoader(src, width, height, loaderClass, alt, title, aspect);
+  if (isBase64Image(src)) {
+    createImageLoader(
+      src,
+      loaderVisualData.width,
+      loaderVisualData.height,
+      loaderVisualData.loaderClass,
+      updatedAlt,
+      updatedTitle,
+      aspect
+    );
     closeImageModal();
     return;
   }
+
   if (isNotImage.value) {
     emitNotification('imageNotFound');
     return;
   }
-  if (isUrl(fUrl)) {
-    src = fUrl;
-  } else {
+
+  const formattedUrl = formatImageUrl(src);
+  if (!formattedUrl) {
     emitNotification('invalidAdress');
     return;
   }
 
-  editor.value.chain().focus().setImage({ src, alt, title }).run();
+  editor.value
+    .chain()
+    .focus()
+    .setImage({ src: formattedUrl, alt: updatedAlt, title: updatedTitle })
+    .run();
   closeImageModal();
 }
 

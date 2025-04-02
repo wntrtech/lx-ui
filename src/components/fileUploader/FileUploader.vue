@@ -275,70 +275,91 @@ const formatExtensions = computed(() =>
 
 const isUploading = ref(false);
 
+function isInvalidFileExtension(file, fileId) {
+  const fileExtension = file.name.split('.').pop().toLowerCase();
+  if (
+    formatExtensions.value.length > 0 &&
+    !fileUploaderUtils.checkExtension(fileExtension, formatExtensions.value)
+  ) {
+    onError(file.id ? file.id : fileId, 'format');
+    return true;
+  }
+  return false;
+}
+
+function isExceedingFileSize(file, fileId) {
+  if (props.maxFileSize && file.size > props.maxFileSize) {
+    onError(file.id ? file.id : fileId, 'size');
+    return true;
+  }
+  return false;
+}
+
+function createFileData(file, fileId) {
+  return {
+    id: fileId,
+    name: file.name,
+    content: file.content,
+    meta: {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      lastModified: file.lastModified,
+    },
+  };
+}
+
+async function processFileMeta(file, fileId) {
+  if (!props.maxSizeForMeta || file.size <= props.maxSizeForMeta) {
+    const fileMeta = await fileUploaderUtils.getMeta(file, props.texts);
+    const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
+    if (tempFileDataMeta) {
+      tempFileDataMeta.meta = fileMeta;
+    }
+  }
+}
+
+async function processFileContent(file, fileId) {
+  const fileContent = await fileUploaderUtils.getContent(file);
+  const tempFileDataContent = advancedFilesData.value.find((f) => f.id === fileId);
+  if (tempFileDataContent) {
+    if (props.dataType === 'content') {
+      tempFileDataContent.content = fileContent.base64Content;
+    } else {
+      tempFileDataContent.content = fileContent.originalFile;
+    }
+    storedBase64Strings.value.push({
+      id: fileId,
+      base64String: fileContent.base64Content,
+    });
+  }
+}
+
+function handleFileProcessingError(file, fileId, error) {
+  if (error.message === 'password-protected') {
+    const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
+    if (tempFileDataMeta) {
+      tempFileDataMeta.meta.passwordProtected = true;
+      tempFileDataMeta.meta.additionalInfo = props.texts.metaAdditionalInfoProtectedArchive;
+    }
+  }
+  onError(file.id ? file.id : fileId, error.message);
+}
+
 async function processFiles(files) {
   const promises = files.map(async (file) => {
     const fileId = generateUUID();
-    const fileExtension = file.name.split('.').pop().toLowerCase();
-    if (
-      formatExtensions.value.length > 0 &&
-      !fileUploaderUtils.checkExtension(fileExtension, formatExtensions.value)
-    ) {
-      onError(file.id ? file.id : fileId, 'format');
-      return;
-    }
-    if (props.maxFileSize && file.size > props.maxFileSize) {
-      onError(file.id ? file.id : fileId, 'size');
-      return;
-    }
+    if (isInvalidFileExtension(file, fileId)) return;
+    if (isExceedingFileSize(file, fileId)) return;
 
-    const fileData = {
-      id: fileId,
-      name: file.name,
-      content: file.content,
-      meta: {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        lastModified: file.lastModified,
-      },
-    };
-
+    const fileData = createFileData(file, fileId);
     advancedFilesData.value.push(fileData);
 
     try {
-      if (!props.maxSizeForMeta || file.size <= props.maxSizeForMeta) {
-        const fileMeta = await fileUploaderUtils.getMeta(file, props.texts);
-
-        const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
-
-        if (tempFileDataMeta) {
-          tempFileDataMeta.meta = fileMeta;
-        }
-      }
-
-      const fileContent = await fileUploaderUtils.getContent(file);
-
-      const tempFileDataContent = advancedFilesData.value.find((f) => f.id === fileId);
-      if (tempFileDataContent) {
-        if (props.dataType === 'content') {
-          tempFileDataContent.content = fileContent.base64Content;
-        } else {
-          tempFileDataContent.content = fileContent.originalFile;
-        }
-        storedBase64Strings.value.push({
-          id: fileId,
-          base64String: fileContent.base64Content,
-        });
-      }
+      await processFileMeta(file, fileId);
+      await processFileContent(file, fileId);
     } catch (error) {
-      if (error.message === 'password-protected') {
-        const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
-        if (tempFileDataMeta) {
-          tempFileDataMeta.meta.passwordProtected = true;
-          tempFileDataMeta.meta.additionalInfo = props.texts.metaAdditionalInfoProtectedArchive;
-        }
-      }
-      onError(file.id ? file.id : fileId, error.message);
+      handleFileProcessingError(file, fileId, error);
     }
   });
 

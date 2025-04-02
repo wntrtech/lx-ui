@@ -357,50 +357,80 @@ watch(
   }
 );
 
+function isDecimalOrInteger() {
+  return props.mask === 'decimal' || props.mask === 'integer';
+}
+
+function isInvalidSignedLength(newValue) {
+  return (
+    isDecimalOrInteger() &&
+    props.maxlength &&
+    props.signed &&
+    ((newValue?.toString()?.charAt(0) === '-' &&
+      newValue?.toString().length > Number(props.maxlength) + 1) ||
+      (newValue?.toString()?.charAt(0) !== '-' &&
+        newValue?.toString().length > Number(props.maxlength)))
+  );
+}
+
+function revertToOldValue(oldValue) {
+  model.value = oldValue;
+  valueRaw.value = oldValue?.toString().replace('.', ',');
+}
+
+function isExceedingMaxLength(newValue) {
+  return maxLengthValue.value && newValue?.toString().length > Number(maxLengthValue.value);
+}
+
+function formatTimeValue(newValue) {
+  let res = '';
+  const strValue = newValue?.toString();
+  if (strValue?.length === 1) res = `${strValue}_:__`;
+  else if (strValue?.length === 2) res = `${strValue}:__`;
+  else if (strValue?.length === 3) res = `${strValue.slice(0, 2)}:${strValue.slice(2)}_`;
+
+  return res !== valueRaw.value ? model.value : valueRaw.value;
+}
+
+function formatCurrencyValue(newValue) {
+  const res = `${newValue} €`;
+  return res?.replace('.', ',') !== valueRaw.value ? model.value?.toString() : valueRaw.value;
+}
+
+function formatPhoneValue(newValue) {
+  const res = newValue?.toString()?.replace(/[()-]/g, '');
+  return res !== valueRaw.value ? model.value?.toString() : valueRaw.value;
+}
+
+function updateValueRaw(newValue) {
+  if (props.mask === 'decimal') {
+    valueRaw.value = model.value?.toString().replace('.', ',');
+  } else if (props.mask === 'time') {
+    valueRaw.value = formatTimeValue(newValue);
+  } else if (props.mask === 'currency') {
+    valueRaw.value = formatCurrencyValue(newValue);
+  } else if (props.kind === 'phone') {
+    valueRaw.value = formatPhoneValue(newValue);
+  } else {
+    valueRaw.value = model.value?.toString();
+  }
+}
+
 watch(
   () => props.modelValue,
   (newValue, oldValue) => {
-    if (
-      ((props.mask === 'decimal' || props.mask === 'integer') &&
-        props.maxlength &&
-        props.signed &&
-        newValue?.toString()?.charAt(0) === '-' &&
-        newValue?.toString().length > Number(props.maxlength) + 1) ||
-      ((props.mask === 'decimal' || props.mask === 'integer') &&
-        props.maxlength &&
-        props.signed &&
-        newValue?.toString()?.charAt(0) !== '-' &&
-        newValue?.toString().length > Number(props.maxlength))
-    ) {
-      model.value = oldValue;
-      valueRaw.value = oldValue?.toString().replace('.', ',');
+    if (isInvalidSignedLength(newValue)) {
+      revertToOldValue(oldValue);
+      return;
     }
-    if (maxLengthValue.value && newValue?.toString().length > Number(maxLengthValue.value)) {
-      model.value = oldValue;
-    } else if (convertValue(newValue) !== convertValue(oldValue)) {
-      if (props.mask === 'decimal') {
-        valueRaw.value = model.value?.toString().replace('.', ',');
-      } else if (props.mask === 'time') {
-        let res = '';
-        if (newValue?.toString()?.length === 1) res = `${newValue}_:__`;
-        else if (newValue?.toString()?.length === 2) res = `${newValue}:__`;
-        else if (newValue?.toString()?.length === 3)
-          res = `${newValue?.toString().slice(0, 2)}:${newValue?.toString().slice(2)}_`;
 
-        if (res !== valueRaw.value) {
-          valueRaw.value = model.value;
-        }
-      } else if (props.mask === 'currency') {
-        const res = `${newValue} €`;
-        if (res?.replace('.', ',') !== valueRaw.value) {
-          valueRaw.value = model.value?.toString();
-        }
-      } else if (props.kind === 'phone') {
-        const res = newValue?.toString()?.replace(/[()-]/g, '');
-        if (res !== valueRaw.value) {
-          valueRaw.value = model.value?.toString();
-        }
-      } else valueRaw.value = model.value?.toString();
+    if (isExceedingMaxLength(newValue)) {
+      model.value = oldValue;
+      return;
+    }
+
+    if (convertValue(newValue) !== convertValue(oldValue)) {
+      updateValueRaw(newValue);
     }
   },
   { immediate: true }

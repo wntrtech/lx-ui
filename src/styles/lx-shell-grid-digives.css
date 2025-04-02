@@ -152,7 +152,6 @@
 .lx-header-digives .lx-lower-row .lower-button > button,
 .lx-header-digives .lx-lower-row .lower-button > a {
   flex-direction: row;
-  /* text-decoration: underline; */
   color: var(--color-data);
   height: calc(var(--row-size) - 4px);
 }
@@ -197,27 +196,11 @@
   display: none;
 }
 
-/* .lx-layout.lx-layout-default.lx-hide-nav-bar>nav .lx-nav-panel.lx-responsive {
-    display: none;
-    width: 100%;
-    padding-top: 5rem;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-.lx-layout.lx-layout-default>nav .lx-nav-panel.lx-responsive>.lx-nav-group {
-    width: 100%;
-} */
-
 .lx-layout.lx-layout-default
   > nav
   .lx-nav-panel.lx-responsive
   > .lx-nav-group:last-child
   .lx-button {
-  /* text-decoration: underline; */
   background-color: var(--color-background);
 }
 

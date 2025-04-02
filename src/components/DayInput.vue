@@ -112,12 +112,28 @@ function calculateResult() {
       break;
   }
 
-  const yearString = years !== 0 ? `${years} ${years === 1 ? 'gads' : 'gadi'}` : '';
-  const monthString = months !== 0 ? `${months} ${months === 1 ? 'mēnesis' : 'mēneši'}` : '';
-  const dayString = days !== 0 ? `${days} ${days === 1 ? 'diena' : 'dienas'}` : '';
+  const yearString = (() => {
+    if (years !== 0) {
+      return `${years} ${years === 1 ? 'gads' : 'gadi'}`;
+    }
+    return '';
+  })();
+
+  const monthString = (() => {
+    if (months !== 0) {
+      return `${months} ${months === 1 ? 'mēnesis' : 'mēneši'}`;
+    }
+    return '';
+  })();
+
+  const dayString = (() => {
+    if (days !== 0) {
+      return `${days} ${days === 1 ? 'diena' : 'dienas'}`;
+    }
+    return '';
+  })();
 
   result.value = [yearString, monthString, dayString].filter(Boolean).join(', ');
-
   if (props.modelValue === null && inputValue.value) {
     emits('update:modelValue', daysResult);
   } else if (typeof props.modelValue === 'number') {

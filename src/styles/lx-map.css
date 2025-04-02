@@ -146,6 +146,7 @@
 
 .leaflet-popup-pane {
   z-index: 700;
+  cursor: auto;
 }
 
 .leaflet-map-pane canvas {
@@ -280,10 +281,6 @@ svg.leaflet-zoom-animated {
 .leaflet-crosshair,
 .leaflet-crosshair .leaflet-interactive {
   cursor: crosshair;
-}
-
-.leaflet-popup-pane {
-  cursor: auto;
 }
 
 .leaflet-dragging .leaflet-grab,

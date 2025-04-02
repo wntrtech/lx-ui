@@ -522,12 +522,15 @@ export async function getMeta(file, texts) {
         if (error.message === 'Encrypted zip are not supported') {
           reject(new Error('password-protected'));
         } else {
-          reject(error);
+          reject(error instanceof Error ? error : new Error(error));
         }
       }
     };
 
-    reader.onerror = (error) => reject(error);
+    reader.onerror = (event) => {
+      const errorMessage = event?.target?.error?.message || 'An unknown error occurred';
+      reject(new Error(errorMessage));
+    };
     reader.readAsArrayBuffer(file);
   });
 }
@@ -540,16 +543,18 @@ export function getContent(file) {
       const originalFile = file;
       resolve({ base64Content, originalFile });
     };
-    reader.onerror = (error) => reject(error);
+    reader.onerror = (event) => {
+      const errorMessage = event?.target?.error?.message || 'An unknown error occurred';
+      reject(new Error(errorMessage));
+    };
     reader.readAsDataURL(file);
   });
 }
 
 function findExifHeightAndWidth(exif) {
-  if (exif && exif['Image Height'] && exif['Image Width']) {
-    return `${exif['Image Width'].value} × ${exif['Image Height'].value} px`;
-  }
-  return '';
+  const width = exif?.['Image Width']?.value;
+  const height = exif?.['Image Height']?.value;
+  return width && height ? `${width} × ${height} px` : '';
 }
 
 function handleOfficeFile(count, labelSingle, labelMulti) {
