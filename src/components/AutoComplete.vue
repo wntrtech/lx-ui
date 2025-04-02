@@ -1067,7 +1067,7 @@ onMounted(() => {
                           :id="id"
                           v-model="query"
                           class="lx-text-input lx-value-picker-placeholder lx-input-area"
-                         
+                         :aria-labelledby="labelledBy"
                           :aria-label="getName(false)"
                           :aria-invalid="invalid"
                           :aria-busy="loadingState || loading"
