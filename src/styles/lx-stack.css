@@ -61,8 +61,12 @@
     grid-auto-flow: row;
 }
 
-.lx-stack.lx-stack-mode-grid{
+
+.lx-stack.lx-stack-mode-grid.lx-stack-use-vertical-config{
     grid-template-rows: var(--stack-template-rows);
+}
+
+.lx-stack.lx-stack-mode-grid.lx-stack-use-horizontal-config{
     grid-template-columns: var(--stack-template-columns);
 }
 

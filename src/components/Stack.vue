@@ -106,6 +106,8 @@ const horizontalConfigAlignment = computed(() => {
       { ['lx-stack-vertical-alignment-' + verticalAlignment]: verticalAlignment },
       { 'lx-stack-has-vertical-config': verticalConfig?.length > 1 },
       { 'lx-stack-has-horizontal-config': horizontalConfig?.length > 1 },
+      { 'lx-stack-use-vertical-config': verticalConfig?.length > 0 },
+      { 'lx-stack-use-horizontal-config': horizontalConfig?.length > 0 },
     ]"
   >
     <slot />
