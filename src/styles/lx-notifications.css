@@ -129,4 +129,8 @@ p.lx-subtitle {
   .lx .lx-notifications-list .lx-notification .lx-main {
     width: 100%;
   }
+  
+  .lx .lx-notifications-list:empty{
+    visibility: hidden;
+  }
 }
