@@ -458,6 +458,22 @@ watch(
   { immediate: true }
 );
 
+function updateValueRawBasedOnMask(newValue) {
+  if (props.mask === 'decimal') {
+    return newValue?.toString()?.replace('.', ',') || '';
+  }
+  return newValue?.toString() || '';
+}
+
+watch(
+  [() => model.value, () => props.kind],
+  ([newValue]) => {
+    valueRaw.value = updateValueRawBasedOnMask(newValue);
+    maskUpdate();
+  },
+  { immediate: true }
+);
+
 onMounted(() => {
   maskUpdate();
   if (props.mask === 'decimal') valueRaw.value = props.modelValue?.toString()?.replace('.', ',');
