@@ -691,11 +691,10 @@ test('LxTextInput email mask', async () => {
       mask: 'email',
     },
   });
-
   const input = wrapper.find('.lx-text-input').element;
-  expect(input.inputmode).toBe('email');
+  expect(input.inputMode).toBe('email');
   await wrapper.setProps({ mask: 'decimal' });
-  expect(input.inputmode).toBe('decimal');
+  expect(input.inputMode).toBe('decimal');
 });
 
 test('LxTextInput numeric mask', async () => {

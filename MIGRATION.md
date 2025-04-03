@@ -1,5 +1,33 @@
 # LX/UI Migration Guide
 
+## 1.8 → 1.9
+
+### pnpm update
+
+We have upgraded the pnpm version used for our library to `10.7.0`. To ensure smooth dependency management and avoid potential compatibility issues, we recommend that all users verify their pnpm version and update it accordingly.
+
+To check your current pnpm version, use:
+```sh
+pnpm -v
+```
+
+If you manage pnpm globally, update it with:
+```sh
+npm install -g pnpm@10.7.0
+```
+
+If you prefer to update pnpm only for one project, modify your `package.json` to specify the required version:
+```json
+{
+  "packageManager": "pnpm@10.7.0"
+}
+```
+
+To ensure dependencies update correctly and resolve potential lockfile changes, run:
+```sh
+pnpm i
+```
+
 ## 1.7 → 1.8
 
 ### Layout changes
