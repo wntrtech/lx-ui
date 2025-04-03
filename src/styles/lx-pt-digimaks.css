@@ -41,6 +41,18 @@
   --input-border-bottom: 1px solid var(--color-input);
   --input-border-radius: 12px;
   --input-height: 3.5rem;
+
+  --button-ghost-gap: 1rem;
+  --button-primary-border-radius: 0.5rem;
+  --button-secondary-border-radius: 0.5rem;
+  --button-tertiary-border-radius: 0.5rem;
+  --button-ghost-border-radius: 0.5rem;
+  --button-primary-font-weight: var(--font-weight-bold);
+
+  --button-toolbar-primary-border-radius: 0.5rem;
+  --button-toolbar-secondary-border-radius: 0.5rem;
+  --button-toolbar-tertiary-border-radius: 0.5rem;
+  --button-toolbar-ghost-border-radius: 0.5rem;
 }
 
 .lx.lx-theme-dark {
