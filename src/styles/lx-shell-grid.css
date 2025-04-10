@@ -1741,6 +1741,27 @@
   padding-bottom: 0;
 }
 
+.lx-view-layout {
+  display: grid;
+  grid-template-areas: 
+      "filters"
+      "main"
+      "aside";
+  gap: var(--gap);
+}
+
+.lx-view-layout > .filters-container{
+  grid-area: filters;
+}
+
+.lx-view-layout > .default-container{
+  grid-area: main;
+}
+
+.lx-view-layout > .aside-container{
+  grid-area: aside;
+}
+
 @media (max-width: 2000px) {
   .lx-layout.lx-layout-default > header .lx-header {
     grid-template-columns: auto 1fr auto;
