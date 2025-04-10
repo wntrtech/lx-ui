@@ -1126,79 +1126,77 @@ function handleSingleSelection(selectedValue, selectionType, isNotSelectable = f
 }
 
 function handleRangeSelection(selectedValue, selectionType, isNotSelectable = false) {
-  if (props.disabled) return;
-  if (isNotSelectable) return;
+  if (props.disabled || isNotSelectable) return;
   selectedManually.value = true;
 
   // Declare new cloned date reference
   const newDate = new Date(currentDate.value);
 
-  if (selectionType === 'month') {
-    newDate.setDate(1);
-    newDate.setMonth(selectedValue.orderIndex);
-    if (props.mode === 'date') currentDate.value = newDate;
-
-    // Set selectedMonth from the selected value
-    selectedMonth.value = Number(selectedValue.orderIndex);
-
-    if (props.mode === 'month') {
+  switch (selectionType) {
+    case 'month':
       newDate.setDate(1);
       newDate.setMonth(selectedValue.orderIndex);
-      newDate.setHours(0, 0, 0, 0);
-      handleRangeDifferentCaseValidation(newDate);
-      return;
-    }
+      if (props.mode === 'date') currentDate.value = newDate;
 
-    if (props.mode === 'month-year') {
-      newDate.setDate(1);
-      newDate.setMonth(selectedValue.orderIndex);
-      newDate.setFullYear(selectedValue.year);
-      newDate.setHours(0, 0, 0, 0);
-      handleRangeDifferentCaseValidation(newDate);
-      return;
-    }
+      // Set selectedMonth from the selected value
+      selectedMonth.value = Number(selectedValue.orderIndex);
 
-    monthsLayout.value = false;
-    regularLayout.value = true;
-    return;
-  }
+      if (props.mode === 'month') {
+        newDate.setDate(1);
+        newDate.setMonth(selectedValue.orderIndex);
+        newDate.setHours(0, 0, 0, 0);
+        handleRangeDifferentCaseValidation(newDate);
+        break;
+      }
 
-  if (selectionType === 'year') {
-    newDate.setFullYear(selectedValue);
-    if (props.mode === 'date' || props.mode === 'month-year') currentDate.value = newDate;
+      if (props.mode === 'month-year') {
+        newDate.setDate(1);
+        newDate.setMonth(selectedValue.orderIndex);
+        newDate.setFullYear(selectedValue.year);
+        newDate.setHours(0, 0, 0, 0);
+        handleRangeDifferentCaseValidation(newDate);
+        break;
+      }
 
-    // Set selectedYear from the selected value
-    selectedYear.value = Number(selectedValue);
+      monthsLayout.value = false;
+      regularLayout.value = true;
+      break;
+    case 'year':
+      newDate.setFullYear(selectedValue);
+      if (props.mode === 'date' || props.mode === 'month-year') currentDate.value = newDate;
 
-    if (props.mode === 'year') {
-      newDate.setDate(1);
-      newDate.setMonth(1);
-      newDate.setHours(0, 0, 0, 0);
-      handleRangeDifferentCaseValidation(newDate);
-      return;
-    }
+      // Set selectedYear from the selected value
+      selectedYear.value = Number(selectedValue);
 
-    if (props.mode === 'month-year') {
+      if (props.mode === 'year') {
+        newDate.setDate(1);
+        newDate.setMonth(1);
+        newDate.setHours(0, 0, 0, 0);
+        handleRangeDifferentCaseValidation(newDate);
+        break;
+      }
+
+      if (props.mode === 'month-year') {
+        yearsLayout.value = false;
+        monthsLayout.value = true;
+        break;
+      }
+
       yearsLayout.value = false;
-      monthsLayout.value = true;
-      return;
+      regularLayout.value = true;
+      break;
+    case 'quarter': {
+      const updatedDate = dateFromYearAndQuarter(selectedValue?.year, selectedValue?.quarter);
+      // Set selectedYear from the selected value
+      selectedYear.value = Number(selectedValue?.year);
+      handleRangeDifferentCaseValidation(updatedDate);
+      break;
     }
-
-    yearsLayout.value = false;
-    regularLayout.value = true;
-    return;
-  }
-
-  if (selectionType === 'quarter') {
-    const updatedDate = dateFromYearAndQuarter(selectedValue?.year, selectedValue?.quarter);
-    // Set selectedYear from the selected value
-    selectedYear.value = Number(selectedValue?.year);
-    handleRangeDifferentCaseValidation(updatedDate);
-    return;
-  }
-
-  if (selectionType === 'date') {
-    handleRangeDifferentCaseValidation(selectedValue);
+    case 'date':
+      handleRangeDifferentCaseValidation(selectedValue);
+      break;
+    default:
+      break;
   }
 }
 

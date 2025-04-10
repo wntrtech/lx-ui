@@ -272,6 +272,7 @@ function triggerContextPersonMenu() {
                   @click="changePerson(item)"
                   tabindex="0"
                   @keydown.enter="changePerson(item)"
+                  role="button"
                 >
                   <div class="person-custom-button">
                     <label>{{ item?.name }}</label>

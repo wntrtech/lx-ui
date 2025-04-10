@@ -277,7 +277,7 @@ function getItemId(id) {
             tag="ul"
             class="lx-rotator-set lx-input-area"
             :class="[{ 'lx-rotator-set-custom': variant === 'rotator-custom' }]"
-            tabindex="0"
+            tabindex="-1"
             role="button"
             aria-live="polite"
           >

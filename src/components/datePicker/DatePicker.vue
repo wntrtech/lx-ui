@@ -630,17 +630,37 @@ const isMobileScreen = computed(() => windowSize.width.value < 640);
 const offsetSkidByKind = computed(() => {
   if (isMobileScreen.value) return '0';
 
-  if (props.mode === 'time' && props.pickerType === 'single') return '0';
-  if (props.mode === 'date-time' && props.pickerType === 'single') return '144';
-  if (props.mode === 'month' && props.pickerType === 'single') return '40';
-  if (props.mode === 'month-year' && props.pickerType === 'single') return '60';
-  if (props.mode === 'quarters' && props.pickerType === 'single') return '89';
-
-  if (props.mode === 'date' && props.pickerType === 'range') return '147';
-  if (props.mode === 'month' && props.pickerType === 'range') return '0';
-  if (props.mode === 'year' && props.pickerType === 'range') return '0';
-  if (props.mode === 'month-year' && props.pickerType === 'range') return '85';
-  if (props.mode === 'quarters' && props.pickerType === 'range') return '0';
+  if (props.pickerType === 'single') {
+    switch (props.mode) {
+      case 'time':
+        return '0';
+      case 'date-time':
+        return '144';
+      case 'month':
+        return '40';
+      case 'month-year':
+        return '60';
+      case 'quarters':
+        return '89';
+      default:
+        return '88';
+    }
+  } else if (props.pickerType === 'range') {
+    switch (props.mode) {
+      case 'date':
+        return '147';
+      case 'month':
+        return '0';
+      case 'year':
+        return '0';
+      case 'month-year':
+        return '85';
+      case 'quarters':
+        return '0';
+      default:
+        return '88';
+    }
+  }
 
   return '88';
 });

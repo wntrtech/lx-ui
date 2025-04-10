@@ -294,8 +294,9 @@ function triggerContextPersonMenu() {
                   @click="changePerson(item)"
                   :tabindex="3"
                   @keydown.enter="changePerson(item)"
+                  role="button"
                 >
-                  <div class="person-custom-button" role="button">
+                  <div class="person-custom-button">
                     <label>{{ item?.name }}</label>
                     <div class="lx-description">
                       {{ item?.description }}

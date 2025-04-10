@@ -996,6 +996,8 @@ onMounted(() => {
           :data-invalid="invalid ? '' : null"
           :data-disabled="disabled ? '' : null"
           role="combobox"
+          :aria-expanded="menuOpen"
+          aria-controls="popper-id"
           :aria-labelledby="labelledBy"
           tabindex="-1"
         >
@@ -1017,8 +1019,6 @@ onMounted(() => {
                   class="lx-autocomplete"
                   :title="tooltip"
                   tabindex="-1"
-                  :aria-expanded="menuOpen"
-                  aria-controls="popper-id"
                   @click="openMenu"
                   @keydown.esc.prevent="closeMenu"
                   @keydown.enter.prevent="onEnter"
