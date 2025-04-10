@@ -3,10 +3,13 @@
 }
 
 .lx {
-  --color-brand: #1a71b9;
-  --color-interactive-background: #1a71b9;
+  --color-h: 207;
+  --color-s: 75%;
+  --color-l: 41%;
+  --color-brand: hsl(var(--color-h), var(--color-s), var(--color-l));
+  --color-interactive-background: var(--color-brand);
   --color-interactive-foreground: #fff;
-  --color-interactive-hover-background: #0f5c9c;
+  --color-interactive-hover-background: hsl(var(--color-h), var(--color-s), calc(var(--color-l) - 7%));
   --color-interactive-hover-foreground: #fff;
   --color-interactive-secondary-background: #333;
   --color-interactive-secondary-foreground: #fff;

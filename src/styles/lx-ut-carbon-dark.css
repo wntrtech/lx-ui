@@ -3,10 +3,13 @@
 }
 
 .lx.lx-theme-dark {
-  --color-brand: #3e98e2;
-  --color-interactive-background: #3e98e2;
+  --color-h-dark: var(--color-h);
+  --color-s-dark: min(60%, var(--color-s));
+  --color-l-dark: 70%;
+  --color-brand: hsl(var(--color-h-dark), var(--color-s-dark), var(--color-l-dark));
+  --color-interactive-background: var(--color-brand);
   --color-interactive-foreground: #18181a;
-  --color-interactive-hover-background: #1a71b9;
+  --color-interactive-hover-background: hsl(var(--color-h), var(--color-s), var(--color-l));
   --color-interactive-hover-foreground: #eee;
   --color-interactive-secondary-background: #6f6f6f;
   --color-interactive-secondary-foreground: #eee;

@@ -1,0 +1,17 @@
+.lx {
+    --color-h: 179;
+    --color-s: 93%;
+    --color-l: 23%;
+    --color-highlight: #deeded;
+    --color-background: #eeeff2;
+    --color-data: #12191b;
+
+    --color-button-nav-selected-background: var(--color-highlight);
+}
+
+.lx.lx-theme-dark {
+    --color-highlight: #313f3f;
+    --color-background: #161718;
+    
+    --color-button-nav-selected-background: var(--color-highlight);
+}
