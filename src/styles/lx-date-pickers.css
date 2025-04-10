@@ -6,7 +6,7 @@
   width: var(--input-container-width-large);
 }
 
-.lx-datepicker-default .lx-context-container .inline-block .popper .lx-dropdown-panel {
+.lx-datepicker-default .lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
   width: fit-content;
   padding: 0;
 }

@@ -896,12 +896,12 @@
 }
 
 .lx .lx-info-wrapper-content:focus,
-.lx .inline-block>div:focus,
-.lx .inline-block>div:focus-visible {
+.lx .popper-wrapper>div:focus,
+.lx .popper-wrapper>div:focus-visible {
   outline: 2px solid var(--color-focus-background);
 }
 
-.lx-context-container .inline-block .popper .lx-dropdown-panel {
+.lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
   padding: 0.5rem;
   position: static;
   box-shadow: var(--shadow-dropdown);

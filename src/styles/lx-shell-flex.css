@@ -435,7 +435,7 @@ code {
   line-height: 1em;
 }
 
-.lx-context-container .inline-block .popper .lx-dropdown-panel {
+.lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
   padding: 0.5rem;
   position: static;
   box-shadow: var(--shadow-dropdown);
@@ -1171,12 +1171,11 @@ code {
 }
 
 /* InfoWrapper */
+
 .lx .lx-info-wrapper .popper {
   background-color: var(--color-tooltip-background);
-
   padding: 0.5rem 1rem;
   color: var(--color-tooltip-foreground);
-  margin-top: 0.5rem;
 }
 
 .lx-info-wrapper .lx-info-wrapper-panel .lx-row {

@@ -53,7 +53,7 @@
   top: 0;
   width: 100%;
   align-items: center;
-  z-index: 250;
+  z-index: 8100;
 }
 
 .lx-layout.lx-layout-default > header .lx-header {
@@ -499,7 +499,7 @@
   width: calc(var(--row-size) - 1.2rem);
 }
 
-.lx-mega-menu .lx-context-container .inline-block .popper .lx-dropdown-panel {
+.lx-mega-menu .lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
   width: 100%;
 }
 
@@ -727,7 +727,6 @@
   background-color: var(--color-tooltip-background);
   padding: 0.5rem 1rem;
   color: var(--color-tooltip-foreground);
-  margin-top: 0.5rem;
 }
 
 .lx-info-wrapper .lx-info-wrapper-panel {
@@ -746,7 +745,8 @@
 .lx .popper .lx-info-wrapper-panel label:not(.lx-state > .lx-primary),
 .lx .popper .lx-info-wrapper-panel .lx-secondary,
 .lx .popper .lx-info-wrapper-panel p.lx-data,
-.lx  .lx-form-grid>.lx-main .lx-row > div.lx-vertical > .lx-field-wrapper .popper p.lx-data  {
+.lx .popper p.lx-simple-popper-content,
+.lx .lx-form-grid>.lx-main .lx-row > div.lx-vertical > .lx-field-wrapper .popper p.lx-data  {
   color: var(--color-tooltip-foreground);
 }
 
@@ -761,6 +761,19 @@
 
 .lx .lx-form .lx-info-wrapper .popper .lx-info-wrapper-panel .lx-row {
   width: inherit;
+}
+
+.lx .popper-wrapper .popper .popper-floating-arrow {
+  position: absolute;
+  width: 0.625rem;
+  height: 0.625rem;
+  background-color: var(--color-tooltip-background);
+  transform: rotate(45deg);
+  z-index: 8000;
+}
+
+.lx .popper-wrapper .popper {
+  z-index: 8000;
 }
 
 .lx-toolbar.lx-sticky {
@@ -961,7 +974,7 @@
 
 /* /articles */
 
-.lx-layout .lx-info-wrapper > .inline-block {
+.lx-layout .lx-info-wrapper > .popper-wrapper {
   width: 100%;
   margin: 0 !important;
   border: none !important;
@@ -1606,8 +1619,8 @@
   outline: 2px solid var(--color-focus-background);
 }
 
-.lx .lx-nav-group .lx-language-picker > .lx-language-menu > .lx-context-container > .inline-block,
-.lx .lx-nav-group .lx-theme-picker > .lx-theme-menu > .lx-context-container > .inline-block {
+.lx .lx-nav-group .lx-language-picker > .lx-language-menu > .lx-context-container > .popper-wrapper,
+.lx .lx-nav-group .lx-theme-picker > .lx-theme-menu > .lx-context-container > .popper-wrapper {
   width: 100%;
 }
 

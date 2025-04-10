@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import Popper from 'vue3-popper';
+import LxPopper from '@/components/Popper.vue';
 
 const props = defineProps({
   placement: { type: String, default: 'bottom' },
@@ -36,12 +36,10 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
     class="lx-context-container"
     :class="[{ 'lx-selected': menuOpen }, customClass]"
   >
-    <Popper
-      :placement="props.placement"
-      :hover="false"
-      :interactive="true"
-      :locked="false"
+    <LxPopper
+      :placement="placement"
       :offset-skid="offsetSkid"
+      :disabled="disabled"
       offset-distance="0"
       :show="menuOpen"
     >
@@ -55,12 +53,13 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       </div>
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
       <div
-        @click="props.triggerClick === 'left' ? openMenu() : null"
         v-else
         class="lx-dropdown-toggler"
+        @click="props.triggerClick === 'left' ? openMenu() : null"
       >
         <slot />
       </div>
+
       <template #content>
         <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel" role="group">
           <slot name="clickSafePanel"> </slot>
@@ -70,6 +69,6 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           <slot name="panel"> </slot>
         </div>
       </template>
-    </Popper>
+    </LxPopper>
   </div>
 </template>

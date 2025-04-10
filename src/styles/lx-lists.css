@@ -915,10 +915,9 @@
   border-radius: var(--list-item-border-radius);
 }
 
-.lx-draggable-group-list-item > .lx-list-item-container > .lx-context-container > .inline-block,
-.lx-draggable-group-list-item > .lx-list-item-container > .lx-context-container > .inline-block > div,
-.lx-draggable-group-list-item > .lx-list-item-container > .lx-context-container > .inline-block > div > .lx-dropdown-toggler,
-.lx-draggable-group-list-item > .lx-list-item-container > .lx-context-container > .inline-block > div > .lx-dropdown-toggler > .lx-handle {
+.lx-draggable-group-list-item > .lx-list-item-container > .lx-context-container > .popper-wrapper,
+.lx-draggable-group-list-item > .lx-list-item-container > .lx-context-container > .popper-wrapper > .lx-dropdown-toggler,
+.lx-draggable-group-list-item > .lx-list-item-container > .lx-context-container > .popper-wrapper > .lx-dropdown-toggler > .lx-handle {
   height: 100%;
 }
 

@@ -2833,8 +2833,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: var(--input-container-height);
 }
 
-.lx-dropdown-default > .inline-block,
-.lx-autocomplete-default > .inline-block {
+.lx-dropdown-default > .popper-wrapper,
+.lx-autocomplete-default > .popper-wrapper {
   display: inline-block;
   flex-grow: 1;
   width: 100%;
@@ -4198,7 +4198,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   position: relative;
 }
 
-.lx-value-picker-tags.lx-rotator .inline-block {
+.lx-value-picker-tags.lx-rotator .popper-wrapper {
   width: 100%;
 }
 

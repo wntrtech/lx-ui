@@ -5,7 +5,7 @@ import LxStateDisplay from '@/components/StateDisplay.vue';
 import LxFlag from '@/components/Flag.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { onClickOutside } from '@vueuse/core';
-import Popper from 'vue3-popper';
+import LxPopper from '@/components/Popper.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -393,16 +393,11 @@ onMounted(() => {
         aria-controls="popper-id"
         :aria-labelledby="labelledBy"
       >
-        <Popper
-          id="popper-id"
-          placement="bottom"
-          offset-distance="0,9"
-          :hover="false"
-          :arrow="false"
-          :disabled="props.disabled"
+        <LxPopper
+          :id="`${id}-popper`"
+          offset-distance="0"
+          :disabled="disabled"
           :show="menuOpen"
-          open-delay="0"
-          close-delay="0"
           role="listbox"
         >
           <!--eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
@@ -512,7 +507,7 @@ onMounted(() => {
               </slot>
             </div>
           </template>
-        </Popper>
+        </LxPopper>
       </div>
     </template>
   </div>

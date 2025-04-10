@@ -8,7 +8,7 @@ import LxSearchableText from '@/components/SearchableText.vue';
 import LxAutoComplete from '@/components/AutoComplete.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import { onClickOutside } from '@vueuse/core';
-import Popper from 'vue3-popper';
+import LxPopper from '@/components/Popper.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -557,36 +557,32 @@ const columnReadOnly = computed(() => {
         :id="id"
         ref="container"
         :disabled="disabled"
-        @keydown.esc.prevent="closeDropDownDefault"
-        @keydown.enter.prevent="onEnter"
-        @keydown.space.prevent="onEnter"
-        @keydown.down.prevent="focusNextInputElement"
-        @keydown.up.prevent="focusPreviousInputElement"
-        @keydown.tab="focusOnDropDown"
         tabindex="0"
         role="combobox"
         :aria-invalid="invalid"
         :aria-expanded="menuOpen"
         aria-controls="popper-id"
         :aria-labelledby="labelId"
+        @keydown.esc.prevent="closeDropDownDefault"
+        @keydown.enter.prevent="onEnter"
+        @keydown.space.prevent="onEnter"
+        @keydown.down.prevent="focusNextInputElement"
+        @keydown.up.prevent="focusPreviousInputElement"
+        @keydown.tab="focusOnDropDown"
       >
-        <Popper
-          id="popper-id"
-          placement="bottom"
-          offset-distance="0,9"
-          :hover="false"
-          :arrow="false"
-          :disabled="props.disabled"
+        <LxPopper
+          :id="`${id}-popper`"
+          offset-distance="0"
+          :disabled="disabled"
           :show="menuOpen"
-          open-delay="0"
-          close-delay="0"
+          role="listbox"
         >
           <div
             class="lx-dropdown-default-panel lx-input-wrapper"
-            @click="openDropDownDefault"
             :class="[{ 'lx-invalid': invalid && !hasSearch }, { 'lx-disabled': disabled }]"
             :title="tooltip"
             tabindex="-1"
+            @click="openDropDownDefault"
           >
             <slot>
               <div class="pseudo-input" />
@@ -634,8 +630,8 @@ const columnReadOnly = computed(() => {
                   class="lx-value-picker-item select-all"
                   tabindex="-1"
                   role="option"
-                  @click="selectAll"
                   :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
+                  @click="selectAll"
                 >
                   <LxIcon
                     :value="
@@ -650,7 +646,6 @@ const columnReadOnly = computed(() => {
                 </div>
                 <template v-for="item in filteredItems" :key="item[idAttribute]">
                   <div
-                    @click="selectMultiple(item[idAttribute])"
                     :title="item[nameAttribute]"
                     class="lx-value-picker-item"
                     tabindex="-1"
@@ -662,6 +657,7 @@ const columnReadOnly = computed(() => {
                       },
                     ]"
                     :id="getItemId(item[idAttribute])"
+                    @click="selectMultiple(item[idAttribute])"
                   >
                     <LxCheckbox
                       v-if="kind === 'multiple'"
@@ -690,7 +686,7 @@ const columnReadOnly = computed(() => {
               </slot>
             </div>
           </template>
-        </Popper>
+        </LxPopper>
       </div>
       <div v-show="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
     </div>

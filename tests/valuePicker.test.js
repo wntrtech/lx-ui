@@ -717,8 +717,11 @@ test('LxValuePicker dropdown modelValue', async () => {
     },
   });
   expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('One');
-  await wrapper.trigger('click');
+  const trigger = wrapper.find('.lx-dropdown-default-panel');
+  expect(trigger.exists()).toBe(true);
+  await trigger.trigger('click');
   const items = wrapper.findAll('.lx-value-picker-item');
+  expect(items.length).toBeGreaterThan(0);
   await items[1].trigger('click');
   expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('Two');
 });
@@ -742,7 +745,9 @@ test('LxValuePicker dropdown modelValue 2', async () => {
     },
   });
   expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('One');
-  await wrapper.trigger('click');
+  const trigger = wrapper.find('.lx-dropdown-default-panel');
+  expect(trigger.exists()).toBe(true);
+  await trigger.trigger('click');
   const items = wrapper.findAll('.lx-value-picker-item');
   await items[1].trigger('click');
   expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('One, Two');
@@ -925,6 +930,9 @@ test('LxValuePicker dropdown search', async () => {
     },
   });
 
+  const trigger = wrapper.find('.lx-autocomplete');
+  expect(trigger.exists()).toBe(true);
+  await trigger.trigger('click');
   const search = wrapper.find('.lx-text-input');
   await search.setValue('o');
   const items = wrapper.findAll('.lx-value-picker-item');
@@ -1140,7 +1148,9 @@ test('LxValuePicker dropdown hasSelectAll', async () => {
     },
   });
 
-  await wrapper.trigger('click');
+  const trigger = wrapper.find('.lx-autocomplete');
+  expect(trigger.exists()).toBe(true);
+  await trigger.trigger('click');
   expect(wrapper.find('.select-all').exists()).toBe(true);
   const selectAll = wrapper.find('.select-all');
   await selectAll.trigger('click');

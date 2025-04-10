@@ -2992,7 +2992,6 @@ watch(
                       >
                         <template v-for="(date, dayIndex) in week" :key="dayIndex">
                           <LxInfoWrapper
-                            placement="auto"
                             :disabled="
                               !hasSpecialDates(date, specialDatesAttributes) ||
                               (!isSameMonth(date, month) &&

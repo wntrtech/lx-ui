@@ -1,0 +1,124 @@
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+import { useFloating, flip, shift, arrow, offset, autoUpdate } from '@floating-ui/vue';
+import { generateUUID } from '@/utils/stringUtils';
+
+const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
+  placement: { type: String, default: 'bottom' },
+  offsetDistance: { type: String, default: '12' },
+  offsetSkid: { type: String, default: '0' },
+  disabled: { type: Boolean, default: false },
+  arrowPointer: { type: Boolean, default: false },
+  wrapperClass: { type: String, default: '' },
+  panelClass: { type: String, default: '' },
+  arrowPadding: { type: String, default: '5' },
+  content: { default: null },
+  show: { type: Boolean, default: null },
+  locked: { type: Boolean, default: false },
+});
+
+const reference = ref(null);
+const floating = ref(null);
+const floatingArrow = ref(null);
+
+const basePlacement = computed(() => {
+  switch (props.placement) {
+    case 'auto':
+      return 'bottom';
+    case 'auto-start':
+      return 'bottom-start';
+    case 'auto-end':
+      return 'bottom-end';
+    default:
+      return props.placement;
+  }
+});
+
+const fallbackPlacements = computed(() => {
+  switch (props.placement) {
+    case 'auto':
+      return ['top', 'right', 'left'];
+    case 'auto-start':
+      return ['bottom-start', 'top-start'];
+    case 'auto-end':
+      return ['bottom-end', 'top-end'];
+    default:
+      return [];
+  }
+});
+
+const middleware = computed(() => [
+  flip({
+    mainAxis: !props.locked,
+    crossAxis: !props.locked,
+    // @ts-ignore
+    fallbackPlacements: fallbackPlacements.value,
+  }),
+  shift({ padding: 16 }),
+  arrow({
+    element: floatingArrow,
+    padding: Number(props.arrowPadding),
+  }),
+  offset({
+    mainAxis: Number(props.offsetDistance),
+    crossAxis: Number(props.offsetSkid),
+  }),
+]);
+
+const {
+  floatingStyles,
+  middlewareData,
+  placement: plc,
+  update,
+} = useFloating(reference, floating, {
+  strategy: 'fixed',
+  // @ts-ignore
+  placement: basePlacement,
+  middleware,
+  whileElementsMounted: autoUpdate,
+});
+
+watch(
+  () => props.placement,
+  () => {
+    update();
+  }
+);
+</script>
+
+<template>
+  <div :id="id" ref="reference" class="popper-wrapper">
+    <slot />
+
+    <div v-show="show" ref="floating" :style="floatingStyles" class="popper">
+      <slot v-if="$slots.content" name="content" />
+      <p v-else-if="content" class="lx-simple-popper-content">{{ content }}</p>
+
+      <div
+        v-if="arrowPointer"
+        ref="floatingArrow"
+        class="popper-floating-arrow"
+        :style="{
+          position: 'absolute',
+          left: plc.startsWith('right')
+            ? '-5px'
+            : plc.startsWith('left')
+            ? 'auto'
+            : middlewareData.arrow?.x != null
+            ? `${middlewareData.arrow.x - Number(props.offsetSkid)}px`
+            : '',
+          right: plc.startsWith('left') ? '-5px' : '',
+          top: plc.startsWith('top')
+            ? 'auto'
+            : plc.startsWith('bottom')
+            ? '-5px'
+            : middlewareData.arrow?.y != null
+            ? `${middlewareData.arrow.y}px`
+            : '',
+          bottom: plc.startsWith('top') ? '-5px' : '',
+        }"
+      />
+    </div>
+  </div>
+</template>

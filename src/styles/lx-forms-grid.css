@@ -60,7 +60,7 @@ svg .lx-shade {
 }
 
 .lx-form-grid > header > .lx-group .lx-info-wrapper {
-  padding-top: 0.375rem;
+  padding: 0.4rem 0;
 }
 
 .lx-form-grid > header > .lx-group .lx-toolbar-chip {
@@ -542,6 +542,11 @@ svg .lx-shade {
   line-height: 1.25em;
 }
 
+.lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-field-wrapper > .lx-date-time-picker-wrapper p.lx-data,
+.lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-field-wrapper > .lx-date-time-picker-wrapper p.lx-data {
+   min-height: 0;
+}
+
 .lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-field-wrapper ul.lx-column-read-only-data,
 .lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-field-wrapper ul.lx-column-read-only-data,
 .lx-form-grid
@@ -888,7 +893,7 @@ svg .lx-shade {
   display: none;
 }
 
-.lx-row-header > .lx-info-wrapper > .inline-block > .popper > .lx-info-wrapper-panel {
+.lx-row-header > .lx-info-wrapper > .popper-wrapper > .popper > .lx-info-wrapper-panel {
   white-space: normal;
 }
 
