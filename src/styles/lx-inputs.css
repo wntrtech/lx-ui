@@ -12,6 +12,44 @@
   overflow: hidden;
 }
 
+.lx .lx-override.lx-layout input:where(:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="reset"]):not([type="button"]):not([type="file"]):not([type="range"]):not([type="color"]):not([type="image"]):not(.lx-input-area)),
+.lx .lx-override.lx-layout textarea:where(:not(.lx-input-area)) {
+  display: grid;
+  align-items: center;
+  height: var(--input-container-height);
+  width: var(--input-container-width);
+  border-radius: var(--input-border-radius);
+  outline: 2px solid transparent;
+  outline-offset: -2px;
+  border: var(--input-border);
+  border-bottom: var(--input-border-bottom);
+  border-radius: var(--input-border-radius);
+  font-size: var(--input-text-font-size);
+  color: var(--color-input);
+  background-color: var(--color-input-background);
+  padding: 0 var(--input-container-padding-right) 0 var(--input-container-padding-left);
+}
+
+.lx-autocomplete-default .lx-input-wrapper:not(.lx-disabled):has(input:focus),
+.lx-field-wrapper > .lx-text-input-wrapper.lx-input-wrapper:not(.lx-disabled),
+.lx-date-time-picker-wrapper .lx-input-wrapper:not(.lx-disabled),
+.lx-override input:not(.lx-disabled),
+.lx-override input:not([disabled]),
+.lx-override textarea:not(.lx-disabled),
+.lx-override textarea:not([disabled]) {
+  cursor: text;
+}
+
+.lx .lx-override input[type="color"] {
+  cursor: default;
+  background-color: transparent;
+  border: 1px solid var(--color-data);
+}
+
+.lx .lx-override input[type="image"] {
+  cursor: pointer;
+}
+
 .lx .lx-input-wrapper input {
   padding: 0;
   height: 100%;
@@ -30,7 +68,11 @@
 .lx .lx-layout .lx-dropdown-default:focus .lx-input-wrapper:not(.lx-disabled) .lx-input-area,
 .lx .lx-layout .lx-input-wrapper:not(.lx-disabled) .lx-input-area:has(.ProseMirror-focused),
 .lx .lx-layout .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus,
-.lx .lx-layout .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus-visible {
+.lx .lx-layout .lx-input-wrapper:not(.lx-disabled) .lx-input-area:focus-visible,
+.lx-override input:not([disabled]):focus,
+.lx-override input:not([disabled]):focus-visible,
+.lx-override textarea:not([disabled]):focus,
+.lx-override textarea:not([disabled]):focus-visible {
   outline-color: var(--color-focus-background);
   border-color: transparent;
 }
@@ -477,6 +519,15 @@
   resize: vertical;
 }
 
+.lx .lx-override.lx-layout textarea {
+  --input-container-height: auto;
+  min-height: var(--input-container-min-height-text-area);
+  padding: var(--input-container-padding-vertical-text-area) 
+           var(--input-container-padding-right) 
+           var(--input-container-padding-vertical-text-area) 
+           var(--input-container-padding-left);
+}
+
 .lx .lx-layout .lx-text-area-wrapper div.lx-input-wrapper .lx-text-area.lx-text-area-template {
   position: absolute;
   top: 0;
@@ -586,18 +637,32 @@
   cursor: not-allowed;
 }
 
-.lx .lx-layout div.lx-input-wrapper.lx-disabled {
+.lx .lx-layout div.lx-input-wrapper.lx-disabled,
+.lx .lx-override.lx-layout input.lx-disabled,
+.lx .lx-override.lx-layout input[disabled],
+.lx .lx-override.lx-layout textarea.lx-disabled,
+.lx .lx-override.lx-layout textarea[disabled] {
   color: var(--color-input-disabled);
   background-color: var(--color-input-disabled-background);
   cursor: not-allowed;
 }
 
-.lx .lx-layout div.lx-input-wrapper.lx-disabled .lx-input-area {
+.lx .lx-layout div.lx-input-wrapper.lx-disabled .lx-input-area,
+.lx .lx-override.lx-layout input.lx-disabled,
+.lx .lx-override.lx-layout input[disabled],
+.lx .lx-override.lx-layout textarea.lx-disabled,
+.lx .lx-override.lx-layout textarea[disabled] {
   border-bottom-color: var(--color-input-disabled);
   cursor: not-allowed;
 }
 
-.lx.lx-theme-contrast .lx-layout div.lx-input-wrapper.lx-disabled .lx-input-area {
+.lx.lx-theme-contrast .lx-layout div.lx-input-wrapper.lx-disabled .lx-input-area,
+.lx.lx-theme-contrast .lx-override input:not([type="submit"]):not([type="button"]):not([type="file"]).lx-disabled,
+.lx.lx-theme-contrast .lx-override input:not([type="submit"]):not([type="button"]):not([type="file"])[disabled],
+.lx.lx-theme-contrast .lx-override input:not([type="reset"]):not([type="button"]):not([type="file"]).lx-disabled,
+.lx.lx-theme-contrast .lx-override input:not([type="reset"]):not([type="button"]):not([type="file"])[disabled],
+.lx.lx-theme-contrast .lx-override textarea.lx-disabled,
+.lx.lx-theme-contrast .lx-override textarea[disabled] {
   border-bottom: var(--input-border);
 }
 
@@ -607,30 +672,40 @@
 
 .lx .lx-appendable-list .lx-input-wrapper,
 .lx .lx-appendable-list .lx-rotator-tag,
+.lx .lx-override .lx-appendable-list input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
+.lx .lx-override .lx-appendable-list textarea,
 .lx .lx-form-grid .lx-input-wrapper,
+.lx .lx-override .lx-form-grid input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
+.lx .lx-override .lx-form-grid textarea,
 .lx .lx-form-grid .lx-rotator-tag,
 .lx .lx-region .lx-input-wrapper,
+.lx .lx-override .lx-region input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
+.lx .lx-override .lx-region textarea,
 .lx .lx-region .lx-rotator-tag,
 .lx .lx-modal .lx-input-wrapper,
+.lx .lx-override .lx-modal input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
+.lx .lx-override .lx-modal textarea,
 .lx .lx-modal .lx-rotator-tag,
 .lx .lx-form .lx-input-wrapper,
+.lx .lx-override .lx-form input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
+.lx .lx-override .lx-form textarea,
 .lx .lx-form .lx-rotator-tag {
   background-color: var(--color-input-region-background);
 }
 
 .lx .lx-form-grid .lx-appendable-list .lx-input-wrapper,
 .lx .lx-form-grid .lx-appendable-list .lx-rotator-tag,
+.lx .lx-override .lx-form-grid .lx-appendable-list input,
+.lx .lx-override .lx-form-grid .lx-appendable-list textarea,
 .lx .lx-region .lx-appendable-list .lx-input-wrapper,
 .lx .lx-region .lx-appendable-list .lx-rotator-tag,
+.lx .lx-override .lx-region .lx-appendable-list input,
+.lx .lx-override .lx-region .lx-appendable-list textarea,
 .lx .lx-modal .lx-appendable-list .lx-input-wrapper,
-.lx .lx-modal .lx-appendable-list .lx-rotator-tag {
+.lx .lx-modal .lx-appendable-list .lx-rotator-tag,
+.lx .lx-override .lx-modal .lx-appendable-list input,
+.lx .lx-override .lx-modal .lx-appendable-list textarea {
   background-color: var(--color-input-background);
-}
-
-.lx-autocomplete-default .lx-input-wrapper:not(.lx-disabled):has(input:focus),
-.lx-field-wrapper > .lx-text-input-wrapper.lx-input-wrapper:not(.lx-disabled),
-.lx-date-time-picker-wrapper .lx-input-wrapper:not(.lx-disabled) {
-  cursor: text;
 }
 
 .lx-form-grid > .lx-main .popper ul.lx-list li {
@@ -638,6 +713,14 @@
 }
 
 /*** Icon styles ***/
+
+.lx.lx-theme-dark .lx-override.lx-layout input[type="time"]::-webkit-calendar-picker-indicator,
+.lx.lx-theme-dark .lx-override.lx-layout input[type="date"]::-webkit-calendar-picker-indicator,
+.lx.lx-theme-dark .lx-override.lx-layout input[type="week"]::-webkit-calendar-picker-indicator,
+.lx.lx-theme-dark .lx-override.lx-layout input[type="month"]::-webkit-calendar-picker-indicator,
+.lx.lx-theme-dark .lx-override.lx-layout input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  color-scheme: dark;
+}
 
 .lx .lx-invalidation-icon,
 .lx .lx-invalidation-icon-end {
@@ -791,6 +874,99 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: transparent;
 }
 
+.lx-layout.lx-override input[type="checkbox"] {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1rem;
+  height: 1rem;
+  margin: 0.5rem;
+  margin-left: 0.15rem;
+  border: 1px solid var(--color-data);
+  background-color: transparent;
+  outline: 2px solid transparent;
+  cursor: pointer;
+}
+
+.lx-override input[type="checkbox"]:focus {
+  outline-color: var(--color-focus-background);
+}
+
+.lx-override input[type="checkbox"]::before {
+  content: "✔";
+  color: transparent;
+  font-size: 0.75rem;
+  opacity: 0;
+}
+
+.lx-override input[type="checkbox"]:checked {
+  background-color: var(--color-data);
+  border-color: var(--color-data);
+}
+
+.lx-override input[type="checkbox"]:hover {
+  background-color: var(--color-interactive-hover-background);
+  border-color: transparent;
+}
+
+.lx-override input[type="checkbox"]:checked::before {
+  color: var(--color-region);
+  opacity: 1;
+}
+
+.lx-override input[type="checkbox"]:checked:hover::before {
+  color: var(--color-interactive-hover-foreground);
+}
+
+.lx-layout.lx-override input[type="radio"] {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  margin: 0.5rem;
+  margin-left: 0.15rem;
+  border: 1px solid var(--color-data);
+  border-radius: 50%;
+  background-color: transparent;
+  outline: 2px solid transparent;
+  cursor: pointer;
+}
+
+.lx-override input[type="radio"]:focus {
+  outline-color: var(--color-focus-background);
+}
+
+.lx-override input[type="radio"]::before {
+  content: "●";
+  color: transparent;
+  font-size: 1.6rem;
+  margin-top: -0.2rem;
+  opacity: 0;
+}
+
+.lx-override input[type="radio"]:checked {
+  background-color: transparent;
+  border-color: var(--color-data);
+}
+
+.lx-override input[type="radio"]:hover {
+  background-color: var(--color-interactive-hover-background);
+  border-color: transparent;
+}
+
+.lx-override input[type="radio"]:checked:hover::before {
+  color: var(--color-interactive-hover-foreground);
+  border-color: transparent;
+}
+
+.lx-override input[type="radio"]:checked::before {
+  color: var(--color-data);
+  opacity: 1;
+}
+
 .lx-radio-button-appearance {
   width: 1.2rem;
   height: 1.2rem;
@@ -851,6 +1027,10 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-checkbox:checked + .lx-checkbox-label-wrapper .lx-checkbox-appearance .lx-checkbox-thumb svg {
   fill: var(--color-region);
+}
+
+.lx-checkbox-wrapper:hover .lx-checkbox:checked + .lx-checkbox-label-wrapper .lx-checkbox-appearance .lx-checkbox-thumb svg {
+  fill: var(--color-interactive-hover-foreground);
 }
 
 .lx-radio-button:not(:disabled):active + .lx-radio-button-label-wrapper .lx-radio-button-appearance,
@@ -1854,7 +2034,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   color: var(--color-placeholder-disabled);
 }
 
-input[type='range'] {
+.lx .lx-layout input[type='range'] {
   position: absolute;
   z-index: 11;
   -webkit-appearance: none;
@@ -1864,7 +2044,7 @@ input[type='range'] {
   width: 200px;
 }
 
-input[type='range']::-webkit-slider-thumb {
+.lx .lx-layout input[type='range']::-webkit-slider-thumb {
   margin-top: 3px;
   -webkit-appearance: none;
   appearance: none;
@@ -1874,7 +2054,7 @@ input[type='range']::-webkit-slider-thumb {
   width: 1rem;
 }
 
-input[type='range']:focus::-webkit-slider-thumb {
+.lx .lx-layout input[type='range']:focus::-webkit-slider-thumb {
   margin-top: 2px;
   -webkit-appearance: none;
   appearance: none;
@@ -1887,7 +2067,7 @@ input[type='range']:focus::-webkit-slider-thumb {
   outline-offset: 0rem;
 }
 
-input[type='range']::-moz-range-thumb {
+.lx .lx-layout input[type='range']::-moz-range-thumb {
   position: relative;
   z-index: 100;
   border: none;
@@ -1897,7 +2077,7 @@ input[type='range']::-moz-range-thumb {
   width: 1rem;
 }
 
-input[type='range']:focus::-moz-range-thumb {
+.lx .lx-layout input[type='range']:focus::-moz-range-thumb {
   background-color: var(--color-focus-background);
   border-radius: 50%;
   height: 1rem;
@@ -1907,20 +2087,38 @@ input[type='range']:focus::-moz-range-thumb {
   outline-offset: 0rem;
 }
 
-input[type='range']:focus {
+.lx .lx-layout input[type='range']:focus {
   outline: none;
 }
 
-input[type='range']:hover::-webkit-slider-thumb {
+.lx .lx-layout input[type='range']:hover::-webkit-slider-thumb {
   border: 0.6rem solid var(--color-data);
   outline: 0rem solid var(--color-data);
   outline-offset: 0rem;
 }
 
-input[type='range']:hover::-moz-range-thumb {
+.lx .lx-layout input[type='range']:hover::-moz-range-thumb {
   border: 2px solid var(--color-data);
   outline: 0rem solid var(--color-data);
   outline-offset: 0rem;
+}
+
+.lx .lx-layout.lx-override input[type='range']:not(.input-slider input) {
+  margin-top: 0.5rem;
+}
+
+.lx .lx-layout.lx-override input[type='range']:not(.input-slider input)::-webkit-slider-thumb {
+  margin-top: -0.35rem;
+}
+
+.lx .lx-layout.lx-override input[type='range']:not(.input-slider input)::-webkit-slider-runnable-track {
+  background-color: var(--color-chrome);
+  height: 0.15rem;
+}
+
+.lx .lx-layout.lx-override input[type='range']:not(.input-slider input):focus::-webkit-slider-thumb,
+.lx .lx-layout.lx-override input[type='range']:not(.input-slider input):hover::-webkit-slider-thumb {
+  margin-top: -0.45rem;
 }
 
 /*** LxContentSwitcher styles ***/

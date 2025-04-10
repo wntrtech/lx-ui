@@ -29,9 +29,11 @@ a.lx-sitemap-link {
 /*** General primary styles ***/
 
 .lx .lx-layout .lx-button,
-.lx .lx-layout button,
-.lx .lx-button,
-.lx button {
+.lx-layout.lx-override button,
+.lx .lx-layout.lx-override input[type="button"],
+.lx .lx-layout.lx-override input[type="submit"],
+.lx .lx-layout.lx-override input[type="reset"],
+.lx .lx-layout.lx-override input[type="file"]::file-selector-button {
   display: flex;
   position: relative;
   padding: var(--button-primary-padding);
@@ -50,6 +52,12 @@ a.lx-sitemap-link {
   outline-offset: var(--button-primary-outline-offset);
 }
 
+.lx-layout.lx-override input[type="submit"],
+.lx-layout.lx-override input[type="reset"],
+.lx-layout.lx-override input[type="button"] {
+  cursor: pointer;
+}
+
 .lx-button-content-wrapper {
   display: grid;
   grid-template-areas: var(--button-primary-grid-areas);
@@ -61,7 +69,12 @@ a.lx-sitemap-link {
   height: 100%;
 }
 
-.lx .lx-button .lx-button-content {
+.lx .lx-button .lx-button-content,
+.lx-override button,
+.lx-override input[type="button"],
+.lx-override input[type="submit"],
+.lx-override input[type="reset"],
+.lx-override input[type="file"]::file-selector-button {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -69,9 +82,23 @@ a.lx-sitemap-link {
   grid-area: content;
 }
 
+.lx .lx-button:has(.lx-button-content-wrapper) {
+  overflow: visible;
+}
+
+.lx-override button,
+.lx-override input[type="button"],
+.lx-override input[type="submit"],
+.lx-override input[type="reset"],
+.lx-override input[type="file"]::file-selector-button { 
+  align-items: var(--button-primary-align);
+}
+
 /*** General secondary styles ***/
 
-.lx .lx-button.lx-button-secondary {
+.lx .lx-button.lx-button-secondary,
+.lx-override button.lx-button-secondary,
+.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary) {
   padding: var(--button-secondary-padding);
   margin: var(--button-secondary-margin);
   text-decoration: var(--button-secondary-text-decoration);
@@ -95,13 +122,22 @@ a.lx-sitemap-link {
   gap: var(--button-secondary-gap);
 }
 
-.lx .lx-button.lx-button-secondary .lx-button-content {
+.lx .lx-button.lx-button-secondary .lx-button-content,
+.lx-override button.lx-button-secondary,
+.lx-override input[type="button"]:where(.lx-button-secondary) {
   text-align: var(--button-secondary-text-align);
+}
+
+.lx-override button.lx-button-secondary,
+.lx-override input[type="button"]:where(.lx-button-secondary) {
+  align-items: var(--button-secondary-align);
 }
 
 /*** General tertiary styles ***/
 
-.lx .lx-button.lx-button-tertiary {
+.lx .lx-button.lx-button-tertiary,
+.lx-override button.lx-button-tertiary,
+.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary) {
   padding: var(--button-tertiary-padding);
   margin: var(--button-tertiary-margin);
   text-decoration: var(--button-tertiary-text-decoration);
@@ -125,13 +161,22 @@ a.lx-sitemap-link {
   gap: var(--button-tertiary-gap);
 }
 
-.lx .lx-button.lx-button-tertiary .lx-button-content {
+.lx .lx-button.lx-button-tertiary .lx-button-content,
+.lx-override button.lx-button-tertiary,
+.lx-override input[type="button"]:where(.lx-button-tertiary) {
   text-align: var(--button-tertiary-text-align);
+}
+
+.lx-override button.lx-button-tertiary,
+.lx-override input[type="button"]:where(.lx-button-tertiary) {
+  align-items: var(--button-tertiary-align);
 }
 
 /*** General ghost styles ***/
 
-.lx .lx-button.lx-button-ghost {
+.lx .lx-button.lx-button-ghost,
+.lx-override button.lx-button-ghost,
+.lx-override input[type="button"]:where(.lx-button-ghost) {
   padding: var(--button-ghost-padding);
   margin: var(--button-ghost-margin);
   text-decoration: var(--button-ghost-text-decoration);
@@ -159,15 +204,21 @@ a.lx-sitemap-link {
   grid-template-areas: var(--button-nav-grid-areas);
 }
 
-.lx .lx-button.lx-button-ghost .lx-button-content {
+.lx .lx-button.lx-button-ghost .lx-button-content,
+.lx-override button.lx-button-ghost,
+.lx-override input[type="button"]:where(.lx-button-ghost) {
   text-align: var(--button-ghost-text-align);
+}
+
+.lx-override button.lx-button-ghost,
+.lx-override input[type="button"]:where(.lx-button-ghost) {
+  align-items: var(--button-ghost-align);
 }
 
 /*** Icon styles ***/
 
 .lx .lx-button svg,
-.lx a.lx-button svg,
-.lx button svg {
+.lx a.lx-button svg {
   height: var(--button-primary-icon-height);
   width: var(--button-primary-icon-width);
   fill: var(--color-button-primary-icon);
@@ -179,24 +230,21 @@ a.lx-sitemap-link {
 }
 
 .lx-button.lx-button-secondary svg,
-a.lx-button.lx-button-secondary svg,
-.lx button.lx-button-secondary svg {
+a.lx-button.lx-button-secondary svg {
   height: var(--button-secondary-icon-height);
   width: var(--button-secondary-icon-width);
   fill: var(--color-button-secondary-icon);
 }
 
 .lx-button.lx-button-tertiary svg,
-a.lx-button.lx-button-tertiary svg,
-.lx button.lx-button-tertiary svg {
+a.lx-button.lx-button-tertiary svg {
   height: var(--button-tertiary-icon-height);
   width: var(--button-tertiary-icon-width);
   fill: var(--color-button-tertiary-icon);
 }
 
 .lx-button.lx-button-ghost svg,
-a.lx-button.lx-button-ghost svg,
-.lx button.lx-button-ghost svg {
+a.lx-button.lx-button-ghost svg {
   height: var(--button-ghost-icon-height);
   width: var(--button-ghost-icon-width);
   fill: var(--color-button-ghost-icon);
@@ -474,129 +522,103 @@ a.lx-button.lx-button-ghost svg,
 
 /* lx-active icon styles */
 
-.lx .lx-layout .lx-button.lx-active:not(.lx-disabled) svg,
-.lx .lx-layout button.lx-active:not(.lx-disabled) svg,
-.lx .lx-button.lx-active:not(.lx-disabled) svg,
-.lx button.lx-active:not(.lx-disabled) svg {
+.lx .lx-layout .lx-button.lx-active:not(.lx-disabled) svg {
   fill: var(--color-button-active-mode-icon);
 }
 
 /* Hover icon styles */
 
-.lx .lx-button:hover svg,
-.lx button:hover svg {
+.lx .lx-button:hover svg {
   fill: var(--color-button-primary-icon-hover);
 }
 
-.lx-button.lx-button-secondary:hover svg,
-.lx button.lx-button-secondary:hover svg {
+.lx-button.lx-button-secondary:hover svg {
   fill: var(--color-button-secondary-icon-hover);
 }
 
-.lx-button.lx-button-tertiary:hover svg,
-.lx button.lx-button-tertiary:hover svg {
+.lx-button.lx-button-tertiary:hover svg {
   fill: var(--color-button-tertiary-icon-hover);
 }
 
-.lx-button.lx-button-ghost:hover svg,
-.lx button.lx-button-ghost:hover svg {
+.lx-button.lx-button-ghost:hover svg {
   fill: var(--color-button-ghost-icon-hover);
 }
 
 /* Focus icon styles */
 
-.lx .lx-button:focus svg,
-.lx button:focus svg {
+.lx .lx-button:focus svg {
   fill: var(--color-button-primary-icon-focus);
 }
 
-.lx-button.lx-button-secondary:focus svg,
-.lx button.lx-button-secondary:focus svg {
+.lx-button.lx-button-secondary:focus svg {
   fill: var(--color-button-secondary-icon-focus);
 }
 
-.lx-button.lx-button-tertiary:focus svg,
-.lx button.lx-button-tertiary:focus svg {
+.lx-button.lx-button-tertiary:focus svg {
   fill: var(--color-button-tertiary-icon-focus);
 }
 
-.lx-button.lx-button-ghost:focus svg,
-.lx button.lx-button-ghost:focus svg {
+.lx-button.lx-button-ghost:focus svg {
   fill: var(--color-button-ghost-icon-focus);
 }
 
 /* Focus-hover icon styles */
 
-.lx-button:focus:hover svg,
-.lx button:focus:hover svg {
+.lx-button:focus:hover svg {
   fill: var(--color-button-primary-icon-hover);
 }
 
-.lx-button.lx-button-secondary:focus:hover svg,
-.lx button.lx-button-secondary:focus:hover svg {
+.lx-button.lx-button-secondary:focus:hover svg {
   fill: var(--color-button-secondary-icon-hover);
 }
 
-.lx-button.lx-button-tertiary:focus:hover svg,
-.lx button.lx-button-tertiary:focus:hover svg {
+.lx-button.lx-button-tertiary:focus:hover svg {
   fill: var(--color-button-tertiary-icon-hover);
 }
 
-.lx-button.lx-button-ghost:focus:hover svg,
-.lx button.lx-button-ghost:focus:hover svg {
+.lx-button.lx-button-ghost:focus:hover svg {
   fill: var(--color-button-ghost-icon-hover);
 }
 
 /* Active icon styles */
 
-.lx .lx-button:active svg,
-.lx button:active svg {
+.lx .lx-button:active svg {
   fill: var(--color-button-primary-icon-active);
 }
 
-.lx .lx-button.lx-button-secondary:active svg,
-.lx .lx-layout button.lx-button-secondary:active svg {
+.lx .lx-button.lx-button-secondary:active svg {
   fill: var(--color-button-secondary-icon-active);
 }
 
-.lx .lx-button.lx-button-tertiary:active svg,
-.lx .lx-layout button.lx-button-tertiary:active svg {
+.lx .lx-button.lx-button-tertiary:active svg {
   fill: var(--color-button-tertiary-icon-active);
 }
 
-.lx .lx-button.lx-button-ghost:active svg,
-.lx .lx-layout button.lx-button-ghost:active svg {
+.lx .lx-button.lx-button-ghost:active svg {
   fill: var(--color-button-ghost-icon-active);
 }
 
 /* Destructive icon styles */
 
-.lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover svg,
-.lx .lx-layout button.lx-destructive:not(.lx-disabled):hover svg,
-.lx .lx-button.lx-destructive:not(.lx-disabled):hover svg,
-.lx button.lx-destructive:not(.lx-disabled):hover svg {
+.lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover svg {
   fill: var(--color-button-destructive-icon);
 }
 
 /* Disabled icon styles */
 
-.lx .lx-button.lx-disabled svg,
-.lx button.lx-disabled svg {
+.lx .lx-layout .lx-button.lx-disabled svg {
   fill: var(--color-button-primary-icon-disabled);
 }
 
-.lx-button.lx-button-secondary.lx-disabled svg,
-.lx button.lx-button-secondary.lx-disabled svg {
+.lx-layout .lx-button.lx-button-secondary.lx-disabled svg {
   fill: var(--color-button-secondary-icon-disabled);
 }
 
-.lx-button.lx-button-tertiary.lx-disabled svg,
-.lx button.lx-button-tertiary.lx-disabled svg {
+.lx-layout .lx-button.lx-button-tertiary.lx-disabled svg {
   fill: var(--color-button-tertiary-icon-disabled);
 }
 
-.lx-button.lx-button-ghost.lx-disabled svg,
-.lx button.lx-button-ghost.lx-disabled svg {
+.lx-layout .lx-button.lx-button-ghost.lx-disabled svg {
   fill: var(--color-button-ghost-icon-disabled);
 }
 
@@ -796,8 +818,8 @@ a.lx-button.lx-button-ghost svg,
   color: var(--color-button-toolbar-primary-active);
 }
 
-.lx-list-wrapper .lx-list-toolbar .lx-button.lx-disabled,
-.lx-layout .lx-component-toolbar .lx-button.lx-disabled {
+.lx .lx-list-wrapper .lx-list-toolbar .lx-button.lx-disabled,
+.lx .lx-layout .lx-component-toolbar .lx-button.lx-disabled {
   background-color: var(--color-button-toolbar-primary-disabled-background);
   color: var(--color-button-toolbar-primary-disabled);
   border-color: var(--color-button-toolbar-primary-disabled-border);
@@ -1450,10 +1472,7 @@ a.lx-button.lx-button-ghost svg,
 
 /*** Active + hover + focus styles ***/
 
-.lx .lx-layout .lx-button.lx-active:not(.lx-disabled),
-.lx .lx-layout button.lx-active:not(.lx-disabled),
-.lx .lx-button.lx-active:not(.lx-disabled),
-.lx button.lx-active:not(.lx-disabled) {
+.lx .lx-layout .lx-button.lx-active:not(.lx-disabled) {
   background-color: var(--color-button-active-mode-background);
   color: var(--color-button-active-mode);
   border-color: var(--color-button-active-mode-border);
@@ -1462,28 +1481,35 @@ a.lx-button.lx-button-ghost svg,
 /* Hover styles */
 
 .lx .lx-button:hover,
-.lx button:hover {
+.lx-override button:hover,
+.lx .lx-layout.lx-override input[type="button"]:where(:hover),
+.lx .lx-layout.lx-override input[type="submit"]:where(:hover),
+.lx .lx-layout.lx-override input[type="reset"]:where(:hover),
+.lx .lx-layout.lx-override input[type="file"]:where(:hover)::file-selector-button {
   background-color: var(--color-button-primary-hover-background);
   color: var(--color-button-primary-hover);
   border-color: var(--color-button-primary-hover-border);
 }
 
 .lx-button.lx-button-secondary:hover,
-.lx button.lx-button-secondary:hover {
+.lx-override button.lx-button-secondary:hover,
+.lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:hover) {
   background-color: var(--color-button-secondary-hover-background);
   color: var(--color-button-secondary-hover);
   border-color: var(--color-button-secondary-hover-border);
 }
 
 .lx-button.lx-button-tertiary:hover,
-.lx button.lx-button-tertiary:hover {
+.lx-override button.lx-button-tertiary:hover,
+.lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:hover) {
   background-color: var(--color-button-tertiary-hover-background);
   color: var(--color-button-tertiary-hover);
   border-color: var(--color-button-tertiary-hover-border);
 }
 
 .lx-button.lx-button-ghost:hover,
-.lx button.lx-button-ghost:hover {
+.lx-override button.lx-button-ghost:hover,
+.lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:hover) {
   background-color: var(--color-button-ghost-hover-background);
   color: var(--color-button-ghost-hover);
   border-color: var(--color-button-ghost-hover-border);
@@ -1492,7 +1518,11 @@ a.lx-button.lx-button-ghost svg,
 /* Focus styles */
 
 .lx .lx-button:focus,
-.lx button:focus {
+.lx-override button:focus,
+.lx .lx-layout.lx-override input[type="button"]:where(:focus),
+.lx .lx-layout.lx-override input[type="submit"]:where(:focus),
+.lx .lx-layout.lx-override input[type="reset"]:where(:focus),
+.lx .lx-layout.lx-override input[type="file"]:where(:focus)::file-selector-button {
   background-color: var(--color-button-primary-focus-background);
   border-color: var(--color-button-primary-focus-border);
   outline: 2px solid var(--color-focus-background);
@@ -1501,21 +1531,24 @@ a.lx-button.lx-button-ghost svg,
 }
 
 .lx-button.lx-button-secondary:focus,
-.lx button.lx-button-secondary:focus {
+.lx-override button.lx-button-secondary:focus,
+.lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus) {
   background-color: var(--color-button-secondary-focus-background);
   border-color: var(--color-button-secondary-focus-border);
   color: var(--color-button-secondary);
 }
 
 .lx-button.lx-button-tertiary:focus,
-.lx button.lx-button-tertiary:focus {
+.lx-override button.lx-button-tertiary:focus,
+.lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus) {
   background-color: var(--color-button-tertiary-focus-background);
   border-color: var(--color-button-tertiary-focus-border);
   color: var(--color-button-tertiary);
 }
 
 .lx-button.lx-button-ghost:focus,
-.lx button.lx-button-ghost:focus {
+.lx-override button.lx-button-ghost:focus,
+.lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus) {
   background-color: var(--color-button-ghost-focus-background);
   border-color: var(--color-button-ghost-focus-border);
   color: var(--color-button-ghost);
@@ -1524,25 +1557,32 @@ a.lx-button.lx-button-ghost svg,
 /* Focus-hover styles */
 
 .lx-button:focus:hover,
-button:focus:hover {
+.lx-override button:focus:where(:hover),
+.lx .lx-layout.lx-override input[type="button"]:where(:focus:hover),
+.lx .lx-layout.lx-override input[type="submit"]:where(:focus:hover),
+.lx .lx-layout.lx-override input[type="reset"]:where(:focus:hover),
+.lx .lx-layout.lx-override input[type="file"]:where(:focus:hover)::file-selector-button {
   background-color: var(--color-button-primary-hover-background);
   color: var(--color-button-primary-hover);
 }
 
 .lx-button.lx-button-secondary:focus:hover,
-button.lx-button-secondary:focus:hover {
+.lx-override button.lx-button-secondary:focus:where(:hover),
+.lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus:hover) {
   background-color: var(--color-button-secondary-hover-background);
   color: var(--color-button-secondary-hover);
 }
 
 .lx-button.lx-button-tertiary:focus:hover,
-button.lx-button-tertiary:focus:hover {
+.lx-override button.lx-button-tertiary:focus:where(:hover),
+.lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus:hover) {
   background-color: var(--color-button-tertiary-hover-background);
   color: var(--color-button-tertiary-hover);
 }
 
 .lx-button.lx-button-ghost:focus:hover,
-button.lx-button-ghost:focus:hover {
+.lx-override button.lx-button-ghost:focus:where(:hover),
+.lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus:hover) {
   background-color: var(--color-button-ghost-hover-background);
   color: var(--color-button-ghost-hover);
 }
@@ -1550,28 +1590,35 @@ button.lx-button-ghost:focus:hover {
 /* Active styles */
 
 .lx .lx-button:active,
-.lx button:active {
+.lx-override button:active,
+.lx .lx-layout.lx-override input[type="button"]:where(:active),
+.lx .lx-layout.lx-override input[type="submit"]:where(:active),
+.lx .lx-layout.lx-override input[type="reset"]:where(:active),
+.lx .lx-layout.lx-override input[type="file"]:where(:active)::file-selector-button {
   background-color: var(--color-button-primary-active-background);
   color: var(--color-button-primary-active);
   border-color: var(--color-button-primary-active-border);
 }
 
 .lx .lx-button.lx-button-secondary:active,
-.lx button.lx-button-secondary:active {
+.lx-override button.lx-button-secondary:active,
+.lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:active) {
   background-color: var(--color-button-secondary-active-background);
   color: var(--color-button-secondary-active);
   border-color: var(--color-button-secondary-active-border);
 }
 
 .lx .lx-button.lx-button-tertiary:active,
-.lx button.lx-button-tertiary:active {
+.lx-override button.lx-button-tertiary:active,
+.lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:active) {
   background-color: var(--color-button-tertiary-active-background);
   color: var(--color-button-tertiary-active);
   border-color: var(--color-button-tertiary-active-border);
 }
 
 .lx .lx-button.lx-button-ghost:active,
-.lx button.lx-button-ghost:active {
+.lx-override button.lx-button-ghost:active,
+.lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:active) {
   background-color: var(--color-button-ghost-active-background);
   color: var(--color-button-ghost-active);
   border-color: var(--color-button-ghost-active-border);
@@ -1580,9 +1627,10 @@ button.lx-button-ghost:focus:hover {
 /*** Destructive styles ***/
 
 .lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover,
-.lx .lx-layout button.lx-destructive:not(.lx-disabled):hover,
-.lx .lx-button.lx-destructive:not(.lx-disabled):hover,
-.lx button.lx-destructive:not(.lx-disabled):hover {
+.lx-layout.lx-override button.lx-destructive:not(.lx-disabled):hover,
+.lx-layout.lx-override button.lx-destructive:not([disabled]):hover,
+.lx .lx-layout.lx-override input[type="button"].lx-destructive:not(.lx-disabled):hover,
+.lx .lx-layout.lx-override input[type="button"].lx-destructive:not([disabled]):hover {
   background-color: var(--color-button-destructive-background) !important;
   border-color: var(--color-button-destructive-border) !important;
   color: var(--color-button-destructive);
@@ -1591,9 +1639,16 @@ button.lx-button-ghost:focus:hover {
 /*** Disabled styles ***/
 
 .lx .lx-layout .lx-button.lx-disabled,
-.lx .lx-layout button.lx-disabled,
-.lx .lx-button.lx-disabled,
-.lx button.lx-disabled {
+.lx-layout.lx-override button.lx-disabled,
+.lx-layout.lx-override button[disabled],
+.lx .lx-layout.lx-override input[type="button"].lx-disabled,
+.lx .lx-layout.lx-override input[type="button"][disabled],
+.lx .lx-layout.lx-override input[type="submit"].lx-disabled,
+.lx .lx-layout.lx-override input[type="submit"][disabled],
+.lx .lx-layout.lx-override input[type="reset"].lx-disabled,
+.lx .lx-layout.lx-override input[type="reset"][disabled],
+.lx .lx-layout.lx-override input[type="file"].lx-disabled::file-selector-button,
+.lx .lx-layout.lx-override input[type="file"][disabled]::file-selector-button {
   background-color: var(--color-button-primary-disabled-background);
   color: var(--color-button-primary-disabled);
   border-color: var(--color-button-primary-disabled-border);
@@ -1601,22 +1656,31 @@ button.lx-button-ghost:focus:hover {
   cursor: not-allowed;
 }
 
-.lx .lx-button.lx-disabled.lx-button-secondary,
-.lx button.lx-disabled.lx-button-secondary {
+.lx .lx-button.lx-button-secondary.lx-disabled,
+.lx-override button.lx-button-secondary.lx-disabled,
+.lx-override button.lx-button-secondary[disabled],
+.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary.lx-disabled),
+.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-secondary[disabled]) {
   background-color: var(--color-button-secondary-disabled-background);
   color: var(--color-button-secondary-disabled);
   border-color: var(--color-button-secondary-disabled-border);
 }
 
-.lx .lx-button.lx-disabled.lx-button-tertiary,
-.lx button.lx-disabled.lx-button-tertiary {
+.lx .lx-button.lx-button-tertiary.lx-disabled,
+.lx-override button.lx-button-tertiary.lx-disabled,
+.lx-override button.lx-button-tertiary[disabled],
+.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary.lx-disabled),
+.lx .lx-layout.lx-override input[type="button"]:where(.lx-button-tertiary[disabled]) {
   background-color: var(--color-button-tertiary-disabled-background);
   color: var(--color-button-tertiary-disabled);
   border-color: var(--color-button-tertiary-disabled-border);
 }
 
-.lx .lx-button.lx-disabled.lx-button-ghost,
-.lx button.lx-disabled.lx-button-ghost {
+.lx .lx-button.lx-button-ghost.lx-disabled,
+.lx-override button.lx-button-ghost.lx-disabled,
+.lx-override button.lx-button-ghost[disabled],
+.lx-layout.lx-override input[type="button"].lx-button-ghost.lx-disabled,
+.lx-layout.lx-override input[type="button"].lx-button-ghost[disabled] {
   background-color: var(--color-button-ghost-disabled-background);
   color: var(--color-button-ghost-disabled);
   border-color: var(--color-button-ghost-disabled-border);

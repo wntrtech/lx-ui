@@ -188,6 +188,11 @@
 }
 
 .lx:not(.lx-no-animations) .lx-button,
+.lx:not(.lx-no-animations) .lx-override button,
+.lx:not(.lx-no-animations) .lx-override input[type="button"],
+.lx:not(.lx-no-animations) .lx-override input[type="submit"],
+.lx:not(.lx-no-animations) .lx-override input[type="reset"],
+.lx:not(.lx-no-animations) .lx-override input[type="file"]::file-selector-button,
 .lx-layout-latvijalv .lx-latvijalv-alert-list .lx-alert-clickable,
 .lx:not(.lx-no-animations) .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-badge {
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
@@ -260,7 +265,9 @@
   transition: background-color 0.2s ease-out, border-color 0.2s ease-out;
 }
 
-.lx:not(.lx-no-animations) .lx-checkbox-appearance .lx-checkbox-thumb {
+.lx:not(.lx-no-animations) .lx-checkbox-appearance .lx-checkbox-thumb,
+.lx:not(.lx-no-animations) .lx-override input[type="checkbox"]::before,
+.lx:not(.lx-no-animations) .lx-override input[type="radio"]::before {
   transition: opacity 0.2s ease-out, transform 0.2s ease-out;
 }
 
@@ -476,7 +483,9 @@
 }
 
 .lx:not(.lx-no-animations) .lx-radio-button-appearance,
-.lx:not(.lx-no-animations) .lx-checkbox-appearance {
+.lx:not(.lx-no-animations) .lx-checkbox-appearance,
+.lx:not(.lx-no-animations) .lx-override input[type="checkbox"],
+.lx:not(.lx-no-animations) .lx-override input[type="radio"] {
   -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),
     border-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
   transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9),

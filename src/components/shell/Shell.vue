@@ -144,6 +144,8 @@ const props = defineProps({
 
   hasSkipLink: { type: Boolean, default: true },
 
+  overrideDefaultStyles: { type: Boolean, default: true },
+
   texts: {
     type: Object,
     default: () => ({
@@ -640,7 +642,12 @@ function focusFirstMainFocusableElement() {
 </script>
 <template>
   <transition name="shell-switch">
-    <div ref="shell" v-if="mode === 'cover'" class="lx-layout lx-layout-cover">
+    <div
+      ref="shell"
+      v-if="mode === 'cover'"
+      class="lx-layout lx-layout-cover"
+      :class="{ 'lx-override': overrideDefaultStyles }"
+    >
       <LxSkipLink
         v-if="props.hasSkipLink"
         :label="props.texts.skipLinkLabel"
@@ -754,6 +761,7 @@ function focusFirstMainFocusableElement() {
         { 'lx-collapsed': navBarSwitchBasic },
         { 'lx-hide-nav-bar': hideNavBar },
         { 'no-nav-items': !navItems || navItems?.length === 0 },
+        { 'lx-override': overrideDefaultStyles },
       ]"
     >
       <LxSkipLink
@@ -880,6 +888,7 @@ function focusFirstMainFocusableElement() {
         { 'lx-collapsed': navBarSwitchBasic },
         { 'lx-hide-nav-bar': hideNavBar },
         { 'no-nav-items': !navItems || navItems?.length === 0 },
+        { 'lx-override': overrideDefaultStyles },
       ]"
     >
       <LxSkipLink
@@ -1052,6 +1061,7 @@ function focusFirstMainFocusableElement() {
         { 'lx-collapsed': navBarSwitchModel },
         { 'lx-hide-nav-bar': hideNavBar },
         { 'lx-collapsed-null': navBarSwitchModel === null },
+        { 'lx-override': overrideDefaultStyles },
       ]"
     >
       <LxSkipLink
@@ -1202,7 +1212,11 @@ function focusFirstMainFocusableElement() {
       </footer>
       <div ref="modals" id="modals"></div>
     </div>
-    <div v-else-if="mode === 'digimaks'" class="lx-layout lx-layout-digimaks">
+    <div
+      v-else-if="mode === 'digimaks'"
+      class="lx-layout lx-layout-digimaks"
+      :class="{ 'lx-override': overrideDefaultStyles }"
+    >
       <LxSkipLink
         v-if="props.hasSkipLink"
         :label="props.texts.skipLinkLabel"
@@ -1284,7 +1298,7 @@ function focusFirstMainFocusableElement() {
     <div
       v-else
       class="lx-layout lx-layout-default"
-      :class="[{ 'lx-collapsed': navBarSwitchBasic }]"
+      :class="[{ 'lx-collapsed': navBarSwitchBasic }, { 'lx-override': overrideDefaultStyles }]"
     >
       <LxSkipLink
         v-if="props.hasSkipLink"
