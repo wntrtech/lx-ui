@@ -1638,7 +1638,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-value-picker-tags .lx-tag-set .lx-tag {
   background-color: var(--color-tile-background) !important;
-  border: 2px solid var(--color-region-2);
+  border: 2px solid var(--color-chrome);
   cursor: pointer;
 }
 
