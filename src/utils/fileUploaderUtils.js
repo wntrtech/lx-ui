@@ -1,15 +1,32 @@
 import mime from 'mime';
 import useLx from '@/hooks/useLx';
 import { formatFull, formatDateTime } from '@/utils/dateUtils';
-import { log } from '@/utils/devUtils';
+import { log, logError } from '@/utils/devUtils';
 import { getTexts } from '@/utils/visualPickerUtils';
 
 const DASH = '—';
 
 // Functions to dynamically load packages
 async function loadX509() {
-  const { X509 } = await import('jsrsasign');
-  return X509;
+  try {
+    const dynamicModule = await import('jsrsasign');
+
+    if (dynamicModule.X509) {
+      return dynamicModule.X509;
+    }
+
+    if (dynamicModule.default && dynamicModule.default.X509) {
+      return dynamicModule.default.X509;
+    }
+
+    if (dynamicModule.jsrsasign && dynamicModule.jsrsasign.X509) {
+      return dynamicModule.jsrsasign.X509;
+    }
+  } catch (error) {
+    logError(`Failed to dynamically import jsrsasign:${error}`, useLx().getGlobals()?.environment);
+  }
+
+  throw new Error('Could not find X509 in jsrsasign module');
 }
 
 async function loadExifReader() {
