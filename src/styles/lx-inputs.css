@@ -23,7 +23,6 @@
   outline-offset: -2px;
   border: var(--input-border);
   border-bottom: var(--input-border-bottom);
-  border-radius: var(--input-border-radius);
   font-size: var(--input-text-font-size);
   color: var(--color-input);
   background-color: var(--color-input-background);

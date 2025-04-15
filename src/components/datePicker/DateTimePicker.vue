@@ -167,72 +167,89 @@ const model = computed({
     }
   },
 });
+function getNameDate() {
+  if (isDateValid(props.modelValue)) {
+    return formatDate(new Date(props.modelValue));
+  }
+  if (typeof props.modelValue !== 'string') {
+    return formatDate(props.modelValue);
+  }
+  return null;
+}
+
+function getNameTime() {
+  if (isTimeValid(props.modelValue)) {
+    return props.modelValue;
+  }
+  if (typeof props.modelValue !== 'string') {
+    return extractTime(formatDateTime(props.modelValue));
+  }
+  return null;
+}
+
+function getNameDateTime() {
+  if (isDateValid(props.modelValue)) {
+    return formatDateTime(new Date(props.modelValue));
+  }
+  if (typeof props.modelValue !== 'string') {
+    return formatDateTime(props.modelValue);
+  }
+  return null;
+}
+
+function getNameMonth() {
+  if (typeof props.modelValue === 'string') {
+    const monthsList = getMonthNames(localeComputed.value);
+    return getMonthNameByOrder(monthsList, new Date(props.modelValue)?.getMonth(), true);
+  }
+  if (typeof props.modelValue !== 'string') {
+    const monthsList = getMonthNames(localeComputed.value);
+    return getMonthNameByOrder(monthsList, props.modelValue?.getMonth(), true);
+  }
+  return null;
+}
+
+function getNameMonthYear() {
+  if (typeof props.modelValue === 'string') {
+    return getMonthYearString(
+      localeComputed.value,
+      new Date(props.modelValue)?.getMonth(),
+      new Date(props.modelValue)?.getFullYear()
+    );
+  }
+  if (typeof props.modelValue !== 'string') {
+    return getMonthYearString(
+      localeComputed.value,
+      props.modelValue?.getMonth(),
+      props.modelValue?.getFullYear()
+    );
+  }
+  return null;
+}
 
 function getName() {
   if (props.modelValue === '') return null;
 
   switch (props.kind) {
     case 'date':
-      if (isDateValid(props.modelValue)) {
-        return formatDate(new Date(props.modelValue));
-      }
-      if (typeof props.modelValue !== 'string') {
-        return formatDate(props.modelValue);
-      }
-      break;
+      return getNameDate();
 
     case 'time':
-      if (isTimeValid(props.modelValue)) {
-        return props.modelValue;
-      }
-      if (typeof props.modelValue !== 'string') {
-        return extractTime(formatDateTime(props.modelValue));
-      }
-      break;
+      return getNameTime();
 
     case 'dateTime':
     case 'date-time':
-      if (isDateValid(props.modelValue)) {
-        return formatDateTime(new Date(props.modelValue));
-      }
-      if (typeof props.modelValue !== 'string') {
-        return formatDateTime(props.modelValue);
-      }
-      break;
+      return getNameDateTime();
 
     case 'month':
-      if (typeof props.modelValue === 'string') {
-        const monthsList = getMonthNames(localeComputed.value);
-        return getMonthNameByOrder(monthsList, new Date(props.modelValue)?.getMonth(), true);
-      }
-      if (typeof props.modelValue !== 'string') {
-        const monthsList = getMonthNames(localeComputed.value);
-        return getMonthNameByOrder(monthsList, props.modelValue?.getMonth(), true);
-      }
-      break;
+      return getNameMonth();
 
     case 'month-year':
-      if (typeof props.modelValue === 'string') {
-        return getMonthYearString(
-          localeComputed.value,
-          new Date(props.modelValue)?.getMonth(),
-          new Date(props.modelValue)?.getFullYear()
-        );
-      }
-      if (typeof props.modelValue !== 'string') {
-        return getMonthYearString(
-          localeComputed.value,
-          props.modelValue?.getMonth(),
-          props.modelValue?.getFullYear()
-        );
-      }
-      break;
+      return getNameMonthYear();
 
     default:
       return props.modelValue;
   }
-
-  return null;
 }
 
 const modelValueIso = computed(() => {

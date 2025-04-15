@@ -2186,15 +2186,12 @@ const timeSelectButtonLabel = computed(() => {
   return `${currentHours}:${currentMinutes}`;
 });
 
-const doNotIndicateStartDisableState = computed(() => {
-  if (props.disabled) return true;
-  // Start date already selected as not set: disabled
-  if (!selectedStartDate.value && !selectedManually.value) return true;
-  if (!selectedStartDate.value && !selectedEndDate.value) return true;
-
-  // Default case: enabled
-  return false;
-});
+const doNotIndicateStartDisableState = computed(
+  () =>
+    props.disabled ||
+    (!selectedStartDate.value && !selectedManually.value) ||
+    (!selectedStartDate.value && !selectedEndDate.value)
+);
 
 const clearButtonDisableState = computed(() => {
   if (props.disabled) return true;
@@ -2221,15 +2218,12 @@ const clearButtonDisableState = computed(() => {
   return false;
 });
 
-const doNotIndicateEndDisableState = computed(() => {
-  if (props.disabled) return true;
-  // End date already selected as not set: disabled
-  if (!selectedEndDate.value && !selectedManually.value) return true;
-  if (!selectedStartDate.value && !selectedEndDate.value) return true;
-
-  // Default case: enabled
-  return false;
-});
+const doNotIndicateEndDisableState = computed(
+  () =>
+    props.disabled ||
+    (!selectedEndDate.value && !selectedManually.value) ||
+    (!selectedEndDate.value && !selectedStartDate.value)
+);
 
 const isMinMaxInFuture = computed(() =>
   props.minDateRef && props.maxDateRef

@@ -444,6 +444,10 @@ function rowActionClicked(action, value, schemaName, index) {
   emits('rowActionClick', action, value, schemaName, index);
 }
 
+function isNumber(type) {
+  return type === 'number' || type === 'integer';
+}
+
 // Creates rule for 'modelValue' validation based on the provided schema
 const rules = computed(() => {
   const req = props.schema?.required;
@@ -455,56 +459,58 @@ const rules = computed(() => {
   });
   if (props.schema?.properties) {
     Object.entries(props.schema?.properties)?.forEach(([key, value]) => {
-      if (value?.minimum && (value?.type === 'number' || value?.type === 'integer')) {
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].minValue = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(props.texts?.minimum, $params.min),
-          minValue(value?.minimum)
-        );
-      }
-      if (value?.exclusiveMinimum && (value?.type === 'number' || value?.type === 'integer')) {
-        const exclusiveMinimum = (param) =>
-          helpers.withParams(
-            { type: 'exclusiveMinimum', value: param },
-            (targetValue) => targetValue > param
+      if (isNumber(value?.type)) {
+        if (value?.minimum) {
+          res.modelClone[key] = res.modelClone[key] || {};
+          res.modelClone[key].minValue = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(props.texts?.minimum, $params.min),
+            minValue(value?.minimum)
           );
+        }
+        if (value?.exclusiveMinimum) {
+          const exclusiveMinimum = (param) =>
+            helpers.withParams(
+              { type: 'exclusiveMinimum', value: param },
+              (targetValue) => targetValue > param
+            );
 
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].exclusiveMinimum = helpers.withMessage(
-          () => replaceErrorMessage(props.texts?.exclusiveMinimum, value?.exclusiveMinimum),
-          exclusiveMinimum(value?.exclusiveMinimum)
-        );
-      }
-      if (value?.maximum && (value?.type === 'number' || value?.type === 'integer')) {
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].maxValue = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(props.texts?.maximum, $params.max),
-          maxValue(value?.maximum)
-        );
-      }
-      if (value?.exclusiveMaximum && (value?.type === 'number' || value?.type === 'integer')) {
-        const exclusiveMaximum = (param) =>
-          helpers.withParams(
-            { type: 'exclusiveMaximum', value: param },
-            (targetValue) => targetValue < param
+          res.modelClone[key] = res.modelClone[key] || {};
+          res.modelClone[key].exclusiveMinimum = helpers.withMessage(
+            () => replaceErrorMessage(props.texts?.exclusiveMinimum, value?.exclusiveMinimum),
+            exclusiveMinimum(value?.exclusiveMinimum)
           );
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].exclusiveMaximum = helpers.withMessage(
-          () => replaceErrorMessage(props.texts?.exclusiveMaximum, value?.exclusiveMaximum),
-          exclusiveMaximum(value?.exclusiveMaximum)
-        );
-      }
-      if (value?.multipleOf && (value?.type === 'number' || value?.type === 'integer')) {
-        const multipleOf = (param) =>
-          helpers.withParams(
-            { type: 'multipleOf', value: param },
-            (targetValue) => targetValue % param === 0
+        }
+        if (value?.maximum) {
+          res.modelClone[key] = res.modelClone[key] || {};
+          res.modelClone[key].maxValue = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(props.texts?.maximum, $params.max),
+            maxValue(value?.maximum)
           );
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].multipleOf = helpers.withMessage(
-          () => replaceErrorMessage(props.texts?.multipleOf, value?.multipleOf),
-          multipleOf(value?.multipleOf)
-        );
+        }
+        if (value?.exclusiveMaximum) {
+          const exclusiveMaximum = (param) =>
+            helpers.withParams(
+              { type: 'exclusiveMaximum', value: param },
+              (targetValue) => targetValue < param
+            );
+          res.modelClone[key] = res.modelClone[key] || {};
+          res.modelClone[key].exclusiveMaximum = helpers.withMessage(
+            () => replaceErrorMessage(props.texts?.exclusiveMaximum, value?.exclusiveMaximum),
+            exclusiveMaximum(value?.exclusiveMaximum)
+          );
+        }
+        if (value?.multipleOf) {
+          const multipleOf = (param) =>
+            helpers.withParams(
+              { type: 'multipleOf', value: param },
+              (targetValue) => targetValue % param === 0
+            );
+          res.modelClone[key] = res.modelClone[key] || {};
+          res.modelClone[key].multipleOf = helpers.withMessage(
+            () => replaceErrorMessage(props.texts?.multipleOf, value?.multipleOf),
+            multipleOf(value?.multipleOf)
+          );
+        }
       }
       if (value?.minLength && value?.type === 'string') {
         res.modelClone[key] = res.modelClone[key] || {};

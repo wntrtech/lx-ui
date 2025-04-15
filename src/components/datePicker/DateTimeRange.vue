@@ -119,98 +119,114 @@ function updateEndValue(endValue) {
   }
 }
 
+function getMonthModel() {
+  let newStartDate;
+  let newEndDate;
+
+  if (typeof props.startDate === 'string' && props.startDate?.length === 2) {
+    newStartDate = new Date();
+    newStartDate.setDate(1); // Set to the first day of the month
+    newStartDate.setHours(0, 0, 0, 0);
+    newStartDate.setMonth(Number(props.startDate) - 1);
+  } else {
+    newStartDate = props.startDate;
+  }
+  if (typeof props.endDate === 'string' && props.endDate?.length === 2) {
+    newEndDate = new Date();
+    newEndDate.setDate(1); // Set to the first day of the month
+    newEndDate.setHours(0, 0, 0, 0);
+    newEndDate.setMonth(Number(props.endDate) - 1);
+  } else {
+    newEndDate = props.endDate;
+  }
+  return {
+    start: newStartDate ? parseDate(newStartDate) : null,
+    end: newEndDate ? parseDate(newEndDate) : null,
+  };
+}
+
+function getYearModel() {
+  let newStartDate;
+  let newEndDate;
+
+  if (typeof props.startDate === 'string' && props.startDate?.length === 4) {
+    newStartDate = new Date();
+    newStartDate.setDate(1); // Set to the first day of the month
+    newStartDate.setMonth(1);
+    newStartDate.setHours(0, 0, 0, 0);
+    newStartDate.setFullYear(Number(props.startDate));
+  }
+  if (typeof props.endDate === 'string' && props.endDate?.length === 4) {
+    newEndDate = new Date();
+    newEndDate.setDate(1); // Set to the first day of the month
+    newEndDate.setMonth(1);
+    newEndDate.setHours(0, 0, 0, 0);
+    newEndDate.setFullYear(Number(props.endDate));
+  }
+  return {
+    start: newStartDate ? parseDate(newStartDate) : null,
+    end: newEndDate ? parseDate(newEndDate) : null,
+  };
+}
+
+function getYearMonthModel() {
+  let newStartDate;
+  let newEndDate;
+
+  if (typeof props.startDate === 'string' && props.startDate?.length === 7) {
+    newStartDate = new Date();
+    newStartDate.setDate(1); // Set to the first day of the month
+    newStartDate.setHours(0, 0, 0, 0);
+    newStartDate.setFullYear(Number(props.startDate?.slice(0, 4)));
+    newStartDate.setMonth(Number(props.startDate?.slice(5, 7)) - 1);
+  }
+  if (typeof props.endDate === 'string' && props.endDate?.length === 7) {
+    newEndDate = new Date();
+    newEndDate.setDate(1); // Set to the first day of the month
+    newEndDate.setHours(0, 0, 0, 0);
+    newEndDate.setFullYear(Number(props.endDate?.slice(0, 4)));
+    newEndDate.setMonth(Number(props.endDate?.slice(5, 7)) - 1);
+  }
+  return {
+    start: newStartDate ? parseDate(newStartDate) : null,
+    end: newEndDate ? parseDate(newEndDate) : null,
+  };
+}
+
+function getQuarterModel() {
+  let newStartDate;
+  let newEndDate;
+
+  if (typeof props.startDate === 'string' && props.startDate?.length === 7) {
+    const [year, quarter] = props.startDate.split('-');
+    const normalizedQuarter = quarter.split('Q');
+    newStartDate = dateFromYearAndQuarter(year, normalizedQuarter[1]);
+  }
+  if (typeof props.endDate === 'string' && props.endDate?.length === 7) {
+    const [year, quarter] = props.endDate.split('-');
+    const normalizedQuarter = quarter.split('Q');
+    newEndDate = dateFromYearAndQuarter(year, normalizedQuarter[1]);
+  }
+  return {
+    start: newStartDate ? parseDate(newStartDate) : null,
+    end: newEndDate ? parseDate(newEndDate) : null,
+  };
+}
+
 const model = computed({
   get() {
     if (props.kind === 'month') {
-      let newStartDate;
-      let newEndDate;
-
-      if (typeof props.startDate === 'string' && props.startDate?.length === 2) {
-        newStartDate = new Date();
-        newStartDate.setDate(1); // Set to the first day of the month
-        newStartDate.setHours(0, 0, 0, 0);
-        newStartDate.setMonth(Number(props.startDate) - 1);
-      } else {
-        newStartDate = props.startDate;
-      }
-      if (typeof props.endDate === 'string' && props.endDate?.length === 2) {
-        newEndDate = new Date();
-        newEndDate.setDate(1); // Set to the first day of the month
-        newEndDate.setHours(0, 0, 0, 0);
-        newEndDate.setMonth(Number(props.endDate) - 1);
-      } else {
-        newEndDate = props.endDate;
-      }
-      return {
-        start: newStartDate ? parseDate(newStartDate) : null,
-        end: newEndDate ? parseDate(newEndDate) : null,
-      };
+      return getMonthModel();
     }
 
     if (props.kind === 'year') {
-      let newStartDate;
-      let newEndDate;
-
-      if (typeof props.startDate === 'string' && props.startDate?.length === 4) {
-        newStartDate = new Date();
-        newStartDate.setDate(1); // Set to the first day of the month
-        newStartDate.setMonth(1);
-        newStartDate.setHours(0, 0, 0, 0);
-        newStartDate.setFullYear(Number(props.startDate));
-      }
-      if (typeof props.endDate === 'string' && props.endDate?.length === 4) {
-        newEndDate = new Date();
-        newEndDate.setDate(1); // Set to the first day of the month
-        newEndDate.setMonth(1);
-        newEndDate.setHours(0, 0, 0, 0);
-        newEndDate.setFullYear(Number(props.endDate));
-      }
-      return {
-        start: newStartDate ? parseDate(newStartDate) : null,
-        end: newEndDate ? parseDate(newEndDate) : null,
-      };
+      return getYearModel();
     }
     if (props.kind === 'month-year') {
-      let newStartDate;
-      let newEndDate;
-
-      if (typeof props.startDate === 'string' && props.startDate?.length === 7) {
-        newStartDate = new Date();
-        newStartDate.setDate(1); // Set to the first day of the month
-        newStartDate.setHours(0, 0, 0, 0);
-        newStartDate.setFullYear(Number(props.startDate?.slice(0, 4)));
-        newStartDate.setMonth(Number(props.startDate?.slice(5, 7)) - 1);
-      }
-      if (typeof props.endDate === 'string' && props.endDate?.length === 7) {
-        newEndDate = new Date();
-        newEndDate.setDate(1); // Set to the first day of the month
-        newEndDate.setHours(0, 0, 0, 0);
-        newEndDate.setFullYear(Number(props.endDate?.slice(0, 4)));
-        newEndDate.setMonth(Number(props.endDate?.slice(5, 7)) - 1);
-      }
-      return {
-        start: newStartDate ? parseDate(newStartDate) : null,
-        end: newEndDate ? parseDate(newEndDate) : null,
-      };
+      return getYearMonthModel();
     }
     if (props.kind === 'quarters') {
-      let newStartDate;
-      let newEndDate;
-
-      if (typeof props.startDate === 'string' && props.startDate?.length === 7) {
-        const [year, quarter] = props.startDate.split('-');
-        const normalizedQuarter = quarter.split('Q');
-        newStartDate = dateFromYearAndQuarter(year, normalizedQuarter[1]);
-      }
-      if (typeof props.endDate === 'string' && props.endDate?.length === 7) {
-        const [year, quarter] = props.endDate.split('-');
-        const normalizedQuarter = quarter.split('Q');
-        newEndDate = dateFromYearAndQuarter(year, normalizedQuarter[1]);
-      }
-      return {
-        start: newStartDate ? parseDate(newStartDate) : null,
-        end: newEndDate ? parseDate(newEndDate) : null,
-      };
+      return getQuarterModel();
     }
 
     return { start: parseDate(props.startDate), end: parseDate(props.endDate) };

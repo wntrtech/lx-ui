@@ -196,7 +196,41 @@ function mapClick(event) {
   }
 }
 
-function spineClick(event) {
+function spineClick(bone) {
+  if (props.selectingKind === 'multiple') {
+    const boneId = bone?.split('-')[0];
+
+    const res = [...model.value];
+    const index = res.findIndex((selectedItem) => selectedItem === boneId);
+    if (boneId !== 'skeleton') {
+      if (index !== -1) res.splice(index, 1);
+      else res.push(boneId);
+
+      model.value = res;
+    }
+  } else if (bone !== 'skeleton') {
+    if (model.value === bone) model.value = null;
+    else model.value = bone;
+  }
+}
+
+function nonSpineClick(boneId) {
+  if (props.selectingKind === 'multiple') {
+    const res = [...model.value];
+    const index = res.findIndex((selectedItem) => selectedItem === boneId);
+    if (boneId !== 'skeleton' && boneId !== 'LV') {
+      if (index !== -1) res.splice(index, 1);
+      else res.push(boneId);
+
+      model.value = res;
+    }
+  } else if (boneId !== 'skeleton' && boneId !== 'LV') {
+    if (model.value === boneId) model.value = null;
+    else model.value = boneId;
+  }
+}
+
+function skeletonClick(event) {
   if (props.readOnly) return;
 
   let boneId = event.target?.id;
@@ -206,41 +240,15 @@ function spineClick(event) {
   if (!boneId) return;
 
   if (props.kind === 'spine') {
-    if (props.selectingKind === 'multiple') {
-      boneId = boneId?.split('-')[0];
-
-      const res = [...model.value];
-      const index = res.findIndex((selectedItem) => selectedItem === boneId);
-      if (boneId !== 'skeleton') {
-        if (index !== -1) res.splice(index, 1);
-        else res.push(boneId);
-
-        model.value = res;
-      }
-    } else if (boneId !== 'skeleton') {
-      if (model.value === boneId) model.value = null;
-      else model.value = boneId;
-    }
+    spineClick(boneId);
   } else if (props.kind !== 'spine') {
-    if (props.selectingKind === 'multiple') {
-      const res = [...model.value];
-      const index = res.findIndex((selectedItem) => selectedItem === boneId);
-      if (boneId !== 'skeleton' && boneId !== 'LV') {
-        if (index !== -1) res.splice(index, 1);
-        else res.push(boneId);
-
-        model.value = res;
-      }
-    } else if (boneId !== 'skeleton' && boneId !== 'LV') {
-      if (model.value === boneId) model.value = null;
-      else model.value = boneId;
-    }
+    nonSpineClick(boneId);
   }
 }
 
 function imageClick(event) {
   if (props.kind === 'europe') mapClick(event);
-  else spineClick(event);
+  else skeletonClick(event);
 }
 
 watch(
