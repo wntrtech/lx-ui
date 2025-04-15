@@ -40,9 +40,33 @@ const fallbackPlacements = computed(() => {
     case 'auto':
       return ['top', 'right', 'left'];
     case 'auto-start':
-      return ['bottom-start', 'top-start'];
+      return ['top-start', 'right-start', 'left-start'];
     case 'auto-end':
-      return ['bottom-end', 'top-end'];
+      return ['top-end', 'right-end', 'left-end'];
+    case 'top':
+      return ['bottom'];
+    case 'top-start':
+      return ['bottom-start'];
+    case 'top-end':
+      return ['bottom-end'];
+    case 'bottom':
+      return ['top'];
+    case 'bottom-start':
+      return ['top-start'];
+    case 'bottom-end':
+      return ['top-end'];
+    case 'right':
+      return ['left'];
+    case 'right-start':
+      return ['left-start'];
+    case 'right-end':
+      return ['left-end'];
+    case 'left':
+      return ['right'];
+    case 'left-start':
+      return ['right-start'];
+    case 'left-end':
+      return ['right-end'];
     default:
       return [];
   }

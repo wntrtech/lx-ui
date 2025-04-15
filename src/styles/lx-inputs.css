@@ -3932,7 +3932,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000;
+  z-index: 8100;
   background-color: var(--color-region);
   display: grid;
   grid-template-rows: var(--row-size) 1fr;
@@ -4295,14 +4295,20 @@ h2.lx-section-header + p.lx-invalidation-message,
   outline: none;
 }
 
-.lx-file-upload-wrapper .lx-draggable-upload-wrapper > svg{
+.lx-file-upload-wrapper .lx-draggable-upload-wrapper > svg {
   width: 1.5rem;
   fill: var(--color-brand);
   margin-right: 1rem;
   flex-shrink: 0;
 }
 
-.lx-camera > .lx-component-toolbar .lx-button-content-wrapper svg{ 
+.lx-file-upload-wrapper .lx-list-item .lx-file-wrapper .lx-file-preview > img,
+.lx-file-upload-wrapper .lx-list-item .compact-wrapper .lx-info-wrapper .popper .lx-file-preview > img {
+  height: 100%;
+  width: 100%;
+}
+
+.lx-camera > .lx-component-toolbar .lx-button-content-wrapper svg { 
   fill: var(--color-data)
 }
 
