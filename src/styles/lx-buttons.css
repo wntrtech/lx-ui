@@ -69,6 +69,10 @@ a.lx-sitemap-link {
   height: 100%;
 }
 
+.lx .lx-button .lx-button-content {
+  grid-area: content;
+}
+
 .lx .lx-button .lx-button-content,
 .lx-override button,
 .lx-override input[type="button"],
@@ -79,7 +83,6 @@ a.lx-sitemap-link {
   white-space: nowrap;
   text-overflow: ellipsis;
   text-align: var(--button-primary-text-align);
-  grid-area: content;
 }
 
 .lx .lx-button:has(.lx-button-content-wrapper) {
