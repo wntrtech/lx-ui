@@ -404,7 +404,7 @@ onBeforeMount(() => {
 
         <div v-if="kind === 'legacy'" class="legacy-pickers-wrapper">
           <LxDatePicker
-            :id="id"
+            :id="'from-' + id"
             v-model="modelStart"
             :masks="localeMasks"
             :placeholder="placeholder"
@@ -423,7 +423,7 @@ onBeforeMount(() => {
           <span class="lx-date-time-range-separator">–</span>
 
           <LxDatePicker
-            :id="id"
+            :id="'till-' + id"
             v-model="modelEnd"
             :masks="localeMasks"
             :placeholder="placeholder"
