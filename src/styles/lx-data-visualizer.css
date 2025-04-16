@@ -361,7 +361,7 @@
 .lx-data-visualizer .lx-bars-horizontal .bar.with-sub-bars {
   height: fit-content;
   background-color: transparent;
-  margin: 0.55rem 0;
+  margin: 0.65rem 0;
   margin-left: var(--gap-buttons);
 }
 
@@ -455,11 +455,15 @@
 }
 
 .lx-data-visualizer .lx-bars-horizontal .bar-wrapper .lx-bar-group .lx-bar-group-label {
-  top: -1rem;
+  top: -1.25rem;
 }
 
 .lx-data-visualizer .lx-bars-vertical .bar-wrapper .lx-bar-group .lx-bar-group-label {
   left: calc(100% + 0.1rem);
   bottom: 0;
   max-height: 10rem;
+}
+
+.lx-data-visualizer .lx-bars-horizontal .bar-wrapper .lx-bar-group .bar-name {
+  padding-left: 1.5rem;
 }
