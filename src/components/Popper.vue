@@ -115,7 +115,7 @@ watch(
   <div :id="id" ref="reference" class="popper-wrapper">
     <slot />
 
-    <div v-show="show" ref="floating" :style="floatingStyles" class="popper">
+    <div v-if="show && !disabled" ref="floating" :style="floatingStyles" class="popper">
       <slot v-if="$slots.content" name="content" />
       <p v-else-if="content" class="lx-simple-popper-content">{{ content }}</p>
 
