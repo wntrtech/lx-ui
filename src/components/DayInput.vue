@@ -192,49 +192,54 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 </script>
 
 <template>
-  <div
-    :class="[{ 'lx-day-input-wrapper': !readOnly }, { 'lx-day-input-readonly-wrapper': readOnly }]"
-  >
-    <p v-if="readOnly" class="lx-data" :title="computedTitle" :aria-labelledby="labelledBy">
-      {{ result }}
-    </p>
+  <div class="lx-field-wrapper">
+    <div
+      :class="[
+        { 'lx-day-input-wrapper': !readOnly },
+        { 'lx-day-input-readonly-wrapper': readOnly },
+      ]"
+    >
+      <p v-if="readOnly" class="lx-data" :title="computedTitle" :aria-labelledby="labelledBy">
+        {{ result }}
+      </p>
 
-    <template v-else>
-      <LxTextInput
-        v-model="inputValue"
-        :mask="inputMask"
-        :kind="inputKind"
-        :maxlength="inputMaxLength"
-        :convert-to-string="convertToString"
-        :disabled="disabled"
-        :placeholder="inputPlaceholder"
-        :tooltip="texts.inputTooltip"
-        :invalid="invalid"
-        :invalidationMessage="invalidationMessage"
-        :labelId="labelledBy"
-        @update:modelValue="calculateResult"
-      />
+      <template v-else>
+        <LxTextInput
+          v-model="inputValue"
+          :mask="inputMask"
+          :kind="inputKind"
+          :maxlength="inputMaxLength"
+          :convert-to-string="convertToString"
+          :disabled="disabled"
+          :placeholder="inputPlaceholder"
+          :tooltip="texts.inputTooltip"
+          :invalid="invalid"
+          :invalidationMessage="invalidationMessage"
+          :labelId="labelledBy"
+          @update:modelValue="calculateResult"
+        />
 
-      <LxDropDown
-        v-model="selectedUnit"
-        :items="unitOptionTypes"
-        :placeholder="texts.dropdownPlaceholder"
-        :tooltip="texts.dropdownTooltip"
-        :disabled="disabled"
-        :invalid="invalid"
-        :labelId="labelledBy"
-        @update:modelValue="calculateResult"
-      />
-    </template>
+        <LxDropDown
+          v-model="selectedUnit"
+          :items="unitOptionTypes"
+          :placeholder="texts.dropdownPlaceholder"
+          :tooltip="texts.dropdownTooltip"
+          :disabled="disabled"
+          :invalid="invalid"
+          :labelId="labelledBy"
+          @update:modelValue="calculateResult"
+        />
+      </template>
 
-    <div class="lx-day-input-result-info-icon">
-      <LxInfoWrapper v-if="shouldShowInfoIcon" :placement="'top'">
-        <LxIcon value="info" />
+      <div class="lx-day-input-result-info-icon">
+        <LxInfoWrapper v-if="shouldShowInfoIcon" :placement="'top'">
+          <LxIcon value="info" />
 
-        <template #panel>
-          <p class="lx-data">{{ displayText }}</p>
-        </template>
-      </LxInfoWrapper>
+          <template #panel>
+            <p class="lx-data">{{ displayText }}</p>
+          </template>
+        </LxInfoWrapper>
+      </div>
     </div>
   </div>
 
