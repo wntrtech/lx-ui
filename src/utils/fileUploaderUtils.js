@@ -147,6 +147,8 @@ export function checkExtension(extension, allowedExtensions) {
 }
 
 export function convertBytesToFormattedString(bytes) {
+  if (!bytes) return '';
+
   if (bytes < 1048576) {
     return `${(bytes / 1024).toFixed(2).replace('.', ',')} KiB`;
   }
