@@ -1205,6 +1205,9 @@ li .lx-list-item.lx-inactive {
   align-self: center;
 }
 
+.lx-list-actions-hidden {
+  visibility: hidden;
+}
 
 @media (max-width: 1900px) {
   .lx-list-3 li {

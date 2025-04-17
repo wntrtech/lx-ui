@@ -6,7 +6,7 @@ import LxSearchableText from '@/components/SearchableText.vue';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import useLx from '@/hooks/useLx';
 import LxLoader from '@/components/Loader.vue';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 
 const emits = defineEmits(['click', 'actionClick']);
@@ -43,6 +43,12 @@ const props = defineProps({
     }),
   },
 });
+
+const visibleActionDefinitions = computed(() =>
+  props.actionDefinitions?.filter((action) =>
+    action.visibleByAttribute ? props.value[action.visibleByAttribute] : true
+  )
+);
 
 function performClick() {
   if (props.clickable && !props.disabled) {
@@ -128,7 +134,7 @@ function getItemId(id, parentId) {
         { 'lx-invalid': invalid },
         {
           'lx-list-item-compact-actions':
-            actionDefinitions?.length > 0 && actionsLayout === 'vertical',
+            visibleActionDefinitions?.length > 0 && actionsLayout === 'vertical',
         },
       ]"
     >
@@ -154,13 +160,13 @@ function getItemId(id, parentId) {
         <div
           class="lx-list-item-actions"
           v-if="
-            actionDefinitions?.length &&
-            actionDefinitions?.length === 1 &&
+            visibleActionDefinitions?.length &&
+            visibleActionDefinitions?.length === 1 &&
             actionsLayout === 'vertical'
           "
         >
           <LxButton
-            v-for="action in actionDefinitions"
+            v-for="action in visibleActionDefinitions"
             :id="`${id}-action-${action.id}`"
             :key="action.id"
             kind="ghost"
@@ -181,15 +187,12 @@ function getItemId(id, parentId) {
           />
         </div>
         <div
+          v-else-if="actionDefinitions?.length && actionsLayout === 'vertical'"
           class="lx-list-item-actions"
-          v-if="
-            actionDefinitions?.length &&
-            actionDefinitions?.length > 1 &&
-            actionsLayout === 'vertical'
-          "
+          :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
         >
           <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
-            <div v-if="actionDefinitions.length > 1">
+            <div>
               <LxButton
                 :id="`${id}-action-open-menu`"
                 icon="overflow-menu"
@@ -201,9 +204,9 @@ function getItemId(id, parentId) {
               />
             </div>
             <template v-slot:panel>
-              <div class="lx-button-set">
+              <div class="lx-button-set" v-if="visibleActionDefinitions.length > 1">
                 <LxButton
-                  v-for="action in actionDefinitions"
+                  v-for="action in visibleActionDefinitions"
                   :id="`${id}-action-${action.id}`"
                   :key="action.id"
                   :icon="action.icon"
@@ -267,7 +270,7 @@ function getItemId(id, parentId) {
         { 'lx-invalid': invalid },
         {
           'lx-list-item-compact-actions':
-            actionDefinitions?.length > 0 && actionsLayout === 'vertical',
+            visibleActionDefinitions?.length > 0 && actionsLayout === 'vertical',
         },
       ]"
       :tabindex="href || clickable ? 0 : -1"
@@ -294,13 +297,13 @@ function getItemId(id, parentId) {
         <div
           class="lx-list-item-actions"
           v-if="
-            actionDefinitions?.length &&
-            actionDefinitions?.length === 1 &&
+            visibleActionDefinitions?.length &&
+            visibleActionDefinitions?.length === 1 &&
             actionsLayout === 'vertical'
           "
         >
           <LxButton
-            v-for="action in actionDefinitions"
+            v-for="action in visibleActionDefinitions"
             :id="`${id}-action-${action.id}`"
             :key="action.id"
             kind="ghost"
@@ -321,15 +324,12 @@ function getItemId(id, parentId) {
           />
         </div>
         <div
+          v-else-if="actionDefinitions?.length && actionsLayout === 'vertical'"
           class="lx-list-item-actions"
-          v-if="
-            actionDefinitions?.length &&
-            actionDefinitions?.length > 1 &&
-            actionsLayout === 'vertical'
-          "
+          :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
         >
           <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
-            <div v-if="actionDefinitions.length > 1">
+            <div>
               <LxButton
                 :id="`${id}-action-open-menu`"
                 icon="overflow-menu"
@@ -341,9 +341,9 @@ function getItemId(id, parentId) {
               />
             </div>
             <template v-slot:panel>
-              <div class="lx-button-set">
+              <div class="lx-button-set" v-if="visibleActionDefinitions.length > 1">
                 <LxButton
-                  v-for="action in actionDefinitions"
+                  v-for="action in visibleActionDefinitions"
                   :id="`${id}-action-${action.id}`"
                   :key="action.id"
                   :icon="action.icon"
@@ -372,11 +372,13 @@ function getItemId(id, parentId) {
     <div
       class="lx-list-item-actions"
       v-if="
-        actionDefinitions?.length && actionDefinitions?.length === 1 && actionsLayout !== 'vertical'
+        visibleActionDefinitions?.length &&
+        visibleActionDefinitions?.length === 1 &&
+        actionsLayout !== 'vertical'
       "
     >
       <LxButton
-        v-for="action in actionDefinitions"
+        v-for="action in visibleActionDefinitions"
         :id="`${id}-action-${action.id}`"
         :key="action.id"
         kind="ghost"
@@ -397,13 +399,12 @@ function getItemId(id, parentId) {
       />
     </div>
     <div
+      v-else-if="actionDefinitions?.length && actionsLayout !== 'vertical'"
       class="lx-list-item-actions"
-      v-if="
-        actionDefinitions?.length && actionDefinitions?.length > 1 && actionsLayout !== 'vertical'
-      "
+      :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
     >
       <lx-drop-down-menu :disabled="loading || busy || disabled">
-        <div v-if="actionDefinitions.length > 1">
+        <div>
           <LxButton
             :id="`${id}-action-overflow-menu`"
             icon="overflow-menu"
@@ -414,9 +415,9 @@ function getItemId(id, parentId) {
           />
         </div>
         <template v-slot:panel>
-          <div class="lx-button-set">
+          <div class="lx-button-set" v-if="visibleActionDefinitions.length > 1">
             <LxButton
-              v-for="action in actionDefinitions"
+              v-for="action in visibleActionDefinitions"
               :id="`${id}-action-${action.id}`"
               :key="action.id"
               :icon="action.icon"
