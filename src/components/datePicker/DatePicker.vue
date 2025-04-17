@@ -41,7 +41,7 @@ const props = defineProps({
   maxDate: { type: [String, Date], default: null },
   required: { type: Boolean, default: false },
   locale: { type: String, default: 'lv-LV' },
-  firstDayOfTheWeek: { type: Number, default: 1 },
+  firstDayOfTheWeek: { type: Number, default: 2 },
   specialDatesAttributes: { type: Array, default: null },
   clearIfNotExact: { type: Boolean, default: false },
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
@@ -57,6 +57,12 @@ const props = defineProps({
       clearEnd: 'Notīrīt beigu vērtību',
       next: 'Nākamais',
       previous: 'Iepriekšējais',
+      nextMonth: 'Nākamais mēnesis',
+      previousMonth: 'Iepriekšējais mēnesis',
+      nextYear: 'Nākamais gads',
+      previousYear: 'Iepriekšējais gads',
+      nextDecade: 'Nākamā dekāde',
+      previousDecade: 'Iepriekšējā dekāde',
       doNotIndicateStart: 'Nenorādīt sākumu',
       doNotIndicateEnd: 'Nenorādīt beigas',
       scrollUp: 'Ritināt uz augšu',
@@ -292,7 +298,7 @@ function validateIfExact(e, type = 'startInput') {
             end: model.value.end,
           };
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput');
+          setActiveInput('endInput', props.id);
           return;
         }
         if (!updatedValue && !model.value.end) {
@@ -314,11 +320,11 @@ function validateIfExact(e, type = 'startInput') {
               start: updatedValue,
               end: null,
             };
-            setActiveInput('endInput');
+            setActiveInput('endInput', props.id);
           }
 
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput');
+          setActiveInput('endInput', props.id);
           return;
         }
         if (updatedValue && !model.value.start && model.value.end) {
@@ -332,7 +338,7 @@ function validateIfExact(e, type = 'startInput') {
               start: updatedValue,
               end: null,
             };
-            setActiveInput('endInput');
+            setActiveInput('endInput', props.id);
           }
           emits('update:modelValue', updatedDatesObject);
           return;
@@ -343,7 +349,7 @@ function validateIfExact(e, type = 'startInput') {
             end: null,
           };
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput');
+          setActiveInput('endInput', props.id);
           return;
         }
         if (updatedValue && !model.value.start && !model.value.end) {
@@ -352,7 +358,7 @@ function validateIfExact(e, type = 'startInput') {
             end: null,
           };
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('endInput');
+          setActiveInput('endInput', props.id);
           return;
         }
       }
@@ -385,7 +391,7 @@ function validateIfExact(e, type = 'startInput') {
               start: updatedValue,
               end: null,
             };
-            setActiveInput('endInput');
+            setActiveInput('endInput', props.id);
           }
 
           emits('update:modelValue', updatedDatesObject);
@@ -412,7 +418,7 @@ function validateIfExact(e, type = 'startInput') {
             end: updatedValue,
           };
           emits('update:modelValue', updatedDatesObject);
-          setActiveInput('startInput');
+          setActiveInput('startInput', props.id);
           return;
         }
         if (updatedValue && !model.value.start && !model.value.end) {
@@ -558,6 +564,260 @@ function validateIfExact(e, type = 'startInput') {
     // Update the value with the valid date
     const updatedValue = new Date(dateTimeString);
     emits('update:modelValue', updatedValue);
+  }
+
+  if (props.mode === 'year') {
+    const now = new Date();
+    const year = e.target.value;
+    const inputYear = props.masks?.inputYear || 'yyyy';
+
+    if (inputYear.length !== year.length || !validateDateByMask(year, inputYear)) {
+      if (props.pickerType === 'range') {
+        if (type === 'startInput' && model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: model.value.end,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+
+        if (type === 'startInput' && !model.value.end && !model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+
+        if (type === 'endInput' && model.value.start) {
+          const updatedDatesObject = {
+            start: model.value.start,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+
+        if (type === 'endInput' && !model.value.end && !model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+      }
+
+      const updatedValue = props.clearIfNotExact ? null : new Date();
+      emits('update:modelValue', updatedValue);
+
+      e.target.value = props.clearIfNotExact ? null : now.getFullYear();
+      return;
+    }
+
+    const dateString = `${year}-${1}-${1}`; // "YYYY-MM-DD"
+
+    // Check if the year is within the min/max range
+    if (year && !canSelectDate(new Date(dateString), props.minDate, props.maxDate, 'year')) {
+      if (props.pickerType === 'range') {
+        if (type === 'startInput' && model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: model.value.end,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+        if (type === 'startInput' && !model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+
+        if (type === 'endInput' && model.value.start) {
+          const updatedDatesObject = {
+            start: model.value.start,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+        if (type === 'endInput' && !model.value.start) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          e.target.value = null;
+          return;
+        }
+      }
+
+      const updatedValue = props.clearIfNotExact ? null : new Date();
+      emits('update:modelValue', updatedValue);
+
+      e.target.value = props.clearIfNotExact ? null : now.getFullYear();
+      return;
+    }
+
+    // Update the value with the valid date
+    const updatedValue = new Date(year, 1, 1, 0, 0);
+
+    if (props.pickerType === 'single') {
+      emits('update:modelValue', updatedValue);
+    }
+    if (props.pickerType === 'range') {
+      if (type === 'startInput') {
+        if (!updatedValue && model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: model.value.end,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          setActiveInput('endInput', props.id);
+          return;
+        }
+        if (!updatedValue && !model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && model.value.start && model.value.end) {
+          let updatedDatesObject = {
+            start: updatedValue,
+            end: model.value.end,
+          };
+
+          if (updatedValue > model.value.end) {
+            updatedDatesObject = {
+              start: updatedValue,
+              end: null,
+            };
+            setActiveInput('endInput', props.id);
+          }
+
+          emits('update:modelValue', updatedDatesObject);
+          setActiveInput('endInput', props.id);
+          return;
+        }
+        if (updatedValue && !model.value.start && model.value.end) {
+          let updatedDatesObject = {
+            start: updatedValue,
+            end: model.value.end,
+          };
+
+          if (updatedValue > model.value.end) {
+            updatedDatesObject = {
+              start: updatedValue,
+              end: null,
+            };
+            setActiveInput('endInput', props.id);
+          }
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && model.value.start && !model.value.end) {
+          const updatedDatesObject = {
+            start: updatedValue,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          setActiveInput('endInput', props.id);
+          return;
+        }
+        if (updatedValue && !model.value.start && !model.value.end) {
+          const updatedDatesObject = {
+            start: updatedValue,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          setActiveInput('endInput', props.id);
+          return;
+        }
+      }
+
+      if (type === 'endInput') {
+        if (!updatedValue && model.value.start) {
+          const updatedDatesObject = {
+            start: props.modelValue.start,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (!updatedValue && !model.value.start) {
+          const updatedDatesObject = {
+            start: null,
+            end: null,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && model.value.start && model.value.end) {
+          let updatedDatesObject = {
+            start: model.value.start,
+            end: updatedValue,
+          };
+
+          if (updatedValue < model.value.start) {
+            updatedDatesObject = {
+              start: updatedValue,
+              end: null,
+            };
+            setActiveInput('endInput', props.id);
+          }
+
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && model.value.start && !model.value.end) {
+          let updatedDatesObject = {
+            start: model.value.start,
+            end: updatedValue,
+          };
+
+          if (updatedValue < model.value.start) {
+            updatedDatesObject = {
+              start: updatedValue,
+              end: null,
+            };
+          }
+          emits('update:modelValue', updatedDatesObject);
+          return;
+        }
+        if (updatedValue && !model.value.start && model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: updatedValue,
+          };
+          emits('update:modelValue', updatedDatesObject);
+          setActiveInput('startInput', props.id);
+          return;
+        }
+        if (updatedValue && !model.value.start && !model.value.end) {
+          const updatedDatesObject = {
+            start: null,
+            end: updatedValue,
+          };
+          emits('update:modelValue', updatedDatesObject);
+        }
+      }
+    }
   }
 }
 
@@ -840,9 +1100,7 @@ onMounted(async () => {
             :placeholder="placeholderComputed"
             :disabled="disabled"
             autocomplete="off"
-            :readonly="
-              mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
-            "
+            :readonly="mode === 'month' || mode === 'month-year' || mode === 'quarters'"
             :tabindex="startInputIndex"
             :maxlength="getMaxLength"
             :aria-invalid="invalid"
@@ -890,9 +1148,7 @@ onMounted(async () => {
               :placeholder="placeholderComputed"
               :disabled="disabled"
               autocomplete="off"
-              :readonly="
-                mode === 'month' || mode === 'year' || mode === 'month-year' || mode === 'quarters'
-              "
+              :readonly="mode === 'month' || mode === 'month-year' || mode === 'quarters'"
               :tabindex="endInputIndex"
               :maxlength="getMaxLength"
               :aria-invalid="invalid"

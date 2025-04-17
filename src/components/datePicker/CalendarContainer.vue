@@ -40,7 +40,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   locale: { type: String, default: 'lv-LV' },
   specialDatesAttributes: { type: Array, default: null },
-  firstDayOfTheWeek: { type: Number, default: 1 },
+  firstDayOfTheWeek: { type: Number, default: 2 },
   localizedMonthsList: { type: Array, default: () => [] },
   weekDaysList: { type: Array, default: () => [] },
   minDateRef: { type: [String, Date], default: null },
@@ -63,6 +63,12 @@ const props = defineProps({
       clearEnd: 'Notīrīt beigu vērtību',
       next: 'Nākamais',
       previous: 'Iepriekšējais',
+      nextMonth: 'Nākamais mēnesis',
+      previousMonth: 'Iepriekšējais mēnesis',
+      nextYear: 'Nākamais gads',
+      previousYear: 'Iepriekšējais gads',
+      nextDecade: 'Nākamā dekāde',
+      previousDecade: 'Iepriekšējā dekāde',
       doNotIndicateStart: 'Nenorādīt sākumu',
       doNotIndicateEnd: 'Nenorādīt beigas',
       scrollUp: 'Ritināt uz augšu',
@@ -2237,6 +2243,22 @@ const isMinMaxInPast = computed(() =>
     : false
 );
 
+const previousSlideButtonLabel = computed(() => {
+  if (regularLayout.value) return props.texts.previousMonth;
+  if (monthsLayout.value) return props.texts.previousYear;
+  if (yearsLayout.value) return props.texts.previousDecade;
+  if (quartersLayout.value) return props.texts.previousDecade;
+  return props.texts.previous;
+});
+
+const nextSlideButtonLabel = computed(() => {
+  if (regularLayout.value) return props.texts.nextMonth;
+  if (monthsLayout.value) return props.texts.nextYear;
+  if (yearsLayout.value) return props.texts.nextDecade;
+  if (quartersLayout.value) return props.texts.nextDecade;
+  return props.texts.next;
+});
+
 onClickOutside(containerRef, () => {
   if (props.pickerType === 'single' && props.variant !== 'default') {
     handleDateTimeSelection();
@@ -2878,7 +2900,7 @@ watch(
         <LxButton
           v-if="(isMobileScreen && !mobileTimeLayout) || (mode !== 'month' && !isMobileScreen)"
           customClass="lx-previous-slide-button"
-          :label="texts.previous"
+          :label="previousSlideButtonLabel"
           kind="ghost"
           :icon="variant === 'full-rows' ? 'caret-up' : 'previous-page'"
           variant="icon-only"
@@ -2985,36 +3007,37 @@ watch(
                         role="row"
                       >
                         <template v-for="(date, dayIndex) in week" :key="dayIndex">
-                          <LxInfoWrapper
-                            :disabled="
-                              !hasSpecialDates(date, specialDatesAttributes) ||
-                              (!isSameMonth(date, month) &&
-                                !canSelectDate(date, minDateRef, maxDateRef, 'date')) ||
-                              pickerType === 'range'
-                            "
-                            :arrow="true"
+                          <div
+                            class="lx-calendar-day-wrapper"
+                            :class="[
+                              {
+                                'hovering-range':
+                                  (isHoveringRange(date) || isSelectedDateRange(date)) &&
+                                  isSameMonth(date, month),
+                              },
+                              {
+                                'start-day':
+                                  date.getDate() === selectedStartDay &&
+                                  date.getMonth() === selectedStartDate.getMonth() &&
+                                  date.getFullYear() === selectedStartDate.getFullYear(),
+                              },
+                              {
+                                'end-day':
+                                  date.getDate() === selectedEndDay &&
+                                  date.getMonth() === selectedEndDate.getMonth() &&
+                                  date.getFullYear() === selectedEndDate.getFullYear(),
+                              },
+                            ]"
                           >
-                            <div
-                              class="lx-calendar-day-wrapper"
-                              :class="[
-                                {
-                                  'hovering-range':
-                                    (isHoveringRange(date) || isSelectedDateRange(date)) &&
-                                    isSameMonth(date, month),
-                                },
-                                {
-                                  'start-day':
-                                    date.getDate() === selectedStartDay &&
-                                    date.getMonth() === selectedStartDate.getMonth() &&
-                                    date.getFullYear() === selectedStartDate.getFullYear(),
-                                },
-                                {
-                                  'end-day':
-                                    date.getDate() === selectedEndDay &&
-                                    date.getMonth() === selectedEndDate.getMonth() &&
-                                    date.getFullYear() === selectedEndDate.getFullYear(),
-                                },
-                              ]"
+                            <LxInfoWrapper
+                              :disabled="
+                                !hasSpecialDates(date, specialDatesAttributes) ||
+                                (!isSameMonth(date, month) &&
+                                  !canSelectDate(date, minDateRef, maxDateRef, 'date')) ||
+                                pickerType === 'range'
+                              "
+                              :arrow="true"
+                              :focusable="false"
                             >
                               <div
                                 class="lx-calendar-day"
@@ -3055,7 +3078,6 @@ watch(
                                   },
                                 ]"
                                 role="cell"
-                                :aria-label="formatLocalizedDate(props.locale, date)"
                                 :tabindex="
                                   getDayTabIndex(
                                     date,
@@ -3086,9 +3108,17 @@ watch(
                                 @focusin="hoverDate(date)"
                                 @mouseover="hoverDate(date)"
                               >
-                                <div class="lx-calendar-day-content">
+                                <div
+                                  class="lx-calendar-day-content"
+                                  :aria-label="
+                                    !hasSpecialDates(date, specialDatesAttributes)
+                                      ? formatLocalizedDate(props.locale, date)
+                                      : undefined
+                                  "
+                                >
                                   {{ date.getDate() }}
                                 </div>
+
                                 <div class="lx-calendar-day-layer">
                                   <div class="lx-day-layer-bars">
                                     <template
@@ -3104,36 +3134,36 @@ watch(
                                   </div>
                                 </div>
                               </div>
-                            </div>
 
-                            <template #panel>
-                              <div class="lx-day-layer-popper-layout">
-                                <span class="lx-day-layer-popper-header">
-                                  {{ formatLocalizedDate(props.locale, date) }}
-                                </span>
+                              <template #panel v-if="hasSpecialDates(date, specialDatesAttributes)">
+                                <div class="lx-day-layer-popper-layout">
+                                  <span class="lx-day-layer-popper-header">
+                                    {{ formatLocalizedDate(props.locale, date) }}
+                                  </span>
 
-                                <div class="lx-day-layer-popper-main">
-                                  <ul class="lx-list">
-                                    <template
-                                      v-for="(attr, attrIndex) in specialDatesAttributes"
-                                      :key="attrIndex"
-                                    >
-                                      <li v-if="checkForSpecialDate(date, attr.dates)">
-                                        <span
-                                          class="lx-day-layer-popper-bar"
-                                          :class="['bar-' + attr.barColor]"
-                                        ></span>
+                                  <div class="lx-day-layer-popper-main">
+                                    <ul class="lx-list">
+                                      <template
+                                        v-for="(attr, attrIndex) in specialDatesAttributes"
+                                        :key="attrIndex"
+                                      >
+                                        <li v-if="checkForSpecialDate(date, attr.dates)">
+                                          <span
+                                            class="lx-day-layer-popper-bar"
+                                            :class="['bar-' + attr.barColor]"
+                                          ></span>
 
-                                        <div class="lx-row">
-                                          <p class="lx-data">{{ attr.popoverLabel }}</p>
-                                        </div>
-                                      </li>
-                                    </template>
-                                  </ul>
+                                          <div class="lx-row">
+                                            <p class="lx-data">{{ attr.popoverLabel }}</p>
+                                          </div>
+                                        </li>
+                                      </template>
+                                    </ul>
+                                  </div>
                                 </div>
-                              </div>
-                            </template>
-                          </LxInfoWrapper>
+                              </template>
+                            </LxInfoWrapper>
+                          </div>
                         </template>
                       </div>
                     </div>
@@ -3562,7 +3592,7 @@ watch(
         <LxButton
           v-if="(isMobileScreen && !mobileTimeLayout) || (mode !== 'month' && !isMobileScreen)"
           customClass="lx-next-slide-button"
-          :label="texts.next"
+          :label="nextSlideButtonLabel"
           kind="ghost"
           :icon="variant === 'full-rows' ? 'caret-down' : 'next-page'"
           variant="icon-only"

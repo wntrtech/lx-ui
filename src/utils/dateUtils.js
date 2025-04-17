@@ -163,18 +163,18 @@ export function getWeekdayNames(localeId = 'lv-LV', firstDayOfTheWeek = 2) {
   });
 }
 
-// Examples: "Thursday, September 12"
+// Examples: "Thursday, September 12, 2012"
 export function formatLocalizedDate(localeId, date) {
   const options = {
     weekday: 'long',
+    year: 'numeric',
     month: 'long',
     day: 'numeric',
   };
 
-  const formattedDate = date.toLocaleDateString(localeId, options);
-  const [weekday, day, month] = formattedDate.split(' ');
-  const capitalizedWeekday = weekday.charAt(0).toUpperCase() + weekday.slice(1);
-  return `${capitalizedWeekday} ${day} ${month}`;
+  let formattedDate = date.toLocaleDateString(localeId, options);
+  formattedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+  return formattedDate;
 }
 
 export function getMonthYearString(localeId, month, year) {

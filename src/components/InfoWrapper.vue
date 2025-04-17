@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxPopper from '@/components/Popper.vue';
 
@@ -17,9 +17,11 @@ const props = defineProps({
   interactive: { type: Boolean, default: false },
   content: { default: null },
   locked: { type: Boolean, default: false },
+  focusable: { type: Boolean, default: true },
 });
 
 const showPopper = ref(false);
+const triggerWrapper = ref(null);
 
 let openTimeout = null;
 let closeTimeout = null;
@@ -65,6 +67,13 @@ const handleClose = () => {
   showPopper.value = false;
 };
 
+onMounted(() => {
+  const el = triggerWrapper.value?.firstElementChild;
+  if (el && el instanceof HTMLElement) {
+    el.setAttribute('aria-labelledby', `${props.id}-description`);
+  }
+});
+
 onBeforeUnmount(() => {
   if (openTimeout) clearTimeout(openTimeout);
   if (closeTimeout) clearTimeout(closeTimeout);
@@ -89,9 +98,9 @@ onBeforeUnmount(() => {
       :locked="locked"
     >
       <div
+        ref="triggerWrapper"
         class="lx-info-wrapper-content"
-        :tabindex="$slots.panel ? '0' : '-1'"
-        :aria-describedby="`${id}-description`"
+        :tabindex="$slots.panel && focusable ? '0' : '-1'"
         @focusin="handleFocusIn"
         @focusout="handleMouseLeave"
         @mouseenter="handleMouseEnter"
@@ -102,7 +111,12 @@ onBeforeUnmount(() => {
       </div>
 
       <template #content v-if="$slots.panel">
-        <div class="lx-info-wrapper-panel" role="tooltip" :id="`${id}-description`">
+        <div
+          class="lx-info-wrapper-panel"
+          :id="`${id}-description`"
+          role="tooltip"
+          :aria-hidden="!showPopper"
+        >
           <slot name="panel" />
         </div>
       </template>

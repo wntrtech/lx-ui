@@ -54,6 +54,12 @@ const props = defineProps({
       clearButton: 'Attīrīt vērtību',
       next: 'Nākamais',
       previous: 'Iepriekšējais',
+      nextMonth: 'Nākamais mēnesis',
+      previousMonth: 'Iepriekšējais mēnesis',
+      nextYear: 'Nākamais gads',
+      previousYear: 'Iepriekšējais gads',
+      nextDecade: 'Nākamā dekāde',
+      previousDecade: 'Iepriekšējā dekāde',
       scrollUp: 'Ritināt uz augšu',
       scrollDown: 'Ritināt uz leju',
     }),
@@ -85,6 +91,7 @@ const localeMasks = computed(() => {
     inputTime24hr: 'HH:mm',
     inputMonthYear: 'yyyy-MM',
     inputQuarters: 'yyyy-QQQ',
+    inputYear: 'yyyy',
   };
   return props.locale?.masks ? props.locale.masks : defaultMasks;
 });

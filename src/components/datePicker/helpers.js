@@ -874,6 +874,8 @@ export const sanitizeDateInput = (e, mode) => {
     allowedChars = /[^0-9.,/\- :]/g; // number, dot, comma, slash, dash, space, colon
   } else if (mode === 'time') {
     allowedChars = /[^0-9:]/g; // only number and colon
+  } else if (mode === 'year') {
+    allowedChars = /[^0-9]/g; // only number
   }
 
   // Remove any disallowed characters
