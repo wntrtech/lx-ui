@@ -9,6 +9,7 @@ import {
   getMonthYearString,
   isDateValid,
   isTimeValid,
+  formatLocalizedDate,
 } from '@/utils/dateUtils';
 import {
   getMonthNameByOrder,
@@ -67,6 +68,10 @@ const props = defineProps({
       doNotIndicateEnd: 'Nenorādīt beigas',
       scrollUp: 'Ritināt uz augšu',
       scrollDown: 'Ritināt uz leju',
+      startDateLabel: 'Sākuma datums',
+      endDateLabel: 'Beigu datums',
+      dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
+      selectedStartDate: 'Izvēlēts sākuma datums',
     }),
   },
 });
@@ -91,6 +96,9 @@ const modelEndDateInput = ref(null);
 const activeInput = ref(null);
 const startInputRefs = ref({});
 const endInputRefs = ref({});
+
+const liveMessage = ref('');
+const inputDescriptionMsg = ref(props.texts.dateFormatMessage);
 
 const windowSize = useWindowSize();
 
@@ -290,6 +298,7 @@ function validateIfExact(e, type = 'startInput') {
     if (props.pickerType === 'single') {
       emits('update:modelValue', updatedValue);
     }
+
     if (props.pickerType === 'range') {
       if (type === 'startInput') {
         if (!updatedValue && model.value.end) {
@@ -366,7 +375,7 @@ function validateIfExact(e, type = 'startInput') {
       if (type === 'endInput') {
         if (!updatedValue && model.value.start) {
           const updatedDatesObject = {
-            start: props.modelValue.start,
+            start: model.value.start,
             end: null,
           };
           emits('update:modelValue', updatedDatesObject);
@@ -392,6 +401,10 @@ function validateIfExact(e, type = 'startInput') {
               end: null,
             };
             setActiveInput('endInput', props.id);
+            liveMessage.value = `${props.texts.selectedStartDate}: ${formatLocalizedDate(
+              props.locale,
+              updatedValue
+            )}`;
           }
 
           emits('update:modelValue', updatedDatesObject);
@@ -408,6 +421,11 @@ function validateIfExact(e, type = 'startInput') {
               start: updatedValue,
               end: null,
             };
+            setActiveInput('endInput', props.id);
+            liveMessage.value = `${props.texts.selectedStartDate}: ${formatLocalizedDate(
+              props.locale,
+              updatedValue
+            )}`;
           }
           emits('update:modelValue', updatedDatesObject);
           return;
@@ -886,43 +904,9 @@ const placeholderComputed = computed(() => {
 
 const isMobileScreen = computed(() => windowSize.width.value < 640);
 
-// Computed determines offset amount for right popper placement in different modes
-const offsetSkidByKind = computed(() => {
-  if (isMobileScreen.value) return '0';
-
-  if (props.pickerType === 'single') {
-    switch (props.mode) {
-      case 'time':
-        return '0';
-      case 'date-time':
-        return '144';
-      case 'month':
-        return '40';
-      case 'month-year':
-        return '60';
-      case 'quarters':
-        return '89';
-      default:
-        return '88';
-    }
-  } else if (props.pickerType === 'range') {
-    switch (props.mode) {
-      case 'date':
-        return '147';
-      case 'month':
-        return '0';
-      case 'year':
-        return '0';
-      case 'month-year':
-        return '85';
-      case 'quarters':
-        return '0';
-      default:
-        return '88';
-    }
-  }
-
-  return '88';
+const computedPlacement = computed(() => {
+  if (isMobileScreen.value) return 'bottom';
+  return 'bottom-start';
 });
 
 const mode = computed(() => props.mode);
@@ -1068,10 +1052,24 @@ onMounted(async () => {
 
 <template>
   <div ref="containerRef" class="lx-datepicker-default" @focusout="handleFocusOut">
+    <div :id="`${id}-lx-range-input-description`" class="lx-invisible">
+      {{ inputDescriptionMsg }}
+    </div>
+
+    <div
+      :id="`${id}-announce`"
+      class="lx-invisible"
+      aria-live="assertive"
+      role="status"
+      aria-atomic="true"
+    >
+      {{ liveMessage }}
+    </div>
+
     <LxDropDownMenu
       v-if="variant === 'default'"
       ref="dropDownMenuRef"
-      :offset-skid="offsetSkidByKind"
+      :placement="computedPlacement"
       :disabled="disabled"
     >
       <div
@@ -1082,6 +1080,7 @@ onMounted(async () => {
           { range: pickerType === 'range' },
           { 'month-year': mode === 'month-year' },
         ]"
+        :aria-labelledby="pickerType === 'range' ? labelledBy : null"
         @click="dropDownMenuRef?.preventClose"
         @keydown="dropDownMenuRef?.preventClose"
       >
@@ -1104,7 +1103,9 @@ onMounted(async () => {
             :tabindex="startInputIndex"
             :maxlength="getMaxLength"
             :aria-invalid="invalid"
-            :aria-labelledby="labelledBy"
+            :aria-label="pickerType === 'range' ? texts.startDateLabel : null"
+            :aria-labelledby="pickerType === 'single' ? labelledBy : null"
+            :aria-describedby="pickerType === 'range' ? `${id}-lx-range-input-description` : null"
             @click="handleOpen('startInput')"
             @keydown.arrow-down.prevent="handleOpen('startInput')"
             @keydown.esc.prevent="handleClose"
@@ -1152,7 +1153,8 @@ onMounted(async () => {
               :tabindex="endInputIndex"
               :maxlength="getMaxLength"
               :aria-invalid="invalid"
-              :aria-labelledby="labelledBy"
+              :aria-label="texts.endDateLabel"
+              :aria-describedby="`${id}-lx-range-input-description`"
               @click="handleOpen('endInput')"
               @keydown.arrow-down.prevent="handleOpen('endInput')"
               @keydown.esc.prevent="handleClose"

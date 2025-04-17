@@ -61,6 +61,10 @@ const props = defineProps({
       doNotIndicateEnd: 'Nenorādīt beigas',
       scrollUp: 'Ritināt uz augšu',
       scrollDown: 'Ritināt uz leju',
+      startDateLabel: 'Sākuma datums',
+      endDateLabel: 'Beigu datums',
+      dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
+      selectedStartDate: 'Izvēlēts sākuma datums',
     }),
   },
 });
