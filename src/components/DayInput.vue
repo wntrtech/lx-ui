@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref, watch, inject } from 'vue';
-
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -23,6 +22,7 @@ const props = defineProps({
       inputTooltip: 'Dienu, mēnešu vai gadu ievade',
       dropdownPlaceholder: 'Izvēlieties vērtību',
       dropdownTooltip: 'Dienu, mēnešu vai gadu izvēle',
+      noResults: 'Nav rezultāta',
     }),
   },
 });
@@ -50,7 +50,7 @@ const selectedUnitName = computed(() => {
 });
 
 const shouldShowInfoIcon = computed(
-  () => props.kind === 'icon' && (inputValue.value || !props.readOnly)
+  () => props.kind === 'icon' && (!props.readOnly || Number(inputValue.value) > 0)
 );
 
 const tooltipText = computed(() =>
@@ -63,7 +63,7 @@ const displayText = computed(() => {
   if (result.value) {
     return props.readOnly ? tooltipText.value : result.value;
   }
-  return !props.readOnly ? 'Nav rezultāta' : '';
+  return !props.readOnly ? props.texts.noResults : '';
 });
 
 function updatePlaceholder(unit) {
@@ -134,6 +134,7 @@ function calculateResult() {
   })();
 
   result.value = [yearString, monthString, dayString].filter(Boolean).join(', ');
+
   if (props.modelValue === null && inputValue.value) {
     emits('update:modelValue', daysResult);
   } else if (typeof props.modelValue === 'number') {
@@ -163,25 +164,36 @@ watch(
 );
 
 watch(
+  () => inputValue.value,
+  () => {
+    calculateResult();
+  }
+);
+
+watch(
+  () => selectedUnit.value,
+  () => {
+    calculateResult();
+  }
+);
+
+watch(
   () => props.modelValue,
   (newValue, oldValue) => {
-    // Compare primitive values
     if (newValue === oldValue) return;
 
-    // Compare object stringified values
     if (typeof newValue === 'object' && typeof oldValue === 'object') {
       if (JSON.stringify(newValue) === JSON.stringify(oldValue)) return;
     }
 
-    if (props.modelValue) {
-      if (typeof props.modelValue === 'number') {
-        inputValue.value = props.modelValue;
+    if (newValue) {
+      if (typeof newValue === 'number' && selectedUnit.value === 'days') {
+        inputValue.value = newValue;
       }
-      if (typeof props.modelValue === 'object') {
-        inputValue.value = props.modelValue.value;
-        selectedUnit.value = props.modelValue.unit;
+      if (typeof newValue === 'object') {
+        inputValue.value = newValue.value;
+        selectedUnit.value = newValue.unit;
       }
-      calculateResult();
     }
   },
   { immediate: true }
@@ -216,7 +228,6 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :invalid="invalid"
           :invalidationMessage="invalidationMessage"
           :labelId="labelledBy"
-          @update:modelValue="calculateResult"
         />
 
         <LxDropDown
@@ -227,12 +238,11 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :disabled="disabled"
           :invalid="invalid"
           :labelId="labelledBy"
-          @update:modelValue="calculateResult"
         />
       </template>
 
       <div class="lx-day-input-result-info-icon">
-        <LxInfoWrapper v-if="shouldShowInfoIcon" :placement="'top'">
+        <LxInfoWrapper v-if="shouldShowInfoIcon" placement="top">
           <LxIcon value="info" />
 
           <template #panel>
