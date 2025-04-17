@@ -27,6 +27,7 @@ export { default as LxErrorPage } from '@/components/ErrorPage.vue';
 export { default as LxExpander } from '@/components/Expander.vue';
 export { default as LxFileUploader } from '@/components/fileUploader/FileUploader.vue';
 export { default as LxFileViewer } from '@/components/FileViewer.vue';
+export { default as LxFilterBuilder } from '@/components/FilterBuilder.vue';
 export { default as LxFilters } from '@/components/Filters.vue';
 export { default as LxFlag } from '@/components/Flag.vue';
 export { default as LxFormBuilder } from '@/components/forms/FormBuilder.vue';

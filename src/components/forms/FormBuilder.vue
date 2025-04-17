@@ -629,7 +629,7 @@ watch(
 onMounted(() => {
   if (props.mode !== 'no-schema') addDefaultValues();
 });
-defineExpose({ validateModel, clearValidations });
+defineExpose({ validateModel, clearValidations, componentSelect });
 </script>
 
 <template>
