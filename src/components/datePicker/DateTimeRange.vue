@@ -366,8 +366,11 @@ onBeforeMount(() => {
 <template>
   <div class="lx-field-wrapper">
     <p v-if="readOnly" class="lx-data" :aria-labelledby="labelledBy">
-      <time :datetime="startDate">{{ getNameStart() }}</time
-      >–<time :datetime="endDate">{{ getNameEnd() }}</time>
+      <span v-if="!startDate && !endDate">—</span>
+      <span v-else>
+        <time :datetime="startDate">{{ getNameStart() }}</time
+        >–<time :datetime="endDate">{{ getNameEnd() }}</time>
+      </span>
     </p>
     <template v-else>
       <div

@@ -212,7 +212,10 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       ]"
     >
       <p v-if="readOnly" class="lx-data" :title="computedTitle" :aria-labelledby="labelledBy">
-        {{ result }}
+        <span v-if="!result"> — </span>
+        <span v-else>
+          {{ result }}
+        </span>
       </p>
 
       <template v-else>
