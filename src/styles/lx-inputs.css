@@ -2885,7 +2885,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-layout div.lx-autocomplete-default {
   background-color: transparent;
-  height: var(--input-container-height);
   cursor: pointer;
 }
 
