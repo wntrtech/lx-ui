@@ -431,6 +431,9 @@ watch(
 
     if (convertValue(newValue) !== convertValue(oldValue)) {
       updateValueRaw(newValue);
+    } else {
+      valueRaw.value =
+        props.mask === 'decimal' ? newValue?.toString()?.replace('.', ',') : newValue?.toString();
     }
   },
   { immediate: true }
@@ -454,22 +457,6 @@ watch(
         model.value = convertValue(newInputValue?.value);
       }
     }
-  },
-  { immediate: true }
-);
-
-function updateValueRawBasedOnMask(newValue) {
-  if (props.mask === 'decimal') {
-    return newValue?.toString()?.replace('.', ',') || '';
-  }
-  return newValue?.toString() || '';
-}
-
-watch(
-  [() => model.value, () => props.kind],
-  ([newValue]) => {
-    valueRaw.value = updateValueRawBasedOnMask(newValue);
-    maskUpdate();
   },
   { immediate: true }
 );
