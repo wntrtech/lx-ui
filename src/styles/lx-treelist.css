@@ -52,7 +52,7 @@
     display: none;
 }
 
-.tree-list>.tree-item>.tree-item-invalid,
+.tree-list .tree-item .tree-item-invalid,
 .tree-list-small>.tree-item-invalid {
     border: 2px solid var(--color-red);
     height: var(--row-size);
@@ -65,11 +65,11 @@
     background-color: var(--color-list-background);
 }
 
-.tree-list>.tree-item>.tree-item-invalid>.lx-button{
+.tree-list .tree-item .tree-item-invalid>.lx-button{
     height: calc(var(--row-size) - 2px);
 }
 
-.lx-region .tree-list>.tree-item>.tree-item-invalid,
+.lx-region .tree-list .tree-item .tree-item-invalid,
 .lx-region .tree-list-small>.tree-item-invalid {
     background-color: var(--color-list-region-background);
 }
@@ -78,7 +78,7 @@
     margin-left: var(--row-size);
 }
 
-.tree-list>.tree-item>.tree-item-invalid>.invalid-text,
+.tree-list .tree-item .tree-item-invalid>.invalid-text,
 .tree-list-small>.tree-item-invalid>.invalid-text {
     padding-left: 1rem;
     display: flex;
@@ -87,7 +87,7 @@
     gap: 0.5rem
 }
 
-.tree-list>.tree-item>.tree-item-invalid>.invalid-text>svg,
+.tree-list .tree-item .tree-item-invalid>.invalid-text>svg,
 .tree-list-small>.tree-item-invalid>.invalid-text>svg {
     fill: var(--color-red);
     height: 1.1rem;
@@ -145,14 +145,14 @@
     border-color: var(--color-list-hover-selected-border);
 }
 
-.tree-list>.tree-item>.tree-item-invalid>.lx-button svg,
+.tree-list .tree-item .tree-item-invalid>.lx-button svg,
 .tree-list-small>.tree-item-invalid>.lx-button svg,
 .lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button > .lx-button-content-wrapper svg,
 .lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button > .lx-button-content-wrapper svg {
     fill: var(--color-list-icon);
 }
 
-.tree-list>.tree-item>.tree-item-invalid>.lx-button:hover svg,
+.tree-list .tree-item .tree-item-invalid>.lx-button:hover svg,
 .tree-list-small>.tree-item-invalid>.lx-button:hover svg,
 .lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button:hover>.lx-button-content-wrapper svg,
 .lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button:hover>.lx-button-content-wrapper svg {

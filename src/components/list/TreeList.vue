@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue';
-import { watchOnce } from '@vueuse/core';
+import { ref, computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import LxListItem from '@/components/list/ListItem.vue';
@@ -9,7 +8,6 @@ import LxRadioButton from '@/components/RadioButton.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxTreeItem from '@/components/list/TreeItem.vue';
-import { lxDevUtils } from '@/utils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -74,77 +72,46 @@ const states = computed({
   },
 });
 
-const smallItems = ref(props.items);
-const level = ref(0);
-const parent = ref(null);
-const parentArray = ref([props.items]);
-
 function loadChildren(id) {
-  return new Promise((resolve, reject) => {
-    emits('loadChildren', id);
-
-    const parentItem = props.items.find((x) => x[props.idAttribute] === id);
-    if (!parentItem) {
-      reject(new Error(`Parent not found for ID: ${id}`));
-      return;
-    }
-
-    if (
-      Array.isArray(parentItem[props.childrenAttribute]) &&
-      parentItem[props.childrenAttribute].length > 0
-    ) {
-      resolve();
-      return;
-    }
-
-    nextTick(() => {
-      watchOnce(
-        () => parentItem[props.childrenAttribute],
-        (newChildren) => {
-          if (Array.isArray(newChildren) && newChildren.length > 0) {
-            smallItems.value = [...newChildren];
-            parent.value = parentItem;
-            if (parent.value) {
-              parentArray.value.push(parent.value);
-            }
-
-            resolve();
-          } else {
-            reject(new Error(`No children found for ID: ${id}`));
-          }
-        },
-        { deep: true }
-      );
-    });
-  });
+  emits('loadChildren', id);
 }
-
-watch(
-  () => props.items,
-  (newValue, oldValue) => {
-    if (
-      (Array.isArray(oldValue) &&
-        oldValue?.length === 0 &&
-        Array.isArray(newValue) &&
-        newValue?.length > 0) ||
-      props.groupDefinitions
-    )
-      smallItems.value = props.items;
-  },
-  { immediate: true }
-);
 
 function selectRow(id) {
   selected.value = { [id]: true };
 }
 
-async function goTo(id, element) {
-  parent.value = smallItems.value.find((x) => id === x[props.idAttribute]);
-  parentArray.value.push(parent.value);
-  smallItems.value = smallItems.value.find((x) => id === x[props.idAttribute])[
+const parent = ref(null);
+const parentArray = ref([]);
+
+function findItemRecursively(items, targetId) {
+  if (!items || !Array.isArray(items)) return null;
+
+  const directMatch = items.find((item) => item[props.idAttribute] === targetId);
+  if (directMatch) return directMatch;
+
+  const foundInChildren = items.reduce((result, item) => {
+    if (result) return result;
+    if (item[props.childrenAttribute] && Array.isArray(item[props.childrenAttribute])) {
+      return findItemRecursively(item[props.childrenAttribute], targetId);
+    }
+    return null;
+  }, null);
+
+  return foundInChildren;
+}
+
+const smallList = computed(() => {
+  if (!parent.value) return props.items;
+  const res = findItemRecursively(props.items, parent.value?.[props.idAttribute])?.[
     props.childrenAttribute
   ];
-  level.value += 1;
+  if (!res) return [];
+  return res;
+});
+
+function goTo(id, element) {
+  parent.value = element;
+  parentArray.value.push(element);
   if (
     props.mode === 'server' &&
     (!element?.[props.childrenAttribute] || element?.[props.childrenAttribute]?.length === 0)
@@ -153,32 +120,18 @@ async function goTo(id, element) {
       ...states.value?.[id],
       busy: true,
     };
-
-    try {
-      await loadChildren(id);
-    } catch (error) {
-      lxDevUtils.logError(
-        `Error loading treelist children, ${error}`,
-        useLx().getGlobals().environment
-      );
-    } finally {
-      states.value[id].busy = false;
-    }
+    loadChildren(id);
   }
 }
 
 function goBack() {
-  if (level.value > 1) {
-    smallItems.value = parentArray.value[parentArray.value.length - 2][props.childrenAttribute];
+  if (parentArray.value?.length > 1) {
     parentArray.value.pop();
     parent.value = parentArray.value[parentArray.value.length - 1];
   } else {
-    smallItems.value = props.items;
-    parentArray.value = [props.items];
+    parentArray.value = [];
     parent.value = null;
   }
-
-  level.value -= 1;
 }
 
 function isExpandable(item) {
@@ -273,7 +226,11 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
       </LxTreeItem>
     </div>
     <div class="tree-list tree-list-small" role="list">
-      <div v-if="level > 0" class="tree-item-small tree-item-small-parent" role="listitem">
+      <div
+        v-if="parentArray?.length > 0"
+        class="tree-item-small tree-item-small-parent"
+        role="listitem"
+      >
         <LxButton
           v-if="isExpandable(parent)"
           kind="ghost"
@@ -341,13 +298,13 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         />
       </div>
       <div
-        v-for="item in smallItems"
+        v-for="item in smallList"
         :key="item[idAttribute]"
         class="tree-item-small"
         :class="{
           'not-expandable':
             !isExpandable(item) &&
-            (level === 0 ? props.areSomeExpandable || areSomeExpandable : true),
+            (parentArray?.length === 0 ? props.areSomeExpandable || areSomeExpandable : true),
         }"
         role="listitem"
       >
