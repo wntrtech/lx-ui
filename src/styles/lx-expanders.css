@@ -387,7 +387,7 @@
   padding: 4rem;
 }
 
-.lx-data-block-wrapper>.lx-data-block-content>.lx-main button {
+.lx-data-block-wrapper>.lx-data-block-content>.lx-main button:not(.lx-tag button) {
   margin-bottom: 0.5rem;
   margin-left: 0.5rem;
 }

@@ -17,6 +17,7 @@
   transition: font-size 0.1s ease-in-out;
   font-size: 2.5rem;
   font-weight: var(--h1-font-weight);
+  line-height: 1.1em;
 }
 
 /* DEFAULT */
