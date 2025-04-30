@@ -62,6 +62,8 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
  *
  *     // Track navigation state for version checking
  *     lxNavigationStateUtils.trackNavigationState(to);
+ *     // Check for version change on route change
+       await lxVersionCheckUtils.isAppVersionChanged(undefined);
  *   });
  *   router.afterEach(async (to, from) => {
  *     const appStore = useAppStore();
@@ -72,13 +74,26 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
  *   });
  * };
  */
+
+let lastVersionCheckTime = 0;
+
 export async function isAppVersionChanged(
   notify,
   notifyText = undefined,
   useInterval = false,
-  intervalTime = 1800000,
-  basePath = '/'
+  intervalTime = 1800000, // 30 minutes
+  basePath = '/',
+  throttleTime = 2000 // 2 seconds
 ) {
+  const now = Date.now();
+
+  // Skip if called too soon again
+  if (!useInterval && now - lastVersionCheckTime < throttleTime) {
+    return;
+  }
+
+  lastVersionCheckTime = now;
+
   if (useInterval) {
     setInterval(async () => {
       await checkVersion(notify, notifyText, basePath);
