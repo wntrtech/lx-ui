@@ -65,17 +65,21 @@
 .lx-ratings.lx-colorful svg.lx-category-red  {
     fill: var(--color-red);
 }
+
 .lx-grid-row .lx-cell-secondary .lx-ratings svg {
     opacity: 0.25;
 }
 
-.lx-theme-contrast .lx-grid-row .lx-cell-secondary .lx-ratings svg {
+.lx-theme-contrast .lx-grid-row .lx-cell-secondary .lx-ratings svg,
+.lx-grid-row.lx-selected .lx-cell-secondary .lx-ratings svg,
+.lx-grid-row:hover .lx-cell-secondary .lx-ratings svg {
     opacity: 1;
 }
 
 .lx-grid-row:hover .lx-cell-secondary .lx-ratings svg {
-    opacity: 1;
+    fill: var(--color-grid-hover-foreground);
 }
+
 .lx-grid-row .lx-tooltip .lx-row {
     width: 5rem !important;
 }

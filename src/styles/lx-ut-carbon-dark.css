@@ -35,8 +35,8 @@
   --color-latvijalv-alert-hover-foreground: var(--color-latvijalv-alert-foreground);
   --color-latvijalv-alert-hover-background: #000;
   --color-grid-header: var(--color-chrome);
-  --color-grid-selected-background: var(--color-button-nav-selected-background);
   --color-grid-hover-background: var(--color-tile-hover-background);
+  --color-grid-hover-foreground: var(--color-tile-hover-foreground);
   --color-grid-header-hover-background: #252525;
   --color-highlight: #124c58;
   --color-highlight-background: var(--color-highlight);
@@ -124,10 +124,15 @@
   --color-placeholder: #6c6c6c;
   --color-placeholder-disabled: #333333;
 
+  --color-selected: var(--color-data);
+  --color-selected-border: var(--color-brand);
+  --color-selected-background: var(--color-highlight);
+  --color-selected-dropdown: var(--color-selected);
+  --color-selected-dropdown-background: var(--color-selected-background);
+  --color-selected-dropdown-border: transparent transparent transparent var(--color-selected-border);
+
   --color-tile-foreground: var(--color-data);
   --color-tile-hover-foreground: var(--color-data);
-
-  
   --color-tile-background: var(--color-list-background);
   --color-tile-hover-background: var(--color-list-hover-background);
   --color-tile-primary: var(--color-list-primary);
@@ -146,19 +151,11 @@
   --color-list-secondary: var(--color-label);
   --color-list-disabled-foreground: var(--color-disabled);
   --color-list-disabled-selected-text: var(--color-disabled);
-  --color-list-icon-selected: var(--color-data);
   --color-list-icon-hover: var(--color-region-hover-foreground);
-  --color-list-region-selected-background: var(--color-list-region-background);
-  --color-list-region-selected-border: var(--color-list-selected-border);
-  --color-list-text-primary-selected: var(--color-list-primary);
-  --color-list-text-secondary-selected: var(--color-list-secondary);
-  --color-list-selected-background: var(--color-list-background);
-  --color-list-selected-border: var(--color-brand);
   --color-list-hover-handle-icon: var(--color-region-hover-foreground);
   --color-list-hover-background: var(--color-region-hover-background);
   --color-list-hover-text-primary: var(--color-region-hover-foreground);
-  --color-list-hover-text-secondary: var(--color-list-secondary);
-  --color-list-hover-selected-border: var(--color-interactive-hover-background);
+  --color-list-hover-text-secondary: var(--color-region-hover-foreground);
 
   --color-input: var(--color-data);
   --color-input-background: var(--color-region);
@@ -169,9 +166,9 @@
   --color-input-region-background: var(--color-region-2);
   --color-input-selected-range-background: #bfdbfe;
 
-  --color-button-active-mode: var(--color-data);
-  --color-button-active-mode-background: var(--color-highlight);
-  --color-button-active-mode-border: var(--color-button-active-mode-background);
+  --color-button-active-mode: var(--color-data);		
+  --color-button-active-mode-background: var(--color-highlight);		
+  --color-button-active-mode-border: var(--color-button-active-mode-background);		
   --color-button-active-mode-icon: var(--color-button-active-mode);
   --color-button-destructive: var(--color-interactive-hover-foreground);
   --color-button-destructive-background: var(--color-destructive);

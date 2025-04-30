@@ -1592,13 +1592,16 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-disabled-foreground);
 }
 
-.lx-value-picker-tile:hover,
 .lx-value-picker-tile:focus,
 .lx-value-picker-tile:focus-visible {
   background-color: var(--color-tile-hover-background);
   border: 2px solid var(--color-brand);
   box-shadow: var(--shadow-1);
   outline: 1px solid var(--color-focus-background);
+}
+
+.lx-value-picker-tile:hover {
+  background-color: var(--color-region-hover);
 }
 
 .lx-value-picker-icon {
@@ -1617,6 +1620,24 @@ h2.lx-section-header + p.lx-invalidation-message,
   word-wrap: break-word;
 }
 
+.lx-value-picker-tile:hover .lx-value-picker-tile-header,
+.lx-value-picker-tile:hover .lx-value-picker-description {
+  color: var(--color-region-hover-foreground);
+}
+
+.lx-value-picker-tile:hover .lx-value-picker-icon svg {
+  fill: var(--color-region-hover-foreground);
+}
+
+.lx-value-picker-tile.lx-value-picker-tile-selected .lx-value-picker-tile-header,
+.lx-value-picker-tile.lx-value-picker-tile-selected .lx-value-picker-description {
+  color: var(--color-selected);
+}
+
+.lx-value-picker-tile.lx-value-picker-tile-selected .lx-value-picker-icon svg {
+  fill: var(--color-selected);
+}
+
 .lx-value-picker-tile-name {
   margin-right: 1rem;
   white-space: nowrap;
@@ -1631,13 +1652,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: 100%;
 }
 
-.lx-value-picker-tile-selected {
-  border: 2px solid var(--color-brand);
-  box-shadow: var(--shadow-1);
+.lx .lx-layout .lx-value-picker-tile-selected {
+  border-color: var(--color-selected-border);
+  background-color: var(--color-selected-background);
 }
 
-.lx-value-picker-tags .lx-tag-set .lx-tag {
-  background-color: var(--color-tile-background) !important;
+.lx .lx-value-picker-tags .lx-tag-set .lx-tag {
+  background-color: var(--color-tile-background);
   border: 2px solid var(--color-chrome);
   cursor: pointer;
 }
@@ -1647,11 +1668,9 @@ h2.lx-section-header + p.lx-invalidation-message,
   cursor: pointer;
 }
 
-.lx-value-picker-tags .lx-tag-set .lx-tag:hover,
-.lx-value-picker-tags .lx-tag-set .lx-tag.lx-tags-tile-highlighted {
-  background-color: var(--color-tile-hover-background);
-  border: 2px solid var(--color-brand);
-  box-shadow: var(--shadow-1);
+.lx-value-picker-tags .lx-tag-set .lx-tag:hover {
+  background-color: var(--color-region-hover);
+  color: var(--color-region-hover-foreground);
 }
 
 .lx-value-picker-indicators
@@ -1708,13 +1727,18 @@ h2.lx-section-header + p.lx-invalidation-message,
   outline: none;
 }
 
-.lx .lx-value-picker-tags .lx-tag.lx-tags-tile-selected,
-.lx .lx-value-picker-tags .lx-tag.lx-tags-tile-selected[disabled='true'],
 .lx .lx-value-picker-indicators .lx-indicator.lx-indicators-selected,
 .lx-form-grid > .lx-main .lx-row ul.lx-indicator-set .lx-indicator.lx-indicators-selected,
 .lx-form-grid > .lx-main .lx-row ul.lx-tag-set .lx-tag.lx-tags-tile-selected {
   background-color: var(--color-content-switcher-foreground) !important;
   color: var(--color-region);
+}
+
+.lx .lx-layout .lx-value-picker-tags .lx-tag.lx-tags-tile-selected,
+.lx .lx-layout .lx-value-picker-tags .lx-tag.lx-tags-tile-selected[disabled='true'] {
+  background-color: var(--color-selected-background);
+  border: var(--selected-border);
+  color: var(--color-selected);
 }
 
 .lx .lx-value-picker-indicators .lx-indicator.lx-indicators-selected {
@@ -1861,14 +1885,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   fill: var(--color-region);
 }
 
-.lx .lx-value-picker-tags .lx-tag[disabled='false'].lx-tags-tile-selected:hover,
-.lx
-  .lx-value-picker-indicators
-  .lx-indicator[disabled='false'][readOnly='false'].lx-indicators-selected:hover {
-  background-color: var(--color-content-switcher-foreground);
-  color: var(--color-grid-header-hover-background);
-}
-
 .lx
   .lx-value-picker-indicators
   .lx-indicator[disabled='false'][readOnly='false'].lx-indicators-selected:not(
@@ -1890,8 +1906,9 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-dropdown-default-content .lx-value-picker-item.lx-selected {
-  color: var(--color-highlight-foreground);
-  background-color: var(--color-highlight-background);
+  color: var(--color-selected);
+  background-color: var(--color-selected-background);
+  border-color: transparent transparent transparent var(--color-selected-border);
 }
 
 .lx-value-picker-default-wrapper.lx-invalid
@@ -2853,6 +2870,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: auto;
   padding: 0.5rem 1rem;
   outline-color: var(--color-focus-background);
+  border: 2px solid transparent;
 }
 
 .lx-dropdown-default[disabled='true'],

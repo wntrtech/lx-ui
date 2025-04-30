@@ -1713,28 +1713,30 @@
 }
 
 .lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile.selected {
-  background-color: var(--color-region-2);
-  border: 2px solid var(--color-brand);
+  background-color: var(--color-selected-background);
+  border-color: var(--color-selected-border);
 }
 
 .lx-mega-menu .lx-mega-menu-container ul li.secondary-menu-item.selected {
-  background-color: var(--color-region-2);
-  border-left: 2px solid var(--color-brand);
+  background-color: var(--color-selected-dropdown-background);
+  border-color: var(--color-selected-dropdown-border);
 }
 
+.primary-menu-tile.default-icon svg,
+.primary-menu-tile.selected svg {
+  fill: var(--color-selected);
+}
 
-.primary-menu-tile.selected svg,
+.primary-menu-tile.selected p {
+  color: var(--color-selected);
+}
+
 .secondary-menu-item.selected svg {
-  fill: var(--color-brand);
+  fill: var(--color-selected-dropdown);
 }
 
-.primary-menu-tile.selected p,
 .secondary-menu-item.selected p {
-  color: var(--color-brand);
-}
-
-.primary-menu-tile.default-icon svg {
-  fill: var(--color-label)
+  color: var(--color-selected-dropdown);
 }
 
 .lx .lx-mega-menu .lx-mega-menu-container .primary-menu:not(:has(+ .secondary-menu)) {

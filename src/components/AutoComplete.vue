@@ -604,9 +604,12 @@ function updateModel(selectedValue, isSelected) {
 }
 
 function isItemSelected(item) {
-  return (
-    selectedItem.value && getIdAttributeString(item) === getIdAttributeString(selectedItem.value)
-  );
+  if (props.selectingKind === 'single') {
+    return selectedItem.value && getIdAttributeString(item) === getIdAttributeString(selectedItem.value);
+  } else if (props.selectingKind === 'multiple') {
+    return model.value?.includes(getIdAttributeString(item));
+  }
+  return false;
 }
 
 const icon = computed(() => {
@@ -1272,7 +1275,7 @@ onMounted(() => {
                             class="lx-value-picker-item"
                             :class="[
                               {
-                                'lx-selected': isItemSelected(item) && selectingKind === 'single',
+                                'lx-selected': isItemSelected(item),
                                 'lx-highlighted-item':
                                   highlightedItemId &&
                                   highlightedItemId === getIdAttributeString(item),

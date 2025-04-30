@@ -77,10 +77,8 @@
     color: var(--color-data);
 }
 
-
-
 .lx .lx-master-detail .lx-master .lx-list-item-wrapper:has(.lx-list-item.lx-list-item-active.lx-invalid) {
-    border-color: var(--color-list-selected-border);
+    border-color: var(--color-selected-border);
 }
 
 .lx .lx-master-detail .lx-master .lx-list-item-wrapper:has(.lx-list-item.lx-invalid) {
@@ -94,7 +92,7 @@
 }
 
 .lx.lx-theme-contrast .lx-list-item.lx-selected.lx-invalid .lx-invalidation-icon {
-    fill: var(--color-list-icon-selected);
+    fill: var(--color-selected);
 }
 
 .lx-master-detail li:hover .lx-list-item .lx-invalidation-icon {

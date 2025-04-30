@@ -415,7 +415,6 @@ function updateDescriptionTabIndexes(items) {
         <div v-for="item in itemsDisplay" :key="item[idAttribute]">
           <div
             v-if="kind === 'single' && !isElementHidden(item)"
-            v-on:focus="onFocus"
             class="lx-value-picker-tile"
             :class="{
               'lx-value-picker-tile-selected':
@@ -478,7 +477,6 @@ function updateDescriptionTabIndexes(items) {
 
           <div
             v-if="kind === 'multiple' && !isElementHidden(item)"
-            v-on:focus="onFocus"
             class="lx-value-picker-tile"
             :id="getItemId(item[idAttribute])"
             :group-id="groupId"
@@ -537,7 +535,6 @@ function updateDescriptionTabIndexes(items) {
           <li
             v-for="item in itemsDisplay"
             :key="item[idAttribute]"
-            v-on:focus="onFocus"
             class="lx-tag"
             :title="item[descriptionAttribute]"
             :id="getItemId(item[idAttribute])"
@@ -575,7 +572,6 @@ function updateDescriptionTabIndexes(items) {
         >
           <li
             v-for="item in itemsDisplay"
-            v-on:focus="onFocus"
             :key="item[idAttribute]"
             class="lx-tag"
             :title="item[descriptionAttribute]"

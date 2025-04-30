@@ -462,6 +462,13 @@ const areAllSelected = computed(() => {
   return res;
 });
 
+function isItemSelected(item) {
+  if (props.kind === 'multiple' && Array.isArray(model.value)) {
+    return model.value.includes(getIdAttributeString(item));
+  }
+  return false;
+}
+
 function selectAll() {
   if (areAllSelected.value) {
     model.value = [];
@@ -652,10 +659,14 @@ const columnReadOnly = computed(() => {
                     class="lx-value-picker-item"
                     tabindex="-1"
                     role="option"
+                    :aria-selected="isItemSelected(item)"
                     :class="[
                       {
                         'lx-highlighted-item':
                           highlightedItemId && highlightedItemId === getIdAttributeString(item),
+                      },
+                      {
+                        'lx-selected': isItemSelected(item),
                       },
                     ]"
                     :id="getItemId(item[idAttribute])"

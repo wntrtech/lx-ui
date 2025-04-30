@@ -72,18 +72,11 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 | `--color-list-hover-handle-icon`             | `--color-region-hover-foreground`         | `--color-region-hover-foreground`         |
 | `--color-list-hover-background`              | `--color-region-hover-background`         | `--color-region-hover-background`         |
 | `--color-list-icon`                          | `--color-data`                            | `--color-data`                            |
-| `--color-list-icon-selected`                 | `--color-data`                            | `--color-data`                            |
 | `--color-list-primary`                       | `--color-data`                            | `--color-data`                            |
 | `--color-list-hover-text-primary`            | `--color-region-hover-foreground`         | `--color-region-hover-foreground`         |
-| `--color-list-text-primary-selected`         | `--color-list-primary`                    | `--color-list-primary`                    |
 | `--color-list-region-background`             | `--color-region-2`                        | `--color-region-2`                        |
-| `--color-list-region-selected-background`    | `--color-list-region-background`          | `--color-list-region-background`          |
 | `--color-list-secondary`                     | `--color-label`                           | `--color-label`                           |
-| `--color-list-hover-text-secondary`          | `--color-secondary`                       | `--color-list-secondary`                  |
-| `--color-list-text-secondary-selected`       | `--color-secondary`                       | `--color-list-secondary`                  |
-| `--color-list-selected-background`           | `--color-list-background`                 | `--color-list-background`                 |
-| `--color-list-selected-border`               | `--color-brand`                           | `--color-brand`                           |
-| `--color-list-hover-selected-border`         | `--color-interactive-hover-background`    | `--color-interactive-hover-background`    |
+| `--color-list-hover-text-secondary`          | `--color-region-hover-foreground`         | `--color-region-hover-foreground`         |
 
 <br>
 Customized values for contrast mode:
@@ -91,13 +84,6 @@ Customized values for contrast mode:
 | Variable name                                | Contrast mode value                       |
 |----------------------------------------------|-------------------------------------------|
 | `--color-list-category-contrast`             | transparent                               |
-| `--color-list-icon-selected`                 | `--contrast-background`                   |
-| `--color-list-text-primary-selected`         | `--contrast-background`                   |
-| `--color-list-region-selected-background`    | `--contrast-foreground`                   |
-| `--color-list-hover-text-secondary`          | `--contrast-background`                   |
-| `--color-list-text-secondary-selected`       | `--contrast-background`                   |
-| `--color-list-selected-background`           | `--contrast-foreground`                   |
-| `--color-list-hover-selected-border`         | `--contrast-foreground`                   |
 | `--color-list-disabled-selected-text`        | `--contrast-background`                   |
 
 
@@ -561,12 +547,11 @@ Customized values for contrast mode:
 | `--button-ghost-icon-only-width`                   | auto                                                     |
 
 ### Color
-
 | Variable name                                          | Light mode value                                       | Dark mode value                                        |
 |--------------------------------------------------------|--------------------------------------------------------|--------------------------------------------------------|
 | `--color-button-active-mode`                           | `--color-data`                                         | `--color-data`                                         |
 | `--color-button-active-mode-background`                | `--color-highlight`                                    | `--color-highlight`                                    |
-| `--color-button-active-mode-border`                    | `--color-button-active-background`                     | `--color-button-active-background`                     |
+| `--color-button-active-mode-border`                    | `--color-button-active-mode-background`                | `--color-button-active-mode-background`                |
 | `--color-button-active-mode-icon`                      | `--color-button-active-mode`                           | `--color-button-active-mode`                           |
 | `--color-button-destructive`                           | `--color-interactive-hover-foreground`                 | `--color-interactive-hover-foreground`                 |
 | `--color-button-destructive-background`                | `--color-destructive`                                  | `--color-destructive`                                  |
@@ -817,7 +802,7 @@ Customized values for contrast mode:
 
 | Variable name                            | Contrast mode value      |
 |------------------------------------------|--------------------------|
-| `--color-button-active-mode`             | `--contrast-background`  |
+| `--color-button-active-mode-background`  | `--contrast-background`  |
 | `--color-button-dropdown`                | `--contrast-interactive` |
 | `--color-button-dropdown-background`     | `--contrast-background`  |
 | `--color-button-dropdown-focus`          | `--contrast-background`  |

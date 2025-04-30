@@ -378,7 +378,6 @@ const indicatorTooltips = computed(() => {
         <li
           v-for="item in itemsDisplay"
           :key="item[idAttribute]"
-          v-on:focus="onFocus"
           class="lx-indicator"
           :title="indicatorTooltips[item[idAttribute]]"
           :id="getItemId(item[idAttribute])"
@@ -415,7 +414,6 @@ const indicatorTooltips = computed(() => {
       <ul class="lx-indicator-set" v-if="kind === 'multiple'">
         <li
           v-for="item in itemsDisplay"
-          v-on:focus="onFocus"
           :key="item[idAttribute]"
           class="lx-indicator"
           :title="indicatorTooltips[item[idAttribute]]"

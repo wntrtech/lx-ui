@@ -180,7 +180,7 @@
   outline: 2px solid var(--color-focus-background);
 }
 
-.lx .lx-region .lx-tag-set .lx-tag,
+.lx-region .lx-tag-set .lx-tag,
 .lx .lx-form-region .lx-tag-set .lx-tag,
 .lx .lx-form-region .lx-indicator-set .lx-indicator {
   background-color: var(--color-region-2);

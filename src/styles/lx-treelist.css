@@ -114,35 +114,27 @@
   .lx-list-item-actions
   > .lx-button
   svg {
-    fill: var(--color-list-icon-selected);
+    fill: var(--color-selected);
 }
 
-.tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) p.lx-primary {
-    color: var(--color-list-text-primary-selected);
-}
-
+.tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) p.lx-primary,
 .tree-list .tree-item-small-parent .lx-list-item:not(.lx-list-item-disabled) p.lx-secondary {
-    color: var(--color-list-text-secondary-selected);
+    color: var(--color-selected);
 }
 
 .lx .tree-list .tree-item-small-parent:not(:has(.lx-list-item-container)) .lx-list-item-wrapper,
 .lx .tree-list .tree-item-small-parent .lx-list-item-container {
-    background-color: var(--color-list-selected-background);
-    border-color: var(--color-list-selected-border);
+    background-color: var(--color-selected-background);
+    border-color: var(--color-selected-border);
 }
 
 .lx .lx-region .tree-list .tree-item-small-parent:not(:has(.lx-list-item-container)) .lx-list-item-wrapper,
 .lx .lx-region .tree-list .tree-item-small-parent .lx-list-item-container {
-    background-color: var(--color-list-region-selected-background);
+    background-color: var(--color-selected-background);
 }
   
 .lx .tree-item-small-parent .lx-list-item.lx-list-item-interactive:not(.lx-list-item-disabled):hover {
     background-color: var(--color-list-hover-background);
-}
-
-.lx .tree-item-small-parent:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-list-item-interactive:not(.lx-list-item-disabled):hover),
-.lx .tree-item-small-parent .lx-list-item-container:has(.lx-list-item.lx-list-item-interactive:not(.lx-list-item-disabled):hover) {
-    border-color: var(--color-list-hover-selected-border);
 }
 
 .tree-list .tree-item .tree-item-invalid>.lx-button svg,

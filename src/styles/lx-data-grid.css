@@ -142,8 +142,14 @@
   display: contents;
 }
 
-.lx .lx-data-grid .lx-grid-row.lx-selected .lx-cell-selector {
-  background-color: var(--color-grid-selected-background);
+.lx .lx-data-grid-wrapper .lx-grid-row.lx-selected {
+  color: var(--color-selected);
+  fill: var(--color-selected);
+}
+
+.lx .lx-data-grid-wrapper .lx-grid-row:hover {
+  color: var(--color-grid-hover-foreground);
+  fill: var(--color-grid-hover-foreground);
 }
 
 .lx .lx-data-grid .lx-grid-row .lx-cell-selector .lx-checkbox-wrapper,
@@ -152,9 +158,10 @@
   padding-top: 0.35rem;
 }
 
+.lx .lx-data-grid .lx-grid-row.lx-selected .lx-cell-selector,
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell,
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell-action {
-  background-color: var(--color-grid-selected-background);
+  background-color: var(--color-selected-background);
 }
 
 .lx.lx-theme-contrast .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row.lx-selected .lx-cell,
@@ -418,6 +425,11 @@
   fill: var(--color-label);
 }
 
+.lx-grid-row.lx-selected .lx-cell-secondary svg,
+.lx-grid-row.lx-selected .lx-cell-extra svg {
+  fill: var(--color-selected);
+}
+
 .lx-grid-row:hover .lx-cell-secondary .lx-user-icon-display > svg,
 .lx-grid-row:hover .lx-cell-extra .lx-user-icon-display > svg,
 .lx-grid-row:hover .lx-cell-secondary .lx-person-icon-display > svg,
@@ -473,6 +485,18 @@
   color: var(--color-label);
 }
 
+.lx .lx-grid-row.lx-selected .lx-cell-secondary,
+.lx .lx-grid-row.lx-selected .lx-cell-secondary .lx-person-display-name,
+.lx .lx-grid-row.lx-selected .lx-cell-secondary .lx-grid-icon-text,
+.lx .lx-grid-row.lx-selected .lx-cell-secondary .flag-column p,
+.lx .lx-grid-row.lx-selected .lx-cell-extra,
+.lx .lx-grid-row.lx-selected .lx-cell-extra .lx-person-display-name,
+.lx .lx-grid-row.lx-selected .lx-cell-extra .lx-grid-icon-text,
+.lx .lx-grid-row.lx-selected .lx-cell-extra .flag-column p {
+  color: var(--color-selected);
+  opacity: 1;
+}
+
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-secondary,
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-secondary .lx-person-display-name,
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-secondary .lx-grid-icon-text,
@@ -481,12 +505,12 @@
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-extra .lx-person-display-name,
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-extra .lx-grid-icon-text,
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-extra .flag-column p {
-  color: inherit;
+  color: var(--color-grid-hover-foreground);
 }
 
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-extra .lx-grid-column-icon,
 .lx .lx-data-grid .lx-grid-table:not(.lx-skeleton) .lx-grid-row:hover .lx-cell-secondary .lx-grid-column-icon {
-  fill: inherit;
+  fill: var(--color-grid-hover-foreground);
 }
 
 .lx .lx-data-grid-wrapper .lx-data-grid .lx-cell-secondary p.lx-person-display-name,

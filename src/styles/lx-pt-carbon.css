@@ -90,6 +90,9 @@
   --screen-xxs: 672px;
   --screen-xxxs: 320px;
 
+  --selected-border: 2px solid var(--color-selected-border);
+  --selected-dropdown-border: 2px solid var(--color-selected-dropdown-border);
+
   --tile-width: 20rem;
   --tile-width-x2-size: calc(var(--tile-width) * 2 + 1rem);
   --tile-min-height: 12rem;
