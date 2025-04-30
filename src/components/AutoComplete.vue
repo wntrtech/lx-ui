@@ -345,7 +345,7 @@ function handleTouchStart() {
 }
 
 function openMenu() {
-  if (!props.disabled && menuOpen.value === false) {
+  if (!props.disabled && !menuOpen.value) {
     if (!menuOpen.value) {
       panelWidth.value = refContainer.value?.offsetWidth;
     }
@@ -378,6 +378,14 @@ function closeMenu() {
     refQuery.value.focus();
   });
 }
+
+function toggleMenu(e) {
+  if (menuOpen.value && e.target?.id === props.id) {
+    closeMenu();
+    return;
+  }
+  openMenu();
+};
 
 onClickOutside(refRoot, closeOnClickOutside);
 
@@ -1029,7 +1037,7 @@ onMounted(() => {
                   class="lx-autocomplete"
                   :title="tooltip"
                   tabindex="-1"
-                  @click="openMenu"
+                  @click="toggleMenu"
                   @keydown.esc.prevent="closeMenu"
                   @keydown.enter.prevent="onEnter"
                   @keydown.down.prevent="focusNextInputElement"
