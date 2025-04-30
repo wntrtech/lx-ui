@@ -46,8 +46,8 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
       <div
         v-if="props.triggerClick === 'right'"
-        @contextmenu.prevent="openMenu"
         class="lx-dropdown-toggler"
+        @contextmenu.prevent="openMenu"
       >
         <slot />
       </div>
@@ -62,11 +62,11 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
 
       <template #content>
         <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel" role="group">
-          <slot name="clickSafePanel"> </slot>
+          <slot name="clickSafePanel" />
         </div>
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
-        <div v-if="$slots.panel" @click="closeMenu" class="lx-dropdown-panel" role="group">
-          <slot name="panel"> </slot>
+        <div v-if="$slots.panel" class="lx-dropdown-panel" role="group" @click="closeMenu">
+          <slot name="panel" />
         </div>
       </template>
     </LxPopper>

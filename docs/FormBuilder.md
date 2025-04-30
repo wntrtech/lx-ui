@@ -582,3 +582,1175 @@ This schema would generate 15 rows:
 - LxRow label is "Mīļākās sporta spēles"
 - LxDataGrid component is generated in this row
 - Every item is openable and editable in modal dialog
+
+---
+
+## Other Components
+
+Since lx/ui `1.9.0 beta 5` version, many other input and display components can be defined with LxFormBuilder.
+
+The required component can be defined in the `displayType` attribute of the `lx` attribute.
+
+For example, the LxCamera component can be defined in this way:
+
+```js
+{
+  type: 'object',
+  properties: {
+    camera: {
+      type: 'string',
+      lx: {
+        displayType: 'camera'
+      },
+    },
+  }
+}
+```
+
+Input component type is the type of componets `modelValue` prop. However container and indicator components can mostly be defined in one of two ways: 
+- type='object' - all props must be defined in `modelValue`;
+- type='string' or type='array' - all props must be defined in `schema`, only the main one can be defined in `modelValue`. 
+
+Using `type="object"`
+```js
+const schema = {
+  type: 'object',
+  properties: {
+    icon: {
+      type: 'object',
+      lx: {
+        displayType: 'icon'
+      },
+    },
+  }
+}
+
+const modelValue = ref({
+  icon: { value: 'flash', iconSet: 'cds', title: 'Flash icon'}
+})
+```
+
+Using `type="string"`
+```js
+const schema = {
+  type: 'object',
+  properties: {
+    icon: {
+      type: 'string',
+      lx: {
+        displayType: 'icon',
+        iconSet: 'cds',
+        title: 'Flash icon',
+      },
+    },
+  }
+}
+
+const modelValue = ref({
+  icon: 'flash',
+})
+```
+
+List of added components their types and main props:
+
+| Component | displayType | type | main prop (only for not input components) |
+| -------- | ------- | ------- | ------- |
+| LxAutoComplete | 'autoComplete' | 'string', 'array', 'object' | - |
+| LxButton | 'button' | 'string', 'object' | `label` |
+| LxCamera | 'camera' | 'string' | - |
+| LxCheckbox | 'checkbox' | 'boolean' | - |
+| LxContentSwitcher | 'contentSwitcher' | 'string' | - |
+| LxDataVisualizer | 'dataVisualizer' | 'array', 'object' | `items` |
+| LxDropdownMenu | 'dropDownMenu' | 'string', 'object' | `label` |
+| LxFileUploader | 'file' | 'array' | - |
+| LxFileViewer | 'fileViewer' | 'string' | - |
+| LxFlag | 'flag' | 'string', 'object' | `value` |
+| LxIcon | 'icon' | 'string', 'object' | `value` |
+| LxIllustration | 'illustration' | 'string', 'object' | `value` |
+| LxLink | 'link' | 'string', 'object' | `href` |
+| LxMap | 'map' | 'object' | - |
+| LxMarkdownTextArea | 'markdown' | 'string' | - |
+| LxNumberSlider | 'numberSlider' | 'integer' | - |
+| LxPersonDisplay | 'personDisplay' | 'string', 'array', 'object' | `value` |
+| LxQr | 'qr' | 'string', 'object' | `value` |
+| LxQrScanner | 'qrScanner' | 'object' | - |
+| LxRatings | 'ratings' | 'integer', 'decimal' | - |
+| LxRichTextDisplay | 'richTextDisplay' | 'string', 'object' | `value` |
+| LxStateDisplay | 'stateDisplay' | 'string', 'object' | `value` |
+| LxSteps | 'steps' | 'string' | - |
+| LxVisualPicker | 'visualPicker' | 'string', 'array' | - |
+| LxDayInput | 'dayInput' | 'integer', 'object' | - |
+| LxDrawPad | 'drawPad' | 'string' | - |
+| LxLogoDisplay | 'logoDisplay' | 'string', 'object' | `value` |
+| LxStack | 'stack' | 'object' | - |
+
+There is also an option to show basic text: 
+
+```js
+const schema = {
+  type: 'object',
+  properties: {
+    text: {
+      type: 'string',
+      lx: {
+        displayType: 'text',
+      },
+    },
+  }
+}
+
+const modelValue = ref({
+  text: 'text',
+})
+```
+
+LxStack component can be used to describe custom layout inside each row. Components can be put inside up to 2 LxStack nested levels.
+
+```js
+const schema = {
+  type: 'object',
+  properties: {
+    outerStack: {
+      type: 'object',
+      lx: {
+        displayType: 'stack',
+        orientation: 'horizontal',
+        mode: 'grid',
+        horizontalAlignment: 'stretch',
+        verticalAlignment: 'center',
+        horizontalConfig: ['*', 'auto'],
+      },
+      properties: {
+        name: {
+          type: 'string',
+        },
+        innerStack: {
+          type: 'object',
+          lx: {
+            displayType: 'stack',
+            orientation: 'horizontal',
+          },
+          properties: {
+            icon: {
+              type: 'string',
+              lx: {
+                displayType: 'button',
+                icon: 'info',
+                kind: 'ghost',
+              },
+            },
+            flag: {
+              type: 'object',
+              lx: {
+                displayType: 'flag',
+                value: 'lv',
+              },
+            },
+          },
+        },
+      },
+    },
+  }
+}
+```
+
+## Basic Text
+
+```js
+{
+  type: 'string',
+  lx: {
+    displayType: 'text'
+  }
+}
+```
+
+## LxAutoComplete
+ 
+`type='string'` for single selection, or `type='array'` for multiple selection mode
+```js
+{
+  autoComplete: {
+    type: 'string',
+    lx: {
+      displayType: 'autoComplete'
+
+      items:  [{id: 'one', name: 'One'}, {id: 'two', name: 'Two'}],
+      idAttribute: 'id',
+      nameAttribute: 'name',
+      dictionary: null,
+      groupId:null,
+      queryMinLength: 0,
+      queryMaxLength: null,
+      queryDebounce: 200,
+      placeholder: null,
+      tooltip: 'AutoComplete tooltip',
+      readOnly: false,
+      disabled: false,
+      loading: false,
+      hasDetails: false,
+      detailMode: 'simple',
+      variant: 'default',
+      preloadedItems: null,
+      labelId: null,
+      hasSelectAll: false,
+      searchAttributes: null
+    }
+  }
+}
+```
+
+## LxButton
+
+### type="string"
+schema: 
+```js
+{
+  button: {
+    type: 'string',
+    lx: {
+      displayType: 'button'
+
+      id: 'button-id',
+      title: 'button title',
+      busyTooltip: '',
+      icon: 'flash',
+      iconSet: 'cds',
+      iconVariant: 'default',
+      kind: 'primary',
+      variant: 'default',
+      size: 'default',
+      destructive: false,
+      href: {},
+      disabled: false,
+      loading: false,
+      busy: false,
+      badge: '',
+      badgeType: 'default', 
+      active: false,
+      tabindex:  0,
+      customClass: '',
+      openInNewTab: false,
+    }
+  }
+}
+```
+
+modelValue:
+
+```js
+{
+  button: 'button label',
+}
+```
+
+### type="object"
+schema: 
+```js
+{
+  button: {
+    type: 'object',
+    lx: {
+      displayType: 'button'
+    }
+  }
+}
+```
+modelValue:
+
+```js
+{
+  button: {
+    label: 'button label',
+    title: 'button title',
+    busyTooltip: '',
+    icon: 'flash',
+    iconSet: 'cds',
+    iconVariant: 'default',
+    kind: 'primary',
+    variant: 'default',
+    size: 'default',
+    destructive: false,
+    href: {},
+    disabled: false,
+    loading: false,
+    busy: false,
+    badge: '',
+    badgeType: 'default', 
+    active: false,
+    tabindex:  0,
+    customClass: '',
+    openInNewTab: false,
+  }
+}
+```
+
+## LxCamera
+
+schema:
+```js
+
+{
+  camera: {
+    type: 'string',
+    lx: {
+      displayType: 'camera'
+      id: 'camera-id',
+      cameraSwitcherMode: 'toggle',
+      hasFlashlightToggle: false,
+      imageSize: 'default',
+      preferencesId: 'lx-camera-settings',
+      labelId: null,
+      texts: undefined,
+    }
+  }
+}
+```
+
+## LxCheckbox
+
+```js
+{
+  checkbox: {
+    type: 'boolean',
+    lx: {
+      displayType: 'checkbox',
+      groupId: null,
+      label: 'label',
+      disabled: false,
+      value: 'none',
+      tabindex: '0',
+      labelId: null,
+    }
+  }
+}
+```
+
+## LxContentSwitcher
+
+```js
+{
+  checkbox: {
+    type: 'string',
+    lx: {
+      displayType: 'contentSwitcher'
+      items: [{id: 'one', name: 'One'}, {id: 'two', name: 'Two'}],
+      idAttribute: 'id',
+      nameAttribute: 'name',
+      readOnly: false,
+      disabled: false,
+      kind : 'default',
+      icon : null,
+      tooltip: null,
+      labelId: null,
+    }
+  }
+}
+```
+
+## LxDataVisualizer
+
+### type='array'
+
+schema: 
+```js
+{
+  dataVisualizer: {
+    type: 'array',
+    lx: {
+      displayType: 'dataVisualizer'
+      kind: 'bars-horizontal',
+      thresholds: [],
+      showValues: 'default',
+      idAttribute: 'id',
+      nameAttribute: 'name',
+      colorAttribute: 'color',
+      valueAttribute: 'value',
+      showLegend: false,
+      targets: [],
+      maxValue: null,
+      mode: 'default',
+    }
+  }
+}
+```
+
+modelValue: 
+
+```js
+{
+  dataVisualizer: [{id: 'one', name: 'One', value: 10}, {id: 'two', name: 'Two', value: 8}],
+}
+```
+
+### type='object'
+
+schema: 
+```js
+{
+  dataVisualizer: {
+    type: 'object',
+    lx: {
+      displayType: 'dataVisualizer'
+    }
+  }
+}
+```
+
+modelValue: 
+
+```js
+{
+  dataVisualizer: {
+    kind: 'bars-horizontal',
+    items: [{id: 'one', name: 'One', value: 10}, {id: 'two', name: 'Two', value: 8}],
+    thresholds: [],
+    showValues: 'default',
+    idAttribute: 'id',
+    nameAttribute: 'name',
+    colorAttribute: 'color',
+    valueAttribute: 'value',
+    showLegend: false,
+    targets: [],
+    maxValue: null,
+    mode: 'default',
+  }
+}
+```
+
+## LxDropDownMenu
+
+### type="object"
+schema: 
+```js
+{
+  dropDownMenu: {
+    type: 'object',
+    lx: {
+      displayType: 'dropDownMenu',
+      items: [
+        {
+          label: 'Edit',
+          icon: 'edit',
+        },
+        {
+          label: 'Delete',
+          icon: 'delete',
+          destructive: true,
+        },
+      ]
+    }
+  }
+}
+```
+modelValue:
+
+```js
+{
+  dropDownMenu: {
+    label: 'Open actions',
+    variant: 'icon-only',
+    icon: 'overflow-menu',
+    kind: 'ghost',
+  }
+}
+```
+
+## LxFileUplader
+
+```js
+{
+  file: {
+    type: 'array',
+    lx: {
+      displayType: 'file',
+      kind: 'multiple',
+      mode: 'default',
+      draggable: false,
+      dataType: 'meta',
+      hasSearch: false,
+      disabled: false,
+      loading: false,
+      busy: false,
+      readOnly: false,
+      allowedFileExtensions: [],
+      maxFileSize: 30000000,
+      hasDownloadButton: false,
+      showMeta: true,
+      maxSizeForMeta: 30000000,
+      hasCamera: false,
+      cameraSwitcherMode: 'toggle',
+      hasFlashlightToggle: false,
+      imageSize: 'default',
+      preferencesId: 'lx-camera-settings',
+      labelId: null,
+    }
+  }
+}
+```
+## LxFileViewer 
+
+```js
+{
+  fileViewer: {
+    type: 'string',
+    lx: {
+      displayType: 'fileViewer',
+      scrollable: false,
+      width: 'auto',
+      height: 'auto',
+      fileName: null,
+      showPrintButton: false,
+      showFullScreenButton: true,
+      primaryDownloadButton: false,
+      stickyHeader: true,
+      zoomLevel: null,
+      downloadType: 'default',
+      preloadLibs: [],
+    }
+  }
+}
+```
+
+## LxFlag
+
+### type="string"
+
+schema: 
+```js
+{
+  flag: {
+    type: 'string',
+    lx: {
+      displayType: 'flag'
+      size: 'm',
+      title: 'Latvian flag'
+    }
+  }
+}
+```
+
+modelValue: 
+
+```js
+{
+  flag: 'lv',
+}
+```
+
+### type="object"
+
+schema: 
+```js
+{
+  flag: {
+    type: 'object',
+    lx: {
+      displayType: 'flag'
+    }
+  }
+}
+```
+
+modelValue: 
+
+```js
+{
+  flag: { value: 'lv',  size: 'm', title: 'Latvian flag' },
+}
+```
+
+## LxIcon
+
+### type="string"
+
+schema: 
+```js
+{
+  icon: {
+    type: 'string',
+    lx: {
+      displayType: 'icon'
+      iconSet: 'cds',
+      variant: 'default',
+      customClass: '',
+      animation: 'default',
+      meaningful: false,
+      title: 'Flash icon'
+      desc: '',
+    }
+  }
+}
+```
+
+modelValue: 
+
+```js
+{
+  icon: 'flash',
+}
+```
+
+### type="object"
+
+schema: 
+```js
+{
+  icon: {
+    type: 'object',
+    lx: {
+      displayType: 'icon'
+    }
+  }
+}
+```
+
+modelValue: 
+
+```js
+{
+  icon: { value: 'lv',  size: 'm', title: 'Flash icon' },
+}
+```
+
+## LxIllustration
+
+### type="string"
+
+schema: 
+```js
+{
+  illustration: {
+    type: 'string',
+    lx: {
+      displayType: 'illustration'
+      class: 'lx-illustration'
+      animation: 'default',
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  illustration: 'success',
+}
+```
+
+### type="object"
+
+schema: 
+```js
+{
+  illustration: {
+    type: 'object',
+    lx: {
+      displayType: 'illustration'
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  illustration: { value: 'success',  class: 'lx-illustration', animation: 'default' },
+}
+```
+
+## LxLink
+
+### type="string"
+
+schema: 
+```js
+{
+  link: {
+    type: 'string',
+    lx: {
+      displayType: 'link'
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  link: '/profile',
+}
+```
+
+### type="object"
+
+schema: 
+```js
+{
+  link: {
+    type: 'object',
+    lx: {
+      displayType: 'link'
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  link: { name: 'profile' },
+}
+```
+
+## LxMap
+
+schema: 
+```js
+{
+  map: {
+    type: 'object',
+    lx: {
+      displayType: 'map'
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  map: { 
+    zoom: 2,
+    center: { lat: 0, lng: 0 },
+    showSearch: false,
+    showToolbar: false,
+    ignoreThemeChange: false,
+    hasUserLocation: false,
+   },
+}
+```
+
+## LxMarkdownTextArea
+
+```js
+{ 
+  markdown: {
+    type: 'string',
+    lx: {
+      displayType: 'markdown'
+      placeholder: 'markdown placeholder',
+      rows: 3,
+      maxlength: 500,
+      disabled: false,
+      showColorPicker: false,
+      showLinkEditor: true,
+      tooltip: null,
+      showPlaceholderPicker: false,
+      showImagePicker: false,
+      showUnderlineToggle: true,
+      showHeadingPicker: true,
+      imageMaxSize: 3000000,
+      dictionary: null,
+      labelId: null,
+    }
+  }
+}
+```
+
+## LxNumberSlider
+
+```js
+{
+  numberSlider: {
+    type: 'number',
+    lx: {
+      displayType: 'numberSlider'
+      min: 0,
+      max: 9999,
+      step: 1,
+      stepMultiplier: 5,
+      hasInput: false,
+      labelId: null,
+    }
+  }
+}
+```
+
+## LxPersonDisplay
+
+type can be string, object or array
+```js
+{
+  personDisplay: {
+    type: 'string',
+    lx: {
+      displayType: 'personDisplay'
+      name: 'Name Surname',
+      size: 'm',
+      variant: 'full',
+      description: 'Admin',
+      role: null,
+      institution: null,
+      icon: null,
+      iconSet: null,
+      idAttribute: 'id',
+      nameAttribute: 'name',
+      firstNameAttribute: 'firstName',
+      lastNameAttribute: 'lastName',
+      descriptionAttribute: 'description',
+      roleAttribute: 'role',
+      institutionAttribute: 'institution',
+      iconAttribute: 'icon',
+      iconSetAttribute: 'iconSet',
+      maxLength: 3,
+    }
+  }
+}
+```
+
+## LxQr 
+
+### type="string"
+
+schema: 
+```js
+{
+  qr: {
+    type: 'string',
+    lx: {
+      displayType: 'qr'
+      size: 's',
+      ignoreTheme: false,
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  qr: 'https://github.com/wntrtech/lx-ui',
+}
+```
+
+### type="object"
+
+schema: 
+```js
+{
+  qr: {
+    type: 'object',
+    lx: {
+      displayType: 'qr'
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  qr: { 
+    value: 'https://github.com/wntrtech/lx-ui', size: 's', ignoreTheme: false 
+  }
+}
+```
+
+## LxQrScanner 
+
+```js
+{
+  qrScanner: { 
+    type: 'object',
+    lx: {
+      displayType: 'qrScanner'
+      hasFileUploader: true,
+      kind: 'single',
+      cameraSwitcherMode: 'list',
+      hasFlashlightToggle: false,
+      showAlerts: true,
+      labelId: null,
+    }
+  }
+}
+```
+
+## LxRatings 
+
+```js
+{
+  ratings: { 
+    type: 'string',
+    lx: {
+      displayType: 'ratings'
+      mode: 'edit',
+      variant: 'default',
+      disabled: false,
+    }
+  }
+}
+```
+
+## LxRichTextDisplay
+
+### type="string"
+
+schema: 
+```js
+{
+  richTextDisplay: {
+    type: 'string',
+    lx: {
+      displayType: 'richTextDisplay'
+      loading: false,
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  richTextDisplay: 'Very very rich text',
+}
+```
+
+### type="object"
+
+schema: 
+```js
+{
+  richTextDisplay: {
+    type: 'object',
+    lx: {
+      displayType: 'richTextDisplay'
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  richTextDisplay: { 
+    value: 'https://github.com/wntrtech/lx-ui', loading: false 
+  }
+}
+```
+
+## LxStack 
+
+```js
+{
+  steps: { 
+    type: 'object',
+    lx: {
+      displayType: 'stack'
+      orientation: 'vertical',
+      kind: 'default',
+      mode: 'default',
+      horizontalAlignment: 'leading',
+      verticalAlignment: 'leading',
+      verticalConfig: [],
+      horizontalConfig: [],
+    }
+  }
+}
+```
+
+## LxStateDisplay
+
+### type="string"
+
+schema: 
+```js
+{
+  stateDisplay: {
+    type: 'string',
+    lx: {
+      displayType: 'stateDisplay'
+      dictionary: [
+        {
+          value: 'success',
+          displayName: 'Finished',
+          displayType: 'finished',
+          displayShape: 'circle',
+        },
+      ]
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  stateDisplay: 'success',
+}
+```
+
+### type="object"
+
+schema: 
+```js
+{
+  stateDisplay: {
+    type: 'object',
+    lx: {
+      displayType: 'stateDisplay'
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  stateDisplay: { 
+    value: 'sucess',
+    dictionary: [
+      {
+        value: 'success',
+        displayName: 'Finished',
+        displayType: 'finished',
+        displayShape: 'circle',
+      },
+    ]
+  }
+}
+```
+
+## LxSteps 
+
+```js
+{
+  steps: { 
+    type: 'string',
+    lx: {
+      displayType: 'steps'
+      items: [
+        {id: 'download', name: 'Download', state: 'complete'},
+        {id: 'installation', name: 'Installation', state: 'current'},
+      ],
+      kind: 'default',
+      idAttribute: 'id',
+      nameAttribute: 'name',
+      descriptionAttribute: 'description',
+      stateAttribute: 'state',
+      loading: false,
+      busy: false,
+      disabled: false,
+    }
+  }
+}
+```
+
+## LxVisualPicker 
+
+`type='string'` for single selection, or `type='array'` for multiple selection mode
+
+```js
+{
+  visualPicker: { 
+    type: 'string',
+    lx: {
+      displayType: 'visualPicker'
+      kind: 'europe',
+      readOnly: false,
+      mode: 'default'
+      labelId: null,
+    }
+  }
+}
+```
+
+## LxDayInput 
+
+`type` can be `number` or `object`
+```js
+{
+  dayInput: { 
+    type: 'number',
+    lx: {
+      displayType: 'dayInput'
+      disabled: false,
+      readOnly: false,
+      kind: 'label',
+      labelId: null,
+    }
+  }
+}
+```
+
+## LxDrawPad 
+
+```js
+{
+  drawPad: { 
+    type: 'string',
+    lx: {
+      displayType: 'drawPad'
+      disabled: false,
+      width: '500',
+      height: '400',
+      instrument: 'brush',
+      color: 'black',
+      showInstruments: false,
+      showColorPicker: false,
+      showClearAll: false,
+      labelId: null,
+    }
+  }
+}
+```
+
+## LxLogoDisplay 
+
+### type="string"
+
+schema: 
+```js
+{
+  logoDisplay: {
+    type: 'string',
+    lx: {
+      displayType: 'logoDisplay'
+      kind: 'default',
+      size: 'auto',
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  logoDisplay: 'zzdats',
+}
+```
+
+### type="object"
+
+schema: 
+```js
+{
+  logoDisplay: {
+    type: 'object',
+    lx: {
+      displayType: 'logoDisplay'
+    }
+  }
+}
+```
+
+modelValue: 
+```js
+{
+  logoDisplay: { 
+    value: 'zzdats',
+    kind: 'default',
+    size: 'auto',
+  }
+}
+```

@@ -68,7 +68,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emit = defineEmits(['update:modelValue', 'filter', 'openDetails']);
+const emit = defineEmits(['update:modelValue', 'openDetails']);
 
 const menuOpen = ref(false);
 const refContainer = ref();

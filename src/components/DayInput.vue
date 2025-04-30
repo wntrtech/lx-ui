@@ -37,7 +37,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue', 'changed']);
+const emits = defineEmits(['update:modelValue']);
 
 const inputKind = ref('default');
 const inputMask = ref('integer');

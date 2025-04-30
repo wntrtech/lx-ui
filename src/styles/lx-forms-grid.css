@@ -1632,6 +1632,19 @@ p .lx-person-display-wrapper {
   fill: var(--color-data)
 }
 
+.lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > svg,
+.lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-stack > svg,
+.lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-stack > .lx-stack > svg {
+  height: var(--button-toolbar-primary-icon-width);
+  width: var(--button-toolbar-primary-icon-width);
+  min-height: var(--button-toolbar-primary-icon-width);
+  min-width: var(--button-toolbar-primary-icon-width);
+}
+
+.lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-context-container {
+  align-items: flex-start;
+}
+
 @media (max-width: 1900px) {
   .lx-index {
     display: none;
