@@ -1,22 +1,25 @@
 <script setup>
+import { computed } from 'vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 
 const emits = defineEmits(['emptyStateActionClick']);
 
-defineProps({
+const props = defineProps({
   label: { type: String, default: '' },
   description: { type: String, default: '' },
   icon: { type: String, default: '' },
   actionDefinitions: { type: Array, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      overflowMenu: 'Atvērt papildus iespējas',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  overflowMenu: 'Atvērt papildus iespējas',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 function actionClicked(actionName) {
   emits('emptyStateActionClick', actionName);
@@ -55,7 +58,7 @@ function actionClicked(actionName) {
           <LxButton
             icon="overflow-menu"
             kind="tertiary"
-            :label="texts.overflowMenu"
+            :label="displayTexts.overflowMenu"
             variant="icon-only"
           />
           <template v-slot:panel>

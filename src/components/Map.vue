@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, shallowRef, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import {
   LMap,
   LTileLayer,
@@ -68,25 +69,28 @@ const props = defineProps({
   showToolbar: { type: Boolean, default: false },
   ignoreThemeChange: { type: Boolean, default: false },
   hasUserLocation: { type: Boolean, default: false },
-  texts: {
-    type: Object,
-    default: () => ({
-      clear: 'Notīrīt',
-      search: 'Meklēt',
-      zoomIn: 'Pietuvināt',
-      zoomOut: 'Attālināt',
-      expand: 'Palielināt karti',
-      collapse: 'Samazināt karti',
-      moreOptions: 'Papildus izvēles',
-      grayscaleOn: 'Iespējot pelēktoni',
-      grayscaleOff: 'Atspējot pelēktoni',
-      grayscale: 'Pelēktonis',
-      baseLayers: 'Fona slāņi',
-      overlayLayers: 'Virsslāņi',
-      currentLocation: 'Pietuvināt atrašanās vietu',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  clear: 'Notīrīt',
+  search: 'Meklēt',
+  zoomIn: 'Pietuvināt',
+  zoomOut: 'Attālināt',
+  expand: 'Palielināt karti',
+  collapse: 'Samazināt karti',
+  moreOptions: 'Papildus izvēles',
+  grayscaleOn: 'Iespējot pelēktoni',
+  grayscaleOff: 'Atspējot pelēktoni',
+  grayscale: 'Pelēktonis',
+  baseLayers: 'Fona slāņi',
+  overlayLayers: 'Virsslāņi',
+  currentLocation: 'Pietuvināt atrašanās vietu',
+  errorTitle: 'Kļūda kartes attēlošanā',
+  errorDescription: 'Nav definēts neviens kartes pamata slānis',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const zoom = computed({
   get() {
@@ -286,11 +290,17 @@ watch(
 );
 
 const toolbarActions = computed(() => [
-  { id: 'zoomIn', name: props.texts.zoomIn, icon: 'zoom-in', groupId: '1', area: 'right' },
-  { id: 'zoomOut', name: props.texts.zoomOut, icon: 'zoom-Out', groupId: '1', area: 'right' },
+  { id: 'zoomIn', name: displayTexts.value.zoomIn, icon: 'zoom-in', groupId: '1', area: 'right' },
+  {
+    id: 'zoomOut',
+    name: displayTexts.value.zoomOut,
+    icon: 'zoom-Out',
+    groupId: '1',
+    area: 'right',
+  },
   {
     id: 'fullscreen',
-    name: isExpanded.value ? props.texts.collapse : props.texts.expand,
+    name: isExpanded.value ? displayTexts.value.collapse : displayTexts.value.expand,
     icon: isExpanded.value ? 'collapse' : 'expand',
     groupId: '2',
     area: 'right',
@@ -332,7 +342,7 @@ onUnmounted(() => {
             icon="search"
             kind="ghost"
             variant="icon-only"
-            :label="texts.search"
+            :label="displayTexts.search"
             @click="emitSearch()"
           />
           <LxButton
@@ -340,7 +350,7 @@ onUnmounted(() => {
             icon="clear"
             kind="ghost"
             variant="icon-only"
-            :label="texts.clear"
+            :label="displayTexts.clear"
             @click="clearSearch()"
           />
         </div>
@@ -351,7 +361,7 @@ onUnmounted(() => {
           <div class="lx-map-grayscale">
             <LxToggle
               v-model="isGrayscale"
-              :tooltip="isGrayscale ? texts?.grayscaleOff : texts?.grayscaleOn"
+              :tooltip="isGrayscale ? displayTexts.grayscaleOff : displayTexts.grayscaleOn"
               @update:model-value="grayscaleToggle()"
             />
             <LxButton
@@ -359,22 +369,22 @@ onUnmounted(() => {
               icon="location-current"
               kind="ghost"
               variant="icon-only"
-              :label="texts.currentLocation"
+              :label="displayTexts.currentLocation"
               @click="centerLocation"
             />
             <LxDropDownMenu>
               <LxButton
                 icon="overflow-menu"
                 kind="ghost"
-                :label="texts.moreOptions"
+                :label="displayTexts.moreOptions"
                 variant="icon-only"
               />
               <template #clickSafePanel>
-                <p class="lx-menu-label">{{ texts.grayscale }}:</p>
+                <p class="lx-menu-label">{{ displayTexts.grayscale }}:</p>
                 <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" />
                 <div v-if="baseLayerDefinitions?.length > 1">
                   <hr />
-                  <p class="lx-menu-label">{{ texts.baseLayers }}:</p>
+                  <p class="lx-menu-label">{{ displayTexts.baseLayers }}:</p>
                   <LxButton
                     v-for="layer in baseLayerDefinitions"
                     :key="layer?.id"
@@ -386,7 +396,7 @@ onUnmounted(() => {
                 </div>
                 <div v-if="overlayLayerDefinitions?.length > 0">
                   <hr />
-                  <p class="lx-menu-label">{{ texts.overlayLayers }}:</p>
+                  <p class="lx-menu-label">{{ displayTexts.overlayLayers }}:</p>
                   <div class="overlay-layer" v-for="layer in allOverlayObj" :key="layer.id">
                     <LxToggle v-model="layer.show" @update:model-value="updateSelectedOverlay()" />
                     <p>{{ layer?.name }}</p>
@@ -473,8 +483,8 @@ onUnmounted(() => {
     </LMap>
     <LxEmptyState
       v-else-if="baseLayerDefinitions?.length === 0"
-      label="Kļūda kartes attēlošanā"
-      description="Nav definēts neviens kartes pamata slānis"
+      :label="displayTexts.value.errorTitle"
+      :description="displayTexts.value.errorDescription"
       icon="invalid"
     />
   </div>

@@ -38,10 +38,6 @@ describe('LxMasterDetail', () => {
       expect(props.descriptionAttribute).toBe(null);
       expect(props.categoryAttribute).toBe('category');
       expect(props.invalidAttribute).toBe('invalid');
-      expect(props.texts.add).toBe('Pievienot ierakstu');
-      expect(props.texts.noData).toBe('Nav datu');
-      expect(props.texts.noDataDescription).toBe('Izvēlieties ierakstu, lai apskatītu datus');
-      expect(props.texts.back).toBe('Atgriezties atpakaļ');
     });
 
     test('should accept provided values', () => {

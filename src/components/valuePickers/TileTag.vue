@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
@@ -30,19 +31,20 @@ const props = defineProps({
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas izvēlētās vērtības',
-      notSelected: 'Nav izvēlēts',
-      searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-      selectAll: 'Izvēlēties visu',
-    }),
-  },
+  texts: { type: Object, default: () => {} },
 });
 
 const emits = defineEmits(['update:modelValue']);
+
+const textsDefault = {
+  clearQuery: 'Notīrīt meklēšanu',
+  clearChosen: 'Notīrīt visas izvēlētās vērtības',
+  notSelected: 'Nav izvēlēts',
+  searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+  selectAll: 'Izvēlēties visu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const model = computed({
   get() {
@@ -66,7 +68,7 @@ const itemsDisplay = computed(() => {
   if (props.kind === 'single' && props.nullable)
     res.unshift({
       [props.idAttribute]: 'notSelected',
-      [props.nameAttribute]: props.texts.notSelected,
+      [props.nameAttribute]: displayTexts.value.notSelected,
     });
 
   return res;
@@ -377,8 +379,8 @@ function updateDescriptionTabIndexes(items) {
               : 'checkbox'
           "
           :disabled="disabled"
-          :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
-          :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+          :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+          :label="hasSearch ? '' : areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
           @click="selectAll"
         />
         <LxTextInput
@@ -387,7 +389,7 @@ function updateDescriptionTabIndexes(items) {
           ref="queryInput"
           v-model="query"
           kind="search"
-          :placeholder="texts.searchPlaceholder"
+          :placeholder="displayTexts.searchPlaceholder"
           role="search"
           :aria-labelledby="labelId"
         />
@@ -396,7 +398,7 @@ function updateDescriptionTabIndexes(items) {
           icon="clear"
           kind="ghost"
           variant="icon-only"
-          :label="texts.clearQuery"
+          :label="displayTexts.clearQuery"
           :disabled="disabled"
           @click="query = ''"
         />

@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxIcon from '@/components/Icon.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -14,18 +15,19 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  texts: {
-    type: Object,
-    default: () => ({
-      label: 'Vērtējums',
-      star1: 'Ļoti slikti',
-      star2: 'Slikti',
-      star3: 'Gandrīz labi',
-      star4: 'Labi',
-      star5: 'Izcili',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  label: 'Vērtējums',
+  star1: 'Ļoti slikti',
+  star2: 'Slikti',
+  star3: 'Gandrīz labi',
+  star4: 'Labi',
+  star5: 'Izcili',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const model = computed({
   get() {
@@ -61,11 +63,11 @@ const valueDecomposition = computed(() => {
 
 const valueDescription = computed(() => {
   if (props.kind === '5stars') {
-    if (model.value >= 5.0) return props.texts.star5;
-    if (model.value >= 4.0) return props.texts.star4;
-    if (model.value >= 3.0) return props.texts.star3;
-    if (model.value >= 2.0) return props.texts.star2;
-    if (model.value >= 1.0) return props.texts.star1;
+    if (model.value >= 5.0) return displayTexts.value.star5;
+    if (model.value >= 4.0) return displayTexts.value.star4;
+    if (model.value >= 3.0) return displayTexts.value.star3;
+    if (model.value >= 2.0) return displayTexts.value.star2;
+    if (model.value >= 1.0) return displayTexts.value.star1;
   }
   return '';
 });
@@ -169,7 +171,7 @@ function reset() {
     </div>
     <template #panel>
       <div class="lx-row">
-        <label>{{ props.texts.label }}</label>
+        <label>{{ displayTexts.label }}</label>
         <p v-if="model" class="lx-data">
           <strong>{{ model.toString() }}</strong
           ><span class="lx-secondary"> / 5:</span> {{ valueDescription }}

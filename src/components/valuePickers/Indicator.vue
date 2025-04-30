@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { textSearch } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import useLx from '@/hooks/useLx';
 import LxIcon from '@/components/Icon.vue';
@@ -33,17 +34,18 @@ const props = defineProps({
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas izvēlētās vērtības',
-      notSelected: 'Nav izvēlēts',
-      searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-      selectAll: 'Izvēlēties visu'
-    }),
-  },
+  texts: { type: Object, default: () => {} },
 });
+
+const textsDefault = {
+  clearQuery: 'Notīrīt meklēšanu',
+  clearChosen: 'Notīrīt visas izvēlētās vērtības',
+  notSelected: 'Nav izvēlēts',
+  searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+  selectAll: 'Izvēlēties visu'
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -66,7 +68,7 @@ const itemsModel = ref({});
 const itemsDisplay = computed( () => { 
     const res = [... props.items];
     if(props.kind === 'single' && props.nullable)  
-      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: props.texts.notSelected});
+      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: props.displayTexts.notSelected});
   
     return res
   }
@@ -341,8 +343,8 @@ const indicatorTooltips = computed(() => {
         v-if="hasSelectAll && kind === 'multiple'"
         :disabled="disabled"
         @click="selectAll"
-        :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
-        :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+        :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+        :label="hasSearch ? '' : areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
       />
       <LxTextInput
         v-if="hasSearch"
@@ -350,7 +352,7 @@ const indicatorTooltips = computed(() => {
         ref="queryInput"
         v-model="query"
         kind="search"
-        :placeholder="texts.searchPlaceholder"
+        :placeholder="displayTexts.searchPlaceholder"
         role="search"
       />
       <LxButton
@@ -358,7 +360,7 @@ const indicatorTooltips = computed(() => {
         icon="clear"
         kind="ghost"
         variant="icon-only"
-        :label="texts.clearQuery"
+        :label="displayTexts.clearQuery"
         :disabled="disabled"
         @click="query = ''"
       />

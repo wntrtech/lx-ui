@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { shallowRef, watch, computed, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -31,14 +32,15 @@ const props = defineProps({
   hasSelectButton: { type: Boolean, default: false },
   selectStatus: { type: String, default: 'none' }, // none, some, all
   customClass: { type: String, default: '' },
-  texts: {
-    type: Object,
-    default: () => ({
-      selectWholeGroup: 'Izvēlēties visu',
-      clearSelected: 'Attīrīt izvēles',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  selectWholeGroup: 'Izvēlēties visu',
+  clearSelected: 'Attīrīt izvēles',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue', 'selectAll']);
 
@@ -172,7 +174,9 @@ defineExpose({ focus });
               : 'checkbox'
           "
           variant="icon-only"
-          :label="selectStatus === 'none' ? texts.selectWholeGroup : texts.clearSelected"
+          :label="
+            selectStatus === 'none' ? displayTexts.selectWholeGroup : displayTexts.clearSelected
+          "
           @click="selectExpander($event, id)"
         />
       </template>

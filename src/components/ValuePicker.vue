@@ -1,6 +1,7 @@
 <script setup>
 import { computed, watch, onMounted, ref, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import LxValuePickerDropDown from '@/components/valuePickers/Dropdown.vue';
@@ -35,17 +36,18 @@ const props = defineProps({
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas izvēlētās vērtības',
-      notSelected: 'Nav izvēlēts',
-      searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-      selectAll: 'Izvēlēties visu',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  clearQuery: 'Notīrīt meklēšanu',
+  clearChosen: 'Notīrīt visas izvēlētās vērtības',
+  notSelected: 'Nav izvēlēts',
+  searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+  selectAll: 'Izvēlēties visu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -151,7 +153,7 @@ onMounted(() => {
       :disabled="disabled"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
-      :texts="texts"
+      :texts="displayTexts"
       :placeholder="placeholder"
       :tooltip="tooltip"
       :has-search="hasSearch"
@@ -182,7 +184,7 @@ onMounted(() => {
       :disabled="disabled"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
-      :texts="texts"
+      :texts="displayTexts"
       :placeholder="placeholder"
       :tooltip="tooltip"
       :has-search="hasSearch"
@@ -219,7 +221,7 @@ onMounted(() => {
       :disabled="disabled"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
-      :texts="texts"
+      :texts="displayTexts"
       :placeholder="placeholder"
       :tooltip="tooltip"
       :always-as-array="alwaysAsArray"
@@ -250,7 +252,7 @@ onMounted(() => {
       :disabled="disabled"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
-      :texts="texts"
+      :texts="displayTexts"
       :placeholder="placeholder"
       :tooltip="tooltip"
       :always-as-array="alwaysAsArray"
@@ -283,7 +285,7 @@ onMounted(() => {
       :disabled="disabled"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
-      :texts="texts"
+      :texts="displayTexts"
       :placeholder="placeholder"
       :tooltip="tooltip"
       :always-as-array="alwaysAsArray"
@@ -313,7 +315,7 @@ onMounted(() => {
       :disabled="disabled"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
-      :texts="texts"
+      :texts="displayTexts"
       :placeholder="placeholder"
       :tooltip="tooltip"
       :has-search="hasSearch"

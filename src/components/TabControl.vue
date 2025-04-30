@@ -4,19 +4,21 @@ import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   value: { type: Array, default: () => [] },
   level: { type: Number, default: 1 },
   kind: { type: String, default: 'default' }, // 'default', 'icon-only', 'combo'
-  texts: {
-    type: Object,
-    default: () => ({
-      previous: 'Iepriekšējais solis',
-      next: 'Nākamais solis',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  previous: 'Iepriekšējais solis',
+  next: 'Nākamais solis',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const activeItemCode = ref('');
 const activeItem = ref(null);
@@ -111,7 +113,7 @@ defineExpose({ setActiveTab, isActiveTab });
         <LxButton
           icon="previous-page"
           kind="ghost"
-          :label="texts.previous"
+          :label="displayTexts.previous"
           variant="icon-only"
           :disabled="isActiveTab(value[0].id)"
           @click="setPreviousTab"
@@ -119,7 +121,7 @@ defineExpose({ setActiveTab, isActiveTab });
         <LxButton
           icon="next-page"
           kind="ghost"
-          :label="texts.next"
+          :label="displayTexts.next"
           variant="icon-only"
           :disabled="isActiveTab(value[value.length - 1].id)"
           @click="setNextTab"

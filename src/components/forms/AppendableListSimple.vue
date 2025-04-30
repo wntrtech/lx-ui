@@ -2,6 +2,7 @@
 import { computed, onMounted } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxForm from '@/components/forms/Form.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   modelValue: { type: Array, default: null },
@@ -11,12 +12,7 @@ const props = defineProps({
   kind: { type: String, default: 'default' }, // default || compact
   requiredMode: { type: String, default: 'optional' }, // required || required-asterisk || optional
   canAddItems: { type: Boolean, default: true },
-  texts: {
-    type: Object,
-    default: () => ({
-      removeItem: 'Dzēst ierakstu',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -29,6 +25,12 @@ const model = computed({
     emits('update:modelValue', value);
   },
 });
+
+const textsDefault = {
+  removeItem: 'Dzēst ierakstu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 function removeItem(index) {
   model.value.splice(index, 1);
@@ -62,7 +64,7 @@ onMounted(() => {
             v-if="!readOnly"
             icon="remove-item"
             variant="icon-only"
-            :label="texts.removeItem"
+            :label="displayTexts.removeItem"
             :destructive="true"
             kind="ghost"
             @click="removeItem(index)"

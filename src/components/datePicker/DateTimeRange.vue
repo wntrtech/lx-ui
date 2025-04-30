@@ -20,6 +20,7 @@ import {
   getMonthNameByOrder,
 } from '@/components/datePicker/helpers';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -41,33 +42,35 @@ const props = defineProps({
   rangeMonth: { type: String, default: 'next' }, // next, previous
   clearIfNotExact: { type: Boolean, default: false },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      clear: 'Attīrīt',
-      clearButton: 'Attīrīt vērtību',
-      todayButton: 'Šodiena',
-      clearStart: 'Notīrīt sākuma vērtību',
-      clearEnd: 'Notīrīt beigu vērtību',
-      next: 'Nākamais',
-      previous: 'Iepriekšējais',
-      nextMonth: 'Nākamais mēnesis',
-      previousMonth: 'Iepriekšējais mēnesis',
-      nextYear: 'Nākamais gads',
-      previousYear: 'Iepriekšējais gads',
-      nextDecade: 'Nākamā dekāde',
-      previousDecade: 'Iepriekšējā dekāde',
-      doNotIndicateStart: 'Nenorādīt sākumu',
-      doNotIndicateEnd: 'Nenorādīt beigas',
-      scrollUp: 'Ritināt uz augšu',
-      scrollDown: 'Ritināt uz leju',
-      startDateLabel: 'Sākuma datums',
-      endDateLabel: 'Beigu datums',
-      dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
-      selectedStartDate: 'Izvēlēts sākuma datums',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  clear: 'Attīrīt',
+  clearButton: 'Attīrīt vērtību',
+  todayButton: 'Šodiena',
+  clearStart: 'Notīrīt sākuma vērtību',
+  clearEnd: 'Notīrīt beigu vērtību',
+  next: 'Nākamais',
+  previous: 'Iepriekšējais',
+  nextMonth: 'Nākamais mēnesis',
+  previousMonth: 'Iepriekšējais mēnesis',
+  nextYear: 'Nākamais gads',
+  previousYear: 'Iepriekšējais gads',
+  nextDecade: 'Nākamā dekāde',
+  previousDecade: 'Iepriekšējā dekāde',
+  doNotIndicateStart: 'Nenorādīt sākumu',
+  doNotIndicateEnd: 'Nenorādīt beigas',
+  scrollUp: 'Ritināt uz augšu',
+  scrollDown: 'Ritināt uz leju',
+  startDateLabel: 'Sākuma datums',
+  endDateLabel: 'Beigu datums',
+  dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
+  selectedStartDate: 'Izvēlēts sākuma datums',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
 const emits = defineEmits(['update:startDate', 'update:endDate']);
 
 const { dateFormat, dateTimeFormat } = useLx().getGlobals();
@@ -411,7 +414,7 @@ onBeforeMount(() => {
           :first-day-of-the-week="localeFirstDay"
           picker-type="range"
           :clearIfNotExact="clearIfNotExact"
-          :texts="texts"
+          :texts="displayTexts"
           :labelled-by="labelledBy"
         />
 
@@ -429,7 +432,7 @@ onBeforeMount(() => {
             :locale="localeComputed"
             :first-day-of-the-week="localeFirstDay"
             :clearIfNotExact="clearIfNotExact"
-            :texts="texts"
+            :texts="displayTexts"
             :labelled-by="labelledBy"
           />
 
@@ -447,7 +450,7 @@ onBeforeMount(() => {
             :locale="localeComputed"
             :first-day-of-the-week="localeFirstDay"
             :clearIfNotExact="clearIfNotExact"
-            :texts="texts"
+            :texts="displayTexts"
             :labelled-by="labelledBy"
           />
         </div>

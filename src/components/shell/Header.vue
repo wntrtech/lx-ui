@@ -7,6 +7,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
 import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
@@ -63,35 +64,34 @@ const props = defineProps({
   megaMenuHasShowAll: { type: Boolean, default: false },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
-
-  texts: {
-    type: Object,
-    required: false,
-    default: () => ({
-      defaultBack: 'Atpakaļ',
-      logOut: 'Iziet',
-      openAlerts: 'Atvērt sarakstu',
-      openNavbar: 'Atvērt izvēlni',
-      helpTitle: 'Palīdzība',
-      alertsTitle: 'Paziņojumi',
-      languagesTitle: 'Valodu izvēle',
-      close: 'Aizvērt',
-      contextPersonsLabel: 'Izvēlieties konteksta personu',
-      alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
-      contextPersonsButtonLabel: 'Konteksta personas',
-      alternativeProfilesButtonLabel: 'Alternatīvie profili',
-      themeTitle: 'Noformējuma izvēle',
-      themeAuto: 'Automātiskais režīms',
-      themeLight: 'Gaišais režīms',
-      themeDark: 'Tumšais režīms',
-      themeContrast: 'Kontrastais režīms',
-      animations: 'Samazināt kustības',
-      fonts: 'Iekārtas fonti',
-      showAllLabel: 'Vairāk',
-      megaMenuTitle: 'Lietotnes',
-    }),
-  },
+  texts: { type: Object, default: () => {} },
 });
+
+const textsDefault = {
+  defaultBack: 'Atpakaļ',
+  logOut: 'Iziet',
+  openAlerts: 'Atvērt sarakstu',
+  openNavbar: 'Atvērt izvēlni',
+  helpTitle: 'Palīdzība',
+  alertsTitle: 'Paziņojumi',
+  languagesTitle: 'Valodu izvēle',
+  close: 'Aizvērt',
+  contextPersonsLabel: 'Izvēlieties konteksta personu',
+  alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
+  contextPersonsButtonLabel: 'Konteksta personas',
+  alternativeProfilesButtonLabel: 'Alternatīvie profili',
+  themeTitle: 'Noformējuma izvēle',
+  themeAuto: 'Automātiskais režīms',
+  themeLight: 'Gaišais režīms',
+  themeDark: 'Tumšais režīms',
+  themeContrast: 'Kontrastais režīms',
+  animations: 'Samazināt kustības',
+  fonts: 'Iekārtas fonti',
+  showAllLabel: 'Vairāk',
+  megaMenuTitle: 'Lietotnes',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const { y } = useScroll(window);
 
@@ -133,7 +133,7 @@ const goBackLabel = computed(() => {
   if (props.breadcrumbs.length === 1) {
     return props.breadcrumbs[0]?.label;
   }
-  return props.backLabel ? props.backLabel : props.texts.defaultBack;
+  return props.backLabel ? props.backLabel : displayTexts.value.defaultBack;
 });
 
 const goBackPath = computed(() => {
@@ -367,7 +367,7 @@ onMounted(() => {
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
         variant="icon-only"
-        :label="navBarSwitch ? texts.openNavbar : texts.close"
+        :label="navBarSwitch ? displayTexts.openNavbar : displayTexts.close"
         kind="ghost"
         :tabindex="navBarShortMode ? 1 : -1"
         @click="navToggle"
@@ -473,14 +473,14 @@ onMounted(() => {
         @alerts-click="alertsClicked"
         @help-click="helpClicked"
         @log-out="logOut"
-        :texts="texts"
+        :texts="displayTexts"
       />
       <LxButton
         v-if="!hideNavBar"
         id="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
         variant="icon-only"
-        :label="navBarSwitch ? texts.openNavbar : texts.close"
+        :label="navBarSwitch ? displayTexts.openNavbar : displayTexts.close"
         kind="ghost"
         @click="navToggle"
       />
@@ -523,17 +523,17 @@ onMounted(() => {
       @alerts-click="alertsClicked"
       @help-click="helpClicked"
       @log-out="logOut"
-      :texts="texts"
+      :texts="displayTexts"
     />
   </div>
 
   <LxModal
     ref="alternativeProfilesModal"
-    :label="texts.alternativeProfilesLabel"
+    :label="displayTexts.alternativeProfilesLabel"
     size="m"
     :button-secondary-visible="true"
     :button-primary-visible="false"
-    :button-secondary-label="texts.close"
+    :button-secondary-label="displayTexts.close"
     :button-secondary-is-cancel="true"
   >
     <LxList
@@ -561,11 +561,11 @@ onMounted(() => {
 
   <LxModal
     ref="contextPersonModal"
-    :label="texts.contextPersonsLabel"
+    :label="displayTexts.contextPersonsLabel"
     size="m"
     :button-secondary-visible="true"
     :button-primary-visible="false"
-    :button-secondary-label="texts.close"
+    :button-secondary-label="displayTexts.close"
     :button-secondary-is-cancel="true"
   >
     <LxList

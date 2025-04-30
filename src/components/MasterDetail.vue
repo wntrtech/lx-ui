@@ -5,6 +5,7 @@ import LxEmptyState from '@/components/EmptyState.vue';
 import LxListItem from '@/components/list/ListItem.vue';
 import { useWindowSize, useElementSize } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   modelValue: { type: Array, default: () => [] },
@@ -15,16 +16,17 @@ const props = defineProps({
   descriptionAttribute: { type: String, default: null },
   categoryAttribute: { type: String, default: 'category' },
   invalidAttribute: { type: String, default: 'invalid' },
-  texts: {
-    type: Object,
-    default: () => ({
-      add: 'Pievienot ierakstu',
-      noData: 'Nav datu',
-      noDataDescription: 'Izvēlieties ierakstu, lai apskatītu datus',
-      back: 'Atgriezties atpakaļ',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  add: 'Pievienot ierakstu',
+  noData: 'Nav datu',
+  noDataDescription: 'Izvēlieties ierakstu, lai apskatītu datus',
+  back: 'Atgriezties atpakaļ',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue', 'newItemAdded', 'selectionChanged']);
 
@@ -83,7 +85,7 @@ defineExpose({ selectItem });
           customClass="lx-master-detail-button"
           icon="add-item"
           kind="tertiary"
-          :label="texts?.add"
+          :label="displayTexts.add"
           @click="addItem"
         />
         <ul class="lx-master-detail-list">
@@ -111,7 +113,7 @@ defineExpose({ selectItem });
       :id="`${id}-action-back`"
       icon="back"
       variant="icon-only"
-      :label="texts.back"
+      :label="displayTexts.back"
       kind="ghost"
       @click="activeItemCode = null"
     />
@@ -119,8 +121,8 @@ defineExpose({ selectItem });
       <div class="lx-detail" v-if="windowWidth >= 1200 || activeItemCode" ref="detailRef">
         <LxEmptyState
           v-if="!activeItemCode"
-          :label="texts?.noData"
-          :description="texts?.noDataDescription"
+          :label="displayTexts.noData"
+          :description="displayTexts.noDataDescription"
         />
         <slot v-else />
       </div>

@@ -2,6 +2,7 @@
 import { shallowRef, computed, watch, defineAsyncComponent } from 'vue';
 import IconDefault from '@/components/icons/Default.vue';
 import useLx from '@/hooks/useLx';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   value: { type: String, default: 'default' },
@@ -14,11 +15,15 @@ const props = defineProps({
   desc: { type: String, default: '' },
   texts: {
     type: Object,
-    default: () => ({
-      iconLabel: 'Piktogramma',
-    }),
+    default: () => ({}),
   },
 });
+
+const defaultTexts = {
+  iconLabel: 'Piktogramma',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
 
 const iconPath = shallowRef(null);
 
@@ -93,7 +98,7 @@ const gradientComputed = computed(() => {
     focusable="false"
   >
     <title>{{ props.title }}</title>
-    <desc>{{ props.desc ? props.desc : `${texts.iconLabel} "${icon}"` }}</desc>
+    <desc>{{ props.desc ? props.desc : `${displayTexts.iconLabel} "${icon}"` }}</desc>
     <defs v-if="variant !== 'default'">
       <linearGradient id="gradient">
         <stop offset="0%" stop-color="var(--color-brand)" />

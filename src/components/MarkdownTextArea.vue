@@ -18,6 +18,7 @@ import { Markdown } from 'tiptap-markdown';
 import { isUrl, generateUUID } from '@/utils/stringUtils';
 import { checkArrayObjectProperty } from '@/utils/arrayUtils';
 import { useElementSize } from '@vueuse/core';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxModal from '@/components/Modal.vue';
@@ -54,46 +55,48 @@ const props = defineProps({
   imageMaxSize: { type: Number, default: 3000000 }, // 3MB
   dictionary: { type: Object, default: null },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      undo: 'Atcelt pēdējo darbību',
-      redo: 'Atgriezt atcelto darbību',
-      bold: 'Treknraksts',
-      italic: 'Slīpraksts',
-      underline: 'Pasvītrojums',
-      strikethrough: 'Pārsvītrojums',
-      color: 'Krāsas izvēle',
-      clear: 'Notīrīt krāsu',
-      heading: 'Virsraksta izmēra izvēle',
-      headingH1: 'Virsraksts 1',
-      headingH2: 'Virsraksts 2',
-      headingH3: 'Virsraksts 3',
-      headingH4: 'Virsraksts 4',
-      headingH5: 'Virsraksts 5',
-      headingH6: 'Virsraksts 6',
-      bulleted: 'Saraksts bez numerācijas',
-      numbered: 'Saraksts ar numerāciju',
-      link: 'Saite',
-      image: 'Attēls',
-      templatePicker: 'Vietturi',
-      modalLabel: 'Saites izveidošana',
-      modalDescription: 'Pievienot saiti uz:',
-      save: 'Saglabāt',
-      close: 'Aizvērt',
-      imageModalLabel: 'Attēla pievienošana',
-      imageModalLinkDescription: 'Pievienot attēlu no URL:',
-      imageModalAltDescription: 'Attēla alternatīvais nosaukums',
-      imageModalTitleDescription: 'Attēla virsraksts',
-      invalidImageLink: 'Ievadītais URL nav derīgs',
-      chooseFile: 'Izvēlēties attēlu',
-      imageModalFileDescription: 'Pievienot attēla datni',
-      inputTypeUrl: 'Saite',
-      inputTypeFile: 'Datne',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
 const emits = defineEmits(['update:modelValue', 'notification', 'preparedImage']);
+
+const textsDefault = {
+  undo: 'Atcelt pēdējo darbību',
+  redo: 'Atgriezt atcelto darbību',
+  bold: 'Treknraksts',
+  italic: 'Slīpraksts',
+  underline: 'Pasvītrojums',
+  strikethrough: 'Pārsvītrojums',
+  color: 'Krāsas izvēle',
+  clear: 'Notīrīt krāsu',
+  heading: 'Virsraksta izmēra izvēle',
+  headingH1: 'Virsraksts 1',
+  headingH2: 'Virsraksts 2',
+  headingH3: 'Virsraksts 3',
+  headingH4: 'Virsraksts 4',
+  headingH5: 'Virsraksts 5',
+  headingH6: 'Virsraksts 6',
+  bulleted: 'Saraksts bez numerācijas',
+  numbered: 'Saraksts ar numerāciju',
+  link: 'Saite',
+  image: 'Attēls',
+  templatePicker: 'Vietturi',
+  modalLabel: 'Saites izveidošana',
+  modalDescription: 'Pievienot saiti uz:',
+  save: 'Saglabāt',
+  close: 'Aizvērt',
+  imageModalLabel: 'Attēla pievienošana',
+  imageModalLinkDescription: 'Pievienot attēlu no URL:',
+  imageModalAltDescription: 'Attēla alternatīvais nosaukums',
+  imageModalTitleDescription: 'Attēla virsraksts',
+  invalidImageLink: 'Ievadītais URL nav derīgs',
+  chooseFile: 'Izvēlēties attēlu',
+  imageModalFileDescription: 'Pievienot attēla datni',
+  inputTypeUrl: 'Saite',
+  inputTypeFile: 'Datne',
+  invalidLinkMessage: 'Saite tika ievadīta nekorektā formā!',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const loading = ref(true);
 
@@ -150,35 +153,35 @@ const markdownImageModal = ref();
 const isNotLink = ref(false);
 const isNotImage = ref(false);
 
-const actionDefinitions = ref([
+const actionDefinitions = computed(() => [
   {
     id: 'Heading1',
-    label: props.texts.headingH1,
+    label: displayTexts.value.headingH1,
     level: 1,
   },
   {
     id: 'Heading2',
-    label: props.texts.headingH2,
+    label: displayTexts.value.headingH2,
     level: 2,
   },
   {
     id: 'Heading3',
-    label: props.texts.headingH3,
+    label: displayTexts.value.headingH3,
     level: 3,
   },
   {
     id: 'Heading4',
-    label: props.texts.headingH4,
+    label: displayTexts.value.headingH4,
     level: 4,
   },
   {
     id: 'Heading5',
-    label: props.texts.headingH5,
+    label: displayTexts.value.headingH5,
     level: 5,
   },
   {
     id: 'Heading6',
-    label: props.texts.headingH6,
+    label: displayTexts.value.headingH6,
     level: 6,
   },
 ]);
@@ -480,7 +483,6 @@ watch(
 );
 
 const isSelectionEmpty = computed(() => editor.value?.state?.selection?.empty);
-const InvalidMessage = ref('Saite tika ievadīta nekorektā formā!');
 
 function setLink() {
   isNotLink.value = false;
@@ -559,10 +561,10 @@ function onError(id, error) {
 
 const imageModalInputType = ref('url');
 
-const imageInputTypes = [
-  { id: 'url', name: props.texts.inputTypeUrl },
-  { id: 'fileUploader', name: props.texts.inputTypeFile },
-];
+const imageInputTypes = computed(() => [
+  { id: 'url', name: displayTexts.value.inputTypeUrl },
+  { id: 'fileUploader', name: displayTexts.value.inputTypeFile },
+]);
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
@@ -593,7 +595,7 @@ onBeforeUnmount(() => {
               icon="undo"
               kind="ghost"
               variant="icon-only"
-              :label="texts.undo"
+              :label="displayTexts.undo"
               @click="editor.chain().focus().undo().run()"
               :disabled="!editor.can().undo() || isDisabled"
             />
@@ -601,7 +603,7 @@ onBeforeUnmount(() => {
               icon="redo"
               kind="ghost"
               variant="icon-only"
-              :label="texts.redo"
+              :label="displayTexts.redo"
               @click="editor.chain().focus().redo().run()"
               :disabled="!editor.can().redo() || isDisabled"
             />
@@ -612,7 +614,7 @@ onBeforeUnmount(() => {
               icon="text-bold"
               kind="ghost"
               variant="icon-only"
-              :label="texts.bold"
+              :label="displayTexts.bold"
               @click="editor.chain().focus().toggleBold().run()"
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('bold')"
@@ -621,7 +623,7 @@ onBeforeUnmount(() => {
               icon="text-italic"
               kind="ghost"
               variant="icon-only"
-              :label="texts.italic"
+              :label="displayTexts.italic"
               @click="editor.chain().focus().toggleItalic().run()"
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('italic')"
@@ -631,7 +633,7 @@ onBeforeUnmount(() => {
               icon="text-underline"
               kind="ghost"
               variant="icon-only"
-              :label="texts.underline"
+              :label="displayTexts.underline"
               @click="editor.chain().focus().toggleUnderline().run()"
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('underline')"
@@ -640,7 +642,7 @@ onBeforeUnmount(() => {
               icon="text-strikethrough"
               kind="ghost"
               variant="icon-only"
-              :label="texts.strikethrough"
+              :label="displayTexts.strikethrough"
               @click="editor.chain().focus().toggleStrike().run()"
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('strike')"
@@ -651,7 +653,7 @@ onBeforeUnmount(() => {
                 icon="color"
                 kind="ghost"
                 variant="icon-only"
-                :label="texts.color"
+                :label="displayTexts.color"
                 :disabled="isSelectionEmpty || isDisabled"
                 :active="editor.isActive('textStyle')"
               />
@@ -797,7 +799,7 @@ onBeforeUnmount(() => {
                 icon="text-heading"
                 kind="ghost"
                 variant="icon-only"
-                :label="texts.heading"
+                :label="displayTexts.heading"
                 :disabled="isSelectionEmpty || isDisabled"
                 :active="editor.isActive('heading')"
               />
@@ -826,7 +828,7 @@ onBeforeUnmount(() => {
               icon="list-bulleted"
               kind="ghost"
               variant="icon-only"
-              :label="texts.bulleted"
+              :label="displayTexts.bulleted"
               @click="editor.chain().focus().toggleBulletList().run()"
               :disabled="isDisabled"
               :active="editor.isActive('bulletList')"
@@ -835,7 +837,7 @@ onBeforeUnmount(() => {
               icon="list-numbered"
               kind="ghost"
               variant="icon-only"
-              :label="texts.numbered"
+              :label="displayTexts.numbered"
               @click="editor.chain().focus().toggleOrderedList().run()"
               :disabled="isDisabled"
               :active="editor.isActive('orderedList')"
@@ -848,14 +850,14 @@ onBeforeUnmount(() => {
               icon="link"
               kind="ghost"
               variant="icon-only"
-              :label="texts.link"
+              :label="displayTexts.link"
               @click="checkIfOpen()"
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('link')"
             />
             <LxModal
               ref="editUrlModal"
-              :label="texts.modalLabel"
+              :label="displayTexts.modalLabel"
               size="s"
               kind="native"
               :button-secondary-visible="true"
@@ -863,11 +865,11 @@ onBeforeUnmount(() => {
               @secondary-action="checkIfOpen()"
               @primary-action="setLink()"
               @closed="onClosing"
-              :button-secondary-label="texts.close"
-              :button-primary-label="texts.save"
+              :button-secondary-label="displayTexts.close"
+              :button-primary-label="displayTexts.save"
               :button-secondary-is-cancel="false"
             >
-              <p class="lx-description">{{ texts.modalDescription }}</p>
+              <p class="lx-description">{{ displayTexts.modalDescription }}</p>
               <LxTextInput
                 ref="inputLinkField"
                 v-model="inputLink"
@@ -882,7 +884,7 @@ onBeforeUnmount(() => {
                 icon="image"
                 kind="ghost"
                 variant="icon-only"
-                :label="texts.image"
+                :label="displayTexts.image"
                 :disabled="isDisabled || !isSelectionEmpty"
                 :active="editor.isActive('image')"
                 @click="openImage()"
@@ -890,13 +892,13 @@ onBeforeUnmount(() => {
               <LxModal
                 id="imageModal"
                 ref="markdownImageModal"
-                :label="texts.imageModalLabel"
+                :label="displayTexts.imageModalLabel"
                 size="s"
                 :button-primary-visible="true"
-                :button-primary-label="texts.save"
+                :button-primary-label="displayTexts.save"
                 @primary-action="setImage()"
                 :button-secondary-visible="true"
-                :button-secondary-label="texts.close"
+                :button-secondary-label="displayTexts.close"
                 :button-secondary-is-cancel="false"
                 @secondary-action="closeImageModal()"
                 @closed="clearModalVariables()"
@@ -904,7 +906,7 @@ onBeforeUnmount(() => {
                 <LxContentSwitcher :items="imageInputTypes" v-model="imageModalInputType" />
                 <LxForm :show-header="false" :show-footer="false">
                   <LxRow
-                    :label="texts.imageModalLinkDescription"
+                    :label="displayTexts.imageModalLinkDescription"
                     v-if="imageModalInputType === 'url'"
                   >
                     <LxTextInput
@@ -912,13 +914,13 @@ onBeforeUnmount(() => {
                       ref="inputImageField"
                       v-model="inputImage"
                       :invalid="isNotImage"
-                      :invalidation-message="texts.invalidImageLink"
+                      :invalidation-message="displayTexts.invalidImageLink"
                     >
                     </LxTextInput>
                   </LxRow>
 
                   <LxRow
-                    :label="texts.imageModalFileDescription"
+                    :label="displayTexts.imageModalFileDescription"
                     v-if="imageModalInputType === 'fileUploader'"
                   >
                     <LxFileUploader
@@ -933,11 +935,11 @@ onBeforeUnmount(() => {
                     />
                   </LxRow>
 
-                  <LxRow :label="texts.imageModalAltDescription">
+                  <LxRow :label="displayTexts.imageModalAltDescription">
                     <LxTextInput id="inputAltField" v-model="inputAlt" />
                   </LxRow>
 
-                  <LxRow :label="texts.imageModalTitleDescription">
+                  <LxRow :label="displayTexts.imageModalTitleDescription">
                     <LxTextInput id="inputTitleField" v-model="inputTitle" />
                   </LxRow>
                 </LxForm>
@@ -951,7 +953,7 @@ onBeforeUnmount(() => {
                 icon="tag"
                 kind="ghost"
                 variant="icon-only"
-                :label="texts.templatePicker"
+                :label="displayTexts.templatePicker"
                 :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')"
                 :active="editor.isActive('backgroundColor')"
               />

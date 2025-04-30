@@ -8,6 +8,7 @@ import useLx from '@/hooks/useLx';
 import LxLoader from '@/components/Loader.vue';
 import { ref, computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const emits = defineEmits(['click', 'actionClick']);
 
@@ -36,13 +37,14 @@ const props = defineProps({
   tooltip: { type: String, default: '' },
   actionDefinitions: { type: Array, default: () => [] },
   actionsLayout: { type: String, default: 'default' }, // default, vertical
-  texts: {
-    type: Object,
-    default: () => ({
-      overflowMenu: 'Atvērt papildus iespējas',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  overflowMenu: 'Atvērt papildus iespējas',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const visibleActionDefinitions = computed(() =>
   props.actionDefinitions?.filter((action) =>
@@ -198,7 +200,7 @@ function getItemId(id, parentId) {
                 icon="overflow-menu"
                 kind="ghost"
                 :disabled="loading || busy || disabled"
-                :label="texts.overflowMenu"
+                :label="displayTexts.overflowMenu"
                 variant="icon-only"
                 @click="openDropDownMenu($event, clickable ? false : true)"
               />
@@ -335,7 +337,7 @@ function getItemId(id, parentId) {
                 icon="overflow-menu"
                 kind="ghost"
                 :disabled="loading || busy || disabled"
-                :label="texts.overflowMenu"
+                :label="displayTexts.overflowMenu"
                 variant="icon-only"
                 @click="openDropDownMenu($event, true)"
               />
@@ -409,7 +411,7 @@ function getItemId(id, parentId) {
             :id="`${id}-action-overflow-menu`"
             icon="overflow-menu"
             kind="ghost"
-            :label="texts.overflowMenu"
+            :label="displayTexts.overflowMenu"
             variant="icon-only"
             :disabled="loading || busy || disabled"
           />

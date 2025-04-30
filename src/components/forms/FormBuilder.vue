@@ -21,6 +21,7 @@ import LxModal from '@/components/Modal.vue';
 import LxButton from '@/components/Button.vue';
 import LxListItem from '@/components/list/ListItem.vue';
 import LxDataGrid from '@/components/DataGrid.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 /**
  * Component for building forms.
@@ -86,29 +87,30 @@ const props = defineProps({
    * @type {Object}
    * @since 1.1.0
    */
-  texts: {
-    type: Object,
-    default: () => ({
-      required: 'Šis lauks ir obligāts',
-      minimum: 'Vērtībai jābūt lielākai vai vienādai ar {0}',
-      exclusiveMinimum: 'Vērtībai jābūt lielākai par {0}',
-      maximum: `Vērtībai jābūt mazākai vai vienādai ar {0}`,
-      exclusiveMaximum: 'Vērtībai jābūt mazākai par {0}',
-      multipleOf: 'Vērtībai jādalās ar skaitli {0}',
-      minLength: 'Vērtības garumam jābūt lielākam par {0}',
-      maxLength: 'Vērtības garumam jābūt mazākam par {0}',
-      pattern: 'Vērtība neatbilst regulārajai izteiksmei {0}',
-      minItems: 'Jāizvēlas vismaz {0} vērtības',
-      maxItems: 'Jāizvēlas ne vairāk kā {0} vērtības',
-      uniqueItems: 'Izvēlētās vērtības nav unikālas',
-      minProperties: 'Objektam jābūt vismaz {0} atribūtiem',
-      maxProperties: 'Objektam jābut ne vairāk kā {0} atribūtiem',
-      addElement: 'Pievienot elementu',
-      saveElement: 'Pievienot elementu sarakstam',
-      addObject: 'Pievienot objektu',
-    }),
-  },
+  texts: { type: Object, default: () => {} },
 });
+
+const textsDefault = {
+  required: 'Šis lauks ir obligāts',
+  minimum: 'Vērtībai jābūt lielākai vai vienādai ar {0}',
+  exclusiveMinimum: 'Vērtībai jābūt lielākai par {0}',
+  maximum: `Vērtībai jābūt mazākai vai vienādai ar {0}`,
+  exclusiveMaximum: 'Vērtībai jābūt mazākai par {0}',
+  multipleOf: 'Vērtībai jādalās ar skaitli {0}',
+  minLength: 'Vērtības garumam jābūt lielākam par {0}',
+  maxLength: 'Vērtības garumam jābūt mazākam par {0}',
+  pattern: 'Vērtība neatbilst regulārajai izteiksmei {0}',
+  minItems: 'Jāizvēlas vismaz {0} vērtības',
+  maxItems: 'Jāizvēlas ne vairāk kā {0} vērtības',
+  uniqueItems: 'Izvēlētās vērtības nav unikālas',
+  minProperties: 'Objektam jābūt vismaz {0} atribūtiem',
+  maxProperties: 'Objektam jābut ne vairāk kā {0} atribūtiem',
+  addElement: 'Pievienot elementu',
+  saveElement: 'Pievienot elementu sarakstam',
+  addObject: 'Pievienot objektu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue', 'rowActionClick']);
 
@@ -455,7 +457,10 @@ const rules = computed(() => {
 
   req?.forEach((property) => {
     res.modelClone[property] = {};
-    res.modelClone[property].required = helpers.withMessage(() => props.texts?.required, required);
+    res.modelClone[property].required = helpers.withMessage(
+      () => displayTexts.value.required,
+      required
+    );
   });
   if (props.schema?.properties) {
     Object.entries(props.schema?.properties)?.forEach(([key, value]) => {
@@ -463,7 +468,7 @@ const rules = computed(() => {
         if (value?.minimum) {
           res.modelClone[key] = res.modelClone[key] || {};
           res.modelClone[key].minValue = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(props.texts?.minimum, $params.min),
+            ({ $params }) => replaceErrorMessage(displayTexts.value.minimum, $params.min),
             minValue(value?.minimum)
           );
         }
@@ -476,14 +481,14 @@ const rules = computed(() => {
 
           res.modelClone[key] = res.modelClone[key] || {};
           res.modelClone[key].exclusiveMinimum = helpers.withMessage(
-            () => replaceErrorMessage(props.texts?.exclusiveMinimum, value?.exclusiveMinimum),
+            () => replaceErrorMessage(displayTexts.value.exclusiveMinimum, value?.exclusiveMinimum),
             exclusiveMinimum(value?.exclusiveMinimum)
           );
         }
         if (value?.maximum) {
           res.modelClone[key] = res.modelClone[key] || {};
           res.modelClone[key].maxValue = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(props.texts?.maximum, $params.max),
+            ({ $params }) => replaceErrorMessage(displayTexts.value.maximum, $params.max),
             maxValue(value?.maximum)
           );
         }
@@ -495,7 +500,7 @@ const rules = computed(() => {
             );
           res.modelClone[key] = res.modelClone[key] || {};
           res.modelClone[key].exclusiveMaximum = helpers.withMessage(
-            () => replaceErrorMessage(props.texts?.exclusiveMaximum, value?.exclusiveMaximum),
+            () => replaceErrorMessage(displayTexts.value.exclusiveMaximum, value?.exclusiveMaximum),
             exclusiveMaximum(value?.exclusiveMaximum)
           );
         }
@@ -507,7 +512,7 @@ const rules = computed(() => {
             );
           res.modelClone[key] = res.modelClone[key] || {};
           res.modelClone[key].multipleOf = helpers.withMessage(
-            () => replaceErrorMessage(props.texts?.multipleOf, value?.multipleOf),
+            () => replaceErrorMessage(displayTexts.value.multipleOf, value?.multipleOf),
             multipleOf(value?.multipleOf)
           );
         }
@@ -515,14 +520,14 @@ const rules = computed(() => {
       if (value?.minLength && value?.type === 'string') {
         res.modelClone[key] = res.modelClone[key] || {};
         res.modelClone[key].minLength = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(props.texts?.minLength, $params.min),
+          ({ $params }) => replaceErrorMessage(displayTexts.value.minLength, $params.min),
           minLength(value?.minLength)
         );
       }
       if (value?.maxLength && value?.type === 'string') {
         res.modelClone[key] = res.modelClone[key] || {};
         res.modelClone[key].maxLength = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(props.texts?.maxLength, $params.max),
+          ({ $params }) => replaceErrorMessage(displayTexts.value.maxLength, $params.max),
           maxLength(value?.maxLength)
         );
       }
@@ -533,21 +538,21 @@ const rules = computed(() => {
           );
         res.modelClone[key] = res.modelClone[key] || {};
         res.modelClone[key].pattern = helpers.withMessage(
-          () => replaceErrorMessage(props.texts?.pattern, value?.pattern),
+          () => replaceErrorMessage(displayTexts.value.pattern, value?.pattern),
           pattern(value?.pattern)
         );
       }
       if (value?.minItems && value?.type === 'array') {
         res.modelClone[key] = res.modelClone[key] || {};
         res.modelClone[key].minItems = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(props.texts?.minItems, $params.min),
+          ({ $params }) => replaceErrorMessage(displayTexts.value.minItems, $params.min),
           minLength(value?.minItems)
         );
       }
       if (value?.maxItems && value?.type === 'array') {
         res.modelClone[key] = res.modelClone[key] || {};
         res.modelClone[key].maxItems = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(props.texts?.maxItems, $params.max),
+          ({ $params }) => replaceErrorMessage(displayTexts.value.maxItems, $params.max),
           maxLength(value?.maxItems)
         );
       }
@@ -555,7 +560,7 @@ const rules = computed(() => {
         const uniqueItems = (targetValue) => new Set(targetValue)?.size === targetValue?.length;
         res.modelClone[key] = res.modelClone[key] || {};
         res.modelClone[key].uniqueItems = helpers.withMessage(
-          () => props.texts?.uniqueItems,
+          () => displayTexts.value.uniqueItems,
           uniqueItems
         );
       }
@@ -567,7 +572,7 @@ const rules = computed(() => {
           (targetValue) => Object.keys(targetValue).length >= param
         );
       res.modelClone.minProperties = helpers.withMessage(
-        () => replaceErrorMessage(props.texts?.minProperties, props.schema?.minProperties),
+        () => replaceErrorMessage(displayTexts.value.minProperties, props.schema?.minProperties),
         minProperties(props.schema?.minProperties)
       );
     }
@@ -578,7 +583,7 @@ const rules = computed(() => {
           (targetValue) => Object.keys(targetValue).length <= param
         );
       res.modelClone.maxProperties = helpers.withMessage(
-        () => replaceErrorMessage(props.texts?.maxProperties, props.schema?.maxProperties),
+        () => replaceErrorMessage(displayTexts.value.maxProperties, props.schema?.maxProperties),
         maxProperties(props.schema?.maxProperties)
       );
     }
@@ -955,7 +960,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
 
           <LxButton
             v-if="componentSelect(row, name) === 'objectButton'"
-            :label="texts.addObject"
+            :label="displayTexts.addObject"
             icon="add-item"
             @click="openObjectModal(id + '-' + name, name)"
             kind="ghost"
@@ -1151,7 +1156,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
             <template #toolbar>
               <LxButton
                 icon="add-item"
-                :label="texts.addElement"
+                :label="displayTexts.addElement"
                 kind="ghost"
                 @click="addArrayObject(name)"
               />
@@ -1159,7 +1164,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
           </LxList>
           <LxModal
             :ref="(el) => (modalRefs[id + '-' + name] = el)"
-            :buttonPrimaryLabel="texts.saveElement"
+            :buttonPrimaryLabel="displayTexts.saveElement"
             :buttonPrimaryVisible="newObject"
             @primary-action="saveNewElement(name)"
             @closed="newObject = false"
@@ -1500,7 +1505,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
             <template #toolbar>
               <LxButton
                 icon="add-item"
-                :label="texts.addElement"
+                :label="displayTexts.addElement"
                 kind="ghost"
                 @click="addArrayObject(name)"
               />
@@ -1508,7 +1513,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
           </LxDataGrid>
           <LxModal
             :ref="(el) => (modalRefs[id + '-' + name] = el)"
-            :buttonPrimaryLabel="texts.saveElement"
+            :buttonPrimaryLabel="displayTexts.saveElement"
             :buttonPrimaryVisible="newObject"
             @primary-action="saveNewElement(name)"
             @closed="newObject = false"

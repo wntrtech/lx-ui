@@ -5,6 +5,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxAvatar from '@/components/Avatar.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxRow from '@/components/forms/Row.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   value: {
@@ -83,17 +84,17 @@ const props = defineProps({
     type: Number,
     default: 3,
   },
-  texts: {
-    type: Object,
-    required: false,
-    default: () => ({
-      name: 'Vārds, uzvārds',
-      description: 'Apraksts',
-      role: 'Loma',
-      institution: 'Iestāde',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  name: 'Vārds, uzvārds',
+  description: 'Apraksts',
+  role: 'Loma',
+  institution: 'Iestāde',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 function formatName(val) {
   if (Array.isArray(val) && val.length > 0) {
@@ -317,16 +318,16 @@ const showDescription = computed(() => description.value && props.size === 'l');
       </div>
       <template #panel>
         <template v-if="!showMultiple">
-          <LxRow :label="texts.name" v-if="name"
+          <LxRow :label="displayTexts.name" v-if="name"
             ><p class="lx-data">{{ name }}</p></LxRow
           >
-          <LxRow :label="texts.description" v-if="description && description !== '—'"
+          <LxRow :label="displayTexts.description" v-if="description && description !== '—'"
             ><p class="lx-data">{{ description }}</p></LxRow
           >
-          <LxRow :label="texts.role" v-if="role && name"
+          <LxRow :label="displayTexts.role" v-if="role && name"
             ><p class="lx-data">{{ role }}</p></LxRow
           >
-          <LxRow :label="texts.institution" v-if="institution && name"
+          <LxRow :label="displayTexts.institution" v-if="institution && name"
             ><p class="lx-data">{{ institution }}</p></LxRow
           >
         </template>

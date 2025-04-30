@@ -1,6 +1,7 @@
 <script setup>
 import LxButton from '@/components/Button.vue';
 import { computed } from 'vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const emits = defineEmits(['goBack']);
 
@@ -36,20 +37,20 @@ const props = defineProps({
     default: () => [], // { to: '{ name: 'aaa'}', label: 'Home' }],
   },
   hideHeaderText: { type: Boolean, default: false },
-  texts: {
-    type: Object,
-    required: false,
-    default: () => ({
-      defaultBack: 'Atpakaļ',
-    }),
-  },
+  texts: { type: Object, default: () => {} },
 });
+
+const defaultTexts = {
+  defaultBack: 'Atpakaļ',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
 
 const goBackLabel = computed(() => {
   if (props.breadcrumbs.length === 1) {
     return props.breadcrumbs[0]?.label;
   }
-  return props.backLabel ? props.backLabel : props.texts.defaultBack;
+  return props.backLabel ? props.backLabel : displayTexts.value.defaultBack;
 });
 
 const goBackPath = computed(() => {

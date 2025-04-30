@@ -6,6 +6,7 @@ import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 /**
  * Represents a section component that can be used inside form.
  *
@@ -133,26 +134,24 @@ const props = defineProps({
    */
   texts: {
     type: Object,
-    default: () => ({
-      required: '(obligāts)',
-      optional: '(neobligāts)',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  required: '(obligāts)',
+  optional: '(neobligāts)',
+  overflowMenu: 'Atvērt papildus iespējas',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['actionClick']);
 
 const formMode = inject('formMode', ref('none'));
 const sectionIndexType = inject('formIndexType', 'default');
 const formIndex = inject('formIndex', null);
-const requiredTexts = inject(
-  'requiredTexts',
-  ref({
-    required: '(obligāts)',
-    optional: '(neobligāts)',
-    overflowMenu: 'Atvērt papildus iespējas',
-  })
-);
+const requiredTexts = inject('requiredTexts', ref(textsDefault));
 const formOrientation = inject('formOrientation', ref(null));
 
 const exactIndex = computed(() => {
@@ -175,11 +174,11 @@ const rowRequiredTexts = computed(() => {
     optional: requiredTexts.value.optional,
     overflowMenu: requiredTexts.value.overflowMenu,
   };
-  if (props.texts.required !== '(obligāts)' && props.texts.required) {
-    res.required = props.texts.required;
+  if (displayTexts.value.required !== '(obligāts)' && displayTexts.value.required) {
+    res.required = displayTexts.value.required;
   }
-  if (props.texts.optional !== '(neobligāts)' && props.texts.optional) {
-    res.optional = props.texts.optional;
+  if (displayTexts.value.optional !== '(neobligāts)' && displayTexts.value.optional) {
+    res.optional = displayTexts.value.optional;
   }
   return res;
 });

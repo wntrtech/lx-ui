@@ -2,7 +2,7 @@
 import { onMounted, ref, computed } from 'vue';
 import LxFilters from '@/components/Filters.vue';
 import LxFormBuilder from '@/components/forms/FormBuilder.vue';
-import { focusNextFocusableElement } from '@/utils/generalUtils';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { formatValue } from '@/utils/formatUtils';
 import { formatDateTime, formatDate } from '@/utils/dateUtils';
 
@@ -143,31 +143,7 @@ const props = defineProps({
    */
   texts: {
     type: Object,
-    default: () => ({
-      // LxFilters texts
-      filters: 'Filtri',
-      search: 'Atlasīt',
-      clear: 'Notīrīt',
-      fastFiltersLabel: 'Ātrie filtri',
-      // LxFormBuilder texts
-      required: 'Šis lauks ir obligāts',
-      minimum: 'Vērtībai jābūt lielākai vai vienādai ar {0}',
-      exclusiveMinimum: 'Vērtībai jābūt lielākai par {0}',
-      maximum: 'Vērtībai jābūt mazākai vai vienādai ar {0}',
-      exclusiveMaximum: 'Vērtībai jābūt mazākai par {0}',
-      multipleOf: 'Vērtībai jādalās ar skaitli {0}',
-      minLength: 'Vērtības garumam jābūt lielākam par {0}',
-      maxLength: 'Vērtības garumam jābūt mazākam par {0}',
-      pattern: 'Vērtība neatbilst regulārajai izteiksmei {0}',
-      minItems: 'Jāizvēlas vismaz {0} vērtības',
-      maxItems: 'Jāizvēlas ne vairāk kā {0} vērtības',
-      uniqueItems: 'Izvēlētās vērtības nav unikālas',
-      minProperties: 'Objektam jābūt vismaz {0} atribūtiem',
-      maxProperties: 'Objektam jābut ne vairāk kā {0} atribūtiem',
-      addElement: 'Pievienot elementu',
-      saveElement: 'Pievienot elementu sarakstam',
-      addObject: 'Pievienot objektu',
-    }),
+    default: () => ({}),
   },
 });
 
@@ -179,6 +155,32 @@ const emits = defineEmits([
   'update:expanded',
   'rowActionClick',
 ]);
+
+const defaultTexts = {
+  filters: 'Filtri',
+  search: 'Atlasīt',
+  clear: 'Notīrīt',
+  fastFiltersLabel: 'Ātrie filtri',
+  required: 'Šis lauks ir obligāts',
+  minimum: 'Vērtībai jābūt lielākai vai vienādai ar {0}',
+  exclusiveMinimum: 'Vērtībai jābūt lielākai par {0}',
+  maximum: 'Vērtībai jābūt mazākai vai vienādai ar {0}',
+  exclusiveMaximum: 'Vērtībai jābūt mazākai par {0}',
+  multipleOf: 'Vērtībai jādalās ar skaitli {0}',
+  minLength: 'Vērtības garumam jābūt lielākam par {0}',
+  maxLength: 'Vērtības garumam jābūt mazākam par {0}',
+  pattern: 'Vērtība neatbilst regulārajai izteiksmei {0}',
+  minItems: 'Jāizvēlas vismaz {0} vērtības',
+  maxItems: 'Jāizvēlas ne vairāk kā {0} vērtības',
+  uniqueItems: 'Izvēlētās vērtības nav unikālas',
+  minProperties: 'Objektam jābūt vismaz {0} atribūtiem',
+  maxProperties: 'Objektam jābut ne vairāk kā {0} atribūtiem',
+  addElement: 'Pievienot elementu',
+  saveElement: 'Pievienot elementu sarakstam',
+  addObject: 'Pievienot objektu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
 
 const model = computed({
   get() {
@@ -385,7 +387,7 @@ onMounted(() => {
     :badge="badge"
     :badgeType="badgeType"
     :columnCount="columnCount || 3"
-    :texts="texts"
+    :texts="displayTexts"
     @filter="filter"
     @resetFilters="() => emits('resetFilters')"
     @fast-filter-click="(e) => emits('fastFilterClick', e)"
@@ -396,7 +398,7 @@ onMounted(() => {
       v-model="model"
       :readOnly="readOnly"
       :mode="mode"
-      :texts="texts"
+      :texts="displayTexts"
       @rowActionClick="
         (action, value, schemaName, index) =>
           emits('rowActionClick', action, value, schemaName, index)

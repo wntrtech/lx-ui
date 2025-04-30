@@ -7,6 +7,7 @@ import LxButton from '@/components/Button.vue';
 import { generateUUID, isEmail } from '@/utils/stringUtils';
 import { flagMap } from '@/utils/flagUtils';
 import LxFlag from '@/components/Flag.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
@@ -60,14 +61,15 @@ const props = defineProps({
     type: Object,
     default: () => ({ phone: 'lv' }),
   },
-  texts: {
-    type: Object,
-    default: () => ({
-      showPassword: 'Rādīt paroli',
-      hidePassword: 'Paslēpt paroli',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  showPassword: 'Rādīt paroli',
+  hidePassword: 'Paslēpt paroli',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 // Russia (+7) and Kazakhstan (+7) share the same country code
 // The United States (+1) shares its code with Canada and many Caribbean nations.
@@ -558,7 +560,7 @@ onMounted(() => {
         kind="ghost"
         :icon="hidePassword ? 'visible' : 'hidden'"
         :disabled="disabled"
-        :label="hidePassword ? props.texts.showPassword : props.texts.hidePassword"
+        :label="hidePassword ? displayTexts.showPassword : displayTexts.hidePassword"
         v-if="props.kind === 'password'"
         @click="showPasswordChange()"
       />

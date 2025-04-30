@@ -4,6 +4,7 @@ import { onClickOutside, useDebounceFn } from '@vueuse/core';
 import LxPopper from '@/components/Popper.vue';
 
 import { generateUUID, textSearch } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 
@@ -45,26 +46,27 @@ const props = defineProps({
   preloadedItems: { type: Array, default: null },
   labelId: { type: String, default: null },
   hasSelectAll: { type: Boolean, default: false },
-  texts: {
-    type: Object,
-    default: () => ({
-      clear: 'Notīrīt izvēli',
-      empty: 'Nav atrasti rezultāti, kas saturētu tekstu',
-      tryEndingWith1: 'Lai sāktu meklēšanu, ievadiet vismaz {0} simbolu',
-      try: 'Lai sāktu meklēšanu, ievadiet vismaz {0} simbolus',
-      tooltipDisplayTextSingle: 'cits',
-      tooltipDisplayTextMulti: 'citi',
-      detailsSwitchAdvancedSearch: 'Izvērstā meklēšana',
-      detailsSwitchSelectedItems: 'Izvēlētās vērtības',
-      detailsButton: 'Skatīt detaļas',
-      detailsModalLabel: 'Izvērstais skats',
-      clearChosen: 'Notīrīt visas izvēlētās vērtības',
-      selectAll: 'Izvēlēties visu',
-      loadingState: 'Notiek ielāde',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
 });
+
+const textsDefault = {
+  clear: 'Notīrīt izvēli',
+  empty: 'Nav atrasti rezultāti, kas saturētu tekstu',
+  tryEndingWith1: 'Lai sāktu meklēšanu, ievadiet vismaz {0} simbolu',
+  try: 'Lai sāktu meklēšanu, ievadiet vismaz {0} simbolus',
+  tooltipDisplayTextSingle: 'cits',
+  tooltipDisplayTextMulti: 'citi',
+  detailsSwitchAdvancedSearch: 'Izvērstā meklēšana',
+  detailsSwitchSelectedItems: 'Izvēlētās vērtības',
+  detailsButton: 'Skatīt detaļas',
+  detailsModalLabel: 'Izvērstais skats',
+  clearChosen: 'Notīrīt visas izvēlētās vērtības',
+  selectAll: 'Izvēlēties visu',
+  loadingState: 'Notiek ielāde',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emit = defineEmits(['update:modelValue', 'filter', 'openDetails']);
 
@@ -732,12 +734,12 @@ const displayTooltipItems = computed(() => {
   const remainingCount = itemCount - 10;
 
   const itemCountSingle =
-    remainingCount === 1 && props.texts.tooltipDisplayTextSingle
-      ? `+ ${remainingCount} ${props.texts.tooltipDisplayTextSingle}`
+    remainingCount === 1 && displayTexts.value.tooltipDisplayTextSingle
+      ? `+ ${remainingCount} ${displayTexts.value.tooltipDisplayTextSingle}`
       : '';
   const itemCountMulti =
-    remainingCount > 1 && props.texts.tooltipDisplayTextMulti
-      ? `+ ${remainingCount} ${props.texts.tooltipDisplayTextMulti}`
+    remainingCount > 1 && displayTexts.value.tooltipDisplayTextMulti
+      ? `+ ${remainingCount} ${displayTexts.value.tooltipDisplayTextMulti}`
       : '';
 
   const displayText = [itemCountSingle, itemCountMulti].filter(Boolean).join(', ');
@@ -792,12 +794,12 @@ const shouldShowDetailsBtn = computed(() => {
 const detailsSwitchTypes = computed(() => [
   {
     id: 'advanced-search',
-    name: props.texts.detailsSwitchAdvancedSearch || '',
+    name: displayTexts.value.detailsSwitchAdvancedSearch || '',
     icon: 'search',
   },
   {
     id: 'selected-items',
-    name: `${props.texts.detailsSwitchSelectedItems || ''} (${
+    name: `${displayTexts.value.detailsSwitchSelectedItems || ''} (${
       displaySelectedItems.value?.length || 0
     })`,
     icon: 'list-bulleted',
@@ -1060,7 +1062,7 @@ onMounted(() => {
                           <div class="lx-tag-button">
                             <LxButton
                               id="clearButton"
-                              :label="texts.clear"
+                              :label="displayTexts.clear"
                               :disabled="disabled"
                               kind="secondary"
                               variant="icon-only"
@@ -1088,7 +1090,7 @@ onMounted(() => {
                           @touchstart="handleTouchStart"
                         />
                         <div class="lx-invisible" aria-live="polite" v-if="loadingState || loading">
-                          {{ props.texts.loadingState }}
+                          {{ displayTexts.loadingState }}
                         </div>
                         <template v-if="shouldShowValuePlaceholder">
                           <div
@@ -1153,7 +1155,7 @@ onMounted(() => {
                           icon="close"
                           kind="ghost"
                           variant="icon-only"
-                          :label="texts.clear"
+                          :label="displayTexts.clear"
                           @click="clear"
                         />
                         <LxButton
@@ -1168,7 +1170,7 @@ onMounted(() => {
                           icon="close"
                           kind="ghost"
                           variant="icon-only"
-                          :label="texts.clear"
+                          :label="displayTexts.clear"
                           @click="clear"
                         />
                         <LxButton
@@ -1178,7 +1180,7 @@ onMounted(() => {
                           icon="search-details"
                           kind="ghost"
                           variant="icon-only"
-                          :label="texts.detailsButton"
+                          :label="displayTexts.detailsButton"
                           @click="openDetails"
                           @keydown.enter="openDetails"
                           @keydown.tab="focusOnDropDown"
@@ -1187,7 +1189,7 @@ onMounted(() => {
                         <div
                           class="lx-autocomplete-loader"
                           v-if="loadingState || loading"
-                          :title="props.texts.loadingState"
+                          :title="displayTexts.loadingState"
                         >
                           <LxLoader loading size="s" />
                         </div>
@@ -1235,7 +1237,7 @@ onMounted(() => {
                           tabindex="-1"
                           role="option"
                           @click="selectAll"
-                          :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
+                          :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
                         >
                           <LxIcon
                             :value="
@@ -1246,7 +1248,7 @@ onMounted(() => {
                                 : 'checkbox'
                             "
                           />
-                          <span>{{ areSomeSelected ? texts.clearChosen : texts.selectAll }}</span>
+                          <span>{{ areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll }}</span>
                         </div>
                         <template v-for="item in filteredItems" :key="item[idAttribute]">
                           <div
@@ -1335,7 +1337,7 @@ onMounted(() => {
                         <div class="lx-empty">
                           <LxIcon value="info" />
                           <p>
-                            {{ props.texts.empty }} "<span class="lx-highlighted-item">{{
+                            {{ displayTexts.empty }} "<span class="lx-highlighted-item">{{
                               query.toLowerCase()
                             }}</span
                             >"
@@ -1354,8 +1356,8 @@ onMounted(() => {
                           <p>
                             {{
                               props.queryMinLength % 10 === 1 && props.queryMinLength !== 11
-                                ? props.texts.tryEndingWith1?.replace('{0}', props.queryMinLength)
-                                : props.texts.try?.replace('{0}', props.queryMinLength)
+                                ? displayTexts.tryEndingWith1?.replace('{0}', props.queryMinLength)
+                                : displayTexts.try?.replace('{0}', props.queryMinLength)
                             }}
                           </p>
                         </div>
@@ -1382,7 +1384,7 @@ onMounted(() => {
         </template>
       </LxInfoWrapper>
 
-      <LxModal ref="detailedModeModal" :label="texts.detailsModalLabel" size="m">
+      <LxModal ref="detailedModeModal" :label="displayTexts.detailsModalLabel" size="m">
         <template v-if="$slots.details && selectingKind === 'multiple'">
           <LxContentSwitcher :items="detailsSwitchTypes" v-model="detailsSwitchType" kind="combo" />
         </template>

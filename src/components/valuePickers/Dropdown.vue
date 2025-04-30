@@ -9,6 +9,7 @@ import LxAutoComplete from '@/components/AutoComplete.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import { onClickOutside } from '@vueuse/core';
 import LxPopper from '@/components/Popper.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -33,16 +34,7 @@ const props = defineProps({
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas izvēlētās vērtības',
-      notSelected: 'Nav izvēlēts',
-      searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-      selectAll: 'Izvēlēties visu',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -57,6 +49,16 @@ const highlightedItemId = ref(null);
 const panelWidth = ref();
 const refRoot = ref();
 const activeDropdown = ref(null);
+
+const textsDefault = {
+  clearQuery: 'Notīrīt meklēšanu',
+  clearChosen: 'Notīrīt visas izvēlētās vērtības',
+  notSelected: 'Nav izvēlēts',
+  searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+  selectAll: 'Izvēlēties visu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const model = computed({
   get() {
@@ -98,7 +100,7 @@ const itemsDisplay = computed(() => {
   if (props.kind === 'single' && props.nullable)
     res.unshift({
       [props.idAttribute]: 'notSelected',
-      [props.nameAttribute]: props.texts.notSelected,
+      [props.nameAttribute]: displayTexts.value.notSelected,
     });
 
   return res;
@@ -508,14 +510,14 @@ const columnReadOnly = computed(() => {
       :items="itemsDisplay"
       :id-attribute="idAttribute"
       :name-attribute="nameAttribute"
-      :placeholder="texts?.searchPlaceholder"
+      :placeholder="displayTexts.searchPlaceholder"
       :tooltip="tooltip"
       :readOnly="readOnly"
       :disabled="disabled"
       :variant="variantAutoComplete"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
-      :texts="texts"
+      :texts="displayTexts"
       :search-attributes="searchAttributes"
       :labelId="labelId"
       :hasSelectAll="hasSelectAll"
@@ -591,7 +593,7 @@ const columnReadOnly = computed(() => {
                 <div class="lx-tag-button">
                   <LxButton
                     id="clearButton"
-                    :label="texts.clearChosen"
+                    :label="displayTexts.clearChosen"
                     :disabled="disabled"
                     kind="secondary"
                     variant="icon-only"
@@ -630,7 +632,7 @@ const columnReadOnly = computed(() => {
                   class="lx-value-picker-item select-all"
                   tabindex="-1"
                   role="option"
-                  :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
+                  :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
                   @click="selectAll"
                 >
                   <LxIcon
@@ -642,7 +644,7 @@ const columnReadOnly = computed(() => {
                         : 'checkbox'
                     "
                   />
-                  <span>{{ areSomeSelected ? texts.clearChosen : texts.selectAll }}</span>
+                  <span>{{ areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll }}</span>
                 </div>
                 <template v-for="item in filteredItems" :key="item[idAttribute]">
                   <div

@@ -7,6 +7,7 @@ import LxLoader from '@/components/Loader.vue';
 import useLx from '@/hooks/useLx';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: 'default' },
@@ -28,13 +29,14 @@ const props = defineProps({
   hasSelecting: { type: Boolean, default: false },
   selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   selected: { type: Boolean, default: false },
-  texts: {
-    type: Object,
-    default: () => ({
-      overflowMenu: 'Atvērt papildus iespējas',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  overflowMenu: 'Atvērt papildus iespējas',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits([
   'actionClick',
@@ -172,7 +174,7 @@ const selected = computed({
               icon="overflow-menu"
               kind="ghost"
               :disabled="isDisabled"
-              :label="texts.overflowMenu"
+              :label="displayTexts.overflowMenu"
               variant="icon-only"
             />
           </div>

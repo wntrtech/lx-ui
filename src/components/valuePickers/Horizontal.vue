@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
@@ -31,16 +32,7 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   hasSelectAll: { type: Boolean, default: false },
-  texts: {
-    type: Object,
-    default: () => ({
-      clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas izvēlētās vērtības',
-      notSelected: 'Nav izvēlēts',
-      searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-      selectAll: 'Izvēlēties visu',
-    }),
-  },
+  texts: { type: Object, default: () => {} },
 });
 
 const emits = defineEmits(['update:modelValue']);
@@ -58,13 +50,23 @@ const itemsModel = ref({});
 const itemsDisplay = computed( () => { 
     const res = [... props.items];
     if(props.kind === 'single' && props.nullable)  
-      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: props.texts.notSelected});
+      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: props.displayTexts.notSelected});
   
     return res
   }
 );
 const notSelectedId = 'notSelected';
 let currentIndex = 0;
+
+const textsDefault = {
+  clearQuery: 'Notīrīt meklēšanu',
+  clearChosen: 'Notīrīt visas izvēlētās vērtības',
+  notSelected: 'Nav izvēlēts',
+  searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+  selectAll: 'Izvēlēties visu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 onMounted(() => {
   if (!model.value && props.kind === 'multiple') {
@@ -415,8 +417,8 @@ function focusNext() {
             : 'checkbox'
         "
         :disabled="disabled"
-        :title="areSomeSelected ? texts.clearChosen : texts.selectAll"
-        :label="hasSearch ? '' : areSomeSelected ? texts.clearChosen : texts.selectAll"
+        :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+        :label="hasSearch ? '' : areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
         @click="selectAll"
       />
       <LxTextInput
@@ -426,7 +428,7 @@ function focusNext() {
         v-model="query"
         kind="search"
         role="search"
-        :placeholder="texts.searchPlaceholder"
+        :placeholder="displayTexts.searchPlaceholder"
       />
       <LxButton
         v-if="query && hasSearch"
@@ -434,7 +436,7 @@ function focusNext() {
         kind="ghost"
         variant="icon-only"
         :disabled="disabled"
-        :label="texts.clearQuery"
+        :label="displayTexts.clearQuery"
         @click="query = ''"
       />
     </div>

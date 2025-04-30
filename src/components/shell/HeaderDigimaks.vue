@@ -9,6 +9,7 @@ import LxToggle from '@/components/Toggle.vue';
 import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import { shortenUserName } from '@/utils/stringUtils';
 import LxAvatar from '@/components/Avatar.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
@@ -47,32 +48,36 @@ const props = defineProps({
   texts: {
     type: Object,
     required: false,
-    default: () => ({
-      defaultBack: 'Atpakaļ',
-      logOut: 'Iziet',
-      openAlerts: 'Atvērt sarakstu',
-      openNavbar: 'Atvērt izvēlni',
-      helpTitle: 'Palīdzība',
-      alertsTitle: 'Paziņojumi',
-      languagesTitle: 'Valodu izvēle',
-      close: 'Aizvērt',
-      contextPersonsLabel: 'Izvēlieties konteksta personu',
-      alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
-      contextPersonsButtonLabel: 'Konteksta personas',
-      alternativeProfilesButtonLabel: 'Alternatīvie profili',
-      themeTitle: 'Noformējuma izvēle',
-      themeAuto: 'Automātiskais režīms',
-      themeLight: 'Gaišais režīms',
-      themeDark: 'Tumšais režīms',
-      themeContrast: 'Kontrastais režīms',
-      animations: 'Samazināt kustības',
-      fonts: 'Iekārtas fonti',
-      showAllLabel: 'Vairāk',
-      megaMenuTitle: 'Lietotnes',
-      userTitle: 'Lietotājs',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  defaultBack: 'Atpakaļ',
+  logOut: 'Iziet',
+  openAlerts: 'Atvērt sarakstu',
+  openNavbar: 'Atvērt izvēlni',
+  helpTitle: 'Palīdzība',
+  alertsTitle: 'Paziņojumi',
+  languagesTitle: 'Valodu izvēle',
+  close: 'Aizvērt',
+  contextPersonsLabel: 'Izvēlieties konteksta personu',
+  alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
+  contextPersonsButtonLabel: 'Konteksta personas',
+  alternativeProfilesButtonLabel: 'Alternatīvie profili',
+  themeTitle: 'Noformējuma izvēle',
+  themeAuto: 'Automātiskais režīms',
+  themeLight: 'Gaišais režīms',
+  themeDark: 'Tumšais režīms',
+  themeContrast: 'Kontrastais režīms',
+  animations: 'Samazināt kustības',
+  fonts: 'Iekārtas fonti',
+  showAllLabel: 'Vairāk',
+  megaMenuTitle: 'Lietotnes',
+  userTitle: 'Lietotājs',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits([
   'nav-toggle',
@@ -282,10 +287,10 @@ const themeIcons = {
 };
 
 const themeNames = computed(() => ({
-  auto: props.texts.themeAuto,
-  light: props.texts.themeLight,
-  dark: props.texts.themeDark,
-  contrast: props.texts.themeContrast,
+  auto: displayTexts.value.themeAuto,
+  light: displayTexts.value.themeLight,
+  dark: displayTexts.value.themeDark,
+  contrast: displayTexts.value.themeContrast,
 }));
 
 function themeChange(theme) {
@@ -397,7 +402,7 @@ const userInfoMenu = ref(false);
         v-if="!hideNavBar"
         customClass="nav-toggle"
         :icon="navBarSwitch ? 'menu' : 'close'"
-        :label="navBarSwitch ? texts.openNavbar : texts.close"
+        :label="navBarSwitch ? displayTexts.openNavbar : displayTexts.close"
         kind="ghost"
         :badge="hasAlerts && alerts && navBarSwitch ? alerts?.length?.toString() : ''"
         :badgeType="alertLevelToBadgeType"
@@ -412,7 +417,7 @@ const userInfoMenu = ref(false);
           <LxButton
             customClass="nav-toggle"
             :icon="navBarSwitch ? 'menu' : 'close'"
-            :label="navBarSwitch ? texts.openNavbar : texts.close"
+            :label="navBarSwitch ? displayTexts.openNavbar : displayTexts.close"
             kind="ghost"
             :badge="hasAlerts && alerts && navBarSwitch ? alerts?.length?.toString() : ''"
             :badgeType="alertLevelToBadgeType"
@@ -424,7 +429,7 @@ const userInfoMenu = ref(false);
             <div v-if="hasHelp">
               <LxButton
                 icon="help"
-                :label="texts.helpTitle"
+                :label="displayTexts.helpTitle"
                 kind="ghost"
                 variant="icon-only"
                 @click="helpClicked"
@@ -439,7 +444,7 @@ const userInfoMenu = ref(false);
                 <LxButton
                   customClass="lx-header-button"
                   icon="notifications"
-                  :label="texts.alertsTitle"
+                  :label="displayTexts.alertsTitle"
                   :badge="alerts ? alerts?.length?.toString() : ''"
                   :disabled="headerNavDisable"
                   :badgeType="alertLevelToBadgeType"
@@ -452,7 +457,7 @@ const userInfoMenu = ref(false);
                     <LxButton
                       v-if="alertsKind === 'combo'"
                       kind="ghost"
-                      :label="texts.openAlerts"
+                      :label="displayTexts.openAlerts"
                       :disabled="headerNavDisable"
                       icon="open"
                       @click="alertsClicked"
@@ -500,7 +505,7 @@ const userInfoMenu = ref(false);
                     <LxButton
                       v-if="alertsKind === 'combo'"
                       kind="ghost"
-                      :label="texts.openAlerts"
+                      :label="displayTexts.openAlerts"
                       :disabled="headerNavDisable"
                       icon="open"
                       @click="alertsClicked"
@@ -549,7 +554,7 @@ const userInfoMenu = ref(false);
                 :items="megaMenuItems"
                 :groupDefinitions="megaMenuGroupDefinitions"
                 :hasShowAll="megaMenuHasShowAll"
-                :texts="texts"
+                :texts="displayTexts"
                 @mega-menu-show-all-click="triggerShowAllClick"
                 :show-label="false"
                 v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
@@ -613,7 +618,7 @@ const userInfoMenu = ref(false);
             <li class="lx-user-menu-item">
               <LxButton
                 kind="ghost"
-                :label="texts.userTitle"
+                :label="displayTexts.userTitle"
                 icon="collapse-left"
                 @click="() => (userInfoMenu = !userInfoMenu)"
               />
@@ -631,7 +636,7 @@ const userInfoMenu = ref(false);
               <LxButton
                 v-if="alternativeProfilesInfo"
                 kind="ghost"
-                :label="texts.alternativeProfilesButtonLabel"
+                :label="displayTexts.alternativeProfilesButtonLabel"
                 icon="switch"
                 @click="openAlternativeProfilesModal"
               />
@@ -640,7 +645,7 @@ const userInfoMenu = ref(false);
               <LxButton
                 v-if="contextPersonsInfo"
                 kind="ghost"
-                :label="texts.contextPersonsButtonLabel"
+                :label="displayTexts.contextPersonsButtonLabel"
                 icon="context-person"
                 @click="openContextPersonModal"
               />
@@ -662,7 +667,7 @@ const userInfoMenu = ref(false);
               <LxDropDownMenu>
                 <LxButton
                   customClass="lx-header-button"
-                  :label="texts.languagesTitle"
+                  :label="displayTexts.languagesTitle"
                   kind="ghost"
                   icon="language"
                 />
@@ -685,7 +690,7 @@ const userInfoMenu = ref(false);
               <LxDropDownMenu ref="themeMenu">
                 <LxButton
                   customClass="lx-header-button"
-                  :label="texts.themeTitle"
+                  :label="displayTexts.themeTitle"
                   kind="ghost"
                   :icon="themeIcon"
                 />
@@ -701,11 +706,11 @@ const userInfoMenu = ref(false);
                     />
                   </div>
                   <div class="lx-animations-controller">
-                    <p>{{ texts.animations }}</p>
+                    <p>{{ displayTexts.animations }}</p>
                     <LxToggle v-model="animationsModel" @click="triggerThemeMenu" />
                   </div>
                   <div class="lx-fonts-controller">
-                    <p>{{ texts.fonts }}</p>
+                    <p>{{ displayTexts.fonts }}</p>
                     <LxToggle v-model="deviceFontsModel" @click="triggerThemeMenu" />
                   </div>
                 </template>
@@ -717,7 +722,7 @@ const userInfoMenu = ref(false);
               <LxButton
                 kind="ghost"
                 icon="logout"
-                :label="texts.logOut"
+                :label="displayTexts.logOut"
                 :destructive="true"
                 @click="logOut"
               />
@@ -732,11 +737,11 @@ const userInfoMenu = ref(false);
 
   <LxModal
     ref="alternativeProfilesModal"
-    :label="texts.alternativeProfilesLabel"
+    :label="displayTexts.alternativeProfilesLabel"
     size="m"
     :button-secondary-visible="true"
     :button-primary-visible="false"
-    :button-secondary-label="texts.close"
+    :button-secondary-label="displayTexts.close"
     :button-secondary-is-cancel="true"
   >
     <LxList
@@ -764,11 +769,11 @@ const userInfoMenu = ref(false);
 
   <LxModal
     ref="contextPersonModal"
-    :label="texts.contextPersonsLabel"
+    :label="displayTexts.contextPersonsLabel"
     size="m"
     :button-secondary-visible="true"
     :button-primary-visible="false"
-    :button-secondary-label="texts.close"
+    :button-secondary-label="displayTexts.close"
     :button-secondary-is-cancel="true"
   >
     <LxList

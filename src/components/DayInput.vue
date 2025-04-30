@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch, inject } from 'vue';
+
+import { getDisplayTexts } from '@/utils/generalUtils';
+import { capitalizeFirstLetter } from '@/utils/stringUtils';
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -13,19 +16,26 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      inputDaysPlaceholder: 'Ievadiet dienu skaitu',
-      inputMonthsPlaceholder: 'Ievadiet mēnešu skaitu',
-      inputYearsPlaceholder: 'Ievadiet gadu skaitu',
-      inputTooltip: 'Dienu, mēnešu vai gadu ievade',
-      dropdownPlaceholder: 'Izvēlieties vērtību',
-      dropdownTooltip: 'Dienu, mēnešu vai gadu izvēle',
-      noResults: 'Nav rezultāta',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  inputDaysPlaceholder: 'Ievadiet dienu skaitu',
+  inputMonthsPlaceholder: 'Ievadiet mēnešu skaitu',
+  inputYearsPlaceholder: 'Ievadiet gadu skaitu',
+  inputTooltip: 'Dienu, mēnešu vai gadu ievade',
+  dropdownPlaceholder: 'Izvēlieties vērtību',
+  dropdownTooltip: 'Dienu, mēnešu vai gadu izvēle',
+  noResults: 'Nav rezultāta',
+  daysPlural: 'dienas',
+  monthsPlural: 'mēneši',
+  yearsPlural: 'gadi',
+  daysSingular: 'diena',
+  monthsSingular: 'mēnesis',
+  yearsSingular: 'gads',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue', 'changed']);
 
@@ -34,9 +44,9 @@ const inputMask = ref('integer');
 const convertToString = ref(true);
 const inputMaxLength = ref(4);
 const unitOptionTypes = ref([
-  { id: 'days', name: 'Dienas' },
-  { id: 'months', name: 'Mēneši' },
-  { id: 'years', name: 'Gadi' },
+  { id: 'days', name: capitalizeFirstLetter(displayTexts.value.daysPlural) },
+  { id: 'months', name: capitalizeFirstLetter(displayTexts.value.monthsPlural) },
+  { id: 'years', name: capitalizeFirstLetter(displayTexts.value.yearsPlural) },
 ]);
 
 const inputValue = ref();
@@ -50,7 +60,7 @@ const selectedUnitName = computed(() => {
 });
 
 const shouldShowInfoIcon = computed(
-  () => props.kind === 'icon' && (!props.readOnly || Number(inputValue.value) > 0)
+  () => props.kind === 'icon' && (inputValue.value || !props.readOnly)
 );
 
 const tooltipText = computed(() =>
@@ -63,16 +73,16 @@ const displayText = computed(() => {
   if (result.value) {
     return props.readOnly ? tooltipText.value : result.value;
   }
-  return !props.readOnly ? props.texts.noResults : '';
+  return !props.readOnly ? displayTexts.value.noResults : '';
 });
 
 function updatePlaceholder(unit) {
   if (unit === 'days') {
-    inputPlaceholder.value = props.texts.inputDaysPlaceholder;
+    inputPlaceholder.value = displayTexts.value.inputDaysPlaceholder;
   } else if (unit === 'months') {
-    inputPlaceholder.value = props.texts.inputMonthsPlaceholder;
+    inputPlaceholder.value = displayTexts.value.inputMonthsPlaceholder;
   } else if (unit === 'years') {
-    inputPlaceholder.value = props.texts.inputYearsPlaceholder;
+    inputPlaceholder.value = displayTexts.value.inputYearsPlaceholder;
   }
 }
 
@@ -114,21 +124,27 @@ function calculateResult() {
 
   const yearString = (() => {
     if (years !== 0) {
-      return `${years} ${years === 1 ? 'gads' : 'gadi'}`;
+      return `${years} ${
+        years === 1 ? displayTexts.value.yearsSingular : displayTexts.value.yearsPlural
+      }`;
     }
     return '';
   })();
 
   const monthString = (() => {
     if (months !== 0) {
-      return `${months} ${months === 1 ? 'mēnesis' : 'mēneši'}`;
+      return `${months} ${
+        months === 1 ? displayTexts.value.monthsSingular : displayTexts.value.monthsPlural
+      }`;
     }
     return '';
   })();
 
   const dayString = (() => {
     if (days !== 0) {
-      return `${days} ${days === 1 ? 'diena' : 'dienas'}`;
+      return `${days} ${
+        days === 1 ? displayTexts.value.daysSingular : displayTexts.value.daysPlural
+      }`;
     }
     return '';
   })();
@@ -156,7 +172,7 @@ watch(
 );
 
 watch(
-  () => props.texts,
+  () => displayTexts,
   () => {
     updatePlaceholder(selectedUnit.value);
   },
@@ -227,7 +243,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :convert-to-string="convertToString"
           :disabled="disabled"
           :placeholder="inputPlaceholder"
-          :tooltip="texts.inputTooltip"
+          :tooltip="displayTexts.inputTooltip"
           :invalid="invalid"
           :invalidationMessage="invalidationMessage"
           :labelId="labelledBy"
@@ -236,8 +252,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         <LxDropDown
           v-model="selectedUnit"
           :items="unitOptionTypes"
-          :placeholder="texts.dropdownPlaceholder"
-          :tooltip="texts.dropdownTooltip"
+          :placeholder="displayTexts.dropdownPlaceholder"
+          :tooltip="displayTexts.dropdownTooltip"
           :disabled="disabled"
           :invalid="invalid"
           :labelId="labelledBy"

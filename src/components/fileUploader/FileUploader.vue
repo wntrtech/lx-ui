@@ -3,6 +3,7 @@ import { ref, computed, onMounted, watch, inject } from 'vue';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxList from '@/components/list/List.vue';
@@ -37,80 +38,84 @@ const props = defineProps({
   labelId: { type: String, default: null },
   texts: {
     type: Object,
-    default: () => ({
-      clear: 'Notīrīt',
-      buttonLabel: 'Izvēlēties datni',
-      uploaderDescription: '',
-      draggablePlaceholder: 'Ievelciet datnes, vai nospiediet šeit, lai augšupielādētu',
-      placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
-      notFoundSearch: 'Nav atrasts:',
-      close: 'Aizvērt',
-      noItems: 'Nav pievienota neviena datne',
-      infoButton: 'Skatīt detaļas',
-      download: 'Lejupielādēt',
-      addPhoto: 'Pievienot attēlu',
-      savePicture: 'Saglabāt',
-      cancelAndClose: 'Atcelt',
-      errorLabel: 'Notika kļūda',
-      errorDescription: 'Nav piešķirta atļauja izmantot kameru',
-      reloadPage: 'Pārlādēt lapu',
-      changeCamera: 'Mainīt kameru',
-      takePhoto: 'Uzņemt attēlu',
-      deletePhoto: 'Mēģināt vēlreiz',
-      useCamera: 'Izmantot kameru',
-      metaPreviewLabel: 'Priekšskatījums',
-      metaMainLabel: 'Galvenie dati',
-      metaMainAuthor: 'Autors',
-      metaMainFormat: 'Formāts',
-      metaMainImageDimensions: 'Attēla dimensijas',
-      metaMainLastModified: 'Pēdējās izmaiņas',
-      metaMainDateCreated: 'Izveides datums',
-      metaMainDataSize: 'Datnes izmērs',
-      metaAdditionalLabel: 'Visi dati',
-      metaLocationLabel: 'Atrašanās vietas dati',
-      metaLocationLatitude: 'Platuma grādi',
-      metaLocationLongitude: 'Garuma grādi',
-      metaLocationAltitude: 'Augstums',
-      metaImageLabel: 'Attēla dati',
-      metaImageWidth: 'Attēla platums',
-      metaImageHeight: 'Attēla augstums',
-      metaImageHorizontalResolution: 'Horizontālā izšķirtspēja',
-      metaImageVerticalResolution: 'Vertikālā izšķirtspēja',
-      metaImageCopyright: 'Autortiesības',
-      metaCameraBrand: 'Kameras ražotājs',
-      metaCameraModel: 'Kameras modelis',
-      metaFocusLength: 'Fokusa attālums',
-      metaFStop: 'F-stop',
-      metaExposure: 'Exposure',
-      metaISO: 'ISO',
-      metaExposureBias: 'Exposure bias',
-      metaFlash: 'Zibspuldzes iestatījums',
-      metaColorSpace: 'Color space',
-      metaDateTime: 'Datums un laiks',
-      metaArchiveContentLabel: 'Arhīva saturs',
-      metaAdditionalInfoSizeTitle: 'Izmērs',
-      metaAdditionalInfoExtensionTitle: 'Paplašinājums',
-      metaAdditionalInfoResolutionTitle: 'Izšķirtspēja',
-      metaAdditionalInfoFileCountTitle: 'Datņu skaits',
-      metaAdditionalInfoFileCountLabelSingle: 'datne',
-      metaAdditionalInfoFileCountLabelMulti: 'datnes',
-      metaAdditionalInfoProtectedArchive: 'Arhīvs aizargāts ar paroli',
-      metaAdditionalInfoPageCountTitle: 'Lappušu skaits',
-      metaAdditionalInfoSlideCountTitle: 'Slaidu skaits',
-      metaAdditionalInfoPageCountLabelSingle: 'lappuse',
-      metaAdditionalInfoPageCountLabelMulti: 'lappuses',
-      metaAdditionalInfoSlideCountLabelSingle: 'slaids',
-      metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
-      metaAdditionalInfoeSigned: 'Dokuments parakstīts ar drošu elektronisko parakstu',
-      metaAdditionalInfoc2paSigned: 'Datne parakstīta ar c2pa elektronisko parakstu',
-      metaAdditionalInfoAiCreated: 'Veidots izmantojot mākslīgo intelektu',
-      metaMainTitle: 'Virsraksts',
-      metaMainDescription: 'Apraksts',
-      metaEDocContentLabel: 'Paraksti',
-      metaEdocArchiveContentLabel: 'Saturs',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  clear: 'Notīrīt',
+  buttonLabel: 'Izvēlēties datni',
+  uploaderDescription: '',
+  draggablePlaceholder: 'Ievelciet datnes, vai nospiediet šeit, lai augšupielādētu',
+  placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
+  notFoundSearch: 'Nav atrasts:',
+  close: 'Aizvērt',
+  noItems: 'Nav pievienota neviena datne',
+  infoButton: 'Skatīt detaļas',
+  download: 'Lejupielādēt',
+  addPhoto: 'Pievienot attēlu',
+  savePicture: 'Saglabāt',
+  cancelAndClose: 'Atcelt',
+  errorLabel: 'Notika kļūda',
+  errorDescription: 'Nav piešķirta atļauja izmantot kameru',
+  reloadPage: 'Pārlādēt lapu',
+  changeCamera: 'Mainīt kameru',
+  takePhoto: 'Uzņemt attēlu',
+  deletePhoto: 'Mēģināt vēlreiz',
+  useCamera: 'Izmantot kameru',
+  metaPreviewLabel: 'Priekšskatījums',
+  metaMainLabel: 'Galvenie dati',
+  metaMainAuthor: 'Autors',
+  metaMainFormat: 'Formāts',
+  metaMainImageDimensions: 'Attēla dimensijas',
+  metaMainLastModified: 'Pēdējās izmaiņas',
+  metaMainDateCreated: 'Izveides datums',
+  metaMainDataSize: 'Datnes izmērs',
+  metaAdditionalLabel: 'Visi dati',
+  metaLocationLabel: 'Atrašanās vietas dati',
+  metaLocationLatitude: 'Platuma grādi',
+  metaLocationLongitude: 'Garuma grādi',
+  metaLocationAltitude: 'Augstums',
+  metaImageLabel: 'Attēla dati',
+  metaImageWidth: 'Attēla platums',
+  metaImageHeight: 'Attēla augstums',
+  metaImageHorizontalResolution: 'Horizontālā izšķirtspēja',
+  metaImageVerticalResolution: 'Vertikālā izšķirtspēja',
+  metaImageCopyright: 'Autortiesības',
+  metaCameraBrand: 'Kameras ražotājs',
+  metaCameraModel: 'Kameras modelis',
+  metaFocusLength: 'Fokusa attālums',
+  metaFStop: 'F-stop',
+  metaExposure: 'Exposure',
+  metaISO: 'ISO',
+  metaExposureBias: 'Exposure bias',
+  metaFlash: 'Zibspuldzes iestatījums',
+  metaColorSpace: 'Color space',
+  metaDateTime: 'Datums un laiks',
+  metaArchiveContentLabel: 'Arhīva saturs',
+  metaAdditionalInfoSizeTitle: 'Izmērs',
+  metaAdditionalInfoExtensionTitle: 'Paplašinājums',
+  metaAdditionalInfoResolutionTitle: 'Izšķirtspēja',
+  metaAdditionalInfoFileCountTitle: 'Datņu skaits',
+  metaAdditionalInfoFileCountLabelSingle: 'datne',
+  metaAdditionalInfoFileCountLabelMulti: 'datnes',
+  metaAdditionalInfoProtectedArchive: 'Arhīvs aizargāts ar paroli',
+  metaAdditionalInfoPageCountTitle: 'Lappušu skaits',
+  metaAdditionalInfoSlideCountTitle: 'Slaidu skaits',
+  metaAdditionalInfoPageCountLabelSingle: 'lappuse',
+  metaAdditionalInfoPageCountLabelMulti: 'lappuses',
+  metaAdditionalInfoSlideCountLabelSingle: 'slaids',
+  metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
+  metaAdditionalInfoeSigned: 'Dokuments parakstīts ar drošu elektronisko parakstu',
+  metaAdditionalInfoc2paSigned: 'Datne parakstīta ar c2pa elektronisko parakstu',
+  metaAdditionalInfoAiCreated: 'Veidots izmantojot mākslīgo intelektu',
+  metaMainTitle: 'Virsraksts',
+  metaMainDescription: 'Apraksts',
+  metaEDocContentLabel: 'Paraksti',
+  metaEdocArchiveContentLabel: 'Saturs',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 // states:
 // id - id of the file
@@ -225,7 +230,7 @@ function provideAdditionalIconAndType(id) {
       id,
       icon: 'sign',
       type: 'esign',
-      title: props.texts.metaAdditionalInfoeSigned,
+      title: displayTexts.value.metaAdditionalInfoeSigned,
     });
   }
   if (advancedFile.meta?.c2paSigned) {
@@ -233,7 +238,7 @@ function provideAdditionalIconAndType(id) {
       id,
       icon: 'sign',
       type: 'c2pa-sign',
-      title: props.texts.metaAdditionalInfoc2paSigned,
+      title: displayTexts.value.metaAdditionalInfoc2paSigned,
     });
   }
   if (advancedFile.meta?.createdUsingAi) {
@@ -241,7 +246,7 @@ function provideAdditionalIconAndType(id) {
       id,
       icon: 'ai',
       type: 'created-using-ai',
-      title: props.texts.metaAdditionalInfoAiCreated,
+      title: displayTexts.value.metaAdditionalInfoAiCreated,
     });
   }
   if (advancedFile.meta?.passwordProtected) {
@@ -249,7 +254,7 @@ function provideAdditionalIconAndType(id) {
       id,
       icon: 'lock',
       type: 'pass-protected',
-      title: props.texts.metaAdditionalInfoProtectedArchive,
+      title: displayTexts.value.metaAdditionalInfoProtectedArchive,
     });
   }
   return returnArr;
@@ -311,7 +316,7 @@ function createFileData(file, fileId) {
 
 async function processFileMeta(file, fileId) {
   if (!props.maxSizeForMeta || file.size <= props.maxSizeForMeta) {
-    const fileMeta = await fileUploaderUtils.getMeta(file, props.texts);
+    const fileMeta = await fileUploaderUtils.getMeta(file, displayTexts.value);
     const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
     if (tempFileDataMeta) {
       tempFileDataMeta.meta = fileMeta;
@@ -340,7 +345,7 @@ function handleFileProcessingError(file, fileId, error) {
     const tempFileDataMeta = advancedFilesData.value.find((f) => f.id === fileId);
     if (tempFileDataMeta) {
       tempFileDataMeta.meta.passwordProtected = true;
-      tempFileDataMeta.meta.additionalInfo = props.texts.metaAdditionalInfoProtectedArchive;
+      tempFileDataMeta.meta.additionalInfo = displayTexts.value.metaAdditionalInfoProtectedArchive;
     }
   }
   onError(file.id ? file.id : fileId, error.message);
@@ -499,7 +504,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       <div class="lx-draggable-wrapper" v-if="!props.draggable && advancedFilesData.length < 1">
         <LxButton
           :id="`${id}-action-file-upload`"
-          :label="props.texts.buttonLabel"
+          :label="displayTexts.buttonLabel"
           kind="tertiary"
           icon="upload"
           :disabled="props.disabled"
@@ -513,7 +518,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           icon="camera"
           kind="tertiary"
           variant="icon-only"
-          :label="texts.useCamera"
+          :label="displayTexts.useCamera"
           :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
@@ -534,9 +539,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           @click="triggerFileUpload"
           role="button"
           tabindex="0"
-          :aria-label="props.texts.draggablePlaceholder"
+          :aria-label="displayTexts.draggablePlaceholder"
         >
-          <p>{{ props.texts.draggablePlaceholder }}</p>
+          <p>{{ displayTexts.draggablePlaceholder }}</p>
           <LxIcon value="upload" />
         </div>
         <LxButton
@@ -545,7 +550,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           icon="camera"
           kind="tertiary"
           variant="icon-only"
-          :label="texts.useCamera"
+          :label="displayTexts.useCamera"
           :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
@@ -567,7 +572,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       <div class="lx-draggable-wrapper" v-if="!props.draggable">
         <LxButton
           :id="`${id}-action-file-upload`"
-          :label="props.texts.buttonLabel"
+          :label="displayTexts.buttonLabel"
           kind="tertiary"
           icon="upload"
           @click="triggerFileUpload"
@@ -581,7 +586,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           icon="camera"
           kind="tertiary"
           variant="icon-only"
-          :label="texts.useCamera"
+          :label="displayTexts.useCamera"
           :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
@@ -602,9 +607,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           @click="triggerFileUpload"
           role="button"
           tabindex="0"
-          :aria-label="props.texts.draggablePlaceholder"
+          :aria-label="displayTexts.draggablePlaceholder"
         >
-          <p>{{ props.texts.draggablePlaceholder }}</p>
+          <p>{{ displayTexts.draggablePlaceholder }}</p>
           <LxIcon value="upload" />
         </div>
         <LxButton
@@ -613,7 +618,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           icon="camera"
           kind="tertiary"
           variant="icon-only"
-          :label="texts.useCamera"
+          :label="displayTexts.useCamera"
           :disabled="disabled || loading || busy"
           @click="cameraModal.open()"
         />
@@ -626,7 +631,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         :items="advancedFilesData"
         :has-search="props.hasSearch && props.kind === 'multiple'"
         listType="1"
-        :texts="props.texts"
+        :texts="displayTexts"
       >
         <template #customItem="{ id, name, meta, state, description, invalidDescription }">
           <FileUploaderItem
@@ -638,7 +643,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
             :busy="props.busy"
             :showMeta="props.showMeta"
             :read-only="props.readOnly"
-            :texts="props.texts"
+            :texts="displayTexts"
             :isUploading="isUploading"
             :defaultIcon="
               fileUploaderUtils.provideDefaultIcon(advancedFilesData.find((file) => file.id === id))
@@ -654,25 +659,25 @@ const labelledBy = computed(() => props.labelId || rowId.value);
     </div>
   </div>
 
-  <div v-if="props.mode === 'default' && props.texts.uploaderDescription" class="lx-description">
-    {{ props.texts.uploaderDescription }}
+  <div v-if="props.mode === 'default' && displayTexts.uploaderDescription" class="lx-description">
+    {{ displayTexts.uploaderDescription }}
   </div>
 
   <LxModal
     ref="infoModal"
     :label="openedItem?.name"
     size="m"
-    :button-secondary-label="props.texts.close"
+    :button-secondary-label="displayTexts.close"
     :button-secondary-visible="true"
     @primary-action="infoModal.close()"
   >
     <FileUploaderDetails
-      :texts="props.texts"
+      :texts="displayTexts"
       :value="
         fileUploaderUtils.getDetails(
           openedItem,
           storedBase64Strings.find((file) => file.id === openedItem.id)?.base64String || null,
-          props.texts,
+          displayTexts,
           provideAdditionalIconAndType(openedItem.id)
         )
       "
@@ -680,12 +685,12 @@ const labelledBy = computed(() => props.labelId || rowId.value);
   </LxModal>
   <LxModal
     ref="cameraModal"
-    :label="texts.addPhoto"
-    :button-secondary-label="texts.cancelAndClose"
+    :label="displayTexts.addPhoto"
+    :button-secondary-label="displayTexts.cancelAndClose"
     :button-secondary-visible="true"
     :button-primary-visible="true"
     :button-primary-disabled="!cameraPhoto"
-    :button-primary-label="texts.savePicture"
+    :button-primary-label="displayTexts.savePicture"
     :buttonSecondaryIsCancel="false"
     @primary-action="savePhoto"
     @secondary-action="cancelPhoto"
@@ -696,7 +701,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       :hasFlashlightToggle="hasFlashlightToggle"
       :imageSize="imageSize"
       :preferencesId="preferencesId"
-      :texts="texts"
+      :texts="displayTexts"
     />
   </LxModal>
 </template>

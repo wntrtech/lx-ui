@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, computed, inject } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
 import { logError } from '@/utils/devUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
@@ -18,15 +19,16 @@ const props = defineProps({
   showColorPicker: { type: Boolean, default: false },
   showClearAll: { type: Boolean, default: false },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      paintbrush: 'Ota',
-      color: 'Krāsas izvēle',
-      clear: 'Notīrīt visu',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  paintbrush: 'Ota',
+  color: 'Krāsas izvēle',
+  clear: 'Notīrīt visu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue', 'update:instrument', 'update:color']);
 
@@ -56,9 +58,9 @@ const strokeLineJoint = ref('round');
 const paths = ref([]);
 const currentPath = ref([]);
 const textsRef = ref({
-  paintbrush: props.texts.paintbrush,
-  color: props.texts.color,
-  clear: props.texts.clear,
+  paintbrush: displayTexts.value.paintbrush,
+  color: displayTexts.value.color,
+  clear: displayTexts.value.clear,
 });
 
 const getColorOrVariableByLabel = (label, returnType = 'color') => {
@@ -230,7 +232,7 @@ watch(
 );
 
 watch(
-  () => props.texts,
+  () => displayTexts,
   (newTexts) => {
     textsRef.value = {
       paintbrush: newTexts.paintbrush,

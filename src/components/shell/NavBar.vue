@@ -5,6 +5,7 @@ import { useWindowSize } from '@vueuse/core';
 
 import LxButton from '@/components/Button.vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   navItems: {
@@ -31,20 +32,24 @@ const props = defineProps({
   texts: {
     type: Object,
     required: false,
-    default: () => ({
-      defaultBack: 'Atpakaļ',
-      languagesTitle: 'Valodu izvēle',
-      close: 'Aizvērt',
-      themeTitle: 'Noformējuma izvēle',
-      themeAuto: 'Automātiskais režīms',
-      themeLight: 'Gaišais režīms',
-      themeDark: 'Tumšais režīms',
-      themeContrast: 'Kontrastais režīms',
-      animations: 'Samazināt kustības',
-      fonts: 'Iekārtas fonti',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  defaultBack: 'Atpakaļ',
+  languagesTitle: 'Valodu izvēle',
+  close: 'Aizvērt',
+  themeTitle: 'Noformējuma izvēle',
+  themeAuto: 'Automātiskais režīms',
+  themeLight: 'Gaišais režīms',
+  themeDark: 'Tumšais režīms',
+  themeContrast: 'Kontrastais režīms',
+  animations: 'Samazināt kustības',
+  fonts: 'Iekārtas fonti',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const width = ref(useWindowSize().width);
 
@@ -175,7 +180,7 @@ function navClick(id) {
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
         v-model:hasDeviceFonts="deviceFontsModel"
-        :texts="texts"
+        :texts="displayTexts"
       />
     </ul>
 

@@ -3,6 +3,7 @@ import { computed, ref, watch, onMounted, useSlots, inject } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import { formatValueBool } from '@/utils/formatUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -14,13 +15,7 @@ const props = defineProps({
   readOnly: { type: Boolean, default: false },
   tooltip: { type: String, default: null },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      valueYes: 'Jā',
-      valueNo: 'Nē',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const slots = useSlots();
@@ -34,6 +29,9 @@ const model = computed({
     if (!props.readOnly) emits('update:modelValue', value);
   },
 });
+
+const textsDefault = { valueYes: 'Jā', valueNo: 'Nē' };
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const idValue = ref('');
 const input = ref({});
@@ -49,8 +47,8 @@ function checkModelState() {
 }
 
 const booleanTexts = computed(() => ({
-  yes: props.texts.valueYes,
-  no: props.texts.valueNo,
+  yes: displayTexts.value.valueYes,
+  no: displayTexts.value.valueNo,
 }));
 
 const tooltipValue = computed(() => {

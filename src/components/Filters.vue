@@ -5,6 +5,7 @@ import LxExpander from '@/components/Expander.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxForm from '@/components/forms/Form.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const emits = defineEmits(['filter', 'resetFilters', 'update:expanded', 'fastFilterClick']);
 
@@ -26,14 +27,18 @@ const props = defineProps({
   shortlistColumnCount: { type: Number, default: 1 },
   texts: {
     type: Object,
-    default: () => ({
-      filters: 'Filtri',
-      search: 'Atlasīt',
-      clear: 'Notīrīt',
-      fastFiltersLabel: 'Ātrie filtri',
-    }),
+    default: () => ({}),
   },
 });
+
+const defaultTexts = {
+  filters: 'Filtri',
+  search: 'Atlasīt',
+  clear: 'Notīrīt',
+  fastFiltersLabel: 'Ātrie filtri',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
 
 const filterSearch = (e) => {
   emits('filter', e);
@@ -66,7 +71,7 @@ function toggleExpander(value = null) {
 const filterBody = ref();
 const filterSize = useElementSize(filterBody);
 
-const labelText = computed(() => (props.label ? props.label : props.texts.filters));
+const labelText = computed(() => (props.label ? props.label : displayTexts.value.filters));
 
 const expander = ref();
 function focus() {
@@ -109,7 +114,7 @@ defineExpose({ toggleExpander, focus });
           <LxButton
             id="filter-search-button"
             :kind="filterButtonKind"
-            :label="texts.search"
+            :label="displayTexts.search"
             icon="refresh"
             :disabled="disabled"
             @click="filterSearch"
@@ -119,7 +124,7 @@ defineExpose({ toggleExpander, focus });
               id="fast-filter-menu"
               kind="tertiary"
               icon="flash"
-              :label="texts.fastFiltersLabel"
+              :label="displayTexts.fastFiltersLabel"
               :disabled="disabled"
             />
             <template v-slot:panel>
@@ -145,7 +150,7 @@ defineExpose({ toggleExpander, focus });
           <LxButton
             id="filter-clear-button"
             kind="tertiary"
-            :label="texts.clear"
+            :label="displayTexts.clear"
             icon="filters-reset"
             :disabled="disabled"
             @click="filterReset"

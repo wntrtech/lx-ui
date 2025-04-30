@@ -6,6 +6,7 @@ import LxDropDown from '@/components/Dropdown.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { useWindowSize } from '@vueuse/core';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   systemNameShort: { type: String, default: null },
@@ -52,22 +53,26 @@ const props = defineProps({
   texts: {
     type: Object,
     required: false,
-    default: () => ({
-      defaultBack: 'Atpakaļ',
-      logOut: 'Iziet',
-      openAlerts: 'Atvērt sarakstu',
-      helpTitle: 'Palīdzība',
-      alertsTitle: 'Paziņojumi',
-      languagesTitle: 'Valodu izvēle',
-      contextPersonTitle: 'Saistītā persona',
-      userTitle: 'Lietotājs',
-      contextPersonsLabel: 'Izvēlēties personu',
-      contextPersonsOwnData: 'Skatīt manus datus',
-      alternativeProfilesLabel: 'Izvēlieties saistīto personu',
-      menu: 'Izvēlne',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  defaultBack: 'Atpakaļ',
+  logOut: 'Iziet',
+  openAlerts: 'Atvērt sarakstu',
+  helpTitle: 'Palīdzība',
+  alertsTitle: 'Paziņojumi',
+  languagesTitle: 'Valodu izvēle',
+  contextPersonTitle: 'Saistītā persona',
+  userTitle: 'Lietotājs',
+  contextPersonsLabel: 'Izvēlēties personu',
+  contextPersonsOwnData: 'Skatīt manus datus',
+  alternativeProfilesLabel: 'Izvēlieties saistīto personu',
+  menu: 'Izvēlne',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 const windowSize = useWindowSize();
@@ -214,7 +219,7 @@ function triggerContextPersonMenu() {
     >
       <div class="header-profile-section">
         <span class="border-span">
-          <div class="header-label">{{ texts.userTitle }}</div>
+          <div class="header-label">{{ displayTexts.userTitle }}</div>
           <template v-if="!alternativeProfilesInfo">
             <div class="header-profile-name">
               {{ fullName }}
@@ -229,7 +234,7 @@ function triggerContextPersonMenu() {
               :tabindex="1"
               :items="alternativeProfilesComputed"
               v-model="dropDownModelAlternatives"
-              :placeholder="texts?.alternativeProfilesLabel"
+              :placeholder="displayTexts?.alternativeProfilesLabel"
               :disabled="headerNavDisable"
             />
           </div>
@@ -245,7 +250,7 @@ function triggerContextPersonMenu() {
       "
     >
       <div class="section-border-left">
-        <div class="header-label">{{ props.texts.contextPersonTitle }}</div>
+        <div class="header-label">{{ displayTexts.contextPersonTitle }}</div>
         <template v-if="headerNavReadOnly">
           <div class="header-profile-name">
             {{ selectedContextPerson?.name }}
@@ -279,7 +284,7 @@ function triggerContextPersonMenu() {
                 </p>
               </div>
               <div v-else>
-                <p class="placeholder">{{ texts?.contextPersonsLabel }}</p>
+                <p class="placeholder">{{ displayTexts.contextPersonsLabel }}</p>
               </div>
               <LxIcon value="chevron-down" />
             </div>
@@ -307,7 +312,7 @@ function triggerContextPersonMenu() {
               <div class="lx-button-set addition-button">
                 <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
                 <LxButton
-                  :label="texts?.contextPersonsOwnData"
+                  :label="displayTexts.contextPersonsOwnData"
                   :tabindex="3"
                   _active="selectedContextPersonModel === item.code"
                   @click="changePerson()"
@@ -326,7 +331,7 @@ function triggerContextPersonMenu() {
             id="lx_nav-toggle"
             :tabindex="4"
             icon="menu"
-            :label="texts?.menu"
+            :label="displayTexts.menu"
             kind="ghost"
             iconVariant="gradient-brand"
             @click="navToggle"

@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, computed, onUnmounted, inject } from 'vue';
 import LxButton from '@/components/Button.vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
@@ -19,19 +20,20 @@ const props = defineProps({
   imageSize: { type: String, default: 'default' }, // default || max
   preferencesId: { type: String, default: 'lx-camera-settings' },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      errorLabel: 'Notika kļūda',
-      errorDescription: 'Nav piešķirta atļauja izmantot kameru',
-      reloadPage: 'Pārlādēt lapu',
-      changeCamera: 'Mainīt kameru',
-      takePhoto: 'Uzņemt attēlu',
-      deletePhoto: 'Mēģināt vēlreiz',
-      toggleFlashlight: 'Zibspuldze',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  errorLabel: 'Notika kļūda',
+  errorDescription: 'Nav piešķirta atļauja izmantot kameru',
+  reloadPage: 'Pārlādēt lapu',
+  changeCamera: 'Mainīt kameru',
+  takePhoto: 'Uzņemt attēlu',
+  deletePhoto: 'Mēģināt vēlreiz',
+  toggleFlashlight: 'Zibspuldze',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const system = useLx().getGlobals()?.systemId;
 
@@ -282,7 +284,7 @@ onUnmounted(() => {
     <LxToolbar v-if="!modelValue">
       <template #rightArea>
         <LxToolbarGroup v-if="hasFlashlightToggle && cameraHasFlashlight && !loading && !error">
-          <LxToggle v-model="flashlight" :tooltip="texts.toggleFlashlight" />
+          <LxToggle v-model="flashlight" :tooltip="displayTexts.toggleFlashlight" />
         </LxToolbarGroup>
         <LxToolbarGroup>
           <LxButton
@@ -290,13 +292,13 @@ onUnmounted(() => {
             icon="camera-switch"
             kind="ghost"
             variant="icon-only"
-            :label="texts.changeCamera"
+            :label="displayTexts.changeCamera"
             :disabled="error || loading"
             @click="switchCamera()"
           />
           <LxDropDownMenu v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'">
             <LxButton
-              :label="texts.changeCamera"
+              :label="displayTexts.changeCamera"
               variant="icon-only"
               kind="ghost"
               icon="menu"
@@ -319,10 +321,10 @@ onUnmounted(() => {
     <LxLoader :loading="true" v-if="loading" />
     <div v-else-if="error" class="lx-camera-error">
       <LxEmptyState
-        :label="texts.errorLabel"
+        :label="displayTexts.errorLabel"
         icon="invalid"
-        :description="texts.errorDescription"
-        :actionDefinitions="[{ id: 'refresh', name: texts.reloadPage, icon: 'refresh' }]"
+        :description="displayTexts.errorDescription"
+        :actionDefinitions="[{ id: 'refresh', name: displayTexts.reloadPage, icon: 'refresh' }]"
         @emptyStateActionClick="actionClicked"
       />
     </div>
@@ -333,10 +335,15 @@ onUnmounted(() => {
       <img :src="modelValue" alt=" " v-if="modelValue" />
     </div>
     <div class="lx-camera-buttons" v-if="!error && !loading">
-      <LxButton @click="captureImage" icon="camera" :label="texts.takePhoto" v-if="!modelValue" />
+      <LxButton
+        @click="captureImage"
+        icon="camera"
+        :label="displayTexts.takePhoto"
+        v-if="!modelValue"
+      />
       <LxButton
         icon="cancel"
-        :label="texts.deletePhoto"
+        :label="displayTexts.deletePhoto"
         @click="model = null"
         kind="tertiary"
         v-else

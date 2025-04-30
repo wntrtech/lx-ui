@@ -21,6 +21,7 @@ import LxSkipLink from '@/components/SkipLink.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import LxAlertWidget from '@/components/AlertWidget.vue';
 import LxMainHeaderDigimaks from '@/components/shell/HeaderDigimaks.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const themeMode = useColorMode({
   selector: '.lx',
@@ -146,54 +147,55 @@ const props = defineProps({
 
   overrideDefaultStyles: { type: Boolean, default: true },
 
-  texts: {
-    type: Object,
-    default: () => ({
-      defaultBack: 'Atpakaļ',
-      logOut: 'Iziet',
-      openAlerts: 'Atvērt sarakstu',
-      openNavbar: 'Atvērt izvēlni',
-      helpTitle: 'Palīdzība',
-      alertsTitle: 'Paziņojumi',
-      languagesTitle: 'Valodu izvēle',
-      contextPersonTitle: 'Saistīto personu dati',
-      close: 'Aizvērt',
-      contextPersonsLabel: 'Izvēlēties personu',
-      contextPersonsOwnData: 'Skatīt manus datus',
-      alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
-      contextPersonsButtonLabel: 'Konteksta personas',
-      alternativeProfilesButtonLabel: 'Alternatīvie profili',
-      idleModalLabel: 'Tuvojas sesijas beigas',
-      idleModalPrimaryLabel: 'Turpināt darbu',
-      idleModalSecondaryLabel: 'Beigt darbu',
-      descriptionMinutes: 'Līdz sesijas beigām ir palikušas {count} minūtes',
-      descriptionMinutesSmall: 'un {count} sekundes',
-      idleDescription: 'Līdz sesijas beigām ir palikušas {count} sekundes',
-      themeTitle: 'Noformējuma izvēle',
-      themeAuto: 'Automātiskais režīms',
-      themeLight: 'Gaišais režīms',
-      themeDark: 'Tumšais režīms',
-      themeContrast: 'Kontrastainais režīms',
-      animations: 'Samazināt kustības',
-      fonts: 'Iekārtas fonti',
-      confirmModalSecondaryDefaultLabel: 'Nē',
-      confirmModalPrimaryDefaultLabel: 'Jā',
-      previousAlertTitle: 'Iepriekšējais paziņojums',
-      nextAlertTitle: 'Nākamais paziņojums',
-      userTitle: 'Lietotājs',
-      menu: 'Izvēlne',
-      showAllLabel: 'Vairāk',
-      megaMenuTitle: 'Lietotnes',
-      successSvgTitle: 'Veiksmīgs paziņojums',
-      warningSvgTitle: 'Brīdinājums',
-      errorSvgTitle: 'Kļūda',
-      infoSvgTitle: 'Informācija',
-      svgTitle: 'Paziņojums',
-      skipLinkLabel: 'Pāriet uz lapas saturu',
-      skipLinkTitle: 'Pāriet uz lapas saturu',
-    }),
-  },
+  texts: { type: Object, default: () => {} },
 });
+
+const textsDefault = {
+  defaultBack: 'Atpakaļ',
+  logOut: 'Iziet',
+  openAlerts: 'Atvērt sarakstu',
+  openNavbar: 'Atvērt izvēlni',
+  helpTitle: 'Palīdzība',
+  alertsTitle: 'Paziņojumi',
+  languagesTitle: 'Valodu izvēle',
+  contextPersonTitle: 'Saistīto personu dati',
+  close: 'Aizvērt',
+  contextPersonsLabel: 'Izvēlēties personu',
+  contextPersonsOwnData: 'Skatīt manus datus',
+  alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
+  contextPersonsButtonLabel: 'Konteksta personas',
+  alternativeProfilesButtonLabel: 'Alternatīvie profili',
+  idleModalLabel: 'Tuvojas sesijas beigas',
+  idleModalPrimaryLabel: 'Turpināt darbu',
+  idleModalSecondaryLabel: 'Beigt darbu',
+  descriptionMinutes: 'Līdz sesijas beigām ir palikušas {count} minūtes',
+  descriptionMinutesSmall: 'un {count} sekundes',
+  idleDescription: 'Līdz sesijas beigām ir palikušas {count} sekundes',
+  themeTitle: 'Noformējuma izvēle',
+  themeAuto: 'Automātiskais režīms',
+  themeLight: 'Gaišais režīms',
+  themeDark: 'Tumšais režīms',
+  themeContrast: 'Kontrastainais režīms',
+  animations: 'Samazināt kustības',
+  fonts: 'Iekārtas fonti',
+  confirmModalSecondaryDefaultLabel: 'Nē',
+  confirmModalPrimaryDefaultLabel: 'Jā',
+  previousAlertTitle: 'Iepriekšējais paziņojums',
+  nextAlertTitle: 'Nākamais paziņojums',
+  userTitle: 'Lietotājs',
+  menu: 'Izvēlne',
+  showAllLabel: 'Vairāk',
+  megaMenuTitle: 'Lietotnes',
+  successSvgTitle: 'Veiksmīgs paziņojums',
+  warningSvgTitle: 'Brīdinājums',
+  errorSvgTitle: 'Kļūda',
+  infoSvgTitle: 'Informācija',
+  svgTitle: 'Paziņojums',
+  skipLinkLabel: 'Pāriet uz lapas saturu',
+  skipLinkTitle: 'Pāriet uz lapas saturu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const notificationModel = computed({
   get: () => props.notifications,
@@ -588,7 +590,7 @@ function pickIcon(level, layoutMode) {
 }
 
 function pickSvgTitle(level) {
-  return props.texts[`${level}SvgTitle`] || props.texts.svgTitle;
+  return displayTexts.value[`${level}SvgTitle`] || displayTexts.value.svgTitle;
 }
 
 const closedAlertsKey = ref(`${useLx().getGlobals()?.systemId || 'lx'}-closed-alerts`);
@@ -650,8 +652,8 @@ function focusFirstMainFocusableElement() {
     >
       <LxSkipLink
         v-if="props.hasSkipLink"
-        :label="props.texts.skipLinkLabel"
-        :title="props.texts.skipLinkTitle"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">
@@ -687,7 +689,7 @@ function focusFirstMainFocusableElement() {
           @nav-toggle="navToggle"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
-          :texts="texts"
+          :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
             <slot name="logoSmall" />
@@ -733,8 +735,8 @@ function focusFirstMainFocusableElement() {
               <LxAlertWidget
                 v-if="alerts?.length > 0"
                 :alerts="alerts"
-                :nextAlertTitle="texts.nextAlertTitle"
-                :previousAlertTitle="texts.previousAlertTitle"
+                :nextAlertTitle="displayTexts.nextAlertTitle"
+                :previousAlertTitle="displayTexts.previousAlertTitle"
               />
             </div>
           </div>
@@ -766,8 +768,8 @@ function focusFirstMainFocusableElement() {
     >
       <LxSkipLink
         v-if="props.hasSkipLink"
-        :label="props.texts.skipLinkLabel"
-        :title="props.texts.skipLinkTitle"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">
@@ -825,7 +827,7 @@ function focusFirstMainFocusableElement() {
           @go-back="goBack"
           @log-out="logOut"
           @nav-toggle="navToggle"
-          :texts="texts"
+          :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
             <slot name="logoSmall" />
@@ -846,7 +848,7 @@ function focusFirstMainFocusableElement() {
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           :selectedNavItems="navItemsSelected"
-          :texts="texts"
+          :texts="displayTexts"
           @nav-toggle="navToggle"
           @navClick="navClick"
         />
@@ -893,8 +895,8 @@ function focusFirstMainFocusableElement() {
     >
       <LxSkipLink
         v-if="props.hasSkipLink"
-        :label="props.texts.skipLinkLabel"
-        :title="props.texts.skipLinkTitle"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">
@@ -952,7 +954,7 @@ function focusFirstMainFocusableElement() {
           @go-back="goBack"
           @log-out="logOut"
           @nav-toggle="navToggle"
-          :texts="texts"
+          :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
             <slot name="logoSmall" />
@@ -973,7 +975,7 @@ function focusFirstMainFocusableElement() {
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           :selectedNavItems="navItemsSelected"
-          :texts="texts"
+          :texts="displayTexts"
           @nav-toggle="navToggle"
           @navClick="navClick"
         />
@@ -1017,7 +1019,7 @@ function focusFirstMainFocusableElement() {
               icon="close"
               kind="ghost"
               variant="icon-only"
-              :label="texts.close"
+              :label="displayTexts.close"
               @click="closeAlert(alert)"
             />
           </div>
@@ -1114,7 +1116,7 @@ function focusFirstMainFocusableElement() {
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @navClick="navClick"
-          :texts="texts"
+          :texts="displayTexts"
         />
       </header>
       <div class="small-nav-bar-button">
@@ -1124,10 +1126,10 @@ function focusFirstMainFocusableElement() {
           kind="ghost"
           :label="
             navBarSwitchModel === null
-              ? texts.openNavbar
+              ? displayTexts.openNavbar
               : navBarSwitchModel
-              ? texts.openNavbar
-              : texts.close
+              ? displayTexts.openNavbar
+              : displayTexts.close
           "
           @click="navToggleButton()"
         />
@@ -1142,7 +1144,7 @@ function focusFirstMainFocusableElement() {
           :userInfo="userInfo"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
-          :texts="texts"
+          :texts="displayTexts"
           :headerNavDisable="headerNavDisable"
           :headerNavReadOnly="headerNavReadOnly"
           @context-person-changed="contextPersonChanged"
@@ -1219,8 +1221,8 @@ function focusFirstMainFocusableElement() {
     >
       <LxSkipLink
         v-if="props.hasSkipLink"
-        :label="props.texts.skipLinkLabel"
-        :title="props.texts.skipLinkTitle"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
         @click="focusFirstMainFocusableElement"
       />
       <main class="lx-main" ref="main">
@@ -1290,7 +1292,7 @@ function focusFirstMainFocusableElement() {
           @nav-toggle="navToggle"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
-          :texts="texts"
+          :texts="displayTexts"
         />
       </header>
       <div ref="modals" id="modals" />
@@ -1302,8 +1304,8 @@ function focusFirstMainFocusableElement() {
     >
       <LxSkipLink
         v-if="props.hasSkipLink"
-        :label="props.texts.skipLinkLabel"
-        :title="props.texts.skipLinkTitle"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">
@@ -1359,7 +1361,7 @@ function focusFirstMainFocusableElement() {
           @nav-toggle="navToggle"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
-          :texts="texts"
+          :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
             <slot name="logoSmall" />
@@ -1379,7 +1381,7 @@ function focusFirstMainFocusableElement() {
           :has-language-picker="hasLanguagePicker"
           :languages="languages"
           :selectedNavItems="navItemsSelected"
-          :texts="texts"
+          :texts="displayTexts"
           @nav-toggle="navToggle"
           @navClick="navClick"
         />
@@ -1418,10 +1420,10 @@ function focusFirstMainFocusableElement() {
   </transition>
   <LxModal
     ref="idleModalRef"
-    :label="texts.idleModalLabel"
-    :button-primary-label="texts.idleModalPrimaryLabel"
+    :label="displayTexts.idleModalLabel"
+    :button-primary-label="displayTexts.idleModalPrimaryLabel"
     :button-primary-visible="true"
-    :button-secondary-label="texts.idleModalSecondaryLabel"
+    :button-secondary-label="displayTexts.idleModalSecondaryLabel"
     :button-secondary-visible="true"
     :button-secondary-is-cancel="false"
     :disable-closing="true"
@@ -1429,15 +1431,17 @@ function focusFirstMainFocusableElement() {
     @secondary-action="idleModalSecondaryClicked()"
   >
     <p v-if="secondsToLive > 60">
-      {{ props.texts.descriptionMinutes?.replace('{count}', Math.floor(props.secondsToLive / 60)) }}
+      {{
+        displayTexts.descriptionMinutes?.replace('{count}', Math.floor(props.secondsToLive / 60))
+      }}
       {{
         secondsToLive % 60 > 0
-          ? props.texts.descriptionMinutesSmall?.replace('{count}', props.secondsToLive % 60)
+          ? displayTexts.descriptionMinutesSmall?.replace('{count}', props.secondsToLive % 60)
           : null
       }}
     </p>
     <p v-else>
-      {{ props.texts.idleDescription?.replace('{count}', props.secondsToLive) }}
+      {{ displayTexts.idleDescription?.replace('{count}', props.secondsToLive) }}
     </p>
   </LxModal>
   <LxModal
@@ -1447,14 +1451,14 @@ function focusFirstMainFocusableElement() {
     :button-primary-label="
       confirmDialogData?.$state.confirmDialogState.primaryLabel
         ? confirmDialogData.$state.confirmDialogState.primaryLabel
-        : texts.confirmModalPrimaryDefaultLabel
+        : displayTexts.confirmModalPrimaryDefaultLabel
     "
     :button-primary-busy="confirmPrimaryButtonBusy"
     :button-secondary-visible="true"
     :button-secondary-label="
       confirmDialogData?.$state.confirmDialogState.secondaryLabel
         ? confirmDialogData.$state.confirmDialogState.secondaryLabel
-        : texts.confirmModalSecondaryDefaultLabel
+        : displayTexts.confirmModalSecondaryDefaultLabel
     "
     :button-secondary-busy="confirmSecondaryButtonBusy"
     :button-secondary-is-cancel="false"

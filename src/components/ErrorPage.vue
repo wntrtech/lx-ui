@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxIllustration from '@/components/Illustration.vue';
 import LxButton from '@/components/Button.vue';
 
@@ -9,39 +10,39 @@ const props = defineProps({
   title: { type: String, default: null },
   description: { type: String, default: null },
   actionDefinitions: { type: Array, default: () => [] },
-  texts: {
-    type: Object,
-    default: () => ({
-      defaultError400: {
-        title: 'Notika negaidīta kļūda',
-        description:
-          'Šķiet, ka pieprasījums bija nepareizs. Lūdzu, pārbaudiet ievadīto informāciju un mēģiniet vēlreiz.',
-      },
-      defaultError401: {
-        title: 'Lapa pieejama tikai autorizētiem lietotājiem',
-        description: 'Pieeja liegta! Lai piekļūtu šai lapai, jāautorizējas.',
-      },
-      defaultError403: {
-        title: 'Pietrūkst tiesību, lai piekļūtu šai lapai',
-        description: 'Pieeja liegta! Lai piekļūtu šai lapai, nepieciešamas papildu tiesības.',
-      },
-      defaultError404: {
-        title: 'Lapa nav atrasta',
-        description:
-          'Jūsu meklētā lapa nav atrasta. Lūdzu, pārbaudiet ievadīto informāciju un mēģiniet vēlreiz!',
-      },
-      defaultError500: {
-        title: 'Notika negaidīta servera kļūda',
-        description: 'Nedaudz uzgaidiet un mēģiniet vēlreiz!',
-      },
-      defaultErrorSessionTimeout: {
-        title: 'Iestājies sesijas noilgums',
-        description:
-          'Jūsu sesija ir beigusies. Lai turpinātu darbu, autorizējieties sistēmā vēlreiz!',
-      },
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  defaultError400: {
+    title: 'Notika negaidīta kļūda',
+    description:
+      'Šķiet, ka pieprasījums bija nepareizs. Lūdzu, pārbaudiet ievadīto informāciju un mēģiniet vēlreiz.',
+  },
+  defaultError401: {
+    title: 'Lapa pieejama tikai autorizētiem lietotājiem',
+    description: 'Pieeja liegta! Lai piekļūtu šai lapai, jāautorizējas.',
+  },
+  defaultError403: {
+    title: 'Pietrūkst tiesību, lai piekļūtu šai lapai',
+    description: 'Pieeja liegta! Lai piekļūtu šai lapai, nepieciešamas papildu tiesības.',
+  },
+  defaultError404: {
+    title: 'Lapa nav atrasta',
+    description:
+      'Jūsu meklētā lapa nav atrasta. Lūdzu, pārbaudiet ievadīto informāciju un mēģiniet vēlreiz!',
+  },
+  defaultError500: {
+    title: 'Notika negaidīta servera kļūda',
+    description: 'Nedaudz uzgaidiet un mēģiniet vēlreiz!',
+  },
+  defaultErrorSessionTimeout: {
+    title: 'Iestājies sesijas noilgums',
+    description: 'Jūsu sesija ir beigusies. Lai turpinātu darbu, autorizējieties sistēmā vēlreiz!',
+  },
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const pictogram = computed(() => {
   if (props.icon) {
@@ -76,14 +77,14 @@ const titleText = computed(() => {
     return props.title;
   }
   const name = `defaultError${kindSanitized.value}`;
-  return props.texts[name].title;
+  return displayTexts.value[name]?.title;
 });
 const titleDescription = computed(() => {
   if (props.description !== null) {
     return props.description;
   }
   const name = `defaultError${kindSanitized.value}`;
-  return props?.texts[name]?.description;
+  return displayTexts.value[name]?.description;
 });
 </script>
 <template>

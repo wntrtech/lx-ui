@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, shallowRef, watch, nextTick, onMounted, onUnmounted } from 'vue';
 import { useWindowSize, useMutationObserver } from '@vueuse/core';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
@@ -27,32 +28,33 @@ const props = defineProps({
   stickyHeader: { type: Boolean, default: true },
   zoomLevel: { type: Number, default: null }, //  50, 75, 100, 125, 150, 175, 200, 250, 300
   downloadType: { type: String, default: 'default' }, // "default" - component will start download, "emit" - component will emit download event
-  texts: {
-    type: Object,
-    default: () => ({
-      zoomIn: 'Pietuvināt',
-      zoomOut: 'Attālināt',
-      expand: 'Izvērst',
-      collapse: 'Samazināt',
-      download: 'Lejupielādēt',
-      print: 'Printēt',
-      fitToHeight: 'Pielāgot augstumam',
-      fitToWidth: 'Pielāgot platumam',
-      goToPage: 'Pāriet uz norādīto lapu',
-      prevPage: 'Pāriet uz iepriekšējo lapu',
-      nextPage: 'Pāriet uz nākamo lapu',
-      firstPage: 'Pāriet uz pirmo lapu',
-      lastPage: 'Pāriet uz pēdējo lapu',
-      inputTooltip: 'Ievadīt lapaspusi',
-      invalidFileUploadedLabel: 'Nav augšupielādēta datne apskatei',
-      invalidFileUploadedDescription: 'Augšupielādējiet datni',
-      grabToScrollFalse: 'Iespējot ritināšanu',
-      grabToScrollTrue: 'Atspējot ritināšanu',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
   /** @description list of mime types that should load they library on component initialization, useful when you already know that you will use pdf viewer and want to load it as soon as possible */
   preloadLibs: { type: Array, default: () => [] },
 });
+
+const textsDefault = {
+  zoomIn: 'Pietuvināt',
+  zoomOut: 'Attālināt',
+  expand: 'Izvērst',
+  collapse: 'Samazināt',
+  download: 'Lejupielādēt',
+  print: 'Printēt',
+  fitToHeight: 'Pielāgot augstumam',
+  fitToWidth: 'Pielāgot platumam',
+  goToPage: 'Pāriet uz norādīto lapu',
+  prevPage: 'Pāriet uz iepriekšējo lapu',
+  nextPage: 'Pāriet uz nākamo lapu',
+  firstPage: 'Pāriet uz pirmo lapu',
+  lastPage: 'Pāriet uz pēdējo lapu',
+  inputTooltip: 'Ievadīt lapaspusi',
+  invalidFileUploadedLabel: 'Nav augšupielādēta datne apskatei',
+  invalidFileUploadedDescription: 'Augšupielādējiet datni',
+  grabToScrollFalse: 'Iespējot ritināšanu',
+  grabToScrollTrue: 'Atspējot ritināšanu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const imgCanvasRef = ref(null);
 let observer = null;
@@ -284,8 +286,8 @@ function setupIntersectionObserver() {
       }
     );
 
-    canvasArray.value.forEach((canvasElement) => {
-      observer.observe(canvasElement);
+    canvasArray.value.forEach((canvasElementArg) => {
+      observer.observe(canvasElementArg);
     });
   }, 500);
 }
@@ -910,7 +912,7 @@ const toolbarActions = computed(() => {
   if (supportedFileType.value === 'Image' || supportedFileType.value === 'SVG') {
     buttons.push({
       id: 'fitToHeight',
-      name: props.texts.fitToHeight,
+      name: displayTexts.value.fitToHeight,
       icon: 'fit-to-height',
       active: fitType.value === 'fit-to-height',
       groupId: '4',
@@ -919,7 +921,7 @@ const toolbarActions = computed(() => {
     });
     buttons.push({
       id: 'fitToWidth',
-      name: props.texts.fitToWidth,
+      name: displayTexts.value.fitToWidth,
       icon: 'fit-to-width',
       active: fitType.value === 'fit-to-width',
       groupId: '4',
@@ -936,7 +938,7 @@ const toolbarActions = computed(() => {
   ) {
     buttons.push({
       id: 'zoomIn',
-      name: props.texts.zoomIn,
+      name: displayTexts.value.zoomIn,
       icon: 'zoom-in',
       groupId: '1',
       area: 'right',
@@ -945,7 +947,7 @@ const toolbarActions = computed(() => {
     });
     buttons.push({
       id: 'zoomOut',
-      name: props.texts.zoomOut,
+      name: displayTexts.value.zoomOut,
       icon: 'zoom-out',
       groupId: '1',
       area: 'right',
@@ -957,7 +959,7 @@ const toolbarActions = computed(() => {
   if (props.showPrintButton) {
     buttons.push({
       id: 'print',
-      name: props.texts.print,
+      name: displayTexts.value.print,
       icon: 'print',
       groupId: '5',
       area: 'right',
@@ -968,7 +970,7 @@ const toolbarActions = computed(() => {
   if (!props.primaryDownloadButton) {
     buttons.push({
       id: 'download',
-      name: props.texts.download,
+      name: displayTexts.value.download,
       icon: 'download',
       groupId: '3',
       area: 'right',
@@ -980,7 +982,7 @@ const toolbarActions = computed(() => {
   if (props.showFullScreenButton) {
     buttons.push({
       id: 'fullscreen',
-      name: isExpanded.value ? props.texts.collapse : props.texts.expand,
+      name: isExpanded.value ? displayTexts.value.collapse : displayTexts.value.expand,
       icon: isExpanded.value ? 'collapse' : 'expand',
       groupId: '2',
       area: 'right',
@@ -991,12 +993,12 @@ const toolbarActions = computed(() => {
   if (props.primaryDownloadButton && windowWidth.value > 800) {
     buttons.push({
       id: 'download',
-      name: props.texts.download,
+      name: displayTexts.value.download,
       icon: 'download',
       groupId: '3',
       area: 'right',
       kind: 'primary',
-      label: props.texts.download,
+      label: displayTexts.value.download,
       loading: renderingInProgress.value,
       busy: downloadInProgress.value,
     });
@@ -1424,8 +1426,8 @@ onUnmounted(() => {
   >
     <LxEmptyState
       v-if="!supportedFileType"
-      :label="texts.invalidFileUploadedLabel"
-      :description="texts.invalidFileUploadedDescription"
+      :label="displayTexts.invalidFileUploadedLabel"
+      :description="displayTexts.invalidFileUploadedDescription"
     />
 
     <LxToolbar
@@ -1442,7 +1444,7 @@ onUnmounted(() => {
             @click="firstPage"
             kind="ghost"
             variant="icon-only"
-            :label="props.texts.firstPage"
+            :label="displayTexts.firstPage"
             :disabled="isPrevBtnDisabled"
           />
 
@@ -1452,7 +1454,7 @@ onUnmounted(() => {
             @click="debouncedPrevPage"
             kind="ghost"
             variant="icon-only"
-            :label="props.texts.prevPage"
+            :label="displayTexts.prevPage"
             :disabled="isPrevBtnDisabled"
           />
 
@@ -1462,7 +1464,7 @@ onUnmounted(() => {
               v-if="!showInput || renderingInProgress"
               tabindex="0"
               variant="icon-only"
-              :label="props.texts.inputTooltip"
+              :label="displayTexts.inputTooltip"
               @click="handlePlaceholderClick"
               @keydown.enter="handlePlaceholderClick"
             >
@@ -1483,13 +1485,13 @@ onUnmounted(() => {
               @click="goToPage"
               kind="ghost"
               variant="icon-only"
-              :label="props.texts.goToPage"
+              :label="displayTexts.goToPage"
               :disabled="!showInput || renderingInProgress"
             />
           </div>
 
           <div class="pdf-page-indicator">
-            <div class="placeholder" :title="props.texts.inputTooltip">
+            <div class="placeholder" :title="displayTexts.inputTooltip">
               {{ currentPage }} / {{ totalPages }}
             </div>
           </div>
@@ -1499,7 +1501,7 @@ onUnmounted(() => {
             icon="next-page"
             kind="ghost"
             variant="icon-only"
-            :label="props.texts.nextPage"
+            :label="displayTexts.nextPage"
             :disabled="isNextBtnDisabled"
             @click="debouncedNextPage"
           />
@@ -1509,7 +1511,7 @@ onUnmounted(() => {
             icon="last-page"
             kind="ghost"
             variant="icon-only"
-            :label="props.texts.lastPage"
+            :label="displayTexts.lastPage"
             :disabled="isNextBtnDisabled"
             @click="lastPage"
           />
@@ -1519,7 +1521,7 @@ onUnmounted(() => {
             :id="`${id}-action-download`"
             icon="download"
             kind="primary"
-            :label="props.texts.download"
+            :label="displayTexts.download"
             :variant="windowWidth >= 540 ? 'default' : 'icon-only'"
             :disabled="renderingInProgress"
             @click="downloadFile()"
@@ -1530,8 +1532,8 @@ onUnmounted(() => {
           <LxToggle
             v-model="dragToScrollMode"
             :texts="{
-              valueYes: props.texts.grabToScrollTrue,
-              valueNo: props.texts.grabToScrollFalse,
+              valueYes: displayTexts.grabToScrollTrue,
+              valueNo: displayTexts.grabToScrollFalse,
             }"
           />
         </LxToolbarGroup>

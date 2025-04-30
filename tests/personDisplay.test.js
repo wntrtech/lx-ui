@@ -59,10 +59,6 @@ describe('LxPersonDisplay', () => {
       expect(props.iconAttribute).toBe('icon');
       expect(props.iconSetAttribute).toBe('iconSet');
       expect(props.maxLength).toBe(3);
-      expect(props.texts.name).toBe('Vārds, uzvārds');
-      expect(props.texts.description).toBe('Apraksts');
-      expect(props.texts.role).toBe('Loma');
-      expect(props.texts.institution).toBe('Iestāde');
     });
 
     test('should accept provided values', () => {

@@ -15,7 +15,7 @@ import LxWizard from '@/components/Wizard.vue';
 import LxIcon from '@/components/Icon.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxSkipLink from '@/components/SkipLink.vue';
-import { focusNextFocusableElement } from '@/utils/generalUtils';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 
 // Calculates the offset for the form header and footer
 function calculateOffset(el, considerRow = true) {
@@ -238,21 +238,23 @@ const props = defineProps({
    * @type {Object}
    * @since 0.3.5
    */
-  texts: {
-    type: Object,
-    default: () => ({
-      otherActions: 'Citas darbības',
-      required: '(obligāts)',
-      optional: '(neobligāts)',
-      skipLinkLabel: 'Izlaist formu',
-      skipLinkTitle: 'Izlaist formu',
-      previous: 'Iepriekšējais',
-      next: 'Nākamais',
-      overflowMenu: 'Atvērt papildus iespējas',
-      additionalActions: 'Papildus darbības',
-    }),
-  },
+  texts: { type: Object, default: () => {} },
 });
+
+const textsDefault = {
+  otherActions: 'Citas darbības',
+  required: '(obligāts)',
+  optional: '(neobligāts)',
+  skipLinkLabel: 'Izlaist formu',
+  skipLinkTitle: 'Izlaist formu',
+  previous: 'Iepriekšējais',
+  next: 'Nākamais',
+  overflowMenu: 'Atvērt papildus iespējas',
+  additionalActions: 'Papildus darbības',
+};
+
+// Merge texts prop with defaults
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 function normalizeId(id) {
   if (id === 'default') {
@@ -341,9 +343,9 @@ const bottomOutOfBounds = computed(() => {
 const indexTypeRef = computed(() => props.indexType);
 const indexRef = computed(() => props.index);
 const textsComp = computed(() => ({
-  required: props.texts.required,
-  optional: props.texts.optional,
-  overflowMenu: props.texts.overflowMenu,
+  required: displayTexts.value.required,
+  optional: displayTexts.value.optional,
+  overflowMenu: displayTexts.value.overflowMenu,
 }));
 const requiredMode = computed(() => props.requiredMode);
 const formOrientation = computed(() => props.orientation);
@@ -365,14 +367,14 @@ const actionDefinitionsWizardSteps = computed(() => [
   {
     id: '_lx_prev_step',
     icon: 'back',
-    name: props.texts.previous,
+    name: displayTexts.value.previous,
     kind: 'primary',
     disabled: currentStepIndex.value === 0,
   },
   {
     id: '_lx_next_step',
     icon: 'next',
-    name: props.texts.next,
+    name: displayTexts.value.next,
     kind: 'primary',
     disabled: currentStepIndex.value === props.index.length - 1,
   },
@@ -676,8 +678,8 @@ defineExpose({ highlightRow, clearHighlights });
   >
     <LxSkipLink
       v-if="props.hasSkipLink"
-      :label="props.texts.skipLinkLabel"
-      :title="props.texts.skipLinkTitle"
+      :label="displayTexts.skipLinkLabel"
+      :title="displayTexts.skipLinkTitle"
       :tabindex="0"
       @click="focusFirstFocusableElementAfter"
     />
@@ -849,14 +851,14 @@ defineExpose({ highlightRow, clearHighlights });
             kind="ghost"
             variant="icon-only"
             custom-class="additional-button-icon"
-            :label="texts?.otherActions"
+            :label="displayTexts?.otherActions"
           />
 
           <LxButton
             :icon="index?.length > 0 && props.indexType === 'default' ? 'menu' : 'overflow-menu'"
             kind="ghost"
             variant="icon-only"
-            :label="texts.overflowMenu"
+            :label="displayTexts.overflowMenu"
             custom-class="additional-button-icon-menu"
           />
           <template #panel>
@@ -864,7 +866,7 @@ defineExpose({ highlightRow, clearHighlights });
               class="lx-description additional-buttons-label"
               v-if="index?.length > 0 && props.indexType === 'default'"
             >
-              {{ texts.additionalActions }}
+              {{ displayTexts.additionalActions }}
             </p>
             <LxButton
               v-for="button in additionalButtons"
@@ -916,7 +918,12 @@ defineExpose({ highlightRow, clearHighlights });
         v-if="additionalButtons?.length === 0 && props.indexType === 'default' && index?.length > 0"
       >
         <LxDropDownMenu>
-          <LxButton icon="menu" kind="ghost" variant="icon-only" :label="texts.overflowMenu" />
+          <LxButton
+            icon="menu"
+            kind="ghost"
+            variant="icon-only"
+            :label="displayTexts.overflowMenu"
+          />
           <template #panel>
             <div
               class="additional-index-button"
@@ -946,7 +953,7 @@ defineExpose({ highlightRow, clearHighlights });
       ref="tabControl"
       :value="props.index"
       :kind="indexHasIcons ? 'combo' : 'default'"
-      :texts="texts"
+      :texts="displayTexts"
       @click="hideAll"
       @keydown.enter="hideAll"
     >
@@ -1022,7 +1029,7 @@ defineExpose({ highlightRow, clearHighlights });
           @click="clickHandler(button.id)"
         />
         <LxDropDownMenu custom-class="responsive-overflow" v-if="notPrimaryButtonCount > 1">
-          <LxButton kind="secondary" icon="overflow-menu" :label="texts?.otherActions" />
+          <LxButton kind="secondary" icon="overflow-menu" :label="displayTexts?.otherActions" />
           <template #panel>
             <LxButton
               v-for="button in secondaryButtons"

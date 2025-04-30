@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { useElementSize } from '@vueuse/core';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
@@ -24,22 +25,29 @@ const props = defineProps({
   isUploading: { type: Boolean, default: false },
   texts: {
     type: Object,
-    default: () => ({
-      metaAdditionalInfoSizeTitle: 'Izmērs',
-      metaAdditionalInfoExtensionTitle: 'Paplašinājums',
-      metaAdditionalInfoResolutionTitle: 'Izšķirtspēja',
-      metaAdditionalInfoFileCountTitle: 'Datņu skaits',
-      metaAdditionalInfoFileCountLabelSingle: 'datne',
-      metaAdditionalInfoFileCountLabelMulti: 'datnes',
-      metaAdditionalInfoPageCountTitle: 'Lappušu skaits',
-      metaAdditionalInfoSlideCountTitle: 'Slaidu skaits',
-      metaAdditionalInfoPageCountLabelSingle: 'lappuse',
-      metaAdditionalInfoPageCountLabelMulti: 'lappuses',
-      metaAdditionalInfoSlideCountLabelSingle: 'slaids',
-      metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  metaAdditionalInfoSizeTitle: 'Izmērs',
+  metaAdditionalInfoExtensionTitle: 'Paplašinājums',
+  metaAdditionalInfoResolutionTitle: 'Izšķirtspēja',
+  metaAdditionalInfoFileCountTitle: 'Datņu skaits',
+  metaAdditionalInfoFileCountLabelSingle: 'datne',
+  metaAdditionalInfoFileCountLabelMulti: 'datnes',
+  metaAdditionalInfoPageCountTitle: 'Lappušu skaits',
+  metaAdditionalInfoSlideCountTitle: 'Slaidu skaits',
+  metaAdditionalInfoPageCountLabelSingle: 'lappuse',
+  metaAdditionalInfoPageCountLabelMulti: 'lappuses',
+  metaAdditionalInfoSlideCountLabelSingle: 'slaids',
+  metaAdditionalInfoSlideCountLabelMulti: 'slaidi',
+  download: 'Lejupielādēt',
+  clear: 'Noņemt',
+  infoButton: 'Informācija',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['downloadFile', 'openModal', 'removeFile']);
 
@@ -72,16 +80,16 @@ const reactiveContainerElementWidth = computed(() => containerElementSize.width.
 
 const additionalInfoTitle = computed(() => {
   if (props.customItem.meta?.type?.startsWith('image/')) {
-    return props.texts.metaAdditionalInfoResolutionTitle;
+    return displayTexts.value.metaAdditionalInfoResolutionTitle;
   }
   if (props.customItem.meta?.type?.endsWith('/zip')) {
-    return props.texts.metaAdditionalInfoFileCountTitle;
+    return displayTexts.value.metaAdditionalInfoFileCountTitle;
   }
   if (props.customItem.meta?.type?.endsWith('.document')) {
-    return props.texts.metaAdditionalInfoPageCountTitle;
+    return displayTexts.value.metaAdditionalInfoPageCountTitle;
   }
   if (props.customItem.meta?.type?.endsWith('.presentation')) {
-    return props.texts.metaAdditionalInfoSlideCountTitle;
+    return displayTexts.value.metaAdditionalInfoSlideCountTitle;
   }
   return '';
 });
@@ -100,7 +108,7 @@ const additionalInfoTitle = computed(() => {
           'lx-list-item-interactive':
             props.hasDownloadButton && !props.disabled && !props.loading && !props.busy,
         }"
-        :title="props.hasDownloadButton ? props.texts?.download : ''"
+        :title="props.hasDownloadButton ? displayTexts.download : ''"
         @keyup.space="downloadFile(props.customItem.id)"
         @keyup.enter="downloadFile(props.customItem.id)"
         @click="downloadFile(props.customItem.id)"
@@ -130,7 +138,7 @@ const additionalInfoTitle = computed(() => {
           kind="ghost"
           variant="icon-only"
           icon="remove"
-          :label="props.texts.clear"
+          :label="displayTexts.clear"
           :destructive="true"
           :disabled="props.disabled"
           :loading="props.loading"
@@ -187,7 +195,7 @@ const additionalInfoTitle = computed(() => {
             >
               <LxButton
                 kind="ghost"
-                :label="props.texts.infoButton"
+                :label="displayTexts.infoButton"
                 :disabled="props.disabled"
                 :loading="props.loading"
                 :busy="props.busy"
@@ -200,21 +208,21 @@ const additionalInfoTitle = computed(() => {
         </div>
         <div class="lx-file-addition-data-wrapper">
           <div class="lx-file-meta" v-if="props.customItem.meta">
-            <p class="lx-data" :title="texts.metaAdditionalInfoSizeTitle">
+            <p class="lx-data" :title="displayTexts.metaAdditionalInfoSizeTitle">
               {{ fileUploaderUtils.convertBytesToFormattedString(props.customItem.meta?.size) }}
             </p>
-            <p class="lx-data" :title="texts.metaAdditionalInfoExtensionTitle">
+            <p class="lx-data" :title="displayTexts.metaAdditionalInfoExtensionTitle">
               {{ fileUploaderUtils.getFileExtension(props.customItem.name) }}
             </p>
             <p
               class="lx-data meta-description"
               :title="
                 additionalInfoTitle ||
-                fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts)
+                fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts.value)
               "
-              v-if="fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts)"
+              v-if="fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts.value)"
             >
-              {{ fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts) }}
+              {{ fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts.value) }}
             </p>
           </div>
           <div v-else></div>
@@ -225,7 +233,7 @@ const additionalInfoTitle = computed(() => {
             <LxButton
               v-if="props.showMeta"
               kind="ghost"
-              :label="props.texts.infoButton"
+              :label="displayTexts.infoButton"
               :disabled="props.disabled"
               :loading="props.loading"
               :busy="props.busy"
@@ -258,7 +266,7 @@ const additionalInfoTitle = computed(() => {
               'lx-list-item-interactive':
                 props.hasDownloadButton && !props.disabled && !props.loading && !props.busy,
             }"
-            :title="props.hasDownloadButton ? props.texts?.download : ''"
+            :title="props.hasDownloadButton ? displayTexts.download : ''"
             @keyup.space="downloadFile(props.customItem.id)"
             @keyup.enter="downloadFile(props.customItem.id)"
             @click="downloadFile(props.customItem.id)"
@@ -293,7 +301,7 @@ const additionalInfoTitle = computed(() => {
                   [
                     fileUploaderUtils.convertBytesToFormattedString(props.customItem.meta?.size),
                     fileUploaderUtils.getFileExtension(props.customItem.meta.name),
-                    fileUploaderUtils.getExtraParameter(props.customItem.meta, props.texts),
+                    fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts.value),
                   ]
                     .filter(Boolean)
                     .join('; ')
@@ -328,7 +336,7 @@ const additionalInfoTitle = computed(() => {
               :loading="props.loading"
               :busy="props.busy"
               icon="info"
-              :title="props.texts.infoButton"
+              :title="displayTexts.infoButton"
               @click="openModal(props.customItem.id)"
             ></LxButton>
             <LxButton
@@ -336,7 +344,7 @@ const additionalInfoTitle = computed(() => {
               kind="ghost"
               variant="icon-only"
               icon="remove"
-              :title="props.texts.clear"
+              :title="displayTexts.clear"
               @click="removeFile(props.customItem.id)"
               :destructive="true"
               :disabled="props.disabled"

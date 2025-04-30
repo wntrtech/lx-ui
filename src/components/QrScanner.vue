@@ -8,6 +8,7 @@ import LxEmptyState from '@/components/EmptyState.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxToggle from '@/components/Toggle.vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -18,24 +19,25 @@ const props = defineProps({
   hasFlashlightToggle: { type: Boolean, default: false },
   showAlerts: { type: Boolean, default: true },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      notAllowedError: 'Nav piešķirta atļauja izmantot kameru',
-      notFoundError: 'Neviena kamera nav atrasta',
-      notReadableError: 'Kameru jau izmanto cita lietotne',
-      error: 'Nesanāca nolasīt kodu',
-      errorLabel: 'Kļūda',
-      success: 'Kods veiksmīgi noskenēts',
-      continueScanning: 'Turpināt skenēšanu',
-      dragHere: 'Ievelciet datni šeit',
-      changeCamera: 'Mainīt kameru',
-      scanFile: 'Skenēt datni',
-      reloadPage: 'Pārlādēt lapu',
-      toggleFlashlight: 'Zibspuldze',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  notAllowedError: 'Nav piešķirta atļauja izmantot kameru',
+  notFoundError: 'Neviena kamera nav atrasta',
+  notReadableError: 'Kameru jau izmanto cita lietotne',
+  error: 'Nesanāca nolasīt kodu',
+  errorLabel: 'Kļūda',
+  success: 'Kods veiksmīgi noskenēts',
+  continueScanning: 'Turpināt skenēšanu',
+  dragHere: 'Ievelciet datni šeit',
+  changeCamera: 'Mainīt kameru',
+  scanFile: 'Skenēt datni',
+  reloadPage: 'Pārlādēt lapu',
+  toggleFlashlight: 'Zibspuldze',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update', 'error']);
 
@@ -53,13 +55,13 @@ function onError(err) {
   if (dragOver.value) dragOver.value = false;
 
   if (err?.name === 'NotAllowedError') {
-    errorMessage.value = props.texts.notAllowedError;
+    errorMessage.value = displayTexts.value.notAllowedError;
   } else if (err?.name === 'NotFoundError') {
-    errorMessage.value = props.texts.notFoundError;
+    errorMessage.value = displayTexts.value.notFoundError;
   } else if (err?.name === 'NotReadableError') {
-    errorMessage.value = props.texts.notReadableError;
+    errorMessage.value = displayTexts.value.notReadableError;
   } else {
-    errorMessage.value = props.texts.error;
+    errorMessage.value = displayTexts.value.error;
   }
   emits('error', errorMessage.value);
 }
@@ -72,7 +74,7 @@ function onDetect(detectedCodes) {
   if (dragOver.value) dragOver.value = false;
   if (detectedCodes?.length === 0 && props.showAlerts) {
     error.value = true;
-    errorMessage.value = props.texts.error;
+    errorMessage.value = displayTexts.value.error;
   } else if (props.showAlerts) accepted.value = true;
 
   if (props.kind === 'multiple' && props.showAlerts) {
@@ -190,11 +192,11 @@ onMounted(async () => {
       <LxToggle
         v-model="torch"
         v-if="!torchNotSupported && hasFlashlightToggle"
-        :tooltip="texts.toggleFlashlight"
+        :tooltip="displayTexts.toggleFlashlight"
       />
       <LxButton
         variant="icon-only"
-        :label="texts.scanFile"
+        :label="displayTexts.scanFile"
         kind="ghost"
         icon="documents"
         :disabled="refreshError || accepted || error"
@@ -206,11 +208,11 @@ onMounted(async () => {
         icon="camera-switch"
         kind="ghost"
         variant="icon-only"
-        :label="texts.changeCamera"
+        :label="displayTexts.changeCamera"
         @click="switchCamera()"
       />
       <LxDropDownMenu v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'">
-        <LxButton :label="texts.changeCamera" variant="icon-only" kind="ghost" icon="menu" />
+        <LxButton :label="displayTexts.changeCamera" variant="icon-only" kind="ghost" icon="menu" />
         <template #panel>
           <LxButton
             v-for="camera in camerasList"
@@ -272,8 +274,8 @@ onMounted(async () => {
           <div class="lx-qr-success" v-if="accepted">
             <div class="lx-qr-success-core">
               <LxIcon value="accept" />
-              <p>{{ texts.success }}</p>
-              <LxButton :label="texts.continueScanning" @click="resetAccepted()" />
+              <p>{{ displayTexts.success }}</p>
+              <LxButton :label="displayTexts.continueScanning" @click="resetAccepted()" />
             </div>
           </div>
         </Transition>
@@ -281,13 +283,13 @@ onMounted(async () => {
           <div class="lx-qr-error" v-show="error">
             <div class="lx-qr-error-core">
               <LxEmptyState
-                :label="texts.errorLabel"
+                :label="displayTexts.errorLabel"
                 :description="errorMessage"
                 icon="invalid"
                 :action-definitions="
                   !refreshError
-                    ? [{ id: 'reset', name: texts.continueScanning }]
-                    : [{ id: 'refresh', name: texts.reloadPage, icon: 'refresh' }]
+                    ? [{ id: 'reset', name: displayTexts.continueScanning }]
+                    : [{ id: 'refresh', name: displayTexts.reloadPage, icon: 'refresh' }]
                 "
                 @emptyStateActionClick="emptyStateAction"
               />
@@ -301,13 +303,13 @@ onMounted(async () => {
             <Transition name="fade">
               <div class="lx-qr-success" v-if="accepted">
                 <LxIcon value="notification-success" />
-                <p>{{ texts.success }}</p>
+                <p>{{ displayTexts.success }}</p>
               </div>
             </Transition>
             <Transition name="fade">
               <div class="lx-qr-error" v-if="error && !refreshError">
                 <LxIcon value="invalid" />
-                <p>{{ texts.errorLabel }}</p>
+                <p>{{ displayTexts.errorLabel }}</p>
               </div>
             </Transition>
           </div>
@@ -324,7 +326,7 @@ onMounted(async () => {
         v-show="(!accepted && !error) || kind === 'multiple'"
       >
         <div class="lx-qr-drag-zone" @dragenter="dragEnter" @dragleave="dragLeave">
-          <p>{{ texts.dragHere }}</p>
+          <p>{{ displayTexts.dragHere }}</p>
         </div>
       </qrcode-drop-zone>
     </Transition>

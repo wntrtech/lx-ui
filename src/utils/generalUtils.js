@@ -49,3 +49,20 @@ export function focusNextFocusableElement(startElement) {
     firstFocusableElement.focus();
   }
 }
+
+// Calculates a dictionary of texts to be displayed in a component, replacing default texts with any passed by property
+export function getDisplayTexts(textsPassed, textsDefault, noCopy) {
+  let ret = textsPassed ?? {};
+  if (!noCopy) {
+    ret = textsPassed ? JSON.parse(JSON.stringify(textsPassed)) : {};
+  }
+  Object.keys(textsDefault).forEach((key) => {
+    if (typeof textsDefault[key] === 'object') {
+      ret[key] = getDisplayTexts(ret[key], textsDefault[key], true);
+    } else if (ret[key] === undefined) {
+      ret[key] = textsDefault[key];
+    }
+  });
+
+  return ret;
+}

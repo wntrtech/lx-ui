@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { safeString } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
@@ -22,51 +23,55 @@ const props = defineProps({
   },
   texts: {
     type: Object,
-    default: () => ({
-      clear: 'Notīrīt',
-      buttonLabel: 'Izvēlēties datni',
-      uploaderDescription: '',
-      draggablePlaceholder: 'Ievelciet datnes, vai nospiediet šeit, lai augšupielādētu',
-      placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
-      close: 'Aizvērt',
-      noItems: 'Nav pievienota neviena datne',
-      infoButton: 'Skatīt detaļas',
-      download: 'Lejupielādēt',
-      metaPreviewLabel: 'Priekšskatījums',
-      metaMainLabel: 'Galvenie dati',
-      metaMainAuthor: 'Autors',
-      metaMainFormat: 'Formāts',
-      metaMainImageDimensions: 'Attēla dimensijas',
-      metaMainLastModified: 'Pēdējās izmaiņas',
-      metaMainDateCreated: 'Izveides datums',
-      metaMainDataSize: 'Datnes izmērs',
-      metaAdditionalLabel: 'Visi dati',
-      metaLocationLabel: 'Atrašanās vietas dati',
-      metaLocationLatitude: 'Platuma grādi',
-      metaLocationLongitude: 'Garuma grādi',
-      metaLocationAltitude: 'Augstums',
-      metaImageLabel: 'Attēla dati',
-      metaImageWidth: 'Attēla platums',
-      metaImageHeight: 'Attēla augstums',
-      metaImageHorizontalResolution: 'Horizontālā izšķirtspēja',
-      metaImageVerticalResolution: 'Vertikālā izšķirtspēja',
-      metaImageCopyright: 'Autortiesības',
-      metaCameraBrand: 'Kameras ražotājs',
-      metaCameraModel: 'Kameras modelis',
-      metaFocusLength: 'Fokusa attālums',
-      metaFStop: 'F-stop',
-      metaExposure: 'Exposure',
-      metaISO: 'ISO',
-      metaExposureBias: 'Exposure bias',
-      metaFlash: 'Zibspuldzes iestatījums',
-      metaColorSpace: 'Color space',
-      metaDateTime: 'Datums un laiks',
-      metaArchiveContentLabel: 'Arhīva saturs',
-      metaEdocArchiveContentLabel: 'Saturs',
-      metaEDocContentLabel: 'Paraksti',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  clear: 'Notīrīt',
+  buttonLabel: 'Izvēlēties datni',
+  uploaderDescription: '',
+  draggablePlaceholder: 'Ievelciet datnes, vai nospiediet šeit, lai augšupielādētu',
+  placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
+  close: 'Aizvērt',
+  noItems: 'Nav pievienota neviena datne',
+  infoButton: 'Skatīt detaļas',
+  download: 'Lejupielādēt',
+  metaPreviewLabel: 'Priekšskatījums',
+  metaMainLabel: 'Galvenie dati',
+  metaMainAuthor: 'Autors',
+  metaMainFormat: 'Formāts',
+  metaMainImageDimensions: 'Attēla dimensijas',
+  metaMainLastModified: 'Pēdējās izmaiņas',
+  metaMainDateCreated: 'Izveides datums',
+  metaMainDataSize: 'Datnes izmērs',
+  metaAdditionalLabel: 'Visi dati',
+  metaLocationLabel: 'Atrašanās vietas dati',
+  metaLocationLatitude: 'Platuma grādi',
+  metaLocationLongitude: 'Garuma grādi',
+  metaLocationAltitude: 'Augstums',
+  metaImageLabel: 'Attēla dati',
+  metaImageWidth: 'Attēla platums',
+  metaImageHeight: 'Attēla augstums',
+  metaImageHorizontalResolution: 'Horizontālā izšķirtspēja',
+  metaImageVerticalResolution: 'Vertikālā izšķirtspēja',
+  metaImageCopyright: 'Autortiesības',
+  metaCameraBrand: 'Kameras ražotājs',
+  metaCameraModel: 'Kameras modelis',
+  metaFocusLength: 'Fokusa attālums',
+  metaFStop: 'F-stop',
+  metaExposure: 'Exposure',
+  metaISO: 'ISO',
+  metaExposureBias: 'Exposure bias',
+  metaFlash: 'Zibspuldzes iestatījums',
+  metaColorSpace: 'Color space',
+  metaDateTime: 'Datums un laiks',
+  metaArchiveContentLabel: 'Arhīva saturs',
+  metaEdocArchiveContentLabel: 'Saturs',
+  metaEDocContentLabel: 'Paraksti',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const mainDataWithoutAuthorAndIcon = computed(() => {
   if (!props.value.mainData) return {};
@@ -104,9 +109,9 @@ const normalizedAuthors = computed(() => {
 
 const archiveContentSectionlabel = computed(() => {
   if (props.value?.edocContentData && props.value?.edocContentData.length > 0) {
-    return props.texts?.metaEdocArchiveContentLabel;
+    return displayTexts.value.metaEdocArchiveContentLabel;
   }
-  return props.texts?.metaArchiveContentLabel;
+  return displayTexts.value.metaArchiveContentLabel;
 });
 
 const customEsignSectionClass = computed(() => {
@@ -152,7 +157,7 @@ const nomalizedIconAndType = computed(() => {
     <template #sections>
       <LxSection
         id="metaPreview"
-        :label="props.texts?.metaPreviewLabel"
+        :label="displayTexts.metaPreviewLabel"
         :column-count="3"
         v-if="props.value?.preview"
       >
@@ -163,8 +168,8 @@ const nomalizedIconAndType = computed(() => {
         </LxRow>
       </LxSection>
 
-      <LxSection id="metaMain" :label="props.texts?.metaMainLabel" :column-count="3">
-        <LxRow :label="props.texts?.metaMainAuthor">
+      <LxSection id="metaMain" :label="displayTexts.metaMainLabel" :column-count="3">
+        <LxRow :label="displayTexts.metaMainAuthor">
           <template v-if="normalizedAuthors">
             <LxPersonDisplay v-for="item in normalizedAuthors" :key="item" :value="item" />
           </template>
@@ -198,7 +203,7 @@ const nomalizedIconAndType = computed(() => {
         class="lx-edoc-signs-list-section"
         icon="sign"
         :customClass="customEsignSectionClass"
-        :label="props.texts?.metaEDocContentLabel"
+        :label="displayTexts.metaEDocContentLabel"
         :badge="props.value?.edocContentData.length"
       >
         <LxRow :column-span="1">
@@ -241,21 +246,21 @@ const nomalizedIconAndType = computed(() => {
 
       <LxSection
         id="metaLocation"
-        :label="props.texts?.metaLocationLabel"
+        :label="displayTexts.metaLocationLabel"
         :column-count="3"
         v-if="props.value?.locationData"
       >
-        <LxRow :label="props.texts?.metaLocationLatitude">
+        <LxRow :label="displayTexts.metaLocationLatitude">
           <p class="lx-data">
             {{ props.value.locationData.lat.value.toFixed(5).replace('.', ',') }}
           </p>
         </LxRow>
-        <LxRow :label="props.texts?.metaLocationLongitude">
+        <LxRow :label="displayTexts.metaLocationLongitude">
           <p class="lx-data">
             {{ props.value.locationData.long.value.toFixed(5).replace('.', ',') }}
           </p>
         </LxRow>
-        <LxRow :label="props.texts?.metaLocationAltitude">
+        <LxRow :label="displayTexts.metaLocationAltitude">
           <p v-if="props.value.locationData?.altitude" class="lx-data">
             {{ props.value.locationData?.altitude.value }} &nbsp;
             <span v-if="props.value.locationData?.altitude.ref">
@@ -275,7 +280,7 @@ const nomalizedIconAndType = computed(() => {
 
       <LxSection
         id="metaImage"
-        :label="props.texts?.metaImageLabel"
+        :label="displayTexts.metaImageLabel"
         :column-count="3"
         v-if="props.value?.imageData"
       >
@@ -286,7 +291,7 @@ const nomalizedIconAndType = computed(() => {
 
       <LxSection
         id="metaAdditional"
-        :label="props.texts?.metaAdditionalLabel"
+        :label="displayTexts.metaAdditionalLabel"
         :column-count="3"
         v-if="props.value?.additionalData"
       >

@@ -5,6 +5,7 @@ import { useWindowSize, onClickOutside } from '@vueuse/core';
 
 import { formatLocalizedDate } from '@/utils/dateUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import {
   getTimeOrderIndex,
   getMonthNameByOrder,
@@ -55,27 +56,31 @@ const props = defineProps({
   setActiveInput: { type: Function, default: () => {} },
   texts: {
     type: Object,
-    default: () => ({
-      clear: 'Attīrīt',
-      clearButton: 'Attīrīt vērtību',
-      todayButton: 'Šodiena',
-      clearStart: 'Notīrīt sākuma vērtību',
-      clearEnd: 'Notīrīt beigu vērtību',
-      next: 'Nākamais',
-      previous: 'Iepriekšējais',
-      nextMonth: 'Nākamais mēnesis',
-      previousMonth: 'Iepriekšējais mēnesis',
-      nextYear: 'Nākamais gads',
-      previousYear: 'Iepriekšējais gads',
-      nextDecade: 'Nākamā dekāde',
-      previousDecade: 'Iepriekšējā dekāde',
-      doNotIndicateStart: 'Nenorādīt sākumu',
-      doNotIndicateEnd: 'Nenorādīt beigas',
-      scrollUp: 'Ritināt uz augšu',
-      scrollDown: 'Ritināt uz leju',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  clear: 'Attīrīt',
+  clearButton: 'Attīrīt vērtību',
+  todayButton: 'Šodiena',
+  clearStart: 'Notīrīt sākuma vērtību',
+  clearEnd: 'Notīrīt beigu vērtību',
+  next: 'Nākamais',
+  previous: 'Iepriekšējais',
+  nextMonth: 'Nākamais mēnesis',
+  previousMonth: 'Iepriekšējais mēnesis',
+  nextYear: 'Nākamais gads',
+  previousYear: 'Iepriekšējais gads',
+  nextDecade: 'Nākamā dekāde',
+  previousDecade: 'Iepriekšējā dekāde',
+  doNotIndicateStart: 'Nenorādīt sākumu',
+  doNotIndicateEnd: 'Nenorādīt beigas',
+  scrollUp: 'Ritināt uz augšu',
+  scrollDown: 'Ritināt uz leju',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -2244,19 +2249,19 @@ const isMinMaxInPast = computed(() =>
 );
 
 const previousSlideButtonLabel = computed(() => {
-  if (regularLayout.value) return props.texts.previousMonth;
-  if (monthsLayout.value) return props.texts.previousYear;
-  if (yearsLayout.value) return props.texts.previousDecade;
-  if (quartersLayout.value) return props.texts.previousDecade;
-  return props.texts.previous;
+  if (regularLayout.value) return displayTexts.value.previousMonth;
+  if (monthsLayout.value) return displayTexts.value.previousYear;
+  if (yearsLayout.value) return displayTexts.value.previousDecade;
+  if (quartersLayout.value) return displayTexts.value.previousDecade;
+  return displayTexts.value.previous;
 });
 
 const nextSlideButtonLabel = computed(() => {
-  if (regularLayout.value) return props.texts.nextMonth;
-  if (monthsLayout.value) return props.texts.nextYear;
-  if (yearsLayout.value) return props.texts.nextDecade;
-  if (quartersLayout.value) return props.texts.nextDecade;
-  return props.texts.next;
+  if (regularLayout.value) return displayTexts.value.nextMonth;
+  if (monthsLayout.value) return displayTexts.value.nextYear;
+  if (yearsLayout.value) return displayTexts.value.nextDecade;
+  if (quartersLayout.value) return displayTexts.value.nextDecade;
+  return displayTexts.value.next;
 });
 
 onClickOutside(containerRef, () => {
@@ -2860,7 +2865,7 @@ watch(
         kind="ghost"
         icon="reset"
         variant="icon-only"
-        :label="texts.todayButton"
+        :label="displayTexts.todayButton"
         :disabled="disabled"
         @click.stop.prevent="returnToToday"
       />
@@ -3620,7 +3625,7 @@ watch(
             icon="caret-up"
             variant="icon-only"
             :disabled="disabled"
-            :label="texts.scrollUp"
+            :label="displayTexts.scrollUp"
             @click.stop.prevent="onScrollClick(-1, 'hours')"
           />
 
@@ -3734,7 +3739,7 @@ watch(
             icon="caret-down"
             variant="icon-only"
             :disabled="disabled"
-            :label="texts.scrollDown"
+            :label="displayTexts.scrollDown"
             @click.stop.prevent="onScrollClick(1, 'hours')"
           />
         </div>
@@ -3747,7 +3752,7 @@ watch(
             icon="caret-up"
             variant="icon-only"
             :disabled="disabled"
-            :label="texts.scrollUp"
+            :label="displayTexts.scrollUp"
             @click.stop.prevent="onScrollClick(-1, 'minutes')"
           />
 
@@ -3857,7 +3862,7 @@ watch(
             icon="caret-down"
             variant="icon-only"
             :disabled="disabled"
-            :label="texts.scrollDown"
+            :label="displayTexts.scrollDown"
             @click.stop.prevent="onScrollClick(1, 'minutes')"
           />
         </div>
@@ -3886,14 +3891,14 @@ watch(
           'range-buttons': pickerType === 'range',
           'range-buttons-icon':
             pickerType === 'range' && mode !== 'month' && mode !== 'year' && mode !== 'quarters',
-          'text-unavailable': pickerType === 'range' && !texts.doNotIndicateStart,
+          'text-unavailable': pickerType === 'range' && !displayTexts.doNotIndicateStart,
         },
       ]"
     >
       <LxButton
         v-if="pickerType === 'range'"
         custom-class="min-date-button"
-        :label="texts.doNotIndicateStart"
+        :label="displayTexts.doNotIndicateStart"
         kind="ghost"
         icon="min-date"
         :variant="
@@ -3901,7 +3906,7 @@ watch(
           mode === 'year' ||
           mode === 'quarters' ||
           isMobileScreen ||
-          !texts.doNotIndicateStart
+          !displayTexts.doNotIndicateStart
             ? 'icon-only'
             : 'default'
         "
@@ -3910,8 +3915,8 @@ watch(
       />
 
       <LxButton
-        :title="texts.clearButton"
-        :label="texts.clear"
+        :title="displayTexts.clearButton"
+        :label="displayTexts.clear"
         kind="ghost"
         icon="clear"
         :variant="
@@ -3926,7 +3931,7 @@ watch(
       <LxButton
         v-if="pickerType === 'range'"
         custom-class="max-date-button"
-        :label="texts.doNotIndicateEnd"
+        :label="displayTexts.doNotIndicateEnd"
         kind="ghost"
         icon="max-date"
         :variant="

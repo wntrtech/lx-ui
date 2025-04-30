@@ -9,6 +9,7 @@ import LxToggle from '@/components/Toggle.vue';
 import LxAvatar from '@/components/Avatar.vue';
 
 import { shortenUserName, safeString } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
@@ -45,26 +46,30 @@ const props = defineProps({
   texts: {
     type: Object,
     required: false,
-    default: () => ({
-      logOut: 'Iziet',
-      openAlerts: 'Atvērt sarakstu',
-      helpTitle: 'Palīdzība',
-      alertsTitle: 'Paziņojumi',
-      languagesTitle: 'Valodu izvēle',
-      contextPersonsButtonLabel: 'Konteksta personas',
-      alternativeProfilesButtonLabel: 'Alternatīvie profili',
-      themeTitle: 'Noformējuma izvēle',
-      themeAuto: 'Automātiskais režīms',
-      themeLight: 'Gaišais režīms',
-      themeDark: 'Tumšais režīms',
-      themeContrast: 'Kontrastais režīms',
-      animations: 'Samazināt kustības',
-      fonts: 'Iekārtas fonti',
-      showAllLabel: 'Vairāk',
-      megaMenuTitle: 'Lietotnes',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  logOut: 'Iziet',
+  openAlerts: 'Atvērt sarakstu',
+  helpTitle: 'Palīdzība',
+  alertsTitle: 'Paziņojumi',
+  languagesTitle: 'Valodu izvēle',
+  contextPersonsButtonLabel: 'Konteksta personas',
+  alternativeProfilesButtonLabel: 'Alternatīvie profili',
+  themeTitle: 'Noformējuma izvēle',
+  themeAuto: 'Automātiskais režīms',
+  themeLight: 'Gaišais režīms',
+  themeDark: 'Tumšais režīms',
+  themeContrast: 'Kontrastais režīms',
+  animations: 'Samazināt kustības',
+  fonts: 'Iekārtas fonti',
+  showAllLabel: 'Vairāk',
+  megaMenuTitle: 'Lietotnes',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits([
   'log-out',
@@ -133,7 +138,7 @@ const selectedMegaMenuItemModel = computed({
 
 const helpLabel = computed(() => {
   if (props.mode === 'cover') {
-    return props.texts.helpTitle;
+    return displayTexts.value.helpTitle;
   }
   return '';
 });
@@ -170,10 +175,10 @@ const themeIcons = {
 };
 
 const themeNames = computed(() => ({
-  auto: props.texts.themeAuto,
-  light: props.texts.themeLight,
-  dark: props.texts.themeDark,
-  contrast: props.texts.themeContrast,
+  auto: displayTexts.value.themeAuto,
+  light: displayTexts.value.themeLight,
+  dark: displayTexts.value.themeDark,
+  contrast: displayTexts.value.themeContrast,
 }));
 
 function themeChange(theme) {
@@ -313,10 +318,10 @@ function triggerUserMenu() {
         customClass="lx-header-button"
         kind="ghost"
         icon="help"
-        :label="helpLabel || texts.helpTitle"
+        :label="helpLabel || displayTexts.helpTitle"
         :variant="mode === 'cover' ? 'default' : 'icon-only'"
         :disabled="headerNavDisable"
-        :title="texts.helpTitle"
+        :title="displayTexts.helpTitle"
         @click="helpClicked"
       />
     </div>
@@ -330,7 +335,7 @@ function triggerUserMenu() {
             kind="ghost"
             :icon="themeIcon"
             :disabled="headerNavDisable"
-            :label="texts.themeTitle"
+            :label="displayTexts.themeTitle"
           />
         </div>
         <template v-slot:panel>
@@ -345,11 +350,11 @@ function triggerUserMenu() {
             />
           </div>
           <div class="lx-animations-controller">
-            <p>{{ texts.animations }}</p>
+            <p>{{ displayTexts.animations }}</p>
             <LxToggle v-model="animationsModel" @click="triggerThemeMenu"></LxToggle>
           </div>
           <div class="lx-fonts-controller">
-            <p>{{ texts.fonts }}</p>
+            <p>{{ displayTexts.fonts }}</p>
             <LxToggle v-model="deviceFontsModel" @click="triggerThemeMenu"></LxToggle>
           </div>
         </template>
@@ -363,7 +368,7 @@ function triggerUserMenu() {
           variant="icon-only"
           kind="ghost"
           icon="notifications"
-          :label="texts.alertsTitle"
+          :label="displayTexts.alertsTitle"
           :badge="alertsCount"
           :disabled="headerNavDisable"
           :badgeType="alertLevelToBadgeType"
@@ -374,7 +379,7 @@ function triggerUserMenu() {
             <LxButton
               v-if="alertsKind === 'combo'"
               kind="ghost"
-              :label="texts.openAlerts"
+              :label="displayTexts.openAlerts"
               :disabled="headerNavDisable"
               icon="open"
               @click="alertsClicked"
@@ -422,7 +427,7 @@ function triggerUserMenu() {
             <LxButton
               v-if="alertsKind === 'combo'"
               kind="ghost"
-              :label="texts.openAlerts"
+              :label="displayTexts.openAlerts"
               :disabled="headerNavDisable"
               icon="open"
               @click="alertsClicked"
@@ -487,7 +492,7 @@ function triggerUserMenu() {
           variant="icon-only"
           kind="ghost"
           icon="language"
-          :label="texts.languagesTitle"
+          :label="displayTexts.languagesTitle"
         />
 
         <template v-slot:panel>
@@ -510,7 +515,7 @@ function triggerUserMenu() {
         :items="megaMenuItems"
         :groupDefinitions="megaMenuGroupDefinitions"
         :hasShowAll="megaMenuHasShowAll"
-        :texts="texts"
+        :texts="displayTexts"
         @mega-menu-show-all-click="triggerShowAllClick"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
       />
@@ -564,7 +569,7 @@ function triggerUserMenu() {
           <LxButton
             v-if="alternativeProfilesInfo"
             kind="ghost"
-            :label="texts.alternativeProfilesButtonLabel"
+            :label="displayTexts.alternativeProfilesButtonLabel"
             icon="switch"
             @click="openAlternativeProfilesModal"
           />
@@ -572,7 +577,7 @@ function triggerUserMenu() {
           <LxButton
             v-if="contextPersonsInfo"
             kind="ghost"
-            :label="texts.contextPersonsButtonLabel"
+            :label="displayTexts.contextPersonsButtonLabel"
             icon="context-person"
             @click="openContextPersonModal"
           />
@@ -638,7 +643,7 @@ function triggerUserMenu() {
             <div class="lx-toolbar">
               <LxButton
                 customClass="lx-header-button"
-                :label="texts.themeTitle"
+                :label="displayTexts.themeTitle"
                 kind="ghost"
                 :icon="themeIcon"
               />
@@ -655,11 +660,11 @@ function triggerUserMenu() {
                 />
               </div>
               <div class="lx-animations-controller">
-                <p>{{ texts.animations }}</p>
+                <p>{{ displayTexts.animations }}</p>
                 <LxToggle v-model="animationsModel" />
               </div>
               <div class="lx-fonts-controller">
-                <p>{{ texts.fonts }}</p>
+                <p>{{ displayTexts.fonts }}</p>
                 <LxToggle v-model="deviceFontsModel" />
               </div>
             </template>

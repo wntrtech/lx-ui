@@ -20,7 +20,7 @@ import LxCheckbox from '@/components/Checkbox.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxTreeList from '@/components/list/TreeList.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
-import { focusNextFocusableElement } from '@/utils/generalUtils';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -68,51 +68,52 @@ const props = defineProps({
   labelId: { type: String, default: null },
 
   hasSkipLink: { type: Boolean, default: false },
-  texts: {
-    type: Object,
-    default: () => ({
-      clear: 'Notīrīt',
-      placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
-      notFoundSearch: 'Nav atrasts:',
-      noItems: 'Nav ierakstu',
-      noItemsDescription: '',
-      loadMore: 'Ielādēt vēl',
-      search: 'Meklēt',
-      items: {
-        singular: 'ieraksts',
-        plural: 'ieraksti',
-        endingWith234: 'ieraksti',
-        endingWith1: 'ieraksts',
-      },
-      ofItems: {
-        label: 'Ieraksti',
-        singular: 'ieraksta',
-        plural: 'ierakstiem',
-        endingWith234: 'ierakstiem',
-        endingWith1: 'ieraksta',
-      },
-      selected: {
-        singular: 'Izvēlēts',
-        plural: 'Izvēlēti',
-        endingWith234: 'Izvēlēti',
-        endingWith1: 'Izvēlēts',
-      },
-      of: 'no',
-      clearSelected: 'Attīrīt izvēles',
-      selectAllRows: 'Izvēlēties visu',
-      selectWholeGroup: 'Izvēlēties visu grupu',
-      loadingError: 'Notika ielādes kļūda',
-      reload: 'Ielādēt atkārtoti',
-      collapse: 'Sakļaut elementu',
-      expand: 'Izvērst elementu',
-      openSearch: 'Atvērt meklētāju',
-      closeSearch: 'Aizvērt meklētāju',
-      skipLinkLabel: 'Izlaist sarakstu',
-      skipLinkTitle: 'Izlaist sarakstu',
-      overflowMenu: 'Atvērt papildus iespējas',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  clear: 'Notīrīt',
+  placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
+  notFoundSearch: 'Nav atrasts:',
+  noItems: 'Nav ierakstu',
+  noItemsDescription: '',
+  loadMore: 'Ielādēt vēl',
+  search: 'Meklēt',
+  items: {
+    singular: 'ieraksts',
+    plural: 'ieraksti',
+    endingWith234: 'ieraksti',
+    endingWith1: 'ieraksts',
+  },
+  ofItems: {
+    label: 'Ieraksti',
+    singular: 'ieraksta',
+    plural: 'ierakstiem',
+    endingWith234: 'ierakstiem',
+    endingWith1: 'ieraksta',
+  },
+  selected: {
+    singular: 'Izvēlēts',
+    plural: 'Izvēlēti',
+    endingWith234: 'Izvēlēti',
+    endingWith1: 'Izvēlēts',
+  },
+  of: 'no',
+  clearSelected: 'Attīrīt izvēles',
+  selectAllRows: 'Izvēlēties visu',
+  selectWholeGroup: 'Izvēlēties visu grupu',
+  loadingError: 'Notika ielādes kļūda',
+  reload: 'Ielādēt atkārtoti',
+  collapse: 'Sakļaut elementu',
+  expand: 'Izvērst elementu',
+  openSearch: 'Atvērt meklētāju',
+  closeSearch: 'Aizvērt meklētāju',
+  skipLinkLabel: 'Izlaist sarakstu',
+  skipLinkTitle: 'Izlaist sarakstu',
+  overflowMenu: 'Atvērt papildus iespējas',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits([
   'actionClick',
@@ -758,28 +759,28 @@ const selectedLabel = computed(() => {
   const selectedCount = selectedItems.value?.length;
   const selectedCountDisplay = selectedCount?.toString();
 
-  let label = props.texts?.items?.plural;
-  let labelStart = props.texts?.selected?.plural;
+  let label = displayTexts.value.items?.plural;
+  let labelStart = displayTexts.value.selected?.plural;
   let ret = null;
 
   if (selectedCount === 1) {
-    label = props.texts?.items?.singular;
-    labelStart = props.texts?.selected?.singular;
+    label = displayTexts.value.items?.singular;
+    labelStart = displayTexts.value.selected?.singular;
   } else if (
     selectedCount > 20 &&
     (selectedCount % 10 === 2 || selectedCount % 10 === 3 || selectedCount % 10 === 4)
   ) {
-    label = props.texts?.items?.endingWith234;
-    labelStart = props.texts?.selected?.endingWith234;
+    label = displayTexts.value.items?.endingWith234;
+    labelStart = displayTexts.value.selected?.endingWith234;
   } else if (selectedCount > 11 && selectedCount % 10 === 1) {
-    label = props.texts?.items?.endingWith1;
-    labelStart = props.texts?.selected?.endingWith1;
+    label = displayTexts.value.items?.endingWith1;
+    labelStart = displayTexts.value.selected?.endingWith1;
   }
 
   if (props.kind !== 'treelist') {
-    ret = `${labelStart} ${selectedCountDisplay} ${label} ${props.texts?.of} ${selectableCount}`;
+    ret = `${labelStart} ${selectedCountDisplay} ${label} ${displayTexts.value.of} ${selectableCount}`;
   } else {
-    ret = `${labelStart} ${selectedCountDisplay} ${label} ${props.texts?.of} ${selectableTreeListItems}`;
+    ret = `${labelStart} ${selectedCountDisplay} ${label} ${displayTexts.value.of} ${selectableTreeListItems}`;
   }
   return ret;
 });
@@ -1063,8 +1064,8 @@ function focusFirstFocusableElementAfter() {
   <div ref="listWrapper" class="lx-list-wrapper">
     <LxSkipLink
       v-if="props.hasSkipLink"
-      :label="props.texts.skipLinkLabel"
-      :title="props.texts.skipLinkTitle"
+      :label="displayTexts.skipLinkLabel"
+      :title="displayTexts.skipLinkTitle"
       :tabindex="0"
       @click="focusFirstFocusableElementAfter"
     />
@@ -1086,7 +1087,7 @@ function focusFirstFocusableElementAfter() {
             v-model="queryRaw"
             :kind="searchSide === 'server' ? 'default' : 'search'"
             :disabled="loading || busy"
-            :placeholder="props.texts.placeholder"
+            :placeholder="displayTexts.placeholder"
             role="search"
             @keydown.enter="serverSideSearch()"
           />
@@ -1097,7 +1098,7 @@ function focusFirstFocusableElementAfter() {
             :busy="busy"
             :disabled="loading"
             variant="icon-only"
-            :label="texts.search"
+            :label="displayTexts.search"
             @click="serverSideSearch()"
           />
           <LxButton
@@ -1105,7 +1106,7 @@ function focusFirstFocusableElementAfter() {
             icon="clear"
             kind="ghost"
             variant="icon-only"
-            :label="texts.clear"
+            :label="displayTexts.clear"
             :disabled="loading || busy"
             @click="clear()"
           />
@@ -1129,7 +1130,7 @@ function focusFirstFocusableElementAfter() {
                 kind="ghost"
                 :icon="searchField ? 'close' : 'search'"
                 variant="icon-only"
-                :label="searchField ? texts.closeSearch : texts.openSearch"
+                :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
                 @click="toggleSearch"
                 v-if="hasSearch"
               />
@@ -1146,7 +1147,7 @@ function focusFirstFocusableElementAfter() {
               "
               :disabled="loading || busy"
               variant="icon-only"
-              :label="texts.selectAllRows"
+              :label="displayTexts.selectAllRows"
               @click="selectRows()"
             />
           </template>
@@ -1172,7 +1173,7 @@ function focusFirstFocusableElementAfter() {
                   <LxButton
                     icon="menu"
                     kind="ghost"
-                    :label="texts.overflowMenu"
+                    :label="displayTexts.overflowMenu"
                     variant="icon-only"
                   />
                   <template #panel>
@@ -1201,7 +1202,7 @@ function focusFirstFocusableElementAfter() {
                 :class="[{ 'is-expanded': searchField }]"
                 kind="ghost"
                 :icon="searchField ? 'close' : 'search'"
-                :label="searchField ? texts.closeSearch : texts.openSearch"
+                :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
                 variant="icon-only"
                 @click="toggleSearch"
               />
@@ -1211,7 +1212,7 @@ function focusFirstFocusableElementAfter() {
               v-if="hasSelecting && kind !== 'draggable'"
               :icon="selectIcon"
               variant="icon-only"
-              :label="texts.clearSelected"
+              :label="displayTexts.clearSelected"
               kind="ghost"
               @click="cancelSelection()"
             />
@@ -1229,7 +1230,7 @@ function focusFirstFocusableElementAfter() {
           v-model="queryRaw"
           :kind="searchSide === 'server' ? 'default' : 'search'"
           :disabled="loading || busy"
-          :placeholder="props.texts.placeholder"
+          :placeholder="displayTexts.placeholder"
           role="search"
           @keydown.enter="serverSideSearch()"
         />
@@ -1241,7 +1242,7 @@ function focusFirstFocusableElementAfter() {
             :busy="busy"
             :disabled="loading"
             variant="icon-only"
-            :label="texts.search"
+            :label="displayTexts.search"
             @click="serverSideSearch()"
           />
           <LxButton
@@ -1249,7 +1250,7 @@ function focusFirstFocusableElementAfter() {
             icon="clear"
             kind="ghost"
             variant="icon-only"
-            :label="texts.clear"
+            :label="displayTexts.clear"
             :disabled="loading || busy"
             @click="clear()"
           />
@@ -1286,7 +1287,7 @@ function focusFirstFocusableElementAfter() {
             :category="item[categoryAttribute]"
             :disabled="loading || busy"
             :selected="isItemSelected(item[idAttribute])"
-            :texts="texts"
+            :texts="displayTexts"
             @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
             @action-click="actionClicked"
           >
@@ -1403,7 +1404,7 @@ function focusFirstFocusableElementAfter() {
                       :clickable="element[clickableAttribute]"
                       :category="element[categoryAttribute]"
                       :disabled="loading || busy"
-                      :texts="texts"
+                      :texts="displayTexts"
                       @click="
                         element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
                       "
@@ -1442,7 +1443,10 @@ function focusFirstFocusableElementAfter() {
             selectingKind === 'multiple'
           "
           :select-status="groupSelectionStatuses?.[group.id]"
-          :texts="{ selectWholeGroup: texts.selectWholeGroup, clearSelected: texts.clearSelected }"
+          :texts="{
+            selectWholeGroup: displayTexts.selectWholeGroup,
+            clearSelected: displayTexts.clearSelected,
+          }"
           @select-all="selectSection(group)"
         >
           <template #customHeader v-if="$slots.customExpanderHeader">
@@ -1481,7 +1485,7 @@ function focusFirstFocusableElementAfter() {
                 :category="item[categoryAttribute]"
                 :disabled="loading || busy"
                 :selected="isItemSelected(item[idAttribute])"
-                :texts="texts"
+                :texts="displayTexts"
                 @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
                 @action-click="actionClicked"
               >
@@ -1555,7 +1559,7 @@ function focusFirstFocusableElementAfter() {
         v-model:selectedItems="selectedItemsRaw"
         v-model:itemsStates="states"
         :mode="mode"
-        :texts="texts"
+        :texts="displayTexts"
         @loadChildren="loadChildren"
       >
         <template #customItem="items" v-if="$slots.customItem">
@@ -1587,7 +1591,7 @@ function focusFirstFocusableElementAfter() {
               :category="item[categoryAttribute]"
               :disabled="loading || busy"
               :selected="isItemSelected(item[idAttribute])"
-              :texts="texts"
+              :texts="displayTexts"
               @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
               @action-click="actionClicked"
             >
@@ -1643,7 +1647,10 @@ function focusFirstFocusableElementAfter() {
             selectingKind === 'multiple'
           "
           :select-status="groupSelectionStatuses?.[group.id]"
-          :texts="{ selectWholeGroup: texts.selectWholeGroup, clearSelected: texts.clearSelected }"
+          :texts="{
+            selectWholeGroup: displayTexts.selectWholeGroup,
+            clearSelected: displayTexts.clearSelected,
+          }"
           @select-all="selectSection(group)"
         >
           <LxTreeList
@@ -1673,7 +1680,7 @@ function focusFirstFocusableElementAfter() {
             v-model:selectedItems="selectedItemsRaw"
             v-model:itemsStates="states"
             :mode="mode"
-            :texts="texts"
+            :texts="displayTexts"
             @loadChildren="loadChildren"
           >
             <template #customItem="items" v-if="$slots.customItem">
@@ -1702,7 +1709,10 @@ function focusFirstFocusableElementAfter() {
             selectingKind === 'multiple'
           "
           :select-status="groupSelectionStatuses?.[group.id]"
-          :texts="{ selectWholeGroup: texts.selectWholeGroup, clearSelected: texts.clearSelected }"
+          :texts="{
+            selectWholeGroup: displayTexts.selectWholeGroup,
+            clearSelected: displayTexts.clearSelected,
+          }"
           @select-all="selectSection(group)"
         >
           <div class="tree-list-wrapper">
@@ -1730,7 +1740,7 @@ function focusFirstFocusableElementAfter() {
                   :category="item[categoryAttribute]"
                   :disabled="loading || busy"
                   :selected="isItemSelected(item[idAttribute])"
-                  :texts="texts"
+                  :texts="displayTexts"
                   @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
                   @action-click="actionClicked"
                 >
@@ -1798,7 +1808,7 @@ function focusFirstFocusableElementAfter() {
             :category="item[categoryAttribute]"
             :disabled="loading || busy"
             :selected="isItemSelected(item[idAttribute])"
-            :texts="texts"
+            :texts="displayTexts"
             @click="item[hrefAttribute] ? null : actionClicked('click', item[idAttribute])"
             @action-click="actionClicked"
           >
@@ -1915,7 +1925,7 @@ function focusFirstFocusableElementAfter() {
                       :clickable="element[clickableAttribute]"
                       :category="element[categoryAttribute]"
                       :disabled="loading || busy"
-                      :texts="texts"
+                      :texts="displayTexts"
                       @click="
                         element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])
                       "
@@ -2034,7 +2044,7 @@ function focusFirstFocusableElementAfter() {
                         :category="element[categoryAttribute]"
                         :disabled="loading || busy"
                         :selected="isItemSelected(element[idAttribute])"
-                        :texts="texts"
+                        :texts="displayTexts"
                         @click="
                           element[hrefAttribute]
                             ? null
@@ -2086,7 +2096,7 @@ function focusFirstFocusableElementAfter() {
         v-model:selected-items="selectedItemsRaw"
         v-model:itemsStates="states"
         :mode="mode"
-        :texts="texts"
+        :texts="displayTexts"
         @loadChildren="loadChildren"
       >
         <template #customItem="items" v-if="$slots.customItem">
@@ -2124,7 +2134,7 @@ function focusFirstFocusableElementAfter() {
           :category="element[categoryAttribute]"
           :disabled="loading || busy"
           :selected="isItemSelected(element[idAttribute])"
-          :texts="texts"
+          :texts="displayTexts"
           @click="element[hrefAttribute] ? null : actionClicked('click', element[idAttribute])"
           @action-click="actionClicked"
         >
@@ -2161,8 +2171,8 @@ function focusFirstFocusableElementAfter() {
     </div>
     <LxEmptyState
       v-if="items?.length === 0 && !(loading || busy) && !query"
-      :label="texts?.noItems"
-      :description="texts?.noItemsDescription"
+      :label="displayTexts?.noItems"
+      :description="displayTexts?.noItemsDescription"
       :icon="emptyStateIcon"
       :actionDefinitions="emptyStateActionDefinitions"
       @empty-state-action-click="emptyStateActionClicked"
@@ -2177,13 +2187,13 @@ function focusFirstFocusableElementAfter() {
       "
     >
       <div aria-live="polite" role="status" class="lx-invisible" v-if="showInvisibleBlock">
-        {{ texts.notFoundSearch }} {{ JSON.stringify(query) }}
+        {{ displayTexts.notFoundSearch }} {{ JSON.stringify(query) }}
       </div>
-      <p>{{ texts.notFoundSearch }} {{ JSON.stringify(query) }}</p>
+      <p>{{ displayTexts.notFoundSearch }} {{ JSON.stringify(query) }}</p>
     </div>
     <div class="lx-load-more-button" v-if="showLoadMore">
       <LxButton
-        :label="props.texts.loadMore"
+        :label="displayTexts.loadMore"
         icon="add-item"
         kind="tertiary"
         :busy="loading"

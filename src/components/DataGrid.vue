@@ -4,6 +4,7 @@ import { useWindowSize, useElementBounding, useElementSize } from '@vueuse/core'
 
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
@@ -73,52 +74,53 @@ const props = defineProps({
   emptyStateActionDefinitions: { type: Array, default: null },
   emptyStateIcon: { type: String, default: '' },
   clickableRole: { type: String, default: 'link' }, // 'link' or 'button'
-  texts: {
-    type: Object,
-    default: () => ({
-      valueYes: 'Jā',
-      valueNo: 'Nē',
-      items: {
-        singular: 'ieraksts',
-        plural: 'ieraksti',
-        endingWith234: 'ieraksti',
-        endingWith1: 'ieraksts',
-      },
-      ofItems: {
-        label: 'Ieraksti',
-        singular: 'ieraksta',
-        plural: 'ierakstiem',
-        endingWith234: 'ierakstiem',
-        endingWith1: 'ieraksta',
-      },
-      selected: {
-        singular: 'Izvēlēts',
-        plural: 'Izvēlēti',
-        endingWith234: 'Izvēlēti',
-        endingWith1: 'Izvēlēts',
-      },
-      of: 'no',
-      firstPage: 'Pirmā lapa',
-      nextPage: 'Nākamā lapa',
-      previousPage: 'Iepriekšējā lapa',
-      clear: 'Attīrīt izvēles',
-      itemsPerPage: 'Ierakstu skaits vienā lapā:',
-      itemsPerPageLabel: 'ieraksti lapā',
-      selectAllRows: 'Izvēlēties visu',
-      noItems: 'Nav neviena ieraksta, ko attēlot',
-      noItemsDescription: '',
-      iconsResponsiveRowLabel: 'Ikonas',
-      moreActions: 'Papildu darbības',
-      actions: 'Darbības',
-      personDisplay: {
-        name: 'Vārds, uzvārds',
-        description: 'Apraksts',
-        role: 'Loma',
-        institution: 'Iestāde',
-      },
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  valueYes: 'Jā',
+  valueNo: 'Nē',
+  items: {
+    singular: 'ieraksts',
+    plural: 'ieraksti',
+    endingWith234: 'ieraksti',
+    endingWith1: 'ieraksts',
+  },
+  ofItems: {
+    label: 'Ieraksti',
+    singular: 'ieraksta',
+    plural: 'ierakstiem',
+    endingWith234: 'ierakstiem',
+    endingWith1: 'ieraksta',
+  },
+  selected: {
+    singular: 'Izvēlēts',
+    plural: 'Izvēlēti',
+    endingWith234: 'Izvēlēti',
+    endingWith1: 'Izvēlēts',
+  },
+  of: 'no',
+  firstPage: 'Pirmā lapa',
+  nextPage: 'Nākamā lapa',
+  previousPage: 'Iepriekšējā lapa',
+  clear: 'Attīrīt izvēles',
+  itemsPerPage: 'Ierakstu skaits vienā lapā:',
+  itemsPerPageLabel: 'ieraksti lapā',
+  selectAllRows: 'Izvēlēties visu',
+  noItems: 'Nav neviena ieraksta, ko attēlot',
+  noItemsDescription: '',
+  iconsResponsiveRowLabel: 'Ikonas',
+  moreActions: 'Papildu darbības',
+  actions: 'Darbības',
+  personDisplay: {
+    name: 'Vārds, uzvārds',
+    description: 'Apraksts',
+    role: 'Loma',
+    institution: 'Iestāde',
+  },
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const sortedColumns = ref({});
 
@@ -157,7 +159,7 @@ function formatBoolean(value) {
   if (value === null || value === undefined || value === '') {
     return '—';
   }
-  return value ? props.texts.valueYes : props.texts.valueNo;
+  return value ? displayTexts.value.valueYes : displayTexts.value.valueNo;
 }
 
 function formatValue(value, type, options = null) {
@@ -658,7 +660,7 @@ const pagesTotal = computed(() => Math.ceil(props.itemsTotal / props.itemsPerPag
 const itemsLabel = computed(() => {
   const num = rows.value.length;
   let numDisplay = num.toString();
-  let label = props.texts.items.plural;
+  let label = displayTexts.value.items.plural;
   if (props.hasPaging && pagesTotal.value) {
     const numStarting = props.pageCurrent * props.itemsPerPage + 1;
     let numEnding =
@@ -666,35 +668,35 @@ const itemsLabel = computed(() => {
     if (numEnding > props.itemsTotal) numEnding = props.itemsTotal;
     numDisplay = `${numStarting}-${numEnding}`;
 
-    return `${props.texts.ofItems.label} ${numDisplay} ${props.texts.of} ${props.itemsTotal}`;
+    return `${displayTexts.value.ofItems.label} ${numDisplay} ${displayTexts.value.of} ${props.itemsTotal}`;
   }
   if (num === 1) {
-    label = props.texts.items.singular;
+    label = displayTexts.value.items.singular;
   } else if (num > 20 && (num % 10 === 2 || num % 10 === 3 || num % 10 === 4)) {
-    label = props.texts.items.endingWith234;
+    label = displayTexts.value.items.endingWith234;
   } else if (num > 11 && num % 10 === 1) {
-    label = props.texts.items.endingWith1;
+    label = displayTexts.value.items.endingWith1;
   }
   return `${numDisplay} ${label}`;
 });
 const selectedLabel = computed(() => {
   const num = selectedRows.value.length;
   const numDisplay = num.toString();
-  let label = props.texts.items.plural;
-  let labelStart = props.texts.selected.plural;
+  let label = displayTexts.value.items.plural;
+  let labelStart = displayTexts.value.selected.plural;
   let ret = numDisplay;
 
   if (num === 1) {
-    label = props.texts.items.singular;
-    labelStart = props.texts.selected.singular;
+    label = displayTexts.value.items.singular;
+    labelStart = displayTexts.value.selected.singular;
   } else if (num > 20 && (num % 10 === 2 || num % 10 === 3 || num % 10 === 4)) {
-    label = props.texts.items.endingWith234;
-    labelStart = props.texts.selected.endingWith234;
+    label = displayTexts.value.items.endingWith234;
+    labelStart = displayTexts.value.selected.endingWith234;
   } else if (num > 11 && num % 10 === 1) {
-    label = props.texts.items.endingWith1;
-    labelStart = props.texts.selected.endingWith1;
+    label = displayTexts.value.items.endingWith1;
+    labelStart = displayTexts.value.selected.endingWith1;
   }
-  ret = `${labelStart} ${numDisplay} ${label} ${props.texts.of} ${props.itemsTotal}`;
+  ret = `${labelStart} ${numDisplay} ${label} ${displayTexts.value.of} ${props.itemsTotal}`;
 
   return ret;
 });
@@ -775,18 +777,18 @@ const toolbarActions = computed(() => {
     props.selectingKind === 'multiple'
   ) {
     res.value = [
-      { id: 'checkAll', name: props.texts.selectAllRows, icon: 'checkbox', groupId: '1' },
+      { id: 'checkAll', name: displayTexts.value.selectAllRows, icon: 'checkbox', groupId: '1' },
     ];
   } else if (props.hasSelecting && selectedRows.value && selectedRows.value?.length !== 0) {
     if (props.hasSelecting && selectedRows.value?.length && isSelectedAll.value) {
       res.value = [
-        { id: 'checkNone', name: props.texts.clear, icon: 'checkbox-filled', groupId: '1' },
+        { id: 'checkNone', name: displayTexts.value.clear, icon: 'checkbox-filled', groupId: '1' },
       ];
     } else {
       res.value = [
         {
           id: 'checkIndeterminate',
-          name: props.texts.clear,
+          name: displayTexts.value.clear,
           icon:
             props.selectingKind === 'multiple' ? 'checkbox-indeterminate' : 'radiobutton-filled',
           groupId: '1',
@@ -1114,7 +1116,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           v-if="hasActionButtons"
           class="lx-cell-header lx-cell-action"
           role="columnheader"
-          :title="texts?.actions"
+          :title="displayTexts.actions"
         ></div>
       </div>
     </div>
@@ -1353,7 +1355,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               <LxPersonDisplay
                 v-if="col.type === 'person'"
                 :value="row[col.attributeName]"
-                :texts="row[col.attributeName]?.texts || texts?.personDisplay"
+                :texts="row[col.attributeName]?.texts || displayTexts.personDisplay"
                 size="s"
               />
               <template v-if="col.type === 'array'">
@@ -1447,7 +1449,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       icon="overflow-menu"
                       kind="ghost"
                       :disabled="isDisabled"
-                      :label="texts?.moreActions"
+                      :label="displayTexts.moreActions"
                       variant="icon-only"
                     />
                   </div>
@@ -1506,8 +1508,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
 
     <LxEmptyState
       v-if="items?.length < 1 && !(loading || busy)"
-      :label="texts?.noItems"
-      :description="texts?.noItemsDescription"
+      :label="displayTexts.noItems"
+      :description="displayTexts.noItemsDescription"
       :icon="emptyStateIcon"
       :actionDefinitions="emptyStateActionDefinitions"
       @empty-state-action-click="emptyStateActionClicked"
@@ -1622,7 +1624,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             <LxPersonDisplay
               v-else-if="col.type === 'person'"
               :value="item[col.attributeName]"
-              :texts="item[col.attributeName]?.texts || texts?.personDisplay"
+              :texts="item[col.attributeName]?.texts || displayTexts.personDisplay"
               size="s"
             />
           </LxRow>
@@ -1631,7 +1633,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             v-if="shouldShowIconRow"
             class="lx-responsive-grid-icons-row"
             columnSpan="2"
-            :label="texts.iconsResponsiveRowLabel"
+            :label="displayTexts.iconsResponsiveRowLabel"
           >
             <div
               v-for="col in columnsComputed?.filter((col) => col.type === 'icon')"
@@ -1700,7 +1702,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         class="lx-group lx-group-paging count-selector"
         v-if="hasPaging && showItemsCountSelector && !loading"
       >
-        {{ texts.itemsPerPage }}
+        {{ displayTexts.itemsPerPage }}
         <LxDropdownMenu>
           <div class="lx-chip">
             {{ itemsPerPage }}
@@ -1711,7 +1713,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               <LxButton
                 v-for="i in itemsCountSelector"
                 :key="i"
-                :label="`${i.toString()} ${texts.itemsPerPageLabel}`"
+                :label="`${i.toString()} ${displayTexts.itemsPerPageLabel}`"
                 :disabled="itemsPerPage === i || isDisabled"
                 @click="changeItemsPerPage(i)"
               />
@@ -1729,7 +1731,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           :id="`${id}-action-first-page`"
           kind="ghost"
           icon="first-page"
-          :label="texts.firstPage"
+          :label="displayTexts.firstPage"
           variant="icon-only"
           :disabled="pageCurrent < 1 || isDisabled"
           @click="selectFirstPage()"
@@ -1739,7 +1741,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           :id="`${id}-action-previous-page`"
           kind="ghost"
           icon="previous-page"
-          :label="texts.previousPage"
+          :label="displayTexts.previousPage"
           variant="icon-only"
           :disabled="pageCurrent < 1 || isDisabled"
           @click="selectPreviousPage"
@@ -1749,7 +1751,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           :id="`${id}-action-next-page`"
           kind="ghost"
           icon="next-page"
-          :label="texts.nextPage"
+          :label="displayTexts.nextPage"
           variant="icon-only"
           :disabled="Number(pageCurrent) + 1 >= Number(pagesTotal) || isDisabled"
           @click="selectNextPage"

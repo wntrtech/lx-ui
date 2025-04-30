@@ -3,6 +3,7 @@ import { ref, computed, watch, nextTick, defineAsyncComponent } from 'vue';
 import { useElementSize } from '@vueuse/core';
 import { generateUUID } from '@/utils/stringUtils';
 import { getTexts } from '@/utils/visualPickerUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxDataGrid from '@/components/DataGrid.vue';
 import LxLoader from '@/components/Loader.vue';
@@ -26,17 +27,19 @@ const props = defineProps({
   targets: { type: Array, default: () => [] },
   maxValue: { type: Number, default: null },
   mode: { type: String, default: 'default' }, // default || compact
-  texts: {
-    type: Object,
-    default: () => ({
-      graph: 'Grafiks',
-      table: 'Tabula',
-      from: 'no',
-      to: 'līdz',
-      target: 'Mērķis',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  graph: 'Grafiks',
+  table: 'Tabula',
+  from: 'no',
+  to: 'līdz',
+  target: 'Mērķis',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
 const emits = defineEmits(['click']);
 
 const latvia = getTexts('latvia');
@@ -363,8 +366,8 @@ function imageClick(event) {
 const contentModel = ref('default');
 
 const contentItems = computed(() => [
-  { id: 'default', name: props.texts?.graph },
-  { id: 'table', name: props.texts?.table },
+  { id: 'default', name: displayTexts.value?.graph },
+  { id: 'table', name: displayTexts.value?.table },
 ]);
 
 const imagePath = ref(null);
@@ -463,7 +466,7 @@ const targetsComputed = computed(() => {
 const targetsList = computed(() => {
   const res = [];
   props.targets.forEach((item) => {
-    res.push({ id: item, name: item, description: props.texts?.target });
+    res.push({ id: item, name: item, description: displayTexts.value?.target });
   });
   return res;
 });
@@ -868,10 +871,10 @@ watch(
             {{ `${formatDecimal(item?.min)} - ${formatDecimal(item?.max)}` }}
           </p>
           <p v-else-if="!item?.max">
-            {{ `${texts?.from || 'no'} ${formatDecimal(item?.min)}` }}
+            {{ `${displayTexts.from || 'no'} ${formatDecimal(item?.min)}` }}
           </p>
           <p v-else-if="!item?.min">
-            {{ `${texts?.to || 'līdz'} ${formatDecimal(item?.max)}` }}
+            {{ `${displayTexts.to || 'līdz'} ${formatDecimal(item?.max)}` }}
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -27,16 +28,17 @@ const props = defineProps({
   invalidationMessage: { type: String, default: null },
   searchAttributes: { type: Array, default: null },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      clearQuery: 'Notīrīt meklēšanu',
-      clearChosen: 'Notīrīt visas atlasītās vērtības',
-      notSelected: 'Nav izvēlēts',
-      searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-    }),
-  },
+  texts: { type: Object, default: () => {} },
 });
+
+const textsDefault = {
+  clearQuery: 'Notīrīt meklēšanu',
+  clearChosen: 'Notīrīt visas atlasītās vērtības',
+  notSelected: 'Nav izvēlēts',
+  searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -59,7 +61,7 @@ const rotatorItemsArray = computed(() => {
   return [
     {
       [props.idAttribute]: notSelectedId,
-      [props.nameAttribute]: props.texts.notSelected,
+      [props.nameAttribute]: displayTexts.value.notSelected,
     },
     ...props.items,
   ];
@@ -148,7 +150,7 @@ const selectedItems = computed(() => {
     if (props.nullable) {
       ret.push({
         [props.idAttribute]: notSelectedId,
-        [props.nameAttribute]: props.texts.notSelected,
+        [props.nameAttribute]: displayTexts.value.notSelected,
       });
     }
     return ret;

@@ -20,6 +20,7 @@ import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 import { useElementSize } from '@vueuse/core';
 import { kebabToCamel, getTexts } from '@/utils/visualPickerUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -29,16 +30,16 @@ const props = defineProps({
   mode: { type: String, default: 'default' }, // default, compact
   selectingKind: { type: String, default: 'multiple' }, // single, multiple
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      visualView: 'Vizuālais skats',
-      listView: 'Saraksta skats',
-      removeCountry: 'Noņemt valsti',
-      errorLabel: 'Neizdevās ielādēt attēlu',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = ref({
+  visualView: 'Vizuālais skats',
+  listView: 'Saraksta skats',
+  removeCountry: 'Noņemt valsti',
+  errorLabel: 'Neizdevās ielādēt attēlu',
+});
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault.value));
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -91,28 +92,15 @@ function loadImage() {
 
 const { environment } = useLx().getGlobals();
 
-const fallBackTexts = ref({
-  visualView: 'Vizuālais skats',
-  listView: 'Saraksta skats',
-  removeCountry: 'Noņemt valsti',
-  errorLabel: 'Neizdevās ielādēt attēlu',
-});
-
 const items = computed(() => {
   const res = [];
   const textValue = kebabToCamel(props.kind);
-  if (props.texts?.[textValue]) {
-    Object.entries(props.texts?.[textValue])?.forEach(([key, value]) => {
-      const obj = { id: key, name: value };
-      res.push(obj);
-    });
-  } else if (fallBackTexts.value?.[textValue]) {
-    Object.entries(fallBackTexts.value?.[textValue])?.forEach(([key, value]) => {
+  if (displayTexts.value?.[textValue]) {
+    Object.entries(displayTexts.value?.[textValue])?.forEach(([key, value]) => {
       const obj = { id: key, name: value };
       res.push(obj);
     });
   }
-
   return res;
 });
 
@@ -263,8 +251,8 @@ watch(
     try {
       await loadImage();
       await nextTick();
-      if (!props.texts[kebabToCamel(newValue)] && !fallBackTexts.value[kebabToCamel(newValue)]) {
-        fallBackTexts.value[kebabToCamel(newValue)] = getTexts(newValue);
+      if (!displayTexts.value[kebabToCamel(newValue)]) {
+        textsDefault.value[kebabToCamel(newValue)] = getTexts(newValue);
       }
     } catch (error) {
       lxDevUtils.log(`Failed to load component: ${error}`, environment, 'error');
@@ -329,8 +317,8 @@ function selectionChanged(selectedValue) {
 }
 
 const contentSwitcherItems = computed(() => [
-  { id: 'visual', name: props.texts?.visualView, icon: 'image' },
-  { id: 'list', name: props.texts?.listView, icon: 'list-bulleted' },
+  { id: 'visual', name: displayTexts.value.visualView, icon: 'image' },
+  { id: 'list', name: displayTexts.value.listView, icon: 'list-bulleted' },
 ]);
 
 const contentSwitcherModel = ref('visual');
@@ -375,11 +363,7 @@ defineExpose({ addTitles });
       v-show="contentSwitcherModel === 'visual' && isImageVisible"
     >
       <LxLoader :loading="loading" class="lx-visual-picker-loader" v-if="loading" />
-      <LxEmptyState
-        :label="texts?.errorLabel || fallBackTexts?.errorLabel"
-        icon="invalid"
-        v-if="errorState"
-      />
+      <LxEmptyState :label="displayTexts.errorLabel" icon="invalid" v-if="errorState" />
       <div class="visual-select" :class="[{ 'europe-map': kind === 'europe' }]">
         <div class="visual-select-picture">
           <imagePath @click="imageClick($event)" />
@@ -400,7 +384,7 @@ defineExpose({ addTitles });
               icon="close"
               kind="ghost"
               variant="icon-only"
-              :label="texts.removeCountry"
+              :label="displayTexts.removeCountry"
               @click="removeItem(item?.id)"
             />
           </div>

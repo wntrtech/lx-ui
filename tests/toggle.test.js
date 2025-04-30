@@ -29,8 +29,6 @@ describe('LxToggle', () => {
       expect(props.invalidationMessage).toBe(null);
       expect(props.readOnly).toBe(false);
       expect(props.tooltip).toBe(null);
-      expect(props.texts.valueYes).toBe('Jā');
-      expect(props.texts.valueNo).toBe('Nē');
     });
 
     test('should accept provided prop values', () => {

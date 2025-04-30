@@ -4,6 +4,7 @@ import LxButton from '@/components/Button.vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxDataBlock from '@/components/DataBlock.vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -28,13 +29,14 @@ const props = defineProps({
   expandedAttribute: { type: String, default: 'extended' },
   selectedValues: { type: Object, default: () => {} },
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      removeItem: 'Dzēst ierakstu',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  removeItem: 'Dzēst ierakstu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue', 'actionClick', 'update:selectedValues']);
 
@@ -122,7 +124,7 @@ const allActions = computed(() => {
         id: 'appendableListDelete',
         icon: 'remove-item',
         destructive: true,
-        title: props.texts.removeItem,
+        title: displayTexts.value.removeItem,
       },
       ...props.actionDefinitions,
     ];
@@ -131,10 +133,10 @@ const allActions = computed(() => {
     return [
       {
         id: 'appendableListDelete',
-        name: props.texts.removeItem,
+        name: displayTexts.value.removeItem,
         icon: 'remove-item',
         destructive: true,
-        title: props.texts.removeItem,
+        title: displayTexts.value.removeItem,
       },
       ...props.actionDefinitions,
     ];
@@ -229,7 +231,7 @@ defineExpose({ clearModel });
               v-if="!readOnly && (!hideRemoveAttribute || !item[hideRemoveAttribute])"
               icon="remove-item"
               variant="icon-only"
-              :label="texts.removeItem"
+              :label="displayTexts.removeItem"
               :destructive="true"
               kind="ghost"
               @click="removeItem(item._lx_appendableKey)"

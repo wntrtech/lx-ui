@@ -125,18 +125,6 @@ describe('LxDayInput', () => {
     });
 
     describe('texts', () => {
-      test('should have the correct default value', () => {
-        wrapper = mount(LxDayInput);
-        const props = wrapper.props().texts;
-
-        expect(props.inputDaysPlaceholder).toBe('Ievadiet dienu skaitu');
-        expect(props.inputMonthsPlaceholder).toBe('Ievadiet mēnešu skaitu');
-        expect(props.inputYearsPlaceholder).toBe('Ievadiet gadu skaitu');
-        expect(props.inputTooltip).toBe('Dienu, mēnešu vai gadu ievade');
-        expect(props.dropdownPlaceholder).toBe('Izvēlieties vērtību');
-        expect(props.dropdownTooltip).toBe('Dienu, mēnešu vai gadu izvēle');
-      });
-
       test('should accept provided values', () => {
         wrapper = mount(LxDayInput, {
           props: {

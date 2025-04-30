@@ -4,6 +4,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -14,12 +15,16 @@ const props = defineProps({
   texts: {
     type: Object,
     required: false,
-    default: () => ({
-      showAllLabel: 'Vairāk',
-      megaMenuTitle: 'Lietotnes',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  showAllLabel: 'Vairāk',
+  megaMenuTitle: 'Lietotnes',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['megaMenuShowAllClick', 'update:selectedMegaMenuItem']);
 
@@ -112,7 +117,7 @@ function getIconSet(item) {
         variant="icon-only"
         kind="ghost"
         icon="apps"
-        :label="texts.megaMenuTitle"
+        :label="displayTexts.megaMenuTitle"
       />
     </div>
 
@@ -145,13 +150,13 @@ function getIconSet(item) {
           <li
             v-if="props.hasShowAll"
             class="primary-menu-tile"
-            :title="texts.showAllLabel"
+            :title="displayTexts.showAllLabel"
             @keyup.enter.prevent="triggerShowAllClick"
             @click="triggerShowAllClick"
             tabindex="0"
           >
-            <LxIcon value="open" :title="texts.showAllLabel" />
-            <p class="lx-data">{{ texts.showAllLabel }}</p>
+            <LxIcon value="open" :title="displayTexts.showAllLabel" />
+            <p class="lx-data">{{ displayTexts.showAllLabel }}</p>
           </li>
         </ul>
 

@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: {
@@ -42,13 +43,12 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  texts: {
-    type: Object,
-    default: () => ({
-      overflowMenu: 'Atvērt papildus iespējas',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = { overflowMenu: 'Atvērt papildus iespējas' };
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
 const emits = defineEmits(['actionClick']);
 
 const size = computed(() => `lx-widget-${props.width}-${props.height}`);
@@ -84,7 +84,7 @@ function actionClicked(actionName) {
           <LxButton
             icon="overflow-menu"
             kind="ghost"
-            :label="texts.overflowMenu"
+            :label="displayTexts.overflowMenu"
             variant="icon-only"
           />
         </div>

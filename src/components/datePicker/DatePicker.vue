@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useWindowSize } from '@vueuse/core';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 import {
   parseDate,
@@ -50,31 +51,35 @@ const props = defineProps({
   labelledBy: { type: String, default: null },
   texts: {
     type: Object,
-    default: () => ({
-      clear: 'Attīrīt',
-      clearButton: 'Attīrīt vērtību',
-      todayButton: 'Šodiena',
-      clearStart: 'Notīrīt sākuma vērtību',
-      clearEnd: 'Notīrīt beigu vērtību',
-      next: 'Nākamais',
-      previous: 'Iepriekšējais',
-      nextMonth: 'Nākamais mēnesis',
-      previousMonth: 'Iepriekšējais mēnesis',
-      nextYear: 'Nākamais gads',
-      previousYear: 'Iepriekšējais gads',
-      nextDecade: 'Nākamā dekāde',
-      previousDecade: 'Iepriekšējā dekāde',
-      doNotIndicateStart: 'Nenorādīt sākumu',
-      doNotIndicateEnd: 'Nenorādīt beigas',
-      scrollUp: 'Ritināt uz augšu',
-      scrollDown: 'Ritināt uz leju',
-      startDateLabel: 'Sākuma datums',
-      endDateLabel: 'Beigu datums',
-      dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
-      selectedStartDate: 'Izvēlēts sākuma datums',
-    }),
+    default: () => ({}),
   },
 });
+
+const textsDefault = {
+  clear: 'Attīrīt',
+  clearButton: 'Attīrīt vērtību',
+  todayButton: 'Šodiena',
+  clearStart: 'Notīrīt sākuma vērtību',
+  clearEnd: 'Notīrīt beigu vērtību',
+  next: 'Nākamais',
+  previous: 'Iepriekšējais',
+  nextMonth: 'Nākamais mēnesis',
+  previousMonth: 'Iepriekšējais mēnesis',
+  nextYear: 'Nākamais gads',
+  previousYear: 'Iepriekšējais gads',
+  nextDecade: 'Nākamā dekāde',
+  previousDecade: 'Iepriekšējā dekāde',
+  doNotIndicateStart: 'Nenorādīt sākumu',
+  doNotIndicateEnd: 'Nenorādīt beigas',
+  scrollUp: 'Ritināt uz augšu',
+  scrollDown: 'Ritināt uz leju',
+  startDateLabel: 'Sākuma datums',
+  endDateLabel: 'Beigu datums',
+  dateFormatMessage: 'Datuma formāts ir diena, mēnesis, gads, atdalīts ar punktu',
+  selectedStartDate: 'Izvēlēts sākuma datums',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
 
@@ -98,7 +103,7 @@ const startInputRefs = ref({});
 const endInputRefs = ref({});
 
 const liveMessage = ref('');
-const inputDescriptionMsg = ref(props.texts.dateFormatMessage);
+const inputDescriptionMsg = ref(displayTexts.value.dateFormatMessage);
 
 const windowSize = useWindowSize();
 
@@ -401,7 +406,7 @@ function validateIfExact(e, type = 'startInput') {
               end: null,
             };
             setActiveInput('endInput', props.id);
-            liveMessage.value = `${props.texts.selectedStartDate}: ${formatLocalizedDate(
+            liveMessage.value = `${displayTexts.value.selectedStartDate}: ${formatLocalizedDate(
               props.locale,
               updatedValue
             )}`;
@@ -422,7 +427,7 @@ function validateIfExact(e, type = 'startInput') {
               end: null,
             };
             setActiveInput('endInput', props.id);
-            liveMessage.value = `${props.texts.selectedStartDate}: ${formatLocalizedDate(
+            liveMessage.value = `${displayTexts.value.selectedStartDate}: ${formatLocalizedDate(
               props.locale,
               updatedValue
             )}`;
@@ -1103,7 +1108,7 @@ onMounted(async () => {
             :tabindex="startInputIndex"
             :maxlength="getMaxLength"
             :aria-invalid="invalid"
-            :aria-label="pickerType === 'range' ? texts.startDateLabel : null"
+            :aria-label="pickerType === 'range' ? displayTexts.startDateLabel : null"
             :aria-labelledby="pickerType === 'single' ? labelledBy : null"
             :aria-describedby="pickerType === 'range' ? `${id}-lx-range-input-description` : null"
             @click="handleOpen('startInput')"
@@ -1153,7 +1158,7 @@ onMounted(async () => {
               :tabindex="endInputIndex"
               :maxlength="getMaxLength"
               :aria-invalid="invalid"
-              :aria-label="texts.endDateLabel"
+              :aria-label="displayTexts.endDateLabel"
               :aria-describedby="`${id}-lx-range-input-description`"
               @click="handleOpen('endInput')"
               @keydown.arrow-down.prevent="handleOpen('endInput')"
@@ -1193,7 +1198,7 @@ onMounted(async () => {
           :pickerType="pickerType"
           :activeInput="activeInput"
           :setActiveInput="setActiveInput"
-          :texts="texts"
+          :texts="displayTexts"
         />
       </template>
     </LxDropDownMenu>
@@ -1220,7 +1225,7 @@ onMounted(async () => {
       :cadenceOfMinutes="cadenceOfMinutes"
       :clearIfNotExact="clearIfNotExact"
       :pickerType="pickerType"
-      :texts="texts"
+      :texts="displayTexts"
     />
     <div v-if="invalid" class="lx-invalidation-message">
       {{ invalidationMessage }}

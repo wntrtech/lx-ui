@@ -25,6 +25,7 @@ import {
 import { generateUUID } from '@/utils/stringUtils';
 
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -46,25 +47,26 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
   labelId: { type: String, default: null },
-  texts: {
-    type: Object,
-    default: () => ({
-      clear: 'Attīrīt',
-      todayButton: 'Šodiena',
-      clearButton: 'Attīrīt vērtību',
-      next: 'Nākamais',
-      previous: 'Iepriekšējais',
-      nextMonth: 'Nākamais mēnesis',
-      previousMonth: 'Iepriekšējais mēnesis',
-      nextYear: 'Nākamais gads',
-      previousYear: 'Iepriekšējais gads',
-      nextDecade: 'Nākamā dekāde',
-      previousDecade: 'Iepriekšējā dekāde',
-      scrollUp: 'Ritināt uz augšu',
-      scrollDown: 'Ritināt uz leju',
-    }),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  clear: 'Attīrīt',
+  todayButton: 'Šodiena',
+  clearButton: 'Attīrīt vērtību',
+  next: 'Nākamais',
+  previous: 'Iepriekšējais',
+  nextMonth: 'Nākamais mēnesis',
+  previousMonth: 'Iepriekšējais mēnesis',
+  nextYear: 'Nākamais gads',
+  previousYear: 'Iepriekšējais gads',
+  nextDecade: 'Nākamā dekāde',
+  previousDecade: 'Iepriekšējā dekāde',
+  scrollUp: 'Ritināt uz augšu',
+  scrollDown: 'Ritināt uz leju',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
 const { dateFormat, dateTimeFormat } = useLx().getGlobals();
@@ -369,7 +371,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :special-dates-attributes="attributesComputed"
           :clearIfNotExact="clearIfNotExact"
           :cadenceOfMinutes="cadenceOfMinutes"
-          :texts="texts"
+          :texts="displayTexts"
           :labelled-by="labelledBy"
         />
       </div>
