@@ -29,6 +29,7 @@ const props = defineProps({
   hasSelecting: { type: Boolean, default: false },
   selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   selected: { type: Boolean, default: false },
+  invalid: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -95,6 +96,16 @@ const selected = computed({
     emits('update:selected', value);
   },
 });
+
+const expandIcon = computed(() => {
+  if (props.invalid && !props.busy) {
+    return 'invalid';
+  }
+  if (expanded.value) {
+    return 'chevron-up';
+  }
+  return 'chevron-down';
+});
 </script>
 <template>
   <div
@@ -106,15 +117,17 @@ const selected = computed({
       { 'lx-data-block-expanded': expanded },
       { 'lx-data-block-disabled': disabled || busy || loading },
       { 'lx-data-block-custom-header': $slots.customHeader },
+      { 'lx-data-block-invalid': invalid },
+      { 'lx-data-block-busy': busy },
     ]"
   >
     <div class="lx-data-block">
       <header
         class="lx-data-block-header"
         :for="id"
+        :tabindex="expandable ? 0 : -1"
         @click="toggleExpander"
         @keydown.space.prevent="toggleExpander"
-        :tabindex="expandable ? 0 : -1"
       >
         <slot name="customHeader" v-if="$slots.customHeader" />
         <template v-else>
@@ -131,12 +144,12 @@ const selected = computed({
             />
           </div>
           <div class="lx-icons" v-if="props.icon !== null && !hasSelecting">
-            <lx-icon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
+            <LxIcon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
             <div class="lx-loader-container" v-show="busy">
-              <lx-loader :loading="true" size="s" />
+              <LxLoader :loading="true" size="s" />
             </div>
           </div>
-          <div v-if="props.icon === null && !hasSelecting"></div>
+          <div v-if="props.icon === null && !hasSelecting" />
           <div class="lx-content">
             <p
               :class="[{ 'lx-primary-uppercase': forceUppercase }]"
@@ -148,9 +161,9 @@ const selected = computed({
             <p class="lx-secondary" :title="description" v-show="description">{{ description }}</p>
           </div>
           <div class="lx-indications" v-if="expandable">
-            <lx-icon v-show="expandable" :value="expanded ? 'chevron-up' : 'chevron-down'" />
+            <LxIcon v-show="expandable" :value="expandIcon" />
           </div>
-          <div v-if="!expandable"></div>
+          <div v-if="!expandable" />
         </template>
       </header>
       <div class="additional-buttons" v-if="Number(actionDefinitionsLength) !== 0">
@@ -162,7 +175,7 @@ const selected = computed({
             variant="icon-only"
             tabindex="0"
             :icon="action.icon"
-            :label="action.title ? action.title : action.name"
+            :label="action.title || action.name"
             :destructive="action.destructive"
             :disabled="isDisabled || action.disabled"
             @click="actionClicked(action.id, props.id)"
@@ -192,10 +205,10 @@ const selected = computed({
               />
             </div>
           </template>
-          <template v-slot:toolbar></template>
+          <template v-slot:toolbar />
         </LxDropDownMenu>
       </div>
-      <div v-if="Number(actionDefinitionsLength) === 0"></div>
+      <div v-if="Number(actionDefinitionsLength) === 0" />
     </div>
     <article class="lx-data-block-content">
       <transition name="expander-transition">

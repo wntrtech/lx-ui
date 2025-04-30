@@ -477,6 +477,23 @@
   fill: var(--color-interactive-hover-foreground);
 }
 
+.lx-data-block-wrapper.lx-data-block-invalid:not(.lx-data-block-busy) .lx-data-block .lx-data-block-header .lx-icons .lx-icon,
+.lx-data-block-wrapper.lx-data-block-invalid:not(.lx-data-block-busy) .lx-data-block .lx-data-block-header .lx-indications svg{
+    fill: var(--color-bad);
+}
+
+.lx-data-block-wrapper.lx-data-block-invalid > .lx-data-block > .lx-data-block-header > .lx-content >p.lx-primary{
+    color: var(--color-bad);
+}
+
+.lx-data-block-wrapper.lx-data-block-busy > .lx-data-block > .lx-data-block-header > .lx-content >p.lx-primary{
+    color: var(--color-disabled-foreground);
+}
+
+.lx-data-block-disabled .lx-data-block>.additional-buttons>.lx-context-container .lx-toolbar .lx-button-content-wrapper svg{
+  fill: var(--color-disabled-foreground);
+}
+
 .lx-expander header.lx-head {
   padding-top: 0;
   padding-bottom: 0;
