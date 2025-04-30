@@ -30,11 +30,14 @@ const props = defineProps({
   selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   selected: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
+  invalidationMessage: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
 });
 
 const textsDefault = {
   overflowMenu: 'Atvērt papildus iespējas',
+  expand: 'Atvērt',
+  collapse: 'Aizvērt',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -106,6 +109,16 @@ const expandIcon = computed(() => {
   }
   return 'chevron-down';
 });
+
+const expandIconTitle = computed(() => {
+  if (props.invalid && !props.busy) {
+    return props.invalidationMessage;
+  }
+  if (expanded.value) {
+    return displayTexts.value.collapse;
+  }
+  return displayTexts.value.expand;
+});
 </script>
 <template>
   <div
@@ -126,6 +139,7 @@ const expandIcon = computed(() => {
         class="lx-data-block-header"
         :for="id"
         :tabindex="expandable ? 0 : -1"
+        :aria-invalid="invalid"
         @click="toggleExpander"
         @keydown.space.prevent="toggleExpander"
       >
@@ -161,7 +175,12 @@ const expandIcon = computed(() => {
             <p class="lx-secondary" :title="description" v-show="description">{{ description }}</p>
           </div>
           <div class="lx-indications" v-if="expandable">
-            <LxIcon v-show="expandable" :value="expandIcon" />
+            <LxIcon
+              v-show="expandable"
+              :value="expandIcon"
+              :title="expandIconTitle"
+              :meaningful="invalid"
+            />
           </div>
           <div v-if="!expandable" />
         </template>
