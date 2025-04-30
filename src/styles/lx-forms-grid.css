@@ -1777,6 +1777,10 @@ p .lx-person-display-wrapper {
   margin: 2px 2px 2px 0;
 }
 
+.responsive-overflow-header {
+  display: none;
+}
+
 @media (min-width: 800px) {
   .lx-form-grid > header .lx-toolbar-chip .lx-field-wrapper {
     min-width: 10rem;
