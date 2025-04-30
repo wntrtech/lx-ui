@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, inject } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed, inject } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
 import { logError } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
 import LxToolbar from '@/components/Toolbar.vue';
@@ -45,8 +46,8 @@ const colorsList = ref([
 ]);
 
 const canvas = ref(null);
-const canvasWidth = ref(Math.max(parseInt(props.width, 10), 200));
-const canvasHeight = ref(Math.max(parseInt(props.height, 10), 200));
+const canvasWidth = ref(Math.max(parseInt(props.width || '0', 10), 200));
+const canvasHeight = ref(Math.max(parseInt(props.height || '0', 10), 200));
 const context = ref(null);
 const drawing = ref(false);
 const lastX = ref(0);
@@ -62,6 +63,39 @@ const textsRef = ref({
   color: displayTexts.value.color,
   clear: displayTexts.value.clear,
 });
+const container = ref(null);
+
+let observer = null;
+
+const redrawPaths = () => {
+  if (!context.value) return;
+
+  context.value.clearRect(0, 0, canvas.value.width, canvas.value.height);
+
+  paths.value.forEach(({ path, color }) => {
+    const p = new Path2D(path);
+    context.value.strokeStyle = color;
+    context.value.lineWidth = strokeWidth.value;
+    context.value.lineJoin = strokeLineJoint.value;
+    context.value.stroke(p);
+  });
+};
+
+const resizeCanvas = () => {
+  if (!canvas.value) return;
+
+  const rect = container.value?.getBoundingClientRect();
+  if (!rect) return;
+
+  const maxWidth = Math.max(parseInt(props.width || '0', 10), 200);
+  const newWidth = Math.min(rect.width, maxWidth);
+  canvasWidth.value = newWidth;
+  canvas.value.width = newWidth;
+
+  context.value = canvas.value.getContext('2d');
+
+  redrawPaths();
+};
 
 const getColorOrVariableByLabel = (label, returnType = 'color') => {
   const colorObj = colorsList.value.find((color) => color.label === label);
@@ -196,8 +230,12 @@ const clearCanvas = () => {
 watch(
   [() => props.modelValue, () => props.width, () => props.height],
   ([newSVGData, newWidth, newHeight]) => {
-    canvasWidth.value = Math.max(parseInt(newWidth, 10), 200);
-    canvasHeight.value = Math.max(parseInt(newHeight, 10), 200);
+    canvasWidth.value = Math.max(parseInt(newWidth || '0', 10), 200);
+    canvasHeight.value = Math.max(parseInt(newHeight || '0', 10), 200);
+
+    if (newWidth) {
+      resizeCanvas();
+    }
 
     if (newSVGData) {
       const img = new Image();
@@ -224,7 +262,7 @@ watch(
       };
 
       img.onerror = (error) => {
-        logError(error);
+        logError(error, useLx().getGlobals()?.environment);
       };
     }
   },
@@ -261,16 +299,31 @@ watch(
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
-onMounted(() => {
-  if (canvas.value) {
-    context.value = canvas.value.getContext('2d');
+onMounted(async () => {
+  const maxWidth = Math.max(parseInt(props.width || '0', 10), 200);
+  canvasWidth.value = maxWidth;
+  canvas.value.width = maxWidth;
+  context.value = canvas.value.getContext('2d');
+
+  observer = new ResizeObserver(() => {
+    resizeCanvas();
+  });
+
+  if (container.value) {
+    observer.observe(container.value);
+  }
+});
+
+onUnmounted(() => {
+  if (observer && container.value) {
+    observer.unobserve(container.value);
   }
 });
 </script>
 
 <template>
   <div class="lx-field-wrapper">
-    <div class="lx-drawpad-wrapper">
+    <div ref="container" class="lx-drawpad-wrapper">
       <LxToolbar>
         <template #leftArea>
           <LxToolbarGroup v-if="showInstruments" class="left-group">
@@ -331,7 +384,6 @@ onMounted(() => {
         <canvas
           ref="canvas"
           class="lx-canvas-element lx-input-area"
-          :width="canvasWidth"
           :height="canvasHeight"
           :aria-labelledby="labelledBy"
           @pointerdown.prevent="startDrawing"

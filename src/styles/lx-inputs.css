@@ -2377,7 +2377,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: -ms-flexbox;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  justify-self: center;
 }
 
 .lx-drawpad-wrapper > .lx-component-toolbar .lx-context-container .lx-dropdown-panel {
