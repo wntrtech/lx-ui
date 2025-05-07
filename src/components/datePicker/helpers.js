@@ -64,13 +64,29 @@ export function canSelectDate(date, minDate, maxDate, mode = 'date') {
     const selectedHours = date.getHours();
     const selectedMinutes = date.getMinutes();
 
-    const isAfterMinHours = !minDateParsed || selectedHours >= minDateParsed.getHours();
-    const isBeforeMaxHours = !maxDateParsed || selectedHours <= maxDateParsed.getHours();
+    const minHour = minDateParsed?.getHours();
+    const minMinute = minDateParsed?.getMinutes();
+    const maxHour = maxDateParsed?.getHours();
+    const maxMinute = maxDateParsed?.getMinutes();
 
-    const isAfterMinMinutes = !minDateParsed || selectedMinutes >= minDateParsed.getMinutes();
-    const isBeforeMaxMinutes = !maxDateParsed || selectedMinutes <= maxDateParsed.getMinutes();
+    const isAfterMinHours = !minDateParsed || selectedHours >= minHour;
+    const isBeforeMaxHours = !maxDateParsed || selectedHours <= maxHour;
 
-    return isAfterMinHours && isBeforeMaxHours && isAfterMinMinutes && isBeforeMaxMinutes;
+    // If hour is strictly between min and max, allow all minutes
+    if (isAfterMinHours && isBeforeMaxHours) return true;
+
+    // If on min hour, minutes must be >= minMinute
+    if (minDateParsed && selectedHours === minHour && selectedMinutes < minMinute) {
+      return false;
+    }
+
+    // If on max hour, minutes must be <= maxMinute
+    if (maxDateParsed && selectedHours === maxHour && selectedMinutes > maxMinute) {
+      return false;
+    }
+
+    // Otherwise, allow all
+    return true;
   }
 
   if (mode === 'year') {
@@ -110,6 +126,15 @@ export function canSelectDate(date, minDate, maxDate, mode = 'date') {
   return isAfterMinDate && isBeforeMaxDate;
 }
 
+export const isSameDay = (d1, d2) =>
+  d1?.getDate() === d2?.getDate() &&
+  d1?.getMonth() === d2?.getMonth() &&
+  d1?.getFullYear() === d2?.getFullYear();
+
+export const isSameMonth = (d1, d2) => d1?.getMonth() === d2?.getMonth();
+
+export const isSameYear = (d1, d2) => d1?.getFullYear() === d2?.getFullYear();
+
 export function canSelectTime(
   hourOrMinuteValue,
   minDate,
@@ -131,81 +156,78 @@ export function canSelectTime(
   // If timeOnly is true, we ignore date validation and only focus on time validation
   if (timeOnly) {
     if (timeUnit === 'hour') {
-      if (minDateParsed && Number(hourOrMinuteValue) < minDateParsed.getHours()) return false;
-      if (maxDateParsed && Number(hourOrMinuteValue) > maxDateParsed.getHours()) return false;
+      const hour = Number(hourOrMinuteValue);
+
+      const minHour = minDateParsed?.getHours();
+      const minMinute = minDateParsed?.getMinutes();
+      const maxHour = maxDateParsed?.getHours();
+      const maxMinute = maxDateParsed?.getMinutes();
+
+      // If no minutes selected yet, validate hour normally
+      if (selectedMinutes === null || selectedMinutes === undefined) {
+        if (minDateParsed && hour < minHour) return false;
+        if (maxDateParsed && hour > maxHour) return false;
+        return true;
+      }
+
+      // If minutes are selected, validate full time combination
+      if (minDateParsed && (hour < minHour || (hour === minHour && selectedMinutes < minMinute))) {
+        return false;
+      }
+
+      if (maxDateParsed && (hour > maxHour || (hour === maxHour && selectedMinutes > maxMinute))) {
+        return false;
+      }
+
       return true;
     }
 
     if (timeUnit === 'minute') {
-      if (minDateParsed && Number(hourOrMinuteValue) < minDateParsed.getMinutes()) return false;
-      if (maxDateParsed && Number(hourOrMinuteValue) > maxDateParsed.getMinutes()) return false;
+      // If no hour is selected yet, allow all minutes
+      if (selectedHours === null || selectedHours === undefined) {
+        return true;
+      }
+
+      const minute = Number(hourOrMinuteValue);
+      const minHour = minDateParsed?.getHours();
+      const minMinute = minDateParsed?.getMinutes();
+      const maxHour = maxDateParsed?.getHours();
+      const maxMinute = maxDateParsed?.getMinutes();
+
+      if (
+        (minDateParsed &&
+          (selectedHours < minHour || (selectedHours === minHour && minute < minMinute))) ||
+        (maxDateParsed &&
+          (selectedHours > maxHour || (selectedHours === maxHour && minute > maxMinute)))
+      ) {
+        return false;
+      }
+
       return true;
     }
 
-    return true; // Allow any time if timeUnit isn't specified
+    // Allow any time if timeUnit isn't specified
+    return true;
   }
 
   // Regular date and time validation if timeOnly is false
   // Validate hours
   if (timeUnit === 'hour') {
-    // When the minute is already selected, validate hour with minute
-    if (selectedMinutes !== null) {
-      // If selecting on minDate day
-      if (
-        minDateParsed &&
-        maxDateParsed &&
-        selectedDay === minDateParsed.getDate() &&
-        selectedMonth === minDateParsed.getMonth() &&
-        selectedYear === minDateParsed.getFullYear() &&
-        selectedDay !== maxDateParsed.getDate() &&
-        selectedMonth !== maxDateParsed.getMonth() &&
-        selectedYear !== maxDateParsed.getFullYear()
-      ) {
-        // If the selected minute is earlier than minDate minute, only allow hours after minDate's hour
-        if (selectedMinutes < minDateParsed.getMinutes()) {
-          return hourOrMinuteValue > minDateParsed.getHours();
-        }
-      }
-      // If selecting on maxDate day
-      if (
-        minDateParsed &&
-        maxDateParsed &&
-        selectedDay !== minDateParsed.getDate() &&
-        selectedMonth !== minDateParsed.getMonth() &&
-        selectedYear !== minDateParsed.getFullYear() &&
-        selectedDay === maxDateParsed.getDate() &&
-        selectedMonth === maxDateParsed.getMonth() &&
-        selectedYear === maxDateParsed.getFullYear()
-      ) {
-        // If the selected minute is later than maxDate minute, only allow hours before maxDate's hour
-        if (selectedMinutes > maxDateParsed.getMinutes()) {
-          return hourOrMinuteValue < maxDateParsed.getHours();
-        }
-      }
-      // If selecting on minDate and maxDate day
-      if (
-        minDateParsed &&
-        maxDateParsed &&
-        selectedDay === minDateParsed.getDate() &&
-        selectedDay === maxDateParsed.getDate()
-      ) {
-        // If the selected minute is the same as minDate minute, validate hours before maxDate hours and after minDate hours
-        if (selectedMinutes === minDateParsed.getMinutes()) {
-          return (
-            hourOrMinuteValue >= minDateParsed.getHours() &&
-            hourOrMinuteValue <= maxDateParsed.getHours()
-          );
-        }
-        // If the selected minute is the same as maxDate minute, validate hours before maxDate hours and after minDate hours
-        if (selectedMinutes === maxDateParsed.getMinutes()) {
-          return (
-            hourOrMinuteValue >= minDateParsed.getHours() &&
-            hourOrMinuteValue <= maxDateParsed.getHours()
-          );
-        }
+    const hasMinute = selectedMinutes !== null && selectedMinutes !== undefined;
+    const selectedDate = new Date(selectedYear, selectedMonth, selectedDay);
+    const isMinDay = minDateParsed && selectedDate.toDateString() === minDateParsed.toDateString();
+    const isMaxDay = maxDateParsed && selectedDate.toDateString() === maxDateParsed.toDateString();
+
+    // Validate when minute is selected
+    if (hasMinute && minDateParsed && maxDateParsed) {
+      const sameDay = isMinDay && isMaxDay;
+
+      if (sameDay) {
         if (
-          selectedMinutes >= minDateParsed.getMinutes() &&
-          selectedMinutes <= maxDateParsed.getMinutes()
+          selectedMinutes === minDateParsed.getMinutes() ||
+          selectedMinutes === maxDateParsed.getMinutes() ||
+          (selectedMinutes > minDateParsed.getMinutes() &&
+            selectedMinutes < maxDateParsed.getMinutes())
         ) {
           return (
             hourOrMinuteValue >= minDateParsed.getHours() &&
@@ -214,136 +236,88 @@ export function canSelectTime(
         }
         return false;
       }
-    }
 
-    // Check if it's the same day as minDate
-    if (
-      minDateParsed &&
-      selectedDay === minDateParsed.getDate() &&
-      selectedMonth === minDateParsed.getMonth() &&
-      selectedYear === minDateParsed.getFullYear()
-    ) {
-      if (hourOrMinuteValue < minDateParsed.getHours()) {
-        // Must be after minDate's hour
-        return false;
+      if (isMinDay && !isMaxDay && selectedMinutes < minDateParsed.getMinutes()) {
+        return hourOrMinuteValue > minDateParsed.getHours();
       }
-    }
-    // Check if it's the same day as maxDate
-    if (
-      maxDateParsed &&
-      selectedDay === maxDateParsed.getDate() &&
-      selectedMonth === maxDateParsed.getMonth() &&
-      selectedYear === maxDateParsed.getFullYear()
-    ) {
-      if (hourOrMinuteValue > maxDateParsed.getHours()) {
-        // Must be before maxDate's hour
-        return false;
+
+      if (!isMinDay && isMaxDay && selectedMinutes > maxDateParsed.getMinutes()) {
+        return hourOrMinuteValue < maxDateParsed.getHours();
       }
     }
 
-    // Allow all hours otherwise
+    // If no minute selected, fall back to basic min/max hour bounds
+    if (isMinDay && hourOrMinuteValue < minDateParsed.getHours()) {
+      return false;
+    }
+
+    if (isMaxDay && hourOrMinuteValue > maxDateParsed.getHours()) {
+      return false;
+    }
+
     return true;
   }
 
   // Validate minutes
   if (timeUnit === 'minute') {
-    // When the hour is already selected, validate minute with hour
-    if (selectedHours !== null) {
-      // If selecting on minDate day
-      if (
-        minDateParsed &&
-        maxDateParsed &&
-        selectedDay === minDateParsed.getDate() &&
-        selectedMonth === minDateParsed.getMonth() &&
-        selectedYear === minDateParsed.getFullYear() &&
-        selectedDay !== maxDateParsed.getDate() &&
-        selectedMonth !== maxDateParsed.getMonth() &&
-        selectedYear !== maxDateParsed.getFullYear()
-      ) {
-        // If the selected hour is the same as minDate hour, validate minutes after minDate minutes
+    const hasHour = selectedHours !== null && selectedHours !== undefined;
+
+    const isMinDay = isSameDay(new Date(selectedYear, selectedMonth, selectedDay), minDateParsed);
+    const isMaxDay = isSameDay(new Date(selectedYear, selectedMonth, selectedDay), maxDateParsed);
+
+    if (hasHour) {
+      // If same day
+      if (isMinDay && isMaxDay) {
+        if (selectedHours > minDateParsed.getHours() && selectedHours < maxDateParsed.getHours()) {
+          return true;
+        }
+
         if (selectedHours === minDateParsed.getHours()) {
           return hourOrMinuteValue >= minDateParsed.getMinutes();
         }
-        if (selectedHours > minDateParsed.getHours()) {
-          return true;
-        }
-      }
-      // If selecting on maxDate day
-      if (
-        minDateParsed &&
-        maxDateParsed &&
-        selectedDay !== minDateParsed.getDate() &&
-        selectedMonth !== minDateParsed.getMonth() &&
-        selectedYear !== minDateParsed.getFullYear() &&
-        selectedDay === maxDateParsed.getDate() &&
-        selectedMonth === maxDateParsed.getMonth() &&
-        selectedYear === maxDateParsed.getFullYear()
-      ) {
-        // If the selected hour is the same as maxDate hour, validate minutes before maxDate minutes
+
         if (selectedHours === maxDateParsed.getHours()) {
           return hourOrMinuteValue <= maxDateParsed.getMinutes();
         }
-      }
-      // If selecting on minDate and maxDate day
-      if (
-        minDateParsed &&
-        maxDateParsed &&
-        selectedDay === minDateParsed.getDate() &&
-        selectedDay === maxDateParsed.getDate()
-      ) {
-        // If the selected hour is the same as minDate hour, validate minutes before maxDate minutes and after minDate minutes
-        if (selectedHours === minDateParsed.getHours()) {
-          return (
-            hourOrMinuteValue >= minDateParsed.getMinutes() &&
-            hourOrMinuteValue <= maxDateParsed.getMinutes()
-          );
-        }
-        // If the selected hour is the same as maxDate hour, validate minutes before maxDate minutes and after minDate minutes
-        if (selectedHours === maxDateParsed.getHours()) {
-          return (
-            hourOrMinuteValue >= minDateParsed.getMinutes() &&
-            hourOrMinuteValue <= maxDateParsed.getMinutes()
-          );
-        }
-        if (
-          selectedHours >= minDateParsed.getHours() &&
-          selectedHours <= maxDateParsed.getHours()
-        ) {
-          return (
-            hourOrMinuteValue >= minDateParsed.getMinutes() &&
-            hourOrMinuteValue <= maxDateParsed.getMinutes()
-          );
-        }
-        return false;
-      }
-    }
 
-    // When the hour is not selected, validate minute by min max
-    if (selectedHours === null) {
-      // If selecting on minDate and maxDate day
-      if (
-        minDateParsed &&
-        maxDateParsed &&
-        selectedDay === minDateParsed.getDate() &&
-        selectedDay === maxDateParsed.getDate()
-      ) {
-        // If the selected day is the same as min/max maxDate hour, validate minutes before maxDate minutes and after minDate minutes
         return (
+          selectedHours >= minDateParsed.getHours() &&
+          selectedHours <= maxDateParsed.getHours() &&
           hourOrMinuteValue >= minDateParsed.getMinutes() &&
           hourOrMinuteValue <= maxDateParsed.getMinutes()
         );
       }
+
+      // Only minDate limit
+      if (isMinDay) {
+        if (selectedHours === minDateParsed.getHours()) {
+          return hourOrMinuteValue >= minDateParsed.getMinutes();
+        }
+        return selectedHours > minDateParsed.getHours();
+      }
+
+      // Only maxDate limit
+      if (isMaxDay) {
+        if (selectedHours === maxDateParsed.getHours()) {
+          return hourOrMinuteValue <= maxDateParsed.getMinutes();
+        }
+        return selectedHours < maxDateParsed.getHours();
+      }
     }
-    // Allow all minutes otherwise
+
+    // If no hour selected
+    if (!hasHour && isMinDay && isMaxDay) {
+      return (
+        hourOrMinuteValue >= minDateParsed.getMinutes() &&
+        hourOrMinuteValue <= maxDateParsed.getMinutes()
+      );
+    }
+
     return true;
   }
 
   // Allow everything if no unit is specified
   return true;
-}
-
-export function isSameMonth(date, comparisonDate) {
-  return date.getMonth() === comparisonDate.getMonth();
 }
 
 export function getSurroundingHours(arr, centerValue, isMobileScreen) {

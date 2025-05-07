@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { subYears, addYears, subMonths, addMonths, isSameDay } from 'date-fns';
+import { subYears, addYears, subMonths, addMonths } from 'date-fns';
 import { useWindowSize, onClickOutside } from '@vueuse/core';
 
 import { formatLocalizedDate } from '@/utils/dateUtils';
@@ -533,13 +533,6 @@ function setEndDate(date) {
   selectedEndYear.value = date.getFullYear();
 }
 
-function resetStartDate() {
-  selectedStartDate.value = null;
-  selectedStartDay.value = null;
-  selectedStartMonth.value = null;
-  selectedStartYear.value = null;
-}
-
 function resetEndDate() {
   selectedEndDate.value = null;
   selectedEndDay.value = null;
@@ -547,216 +540,110 @@ function resetEndDate() {
   selectedEndYear.value = null;
 }
 
+function updateRange(start, end) {
+  emits('update:modelValue', { start, end });
+}
+
+function updateStart(date) {
+  setStartDate(date);
+  hoveredDate.value = date;
+}
+
+function updateEnd(date) {
+  setEndDate(date);
+  hoveredDate.value = date;
+}
+
 function handleRangeDifferentCaseValidation(date) {
-  // If start and end date is not selected
-  if (!selectedStartDate.value && !selectedEndDate.value) {
-    if (props.activeInput === 'startInput') {
-      setStartDate(date);
-      hoveredDate.value = date;
+  const start = selectedStartDate.value;
+  const end = selectedEndDate.value;
+  const input = props.activeInput;
 
-      emits('update:modelValue', {
-        start: selectedStartDate.value,
-        end: null,
-      });
-
+  // Case 1: No dates selected
+  if (!start && !end) {
+    if (input === 'startInput') {
+      updateStart(date);
+      updateRange(date, null);
       props.setActiveInput('endInput', props.id);
-      return;
-    }
-
-    if (props.activeInput === 'endInput') {
-      setEndDate(date);
-      hoveredDate.value = date;
-
-      emits('update:modelValue', {
-        start: null,
-        end: selectedEndDate.value,
-      });
-
+    } else {
+      updateEnd(date);
+      updateRange(null, date);
       props.setActiveInput('startInput', props.id);
-      return;
     }
+    return;
   }
 
-  // If start date is selected, but end date is not
-  if (selectedStartDate.value && !selectedEndDate.value) {
-    if (props.activeInput === 'startInput') {
-      setStartDate(date);
-      hoveredDate.value = date;
-
-      emits('update:modelValue', {
-        start: selectedStartDate.value,
-        end: null,
-      });
-
+  // Case 2: Start is selected, end is not
+  if (start && !end) {
+    if (input === 'startInput') {
+      updateStart(date);
+      updateRange(date, null);
       props.setActiveInput('endInput', props.id);
-      return;
-    }
-
-    if (props.activeInput === 'endInput') {
-      // Ensure the end date is after the start date
-      if (date >= selectedStartDate.value) {
-        setEndDate(date);
-
-        emits('update:modelValue', {
-          start: selectedStartDate.value,
-          end: selectedEndDate.value,
-        });
-
+    } else {
+      if (date >= start) {
+        updateEnd(date);
+        updateRange(start, date);
         hoveredDate.value = null;
         handleLayoutDisplay();
-        props.setActiveInput('endInput', props.id);
-        return;
+      } else {
+        updateStart(date);
+        updateRange(date, null);
       }
-
-      setStartDate(date);
-      hoveredDate.value = date;
-
-      emits('update:modelValue', {
-        start: selectedStartDate.value,
-        end: null,
-      });
-
       props.setActiveInput('endInput', props.id);
-      return;
     }
+    return;
   }
 
-  // If end date is selected, but start date is not
-  if (!selectedStartDate.value && selectedEndDate.value) {
-    if (props.activeInput === 'startInput') {
-      // Ensure the start date is before the end date
-      if (date > selectedEndDate.value) {
-        setStartDate(date);
+  // Case 3: End is selected, start is not
+  if (!start && end) {
+    if (input === 'startInput') {
+      if (date > end) {
+        updateStart(date);
         resetEndDate();
-        hoveredDate.value = date;
-
-        emits('update:modelValue', {
-          start: selectedStartDate.value,
-          end: null,
-        });
-
-        props.setActiveInput('endInput', props.id);
-        return;
-      }
-
-      if (date < selectedEndDate.value) {
+        updateRange(date, null);
+      } else {
         setStartDate(date);
-
-        emits('update:modelValue', {
-          start: selectedStartDate.value,
-          end: selectedEndDate.value,
-        });
-
+        updateRange(date, end);
         hoveredDate.value = null;
-        props.setActiveInput('endInput', props.id);
-        return;
       }
-      if (isSameDay(date, selectedEndDate.value)) {
-        setStartDate(date);
-
-        emits('update:modelValue', {
-          start: date,
-          end: date,
-        });
-
-        hoveredDate.value = null;
-        props.setActiveInput('endInput', props.id);
-        return;
-      }
-    }
-
-    if (props.activeInput === 'endInput') {
-      setEndDate(date);
+      props.setActiveInput('endInput', props.id);
+    } else {
+      updateEnd(date);
+      updateRange(start, end);
       hoveredDate.value = date;
-
-      emits('update:modelValue', {
-        start: selectedStartDate.value,
-        end: selectedEndDate.value,
-      });
-
       handleLayoutDisplay();
       props.setActiveInput('startInput', props.id);
-      return;
     }
+    return;
   }
 
-  // If start and end date is selected
-  if (selectedStartDate.value && selectedEndDate.value) {
-    if (props.activeInput === 'endInput' && date >= selectedStartDate.value) {
-      // If the new date is greater than or equal to the start date, update the end date
-      setEndDate(date);
-
-      emits('update:modelValue', {
-        start: selectedStartDate.value,
-        end: selectedEndDate.value,
-      });
-
-      hoveredDate.value = null;
-      handleLayoutDisplay();
-
-      if (!selectedStartDate.value) {
-        props.setActiveInput('startInput', props.id);
+  // Case 4: Both start and end are selected
+  if (start && end) {
+    if (input === 'endInput') {
+      if (date >= start) {
+        updateEnd(date);
+        updateRange(start, date);
+        hoveredDate.value = null;
+        handleLayoutDisplay();
       } else {
-        props.setActiveInput('endInput', props.id);
+        updateStart(date);
+        resetEndDate();
+        updateRange(date, null);
+        hoveredDate.value = date;
       }
-    }
-
-    if (props.activeInput === 'startInput' && date <= selectedEndDate.value) {
-      // If the new date is less than or equal to the end date, update the start date
-      setStartDate(date);
-
-      emits('update:modelValue', {
-        start: selectedStartDate.value,
-        end: selectedEndDate.value,
-      });
-
-      hoveredDate.value = null;
-      handleLayoutDisplay();
       props.setActiveInput('endInput', props.id);
-      return;
-    }
-
-    if (props.activeInput === 'startInput' && date > selectedEndDate.value) {
-      // If the new date is greater than the end date, update the start date and reset end date
-      setStartDate(date);
-      resetEndDate();
-      hoveredDate.value = date;
-
-      emits('update:modelValue', {
-        start: selectedStartDate.value,
-        end: null,
-      });
-
-      props.setActiveInput('endInput', props.id);
-      return;
-    }
-
-    if (props.activeInput === 'endInput' && date < selectedStartDate.value) {
-      // If the new date is less than the start date, update the start date and reset end date
-      setStartDate(date);
-      resetEndDate();
-      hoveredDate.value = date;
-
-      emits('update:modelValue', {
-        start: selectedStartDate.value,
-        end: null,
-      });
-
-      props.setActiveInput('endInput', props.id);
-      return;
-    }
-
-    if (props.activeInput === 'startInput' && date >= selectedStartDate.value) {
-      // If the new date is greater than or equal to the start date, update the end date and reset start date
-      setEndDate(date);
-      resetStartDate();
-      hoveredDate.value = date;
-
-      emits('update:modelValue', {
-        start: null,
-        end: selectedEndDate.value,
-      });
-
+    } else {
+      if (date <= end) {
+        updateStart(date);
+        updateRange(date, end);
+        hoveredDate.value = null;
+        handleLayoutDisplay();
+      } else {
+        updateStart(date);
+        resetEndDate();
+        updateRange(date, null);
+        hoveredDate.value = date;
+      }
       props.setActiveInput('endInput', props.id);
     }
   }
@@ -776,363 +663,274 @@ function checkCadence(cadence, filteredIndexParameter, minutesValue) {
   return filteredIndex;
 }
 
-function handleSingleSelection(selectedValue, selectionType, isNotSelectable = false) {
-  if (props.disabled) return;
-  if (isNotSelectable) return;
-  selectedManually.value = true;
+function handleDateLayoutAutoScroll(date) {
+  const flatList = monthsList.value.flat();
+  const lastMonth = flatList[flatList.length - 1];
 
-  // Declare new cloned date reference
-  const newDate = new Date(currentDate.value);
+  const isDateVisible = flatList.some((d) => d.getMonth() === date.getMonth());
 
-  if (selectionType === 'month') {
-    newDate.setDate(1);
-    newDate.setMonth(selectedValue.orderIndex);
+  if (!isDateVisible) {
+    const scrolledDate = new Date(date);
+    if (props.variant === 'full') scrolledDate.setMonth(date.getMonth() - 3);
+    if (['full-rows', 'full-columns'].includes(props.variant))
+      scrolledDate.setMonth(date.getMonth() - 1);
 
-    currentDate.value = newDate;
+    transitionName.value =
+      date > lastMonth ? computedNextTransitionName.value : computedPrevTransitionName.value;
+    currentDate.value = scrolledDate;
+  }
+}
 
-    if (props.mode === 'month') {
-      newDate.setMonth(selectedValue.orderIndex);
-      selectedMonth.value = Number(selectedValue.orderIndex);
+function isPartialTimeSelection() {
+  return selectedDay.value && (selectedHour.value === null || selectedMinute.value === null);
+}
 
-      emits('update:modelValue', newDate);
-      // Handle layout display and close the menu
-      handleLayoutDisplay();
-      props.closeMenu();
-      props.setActiveInput('startInput', props.id);
-      return;
-    }
+function isCompleteTimeSelection() {
+  return (
+    selectedHour.value !== null &&
+    selectedHour.value !== undefined &&
+    selectedMinute.value !== null &&
+    selectedMinute.value !== undefined
+  );
+}
 
-    if (props.mode === 'month-year') {
-      selectedMonth.value = Number(selectedValue.orderIndex);
-      selectedYear.value = Number(selectedValue.year);
+function applyHourBoundsIfNeeded(date) {
+  if (props.clearIfNotExact) return;
 
-      if (selectedYear.value) {
-        // Construct the updated date based on the variant condition
-        const updatedDate = new Date(selectedYear.value, selectedMonth.value, 1);
+  const sameDay = props.minDateRef && date.getDate() === props.minDateRef.getDate();
 
-        emits('update:modelValue', updatedDate);
-        // Handle layout display and close the menu
-        handleLayoutDisplay();
-        props.closeMenu();
-        props.setActiveInput('startInput', props.id);
-        return;
-      }
-
-      monthsLayout.value = false;
-      yearsLayout.value = true;
-      return;
-    }
-
-    monthsLayout.value = false;
-    regularLayout.value = true;
-    props.setActiveInput(props.activeInput, props.id);
-    return;
+  if (sameDay && selectedHour.value < props.minDateRef.getHours()) {
+    selectedHour.value = props.minDateRef.getHours();
+    currentHourIndex.value = getTimeOrderIndex(hours.value, selectedHour.value);
+    updateVisibleHours();
   }
 
-  if (selectionType === 'year') {
-    newDate.setFullYear(selectedValue);
-    currentDate.value = newDate;
+  const sameMaxDay = props.maxDateRef && date.getDate() === props.maxDateRef.getDate();
 
-    if (selectedYear.value === startYear.value) {
-      transitionName.value = computedPrevTransitionName.value;
-    }
-    if (selectedYear.value === endYear.value) {
-      transitionName.value = computedNextTransitionName.value;
-    }
+  if (sameMaxDay && selectedHour.value > props.maxDateRef.getHours()) {
+    selectedHour.value = props.maxDateRef.getHours();
+    currentHourIndex.value = getTimeOrderIndex(hours.value, selectedHour.value);
+    updateVisibleHours();
+  }
+}
 
-    startYear.value = findDecadeStartYear(selectedValue) - 1;
-    endYear.value = findDecadeStartYear(selectedValue) + 10;
+function applyMinuteBoundsIfNeeded(date) {
+  if (props.clearIfNotExact) return;
 
-    if (selectedYear.value === startYear.value) {
-      transitionName.value = computedPrevTransitionName.value;
-    }
-    if (selectedYear.value === endYear.value) {
-      transitionName.value = computedNextTransitionName.value;
-    }
+  const cadence = props.cadenceOfMinutes;
+  let filteredIndex = -1;
 
-    startYear.value = findDecadeStartYear(selectedValue) - 1;
-    endYear.value = findDecadeStartYear(selectedValue) + 10;
-
-    if (props.mode === 'month') {
-      yearsLayout.value = false;
-      monthsLayout.value = true;
-      return;
-    }
-
-    if (props.mode === 'year') {
-      emits('update:modelValue', newDate);
-
-      // Handle layout display and close the menu
-      handleLayoutDisplay();
-      props.closeMenu();
-      props.setActiveInput('startInput', props.id);
-      return;
-    }
-
-    if (props.mode === 'month-year') {
-      selectedYear.value = Number(selectedValue);
-      if (
-        selectedMonth.value !== null &&
-        !canSelectDate(
-          new Date(selectedYear.value, selectedMonth.value, 1),
-          props.minDateRef,
-          props.maxDateRef,
-          'month-year'
-        )
-      ) {
-        selectedMonth.value = null;
-        emits('update:modelValue', null);
-      }
-      if (selectedMonth.value !== null) {
-        // Construct the updated date based on the variant condition
-        const updatedDate = new Date(selectedYear.value, selectedMonth.value, 1);
-        emits('update:modelValue', updatedDate);
-        props.closeMenu();
-        handleLayoutDisplay();
-        props.setActiveInput('startInput', props.id);
-        return;
-      }
-      yearsLayout.value = false;
-      monthsLayout.value = true;
-      return;
-    }
-
-    yearsLayout.value = false;
-    regularLayout.value = true;
-    props.setActiveInput(props.activeInput, props.id);
-    return;
+  const sameMinDay = props.minDateRef && date.getDate() === props.minDateRef.getDate();
+  if (sameMinDay && selectedMinute.value < props.minDateRef.getMinutes()) {
+    selectedMinute.value = props.minDateRef.getMinutes();
+    filteredIndex = checkCadence(cadence, filteredIndex, selectedMinute.value);
   }
 
-  if (selectionType === 'quarter') {
-    // Set selectedQuarter from the selected value
-    selectedQuarter.value = selectedValue?.quarter;
-    // Set selectedYear from the selected value
-    selectedYear.value = selectedValue?.year;
+  const sameMaxDay = props.maxDateRef && date.getDate() === props.maxDateRef.getDate();
+  if (sameMaxDay && selectedMinute.value > props.maxDateRef.getMinutes()) {
+    selectedMinute.value = props.maxDateRef.getMinutes();
+    filteredIndex = checkCadence(cadence, filteredIndex, selectedMinute.value);
+  }
 
-    // Construct the updated date based on the variant condition
-    const updatedDate = dateFromYearAndQuarter(selectedValue?.year, selectedValue?.quarter);
+  if (filteredIndex === -1) {
+    filteredIndex = getTimeOrderIndex(filteredMinutes.value, selectedMinute.value, cadence);
+  }
+
+  currentMinuteIndex.value = Math.max(0, filteredIndex);
+  selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+  selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+  updateVisibleMinutes();
+}
+
+function buildAndEmitFinalDateTime(date, baseDate) {
+  if (props.minDateRef && baseDate.getDate() === props.minDateRef.getDate()) {
+    if (selectedHour.value < props.minDateRef.getHours())
+      selectedHour.value = props.minDateRef.getHours();
+    if (selectedMinute.value < props.minDateRef.getMinutes())
+      selectedMinute.value = props.minDateRef.getMinutes();
+  }
+
+  if (props.maxDateRef && baseDate.getDate() === props.maxDateRef.getDate()) {
+    if (selectedHour.value > props.maxDateRef.getHours())
+      selectedHour.value = props.maxDateRef.getHours();
+    if (selectedMinute.value > props.maxDateRef.getMinutes())
+      selectedMinute.value = props.maxDateRef.getMinutes();
+  }
+
+  date.setHours(selectedHour.value);
+  date.setMinutes(selectedMinute.value);
+
+  currentDate.value = date;
+  emits('update:modelValue', date);
+  handleLayoutDisplay();
+  if (shouldCloseMenu.value) props.closeMenu();
+  props.setActiveInput('startInput', props.id);
+}
+
+function handleDateSelection(selectedValue) {
+  // 1. Basic selections
+  selectedDay.value = selectedValue.getDate();
+  selectedMonth.value = selectedValue.getMonth();
+  selectedYear.value = selectedValue.getFullYear();
+
+  const updatedDate = new Date(selectedYear.value, selectedMonth.value, selectedDay.value);
+  selectedDate.value = updatedDate;
+
+  // 2. Handle mode === 'date'
+  if (props.mode === 'date') {
+    handleDateLayoutAutoScroll(updatedDate);
     emits('update:modelValue', updatedDate);
+    handleLayoutDisplay();
     props.closeMenu();
     props.setActiveInput('startInput', props.id);
+    return;
   }
 
-  if (selectionType === 'date') {
-    // Set selected Day, Month, Year from the selected value
-    selectedDay.value = selectedValue.getDate();
-    selectedMonth.value = selectedValue.getMonth();
-    selectedYear.value = selectedValue.getFullYear();
+  // 3. Handle date-time cases
+  if (props.mode === 'date-time') {
+    if (props.clearIfNotExact && isPartialTimeSelection()) {
+      clearSelectedValues();
+      return;
+    }
 
-    // Construct the updated date based on the variant condition
-    const updatedDate = new Date(
-      selectedValue.getFullYear(),
-      selectedValue.getMonth(),
-      selectedValue.getDate()
-    );
-    selectedDate.value = updatedDate;
+    // Hour & minute bound enforcement
+    if (!mobileTimeLayout.value) {
+      applyHourBoundsIfNeeded(selectedValue);
+      applyMinuteBoundsIfNeeded(selectedValue);
 
-    if (props.mode === 'date') {
-      // Get the last element of the flattened monthsList array
-      const clonedArray = [...monthsList.value.flat()];
-      const lastMonthInList = clonedArray[clonedArray.length - 1];
-
-      // Check if the updatedDate exists in the flattened monthsList array
-      const isDateInMonthList = clonedArray.some(
-        (monthDate) => monthDate.getMonth() === updatedDate.getMonth()
-      );
-
-      // Check if the updatedDate is after the lastDateInMonthList
-      if (!isDateInMonthList && updatedDate > lastMonthInList) {
-        // Set currentDate to the updatedDate minus 3 months
-        const threeMonthsBeforeDate = new Date(updatedDate);
-        if (props.variant === 'full') {
-          threeMonthsBeforeDate.setMonth(threeMonthsBeforeDate.getMonth() - 3);
-        }
-        if (props.variant === 'full-rows' || props.variant === 'full-columns') {
-          threeMonthsBeforeDate.setMonth(threeMonthsBeforeDate.getMonth() - 1);
-        }
-
-        transitionName.value = computedNextTransitionName.value;
-        currentDate.value = threeMonthsBeforeDate;
+      if (isCompleteTimeSelection()) {
+        buildAndEmitFinalDateTime(updatedDate, selectedValue);
       }
-      // If updatedDate is NOT in the monthsList, update currentDate.value
-      else if (!isDateInMonthList) {
-        transitionName.value = computedPrevTransitionName.value;
-        currentDate.value = updatedDate;
-      }
+    }
+  }
+}
 
-      // Emit the event with updated value
+function handleMonthSelection(selectedValue, newDate) {
+  newDate.setDate(1);
+  newDate.setMonth(selectedValue.orderIndex);
+  currentDate.value = newDate;
+
+  const monthIndex = Number(selectedValue.orderIndex);
+  selectedMonth.value = monthIndex;
+
+  if (props.mode === 'month') {
+    emits('update:modelValue', newDate);
+    handleLayoutDisplay();
+    props.closeMenu();
+    props.setActiveInput('startInput', props.id);
+    return;
+  }
+
+  if (props.mode === 'month-year') {
+    selectedYear.value = Number(selectedValue.year);
+
+    if (selectedYear.value) {
+      const updatedDate = new Date(selectedYear.value, monthIndex, 1);
       emits('update:modelValue', updatedDate);
-
-      // Handle layout display and close the menu
       handleLayoutDisplay();
       props.closeMenu();
       props.setActiveInput('startInput', props.id);
+    } else {
+      monthsLayout.value = false;
+      yearsLayout.value = true;
     }
+    return;
+  }
 
+  monthsLayout.value = false;
+  regularLayout.value = true;
+  props.setActiveInput(props.activeInput, props.id);
+}
+
+function handleYearSelection(selectedValue, newDate) {
+  const numericYear = Number(selectedValue);
+  newDate.setFullYear(numericYear);
+  currentDate.value = newDate;
+
+  selectedYear.value = numericYear;
+
+  const decadeStart = findDecadeStartYear(numericYear);
+  startYear.value = decadeStart - 1;
+  endYear.value = decadeStart + 10;
+
+  if (numericYear === startYear.value) transitionName.value = computedPrevTransitionName.value;
+  if (numericYear === endYear.value) transitionName.value = computedNextTransitionName.value;
+
+  if (props.mode === 'month') {
+    yearsLayout.value = false;
+    monthsLayout.value = true;
+    return;
+  }
+
+  if (props.mode === 'year') {
+    emits('update:modelValue', newDate);
+    handleLayoutDisplay();
+    props.closeMenu();
+    props.setActiveInput('startInput', props.id);
+    return;
+  }
+
+  if (props.mode === 'month-year') {
     if (
-      props.mode === 'date-time' &&
-      selectedHour.value !== null &&
-      selectedMinute.value === null &&
-      !mobileTimeLayout.value
+      selectedMonth.value !== null &&
+      !canSelectDate(
+        new Date(numericYear, selectedMonth.value, 1),
+        props.minDateRef,
+        props.maxDateRef,
+        'month-year'
+      )
     ) {
-      if (props.clearIfNotExact) {
-        if (!selectedDay.value || selectedHour.value === null || selectedMinute.value === null) {
-          clearSelectedValues();
-        }
-      }
-      // Check and update hours based on min date
-      if (
-        props.minDateRef &&
-        selectedValue.getDate() === props.minDateRef.getDate() &&
-        !props.clearIfNotExact
-      ) {
-        if (selectedHour.value < props.minDateRef?.getHours()) {
-          selectedHour.value = props.minDateRef?.getHours();
-          currentHourIndex.value = getTimeOrderIndex(hours.value, selectedHour.value);
-          updateVisibleHours();
-        }
-      }
-      // Check and update hours based on max date
-      if (
-        props.maxDateRef &&
-        selectedValue.getDate() === props.maxDateRef.getDate() &&
-        !props.clearIfNotExact
-      ) {
-        if (selectedHour.value > props.maxDateRef?.getHours()) {
-          selectedHour.value = props.maxDateRef?.getHours();
-          currentHourIndex.value = getTimeOrderIndex(hours.value, selectedHour.value);
-          updateVisibleHours();
-        }
-      }
-    }
-
-    if (
-      props.mode === 'date-time' &&
-      selectedHour.value === null &&
-      selectedMinute.value !== null &&
-      !mobileTimeLayout.value
-    ) {
-      if (props.clearIfNotExact) {
-        if (!selectedDay.value || selectedHour.value === null || selectedMinute.value === null) {
-          clearSelectedValues();
-        }
-      }
-      // Check and update minutes based on min date
-      if (
-        props.minDateRef &&
-        selectedValue.getDate() === props.minDateRef.getDate() &&
-        !props.clearIfNotExact
-      ) {
-        if (selectedMinute.value < props.minDateRef?.getMinutes()) {
-          selectedMinute.value = props.minDateRef?.getMinutes();
-          const cadence = props.cadenceOfMinutes;
-          const minutesValue = selectedMinute.value;
-          let filteredIndex = -1;
-
-          filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
-
-          // Use fallback index (0) if filteredIndex is invalid
-          currentMinuteIndex.value =
-            filteredIndex !== -1
-              ? filteredIndex
-              : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
-
-          // Ensure currentMinuteIndex is valid, otherwise default to 0
-          if (
-            currentMinuteIndex.value === null ||
-            currentMinuteIndex.value === undefined ||
-            currentMinuteIndex.value < 0
-          ) {
-            currentMinuteIndex.value = 0;
-          }
-
-          selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
-          selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
-          updateVisibleMinutes();
-        }
-      }
-      // Check and update minutes based on max date
-      if (
-        props.maxDateRef &&
-        selectedValue.getDate() === props.maxDateRef.getDate() &&
-        !props.clearIfNotExact
-      ) {
-        if (selectedMinute.value > props.maxDateRef?.getMinutes()) {
-          selectedMinute.value = props.maxDateRef?.getMinutes();
-          const cadence = props.cadenceOfMinutes;
-          const minutesValue = selectedMinute.value;
-          let filteredIndex = -1;
-          filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
-
-          // Use fallback index (0) if filteredIndex is invalid
-          currentMinuteIndex.value =
-            filteredIndex !== -1
-              ? filteredIndex
-              : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
-
-          // Ensure currentMinuteIndex is valid, otherwise default to 0
-          if (
-            currentMinuteIndex.value === null ||
-            currentMinuteIndex.value === undefined ||
-            currentMinuteIndex.value < 0
-          ) {
-            currentMinuteIndex.value = 0;
-          }
-
-          selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
-          selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
-          updateVisibleMinutes();
-        }
-      }
-    }
-
-    if (
-      props.mode === 'date-time' &&
-      selectedHour.value !== null &&
-      selectedHour.value !== undefined &&
-      selectedMinute.value !== null &&
-      selectedMinute.value !== undefined &&
-      !mobileTimeLayout.value
-    ) {
-      updatedDate.setHours(selectedHour.value);
-      updatedDate.setMinutes(selectedMinute.value);
-
-      // Check and update hours/minutes based on min date
-      if (
-        props.minDateRef &&
-        selectedValue.getDate() === props.minDateRef.getDate() &&
-        !props.clearIfNotExact
-      ) {
-        if (selectedHour.value < props.minDateRef?.getHours()) {
-          updatedDate.setHours(props.minDateRef?.getHours());
-        }
-        if (selectedMinute.value < props.minDateRef?.getMinutes()) {
-          updatedDate.setMinutes(props.minDateRef?.getMinutes());
-        }
-      }
-      // Check and update hours/minutes based on max date
-      if (
-        props.maxDateRef &&
-        selectedValue.getDate() === props.maxDateRef.getDate() &&
-        !props.clearIfNotExact
-      ) {
-        if (selectedHour.value > props.maxDateRef?.getHours()) {
-          updatedDate.setHours(props.maxDateRef?.getHours());
-        }
-        if (selectedMinute.value > props.maxDateRef?.getMinutes()) {
-          updatedDate.setMinutes(props.maxDateRef?.getMinutes());
-        }
-      }
-
-      // Update the selectedDate value and emit the event
-      currentDate.value = updatedDate;
+      selectedMonth.value = null;
+      emits('update:modelValue', null);
+    } else if (selectedMonth.value !== null) {
+      const updatedDate = new Date(numericYear, selectedMonth.value, 1);
       emits('update:modelValue', updatedDate);
-
-      // Handle layout display and close the menu
+      props.closeMenu();
       handleLayoutDisplay();
-      if (shouldCloseMenu.value) props.closeMenu();
       props.setActiveInput('startInput', props.id);
+      return;
     }
+    yearsLayout.value = false;
+    monthsLayout.value = true;
+    return;
+  }
+
+  yearsLayout.value = false;
+  regularLayout.value = true;
+  props.setActiveInput(props.activeInput, props.id);
+}
+
+function handleQuarterSelection(selectedValue) {
+  selectedQuarter.value = selectedValue?.quarter;
+  selectedYear.value = selectedValue?.year;
+
+  const updatedDate = dateFromYearAndQuarter(selectedYear.value, selectedQuarter.value);
+  emits('update:modelValue', updatedDate);
+  props.closeMenu();
+  props.setActiveInput('startInput', props.id);
+}
+
+function handleSingleSelection(selectedValue, selectionType, isNotSelectable = false) {
+  if (props.disabled || isNotSelectable) return;
+  selectedManually.value = true;
+
+  const newDate = new Date(currentDate.value);
+
+  switch (selectionType) {
+    case 'date':
+      handleDateSelection(selectedValue);
+      break;
+    case 'month':
+      handleMonthSelection(selectedValue, newDate);
+      break;
+    case 'year':
+      handleYearSelection(selectedValue, newDate);
+      break;
+    case 'quarter':
+      handleQuarterSelection(selectedValue);
+      break;
+    default:
+      break;
   }
 }
 
@@ -1251,108 +1049,78 @@ const isHoveringRange = (date) => {
   return false;
 };
 
+function isMonthBetweenInYear(startMth, endMth, targetMth, targetYr, expectedYr) {
+  if (targetYr !== expectedYr) return false;
+  const [min, max] = [startMth, endMth].sort((a, b) => a - b);
+  return targetMth >= min && targetMth <= max;
+}
+
+function isMonthInForwardMultiYearRange(startYr, startMth, endYr, endMth, month) {
+  if (month.year === startYr) {
+    return month.orderIndex >= startMth;
+  }
+  if (month.year === endYr) {
+    return month.orderIndex <= endMth;
+  }
+  return month.year > startYr && month.year < endYr;
+}
+
+function isMonthInBackwardMultiYearRange(startYr, startMth, endYr, endMth, month) {
+  if (month.year === startYr) {
+    return month.orderIndex <= startMth;
+  }
+  if (month.year === endYr) {
+    return month.orderIndex >= endMth;
+  }
+  return month.year < startYr && month.year > endYr;
+}
+
+function isMonthInHoverRange({ anchorYear, anchorMonth, hoverYear, hoverMonth, month }) {
+  const isSameYear = anchorYear === hoverYear;
+  const isForward = hoverYear > anchorYear || (isSameYear && hoverMonth >= anchorMonth);
+  const isBackward = hoverYear < anchorYear || (isSameYear && hoverMonth < anchorMonth);
+
+  if (isSameYear) {
+    return isMonthBetweenInYear(anchorMonth, hoverMonth, month.orderIndex, month.year, anchorYear);
+  }
+
+  if (isForward) {
+    return isMonthInForwardMultiYearRange(anchorYear, anchorMonth, hoverYear, hoverMonth, month);
+  }
+
+  if (isBackward) {
+    return isMonthInBackwardMultiYearRange(anchorYear, anchorMonth, hoverYear, hoverMonth, month);
+  }
+
+  return false;
+}
+
 // Check if a month/month-year is in the hovering range
 const isHoveringMonthRange = (month) => {
-  if (selectedStartMonth.value !== null && selectedEndMonth.value === null && hoveredDate.value) {
-    const startYr = selectedStartYear.value;
-    const startMth = selectedStartMonth.value;
-    const hoverYr = hoveredDate.value.getFullYear();
-    const hoverMth = hoveredDate.value.getMonth();
+  if (!hoveredDate.value) return false;
 
-    // Forward selection in the same year from start month to hovered month
-    if (month.year === startYr && hoverYr === startYr && hoverMth >= startMth) {
-      return month.orderIndex >= startMth && month.orderIndex <= hoverMth;
-    }
-
-    // Backward selection in the same year from start month to hovered month
-    if (month.year === startYr && hoverYr === startYr && hoverMth < startMth) {
-      return month.orderIndex <= startMth && month.orderIndex >= hoverMth;
-    }
-
-    // Forward selection across years (hovered date in a future year)
-    if (hoverYr > startYr) {
-      // Starting year: include months from the start month to the end of the year
-      if (month.year === startYr) {
-        return month.orderIndex >= startMth;
-      }
-      // Hovered year: include months from the beginning of the year to the hovered month
-      if (month.year === hoverYr) {
-        return month.orderIndex <= hoverMth;
-      }
-      // Intermediate years: include all months
-      if (month.year > startYr && month.year < hoverYr) {
-        return true;
-      }
-    }
-
-    // Backward selection across years (hovered date in a previous year)
-    if (hoverYr < startYr) {
-      // Starting year: include months from the start month to the beginning of the year
-      if (month.year === startYr) {
-        return month.orderIndex <= startMth;
-      }
-      // Hovered year: include months from the hovered month to the end of the year
-      if (month.year === hoverYr) {
-        return month.orderIndex >= hoverMth;
-      }
-      // Intermediate years: include all months
-      if (month.year < startYr && month.year > hoverYr) {
-        return true;
-      }
-    }
+  // Case 1: Start selected, end null
+  if (selectedStartMonth.value !== null && selectedEndMonth.value === null) {
+    return isMonthInHoverRange({
+      anchorYear: selectedStartYear.value,
+      anchorMonth: selectedStartMonth.value,
+      hoverYear: hoveredDate.value.getFullYear(),
+      hoverMonth: hoveredDate.value.getMonth(),
+      month,
+    });
   }
 
-  // Case where only the end month is selected and we're hovering backwards
-  if (selectedEndMonth.value !== null && selectedStartMonth.value === null && hoveredDate.value) {
-    const endYr = selectedEndYear.value;
-    const endMth = selectedEndMonth.value;
-    const hoverYr = hoveredDate.value.getFullYear();
-    const hoverMth = hoveredDate.value.getMonth();
-
-    // Forward selection in the same year from start month to hovered month
-    if (month.year === endYr && hoverYr === endYr && hoverMth >= endMth) {
-      return month.orderIndex >= endMth && month.orderIndex <= hoverMth;
-    }
-
-    // Backward selection in the same year from start month to hovered month
-    if (month.year === endYr && hoverYr === endYr && hoverMth < endMth) {
-      return month.orderIndex <= endMth && month.orderIndex >= hoverMth;
-    }
-
-    // Forward selection across years (hovered date in a future year)
-    if (hoverYr > endYr) {
-      // Starting year: include months from the start month to the end of the year
-      if (month.year === endYr) {
-        return month.orderIndex >= endMth;
-      }
-      // Hovered year: include months from the beginning of the year to the hovered month
-      if (month.year === hoverYr) {
-        return month.orderIndex <= hoverMth;
-      }
-      // Intermediate years: include all months
-      if (month.year > endYr && month.year < hoverYr) {
-        return true;
-      }
-    }
-
-    // Backward selection across years (hovered date in a previous year)
-    if (hoverYr < endYr) {
-      // Starting year: include months from the start month to the beginning of the year
-      if (month.year === endYr) {
-        return month.orderIndex <= endMth;
-      }
-      // Hovered year: include months from the hovered month to the end of the year
-      if (month.year === hoverYr) {
-        return month.orderIndex >= hoverMth;
-      }
-      // Intermediate years: include all months
-      if (month.year < endYr && month.year > hoverYr) {
-        return true;
-      }
-    }
+  // Case 2: End selected, start null
+  if (selectedEndMonth.value !== null && selectedStartMonth.value === null) {
+    return isMonthInHoverRange({
+      anchorYear: selectedEndYear.value,
+      anchorMonth: selectedEndMonth.value,
+      hoverYear: hoveredDate.value.getFullYear(),
+      hoverMonth: hoveredDate.value.getMonth(),
+      month,
+    });
   }
 
-  // Return false if no conditions match
   return false;
 };
 
@@ -1397,65 +1165,68 @@ const isSelectedDateRange = (date) => {
   return false;
 };
 
+function isMonthInOpenRangeForward({ anchorYear, anchorMonth, month }) {
+  if (month.year === anchorYear) {
+    return month.orderIndex >= anchorMonth;
+  }
+  return month.year > anchorYear;
+}
+
+function isMonthInOpenRangeBackward({ anchorYear, anchorMonth, month }) {
+  if (month.year === anchorYear) {
+    return month.orderIndex <= anchorMonth;
+  }
+  return month.year < anchorYear;
+}
+
+function isMonthInFullSelectedRange({ sYear, sMonth, eYear, eMonth, month }) {
+  if (sYear === eYear) {
+    return month.year === sYear && month.orderIndex >= sMonth && month.orderIndex <= eMonth;
+  }
+
+  if (month.year === sYear) {
+    return month.orderIndex >= sMonth;
+  }
+
+  if (month.year === eYear) {
+    return month.orderIndex <= eMonth;
+  }
+
+  return month.year > sYear && month.year < eYear;
+}
+
 const isSelectedMonthRange = (month) => {
-  // Check if only the start month and year are selected
-  if (
-    selectedStartMonth.value !== null &&
-    selectedEndMonth.value === null &&
-    !selectedManually.value
-  ) {
-    // When in the same start year, select months from start month onward
-    if (month.year === selectedStartYear.value) {
-      return month.orderIndex >= selectedStartMonth.value;
+  if (!selectedManually.value) {
+    // Single start selection (range open-ended)
+    if (selectedStartMonth.value !== null && selectedEndMonth.value === null) {
+      return isMonthInOpenRangeForward({
+        anchorYear: selectedStartYear.value,
+        anchorMonth: selectedStartMonth.value,
+        month,
+      });
     }
 
-    // Select all months in the years following the start year
-    if (month.year > selectedStartYear.value) {
-      return true;
-    }
-  }
-
-  // Check if only the start month and year are selected
-  if (
-    selectedStartMonth.value === null &&
-    selectedEndMonth.value !== null &&
-    !selectedManually.value
-  ) {
-    // When in the same start year, select months from start month onward
-    if (month.year === selectedEndYear.value) {
-      return month.orderIndex <= selectedEndMonth.value;
-    }
-
-    // Select all months in the years following the start year
-    if (month.year < selectedEndYear.value) {
-      return true;
+    // Single end selection (range open-ended backwards)
+    if (selectedStartMonth.value === null && selectedEndMonth.value !== null) {
+      return isMonthInOpenRangeBackward({
+        anchorYear: selectedEndYear.value,
+        anchorMonth: selectedEndMonth.value,
+        month,
+      });
     }
   }
 
-  // Check if both start and end month and year are selected
+  // Full range selected
   if (selectedStartMonth.value !== null && selectedEndMonth.value !== null) {
-    // When both start and end are in the same year
-    if (selectedStartYear.value === selectedEndYear.value) {
-      return (
-        month.year === selectedStartYear.value &&
-        month.orderIndex >= selectedStartMonth.value &&
-        month.orderIndex <= selectedEndMonth.value
-      );
-    }
-
-    // When start year is earlier than end year
-    if (month.year === selectedStartYear.value) {
-      return month.orderIndex >= selectedStartMonth.value; // Hovering in the start year
-    }
-    if (month.year === selectedEndYear.value) {
-      return month.orderIndex <= selectedEndMonth.value; // Hovering in the end year
-    }
-
-    // For years between the start and end years
-    if (month.year > selectedStartYear.value && month.year < selectedEndYear.value) {
-      return true; // Hovering for all months in the intermediate years
-    }
+    return isMonthInFullSelectedRange({
+      sYear: selectedStartYear.value,
+      sMonth: selectedStartMonth.value,
+      eYear: selectedEndYear.value,
+      eMonth: selectedEndMonth.value,
+      month,
+    });
   }
+
   return false;
 };
 
@@ -3408,7 +3179,9 @@ watch(
                               !canSelectDate(
                                 new Date(
                                   year,
-                                  selectedMonth !== null ? selectedMonth : todayDate.getMonth(),
+                                  selectedMonth !== null && selectedMonth !== undefined
+                                    ? selectedMonth
+                                    : todayDate.getMonth(),
                                   1
                                 ),
                                 minDateRef,
