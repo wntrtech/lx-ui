@@ -31,7 +31,7 @@ const textsDefault = {
   clear: 'Notīrīt',
   buttonLabel: 'Izvēlēties datni',
   uploaderDescription: '',
-  draggablePlaceholder: 'Ievelciet datnes, vai nospiediet šeit, lai augšupielādētu',
+  draggablePlaceholder: 'Ievelciet datnes vai nospiediet šeit, lai augšupielādētu',
   placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
   close: 'Aizvērt',
   noItems: 'Nav pievienota neviena datne',
