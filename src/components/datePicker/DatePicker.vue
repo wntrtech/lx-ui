@@ -32,7 +32,7 @@ import LxIcon from '@/components/Icon.vue';
 const props = defineProps({
   id: { type: String, default: null },
   modelValue: { type: [String, Date, Object], default: null },
-  mode: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'
+  mode: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters', 'legacy'
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   masks: { type: Object, default: () => {} },
   placeholder: { type: String, default: null },
@@ -1108,9 +1108,19 @@ onMounted(async () => {
             :tabindex="startInputIndex"
             :maxlength="getMaxLength"
             :aria-invalid="invalid"
-            :aria-label="pickerType === 'range' ? displayTexts.startDateLabel : null"
-            :aria-labelledby="pickerType === 'single' ? labelledBy : null"
-            :aria-describedby="pickerType === 'range' ? `${id}-lx-range-input-description` : null"
+            :aria-label="
+              pickerType === 'range'
+                ? displayTexts.startDateLabel
+                : pickerType === 'single' && mode === 'legacy'
+                ? labelledBy
+                : null
+            "
+            :aria-labelledby="pickerType === 'single' && mode !== 'legacy' ? labelledBy : null"
+            :aria-describedby="
+              pickerType === 'range' || (pickerType === 'single' && mode === 'legacy')
+                ? `${id}-lx-range-input-description`
+                : null
+            "
             @click="handleOpen('startInput')"
             @keydown.arrow-down.prevent="handleOpen('startInput')"
             @keydown.esc.prevent="handleClose"

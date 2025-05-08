@@ -418,10 +418,11 @@ onBeforeMount(() => {
           :labelled-by="labelledBy"
         />
 
-        <div v-if="kind === 'legacy'" class="legacy-pickers-wrapper">
+        <div v-if="kind === 'legacy'" class="legacy-pickers-wrapper" :aria-labelledby="labelledBy">
           <LxDatePicker
             :id="'from-' + id"
             v-model="modelStart"
+            mode="legacy"
             :masks="localeMasks"
             :placeholder="placeholder"
             :disabled="disabled"
@@ -433,7 +434,7 @@ onBeforeMount(() => {
             :first-day-of-the-week="localeFirstDay"
             :clearIfNotExact="clearIfNotExact"
             :texts="displayTexts"
-            :labelled-by="labelledBy"
+            :labelled-by="displayTexts.startDateLabel"
           />
 
           <span class="lx-date-time-range-separator">–</span>
@@ -441,6 +442,7 @@ onBeforeMount(() => {
           <LxDatePicker
             :id="'till-' + id"
             v-model="modelEnd"
+            mode="legacy"
             :masks="localeMasks"
             :placeholder="placeholder"
             :disabled="disabled"
@@ -451,7 +453,7 @@ onBeforeMount(() => {
             :first-day-of-the-week="localeFirstDay"
             :clearIfNotExact="clearIfNotExact"
             :texts="displayTexts"
-            :labelled-by="labelledBy"
+            :labelled-by="displayTexts.endDateLabel"
           />
         </div>
       </div>
