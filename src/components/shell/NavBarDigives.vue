@@ -35,6 +35,7 @@ const defaultTexts = {
   defaultBack: 'Atpakaļ',
   logOut: 'Iziet',
   openAlerts: 'Atvērt sarakstu',
+  noAlerts: 'Nav paziņojumu',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',
   languagesTitle: 'Valodu izvēle',

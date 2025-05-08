@@ -154,6 +154,7 @@ const textsDefault = {
   defaultBack: 'Atpakaļ',
   logOut: 'Iziet',
   openAlerts: 'Atvērt sarakstu',
+  noAlerts: 'Nav paziņojumu',
   openNavbar: 'Atvērt izvēlni',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',

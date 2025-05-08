@@ -56,6 +56,7 @@ const textsDefault = {
   defaultBack: 'Atpakaļ',
   logOut: 'Iziet',
   openAlerts: 'Atvērt sarakstu',
+  noAlerts: 'Nav paziņojumu',
   openNavbar: 'Atvērt izvēlni',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',
@@ -463,7 +464,7 @@ const userInfoMenu = ref(false);
                       @click="alertsClicked"
                     />
                   </div>
-                  <ol role="group" aria-live="polite">
+                  <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
                     <li
                       :aria-labelledby="`alert-${item?.id}-name`"
                       :aria-describedby="`alert-${item?.id}-desc`"
@@ -498,6 +499,7 @@ const userInfoMenu = ref(false);
                       </div>
                     </li>
                   </ol>
+                  <LxEmptyState v-else :label="displayTexts.noAlerts"></LxEmptyState>
                 </template>
 
                 <template v-else v-slot:panel>
@@ -511,7 +513,7 @@ const userInfoMenu = ref(false);
                       @click="alertsClicked"
                     />
                   </div>
-                  <ol role="group" aria-live="polite">
+                  <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
                     <li
                       :aria-labelledby="`alert-${item?.id}-name`"
                       :aria-describedby="`alert-${item?.id}-desc`"
@@ -546,6 +548,7 @@ const userInfoMenu = ref(false);
                       </div>
                     </li>
                   </ol>
+                  <LxEmptyState v-else :label="displayTexts.noAlerts"></LxEmptyState>
                 </template>
               </LxDropDownMenu>
             </div>

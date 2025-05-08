@@ -7,6 +7,7 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import LxToggle from '@/components/Toggle.vue';
 import LxAvatar from '@/components/Avatar.vue';
+import LxEmptyState from '@/components/EmptyState.vue';
 
 import { shortenUserName, safeString } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -53,6 +54,7 @@ const props = defineProps({
 const textsDefault = {
   logOut: 'Iziet',
   openAlerts: 'Atvērt sarakstu',
+  noAlerts: 'Nav paziņojumu',
   helpTitle: 'Palīdzība',
   alertsTitle: 'Paziņojumi',
   languagesTitle: 'Valodu izvēle',
@@ -385,7 +387,7 @@ function triggerUserMenu() {
               @click="alertsClicked"
             />
           </div>
-          <ol role="group" aria-live="polite">
+          <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
             <li
               :aria-labelledby="`alert-${item?.id}-name`"
               :aria-describedby="`alert-${item?.id}-desc`"
@@ -420,6 +422,7 @@ function triggerUserMenu() {
               </div>
             </li>
           </ol>
+          <LxEmptyState v-else :label="displayTexts.noAlerts"></LxEmptyState>
         </template>
 
         <template v-else v-slot:panel>
@@ -433,7 +436,7 @@ function triggerUserMenu() {
               @click="alertsClicked"
             />
           </div>
-          <ol role="group" aria-live="polite">
+          <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
             <li
               :aria-labelledby="`alert-${item?.id}-name`"
               :aria-describedby="`alert-${item?.id}-desc`"
@@ -468,6 +471,7 @@ function triggerUserMenu() {
               </div>
             </li>
           </ol>
+          <LxEmptyState v-else :label="displayTexts.noAlerts"></LxEmptyState>
         </template>
       </LxDropDownMenu>
 
