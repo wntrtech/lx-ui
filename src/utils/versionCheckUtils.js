@@ -31,7 +31,7 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
           // Default notification text if no text where provided
           const defaultNotifyText = 'Ir pieejama jauna lietotnes versija, lūdzu pārlādējiet lapu!';
           // Show notification for manual refresh if idle or work in progress inside current route
-          notify.pushWarning(notifyText || defaultNotifyText);
+          notify?.pushWarning(notifyText || defaultNotifyText);
           notificationShown = true;
         }
       }

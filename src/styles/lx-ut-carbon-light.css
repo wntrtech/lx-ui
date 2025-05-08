@@ -425,4 +425,8 @@
   --color-button-ghost-icon-disabled: var(--color-disabled-foreground);
   --color-button-ghost-icon-focus: var(--color-interactive-background);
   --color-button-ghost-icon-hover: var(--color-interactive-hover-foreground);
+
+  --color-badge-background: var(--color-region);
+  --color-badge-region-background: var(--color-region-2);
+  --color-badge-text-color: var(--color-data);
 }

@@ -522,6 +522,15 @@
   --button-ghost-icon-only-min-width: var(--button-ghost-min-width);
   --button-ghost-icon-only-padding: 0;
   --button-ghost-icon-only-width: auto;
+
   --stack-gap: var(--gap-buttons);
   --stack-gap-compact: 0rem;
+
+  --badge-line-height: 1rem;
+  --badge-border-radius: 1rem;
+  --badge-padding: 0.25rem 0.375rem;
+  --badge-min-width: 1.5rem;
+  --badge-min-height: 1.5rem;
+  --badge-gap: 0.25rem;
+  --badge-icon-width: 1rem;
 }

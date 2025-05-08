@@ -4682,3 +4682,42 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-qr-wrapper:not(.lx-ignore-theme) > svg > path{
   fill: var(--color-data); 
 }
+
+/* LxBadge */
+
+.lx-badge-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-width: var(--badge-min-width);
+  min-height: var(--badge-min-height);
+  padding: var(--badge-padding);
+  line-height: var(--badge-line-height);
+  background-color: var(--color-badge-background);
+  border-radius: var(--badge-border-radius);
+  border: var(--region-border);
+}
+
+.lx-badge-wrapper.with-gap {
+  gap: var(--badge-gap);
+}
+
+.lx-badge-icon {
+  width: var(--badge-icon-width);
+}
+
+.lx-region .lx-badge-wrapper,
+.lx-modal .lx-badge-wrapper,
+.lx-form-grid .lx-badge-wrapper,
+.lx-list .lx-badge-wrapper {
+  background-color: var(--color-badge-region-background);
+}
+
+.lx-form-grid .lx-list .lx-badge-wrapper {
+  background-color: var(--color-badge-background);
+}
+
+.lx-list .lx-list-item-container .lx-list-item-wrapper .lx-list-item .lx-badge-wrapper .lx-badge-text {
+  color: var(--color-badge-text-color); 
+}

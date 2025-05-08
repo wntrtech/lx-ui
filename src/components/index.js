@@ -71,5 +71,6 @@ export { default as LxWidget } from '@/components/Widget.vue';
 export { default as LxDayInput } from '@/components/DayInput.vue';
 export { default as LxDrawPad } from '@/components/DrawPad.vue';
 export { default as LxLogoDisplay } from '@/components/LogoDisplay.vue';
+export { default as LxBadge } from '@/components/Badge.vue';
 
 // Other components you plan to publish go here
