@@ -1579,7 +1579,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx .lx-value-picker-tile[disabled='true'] {
-  background-color: var(--color-disabled-foreground);
   border: 2px solid var(--color-disabled-foreground);
   color: var(--color-disabled-foreground);
   opacity: 1;
@@ -1587,9 +1586,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   outline: none;
 }
 
-.lx-value-picker-tile:hover[disabled='true'] {
-  border: 2px solid var(--color-disabled-foreground);
-  background-color: var(--color-disabled-foreground);
+.lx .lx-value-picker-tile[disabled='true']:not(.lx-value-picker-tile-selected) .lx-value-picker-tile-header,
+.lx .lx-value-picker-tile[disabled='true']:not(.lx-value-picker-tile-selected) .lx-value-picker-description {
+  color: var(--color-disabled-foreground);
+}
+
+.lx .lx-value-picker-tile[disabled='true']:not(.lx-value-picker-tile-selected) .lx-value-picker-icon svg {
+  fill: var(--color-disabled-foreground);
 }
 
 .lx-value-picker-tile:focus,
@@ -1600,7 +1603,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   outline: 1px solid var(--color-focus-background);
 }
 
-.lx-value-picker-tile:hover {
+.lx-value-picker-tile[disabled='false']:hover {
   background-color: var(--color-region-hover);
 }
 
@@ -1659,6 +1662,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-value-picker-tags .lx-tag-set .lx-tag {
   background-color: var(--color-tile-background);
+  color: var(--color-data);
   border: 2px solid var(--color-chrome);
   cursor: pointer;
 }
@@ -1668,14 +1672,14 @@ h2.lx-section-header + p.lx-invalidation-message,
   cursor: pointer;
 }
 
-.lx-value-picker-tags .lx-tag-set .lx-tag:hover {
+.lx-value-picker-tags .lx-tag-set .lx-tag[disabled='false']:hover {
   background-color: var(--color-region-hover);
   color: var(--color-region-hover-foreground);
 }
 
 .lx-value-picker-indicators
   .lx-indicator-set
-  .lx-indicator[disabled='false'][readOnly='false']:hover {
+  .lx-indicator[disabled='false'][readOnly='false']:not(.lx-indicators-selected):hover {
   background-color: var(--color-grid-hover-background);
   border: 2px solid var(--color-brand);
   box-shadow: var(--shadow-1);
@@ -1687,7 +1691,6 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-value-picker-tags .lx-tag-set .lx-tag[disabled='true'],
 .lx .lx-value-picker-indicators .lx-indicator-set .lx-indicator[disabled='true'] {
-  background-color: var(--color-disabled-foreground);
   border: 2px solid var(--color-disabled-foreground);
   color: var(--color-disabled-foreground);
   opacity: 1;
@@ -1728,9 +1731,9 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx .lx-value-picker-indicators .lx-indicator.lx-indicators-selected,
-.lx-form-grid > .lx-main .lx-row ul.lx-indicator-set .lx-indicator.lx-indicators-selected,
-.lx-form-grid > .lx-main .lx-row ul.lx-tag-set .lx-tag.lx-tags-tile-selected {
-  background-color: var(--color-content-switcher-foreground) !important;
+.lx .lx-value-picker-indicators .lx-indicator.lx-indicators-selected[disabled='true'] {
+  background-color: var(--color-content-switcher-foreground);
+  border-color: var(--color-content-switcher-foreground);
   color: var(--color-region);
 }
 
@@ -1739,10 +1742,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-selected-background);
   border: var(--selected-border);
   color: var(--color-selected);
-}
-
-.lx .lx-value-picker-indicators .lx-indicator.lx-indicators-selected {
-  border-color: var(--color-content-switcher-foreground);
 }
 
 .lx

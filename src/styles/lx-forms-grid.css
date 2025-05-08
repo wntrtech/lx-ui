@@ -594,9 +594,12 @@ svg .lx-shade {
   margin-bottom: 0;
 }
 
+.lx-form.lx-form-region ul.lx-tag-set .lx-tag,
 .lx-form-grid > .lx-main .lx-row ul.lx-tag-set .lx-tag,
+.lx-form-grid > .lx-main > .lx-form-section ul.lx-tag-set .lx-tag,
+.lx-form-grid>.lx-main .lx-row>div.lx-vertical ul.lx-tag-set .lx-tag,
+.lx-form-grid>.lx-main .lx-row>div.lx-horizontal ul.lx-tag-set .lx-tag,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row ul.lx-tag-set .lx-tag {
-  color: var(--color-data);
   height: var(--input-container-height);
   line-height: 1.1em;
 }

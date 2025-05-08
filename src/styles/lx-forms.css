@@ -180,12 +180,6 @@
   outline: 2px solid var(--color-focus-background);
 }
 
-.lx-region .lx-tag-set .lx-tag,
-.lx .lx-form-region .lx-tag-set .lx-tag,
-.lx .lx-form-region .lx-indicator-set .lx-indicator {
-  background-color: var(--color-region-2);
-}
-
 .lx-highlight {
   background-color: var(--color-highlight);
   color: var(--color-highlight-foreground);
