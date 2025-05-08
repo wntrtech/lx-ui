@@ -204,3 +204,25 @@ export async function afterEach(to, from, appStore, viewStore) {
   if (viewStore) viewStore.$reset();
   appStore.stopNavigating();
 }
+
+// TODO: implement better solution to unfocus (blur) focused element (Current solution is potentially risky)
+// Note: Now browsers save the last focused element, and using just blur() on it will not work
+export function removeFocus() {
+  if (document.activeElement instanceof HTMLElement) {
+    document.activeElement.blur();
+  }
+
+  const trap = document.createElement('div');
+  trap.tabIndex = 0;
+  trap.style.position = 'fixed';
+  trap.style.width = '1px';
+  trap.style.height = '1px';
+  trap.style.opacity = '0';
+
+  document.body.appendChild(trap);
+  trap.focus();
+
+  requestAnimationFrame(() => {
+    document.body.removeChild(trap);
+  });
+}
