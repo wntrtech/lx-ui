@@ -89,8 +89,8 @@
   fill: var(--color-disabled-foreground);
 }
 
-.lx-datepicker-default .lx-calendar-container .lx-calendar-header .lx-button:hover svg,
-.lx-datepicker-default .lx-calendar-container .lx-mobile-time-selection-button-wrapper .lx-button:hover svg {
+.lx-datepicker-default .lx-calendar-container .lx-calendar-header .lx-button:not(.lx-active):hover svg,
+.lx-datepicker-default .lx-calendar-container .lx-mobile-time-selection-button-wrapper .lx-button:not(.lx-active):hover svg {
   fill: var(--color-interactive-hover-foreground);
 }
 

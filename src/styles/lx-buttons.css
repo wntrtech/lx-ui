@@ -439,6 +439,13 @@ a.lx-button.lx-button-ghost svg {
   fill: var(--color-selected);
 }
 
+.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-active:not(.lx-disabled) svg,
+.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active:not(.lx-disabled) svg,
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button.lx-active:not(.lx-disabled) svg,
+.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button.lx-active:not(.lx-disabled) svg {
+  fill: var(--color-selected-dropdown);
+}
+
 /* Toolbar selection icon styles */
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) svg,
@@ -610,7 +617,7 @@ a.lx-button.lx-button-ghost svg {
 /* Destructive icon styles */
 
 .lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover svg {
-  fill: var(--color-button-destructive-icon);
+  fill: var(--color-button-destructive-icon) !important;
 }
 
 /* Disabled icon styles */
@@ -1495,7 +1502,10 @@ a.lx-button.lx-button-ghost svg {
   border-color: var(--color-button-active-mode-border);
 }
 
-.lx .lx-layout .lx-context-container .lx-button.lx-active:not(.lx-disabled) {
+.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-active:not(.lx-disabled),
+.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active:not(.lx-disabled),
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button.lx-active:not(.lx-disabled),
+.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button.lx-active:not(.lx-disabled) {
   background-color: var(--color-selected-dropdown-background);
   color: var(--color-selected-dropdown);
   border-color: var(--color-selected-dropdown-border);
@@ -1656,7 +1666,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout.lx-override input[type="button"].lx-destructive:not([disabled]):hover {
   background-color: var(--color-button-destructive-background) !important;
   border-color: var(--color-button-destructive-border) !important;
-  color: var(--color-button-destructive);
+  color: var(--color-button-destructive) !important;
 }
 
 /*** Disabled styles ***/
