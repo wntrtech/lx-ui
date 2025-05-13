@@ -483,8 +483,8 @@ onUnmounted(() => {
     </LMap>
     <LxEmptyState
       v-else-if="baseLayerDefinitions?.length === 0"
-      :label="displayTexts.value.errorTitle"
-      :description="displayTexts.value.errorDescription"
+      :label="displayTexts.errorTitle"
+      :description="displayTexts.errorDescription"
       icon="invalid"
     />
   </div>

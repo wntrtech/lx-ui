@@ -218,11 +218,11 @@ const additionalInfoTitle = computed(() => {
               class="lx-data meta-description"
               :title="
                 additionalInfoTitle ||
-                fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts.value)
+                fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts)
               "
-              v-if="fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts.value)"
+              v-if="fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts)"
             >
-              {{ fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts.value) }}
+              {{ fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts) }}
             </p>
           </div>
           <div v-else></div>
@@ -301,7 +301,7 @@ const additionalInfoTitle = computed(() => {
                   [
                     fileUploaderUtils.convertBytesToFormattedString(props.customItem.meta?.size),
                     fileUploaderUtils.getFileExtension(props.customItem.meta.name),
-                    fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts.value),
+                    fileUploaderUtils.getExtraParameter(props.customItem.meta, displayTexts),
                   ]
                     .filter(Boolean)
                     .join('; ')
