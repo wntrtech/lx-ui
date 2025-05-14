@@ -59,8 +59,8 @@ svg .lx-shade {
   padding: 0;
 }
 
-.lx-form-grid > header > .lx-group .lx-info-wrapper {
-  padding: 0.4rem 0;
+.lx-form-grid > header > .lx-group .lx-info-wrapper .lx-toolbar-chip {
+  padding: 0.4rem 1rem;
 }
 
 .lx-form-grid > header > .lx-group .lx-toolbar-chip {

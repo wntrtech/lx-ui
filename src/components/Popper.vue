@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useFloating, flip, shift, arrow, offset, autoUpdate } from '@floating-ui/vue';
 import { generateUUID } from '@/utils/stringUtils';
 
@@ -17,6 +17,8 @@ const props = defineProps({
   show: { type: Boolean, default: null },
   locked: { type: Boolean, default: false },
 });
+
+const emits = defineEmits(['update:placement']);
 
 const reference = ref(null);
 const floating = ref(null);
@@ -109,6 +111,14 @@ watch(
     update();
   }
 );
+
+watch(plc, (newPlacement) => {
+  emits('update:placement', newPlacement);
+});
+
+onMounted(() => {
+  emits('update:placement', basePlacement.value);
+});
 </script>
 
 <template>

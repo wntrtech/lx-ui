@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxPopper from '@/components/Popper.vue';
 
@@ -14,17 +14,27 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   openDelay: { type: String, default: '0' },
   closeDelay: { type: String, default: '0' },
-  interactive: { type: Boolean, default: false },
   content: { default: null },
   locked: { type: Boolean, default: false },
   focusable: { type: Boolean, default: true },
 });
 
 const showPopper = ref(false);
-const triggerWrapper = ref(null);
+const triggerRef = ref(null);
+const popperRef = ref(null);
+const resolvedPlacement = ref();
 
 let openTimeout = null;
 let closeTimeout = null;
+
+const spacerStyle = computed(() => {
+  const correction = 1;
+  const popperSpacerSize = Number(props.offsetDistance) + correction;
+  if (Number(props.offsetDistance) > 0) {
+    return `--info-popper-spacer-size: ${popperSpacerSize}px`;
+  }
+  return '';
+});
 
 const parseDelay = (v) => Number(v) || 0;
 
@@ -42,18 +52,30 @@ const handleMouseEnter = () => {
   }, delay);
 };
 
-const handleMouseLeave = () => {
-  if (props.interactive) return;
+const handleMouseLeave = (event) => {
+  if (!props.hover || props.disabled) return;
 
-  if (openTimeout) {
-    clearTimeout(openTimeout);
-    openTimeout = null;
+  const { relatedTarget } = event;
+  const triggerEl = triggerRef.value;
+  const popperEl = popperRef.value;
+
+  if (
+    relatedTarget &&
+    triggerEl instanceof HTMLElement &&
+    popperEl instanceof HTMLElement &&
+    !triggerEl.contains(relatedTarget) &&
+    !popperEl.contains(relatedTarget)
+  ) {
+    if (openTimeout) {
+      clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+
+    const delay = parseDelay(props.closeDelay);
+    closeTimeout = setTimeout(() => {
+      showPopper.value = false;
+    }, delay);
   }
-
-  const delay = parseDelay(props.closeDelay);
-  closeTimeout = setTimeout(() => {
-    showPopper.value = false;
-  }, delay);
 };
 
 const handleFocusIn = () => {
@@ -67,20 +89,32 @@ const handleClose = () => {
   showPopper.value = false;
 };
 
+const handleGlobalKeydown = (e) => {
+  if (e.key === 'Escape' && showPopper.value) {
+    handleClose();
+  }
+};
+
+function handlePlacementChange(newPlacement) {
+  resolvedPlacement.value = newPlacement;
+}
+
 onMounted(() => {
-  const el = triggerWrapper.value?.firstElementChild;
+  const el = triggerRef.value?.firstElementChild;
   if (el && el instanceof HTMLElement) {
     el.setAttribute('aria-labelledby', `${props.id}-description`);
   }
+  window.addEventListener('keydown', handleGlobalKeydown);
 });
 
 onBeforeUnmount(() => {
   if (openTimeout) clearTimeout(openTimeout);
   if (closeTimeout) clearTimeout(closeTimeout);
+  window.removeEventListener('keydown', handleGlobalKeydown);
 });
 </script>
 <template>
-  <div class="lx-info-wrapper">
+  <div class="lx-info-wrapper" ref="popperRef">
     <LxPopper
       :id="`${id}-popper`"
       :placement="placement"
@@ -92,30 +126,60 @@ onBeforeUnmount(() => {
       :disabled="disabled"
       :open-delay="openDelay"
       :close-delay="closeDelay"
-      :interactive="interactive"
       :content="content"
       :show="showPopper"
       :locked="locked"
+      emitPlacement
+      @focusout="handleMouseLeave"
+      @mouseleave="handleMouseLeave"
+      @update:placement="handlePlacementChange"
     >
       <div
-        ref="triggerWrapper"
+        ref="triggerRef"
         class="lx-info-wrapper-content"
         :tabindex="$slots.panel && focusable ? '0' : '-1'"
         @focusin="handleFocusIn"
         @focusout="handleMouseLeave"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
-        @keydown.esc.prevent="handleClose"
       >
         <slot />
       </div>
 
       <template #content v-if="$slots.panel">
         <div
-          class="lx-info-wrapper-panel"
           :id="`${id}-description`"
+          class="lx-info-wrapper-panel"
+          :class="[
+            {
+              'info-popper-top':
+                resolvedPlacement === 'top' ||
+                resolvedPlacement === 'top-start' ||
+                resolvedPlacement === 'top-end',
+            },
+            {
+              'info-popper-bottom':
+                resolvedPlacement === 'bottom' ||
+                resolvedPlacement === 'bottom-start' ||
+                resolvedPlacement === 'bottom-end',
+            },
+            {
+              'info-popper-right':
+                resolvedPlacement === 'right' ||
+                resolvedPlacement === 'right-start' ||
+                resolvedPlacement === 'right-end',
+            },
+            {
+              'info-popper-left':
+                resolvedPlacement === 'left' ||
+                resolvedPlacement === 'left-start' ||
+                resolvedPlacement === 'left-end',
+            },
+          ]"
           role="tooltip"
           :aria-hidden="!showPopper"
+          :style="`${spacerStyle}`"
+          @click.prevent="handleClose"
         >
           <slot name="panel" />
         </div>

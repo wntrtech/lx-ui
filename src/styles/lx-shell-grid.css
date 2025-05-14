@@ -736,6 +736,40 @@
   gap: 1rem;
 }
 
+.lx-info-wrapper-panel::before {
+  position: absolute;
+  content: "";
+  display: block;
+}
+
+.lx-info-wrapper-panel.info-popper-top::before {
+  block-size: var(--info-popper-spacer-size, 0rem);
+  inset-inline: 0;
+  inset-block-end: 0;
+  transform: translateY(100%);
+}
+
+.lx-info-wrapper-panel.info-popper-bottom::before {
+  block-size: var(--info-popper-spacer-size, 0rem);
+  inset-inline: 0;
+  inset-block-start: 0;
+  transform: translateY(-100%);
+}
+
+.lx-info-wrapper-panel.info-popper-right::before {
+  inline-size: var(--info-popper-spacer-size, 0rem);
+  inset-block: 0;
+  inset-inline-start: 0;
+  transform: translateX(-100%);
+}
+
+.lx-info-wrapper-panel.info-popper-left::before {
+  inline-size: var(--info-popper-spacer-size, 0rem);
+  inset-block: 0;
+  inset-inline-end: 0;
+  transform: translateX(100%);
+}
+
 .lx-info-wrapper .lx-info-wrapper-panel .lx-secondary,
 .lx .popper .lx-info-wrapper-panel label:not(.lx-state > .lx-primary) {
   opacity: 0.75;
