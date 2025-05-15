@@ -1092,7 +1092,7 @@
   fill: var(--color-nav-hover-foreground);
 }
 
-.lx-layout.lx-layout-default > header .lx-header .lx-main-button:hover p {
+.lx-layout.lx-layout-default > header .lx-header .lx-main-button:hover p:not(.lx-badge-text) {
   color: var(--color-nav-hover-foreground);
 }
 
@@ -1352,6 +1352,14 @@
   opacity: 1;
 }
 
+.lx-expander .lx-badge .lx-badge-text {
+  color: var(--color-badge-foreground);
+}
+
+.lx-expander .lx-badge .lx-badge-icon {
+  fill: var(--color-badge-foreground);
+}
+
 .lx-expander .lx-badge.lx-icon-badge {
   margin-right: 0.5rem;
   padding: 0;
@@ -1359,14 +1367,27 @@
 
 .lx-expander .lx-badge.lx-badge-info {
   background: var(--color-region);
+}
+
+.lx-expander .lx-badge.lx-badge-info .lx-badge-text {
   color: var(--color-data);
 }
 
 .lx-form .lx-expander .lx-badge.lx-badge-info,
 .lx-region .lx-expander .lx-badge.lx-badge-info {
   background: var(--color-region-2);
+}
+
+.lx-form .lx-expander .lx-badge.lx-badge-info .lx-badge-text,
+.lx-region .lx-expander .lx-badge.lx-badge-info .lx-badge-text {
   color: var(--color-data);
 }
+
+.lx-form .lx-expander .lx-badge.lx-badge-info .lx-badge-icon,
+.lx-expander .lx-badge.lx-badge-info .lx-badge-icon {
+  fill: var(--color-data);
+}
+
 
 .lx-expander .lx-badge.lx-badge-good {
   background: var(--color-green);

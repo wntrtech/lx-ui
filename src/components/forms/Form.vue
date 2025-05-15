@@ -826,6 +826,7 @@ defineExpose({ highlightRow, clearHighlights });
           :disabled="button.disabled"
           :badge="button.badge"
           :badge-type="button.badgeType"
+          :badge-title="button.badgeTitle"
           kind="ghost"
           variant="icon-only"
           @click="clickHandler(button.id)"
@@ -882,6 +883,7 @@ defineExpose({ highlightRow, clearHighlights });
               :active="button.active"
               :badge="button.badge"
               :badge-type="button.badgeType"
+              :badge-title="button.badgeTitle"
               kind="ghost"
               @click="clickHandler(button.id)"
             />
@@ -1025,6 +1027,7 @@ defineExpose({ highlightRow, clearHighlights });
           :active="button.active"
           :badge="button.badge"
           :badge-type="button.badgeType"
+          :badge-title="button.badgeTitle"
           kind="primary"
           @click="clickHandler(button.id)"
         />
@@ -1045,6 +1048,7 @@ defineExpose({ highlightRow, clearHighlights });
               :active="button.active"
               :badge="button.badge"
               :badge-type="button.badgeType"
+              :badge-title="button.badgeTitle"
               kind="ghost"
               @click="clickHandler(button.id)"
             />
@@ -1062,6 +1066,7 @@ defineExpose({ highlightRow, clearHighlights });
               :active="button.active"
               :badge="button.badge"
               :badge-type="button.badgeType"
+              :badge-title="button.badgeTitle"
               kind="ghost"
               @click="clickHandler(button.id)"
             />
@@ -1081,6 +1086,7 @@ defineExpose({ highlightRow, clearHighlights });
           :active="button.active"
           :badge="button.badge"
           :badge-type="button.badgeType"
+          :badge-title="button.badgeTitle"
           kind="secondary"
           :custom-class="
             notPrimaryButtonCount === 1 ? 'only-responsive-button' : 'responsive-button'
@@ -1109,6 +1115,7 @@ defineExpose({ highlightRow, clearHighlights });
           :active="button.active"
           :badge="button.badge"
           :badge-type="button.badgeType"
+          :badge-title="button.badgeTitle"
           kind="tertiary"
           @click="clickHandler(button.id)"
         />

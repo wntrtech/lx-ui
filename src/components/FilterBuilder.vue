@@ -5,6 +5,8 @@ import LxFormBuilder from '@/components/forms/FormBuilder.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { formatValue } from '@/utils/formatUtils';
 import { formatDateTime, formatDate } from '@/utils/dateUtils';
+import useLx from '@/hooks/useLx';
+import { lxDevUtils } from '@/utils';
 
 const props = defineProps({
   /**
@@ -130,12 +132,40 @@ const props = defineProps({
    */
   badge: { type: String, default: '' },
   /**
+   * Badge icon to be displayed on the filter component inside badge.
+   * @type {String}
+   * @default ''
+   * @since 1.9.0-beta.8
+   */
+  badgeIcon: { type: String, default: null },
+  /**
    * The type of the badge.
    * @type {String}
    * @default 'default'
    * @since 1.9.0-beta.3
    */
   badgeType: { type: String, default: 'default' }, // default, good, info, warning, important
+  /**
+   * Badge title to be displayed on the filter badge when badge is provided.
+   * @type {String}
+   * @default ''
+   * @since 1.9.0-beta.8
+   */
+  badgeTitle: {
+    type: String,
+    default: null,
+    validator: (v, p) => {
+      // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
+      if ((p.badge || p.badgeIcon) && !v) {
+        lxDevUtils.logWarn(
+          `Warning: LxFilterBuilder "badgeTitle" is required when "badge" or "badgeIcon" is provided!`,
+          useLx().getGlobals()?.environment
+        );
+        return false;
+      }
+      return true;
+    },
+  },
   /**
    * The object containing text translations.
    * @type {Object}
@@ -385,7 +415,9 @@ onMounted(() => {
     :fastIdAttribute="fastIdAttribute"
     :fastNameAttribute="fastNameAttribute"
     :badge="badge"
-    :badgeType="badgeType"
+    :badge-icon="badgeIcon"
+    :badge-type="badgeType"
+    :badge-title="badgeTitle"
     :columnCount="columnCount || 3"
     :texts="displayTexts"
     @filter="filter"

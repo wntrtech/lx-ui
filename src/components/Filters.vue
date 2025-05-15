@@ -6,6 +6,8 @@ import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxForm from '@/components/forms/Form.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import useLx from '@/hooks/useLx';
+import { lxDevUtils } from '@/utils';
 
 const emits = defineEmits(['filter', 'resetFilters', 'update:expanded', 'fastFilterClick']);
 
@@ -22,7 +24,23 @@ const props = defineProps({
   fastIdAttribute: { type: String, default: 'id' },
   fastNameAttribute: { type: String, default: 'name' },
   badge: { type: String, default: '' },
+  badgeIcon: { type: String, default: null },
   badgeType: { type: String, default: 'default' }, // default, good, info, warning, important},
+  badgeTitle: {
+    type: String,
+    default: null,
+    validator: (v, p) => {
+      // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
+      if ((p.badge || p.badgeIcon) && !v) {
+        lxDevUtils.logWarn(
+          `Warning: LxFilters "badgeTitle" is required when "badge" or "badgeIcon" is provided!`,
+          useLx().getGlobals()?.environment
+        );
+        return false;
+      }
+      return true;
+    },
+  },
   kind: { type: String, default: 'default' }, // default, form
   shortlistColumnCount: { type: Number, default: 1 },
   texts: {
@@ -91,7 +109,9 @@ defineExpose({ toggleExpander, focus });
       v-model="isExpanded"
       :disabled="disabled"
       :badge="badge"
+      :badge-icon="badgeIcon"
       :badge-type="badgeType"
+      :badge-title="badgeTitle"
       class="lx-filter"
       icon="filter"
       :class="[{ 'has-shortlist': $slots.shortlist }]"

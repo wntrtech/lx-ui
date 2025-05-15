@@ -372,8 +372,9 @@ function triggerUserMenu() {
           icon="notifications"
           :label="displayTexts.alertsTitle"
           :badge="alertsCount"
+          :badge-type="alertLevelToBadgeType"
+          :badge-title="displayTexts.alertsTitle"
           :disabled="headerNavDisable"
-          :badgeType="alertLevelToBadgeType"
         />
 
         <template v-if="clickSafeAlerts" v-slot:clickSafePanel>
@@ -482,9 +483,10 @@ function triggerUserMenu() {
         kind="ghost"
         icon="notifications"
         :disabled="headerNavDisable"
-        :label="texts.alertsTitle"
+        :label="displayTexts.alertsTitle"
         :badge="alertsCount"
         :badgeType="alertLevelToBadgeType"
+        :badge-title="displayTexts.alertsTitle"
         @click="alertsClicked"
       />
     </div>
@@ -602,7 +604,7 @@ function triggerUserMenu() {
               <LxButton
                 kind="ghost"
                 icon="logout"
-                :label="texts.logOut"
+                :label="displayTexts.logOut"
                 :destructive="true"
                 @click="logOut"
               />
@@ -621,7 +623,7 @@ function triggerUserMenu() {
             <div class="lx-toolbar">
               <LxButton
                 customClass="lx-header-button"
-                :label="texts.languagesTitle"
+                :label="displayTexts.languagesTitle"
                 kind="ghost"
                 icon="language"
               />

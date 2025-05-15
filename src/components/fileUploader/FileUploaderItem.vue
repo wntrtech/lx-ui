@@ -1,14 +1,13 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useElementSize } from '@vueuse/core';
-
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
-
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import LxBadge from '@/components/Badge.vue';
 
 const props = defineProps({
   customItem: { type: Object, default: () => ({}) },
@@ -23,10 +22,7 @@ const props = defineProps({
   additionalIconAndType: { type: Array, default: null },
   imagePreview: { type: String, default: null },
   isUploading: { type: Boolean, default: false },
-  texts: {
-    type: Object,
-    default: () => ({}),
-  },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const textsDefault = {
@@ -170,10 +166,11 @@ const additionalInfoTitle = computed(() => {
             <LxIcon v-if="!props.imagePreview" customClass="lx-icon" :value="props.defaultIcon" />
 
             <template v-if="props.additionalIconAndType && props.additionalIconAndType.length > 0">
-              <p
+              <LxBadge
                 v-for="(item, index) in additionalIconAndType"
                 :key="item.id"
-                class="lx-badge"
+                :icon="item.icon"
+                :tooltip="item.title"
                 :class="[
                   { 'lx-second-badge': index === 1 },
                   { 'lx-third-badge': index === 2 },
@@ -182,9 +179,7 @@ const additionalInfoTitle = computed(() => {
                   { 'lx-c2pa-sign-badge': item.type === 'c2pa-sign' },
                   { 'lx-created-using-ai-badge': item.type === 'created-using-ai' },
                 ]"
-              >
-                <LxIcon :title="item.title" customClass="lx-icon" :value="item.icon" />
-              </p>
+              />
             </template>
 
             <img v-if="props.imagePreview" :src="props.imagePreview" alt="Image Preview" />
@@ -278,10 +273,12 @@ const additionalInfoTitle = computed(() => {
                 <template
                   v-if="props.additionalIconAndType && props.additionalIconAndType.length > 0"
                 >
-                  <p
+                  <LxBadge
                     v-for="(item, index) in additionalIconAndType"
                     :key="item.id"
-                    class="lx-badge lx-compact-badge"
+                    :icon="item.icon"
+                    :tooltip="item.title"
+                    class="lx-compact-badge"
                     :class="[
                       { 'lx-second-badge': index === 1 },
                       { 'lx-third-badge': index === 2 },
@@ -290,9 +287,7 @@ const additionalInfoTitle = computed(() => {
                       { 'lx-c2pa-sign-badge': item.type === 'c2pa-sign' },
                       { 'lx-created-using-ai-badge': item.type === 'created-using-ai' },
                     ]"
-                  >
-                    <LxIcon :title="item.title" customClass="lx-icon" :value="item.icon" />
-                  </p>
+                  />
                 </template>
               </div>
 

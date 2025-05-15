@@ -456,7 +456,7 @@ function focusOnDropDown(e = { target: { id: null }, shiftKey: false, key: '' })
 
 const handleFocusOut = (e) => {
   isInputFocused.value = false;
-  if (!refListbox.value.contains(e.relatedTarget)) {
+  if (!refListbox.value?.contains(e.relatedTarget)) {
     menuOpen.value = false;
     setTimeout(() => {
       query.value = null;

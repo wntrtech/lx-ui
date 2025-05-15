@@ -7,6 +7,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
 import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
+import LxBadge from '@/components/Badge.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
@@ -396,19 +397,18 @@ onMounted(() => {
           <p class="lx-primary">{{ systemNameShort }}</p>
           <p class="lx-description">{{ systemSubheader }}</p>
         </div>
-        <div
-          class="lx-badge"
+
+        <LxBadge
           v-if="envLabel.id !== 'production'"
-          :title="envLabel.id"
+          :value="envLabel.name"
+          :tooltip="envLabel.id"
           :class="[
             { 'lx-badge-loc': envLabel.id === 'local' },
             { 'lx-badge-dev': envLabel.id === 'development' },
             { 'lx-badge-test': envLabel.id === 'staging' },
             { 'lx-badge-prod': envLabel.id === 'production' },
           ]"
-        >
-          {{ envLabel.name }}
-        </div>
+        />
       </div>
     </div>
     <div id="extra-menu" class="lx-group" v-if="kind === 'default'" tabindex="-1">

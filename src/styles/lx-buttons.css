@@ -1775,6 +1775,7 @@ a.lx-button.lx-button-ghost svg {
 .lx-button:not(#userMenuButton) .lx-badge {
   position: absolute;
   font-family: var(--font-family-mono);
+  font-feature-settings: var(--font-features-mono);
   font-size: var(--small-font-size);
   color: var(--color-badge-foreground);
   font-weight: bold;
@@ -1793,6 +1794,15 @@ a.lx-button.lx-button-ghost svg {
   opacity: 1;
 }
 
+.lx-button:not(#userMenuButton) .lx-badge .lx-badge-icon {
+  width: 1rem;
+  height: unset;
+  margin: 0;
+}
+
+.lx-button:not(#userMenuButton) .lx-badge .lx-badge-text {
+  color: var(--color-badge-foreground);
+} 
 
 .lx-button.lx-button-secondary .lx-badge {
   inset: var(--button-primary-badge-inset);

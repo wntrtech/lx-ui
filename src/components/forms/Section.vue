@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { provide, inject, computed, shallowRef, onMounted, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxExpander from '@/components/Expander.vue';
@@ -109,6 +109,41 @@ const props = defineProps({
    * @since 1.6.0-beta.5
    */
   badge: { type: String, default: '' },
+  /**
+   * The badge icon for header section.
+   * @type {String}
+   * @default
+   * @since 1.9.0-beta.8
+   */
+  badgeIcon: { type: String, default: null },
+  /**
+   * The badge type for header section.
+   * @type {String}
+   * @default
+   * @since 1.9.0-beta.8
+   */
+  badgeType: { type: String, default: 'default' }, // default, good, info, warning, important,
+  /**
+   * The badge title for header section if badge is provided.
+   * @type {String}
+   * @default
+   * @since 1.9.0-beta.8
+   */
+  badgeTitle: {
+    type: String,
+    default: null,
+    validator: (v, p) => {
+      // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
+      if ((p.badge || p.badgeIcon) && !v) {
+        lxDevUtils.logWarn(
+          `Warning: LxSection "badgeTitle" is required when "badge" or "badgeIcon" is provided!`,
+          useLx().getGlobals()?.environment
+        );
+        return false;
+      }
+      return true;
+    },
+  },
   /**
    * Defines the action definitions for the section.
    *
@@ -237,6 +272,9 @@ provide('sectionOrientation', sectionOrientation);
     :icon="icon"
     :iconSet="iconSet"
     :badge="badge"
+    :badge-icon="badgeIcon"
+    :badge-type="badgeType"
+    :badge-title="badgeTitle"
     :customClass="customClass"
   >
     <section

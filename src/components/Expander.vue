@@ -5,30 +5,44 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import LxBadge from '@/components/Badge.vue';
 import useLx from '@/hooks/useLx';
+import { lxDevUtils } from '@/utils';
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
-  id: {
-    type: String,
-    default: () => generateUUID(),
-  },
+  id: { type: String, default: () => generateUUID() },
   label: { type: String, default: null },
   description: { type: String, default: null },
   region: { type: Boolean, default: false },
   icon: { type: String, default: null },
-  iconSet: {
-    type: String,
-    default: () => useLx().getGlobals()?.iconSet,
-  },
+  iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet },
   tooltip: { type: String, default: null },
   kind: { type: String, default: 'row' }, // 'row' or 'column'
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   variant: { type: String, default: 'default' }, // 'default' or 'highlighted'
+
   badge: { type: String, default: '' },
+  badgeIcon: { type: String, default: null },
   badgeType: { type: String, default: 'default' }, // default, good, info, warning, important,
+  badgeTitle: {
+    type: String,
+    default: null,
+    validator: (v, p) => {
+      // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
+      if ((p.badge || p.badgeIcon) && !v) {
+        lxDevUtils.logWarn(
+          `Warning: LxExpander "badgeTitle" is required when "badge" or "badgeIcon" is provided!`,
+          useLx().getGlobals()?.environment
+        );
+        return false;
+      }
+      return true;
+    },
+  },
+
   hasSelectButton: { type: Boolean, default: false },
   selectStatus: { type: String, default: 'none' }, // none, some, all
   customClass: { type: String, default: '' },
@@ -146,8 +160,12 @@ defineExpose({ focus });
             </LxInfoWrapper>
           </div>
         </div>
-        <p
-          class="lx-badge"
+
+        <LxBadge
+          :icon="badgeIcon"
+          :icon-set="iconSet"
+          :value="badge"
+          :tooltip="badgeTitle"
           :class="[
             { 'lx-badge-empty': badge === ' ' },
             { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
@@ -155,10 +173,7 @@ defineExpose({ focus });
             { 'lx-badge-warning': badgeType === 'warning' },
             { 'lx-badge-important': badgeType === 'important' },
           ]"
-          v-if="badge"
-        >
-          {{ badge }}
-        </p>
+        />
 
         <div class="lx-chevron-icon">
           <lx-icon :value="selectedIcon" />

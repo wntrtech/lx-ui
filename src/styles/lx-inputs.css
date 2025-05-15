@@ -4685,7 +4685,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 /* LxBadge */
 
-.lx-badge-wrapper {
+.lx-badge {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -4699,7 +4699,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   border: var(--region-border);
 }
 
-.lx-badge-wrapper.with-gap {
+.lx-badge.with-gap {
   gap: var(--badge-gap);
 }
 
@@ -4707,17 +4707,17 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: var(--badge-icon-width);
 }
 
-.lx-region .lx-badge-wrapper,
-.lx-modal .lx-badge-wrapper,
-.lx-form-grid .lx-badge-wrapper,
-.lx-list .lx-badge-wrapper {
+.lx-region .lx-badge,
+.lx-modal .lx-badge,
+.lx-form-grid .lx-badge,
+.lx-list .lx-badge {
   background-color: var(--color-badge-region-background);
 }
 
-.lx-form-grid .lx-list .lx-badge-wrapper {
+.lx-form-grid .lx-list .lx-badge {
   background-color: var(--color-badge-background);
 }
 
-.lx-list .lx-list-item-container .lx-list-item-wrapper .lx-list-item .lx-badge-wrapper .lx-badge-text {
+.lx-list .lx-list-item-container .lx-list-item-wrapper .lx-list-item .lx-badge .lx-badge-text {
   color: var(--color-badge-text-color); 
 }

@@ -1434,7 +1434,9 @@ function focusFirstFocusableElementAfter() {
           :badge="
             group?.badge ? group?.badge : `${filteredGroupedItems[prepareCode(group.id)].length}`
           "
+          :badge-icon="group?.badgeIcon"
           :badge-type="group?.badgeType"
+          :badge-title="group?.badgeTitle"
           :label="group.name"
           :id="group.id"
           :has-select-button="
@@ -1638,7 +1640,9 @@ function focusFirstFocusableElementAfter() {
           v-model="group.expanded"
           :disabled="loading || busy"
           :badge="group?.badge"
+          :badge-icon="group?.badgeIcon"
           :badge-type="group?.badgeType"
+          :badge-title="group?.badgeTitle"
           :label="group.name"
           :id="group.id"
           :has-select-button="
@@ -1700,7 +1704,9 @@ function focusFirstFocusableElementAfter() {
           v-model="group.expanded"
           :disabled="loading || busy"
           :badge="group?.badge"
+          :badge-icon="group?.badgeIcon"
           :badge-type="group?.badgeType"
+          :badge-title="group?.badgeTitle"
           :label="group.name"
           :id="group.id"
           :has-select-button="
@@ -1955,7 +1961,9 @@ function focusFirstFocusableElementAfter() {
         :badge="
           group?.badge ? group?.badge : `${filteredGroupedItems[prepareCode(group.id)]?.length}`
         "
+        :badge-icon="group?.badgeIcon"
         :badge-type="group?.badgeType"
+        :badge-title="group?.badgeTitle"
         :label="group.name"
       >
         <template #customHeader v-if="$slots.customExpanderHeader">

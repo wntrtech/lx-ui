@@ -46,7 +46,7 @@
   color: var(--color-region-hover-foreground);
 }
 
-.lx-expander:not([data-disabled]) .lx-head:hover svg:not(.lx-button-ghost .lx-button-icon) {
+.lx-expander:not([data-disabled]) .lx-head:hover svg:not(.lx-button-ghost, .lx-button-icon, .lx-badge-icon) {
   fill: var(--color-region-hover-foreground);
 }
 

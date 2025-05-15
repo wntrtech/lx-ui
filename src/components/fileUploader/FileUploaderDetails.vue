@@ -1,10 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue';
-
 import * as fileUploaderUtils from '@/utils/fileUploaderUtils';
 import { safeString } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
-
 import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxMap from '@/components/Map.vue';
@@ -15,16 +13,11 @@ import LxList from '@/components/list/List.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxAvatar from '@/components/Avatar.vue';
 import LxFlag from '@/components/Flag.vue';
+import LxBadge from '@/components/Badge.vue';
 
 const props = defineProps({
-  value: {
-    type: Object,
-    default: () => ({}),
-  },
-  texts: {
-    type: Object,
-    default: () => ({}),
-  },
+  value: { type: Object, default: () => ({}) },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const textsDefault = {
@@ -181,17 +174,16 @@ const nomalizedIconAndType = computed(() => {
 
         <template v-if="nomalizedIconAndType">
           <LxRow class="lx-main-data-icon-row" v-for="item in nomalizedIconAndType" :key="item.id">
-            <p
-              class="lx-badge lx-main-data-badge"
+            <LxBadge
+              :icon="item.icon"
+              class="lx-main-data-badge"
               :class="[
                 { 'lx-pass-protected-badge': item.type === 'pass-protected' },
                 { 'lx-esign-badge': item.type === 'esign' },
                 { 'lx-c2pa-sign-badge': item.type === 'c2pa-sign' },
                 { 'lx-created-using-ai-badge': item.type === 'created-using-ai' },
               ]"
-            >
-              <LxIcon customClass="lx-icon" :value="item.icon" />
-            </p>
+            />
             <p class="lx-data">{{ item.title }}</p>
           </LxRow>
         </template>
@@ -204,7 +196,8 @@ const nomalizedIconAndType = computed(() => {
         icon="sign"
         :customClass="customEsignSectionClass"
         :label="displayTexts.metaEDocContentLabel"
-        :badge="props.value?.edocContentData.length"
+        :badge="props.value?.edocContentData.length.toString()"
+        :badge-title="displayTexts.metaEDocContentLabel"
       >
         <LxRow :column-span="1">
           <LxList list-type="1" :items="props.value?.edocContentData">

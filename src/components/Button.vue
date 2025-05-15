@@ -2,97 +2,53 @@
 import { computed, useSlots } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
+import LxBadge from '@/components/Badge.vue';
 import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
+import { lxDevUtils } from '@/utils';
 
 const emits = defineEmits(['click']);
 
 const props = defineProps({
-  id: {
+  id: { type: String, default: () => generateUUID() },
+  label: { type: String, default: '', required: true },
+  title: { type: String, default: '' },
+  busyTooltip: { type: String, default: '' },
+  icon: { type: String, default: '' },
+  iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet },
+  iconVariant: { type: String, default: 'default' },
+  kind: { type: String, default: 'default' },
+  variant: { type: String, default: 'default' }, // default, icon-only
+  size: { type: String, default: 'default' },
+  destructive: { type: Boolean, default: false },
+  href: { type: Object, default: () => {} },
+  disabled: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
+  busy: { type: Boolean, default: false },
+
+  badge: { type: String, default: '' },
+  badgeIcon: { type: String, default: null },
+  badgeType: { type: String, default: 'default' }, // default, good, info, warning, important
+  badgeTitle: {
     type: String,
-    default: () => generateUUID(),
+    default: null,
+    validator: (v, p) => {
+      // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
+      if ((p.badge || p.badgeIcon) && !v) {
+        lxDevUtils.logWarn(
+          `Warning: LxButton "badgeTitle" is required when "badge" or "badgeIcon" is provided!`,
+          useLx().getGlobals()?.environment
+        );
+        return false;
+      }
+      return true;
+    },
   },
-  label: {
-    type: String,
-    default: '',
-    required: true,
-  },
-  title: {
-    type: String,
-    default: '',
-  },
-  busyTooltip: {
-    type: String,
-    default: '',
-  },
-  icon: {
-    type: String,
-    default: '',
-  },
-  iconSet: {
-    type: String,
-    default: () => useLx().getGlobals()?.iconSet,
-  },
-  iconVariant: {
-    type: String,
-    default: 'default',
-  },
-  kind: {
-    type: String,
-    default: 'default',
-  },
-  variant: {
-    type: String,
-    default: 'default', // default, icon-only
-  },
-  size: {
-    type: String,
-    default: 'default',
-  },
-  destructive: {
-    type: Boolean,
-    default: false,
-  },
-  href: {
-    type: Object,
-    default: () => {},
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-  busy: {
-    type: Boolean,
-    default: false,
-  },
-  badge: {
-    type: String,
-    default: '',
-  },
-  badgeType: {
-    type: String,
-    default: 'default', // default, good, info, warning, important
-  },
-  active: {
-    type: Boolean,
-    default: false,
-  },
-  tabindex: {
-    type: [Number, String],
-    default: 0,
-  },
-  customClass: {
-    type: String,
-    default: '',
-  },
-  openInNewTab: {
-    type: Boolean,
-    default: false,
-  },
+
+  active: { type: Boolean, default: false },
+  tabindex: { type: [Number, String], default: 0 },
+  customClass: { type: String, default: '' },
+  openInNewTab: { type: Boolean, default: false },
 });
 
 const slots = useSlots();
@@ -183,8 +139,12 @@ const accessibleTitle = computed(() => {
         <span class="lx-button-label" v-if="label">{{ label }}</span>
         <slot />
       </div>
-      <p
-        class="lx-badge"
+
+      <LxBadge
+        :icon="badgeIcon"
+        :icon-set="iconSet"
+        :value="badge"
+        :tooltip="badgeTitle"
         :class="[
           { 'lx-badge-empty': badge === ' ' },
           { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
@@ -192,10 +152,7 @@ const accessibleTitle = computed(() => {
           { 'lx-badge-warning': badgeType === 'warning' },
           { 'lx-badge-important': badgeType === 'important' },
         ]"
-        v-if="badge"
-      >
-        {{ badge }}
-      </p>
+      />
     </div>
   </button>
 
@@ -244,8 +201,11 @@ const accessibleTitle = computed(() => {
         <span class="lx-button-label" v-if="label">{{ label }}</span>
         <slot />
       </div>
-      <p
-        class="lx-badge"
+
+      <LxBadge
+        :icon="badgeIcon"
+        :icon-set="iconSet"
+        :value="badge"
         :class="[
           { 'lx-badge-empty': badge === ' ' },
           { 'lx-badge-info': badgeType === 'default' || badgeType === 'info' },
@@ -253,10 +213,7 @@ const accessibleTitle = computed(() => {
           { 'lx-badge-warning': badgeType === 'warning' },
           { 'lx-badge-important': badgeType === 'important' },
         ]"
-        v-if="badge"
-      >
-        {{ badge }}
-      </p>
+      />
     </div>
   </router-link>
   <div class="lx-invisible" aria-live="polite" v-if="props.busy">{{ props.busyTooltip }}</div>
