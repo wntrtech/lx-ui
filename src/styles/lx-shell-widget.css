@@ -330,6 +330,7 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
 }
 
 .lx .lx-button .lx-button-content {
+  overflow: hidden;
   grid-area: content;
   white-space: nowrap;
   text-overflow: ellipsis;
