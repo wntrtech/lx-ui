@@ -23,7 +23,7 @@ import LxAlertWidget from '@/components/AlertWidget.vue';
 import LxMainHeaderDigimaks from '@/components/shell/HeaderDigimaks.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
-const themeMode = useColorMode({
+const themeModel = useColorMode({
   selector: '.lx',
   attribute: 'class',
   emitAuto: true,
@@ -59,7 +59,6 @@ const emits = defineEmits([
   'idleModalPrimary',
   'idleModalSecondary',
   'confirmModalClosed',
-  'update:theme',
   'update:nav-bar-switch',
   'update:selectedMegaMenuItem',
   'navClick',
@@ -97,7 +96,6 @@ const props = defineProps({
 
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
-  theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: null },
   hasDeviceFonts: { type: Boolean, default: null },
 
@@ -225,18 +223,6 @@ const selectedLanguageModel = computed({
         useLx().getGlobals()?.environment,
         'info'
       );
-    }
-  },
-});
-
-const themeModel = computed({
-  get() {
-    return props.theme;
-  },
-  set(value) {
-    if (props.hasThemePicker) {
-      themeMode.value = value;
-      emits('update:theme', value);
     }
   },
 });
@@ -514,11 +500,7 @@ const footer = ref(null);
 
 onMounted(() => {
   if (!props.hasThemePicker) {
-    themeMode.value = 'none';
-  } else if (themeMode.value === 'none') {
-    themeMode.value = 'auto';
-  } else {
-    themeModel.value = themeMode.value;
+    themeModel.value = 'none';
   }
 
   const storageKey = `${
