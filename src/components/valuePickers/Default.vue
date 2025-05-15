@@ -83,7 +83,7 @@ const itemsDisplay = computed(() => {
   if (props.kind === 'single' && props.nullable)
     res.unshift({
       [props.idAttribute]: 'notSelected',
-      [props.nameAttribute]: props.texts.notSelected,
+      [props.nameAttribute]: displayTexts.value.notSelected,
     });
 
   return res;

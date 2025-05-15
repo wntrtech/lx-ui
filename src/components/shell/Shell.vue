@@ -1069,8 +1069,8 @@ function focusFirstMainFocusableElement() {
     >
       <LxSkipLink
         v-if="props.hasSkipLink"
-        :label="props.texts.skipLinkLabel"
-        :title="props.texts.skipLinkTitle"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">
