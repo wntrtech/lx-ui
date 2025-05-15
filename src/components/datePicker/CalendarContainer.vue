@@ -151,6 +151,8 @@ const visibleMinutes = ref([]);
 const selectedHour = ref(null);
 const selectedMinute = ref(null);
 
+const outsideOfToday = ref(false);
+
 const isMobileScreen = computed(() => windowSize.width.value < 640);
 
 function openMonthSelect() {
@@ -1516,19 +1518,40 @@ const selectMinute = (minuteObj, isNotSelectable) => {
 
 function moveCalendar(minDate, maxDate) {
   const now = new Date();
-  // Check if both minDate and maxDate are in the future
-  if (minDate > now && maxDate > now) {
+
+  // Case 1: both in the future
+  if (minDate && maxDate && minDate > now && maxDate > now) {
     currentDate.value = new Date(minDate);
     startYear.value = minDate.getFullYear() - 5;
     endYear.value = minDate.getFullYear() + 6;
+    outsideOfToday.value = true;
     return;
   }
 
-  // Check if both minDate and maxDate are in the past
-  if (minDate < now && maxDate < now) {
+  // Case 2: both in the past
+  if (minDate && maxDate && minDate < now && maxDate < now) {
     currentDate.value = new Date(maxDate);
     startYear.value = maxDate.getFullYear() - 5;
     endYear.value = maxDate.getFullYear() + 6;
+    outsideOfToday.value = true;
+    return;
+  }
+
+  // Case 3: only minDate in the future
+  if (minDate && minDate > now && !maxDate) {
+    currentDate.value = new Date(minDate);
+    startYear.value = minDate.getFullYear() - 5;
+    endYear.value = minDate.getFullYear() + 6;
+    outsideOfToday.value = true;
+    return;
+  }
+
+  // Case 4: only maxDate in the past
+  if (maxDate && maxDate < now && !minDate) {
+    currentDate.value = new Date(maxDate);
+    startYear.value = maxDate.getFullYear() - 5;
+    endYear.value = maxDate.getFullYear() + 6;
+    outsideOfToday.value = true;
   }
 }
 
@@ -2057,8 +2080,8 @@ watch(
 watch(
   () => [props.minDateRef, props.maxDateRef],
   ([newMinDate, newMaxDate]) => {
-    // Check if both dates are present
-    if (newMinDate && newMaxDate) {
+    // Only run if at least one date is present
+    if (newMinDate || newMaxDate) {
       moveCalendar(newMinDate, newMaxDate);
     }
   },
@@ -2637,7 +2660,7 @@ watch(
         icon="reset"
         variant="icon-only"
         :label="displayTexts.todayButton"
-        :disabled="disabled"
+        :disabled="disabled || outsideOfToday"
         @click.stop.prevent="returnToToday"
       />
     </div>

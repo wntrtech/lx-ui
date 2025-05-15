@@ -69,8 +69,8 @@ export function canSelectDate(date, minDate, maxDate, mode = 'date') {
     const maxHour = maxDateParsed?.getHours();
     const maxMinute = maxDateParsed?.getMinutes();
 
-    const isAfterMinHours = !minDateParsed || selectedHours >= minHour;
-    const isBeforeMaxHours = !maxDateParsed || selectedHours <= maxHour;
+    const isAfterMinHours = !minDateParsed || selectedHours > minHour;
+    const isBeforeMaxHours = !maxDateParsed || selectedHours < maxHour;
 
     // If hour is strictly between min and max, allow all minutes
     if (isAfterMinHours && isBeforeMaxHours) return true;
@@ -82,6 +82,16 @@ export function canSelectDate(date, minDate, maxDate, mode = 'date') {
 
     // If on max hour, minutes must be <= maxMinute
     if (maxDateParsed && selectedHours === maxHour && selectedMinutes > maxMinute) {
+      return false;
+    }
+
+    // If selected hour is before min hour
+    if (selectedHours < minHour) {
+      return false;
+    }
+
+    // If selected hour is after max hour
+    if (selectedHours > maxHour) {
       return false;
     }
 

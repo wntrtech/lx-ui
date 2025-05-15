@@ -2,6 +2,7 @@
 import { test, expect, describe, afterEach } from 'vitest';
 import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
 import { mount } from '@vue/test-utils';
+import { directive } from 'vue3-click-away';
 
 // Simple single tests
 
@@ -13,26 +14,36 @@ afterEach(() => {
   }
 });
 
-test.skip('LxDateTimePicker placeholder', () => {
+test('LxDateTimePicker placeholder', () => {
   expect(LxDateTimePicker).toBeTruthy();
-  // Stop all further tests after this one
-  process.exit(0);
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       placeholder: '02.02.2022',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
   const inputElement = wrapper.find('.lx-date-time-picker').element;
   expect(inputElement.placeholder).toBe('02.02.2022');
 });
 
-test.skip('LxDateTimePicker tooltip', () => {
+test('LxDateTimePicker tooltip', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       tooltip: 'Tooltip text',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
@@ -40,37 +51,52 @@ test.skip('LxDateTimePicker tooltip', () => {
 });
 
 describe.each([
-  ['date', [true, false, false]],
-  ['time', [false, true, false]],
-  ['dateTime', [false, false, true]],
-])('LxDateTimePicker kind %s', (kind, expectedResults) => {
-  test.skip(`LxDateTimePicker kind ${kind}`, () => {
+  ['date', '.lx-calendar-container', '.lx-calendar-day-content', /\d+/],
+  ['time', '.lx-calendar-container', '.lx-time-list-item', /\d+/],
+  ['date-time', '.lx-calendar-container', '.lx-calendar-day-content', /\d+/],
+  ['month', '.lx-calendar-container', '.lx-calendar-month', /Janv\./i],
+  ['year', '.lx-calendar-container', '.lx-calendar-year', /\d+/],
+  ['month-year', '.lx-calendar-container', '.lx-calendar-month', /Janv\./i],
+  ['quarters', '.lx-calendar-container', '.lx-calendar-quarter', /^Q1$/],
+])('LxDateTimePicker kind %s', (kind, container, unit, regEx) => {
+  test('LxDateTimePicker test  container renders and there is item to select', async () => {
     expect(LxDateTimePicker).toBeTruthy();
 
     wrapper = mount(LxDateTimePicker, {
       props: {
+        modelValue: '2025-05-14',
+        variant: 'default',
         kind,
       },
       global: {
         stubs: ['router-link'],
+        directives: {
+          ClickAway: directive,
+        },
       },
     });
 
-    expect(wrapper.find('.lx-date-time-picker-wrapper.lx-date').exists()).toBe(expectedResults[0]);
-    expect(wrapper.find('.lx-date-time-picker-wrapper.lx-time').exists()).toBe(expectedResults[1]);
-    expect(wrapper.find('.lx-date-time-picker-wrapper.lx-date-time').exists()).toBe(
-      expectedResults[2]
-    );
+    const pickerInput = wrapper.find('.lx-date-time-picker.lx-input-area');
+    expect(pickerInput.exists()).toBe(true);
+
+    await pickerInput.trigger('keydown', { key: 'ArrowDown' });
+
+    const calendarContainer = wrapper.find(container);
+    expect(calendarContainer.exists()).toBe(true);
+
+    const unitContent = calendarContainer.find(unit);
+    expect(unitContent.exists()).toBe(true);
+    expect(unitContent.text()).toMatch(regEx);
   });
 });
 
-function readOnlyTest(wrapper) {
-  expect(wrapper.find('.lx-date-time-picker-wrapper').exists()).toBe(false);
-  expect(wrapper.find('.lx-data').exists()).toBe(true);
-  expect(wrapper.find('.lx-data time').exists()).toBe(true);
+function readOnlyTest(wrp) {
+  expect(wrp.find('.lx-date-time-picker-wrapper').exists()).toBe(false);
+  expect(wrp.find('.lx-data').exists()).toBe(true);
+  expect(wrp.find('.lx-data time').exists()).toBe(true);
 }
 
-test.skip('LxDateTimePicker readOnly', () => {
+test('LxDateTimePicker readOnly', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
@@ -78,37 +104,49 @@ test.skip('LxDateTimePicker readOnly', () => {
       readOnly: true,
       modelValue: '2002-02-18',
     },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
   });
 
   readOnlyTest(wrapper);
 });
 
-function disabledTest(wrapper) {
-  expect(wrapper.find('.lx-date-time-picker').attributes('disabled')).toBeDefined();
-  expect(wrapper.find('.lx-date-time-picker-wrapper').attributes('data-disabled')).toBeDefined();
+function disabledTest(wrp) {
+  expect(wrp.find('.lx-date-time-picker').attributes('disabled')).toBeDefined();
+  expect(wrp.find('.lx-date-time-picker-wrapper').attributes('data-disabled')).toBeDefined();
 }
-test.skip('LxDateTimePicker disabled', () => {
+
+test('LxDateTimePicker disabled', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       disabled: true,
     },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
   });
 
   disabledTest(wrapper);
 });
 
-function invalidTest(wrapper) {
-  expect(wrapper.find('.lx-date-time-picker.lx-invalid').isVisible()).toBe(true);
-  expect(wrapper.find('.lx-invalidation-icon').isVisible()).toBe(true);
-  const invalidationMessageElement = wrapper
-    .find('.lx-field-wrapper')
-    .find('.lx-invalidation-message');
+function invalidTest(wrp) {
+  expect(wrp.find('.lx-date-time-picker.lx-invalid').isVisible()).toBe(true);
+  expect(wrp.find('.lx-invalidation-icon').isVisible()).toBe(true);
+  const invalidationMessageElement = wrp.find('.lx-field-wrapper').find('.lx-invalidation-message');
   expect(invalidationMessageElement.isVisible()).toBe(true);
   expect(invalidationMessageElement.text()).toBe('Invalid input');
 }
-test.skip('LxDateTimePicker invalid', () => {
+
+test('LxDateTimePicker invalid', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
@@ -117,24 +155,36 @@ test.skip('LxDateTimePicker invalid', () => {
       invalidationMessage: 'Invalid input',
       modelValue: '2002-02-18',
     },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
   });
 
   invalidTest(wrapper);
 });
 
-test.skip('LxDateTimePicker modelValue', async () => {
+test('LxDateTimePicker modelValue', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
     },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
   });
   await wrapper.trigger('');
   expect(wrapper.find('input').element.value).toBe('18.02.2002.');
 });
 
-test.skip('LxDateTimePicker texts.todayButton', () => {
+test('LxDateTimePicker texts.todayButton', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
@@ -148,6 +198,9 @@ test.skip('LxDateTimePicker texts.todayButton', () => {
     },
     global: {
       stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
@@ -156,7 +209,7 @@ test.skip('LxDateTimePicker texts.todayButton', () => {
   );
 });
 
-test.skip('LxDateTimePicker texts.clearButton', () => {
+test('LxDateTimePicker texts.clearButton', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
@@ -165,96 +218,61 @@ test.skip('LxDateTimePicker texts.clearButton', () => {
       variant: 'picker',
       kind: 'date',
       texts: {
-        clearButton: 'Clear',
+        clearButton: 'Attīrīt vērtību',
       },
     },
     global: {
       stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
-  expect(
-    wrapper
-      .find('.lx-button.lx-button-ghost.lx-button-icon-only.lx-destructive')
-      .attributes('title')
-  ).toBe('Clear');
+  const clearButtons = wrapper.findAll('.lx-button.lx-button-ghost');
+  const clearButton = clearButtons.find((btn) => btn.attributes('title') === 'Attīrīt vērtību');
+  expect(clearButton).toBeTruthy();
 });
 
-test.skip('LxDateTimePicker texts.clear', () => {
+test('LxDateTimePicker texts.clear', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '00:00',
-      variant: 'default',
+      variant: 'picker',
       kind: 'time',
       texts: {
-        clear: 'Clear',
+        clear: 'Attīrīt',
       },
     },
     global: {
       stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
-  // setTimeout(() => {
-  //   expect(
-  //     wrapper
-  //       .find('.lx-button.lx-button-ghost.lx-button-icon-only.lx-destructive')
-  //       .attributes('title')
-  //   ).toBe('Clear');
-  // }, 100);
+  const clearButtons = wrapper.findAll('.lx-button.lx-button-ghost');
+  const clearButton = clearButtons.find((btn) => btn.text('Attīrīt'));
+  expect(clearButton).toBeTruthy();
 });
 
-describe.each([
-  ['default', 1, ''],
-  ['picker', 1, ''],
-  ['full', 4, ''],
-  ['full-rows', 2, 'grid-template-columns: repeat(1, 1fr);'],
-  ['full-columns', 2, 'grid-template-columns: repeat(2, 1fr);'],
-])('LxDateTimePicker variant: %s, kind: date', (variant, expectedChildCount, expectedStyle) => {
-  test.skip(`LxDateTimePicker variant ${variant}`, () => {
-    expect(LxDateTimePicker).toBeTruthy();
-
-    wrapper = mount(LxDateTimePicker, {
-      props: {
-        kind: 'date',
-        variant,
-        modelValue: '2002-02-18',
-      },
-      global: {
-        stubs: ['router-link'],
-      },
-    });
-
-    expect(wrapper.find('.lx-date-time-picker-wrapper').exists()).toBe(true);
-    expect(wrapper.find('.lx-date-time-picker').exists()).toBe(variant === 'default');
-
-    const vcContainer = wrapper.find('.vc-container');
-    expect(vcContainer.exists()).toBe(variant !== 'default');
-
-    if (vcContainer.exists()) {
-      const paneLayout = vcContainer.find('.vc-pane-layout');
-      expect(paneLayout.exists()).toBe(true);
-
-      const childCount = paneLayout.element.children.length;
-      expect(childCount).toBe(expectedChildCount);
-
-      if (expectedStyle) {
-        expect(paneLayout.attributes('style')).toContain(expectedStyle);
-      }
-    }
-  });
-});
-
-test.skip('LxDateTimePicker max/min', async () => {
+test('LxDateTimePicker min/max', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
-      minDate: '2002-02-01',
-      maxDate: '2002-02-28',
+      minDate: new Date('2002-02-01'),
+      maxDate: new Date('2002-02-28'),
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
@@ -270,51 +288,233 @@ test.skip('LxDateTimePicker max/min', async () => {
   expect(wrapper.find('input').element.value).toBe('20.02.2002.');
 });
 
-// TODO: tests for kind time, (probably need to fix component first)
-
-// TODO: fix - regeneratorRuntime error
-// test.skip('LxDateTimePicker kind: default, variant: picker, specialDates, dictionary', async () => {
-//   expect(LxDateTimePicker).toBeTruthy();
-
-//   wrapper = mount(LxDateTimePicker, {
-//     props: {
-//       modelValue: '2024-02-07',
-//       variant: 'picker',
-//       kind: 'default',
-//       specialDates: [
-//         { category: 'one', dates: ['2024-02-05'] },
-//         { category: 'two', dates: ['2024-02-07'] },
-//         { category: 'three', dates: ['2024-02-09'] },
-//       ],
-//       dictionary: [
-//         { id: 'one', name: 'LX standup', displayType: 'blue' },
-//         { id: 'two', name: 'LX/UI new release', displayType: 'red-full' },
-//         { id: 'three', name: 'LX lecture', displayType: 'black' },
-//       ],
-//     },
-//     global: {
-//       stubs: ['router-link'],
-//     },
-//   });
-//   // one
-//   expect(wrapper.find('.id-2024-02-05').find('.vc-day-content').text()).toBe('5');
-//   expect(wrapper.find('.id-2024-02-05').find('.vc-lx-blue').exists()).toBe(true);
-
-//   // two
-//   expect(wrapper.find('.id-2024-02-07').find('.vc-day-content').text()).toBe('7');
-//   expect(wrapper.find('.id-2024-02-07').find('.vc-lx-red').exists()).toBe(true);
-
-//   // three
-//   expect(wrapper.find('.id-2024-02-09').find('.vc-day-content').text()).toBe('9');
-//   expect(wrapper.find('.id-2024-02-09').find('.vc-lx-black').exists()).toBe(true);
-// });
-
-test.skip('LxDateTimepicker locale.locale ENG', () => {
+test('LxDateTimePicker min/max outside of today in future', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
-      modelValue: '2002-02-18',
+      modelValue: '2025-05-14',
+      variant: 'picker',
+      kind: 'date',
+      minDate: new Date('2025-06-01'),
+      maxDate: new Date('2025-07-28'),
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
+  });
+
+  const monthSelectButton = wrapper.find('.lx-button.lx-calendar-months-select-button');
+  expect(monthSelectButton).toBeTruthy();
+  expect(monthSelectButton.attributes('aria-label')).toBe('Jūnijs');
+});
+
+test('LxDateTimePicker min/max outside of today in future different year', async () => {
+  expect(LxDateTimePicker).toBeTruthy();
+
+  wrapper = mount(LxDateTimePicker, {
+    props: {
+      modelValue: '2025-05-14',
+      variant: 'picker',
+      kind: 'date',
+      minDate: new Date('2026-06-01'),
+      maxDate: new Date('2026-07-28'),
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
+  });
+
+  const monthSelectButton = wrapper.find('.lx-button.lx-calendar-months-select-button');
+  expect(monthSelectButton).toBeTruthy();
+  expect(monthSelectButton.attributes('aria-label')).toBe('Jūnijs');
+
+  const yearSelectButton = wrapper.find('.lx-button.lx-calendar-years-select-button');
+  expect(yearSelectButton).toBeTruthy();
+  expect(yearSelectButton.attributes('aria-label')).toBe('2026');
+});
+
+test('LxDateTimePicker min/max outside of today in future different year', async () => {
+  expect(LxDateTimePicker).toBeTruthy();
+
+  wrapper = mount(LxDateTimePicker, {
+    props: {
+      modelValue: '2025-05-14',
+      variant: 'picker',
+      kind: 'date',
+      minDate: new Date('2026-06-01'),
+      maxDate: new Date('2026-07-28'),
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
+  });
+
+  const monthSelectButton = wrapper.find('.lx-button.lx-calendar-months-select-button');
+  expect(monthSelectButton).toBeTruthy();
+  expect(monthSelectButton.attributes('aria-label')).toBe('Jūnijs');
+
+  const yearSelectButton = wrapper.find('.lx-button.lx-calendar-years-select-button');
+  expect(yearSelectButton).toBeTruthy();
+  expect(yearSelectButton.attributes('aria-label')).toBe('2026');
+});
+
+test('LxDateTimePicker min outside of today in future, max in not provided', async () => {
+  expect(LxDateTimePicker).toBeTruthy();
+
+  wrapper = mount(LxDateTimePicker, {
+    props: {
+      modelValue: '2025-05-14',
+      variant: 'default',
+      kind: 'date',
+      minDate: new Date('2026-06-01'),
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
+  });
+
+  const pickerInput = wrapper.find('.lx-date-time-picker.lx-input-area');
+  expect(pickerInput.exists()).toBe(true);
+
+  await pickerInput.trigger('keydown', { key: 'ArrowDown' });
+
+  const calendarContainer = wrapper.find('.lx-calendar-container');
+  expect(calendarContainer.exists()).toBe(true);
+
+  const monthSelectButton = wrapper.find('.lx-button.lx-calendar-months-select-button');
+  expect(monthSelectButton).toBeTruthy();
+  expect(monthSelectButton.attributes('aria-label')).toBe('Jūnijs');
+});
+
+test('LxDateTimePicker max outside of today in past, min in not provided', async () => {
+  expect(LxDateTimePicker).toBeTruthy();
+
+  wrapper = mount(LxDateTimePicker, {
+    props: {
+      modelValue: '2025-05-14',
+      variant: 'default',
+      kind: 'date',
+      maxDate: new Date('2025-04-01'),
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
+  });
+
+  const pickerInput = wrapper.find('.lx-date-time-picker.lx-input-area');
+  expect(pickerInput.exists()).toBe(true);
+
+  await pickerInput.trigger('keydown', { key: 'ArrowDown' });
+
+  const calendarContainer = wrapper.find('.lx-calendar-container');
+  expect(calendarContainer.exists()).toBe(true);
+
+  const monthSelectButton = wrapper.find('.lx-button.lx-calendar-months-select-button');
+  expect(monthSelectButton).toBeTruthy();
+  expect(monthSelectButton.attributes('aria-label')).toBe('Aprīlis');
+});
+
+test('LxDateTimePicker kind: default, variant: picker, specialDates, dictionary', async () => {
+  expect(LxDateTimePicker).toBeTruthy();
+
+  wrapper = mount(LxDateTimePicker, {
+    props: {
+      modelValue: '2025-05-07',
+      kind: 'date',
+      variant: 'picker',
+      specialDates: [
+        { category: 'one', dates: ['2025-05-02', '2025-05-05', '2025-05-07'] },
+        { category: 'two', dates: ['2025-05-05', '2025-05-07'] },
+        { category: 'three', dates: ['2025-05-01', '2025-05-07'] },
+      ],
+      dictionary: [
+        { id: 'one', name: 'LX standup', displayType: 'blue' },
+        { id: 'two', name: 'LX/UI new release', displayType: 'red-full' },
+        { id: 'three', name: 'LX lecture', displayType: 'black' },
+      ],
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
+  });
+
+  // 'one'
+  const specialDayOne = wrapper.findAll('.lx-calendar-day').find((day) => {
+    const content = day.find('.lx-calendar-day-content');
+    return content.exists() && content.text().trim() === '7';
+  });
+  expect(specialDayOne).toBeTruthy();
+  const barsWrapperOne = specialDayOne.find('.lx-day-layer-bars');
+  expect(barsWrapperOne.exists()).toBe(true);
+
+  const barsOne = barsWrapperOne.findAll('.lx-day-layer-bar');
+  expect(barsOne.length).toBe(3);
+
+  const blueBarsOne = barsOne.filter((bar) => bar.classes().includes('bar-lx-blue'));
+  const redBarsOne = barsOne.filter((bar) => bar.classes().includes('bar-lx-red'));
+  const blackBarsOne = barsOne.filter((bar) => bar.classes().includes('bar-lx-black'));
+  expect(blueBarsOne.length).toBe(1);
+  expect(redBarsOne.length).toBe(1);
+  expect(blackBarsOne.length).toBe(1);
+
+  // 'two'
+  const specialDayTwo = wrapper.findAll('.lx-calendar-day').find((day) => {
+    const content = day.find('.lx-calendar-day-content');
+    return content.exists() && content.text().trim() === '5';
+  });
+  expect(specialDayTwo).toBeTruthy();
+  const barsWrapperTwo = specialDayTwo.find('.lx-day-layer-bars');
+  expect(barsWrapperTwo.exists()).toBe(true);
+
+  const barsTwo = barsWrapperTwo.findAll('.lx-day-layer-bar');
+  expect(barsTwo.length).toBe(2);
+
+  const blueBarsTwo = barsTwo.filter((bar) => bar.classes().includes('bar-lx-blue'));
+  const redBarsTwo = barsTwo.filter((bar) => bar.classes().includes('bar-lx-red'));
+  expect(blueBarsTwo.length).toBe(1);
+  expect(redBarsTwo.length).toBe(1);
+
+  // 'three'
+  const specialDayThree = wrapper.findAll('.lx-calendar-day').find((day) => {
+    const content = day.find('.lx-calendar-day-content');
+    return content.exists() && content.text().trim() === '1';
+  });
+  expect(specialDayThree).toBeTruthy();
+  const barsWrapperThree = specialDayThree.find('.lx-day-layer-bars');
+  expect(barsWrapperThree.exists()).toBe(true);
+
+  const barsThree = barsWrapperThree.findAll('.lx-day-layer-bar');
+  expect(barsThree.length).toBe(1);
+
+  const blackBarsThree = barsThree.filter((bar) => bar.classes().includes('bar-lx-black'));
+  expect(blackBarsThree.length).toBe(1);
+});
+
+test('LxDateTimepicker locale.locale ENG', () => {
+  expect(LxDateTimePicker).toBeTruthy();
+
+  wrapper = mount(LxDateTimePicker, {
+    props: {
+      modelValue: '2025-05-02',
       variant: 'picker',
       locale: {
         locale: 'en-EN',
@@ -322,18 +522,24 @@ test.skip('LxDateTimepicker locale.locale ENG', () => {
     },
     global: {
       stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
-  expect(wrapper.find('.vc-header .vc-title').text()).toBe('February 2002');
+  const targetDay = wrapper
+    .findAll('.lx-calendar-day-content')
+    .find((el) => el.attributes('aria-label')?.includes('Friday, May 2, 2025'));
+  expect(targetDay).toBeTruthy();
 });
 
-test.skip('LxDateTimepicker locale.locale LV', () => {
+test('LxDateTimepicker locale.locale LV', () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
-      modelValue: '2002-02-18',
+      modelValue: '2025-05-02',
       variant: 'picker',
       locale: {
         locale: 'lv-LV',
@@ -341,20 +547,32 @@ test.skip('LxDateTimepicker locale.locale LV', () => {
     },
     global: {
       stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
-  expect(wrapper.find('.vc-header .vc-title').text()).toBe('februāris 2002');
+  const targetDay = wrapper
+    .findAll('.lx-calendar-day-content')
+    .find((el) => el.attributes('aria-label')?.includes('Piektdiena, 2025. gada 2. maijs'));
+  expect(targetDay).toBeTruthy();
 });
 
 // Change tests
 
-test.skip('LxDateTimePicker modelValue change', async () => {
+test('LxDateTimePicker modelValue change', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
   await wrapper.trigger('');
@@ -364,12 +582,18 @@ test.skip('LxDateTimePicker modelValue change', async () => {
   expect(wrapper.find('input').element.value).toBe('19.02.2002.');
 });
 
-test.skip('LxDateTimePicker modelValue change to null', async () => {
+test('LxDateTimePicker modelValue change to null', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
@@ -377,12 +601,18 @@ test.skip('LxDateTimePicker modelValue change to null', async () => {
   expect(wrapper.find('input').element.value).toBe('');
 });
 
-test.skip('LxDateTimePicker modelValue change to empty string', async () => {
+test('LxDateTimePicker modelValue change to empty string', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
@@ -390,12 +620,18 @@ test.skip('LxDateTimePicker modelValue change to empty string', async () => {
   expect(wrapper.find('input').element.value).toBe('');
 });
 
-test.skip('LxDateTimePicker modelValue change to undefined', async () => {
+test('LxDateTimePicker modelValue change to undefined', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
@@ -403,12 +639,18 @@ test.skip('LxDateTimePicker modelValue change to undefined', async () => {
   expect(wrapper.find('input').element.value).toBe('');
 });
 
-test.skip('LxDateTimePicker modelValue change to undefined and back to date', async () => {
+test('LxDateTimePicker modelValue change to undefined and back to date', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
@@ -418,12 +660,18 @@ test.skip('LxDateTimePicker modelValue change to undefined and back to date', as
   expect(wrapper.find('input').element.value).toBe('18.02.2002.');
 });
 
-test.skip('LxDateTimePicker modelValue change to null and back to date', async () => {
+test('LxDateTimePicker modelValue change to null and back to date', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
@@ -433,13 +681,19 @@ test.skip('LxDateTimePicker modelValue change to null and back to date', async (
   expect(wrapper.find('input').element.value).toBe('18.02.2002.');
 });
 
-test.skip('LxDateTimePicker modelValue change to empty string and back to empty string', async () => {
+test('LxDateTimePicker modelValue change to empty string and back to empty string', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '',
     },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
   });
 
   await wrapper.trigger('');
@@ -448,86 +702,148 @@ test.skip('LxDateTimePicker modelValue change to empty string and back to empty 
   await wrapper.trigger('');
   expect(wrapper.find('input').element.value).toBe('');
 });
-// TODO: tests for v-calendar popper
-// https://github.com/nathanreyes/v-calendar/issues/338
 
-test.skip('LxDateTimePicker kind: date, variant: picker', async () => {
+test('LxDateTimePicker kind: date, variant: picker', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
       modelValue: '2002-02-18',
-      variant: 'picker',
       kind: 'date',
+      variant: 'picker',
     },
     global: {
       stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
-  expect(wrapper.find('.vc-container').exists()).toBe(true);
-  expect(wrapper.find('.vc-header').exists()).toBe(true);
-  expect(wrapper.find('.vc-weeks').exists()).toBe(true);
+  expect(wrapper.find('.lx-calendar-container').exists()).toBe(true);
+  expect(wrapper.find('.lx-calendar-header').exists()).toBe(true);
+  expect(wrapper.find('.lx-calendar-main').exists()).toBe(true);
+  expect(wrapper.find('.lx-calendar-footer').exists()).toBe(true);
+  expect(wrapper.find('.lx-calendar-weekdays').exists()).toBe(true);
+  expect(wrapper.find('.lx-calendar-weeks').exists()).toBe(true);
 });
 
-test.skip('LxDateTimePicker date click', async () => {
+test('LxDateTimePicker date click', async () => {
   expect(LxDateTimePicker).toBeTruthy();
 
   wrapper = mount(LxDateTimePicker, {
     props: {
-      modelValue: '2002-02-18',
-      variant: 'picker',
+      modelValue: '2025-05-13',
       kind: 'date',
+      variant: 'picker',
     },
     global: {
       stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
 
-  await wrapper.find('.id-2002-02-05 .vc-day-content').trigger('click');
-
-  expect(wrapper.find('.vc-highlight-content-solid').text()).toBe('5');
-});
-
-test.skip('LxDateTimePicker clear click', async () => {
-  expect(LxDateTimePicker).toBeTruthy();
-
-  wrapper = mount(LxDateTimePicker, {
-    props: {
-      modelValue: '2002-02-18',
-      variant: 'picker',
-      kind: 'date',
-    },
-    global: {
-      stubs: ['router-link'],
-    },
+  const selectedDate = wrapper.findAll('.lx-calendar-day').find((day) => {
+    const content = day.find('.lx-calendar-day-content');
+    return content.exists() && content.text().trim() === '13';
   });
-  await wrapper.find('.id-2002-02-05 .vc-day-content').trigger('click');
+
+  expect(selectedDate).toBeTruthy();
+  expect(selectedDate.classes()).toContain('lx-selected-day');
 
   await wrapper
-    .find('.footer-buttons .lx-button.lx-button-ghost.lx-button-icon-only.lx-destructive')
+    .findAll('.lx-calendar-day')
+    .find((day) => {
+      const content = day.find('.lx-calendar-day-content');
+      return content.exists() && content.text().trim() === '7';
+    })
     .trigger('click');
 
-  expect(wrapper.find('.vc-highlight-content-solid').exists()).toBe(false);
+  const oldSelected = wrapper.findAll('.lx-calendar-day').find((day) => {
+    const content = day.find('.lx-calendar-day-content');
+    return content.exists() && content.text().trim() === '13';
+  });
+
+  expect(oldSelected.classes()).not.toContain('lx-selected-day');
+
+  const newSelected = wrapper.findAll('.lx-calendar-day').find((day) => {
+    const content = day.find('.lx-calendar-day-content');
+    return content.exists() && content.text().trim() === '7';
+  });
+
+  expect(newSelected.classes()).toContain('lx-selected-day');
 });
-// TODO: somehow this test is not working
-// test.skip('LxDateTimePicker today click', async () => {
-//   expect(LxDateTimePicker).toBeTruthy();
 
-//   wrapper = mount(LxDateTimePicker, {
-//     props: {
-//       modelValue: '2002-02-18',
-//       variant: 'picker',
-//       kind: 'date',
-//     },
-//     global: {
-//       stubs: ['router-link'],
-//     },
-//   });
+test('LxDateTimePicker clear click', async () => {
+  expect(LxDateTimePicker).toBeTruthy();
 
-//   await wrapper
-//     .find('.footer-buttons .lx-button.lx-button-ghost.lx-button-icon-only')
-//     .trigger('click');
+  wrapper = mount(LxDateTimePicker, {
+    props: {
+      modelValue: '2025-05-13',
+      kind: 'date',
+      variant: 'picker',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
+  });
+  const selectedDate = wrapper.findAll('.lx-calendar-day').find((day) => {
+    const content = day.find('.lx-calendar-day-content');
+    return content.exists() && content.text().trim() === '13';
+  });
 
-//   expect(wrapper.find('.vc-highlight-content-solid').text()).toBe('18');
-// });
+  expect(selectedDate).toBeTruthy();
+  expect(selectedDate.classes()).toContain('lx-selected-day');
+
+  // Find and click clear button
+  const clearButtons = wrapper.findAll('.lx-button.lx-button-ghost');
+  const clearButton = clearButtons.find(
+    (btn) =>
+      btn.attributes('title') === 'Attīrīt vērtību' && btn.attributes('aria-label') === 'Attīrīt'
+  );
+  expect(clearButton).toBeTruthy();
+  await clearButton.trigger('click');
+
+  const stillSelected = wrapper
+    .findAll('.lx-calendar-day')
+    .find((day) => day.classes().includes('lx-selected-day'));
+  expect(stillSelected).toBeFalsy();
+
+  const emits = wrapper.emitted('update:modelValue');
+  expect(emits).toBeTruthy();
+  expect(emits[emits.length - 1][0]).toBe(null);
+});
+
+test('LxDateTimePicker today click', async () => {
+  expect(LxDateTimePicker).toBeTruthy();
+
+  wrapper = mount(LxDateTimePicker, {
+    props: {
+      modelValue: '2025-04-18',
+      variant: 'picker',
+      kind: 'date',
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
+  });
+
+  const monthSelectButton = wrapper.find('.lx-button.lx-calendar-months-select-button');
+  expect(monthSelectButton).toBeTruthy();
+  expect(monthSelectButton.attributes('aria-label')).toBe('Aprīlis');
+
+  // Find and click today button
+  const todayButton = wrapper.find('.lx-button.lx-calendar-return-to-today-button');
+  expect(todayButton).toBeTruthy();
+  await todayButton.trigger('click');
+
+  expect(monthSelectButton.attributes('aria-label')).toBe('Maijs');
+});

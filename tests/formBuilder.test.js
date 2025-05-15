@@ -3,6 +3,7 @@ import LxForm from '@/components/forms/Form.vue';
 import LxFormBuilder from '@/components/forms/FormBuilder.vue';
 import { mount } from '@vue/test-utils';
 import { h } from 'vue';
+import { directive } from 'vue3-click-away';
 
 let wrapper;
 
@@ -139,7 +140,7 @@ test('LxFormBuilder with LxTextArea', () => {
   expect(wrapper.find('.lx-text-area').exists()).toBe(true);
 });
 
-test.skip('LxFormBuilder with LxDateTimePicker', () => {
+test('LxFormBuilder with LxDateTimePicker', () => {
   const schemaValue = {
     type: 'object',
     properties: { name: { type: 'string', format: 'date' } },
@@ -151,11 +152,17 @@ test.skip('LxFormBuilder with LxDateTimePicker', () => {
     slots: {
       default: h(LxFormBuilder, { schema: schemaValue }),
     },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
   });
   expect(wrapper.find('.lx-date-time-picker').exists()).toBe(true);
 });
 
-test.skip('LxFormBuilder with LxDateTimePicker time', () => {
+test('LxFormBuilder with LxDateTimePicker time', () => {
   const schemaValue = {
     type: 'object',
     properties: { name: { type: 'string', format: 'time' } },
@@ -167,11 +174,17 @@ test.skip('LxFormBuilder with LxDateTimePicker time', () => {
     slots: {
       default: h(LxFormBuilder, { schema: schemaValue }),
     },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
+    },
   });
   expect(wrapper.find('.lx-time').exists()).toBe(true);
 });
 
-test.skip('LxFormBuilder with LxDateTimePicker dateTime', () => {
+test('LxFormBuilder with LxDateTimePicker dateTime', () => {
   const schemaValue = {
     type: 'object',
     properties: { name: { type: 'string', format: 'date-time' } },
@@ -182,6 +195,12 @@ test.skip('LxFormBuilder with LxDateTimePicker dateTime', () => {
     },
     slots: {
       default: h(LxFormBuilder, { schema: schemaValue }),
+    },
+    global: {
+      stubs: ['router-link'],
+      directives: {
+        ClickAway: directive,
+      },
     },
   });
   expect(wrapper.find('.lx-date-time').exists()).toBe(true);
