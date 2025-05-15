@@ -215,7 +215,10 @@ defineExpose({ clearModel });
           </LxForm>
 
           <template #customHeader v-if="$slots.customHeader">
-            <slot name="customHeader" v-bind="item" />
+            <slot
+              name="customHeader"
+              v-bind="{ item, expanded: expanded[item && item[idAttribute]] }"
+            />
           </template>
         </LxDataBlock>
       </template>

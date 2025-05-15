@@ -1587,7 +1587,40 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             >
               {{ formatValue(item[col.attributeName], col.type, col.options?.fractionDigits) }}
             </div>
-
+            <template v-if="col.type === 'array'">
+              <LxInfoWrapper
+                v-if="
+                  item[col.attributeName] &&
+                  item[col.attributeName].length >
+                    (col.options?.displayItemsCount ? col.options?.displayItemsCount : 1)
+                "
+              >
+                <div class="lx-indicator">
+                  {{
+                    formatValue(item[col.attributeName], col.type, col.options?.displayItemsCount)
+                  }}
+                </div>
+                <template #panel>
+                  <ul>
+                    <li v-for="i in item[col.attributeName]" v-bind:key="i">
+                      <div class="lx-row">
+                        <p class="lx-data">{{ i }}</p>
+                      </div>
+                    </li>
+                  </ul>
+                </template>
+              </LxInfoWrapper>
+              <template
+                v-else
+                v-for="i in formatValue(
+                  item[col.attributeName],
+                  col.type,
+                  col.options?.displayItemsCount
+                )"
+              >
+                {{ `${i} ` }}</template
+              >
+            </template>
             <LxStateDisplay
               v-else-if="col.type === 'state'"
               :value="item[col?.attributeName]"
@@ -1694,6 +1727,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             </div>
           </LxRow>
         </template>
+      </template>
+      <template #customHeader="{ item, expanded }" v-if="$slots.customResponsiveHeader">
+        <slot name="customResponsiveHeader" v-bind="{ item, expanded }" />
       </template>
     </LxAppendableList>
 

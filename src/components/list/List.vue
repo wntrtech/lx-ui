@@ -1452,7 +1452,7 @@ function focusFirstFocusableElementAfter() {
           @select-all="selectSection(group)"
         >
           <template #customHeader v-if="$slots.customExpanderHeader">
-            <slot name="customExpanderHeader" v-bind="group" />
+            <slot name="customExpanderHeader" v-bind="{ group }" />
           </template>
 
           <ul
@@ -1967,7 +1967,7 @@ function focusFirstFocusableElementAfter() {
         :label="group.name"
       >
         <template #customHeader v-if="$slots.customExpanderHeader">
-          <slot name="customExpanderHeader" v-bind="group"></slot>
+          <slot name="customExpanderHeader" v-bind="{ group }"></slot>
         </template>
 
         <div
