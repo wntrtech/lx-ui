@@ -32,7 +32,7 @@ import LxIcon from '@/components/Icon.vue';
 const props = defineProps({
   id: { type: String, default: null },
   modelValue: { type: [String, Date, Object], default: null },
-  mode: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters', 'legacy'
+  mode: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters',
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   masks: { type: Object, default: () => {} },
   placeholder: { type: String, default: null },
@@ -49,6 +49,7 @@ const props = defineProps({
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
   pickerType: { type: String, default: 'single' }, // 'single', 'range'
   labelledBy: { type: String, default: null },
+  legacyMode: { type: Boolean, default: false }, // legacy mode flag to separate logic without breaking date mode flow and validations
   texts: {
     type: Object,
     default: () => ({}),
@@ -1111,13 +1112,13 @@ onMounted(async () => {
             :aria-label="
               pickerType === 'range'
                 ? displayTexts.startDateLabel
-                : pickerType === 'single' && mode === 'legacy'
+                : pickerType === 'single' && legacyMode
                 ? labelledBy
                 : null
             "
-            :aria-labelledby="pickerType === 'single' && mode !== 'legacy' ? labelledBy : null"
+            :aria-labelledby="pickerType === 'single' && !legacyMode ? labelledBy : null"
             :aria-describedby="
-              pickerType === 'range' || (pickerType === 'single' && mode === 'legacy')
+              pickerType === 'range' || (pickerType === 'single' && legacyMode)
                 ? `${id}-lx-range-input-description`
                 : null
             "
@@ -1237,7 +1238,7 @@ onMounted(async () => {
       :pickerType="pickerType"
       :texts="displayTexts"
     />
-    <div v-if="invalid" class="lx-invalidation-message">
+    <div v-if="invalid && !legacyMode" class="lx-invalidation-message">
       {{ invalidationMessage }}
     </div>
   </div>

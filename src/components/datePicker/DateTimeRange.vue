@@ -422,7 +422,7 @@ onBeforeMount(() => {
           <LxDatePicker
             :id="'from-' + id"
             v-model="modelStart"
-            mode="legacy"
+            mode="date"
             :masks="localeMasks"
             :placeholder="placeholder"
             :disabled="disabled"
@@ -435,6 +435,7 @@ onBeforeMount(() => {
             :clearIfNotExact="clearIfNotExact"
             :texts="displayTexts"
             :labelled-by="displayTexts.startDateLabel"
+            legacy-mode
           />
 
           <span class="lx-date-time-range-separator">–</span>
@@ -442,7 +443,7 @@ onBeforeMount(() => {
           <LxDatePicker
             :id="'till-' + id"
             v-model="modelEnd"
-            mode="legacy"
+            mode="date"
             :masks="localeMasks"
             :placeholder="placeholder"
             :disabled="disabled"
@@ -454,7 +455,12 @@ onBeforeMount(() => {
             :clearIfNotExact="clearIfNotExact"
             :texts="displayTexts"
             :labelled-by="displayTexts.endDateLabel"
+            legacy-mode
           />
+        </div>
+
+        <div v-if="invalid && kind === 'legacy'" class="lx-invalidation-message">
+          {{ invalidationMessage }}
         </div>
       </div>
     </template>
