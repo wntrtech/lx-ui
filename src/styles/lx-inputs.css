@@ -4697,6 +4697,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-badge-background);
   border-radius: var(--badge-border-radius);
   border: var(--region-border);
+  cursor: help;
 }
 
 .lx-badge.with-gap {
