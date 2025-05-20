@@ -345,7 +345,7 @@ function triggerContextPersonMenu() {
             :label="items.label"
             :iconSet="items?.iconSet"
             kind="ghost"
-            @click="navToggle"
+            @click="navClick(items?.id)"
           />
           <LxButton
             v-else
