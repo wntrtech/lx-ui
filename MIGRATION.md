@@ -2,19 +2,24 @@
 
 ## 1.8 → 1.9
 
+### LxShell theme
+
+LxShell `theme` prop has been removed. 
+
+It is no longer possible to set the selected theme from code, however the theme selection should work automatically.
+
 ### customHeader slots
 
 Unified slot prop structure: customHeader (in LxAppendableList) and customExpanderHeader (in LxList) slots now receive props as a single object e.g. { item, expanded }, improving consistency and enabling access to the expanded state.
 
-
- If you previously used the `customExpanderHeader` or `customHeader` slot like this:  
- ```js  
- <template #customExpanderHeader="item">  
- ```  
- you now need to update it to:  
- ```js  
- <template #customExpanderHeader="{ item }">  
- ```
+If you previously used the `customExpanderHeader` or `customHeader` slot like this:  
+```js  
+<template #customExpanderHeader="item">  
+```  
+you now need to update it to:  
+```js  
+<template #customExpanderHeader="{ item }">  
+```
 
 ### pnpm update
 
