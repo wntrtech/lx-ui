@@ -589,7 +589,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
     <template v-for="(row, name) in orderedObject" :key="name">
       <LxPlaceholder v-if="componentSelect(row, name) === 'lxPlaceholder'" class="lx-placeholder" />
       <LxRow
-        v-else
+        v-else-if="row?.lx?.displayType !== 'section'"
         :label="
           displaySchema?.properties[name]?.title ? displaySchema?.properties[name]?.title : name
         "
@@ -645,6 +645,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
                   :invalidationMessage="returnErrorMessage(nestedItemName)"
                   :orderedObject="orderedObject?.[name]?.properties?.[itemName]?.properties"
                   :texts="displayTexts"
+                  :parentName="`${name}.${itemName}`"
                   @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
                   @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
                 />
@@ -661,6 +662,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
               :vv="vv"
               :invalidationMessage="returnErrorMessage(name)"
               :orderedObject="orderedObject?.[name]?.properties"
+              :parentName="name"
               :texts="displayTexts"
               @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
               @emit="(a, b, c, d) => componentEmit(a, b, c, d)"

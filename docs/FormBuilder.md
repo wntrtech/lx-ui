@@ -674,7 +674,7 @@ List of added components their types and main props:
 | LxPersonDisplay | 'personDisplay' | 'string', 'array', 'object' | `value` |
 | LxQr | 'qr' | 'string', 'object' | `value` |
 | LxQrScanner | 'qrScanner' | 'object' | - |
-| LxRatings | 'ratings' | 'integer', 'decimal' | - |
+| LxRatings | 'ratings' | 'integer', 'number' | - |
 | LxRichTextDisplay | 'richTextDisplay' | 'string', 'object' | `value` |
 | LxStateDisplay | 'stateDisplay' | 'string', 'object' | `value` |
 | LxSteps | 'steps' | 'string' | - |
@@ -754,7 +754,196 @@ const schema = {
 }
 ```
 
-## Basic Text
+## LxList customItem layouts
+
+There are 2 ways to define LxList customItem layout:
+ - `lx.hasCustomItems === 'default'`
+ - `lx.hasCustomItems === 'nested'`
+
+ These are 7 different display types for List items that can be defined using `lx.displayType` attribute:
+
+| displayType | type | description |
+| -------- | ------- |  ------- | 
+| 'primaryText' | 'string' | Displays value using 'lx-primary' class | 
+| 'secondaryText' | 'string' | Displays value using 'lx-secondary' class | 
+| 'flag' | 'string', 'object' | Displays country flag using LxFlag | 
+| 'stateDisplay' | 'string', 'object' | Displays state using LxStateDisplay | 
+| 'personDisplay' | 'string', 'object'  | Displays person information using LxPersonDisplay | 
+| 'icon' | 'string', 'object' | Displays icon using LxIcon | 
+| `not-defined` | 'string' | Displays value using basic text | 
+
+### hasCustomItems === 'default'
+
+This variant is designed to display a flat object elements. Element attributes are defined in the `items.properties` attribute and special keywords are used to define the layout. 
+
+Using this variant, all list element attributes are placed in an LxStack with `grid` mode. This means that for each attribute it is possible to define in which row and column it will be placed, using the `stackRow` and `stackColumn` keywords.
+ 
+The number of LxStack rows and columns, as well as all other props, can be defined in the `lx.stack` element.
+
+```js
+const schema = {
+  type: 'object',
+  properties: {
+    list: {
+      title: 'Custom item list',
+      type: 'array',
+      lx: {
+        displayType: 'list',
+        listType: '1',
+        hasCustomItems: 'default',
+        stack: {
+          orientation: 'horizontal',
+          verticalAlignment: 'center',
+          mode: 'grid',
+          horizontalConfig: ['*', '*'],
+          verticalConfig: ['*', 'auto'],
+        },
+      },
+      items: {
+        properties: {
+          id: {
+            type: 'string',
+            title: 'ID',
+          },
+          name: {
+            type: 'string',
+            title: 'Name',
+            lx: {
+              displayType: 'primaryText',
+              stackRow: '1',
+              stackColumn: '2',
+            },
+          },
+          country: {
+            type: 'string',
+            title: 'Country',
+            lx: {
+              displayType: 'flag',
+              stackRow: '2',
+              stackColumn: 2,
+            },
+          },
+        },
+      },
+    },
+  },
+}
+
+const model = {
+  list: [
+    {id: '1', name: 'Latvia', country: 'lv'},
+    {id: '2', name: 'Lithuania', country: 'lt'},
+    {id: '3', name: 'Estonia', country: 'ee'},
+  ]
+}
+```
+
+### hasCustomItems === 'nested'
+
+This variant is used to display nested object elements. It allows to put LxStack inside another LxStack, thus allowing more flexible layouts.
+
+Stack element can be defined using `lx.displayType = 'stack'`.
+
+```js
+const schema = {
+  type: 'object',
+  properties: {
+    nestedList: {
+      title: 'Custom item list',
+      type: 'array',
+      lx: {
+        displayType: 'list',
+        listType: '1',
+        hasCustomItems: 'default',
+        stack: {
+          orientation: 'horizontal',
+          verticalAlignment: 'center',
+          mode: 'grid',
+          horizontalConfig: ['*', '*'],
+          verticalConfig: ['*', 'auto'],
+        },
+      },
+      items: {
+        properties: {
+          outerStack: {
+            type: 'object',
+            lx: {
+              displayType: 'stack'
+            },
+            properties: {
+              id: {
+                type: 'string',
+                title: 'ID',
+              },
+              innerStack: {
+                type: 'object',
+                lx: {
+                  displayType: 'stack'
+                },
+                properties: {
+                  name: {
+                    type: 'string',
+                    title: 'Name',
+                    lx: {
+                      displayType: 'primaryText',
+                      stackRow: '1',
+                      stackColumn: '2',
+                    },
+                  },
+                  country: {
+                    type: 'string',
+                    title: 'Country',
+                    lx: {
+                      displayType: 'flag',
+                      stackRow: '2',
+                      stackColumn: 2,
+                    },
+                  },
+                }
+              },
+            }
+          },
+          id: {
+            type: 'string',
+            title: 'ID',
+          },
+          name: {
+            type: 'string',
+            title: 'Name',
+            lx: {
+              displayType: 'primaryText',
+              stackRow: '1',
+              stackColumn: '2',
+            },
+          },
+          country: {
+            type: 'string',
+            title: 'Country',
+            lx: {
+              displayType: 'flag',
+              stackRow: '2',
+              stackColumn: 2,
+            },
+          },
+        },
+      },
+    },
+  },
+}
+
+const model = {
+  nestedList: [
+    { outerStack: {id: '1', innterName: {name: 'Latvia', country: 'lv'}}},
+    { outerStack: { id: '2', innterName: {name: 'Lithuania', country: 'lt'}}},
+    { outerStack: { id: '3', innterName: {name: 'Estonia', country: 'ee'}}},
+  ]
+}
+```
+
+
+## Component examples
+
+### Basic Text
 
 ```js
 {
@@ -765,7 +954,7 @@ const schema = {
 }
 ```
 
-## LxAutoComplete
+### LxAutoComplete
  
 `type='string'` for single selection, or `type='array'` for multiple selection mode
 ```js
@@ -774,7 +963,6 @@ const schema = {
     type: 'string',
     lx: {
       displayType: 'autoComplete'
-
       items:  [{id: 'one', name: 'One'}, {id: 'two', name: 'Two'}],
       idAttribute: 'id',
       nameAttribute: 'name',
@@ -800,9 +988,9 @@ const schema = {
 }
 ```
 
-## LxButton
+### LxButton
 
-### type="string"
+#### type="string"
 schema: 
 ```js
 {
@@ -810,7 +998,6 @@ schema:
     type: 'string',
     lx: {
       displayType: 'button'
-
       id: 'button-id',
       title: 'button title',
       busyTooltip: '',
@@ -844,7 +1031,7 @@ modelValue:
 }
 ```
 
-### type="object"
+#### type="object"
 schema: 
 ```js
 {
@@ -885,7 +1072,7 @@ modelValue:
 }
 ```
 
-## LxCamera
+### LxCamera
 
 schema:
 ```js
@@ -907,7 +1094,7 @@ schema:
 }
 ```
 
-## LxCheckbox
+### LxCheckbox
 
 ```js
 {
@@ -926,7 +1113,7 @@ schema:
 }
 ```
 
-## LxContentSwitcher
+### LxContentSwitcher
 
 ```js
 {
@@ -948,9 +1135,9 @@ schema:
 }
 ```
 
-## LxDataVisualizer
+### LxDataVisualizer
 
-### type='array'
+#### type='array'
 
 schema: 
 ```js
@@ -983,7 +1170,7 @@ modelValue:
 }
 ```
 
-### type='object'
+#### type='object'
 
 schema: 
 ```js
@@ -1018,9 +1205,9 @@ modelValue:
 }
 ```
 
-## LxDropDownMenu
+### LxDropDownMenu
 
-### type="object"
+#### type="object"
 schema: 
 ```js
 {
@@ -1056,7 +1243,7 @@ modelValue:
 }
 ```
 
-## LxFileUplader
+### LxFileUplader
 
 ```js
 {
@@ -1088,7 +1275,7 @@ modelValue:
   }
 }
 ```
-## LxFileViewer 
+### LxFileViewer 
 
 ```js
 {
@@ -1112,9 +1299,9 @@ modelValue:
 }
 ```
 
-## LxFlag
+### LxFlag
 
-### type="string"
+#### type="string"
 
 schema: 
 ```js
@@ -1138,7 +1325,7 @@ modelValue:
 }
 ```
 
-### type="object"
+#### type="object"
 
 schema: 
 ```js
@@ -1160,9 +1347,9 @@ modelValue:
 }
 ```
 
-## LxIcon
+### LxIcon
 
-### type="string"
+#### type="string"
 
 schema: 
 ```js
@@ -1191,7 +1378,7 @@ modelValue:
 }
 ```
 
-### type="object"
+#### type="object"
 
 schema: 
 ```js
@@ -1213,9 +1400,9 @@ modelValue:
 }
 ```
 
-## LxIllustration
+### LxIllustration
 
-### type="string"
+#### type="string"
 
 schema: 
 ```js
@@ -1238,7 +1425,7 @@ modelValue:
 }
 ```
 
-### type="object"
+#### type="object"
 
 schema: 
 ```js
@@ -1259,9 +1446,9 @@ modelValue:
 }
 ```
 
-## LxLink
+### LxLink
 
-### type="string"
+#### type="string"
 
 schema: 
 ```js
@@ -1282,7 +1469,7 @@ modelValue:
 }
 ```
 
-### type="object"
+#### type="object"
 
 schema: 
 ```js
@@ -1303,7 +1490,7 @@ modelValue:
 }
 ```
 
-## LxMap
+### LxMap
 
 schema: 
 ```js
@@ -1331,7 +1518,7 @@ modelValue:
 }
 ```
 
-## LxMarkdownTextArea
+### LxMarkdownTextArea
 
 ```js
 { 
@@ -1358,12 +1545,12 @@ modelValue:
 }
 ```
 
-## LxNumberSlider
+### LxNumberSlider
 
 ```js
 {
   numberSlider: {
-    type: 'number',
+    type: 'integer',
     lx: {
       displayType: 'numberSlider'
       min: 0,
@@ -1377,9 +1564,9 @@ modelValue:
 }
 ```
 
-## LxPersonDisplay
+### LxPersonDisplay
 
-type can be string, object or array
+`type` can be `string`, `object` or `array`
 ```js
 {
   personDisplay: {
@@ -1409,9 +1596,9 @@ type can be string, object or array
 }
 ```
 
-## LxQr 
+### LxQr 
 
-### type="string"
+#### type="string"
 
 schema: 
 ```js
@@ -1434,7 +1621,7 @@ modelValue:
 }
 ```
 
-### type="object"
+#### type="object"
 
 schema: 
 ```js
@@ -1457,7 +1644,7 @@ modelValue:
 }
 ```
 
-## LxQrScanner 
+### LxQrScanner 
 
 ```js
 {
@@ -1476,12 +1663,12 @@ modelValue:
 }
 ```
 
-## LxRatings 
-
+### LxRatings 
+`type` can be `integer` or `number`
 ```js
 {
   ratings: { 
-    type: 'string',
+    type: 'integer',
     lx: {
       displayType: 'ratings'
       mode: 'edit',
@@ -1492,9 +1679,9 @@ modelValue:
 }
 ```
 
-## LxRichTextDisplay
+### LxRichTextDisplay
 
-### type="string"
+#### type="string"
 
 schema: 
 ```js
@@ -1516,7 +1703,7 @@ modelValue:
 }
 ```
 
-### type="object"
+#### type="object"
 
 schema: 
 ```js
@@ -1539,7 +1726,7 @@ modelValue:
 }
 ```
 
-## LxStack 
+### LxStack 
 
 ```js
 {
@@ -1559,9 +1746,9 @@ modelValue:
 }
 ```
 
-## LxStateDisplay
+### LxStateDisplay
 
-### type="string"
+#### type="string"
 
 schema: 
 ```js
@@ -1590,7 +1777,7 @@ modelValue:
 }
 ```
 
-### type="object"
+#### type="object"
 
 schema: 
 ```js
@@ -1621,7 +1808,7 @@ modelValue:
 }
 ```
 
-## LxSteps 
+### LxSteps 
 
 ```js
 {
@@ -1646,7 +1833,7 @@ modelValue:
 }
 ```
 
-## LxVisualPicker 
+### LxVisualPicker 
 
 `type='string'` for single selection, or `type='array'` for multiple selection mode
 
@@ -1665,13 +1852,13 @@ modelValue:
 }
 ```
 
-## LxDayInput 
+### LxDayInput 
 
-`type` can be `number` or `object`
+`type` can be `integer` or `object`
 ```js
 {
   dayInput: { 
-    type: 'number',
+    type: 'integer',
     lx: {
       displayType: 'dayInput'
       disabled: false,
@@ -1683,7 +1870,7 @@ modelValue:
 }
 ```
 
-## LxDrawPad 
+### LxDrawPad 
 
 ```js
 {
@@ -1705,9 +1892,9 @@ modelValue:
 }
 ```
 
-## LxLogoDisplay 
+### LxLogoDisplay 
 
-### type="string"
+#### type="string"
 
 schema: 
 ```js
@@ -1730,7 +1917,7 @@ modelValue:
 }
 ```
 
-### type="object"
+#### type="object"
 
 schema: 
 ```js

@@ -1,21 +1,20 @@
 # LX/UI Migration Guide
 
-## customHeader slots
+## 1.8 → 1.9
+
+### customHeader slots
 
 Unified slot prop structure: customHeader (in LxAppendableList) and customExpanderHeader (in LxList) slots now receive props as a single object e.g. { item, expanded }, improving consistency and enabling access to the expanded state.
 
 
  If you previously used the `customExpanderHeader` or `customHeader` slot like this:  
- ```vue  
+ ```js  
  <template #customExpanderHeader="item">  
  ```  
  you now need to update it to:  
- ```vue  
+ ```js  
  <template #customExpanderHeader="{ item }">  
  ```
-
-
-## 1.8 → 1.9
 
 ### pnpm update
 

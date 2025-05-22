@@ -6,7 +6,7 @@ import { formatValueBool } from '@/utils/formatUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => generateUUID() },
   modelValue: { type: Boolean, default: null },
   size: { type: String, default: 'm' }, // 's' (small) or 'm' (medium)
   disabled: { type: Boolean, default: false },
@@ -33,7 +33,6 @@ const model = computed({
 const textsDefault = { valueYes: 'Jā', valueNo: 'Nē' };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const idValue = ref('');
 const input = ref({});
 
 function checkModelState() {
@@ -78,12 +77,6 @@ const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
 
 onMounted(() => {
-  if (props.id) {
-    idValue.value = props.id;
-  } else {
-    idValue.value = generateUUID();
-  }
-
   checkModelState();
 });
 </script>
@@ -120,7 +113,7 @@ onMounted(() => {
       :data-invalid="invalid ? '' : null"
       :title="tooltipValue"
     >
-      <lx-icon v-show="invalid && !hasSlots" customClass="lx-invalidation-icon" value="invalid" />
+      <LxIcon v-show="invalid && !hasSlots" customClass="lx-invalidation-icon" value="invalid" />
       <!-- it's labelled by the label below, or if that's absent, by aria-label -->
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label-->
       <input
@@ -128,8 +121,8 @@ onMounted(() => {
         type="checkbox"
         class="lx-toggle"
         :class="[{ 'lx-invalid': invalid }]"
-        :id="idValue"
-        :name="idValue"
+        :id="id"
+        :name="id"
         v-model="model"
         :checked="model"
         :aria-checked="model"
@@ -143,7 +136,7 @@ onMounted(() => {
         <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
         <span class="lx-toggle-appearance" @click="toggleValue" role="presentation" />
-        <label class="lx-toggle-text" v-if="size !== 's' && hasSlots" :for="idValue">
+        <label class="lx-toggle-text" v-if="size !== 's' && hasSlots" :for="id">
           <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate"> <slot /> </span>
           <span v-show="model === null">
             <slot name="indeterminate" />

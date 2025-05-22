@@ -65,7 +65,7 @@ export { default as LxToggle } from '@/components/Toggle.vue';
 export { default as LxToolbar } from '@/components/Toolbar.vue';
 export { default as LxToolbarGroup } from '@/components/ToolbarGroup.vue';
 export { default as LxValuePicker } from '@/components/ValuePicker.vue';
-export { default as LxViewLayout } from '@/components/ViewLayout.vue';
+export { default as LxViewBuilder } from '@/components/forms/ViewBuilder.vue';
 export { default as LxVisualPicker } from '@/components/VisualPicker.vue';
 export { default as LxWidget } from '@/components/Widget.vue';
 export { default as LxDayInput } from '@/components/DayInput.vue';

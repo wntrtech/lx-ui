@@ -5,6 +5,10 @@
     width: 100%;
 }
 
+.lx-view-layout > * >.lx-stack{
+    height: auto;
+}
+
 /* orientation */
 
 .lx-stack.lx-stack-orientation-vertical{

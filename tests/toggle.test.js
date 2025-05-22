@@ -21,7 +21,6 @@ describe('LxToggle', () => {
       wrapper = mount(LxToggle);
       const props = wrapper.props();
 
-      expect(props.id).toBe(null);
       expect(props.modelValue).toBe(null);
       expect(props.size).toBe('m');
       expect(props.disabled).toBe(false);

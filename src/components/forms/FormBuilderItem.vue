@@ -45,6 +45,9 @@ import LxDrawPad from '@/components/DrawPad.vue';
 import LxLogoDisplay from '@/components/LogoDisplay.vue';
 import LxAutoComplete from '@/components/AutoComplete.vue';
 
+import LxStack from '@/components/Stack.vue';
+import LxFormBuilderListItem from '@/components/forms/FormBuilderListItem.vue';
+
 const props = defineProps({
   id: { type: String, default: null },
   displaySchema: { type: Object, default: null },
@@ -56,6 +59,7 @@ const props = defineProps({
   vv: { type: Object, default: null },
   invalidationMessage: { type: String, default: null },
   orderedObject: { type: Object, default: () => {} },
+  parentName: { type: String, default: null },
   texts: { type: Object, default: () => {} },
 });
 
@@ -185,7 +189,7 @@ function otherSelect(row) {
   if (row?.lx?.displayType === 'dropDownMenu' && (row?.type === 'string' || row?.type === 'object'))
     return 'dropDownMenu';
   if (row?.lx?.displayType === 'numberSlider' && row?.type === 'integer') return 'numberSlider';
-  if (row?.lx?.displayType === 'ratings' && (row?.type === 'integer' || row?.type === 'decimal'))
+  if (row?.lx?.displayType === 'ratings' && (row?.type === 'integer' || row?.type === 'number'))
     return 'ratings';
   if (row?.type === 'boolean' && row?.lx?.displayType === 'checkbox') return 'checkbox';
   if (
@@ -226,11 +230,23 @@ function componentSelect(row, name) {
 }
 
 function rowActionClicked(action, value, schemaName, index) {
-  emits('rowActionClick', action, value, schemaName, index);
+  emits(
+    'rowActionClick',
+    action,
+    value,
+    props.parentName ? `${props.parentName}.${schemaName}` : schemaName,
+    index
+  );
 }
 
 function componentEmit(emitName, key, value = undefined, additionalParams = undefined) {
-  emits('emit', emitName, key, value, additionalParams);
+  emits(
+    'emit',
+    emitName,
+    props.parentName ? `${props.parentName}.${key}` : key,
+    value,
+    additionalParams
+  );
 }
 
 function enumToObject(value) {
@@ -536,7 +552,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
           :rowSpan="item?.lx?.rowSpan"
           :columnSpan="item?.lx?.columnSpan"
           :action-definitions="item?.lx?.actionDefinitions"
-          @action-click="(a, b, c) => rowActionClicked(b, c, itemName, undefined)"
+          @action-click="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
         >
           <LxTextInput
             v-if="componentSelect(item, itemName) === 'textInputDefault'"
@@ -665,8 +681,8 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
       v-if="componentSelect(row, name) === 'objectButton'"
       :label="texts?.addObject"
       icon="add-item"
-      @click="openObjectModal(id + '-' + name, name)"
       kind="ghost"
+      @click="openObjectModal(id + '-' + name, name)"
     />
     <LxModal :id="id + '-' + name" :ref="(el) => (modalRefs[id + '-' + name] = el)">
       <LxForm
@@ -686,7 +702,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
             :rowSpan="item?.lx?.rowSpan"
             :columnSpan="item?.lx?.columnSpan"
             :action-definitions="item?.lx?.actionDefinitions"
-            @action-click="(a, b, c) => rowActionClicked(b, c, itemName, undefined)"
+            @action-click="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
           >
             <LxTextInput
               v-if="componentSelect(item, itemName) === 'textInputDefault'"
@@ -823,7 +839,88 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
       (val, item) =>
         deleteArrayObject(val, item, name, displaySchema?.properties[name]?.lx?.actionDefinitions)
     "
-  />
+  >
+    <template
+      #customItem="item"
+      v-if="displaySchema?.properties[name]?.lx?.hasCustomItems === 'default'"
+    >
+      <LxStack
+        :orientation="displaySchema?.properties[name]?.lx?.stack?.orientation"
+        :kind="displaySchema?.properties[name]?.lx?.stack?.kind"
+        :mode="displaySchema?.properties[name]?.lx?.stack?.mode || 'grid'"
+        :horizontal-alignment="displaySchema?.properties[name]?.lx?.stack?.horizontalAlignment"
+        :vertical-alignment="displaySchema?.properties[name]?.lx?.stack?.verticalAlignment"
+        :horizontal-config="displaySchema?.properties[name]?.lx?.stack?.horizontalConfig"
+        :vertical-config="displaySchema?.properties[name]?.lx?.stack?.verticalConfig"
+      >
+        <template
+          v-for="(itemValue, itemName) in displaySchema?.properties[name]?.items?.properties"
+          :key="itemName"
+        >
+          <LxFormBuilderListItem
+            :itemValue="itemValue"
+            :itemName="itemName"
+            :item="item"
+            :useStyles="true"
+          />
+        </template>
+      </LxStack>
+    </template>
+    <template
+      #customItem="item"
+      v-else-if="displaySchema?.properties[name]?.lx?.hasCustomItems === 'nested'"
+    >
+      <template
+        v-for="(itemValue, itemName) in displaySchema?.properties[name]?.items?.properties"
+        :key="itemName"
+      >
+        <LxStack
+          v-if="itemValue?.lx?.displayType === 'stack'"
+          :orientation="itemValue?.lx?.orientation"
+          :kind="itemValue?.lx?.kind"
+          :mode="itemValue?.lx?.mode"
+          :horizontal-alignment="itemValue?.lx?.horizontalAlignment"
+          :vertical-alignment="itemValue?.lx?.verticalAlignment"
+          :horizontal-config="itemValue?.lx?.horizontalConfig"
+          :vertical-config="itemValue?.lx?.verticalConfig"
+        >
+          <template
+            v-for="(nestedItemValue, nestedItemName) in itemValue?.properties"
+            :key="nestedItemName"
+          >
+            <LxStack
+              v-if="nestedItemValue?.lx?.displayType === 'stack'"
+              :orientation="nestedItemValue?.lx?.orientation"
+              :kind="nestedItemValue?.lx?.kind"
+              :mode="nestedItemValue?.lx?.mode"
+              :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+              :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+              :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+              :vertical-config="nestedItemValue?.lx?.verticalConfig"
+            >
+              <template
+                v-for="(innerNestedItemValue, innerNestedItemName) in nestedItemValue?.properties"
+                :key="innerNestedItemName"
+              >
+                <LxFormBuilderListItem
+                  :itemValue="innerNestedItemValue"
+                  :itemName="innerNestedItemName"
+                  :item="item?.[itemName]?.[nestedItemName]"
+                />
+              </template>
+            </LxStack>
+            <LxFormBuilderListItem
+              v-else
+              :itemValue="nestedItemValue"
+              :itemName="nestedItemName"
+              :item="item?.[itemName]"
+            />
+          </template>
+        </LxStack>
+        <LxFormBuilderListItem :itemValue="itemValue" :itemName="itemName" :item="item" v-else />
+      </template>
+    </template>
+  </LxList>
   <div v-else-if="componentSelect(row, name) === 'arrayListModal'">
     <LxList
       :items="model[name]"
@@ -871,6 +968,86 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
           @click="addArrayObject(name)"
         />
       </template>
+      <template
+        #customItem="item"
+        v-if="displaySchema?.properties[name]?.lx?.hasCustomItems === 'default'"
+      >
+        <LxStack
+          :orientation="displaySchema?.properties[name]?.lx?.stack?.orientation"
+          :kind="displaySchema?.properties[name]?.lx?.stack?.kind"
+          :mode="displaySchema?.properties[name]?.lx?.stack?.mode || 'grid'"
+          :horizontal-alignment="displaySchema?.properties[name]?.lx?.stack?.horizontalAlignment"
+          :vertical-alignment="displaySchema?.properties[name]?.lx?.stack?.verticalAlignment"
+          :horizontal-config="displaySchema?.properties[name]?.lx?.stack?.horizontalConfig"
+          :vertical-config="displaySchema?.properties[name]?.lx?.stack?.verticalConfig"
+        >
+          <template
+            v-for="(itemValue, itemName) in displaySchema?.properties[name]?.items?.properties"
+            :key="itemName"
+          >
+            <LxFormBuilderListItem
+              :itemValue="itemValue"
+              :itemName="itemName"
+              :item="item"
+              :useStyles="true"
+            />
+          </template>
+        </LxStack>
+      </template>
+      <template
+        #customItem="item"
+        v-else-if="displaySchema?.properties[name]?.lx?.hasCustomItems === 'nested'"
+      >
+        <template
+          v-for="(itemValue, itemName) in displaySchema?.properties[name]?.items?.properties"
+          :key="itemName"
+        >
+          <LxStack
+            v-if="itemValue?.lx?.displayType === 'stack'"
+            :orientation="itemValue?.lx?.orientation"
+            :kind="itemValue?.lx?.kind"
+            :mode="itemValue?.lx?.mode"
+            :horizontal-alignment="itemValue?.lx?.horizontalAlignment"
+            :vertical-alignment="itemValue?.lx?.verticalAlignment"
+            :horizontal-config="itemValue?.lx?.horizontalConfig"
+            :vertical-config="itemValue?.lx?.verticalConfig"
+          >
+            <template
+              v-for="(nestedItemValue, nestedItemName) in itemValue?.properties"
+              :key="nestedItemName"
+            >
+              <LxStack
+                v-if="nestedItemValue?.lx?.displayType === 'stack'"
+                :orientation="nestedItemValue?.lx?.orientation"
+                :kind="nestedItemValue?.lx?.kind"
+                :mode="nestedItemValue?.lx?.mode"
+                :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+                :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+                :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+                :vertical-config="nestedItemValue?.lx?.verticalConfig"
+              >
+                <template
+                  v-for="(innerNestedItemValue, innerNestedItemName) in nestedItemValue?.properties"
+                  :key="innerNestedItemName"
+                >
+                  <LxFormBuilderListItem
+                    :itemValue="innerNestedItemValue"
+                    :itemName="innerNestedItemName"
+                    :item="item?.[itemName]?.[nestedItemName]"
+                  />
+                </template>
+              </LxStack>
+              <LxFormBuilderListItem
+                v-else
+                :itemValue="nestedItemValue"
+                :itemName="nestedItemName"
+                :item="item?.[itemName]"
+              />
+            </template>
+          </LxStack>
+          <LxFormBuilderListItem :itemValue="itemValue" :itemName="itemName" :item="item" v-else />
+        </template>
+      </template>
     </LxList>
     <LxModal
       :ref="(el) => (modalRefs[id + '-' + name] = el)"
@@ -896,7 +1073,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
             :rowSpan="itemValue?.lx?.rowSpan"
             :columnSpan="itemValue?.lx?.columnSpan"
             :action-definitions="itemValue?.lx?.actionDefinitions"
-            @action-click="(a, b, c) => rowActionClicked(b, c, itemName, undefined)"
+            @action-click="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
           >
             <LxTextInput
               v-if="componentSelect(itemValue, itemName) === 'textInputDefault'"
@@ -1012,7 +1189,9 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
                     :required="appendableListRequiredRow(row?.items?.required, appendableItemName)"
                     :inputId="name + '-' + appendableItemName + '-' + index"
                     :action-definitions="appendableItem?.lx?.actionDefinitions"
-                    @action-click="(a, b, c) => rowActionClicked(b, c, appendableItemName, index)"
+                    @action-click="
+                      (a, b, c) => rowActionClicked(b, c, `${name}.${appendableItemName}`, index)
+                    "
                   >
                     <LxTextInput
                       v-if="
@@ -1234,7 +1413,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
             :rowSpan="itemValue?.lx?.rowSpan"
             :columnSpan="itemValue?.lx?.columnSpan"
             :action-definitions="itemValue?.lx?.actionDefinitions"
-            @action-click="(a, b, c) => rowActionClicked(b, c, itemName, undefined)"
+            @action-click="(a, b, c) => rowActionClicked(b, c, `${name}.${itemName}`, undefined)"
           >
             <LxTextInput
               v-if="componentSelect(itemValue, itemName) === 'textInputDefault'"
@@ -1350,7 +1529,9 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
                     :required="appendableListRequiredRow(row?.items?.required, appendableItemName)"
                     :inputId="name + '-' + appendableItemName + '-' + index"
                     :action-definitions="appendableItem?.lx?.actionDefinitions"
-                    @action-click="(a, b, c) => rowActionClicked(b, c, appendableItemName, index)"
+                    @action-click="
+                      (a, b, c) => rowActionClicked(b, c, `${name}.${appendableItemName}`, index)
+                    "
                   >
                     <LxTextInput
                       v-if="
@@ -1505,7 +1686,9 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
           :required="appendableListRequiredRow(row?.items?.required, appendableItemName)"
           :inputId="name + '-' + appendableItemName + '-' + index"
           :action-definitions="appendableItem?.lx?.actionDefinitions"
-          @action-click="(a, b, c) => rowActionClicked(b, c, appendableItemName, index)"
+          @action-click="
+            (a, b, c) => rowActionClicked(b, c, `${name}.${appendableItemName}`, index)
+          "
         >
           <LxTextInput
             v-if="componentSelect(appendableItem, appendableItemName) === 'textInputDefault'"
@@ -1686,8 +1869,8 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
             <span v-else>Nē</span>
           </template>
           <template #indeterminate>
-            <span v-if="row?.items?.lx?.labelIndeterminate"
-              >{{ row?.items?.lx?.labelIndeterminate }}
+            <span v-if="row?.items?.lx?.labelIndeterminate">
+              {{ row?.items?.lx?.labelIndeterminate }}
             </span>
             <span v-else-if="isReadOnly(row?.items)">
               <p class="lx-data">—</p>
@@ -2077,7 +2260,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
         :tabindex="item?.tabindex"
         :customClass="item?.customClass"
         :openInNewTab="item?.openInNewTab"
-        @click="() => componentEmit('click', name, item?.id || item?.label)"
+        @click="() => componentEmit('click', `${name}.${index}`, item?.id || item?.label)"
       />
     </template>
   </LxDropDownMenu>
