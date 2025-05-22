@@ -131,6 +131,7 @@ const getTabIndex = computed(() => {
 
 function navClick(id) {
   emits('navClick', id);
+  emits('nav-toggle', true);
 }
 </script>
 <template>

@@ -65,7 +65,7 @@ const emits = defineEmits([
 ]);
 
 const props = defineProps({
-  mode: { type: String, default: 'default' },
+  mode: { type: String, default: 'default' }, // public, cover, digives, digimaks, latvijalv
   systemNameShort: { type: String, required: true },
   systemName: { type: String, required: true },
   systemSubheader: { type: String, default: null },

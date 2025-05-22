@@ -2072,7 +2072,9 @@ a.lx-button.lx-button-ghost svg {
   .lx-layout-default.lx-collapsed .lx-nav-panel .lx-dropdown-panel .lx-button label {
     display: inherit;
   }
+}
 
+@media (min-width: 801px) and (max-width: 1900px) {
   .lx-layout-default.lx-collapsed .lx-nav-panel:hover {
     width: var(--aside-size);
     box-shadow: var(--shadow-dropdown);

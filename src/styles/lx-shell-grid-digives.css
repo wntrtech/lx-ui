@@ -760,7 +760,7 @@ ul.lx-digives-alert-list {
     display: block;
     position: fixed;
     align-items: center;
-    z-index: 1001;
+    z-index: 8100;
     right: 1rem;
     top: 1.5rem;
   }
