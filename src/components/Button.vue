@@ -90,8 +90,8 @@ const accessibleTitle = computed(() => {
 </script>
 <template>
   <button
-    :id="id"
     v-if="!href"
+    :id="id"
     type="button"
     class="lx-button"
     :class="[
@@ -107,7 +107,6 @@ const accessibleTitle = computed(() => {
       { 'lx-disabled': isDisabled },
       customClass,
     ]"
-    @click="click"
     :title="accessibleTitle"
     :disabled="isDisabled"
     :aria-disabled="isDisabled"
@@ -115,10 +114,13 @@ const accessibleTitle = computed(() => {
     :aria-label="label ? label : null"
     :aria-busy="busy"
     :tabindex="tabindex"
+    @click="click"
+    @keydown.enter.stop.prevent="() => null"
+    @keyup.enter.stop.prevent="click"
   >
     <div class="lx-button-content-wrapper">
       <template v-if="showIcon">
-        <lx-icon
+        <LxIcon
           v-show="!busy"
           :value="icon"
           :icon-set="iconSet"
@@ -128,7 +130,7 @@ const accessibleTitle = computed(() => {
           class="lx-button-icon"
         />
         <div class="lx-loader-container" v-if="busy">
-          <lx-loader :loading="true" size="s" />
+          <LxLoader :loading="true" size="s" />
         </div>
       </template>
       <div v-if="!showIcon"></div>
@@ -181,7 +183,7 @@ const accessibleTitle = computed(() => {
   >
     <div class="lx-button-content-wrapper">
       <template v-if="showIcon">
-        <lx-icon
+        <LxIcon
           v-show="!busy"
           :value="icon"
           :icon-set="iconSet"
@@ -191,7 +193,7 @@ const accessibleTitle = computed(() => {
           class="lx-button-icon"
         />
         <div class="lx-loader-container" v-if="busy">
-          <lx-loader :loading="true" size="s" />
+          <LxLoader :loading="true" size="s" />
         </div>
       </template>
       <div

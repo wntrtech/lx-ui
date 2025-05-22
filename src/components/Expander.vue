@@ -120,9 +120,6 @@ defineExpose({ focus });
       :class="[{ 'lx-head': !$slots.customHeader }, { 'lx-custom-header': $slots.customHeader }]"
       :for="id"
       :title="tooltip"
-      @click="toggleExpander"
-      @keydown.space.prevent="toggleExpander"
-      @keydown.enter.prevent="toggleExpander"
       tabindex="0"
       role="button"
       :aria-labelledby="label ? `${id}-label` : null"
@@ -130,6 +127,9 @@ defineExpose({ focus });
       :aria-expanded="isExpandedRaw"
       :aria-invalid="invalid"
       aria-controls="lx-body"
+      @click="toggleExpander"
+      @keydown.space.prevent="toggleExpander"
+      @keydown.enter.prevent="toggleExpander"
     >
       <template v-if="$slots.customHeader">
         <slot name="customHeader" v-bind="props"> </slot>
