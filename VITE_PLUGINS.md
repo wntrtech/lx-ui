@@ -150,28 +150,4 @@ onMounted(() => {
 });
 ```
 
-In `event.js`:
-
-```js
-import useAuthStore from '@/stores/useAuthStore';
-import useAppStore from '@/stores/useAppStore';
-import { lxFlowUtils, lxNavigationStateUtils } from '@wntr/lx-ui';
-
-export default (router) => {
-  router.beforeEach(async (to, from, next) => {
-    const authStore = useAuthStore();
-    const appStore = useAppStore();
-    await lxFlowUtils.beforeEach(to, from, next, appStore, authStore);
-
-    // Track navigation state for version checking
-    lxNavigationStateUtils.trackNavigationState(to);
-  });
-  router.afterEach(async (to, from) => {
-    const appStore = useAppStore();
-    await lxFlowUtils.afterEach(to, from, appStore);
-
-    // Reset navigation tracking after route change
-    lxNavigationStateUtils.resetNavigationTracking();
-  });
-};
-```
+Since route state tracking and navigation reset are now handled inside flowUtils, make sure to use it if you need route restore functionality.

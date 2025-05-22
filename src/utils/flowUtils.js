@@ -1,4 +1,6 @@
 import { hasScope, hasScopeAtLeast, hasAnyScopeWithNamespace } from '@/utils/permissionUtils';
+import { trackNavigationState, resetNavigationTracking } from '@/utils/navigationState';
+import { isAppVersionChanged } from '@/utils/versionCheckUtils';
 
 const has = (needed, value) => {
   if (!needed) {
@@ -124,6 +126,11 @@ export async function beforeEach(to, from, next, appStore, authStore, successCal
   appStore.$reset();
   appStore.startNavigating();
 
+  // Track navigation state for version checking
+  trackNavigationState(to);
+  // Check for version change on route change
+  await isAppVersionChanged(undefined);
+
   // If allowed to be anonymous:
   const allowAnonymous = to.matched.some((record) => record.meta.anonymous);
   if (allowAnonymous) {
@@ -173,6 +180,7 @@ export async function beforeEach(to, from, next, appStore, authStore, successCal
       name: 'notAuthorized',
     });
   }
+
   // If authorized, but route requires scopes:
   if (isAuthorized && hasScopeInternal) {
     if (typeof successCallbackFn === 'function') {
@@ -182,6 +190,7 @@ export async function beforeEach(to, from, next, appStore, authStore, successCal
     next();
     return;
   }
+
   if (isAuthorized && !hasScopeInternal) {
     next({
       params: { pathMatch: to.path.substring(1) },
@@ -203,6 +212,9 @@ export async function beforeEach(to, from, next, appStore, authStore, successCal
 export async function afterEach(to, from, appStore, viewStore) {
   if (viewStore) viewStore.$reset();
   appStore.stopNavigating();
+
+  // Reset navigation tracking after route change
+  resetNavigationTracking();
 }
 
 // TODO: implement better solution to unfocus (blur) focused element (Current solution is potentially risky)

@@ -15,15 +15,15 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
     );
 
     if (resp.data?.version) {
-      const isVersionChanged = window.config.version !== resp.data.version;
+      const isVersionChanged = window.config.version !== resp.data?.version;
 
       if (isVersionChanged) {
         if (
           sessionStorage.getItem('is_navigating') === 'true' &&
-          sessionStorage.getItem('reload_handled') === 'false'
+          sessionStorage.getItem('version_reload_pending') !== 'true'
         ) {
+          sessionStorage.setItem('version_reload_pending', 'true');
           sessionStorage.setItem('version_update_notification', 'true');
-          sessionStorage.setItem('reload_handled', 'true');
 
           // Perform a hard refresh
           window.location.reload();
@@ -31,7 +31,7 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
           // Default notification text if no text where provided
           const defaultNotifyText = 'Ir pieejama jauna lietotnes versija, lūdzu pārlādējiet lapu!';
           // Show notification for manual refresh if idle or work in progress inside current route
-          notify?.pushWarning(notifyText || defaultNotifyText);
+          notify?.pushWarning(notifyText || defaultNotifyText, null, 0);
           notificationShown = true;
         }
       }
@@ -53,26 +53,6 @@ async function checkVersion(notify, notifyText = undefined, basePath = '/') {
  * // Uses the default notification text and checks `version.json` in the base path `/`
  * lxVersionCheckUtils.isAppVersionChanged(notify, undefined, true, 10000);
  *
- * // In event.js track adn reset navigation state
- * export default (router) => {
- *   router.beforeEach(async (to, from, next) => {
- *     const authStore = useAuthStore();
- *     const appStore = useAppStore();
- *     await lxFlowUtils.beforeEach(to, from, next, appStore, authStore);
- *
- *     // Track navigation state for version checking
- *     lxNavigationStateUtils.trackNavigationState(to);
- *     // Check for version change on route change
-       await lxVersionCheckUtils.isAppVersionChanged(undefined);
- *   });
- *   router.afterEach(async (to, from) => {
- *     const appStore = useAppStore();
- *     await lxFlowUtils.afterEach(to, from, appStore);
- *
- *     // Reset navigation tracking after route change
- *     lxNavigationStateUtils.resetNavigationTracking();
- *   });
- * };
  */
 
 let lastVersionCheckTime = 0;
@@ -83,14 +63,16 @@ export async function isAppVersionChanged(
   useInterval = false,
   intervalTime = 1800000, // 30 minutes
   basePath = '/',
-  throttleTime = 2000 // 2 seconds
+  throttleTime = 1000 // 1 seconds
 ) {
+  const currentEnv = window.config?.environment;
+
+  if (currentEnv && currentEnv.toLowerCase() === 'local') return;
+
   const now = Date.now();
 
   // Skip if called too soon again
-  if (!useInterval && now - lastVersionCheckTime < throttleTime) {
-    return;
-  }
+  if (!useInterval && now - lastVersionCheckTime < throttleTime) return;
 
   lastVersionCheckTime = now;
 
@@ -107,32 +89,30 @@ export async function isAppVersionChanged(
 export function restoreRouteAndNotify(router, notify, notifyText) {
   const savedRoute = sessionStorage.getItem('intended_route');
   const versionUpdateFlag = sessionStorage.getItem('version_update_notification');
-  const reloadHandled = sessionStorage.getItem('reload_handled');
+  const reloadPending = sessionStorage.getItem('version_reload_pending');
 
   const { environment } = useLx().getGlobals();
 
-  if (reloadHandled === 'true') {
-    // Reset the flag after the first load
-    sessionStorage.setItem('reload_handled', 'false'); // Allow future reloads
-  }
-
-  if (versionUpdateFlag && savedRoute) {
+  if (versionUpdateFlag && savedRoute && reloadPending) {
     // Default notification text if no text where provided
     const defaultNotifyText = 'Lapas pārlādē tika veikta, jo ir pieejama jauna lietotnes versija!';
-    notify.pushWarning(notifyText || defaultNotifyText);
+    notify.pushWarning(notifyText || defaultNotifyText, null, 0);
     sessionStorage.removeItem('version_update_notification');
 
     const parsedRoute = JSON.parse(savedRoute);
 
-    // Check if the route exists in the app's route definitions
-    if (router.hasRoute(parsedRoute.name)) {
-      router.replace(parsedRoute).catch((error) => {
-        logError(`Failed to navigate to saved route: ${error}`, environment);
-      });
-      sessionStorage.setItem('reload_handled', 'true');
-    }
+    setTimeout(() => {
+      // Check if the route exists in the app's route definitions
+      if (router.hasRoute(parsedRoute.name)) {
+        router.replace(parsedRoute).catch((error) => {
+          logError(`Failed to navigate to saved route: ${error}`, environment);
+        });
+      }
+    }, 200);
 
-    // Clear the saved route after restoration
+    // Clean up
     sessionStorage.removeItem('intended_route');
+    sessionStorage.removeItem('version_update_notification');
+    sessionStorage.removeItem('version_reload_pending');
   }
 }
