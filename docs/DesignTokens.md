@@ -267,6 +267,7 @@ Customized values for contrast mode:
 | `--button-badge-padding`                           | 0 0.25rem 0 0.25rem                                      |
 | `--button-icon-justify`                            | center                                                   |
 | `--button-icon-margin`                             | 0 -0.4rem                                                |
+| `--button-loader-margin`                           | 0 -0.25rem                                               |
 | `--button-set-gap`                                 | 0.5rem                                                   |
 | `--button-dropdown-align`                          | center                                                   |
 | `--button-dropdown-border`                         | 2px solid var(--color-button-dropdown-background)        |

@@ -1931,6 +1931,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button .lx-loader-container .lx-loader {
   margin: 0;
+  margin: var(--button-loader-margin);
 }
 
 .lx .lx-button .lx-loader-container .lx-loader svg {
