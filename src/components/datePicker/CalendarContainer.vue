@@ -2827,6 +2827,7 @@ watch(
                                   date.getFullYear() === selectedEndDate.getFullYear(),
                               },
                             ]"
+                            role="cell"
                           >
                             <LxInfoWrapper
                               :disabled="
@@ -2876,7 +2877,14 @@ watch(
                                       isHoveringRange(date) || isSelectedDateRange(date),
                                   },
                                 ]"
-                                role="cell"
+                                :aria-current="
+                                  date.getDate() === todayDate.getDate() &&
+                                  date.getMonth() === todayDate.getMonth() &&
+                                  date.getFullYear() === todayDate.getFullYear()
+                                    ? 'date'
+                                    : null
+                                "
+                                role="button"
                                 :tabindex="
                                   getDayTabIndex(
                                     date,

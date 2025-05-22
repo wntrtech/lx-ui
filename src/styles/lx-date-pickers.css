@@ -632,6 +632,26 @@
   font-weight: var(--font-weight-extra-bold);
 }
 
+.lx-datepicker-default .lx-calendar-day.lx-today::before {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 0.185rem;
+  height: 0.185rem;
+  background-color: var(--color-interactive-background);
+  bottom: 0.25rem;
+}
+
+.lx-datepicker-default .lx-calendar-day.lx-selected-day.lx-today::before,
+.lx-datepicker-default .lx-calendar-day.lx-selected-start-day.lx-today::before,
+.lx-datepicker-default .lx-calendar-day.lx-selected-end-day.lx-today::before {
+  background-color: var(--color-interactive-hover-foreground);
+}
+
+.lx-datepicker-default .lx-calendar-day.hovering-range.lx-today:not(.lx-selected-start-day):not(.lx-selected-end-day)::before {
+  background-color: #000;
+}
+
 .lx-datepicker-default .lx-selected-day,
 .lx-datepicker-default .lx-selected-start-day,
 .lx-datepicker-default .lx-selected-end-day,
