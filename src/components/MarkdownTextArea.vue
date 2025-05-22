@@ -1,24 +1,22 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, inject } from 'vue';
+import { useElementSize } from '@vueuse/core';
+
 import { Editor, EditorContent } from '@tiptap/vue-3';
 import { Heading } from '@tiptap/extension-heading';
 import StarterKit from '@tiptap/starter-kit';
 import Placeholder from '@tiptap/extension-placeholder';
 import Link from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
-
 import CharacterCount from '@tiptap/extension-character-count';
-import PlaceholderData from '@/components/markdownExtensions/PlaceholderData';
-
-import ImageComponent from '@/components/markdownExtensions/Image';
-import HiddenIdNode from '@/components/markdownExtensions/Node';
 import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Markdown } from 'tiptap-markdown';
-import { isUrl, generateUUID } from '@/utils/stringUtils';
-import { checkArrayObjectProperty } from '@/utils/arrayUtils';
-import { useElementSize } from '@vueuse/core';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { TextAlign } from '@tiptap/extension-text-align';
+
+import PlaceholderData from '@/components/markdownExtensions/PlaceholderData';
+import ImageComponent from '@/components/markdownExtensions/Image';
+import HiddenIdNode from '@/components/markdownExtensions/Node';
 
 import LxButton from '@/components/Button.vue';
 import LxModal from '@/components/Modal.vue';
@@ -26,7 +24,6 @@ import LxIcon from '@/components/Icon.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxFileUploader from '@/components/fileUploader/FileUploader.vue';
-import { formatValue, formatUrl } from '@/utils/formatUtils';
 import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
@@ -34,6 +31,11 @@ import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxRichTextDisplay from '@/components/RichTextDisplay.vue';
 import LxLoader from '@/components/Loader.vue';
+
+import { isUrl, generateUUID } from '@/utils/stringUtils';
+import { checkArrayObjectProperty } from '@/utils/arrayUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
+import { formatValue, formatUrl } from '@/utils/formatUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -52,6 +54,7 @@ const props = defineProps({
   showImagePicker: { type: Boolean, default: false },
   showUnderlineToggle: { type: Boolean, default: false },
   showHeadingPicker: { type: Boolean, default: false },
+  showAlignment: { type: Boolean, default: false },
   imageMaxSize: { type: Number, default: 3000000 }, // 3MB
   dictionary: { type: Object, default: null },
   labelId: { type: String, default: null },
@@ -94,6 +97,9 @@ const textsDefault = {
   inputTypeUrl: 'Saite',
   inputTypeFile: 'Datne',
   invalidLinkMessage: 'Saite tika ievadīta nekorektā formā!',
+  alignLeft: 'Izlīdzināt pa kreisi',
+  alignRight: 'Izlīdzināt pa labi',
+  alignCenter: 'Centrēt',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -101,6 +107,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const loading = ref(true);
 
 let headingCounter = 0;
+
 const CustomHeadingWithAutoId = Heading.extend({
   levels: [1, 2, 3, 4, 5, 6],
 
@@ -134,6 +141,7 @@ const CustomHeadingWithAutoId = Heading.extend({
     };
   },
 });
+
 const editor = ref(null);
 const text = ref(null);
 const maxlengthExceeded = ref(false);
@@ -152,6 +160,25 @@ const markdownImageModal = ref();
 
 const isNotLink = ref(false);
 const isNotImage = ref(false);
+
+const isModalOpen = ref(false);
+
+const uploadedImage = ref();
+const fileUploader = ref();
+const allowedFileExtensions = ref(['image/*']);
+const markdownWrapper = ref();
+const imageModalInputType = ref('url');
+
+const rowId = inject('rowId', ref(null));
+
+const model = computed({
+  get() {
+    return props.modelValue;
+  },
+  set(value) {
+    emits('update:modelValue', value);
+  },
+});
 
 const actionDefinitions = computed(() => [
   {
@@ -186,27 +213,81 @@ const actionDefinitions = computed(() => [
   },
 ]);
 
-const model = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emits('update:modelValue', value);
-  },
-});
-
-watch(inputImage, (n) => {
-  const fn = formatUrl(n);
-  imageLink.value = isUrl(fn) ? fn : null;
-});
-
 const isDisabled = computed(() => props.disabled);
 
 const characterCount = computed(
   () => editor.value && editor.value.storage.characterCount.characters()
 );
 
-const isModalOpen = ref(false);
+const isSelectionEmpty = computed(() => editor.value?.state?.selection?.empty);
+
+const imageInputTypes = computed(() => [
+  { id: 'url', name: displayTexts.value.inputTypeUrl },
+  { id: 'fileUploader', name: displayTexts.value.inputTypeFile },
+]);
+
+const labelledBy = computed(() => props.labelId || rowId.value);
+
+const formatActionsButtons = computed(() => {
+  const baseActions = [
+    { name: 'bold', icon: 'text-bold', command: 'toggleBold' },
+    { name: 'italic', icon: 'text-italic', command: 'toggleItalic' },
+    { name: 'underline', icon: 'text-underline', command: 'toggleUnderline' },
+    { name: 'strike', icon: 'text-strikethrough', command: 'toggleStrike' },
+  ];
+
+  return baseActions.filter((action) => {
+    if (action.name === 'underline' && !props.showUnderlineToggle) {
+      return false;
+    }
+    return true;
+  });
+});
+
+const listActionsButtons = computed(() => [
+  {
+    name: 'bulleted',
+    icon: 'list-bulleted',
+    command: 'toggleBulletList',
+    isActiveCheck: 'bulletList',
+  },
+  {
+    name: 'numbered',
+    icon: 'list-numbered',
+    command: 'toggleOrderedList',
+    isActiveCheck: 'orderedList',
+  },
+]);
+
+const textAlignmentButtons = computed(() => [
+  {
+    name: 'alignLeft',
+    icon: 'align-left',
+    alignment: 'left',
+  },
+  {
+    name: 'alignCenter',
+    icon: 'align-center',
+    alignment: 'center',
+  },
+  {
+    name: 'alignRight',
+    icon: 'align-right',
+    alignment: 'right',
+  },
+]);
+
+const colorPickerColors = [
+  { name: 'black', var: 'var(--color-data)' },
+  { name: 'red', var: 'var(--color-red)' },
+  { name: 'orange', var: 'var(--color-orange)' },
+  { name: 'yellow', var: 'var(--color-yellow)' },
+  { name: 'green', var: 'var(--color-green)' },
+  { name: 'teal', var: 'var(--color-teal)' },
+  { name: 'blue', var: 'var(--color-blue)' },
+  { name: 'purple', var: 'var(--color-purple)' },
+  { name: 'label', var: 'var(--color-label)' },
+];
 
 function focus() {
   if (!editor.value || isModalOpen.value) {
@@ -215,23 +296,7 @@ function focus() {
   editor.value.commands.focus();
 }
 
-watch(model, (newText) => {
-  const textInEditor = editor.value.storage.markdown.getMarkdown();
-  if (newText !== textInEditor) {
-    editor.value.commands.setContent(newText);
-  }
-  loading.value = false;
-  if (props.maxlength) {
-    const remainingCount = props.maxlength - (characterCount.value || 0);
-    maxlengthExceeded.value = remainingCount < 0;
-  }
-});
-
-watch(isDisabled, (disabled) => {
-  editor.value.setEditable(!disabled);
-});
-
-function concateEscapedWords(words) {
+function concatEscapedWords(words) {
   const escapedWords = words.map((word) => word.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&'));
   const joinedWords = escapedWords.join('|');
   return joinedWords;
@@ -260,11 +325,17 @@ function createEditorExtensions() {
     CharacterCount.configure({
       limit: props.maxlength,
     }),
+
+    TextAlign.configure({
+      defaultAlignment: 'left',
+      types: ['heading', 'paragraph'],
+      alignments: ['left', 'center', 'right'],
+    }),
   ];
 
   if (checkArrayObjectProperty(props.dictionary, 'value')) {
     const words = props.dictionary.map((item) => item.value);
-    const joinedWords = concateEscapedWords(words);
+    const joinedWords = concatEscapedWords(words);
 
     ext.push(
       PlaceholderData.configure({
@@ -289,10 +360,6 @@ function createEditorExtensions() {
   });
 }
 
-const uploadedImage = ref();
-const fileUploader = ref();
-const allowedFileExtensions = ref(['image/*']);
-
 function clearModalVariables() {
   inputImage.value = null;
   inputAlt.value = null;
@@ -309,7 +376,6 @@ function openImage() {
   markdownImageModal.value.open();
   isModalOpen.value = true;
 }
-const markdownWrapper = ref();
 
 function getImageSource() {
   let src = null;
@@ -366,9 +432,11 @@ function repleaceImageLoader(src, id, alt, title) {
     })
     .run();
 }
+
 function removeImageLoader(id) {
   editor.value.chain().focus().removeNode(id).run();
 }
+
 function removeAllImageLoaders() {
   editor.value.chain().focus().removeAllNodes().run();
 }
@@ -376,8 +444,6 @@ function removeAllImageLoaders() {
 function formatSize(size) {
   return Number(size?.replace('px', ''));
 }
-
-defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
 
 function updateAltText(alt, isBase64) {
   return alt === '' || (isBase64 && inputAlt.value) ? inputAlt.value : alt;
@@ -470,20 +536,6 @@ function updateEditorExtensions() {
   createEditorExtensions();
 }
 
-watch(
-  [
-    () => [props.dictionary, props.maxlength],
-    () => props.imageAllowBase64,
-    () => props.imageAllowInline,
-    () => props.imageResizable,
-  ],
-  () => {
-    updateEditorExtensions();
-  }
-);
-
-const isSelectionEmpty = computed(() => editor.value?.state?.selection?.empty);
-
 function setLink() {
   isNotLink.value = false;
   const url = inputLink;
@@ -505,6 +557,7 @@ function setLink() {
   editor.value.chain().focus().extendMarkRange('link').setLink({ href: formatedUrl }).run();
   inputLink.value = '';
 }
+
 function checkIfOpen() {
   if (!isModalOpen.value) {
     isModalOpen.value = !isModalOpen.value;
@@ -516,6 +569,7 @@ function checkIfOpen() {
     editUrlModal.value.close();
   }
 }
+
 function onClosing() {
   isModalOpen.value = false;
 }
@@ -559,15 +613,38 @@ function onError(id, error) {
   emitNotification(error);
 }
 
-const imageModalInputType = ref('url');
+watch(inputImage, (n) => {
+  const fn = formatUrl(n);
+  imageLink.value = isUrl(fn) ? fn : null;
+});
 
-const imageInputTypes = computed(() => [
-  { id: 'url', name: displayTexts.value.inputTypeUrl },
-  { id: 'fileUploader', name: displayTexts.value.inputTypeFile },
-]);
+watch(model, (newText) => {
+  const textInEditor = editor.value.storage.markdown.getMarkdown();
+  if (newText !== textInEditor) {
+    editor.value.commands.setContent(newText);
+  }
+  loading.value = false;
+  if (props.maxlength) {
+    const remainingCount = props.maxlength - (characterCount.value || 0);
+    maxlengthExceeded.value = remainingCount < 0;
+  }
+});
 
-const rowId = inject('rowId', ref(null));
-const labelledBy = computed(() => props.labelId || rowId.value);
+watch(isDisabled, (disabled) => {
+  editor.value.setEditable(!disabled);
+});
+
+watch(
+  [
+    () => [props.dictionary, props.maxlength],
+    () => props.imageAllowBase64,
+    () => props.imageAllowInline,
+    () => props.imageResizable,
+  ],
+  () => {
+    updateEditorExtensions();
+  }
+);
 
 onMounted(() => {
   createEditorExtensions();
@@ -576,6 +653,8 @@ onMounted(() => {
 onBeforeUnmount(() => {
   editor.value.destroy();
 });
+
+defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
 </script>
 
 <template>
@@ -583,10 +662,10 @@ onBeforeUnmount(() => {
     <div
       v-if="!readOnly"
       class="lx-markdown-text-area-wrapper"
-      @click="focus()"
-      @keydown="focus()"
       :data-disabled="isDisabled ? '' : null"
       :data-invalid="invalid ? '' : null"
+      @click="focus()"
+      @keydown="focus()"
     >
       <LxToolbar v-if="editor">
         <template #leftArea>
@@ -596,56 +675,30 @@ onBeforeUnmount(() => {
               kind="ghost"
               variant="icon-only"
               :label="displayTexts.undo"
-              @click="editor.chain().focus().undo().run()"
               :disabled="!editor.can().undo() || isDisabled"
+              @click="editor.chain().focus().undo().run()"
             />
             <LxButton
               icon="redo"
               kind="ghost"
               variant="icon-only"
               :label="displayTexts.redo"
-              @click="editor.chain().focus().redo().run()"
               :disabled="!editor.can().redo() || isDisabled"
+              @click="editor.chain().focus().redo().run()"
             />
           </LxToolbarGroup>
 
           <LxToolbarGroup class="left-group">
             <LxButton
-              icon="text-bold"
+              v-for="button in formatActionsButtons"
+              :key="button.name"
+              :icon="button.icon"
               kind="ghost"
               variant="icon-only"
-              :label="displayTexts.bold"
-              @click="editor.chain().focus().toggleBold().run()"
+              :label="displayTexts[button.name]"
               :disabled="isSelectionEmpty || isDisabled"
-              :active="editor.isActive('bold')"
-            />
-            <LxButton
-              icon="text-italic"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.italic"
-              @click="editor.chain().focus().toggleItalic().run()"
-              :disabled="isSelectionEmpty || isDisabled"
-              :active="editor.isActive('italic')"
-            />
-            <LxButton
-              v-if="showUnderlineToggle"
-              icon="text-underline"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.underline"
-              @click="editor.chain().focus().toggleUnderline().run()"
-              :disabled="isSelectionEmpty || isDisabled"
-              :active="editor.isActive('underline')"
-            />
-            <LxButton
-              icon="text-strikethrough"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.strikethrough"
-              @click="editor.chain().focus().toggleStrike().run()"
-              :disabled="isSelectionEmpty || isDisabled"
-              :active="editor.isActive('strike')"
+              :active="editor.isActive(button.name)"
+              @click="editor.chain().focus()[button.command]().run()"
             />
 
             <LxDropDownMenu v-if="showColorPicker">
@@ -660,133 +713,18 @@ onBeforeUnmount(() => {
               <template #panel>
                 <ul class="lx-color-list">
                   <li
-                    class="lx-color-item black"
+                    v-for="color in colorPickerColors"
+                    :key="color.name"
                     :class="[
-                      {
-                        'lx-selected': editor.isActive('textStyle', {
-                          color: 'var(--color-data)',
-                        }),
-                      },
+                      'lx-color-item',
+                      color.name,
+                      { 'lx-selected': editor.isActive('textStyle', { color: color.var }) },
                     ]"
                   >
                     <div
-                      @click="editor.chain().focus().setColor('var(--color-data)').run()"
-                      @keydown.enter="editor.chain().focus().setColor('var(--color-data)').run()"
-                    ></div>
-                  </li>
-                  <li
-                    class="lx-color-item red"
-                    :class="[
-                      {
-                        'lx-selected': editor.isActive('textStyle', { color: 'var(--color-red)' }),
-                      },
-                    ]"
-                  >
-                    <div
-                      @click="editor.chain().focus().setColor('var(--color-red)').run()"
-                      @keydown.enter="editor.chain().focus().setColor('var(--color-red)').run()"
-                    ></div>
-                  </li>
-                  <li
-                    class="lx-color-item orange"
-                    :class="[
-                      {
-                        'lx-selected': editor.isActive('textStyle', {
-                          color: 'var(--color-orange)',
-                        }),
-                      },
-                    ]"
-                  >
-                    <div
-                      @click="editor.chain().focus().setColor('var(--color-orange)').run()"
-                      @keydown.enter="editor.chain().focus().setColor('var(--color-orange)').run()"
-                    ></div>
-                  </li>
-                  <li
-                    class="lx-color-item yellow"
-                    :class="[
-                      {
-                        'lx-selected': editor.isActive('textStyle', {
-                          color: 'var(--color-yellow)',
-                        }),
-                      },
-                    ]"
-                  >
-                    <div
-                      @click="editor.chain().focus().setColor('var(--color-yellow)').run()"
-                      @keydown.enter="editor.chain().focus().setColor('var(--color-yellow)').run()"
-                    ></div>
-                  </li>
-                  <li
-                    class="lx-color-item green"
-                    :class="[
-                      {
-                        'lx-selected': editor.isActive('textStyle', {
-                          color: 'var(--color-green)',
-                        }),
-                      },
-                    ]"
-                  >
-                    <div
-                      @click="editor.chain().focus().setColor('var(--color-green)').run()"
-                      @keydown.enter="editor.chain().focus().setColor('var(--color-green)').run()"
-                    ></div>
-                  </li>
-                  <li
-                    class="lx-color-item teal"
-                    :class="[
-                      {
-                        'lx-selected': editor.isActive('textStyle', { color: 'var(--color-teal)' }),
-                      },
-                    ]"
-                  >
-                    <div
-                      @click="editor.chain().focus().setColor('var(--color-teal)').run()"
-                      @keydown.enter="editor.chain().focus().setColor('var(--color-teal)').run()"
-                    ></div>
-                  </li>
-                  <li
-                    class="lx-color-item blue"
-                    :class="[
-                      {
-                        'lx-selected': editor.isActive('textStyle', { color: 'var(--color-blue)' }),
-                      },
-                    ]"
-                  >
-                    <div
-                      @click="editor.chain().focus().setColor('var(--color-blue)').run()"
-                      @keydown.enter="editor.chain().focus().setColor('var(--color-blue)').run()"
-                    ></div>
-                  </li>
-                  <li
-                    class="lx-color-item purple"
-                    :class="[
-                      {
-                        'lx-selected': editor.isActive('textStyle', {
-                          color: 'var(--color-purple)',
-                        }),
-                      },
-                    ]"
-                  >
-                    <div
-                      @click="editor.chain().focus().setColor('var(--color-purple)').run()"
-                      @keydown.enter="editor.chain().focus().setColor('var(--color-purple)').run()"
-                    ></div>
-                  </li>
-                  <li
-                    class="lx-color-item label"
-                    :class="[
-                      {
-                        'lx-selected': editor.isActive('textStyle', {
-                          color: 'var(--color-label)',
-                        }),
-                      },
-                    ]"
-                  >
-                    <div
-                      @click="editor.chain().focus().setColor('var(--color-label)').run()"
-                      @keydown.enter="editor.chain().focus().setColor('var(--color-label)').run()"
-                    ></div>
+                      @click="editor.chain().focus().setColor(color.var).run()"
+                      @keydown.enter="editor.chain().focus().setColor(color.var).run()"
+                    />
                   </li>
                 </ul>
               </template>
@@ -825,23 +763,30 @@ onBeforeUnmount(() => {
             </LxDropDownMenu>
 
             <LxButton
-              icon="list-bulleted"
+              v-for="button in listActionsButtons"
+              :key="button.name"
+              :icon="button.icon"
               kind="ghost"
               variant="icon-only"
-              :label="displayTexts.bulleted"
-              @click="editor.chain().focus().toggleBulletList().run()"
+              :label="displayTexts[button.name]"
               :disabled="isDisabled"
-              :active="editor.isActive('bulletList')"
+              :active="editor.isActive(button.isActiveCheck)"
+              @click="editor.chain().focus()[button.command]().run()"
             />
-            <LxButton
-              icon="list-numbered"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.numbered"
-              @click="editor.chain().focus().toggleOrderedList().run()"
-              :disabled="isDisabled"
-              :active="editor.isActive('orderedList')"
-            />
+
+            <template v-if="showAlignment">
+              <LxButton
+                v-for="button in textAlignmentButtons"
+                :key="button.name"
+                :icon="button.icon"
+                :label="displayTexts[button.name]"
+                :disabled="isDisabled"
+                :active="editor.isActive({ textAlign: button.alignment })"
+                kind="ghost"
+                variant="icon-only"
+                @click="editor.chain().focus().setTextAlign(button.alignment).run()"
+              />
+            </template>
           </LxToolbarGroup>
 
           <LxToolbarGroup v-if="props.showLinkEditor || props.showImagePicker" class="left-group">
@@ -851,9 +796,9 @@ onBeforeUnmount(() => {
               kind="ghost"
               variant="icon-only"
               :label="displayTexts.link"
-              @click="checkIfOpen()"
               :disabled="isSelectionEmpty || isDisabled"
               :active="editor.isActive('link')"
+              @click="checkIfOpen()"
             />
             <LxModal
               ref="editUrlModal"
@@ -862,19 +807,19 @@ onBeforeUnmount(() => {
               kind="native"
               :button-secondary-visible="true"
               :button-primary-visible="true"
-              @secondary-action="checkIfOpen()"
-              @primary-action="setLink()"
-              @closed="onClosing"
               :button-secondary-label="displayTexts.close"
               :button-primary-label="displayTexts.save"
               :button-secondary-is-cancel="false"
+              @secondary-action="checkIfOpen()"
+              @primary-action="setLink()"
+              @closed="onClosing"
             >
               <p class="lx-description">{{ displayTexts.modalDescription }}</p>
               <LxTextInput
                 ref="inputLinkField"
                 v-model="inputLink"
                 :invalid="isNotLink"
-                :invalidation-message="InvalidMessage"
+                :invalidation-message="displayTexts.invalidLinkMessage"
               >
               </LxTextInput>
             </LxModal>
