@@ -1,6 +1,11 @@
 <script setup>
 import { computed, onMounted, ref, watch, nextTick } from 'vue';
-import { useWindowSize, useElementBounding, useElementSize } from '@vueuse/core';
+import {
+  useWindowSize,
+  useElementBounding,
+  useElementSize,
+  useMutationObserver,
+} from '@vueuse/core';
 
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
@@ -980,6 +985,20 @@ watch([width, height], () => {
   });
 });
 
+const dataGridWrapperRef = ref(null);
+
+useMutationObserver(
+  dataGridWrapperRef,
+  (mutations) => {
+    const mutation = mutations[0];
+
+    if (mutation && mutation.attributeName === 'style' && mutation.target.style.display === '') {
+      syncColumnWidths();
+    }
+  },
+  { attributes: true, childList: false }
+);
+
 watch(
   () => props.items,
   () => {
@@ -1006,6 +1025,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
     class="lx-data-grid-wrapper"
     :style="`${topOutOfBounds}`"
     :class="[{ 'lx-grid-sticky': stickyHeader }]"
+    ref="dataGridWrapperRef"
   >
     <header v-if="showHeader">
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
