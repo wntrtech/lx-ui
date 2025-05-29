@@ -38,9 +38,7 @@ const spacerStyle = computed(() => {
 
 const parseDelay = (v) => Number(v) || 0;
 
-const handleMouseEnter = () => {
-  if (!props.hover || props.disabled) return;
-
+const handleOpen = () => {
   if (closeTimeout) {
     clearTimeout(closeTimeout);
     closeTimeout = null;
@@ -50,6 +48,23 @@ const handleMouseEnter = () => {
   openTimeout = setTimeout(() => {
     showPopper.value = true;
   }, delay);
+};
+
+const handleClose = () => {
+  if (openTimeout) {
+    clearTimeout(openTimeout);
+    openTimeout = null;
+  }
+
+  const delay = parseDelay(props.closeDelay);
+  closeTimeout = setTimeout(() => {
+    showPopper.value = false;
+  }, delay);
+};
+
+const handleMouseEnter = () => {
+  if (!props.hover || props.disabled) return;
+  handleOpen();
 };
 
 const handleMouseLeave = (event) => {
@@ -66,27 +81,13 @@ const handleMouseLeave = (event) => {
     !triggerEl.contains(relatedTarget) &&
     !popperEl.contains(relatedTarget)
   ) {
-    if (openTimeout) {
-      clearTimeout(openTimeout);
-      openTimeout = null;
-    }
-
-    const delay = parseDelay(props.closeDelay);
-    closeTimeout = setTimeout(() => {
-      showPopper.value = false;
-    }, delay);
+    handleClose();
   }
 };
 
 const handleFocusIn = () => {
   if (props.disabled) return;
   showPopper.value = true;
-};
-
-const handleClose = () => {
-  if (openTimeout) clearTimeout(openTimeout);
-  if (closeTimeout) clearTimeout(closeTimeout);
-  showPopper.value = false;
 };
 
 const handleGlobalKeydown = (e) => {
@@ -112,6 +113,8 @@ onBeforeUnmount(() => {
   if (closeTimeout) clearTimeout(closeTimeout);
   window.removeEventListener('keydown', handleGlobalKeydown);
 });
+
+defineExpose({ handleOpen, handleClose, showPopper });
 </script>
 <template>
   <div class="lx-info-wrapper" ref="popperRef">
@@ -137,7 +140,7 @@ onBeforeUnmount(() => {
       <div
         ref="triggerRef"
         class="lx-info-wrapper-content"
-        :tabindex="$slots.panel && focusable ? '0' : '-1'"
+        :tabindex="$slots.panel && focusable && !disabled ? '0' : '-1'"
         @focusin="handleFocusIn"
         @focusout="handleMouseLeave"
         @mouseenter="handleMouseEnter"

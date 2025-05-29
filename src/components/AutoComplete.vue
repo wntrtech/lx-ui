@@ -88,6 +88,8 @@ const panelWidth = ref();
 const isInputFocused = ref(false);
 const inputReadonly = ref(false);
 
+const infoWrapperRef = ref()
+
 const globalEnvironment = useLx().getGlobals()?.environment;
 
 function formatFinalQuery(q) {
@@ -359,6 +361,9 @@ function openMenu() {
 const highlightedItemId = ref(null);
 
 function closeOnClickOutside() {
+  if (infoWrapperRef.value?.showPopper) {
+    infoWrapperRef.value.handleClose();
+  }
   if (menuOpen.value) {
     menuOpen.value = false;
   }
@@ -1007,7 +1012,9 @@ onMounted(() => {
 
     <template v-else>
       <LxInfoWrapper
+        ref="infoWrapperRef"
         :disabled="
+          disabled ||
           selectingKind === 'single' ||
           (selectingKind === 'multiple' && (!model || !model?.length || menuOpen))
         "
