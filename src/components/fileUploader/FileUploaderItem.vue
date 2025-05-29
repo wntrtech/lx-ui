@@ -100,6 +100,9 @@ const additionalInfoTitle = computed(() => {
     <div class="lx-file-main-part">
       <div
         class="lx-list-item"
+        :tabindex="
+          props.hasDownloadButton && !props.disabled && !props.loading && !props.busy ? 0 : -1
+        "
         :class="{
           'lx-list-item-interactive':
             props.hasDownloadButton && !props.disabled && !props.loading && !props.busy,
@@ -243,7 +246,7 @@ const additionalInfoTitle = computed(() => {
   </div>
 
   <div v-if="props.mode === 'compact'" class="compact-wrapper">
-    <LxInfoWrapper :disabled="!props.imagePreview">
+    <LxInfoWrapper :disabled="!props.imagePreview" :focusable="false">
       <div
         class="lx-file-wrapper"
         :class="{
@@ -256,6 +259,9 @@ const additionalInfoTitle = computed(() => {
           <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview"></div>
           <div
             v-else
+            :tabindex="
+              props.hasDownloadButton && !props.disabled && !props.loading && !props.busy ? 0 : -1
+            "
             class="lx-list-item"
             :class="{
               'lx-list-item-interactive':
