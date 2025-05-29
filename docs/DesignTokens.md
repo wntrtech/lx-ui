@@ -477,6 +477,7 @@ Customized values for contrast mode:
 | `--button-modal-set-padding`                       | 0                                                        |
 | `--button-primary-align`                           | center                                                   |
 | `--button-primary-badge-inset`                     | -0.66rem -0.66rem auto auto                              |
+| `--button-primary-empty-badge-inset`               | -0.56rem -0.56rem auto auto                              |
 | `--button-primary-border`                          | 2px solid var(--color-interactive-background)            |
 | `--button-primary-border-radius`                   | `--radius-default`                                       |
 | `--button-primary-font-size`                       | inherit                                                  |

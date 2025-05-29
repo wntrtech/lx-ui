@@ -1838,8 +1838,18 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-button.lx-button-ghost:not(#userMenuButton) .lx-badge.lx-badge-empty {
-  top: 0;
+  top: 0;		  
   right: 0;
+}
+
+.lx .lx-region .lx-button:not(#userMenuButton) .lx-badge {
+  border: 2px solid var(--color-region);
+}
+
+.lx-button:not(#userMenuButton) .lx-badge.lx-badge-empty {	
+  min-width: 1rem;
+  min-height: 1rem;
+  inset: var(--button-primary-empty-badge-inset);
 }
 
 /*** Main header styles ***/
