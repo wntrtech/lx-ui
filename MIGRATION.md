@@ -2,6 +2,10 @@
 
 ## 1.8 → 1.9
 
+### removed slots
+
+The components `LxAutoComplete`, `LxButton`, and `LxDropDown` no longer have a default slot.
+
 ### LxShell theme
 
 LxShell `theme` prop has been removed. 

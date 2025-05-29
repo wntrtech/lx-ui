@@ -1035,7 +1035,7 @@ onMounted(() => {
             :show="menuOpen"
             role="listbox"
           >
-          <slot>
+
             <div class="lx-autocomplete-input-icon-container">
               <div
                 ref="refAutocomplete"
@@ -1212,7 +1212,7 @@ onMounted(() => {
                 </div>
               </div>
             </div>
-          </slot>
+          
 
             <template #content>
               <div

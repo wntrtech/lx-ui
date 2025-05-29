@@ -139,7 +139,6 @@ const accessibleTitle = computed(() => {
         v-if="variant !== 'icon-only' && (label?.trim() !== '' || $slots.default)"
       >
         <span class="lx-button-label" v-if="label">{{ label }}</span>
-        <slot />
       </div>
 
       <LxBadge
@@ -201,7 +200,6 @@ const accessibleTitle = computed(() => {
         v-if="variant !== 'icon-only' && (label?.trim() !== '' || $slots.default)"
       >
         <span class="lx-button-label" v-if="label">{{ label }}</span>
-        <slot />
       </div>
 
       <LxBadge

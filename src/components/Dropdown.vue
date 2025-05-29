@@ -408,49 +408,47 @@ onMounted(() => {
               :title="tooltip"
               :aria-invalid="invalid"
             >
-              <slot>
-                <div class="pseudo-input" />
-                <div
-                  class="lx-dropdown-default-data lx-input-area"
-                  :title="tooltip"
-                  v-if="variant === 'state'"
-                >
-                  <LxStateDisplay
-                    :value="selectedItem?.id ? selectedItem?.id : props.placeholder"
-                    :dictionary="[
-                      {
-                        value: selectedItem?.id ? selectedItem?.id : props.placeholder,
-                        displayName: selectedItem?.name ? selectedItem?.name : props.placeholder,
-                        displayType: props.dictionary?.displayType,
-                        displayShape: props.dictionary?.displayShape,
-                      },
-                    ]"
-                  />
-                </div>
-                <div
-                  class="lx-dropdown-default-data lx-dropdown-flag lx-input-area"
-                  :title="tooltip"
-                  v-else-if="variant === 'country'"
-                >
-                  <LxFlag
-                    :value="selectedItem?.country ? selectedItem?.country : 'lv'"
-                    size="small"
-                  />
-                  <span class="lx-input-text"> {{ name }} </span>
-                </div>
-                <div class="lx-dropdown-default-data lx-input-area" :title="tooltip" v-else>
-                  <p class="lx-input-text">{{ name }}</p>
-                </div>
-                <div v-if="isPlaceholderVisible()" class="lx-placeholder lx-input-area">
-                  <p class="lx-input-text">{{ placeholder }}</p>
-                </div>
-                <div v-if="invalid" class="lx-invalidation-icon-wrapper">
-                  <LxIcon customClass="lx-invalidation-icon" value="invalid" />
-                </div>
-                <div class="lx-input-icon-wrapper">
-                  <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
-                </div>
-              </slot>
+              <div class="pseudo-input" />
+              <div
+                class="lx-dropdown-default-data lx-input-area"
+                :title="tooltip"
+                v-if="variant === 'state'"
+              >
+                <LxStateDisplay
+                  :value="selectedItem?.id ? selectedItem?.id : props.placeholder"
+                  :dictionary="[
+                    {
+                      value: selectedItem?.id ? selectedItem?.id : props.placeholder,
+                      displayName: selectedItem?.name ? selectedItem?.name : props.placeholder,
+                      displayType: props.dictionary?.displayType,
+                      displayShape: props.dictionary?.displayShape,
+                    },
+                  ]"
+                />
+              </div>
+              <div
+                class="lx-dropdown-default-data lx-dropdown-flag lx-input-area"
+                :title="tooltip"
+                v-else-if="variant === 'country'"
+              >
+                <LxFlag
+                  :value="selectedItem?.country ? selectedItem?.country : 'lv'"
+                  size="small"
+                />
+                <span class="lx-input-text"> {{ name }} </span>
+              </div>
+              <div class="lx-dropdown-default-data lx-input-area" :title="tooltip" v-else>
+                <p class="lx-input-text">{{ name }}</p>
+              </div>
+              <div v-if="isPlaceholderVisible()" class="lx-placeholder lx-input-area">
+                <p class="lx-input-text">{{ placeholder }}</p>
+              </div>
+              <div v-if="invalid" class="lx-invalidation-icon-wrapper">
+                <LxIcon customClass="lx-invalidation-icon" value="invalid" />
+              </div>
+              <div class="lx-input-icon-wrapper">
+                <LxIcon customClass="lx-modifier-icon" value="chevron-down" />
+              </div>
             </div>
             <div v-if="invalid" class="lx-invalidation-message" @click.stop @mousedown.prevent>
               {{ invalidationMessage }}

@@ -43,5 +43,5 @@ export function getAvailableIconsMatrix() {
 }
 
 export function getAvailableIconSets() {
-  return ['cds', 'material', 'brand'];
+  return ['cds', 'material', 'brand', 'phosphor'];
 }
