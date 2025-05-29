@@ -226,7 +226,8 @@
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
-  font-size: var(--input-text-font-size);   
+  font-size: var(--input-text-font-size);
+  z-index: 1;
 }
 
 .lx-dropdown-default-data,
@@ -735,6 +736,7 @@
   transform: translateY(-50%);
   fill: var(--color-input-icon);
   pointer-events: none;
+  z-index: 1;
 }
 
 .lx-date-time-picker-wrapper .lx-modifier-icon {
