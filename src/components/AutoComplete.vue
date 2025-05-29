@@ -157,52 +157,6 @@ const mergeItems = (newItems, storedItems) => {
   return mergedItems;
 };
 
-function handleMultipleSelection(newModelValue) {
-  const selectedArray = newModelValue.map((id) => findItemById(id, allItems.value)).filter(Boolean);
-
-  if (selectedArray.length > 0) {
-    selectedItemsStored.value = mergeItems(selectedArray, selectedItemsStored.value);
-    selectedItem.value = null;
-    selectedItems.value = mergeItems(selectedArray, selectedItemsStored.value);
-  } else if (
-    !menuOpen.value &&
-    props.preloadedItems?.some((item) => newModelValue.includes(getIdAttributeString(item)))
-  ) {
-    // if items are not in allItems, but are in preloadedItems, take them from preloadedItems
-    allItems.value = props.preloadedItems;
-  }
-}
-
-function handleSingleSelection(newModelValue) {
-  let selected = findItemById(newModelValue, allItems.value);
-
-  if (selected) {
-    selectedItem.value = selected;
-    selectedItems.value = [];
-  } else if (
-    !menuOpen.value &&
-    props.preloadedItems?.find((item) => newModelValue === getIdAttributeString(item))
-  ) {
-    // if item is not in allItems, but is in preloadedItems, take it from preloadedItems
-    allItems.value = props.preloadedItems;
-  }
-}
-
-watch([model, () => allItems.value], ([newModelValue]) => {
-  if (newModelValue && (!Array.isArray(newModelValue) || newModelValue.length > 0)) {
-    if (Array.isArray(newModelValue) && props.selectingKind === 'multiple') {
-      handleMultipleSelection(newModelValue);
-    } else {
-      handleSingleSelection(newModelValue);
-    }
-  } else {
-    // Reset everything if newModelValue is empty
-    itemsModel.value = {};
-    selectedItem.value = null;
-    selectedItems.value = [];
-  }
-});
-
 function attributesSearch(item) {
   for (let i = 0; i < props.searchAttributes.length; i += 1) {
     const attrName = props.searchAttributes[i] as string;
@@ -695,8 +649,55 @@ function activate() {
 }
 activate();
 
-function selectMultiple(item) {
+function handleMultipleSelection(newModelValue) {
+  const selectedArray = newModelValue.map((id) => findItemById(id, allItems.value)).filter(Boolean);
+
+  if (selectedArray.length > 0) {
+    selectedItemsStored.value = mergeItems(selectedArray, selectedItemsStored.value);
+    selectedItem.value = null;
+    selectedItems.value = mergeItems(selectedArray, selectedItemsStored.value);
+  } else if (
+    !menuOpen.value &&
+    props.preloadedItems?.some((item) => newModelValue.includes(getIdAttributeString(item)))
+  ) {
+    // if items are not in allItems, but are in preloadedItems, take them from preloadedItems
+    allItems.value = props.preloadedItems;
+  }
   activate();
+}
+
+function handleSingleSelection(newModelValue) {
+  let selected = findItemById(newModelValue, allItems.value);
+
+  if (selected) {
+    selectedItem.value = selected;
+    selectedItems.value = [];
+  } else if (
+    !menuOpen.value &&
+    props.preloadedItems?.find((item) => newModelValue === getIdAttributeString(item))
+  ) {
+    // if item is not in allItems, but is in preloadedItems, take it from preloadedItems
+    allItems.value = props.preloadedItems;
+  }
+  itemsModel.value[newModelValue?.toString()] = true;
+}
+
+watch([model, () => allItems.value], ([newModelValue]) => {
+  if (newModelValue && (!Array.isArray(newModelValue) || newModelValue.length > 0)) {
+    if (Array.isArray(newModelValue) && props.selectingKind === 'multiple') {
+      handleMultipleSelection(newModelValue);
+    } else {
+      handleSingleSelection(newModelValue);
+    }
+  } else {
+    // Reset everything if newModelValue is empty
+    itemsModel.value = {};
+    selectedItem.value = null;
+    selectedItems.value = [];
+  }
+}, { deep: true });
+
+function selectMultiple(item) {
   const idModel = ref(itemsModel.value[getIdAttributeString(item)]);
   idModel.value = !idModel.value;
   let res = model.value;

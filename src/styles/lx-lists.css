@@ -844,7 +844,6 @@
 .draggable-list-item-wrapper .lx-list-item-wrapper {
   display: grid;
   grid-template-columns: subgrid;
-  grid-template-areas: none;
   grid-column: var(--list-draggable-grid-outer-column-span);
 }
 
