@@ -505,7 +505,6 @@ function hideAll() {
   }
   for (let i = 0; i < allElements.length; i += 1) {
     allElements[i].style.display = 'none';
-    allElements[i].style.gridTemplateColumns = 'none';
   }
 
   const selectedForm = document.getElementById(props.id);
@@ -513,7 +512,6 @@ function hideAll() {
   const selectedElement = selectedForm?.querySelector(`#${selectedTabValue.value}`);
   if (selectedElement) {
     selectedElement.style.display = 'grid';
-    selectedElement.style.gridTemplateColumns = '1fr';
   }
 }
 

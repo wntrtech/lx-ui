@@ -475,6 +475,16 @@
   .lx-layout.lx-layout-latvijalv .lx-form-grid>.lx-wizard header.lx-toolbar.lx-sticky {
     top: calc(var(--public-nav-header-size) + var(--row-size));
   }
+
+  .lx-layout.lx-layout-latvijalv .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar), 
+  .lx-layout.lx-layout-latvijalv .lx-form-grid:not(:has(>header))>.lx-wizard header.lx-toolbar.lx-sticky {
+      top: calc(var(--public-nav-header-size) );
+  }
+
+  .lx-layout.lx-layout-latvijalv.no-nav-items .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar),
+  .lx-layout.lx-layout-latvijalv.no-nav-items .lx-form-grid:not(:has(>header))>.lx-wizard header.lx-toolbar.lx-sticky {
+      top: var(--nav-row-size);
+  }
   
   .lx-layout.lx-layout-latvijalv.no-nav-items>nav{
     display: none;
@@ -681,6 +691,11 @@
     .lx-layout-latvijalv .lx-data-grid-wrapper .lx-grid-toolbar + .lx-grid-header-wrapper,
     .lx-layout.lx-layout-latvijalv .lx-form-grid>aside.lx-index>ul {
       top: calc(var(--nav-row-size) + var(--row-size));
+    }
+    
+    .lx-layout.lx-layout-latvijalv .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar), 
+    .lx-layout.lx-layout-latvijalv .lx-form-grid:not(:has(>header))>.lx-wizard header.lx-toolbar.lx-sticky {
+        top: calc(var(--nav-row-size));
     }
   }
   

@@ -702,6 +702,11 @@ ul.lx-digives-alert-list {
   top: calc(var(--nav-row-size) + var(--row-size));
 }
 
+.lx-layout-digives .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar), 
+.lx-layout-digives .lx-form-grid:not(:has(>header))>.lx-wizard header.lx-toolbar.lx-sticky {
+    top: calc(var(--nav-row-size));
+}
+
 @media (max-width: 1800px) {
   .lx-layout.lx-layout-default.lx-layout-digives.lx-collapsed-null nav {
     display: none;

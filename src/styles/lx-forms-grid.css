@@ -724,6 +724,11 @@ svg .lx-shade {
   border-bottom: 1px solid var(--color-chrome);
 }
 
+.lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar), 
+.lx-form-grid:not(:has(>header))>.lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar) {
+    top: calc(var(--nav-row-size));   
+}
+
 .lx-form-grid > .lx-form-with-tabs,
 .lx-form-grid > .lx-form-with-steps {
   border-bottom: 0;
