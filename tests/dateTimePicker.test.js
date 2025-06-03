@@ -845,5 +845,11 @@ test('LxDateTimePicker today click', async () => {
   expect(todayButton).toBeTruthy();
   await todayButton.trigger('click');
 
-  expect(monthSelectButton.attributes('aria-label')).toBe('Maijs');
+  const currentMonthName = new Intl.DateTimeFormat('lv-LV', {
+    month: 'long',
+  }).format(new Date());
+
+  const capitalizedMonthName = currentMonthName.charAt(0).toUpperCase() + currentMonthName.slice(1);
+
+  expect(monthSelectButton.attributes('aria-label')).toBe(capitalizedMonthName);
 });

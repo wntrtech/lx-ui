@@ -355,6 +355,7 @@ function triggerContextPersonMenu() {
             :iconSet="items?.iconSet"
             kind="ghost"
             iconVariant="gradient-brand"
+            @click="navClick(items?.id)"
           />
         </div>
       </div>
