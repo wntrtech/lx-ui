@@ -294,10 +294,11 @@ function formatValuePicker(value, key) {
     if (
       !arraysEqual(model.value?.[key], defaultValues.value?.[key]) &&
       model.value?.[key]?.length > 0
-    )
-      return `${value?.lx?.filterDescription || (value?.title ? `${value?.title}: ` : `${key}: `)}${
-        model.value?.[key]?.length
-      }`;
+    ) {
+      const desc =
+        value?.lx?.filterDescription || (value?.title ? `${value?.title}: ` : `${key}: `);
+      return `${desc}${model.value?.[key]?.length}`;
+    }
   }
   return null;
 }
@@ -356,7 +357,13 @@ function formatDescription(value, key) {
     case 'objectList':
     case 'objectButton':
     case 'dataBlock':
-      return `${value?.lx?.filterDescription || (value?.title ? `${value?.title}` : `${key}`)}`;
+      if (value?.lx?.filterDescription) {
+        return value.lx.filterDescription;
+      }
+      if (value?.title) {
+        return value.title;
+      }
+      return key;
 
     default:
       return null;

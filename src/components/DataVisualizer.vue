@@ -217,51 +217,37 @@ const verticalTextSubElemDimensions = computed(() =>
 );
 
 function isTextOutside(index) {
-  if (
-    props.kind === 'bars-horizontal' &&
-    horizontalElemDimensions.value?.[index]?.width?.value > 0 &&
-    horizontalTextElemDimensions.value?.[index]?.width?.value > 0 &&
-    // eslint-disable-next-line no-unsafe-optional-chaining
-    horizontalTextElemDimensions.value?.[index]?.width?.value + 12 >=
-      horizontalElemDimensions.value?.[index]?.width?.value
-  ) {
-    return true;
-  }
-  if (
-    props.kind === 'bars-vertical' &&
-    verticalElemDimensions.value?.[index]?.height?.value > 0 &&
-    verticalTextElemDimensions.value?.[index]?.width?.value > 0 &&
-    // eslint-disable-next-line no-unsafe-optional-chaining
-    verticalTextElemDimensions.value?.[index]?.width?.value + 12 >=
-      verticalElemDimensions.value?.[index]?.height?.value
-  ) {
-    return true;
-  }
-  return false;
+  return (
+    (props.kind === 'bars-horizontal' &&
+      horizontalElemDimensions.value?.[index]?.width?.value > 0 &&
+      horizontalTextElemDimensions.value?.[index]?.width?.value > 0 &&
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      horizontalTextElemDimensions.value?.[index]?.width?.value + 12 >=
+        horizontalElemDimensions.value?.[index]?.width?.value) ||
+    (props.kind === 'bars-vertical' &&
+      verticalElemDimensions.value?.[index]?.height?.value > 0 &&
+      verticalTextElemDimensions.value?.[index]?.width?.value > 0 &&
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      verticalTextElemDimensions.value?.[index]?.width?.value + 12 >=
+        verticalElemDimensions.value?.[index]?.height?.value)
+  );
 }
 
 function isSubTextOutside(index) {
-  if (
-    props.kind === 'bars-horizontal' &&
-    horizontalSubElemDimensions.value?.[index]?.width?.value > 0 &&
-    horizontalTextSubElemDimensions.value?.[index]?.width?.value > 0 &&
-    // eslint-disable-next-line no-unsafe-optional-chaining
-    horizontalTextSubElemDimensions.value?.[index]?.width?.value + 12 >=
-      horizontalSubElemDimensions.value?.[index]?.width?.value
-  ) {
-    return true;
-  }
-  if (
-    props.kind === 'bars-vertical' &&
-    verticalSubElemDimensions.value?.[index]?.height?.value > 0 &&
-    verticalTextSubElemDimensions.value?.[index]?.width?.value > 0 &&
-    // eslint-disable-next-line no-unsafe-optional-chaining
-    verticalTextSubElemDimensions.value?.[index]?.width?.value + 12 >=
-      verticalSubElemDimensions.value?.[index]?.height?.value
-  ) {
-    return true;
-  }
-  return false;
+  return (
+    (props.kind === 'bars-horizontal' &&
+      horizontalSubElemDimensions.value?.[index]?.width?.value > 0 &&
+      horizontalTextSubElemDimensions.value?.[index]?.width?.value > 0 &&
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      horizontalTextSubElemDimensions.value?.[index]?.width?.value + 12 >=
+        horizontalSubElemDimensions.value?.[index]?.width?.value) ||
+    (props.kind === 'bars-vertical' &&
+      verticalSubElemDimensions.value?.[index]?.height?.value > 0 &&
+      verticalTextSubElemDimensions.value?.[index]?.width?.value > 0 &&
+      // eslint-disable-next-line no-unsafe-optional-chaining
+      verticalTextSubElemDimensions.value?.[index]?.width?.value + 12 >=
+        verticalSubElemDimensions.value?.[index]?.height?.value)
+  );
 }
 
 const hasSubBars = computed(() =>
@@ -521,13 +507,13 @@ watch(
         <template v-for="(item, index) in items" :key="item[idAttribute]">
           <!-- If item has sub-items, render each subItem as its own <data> tag -->
           <div class="lx-bar-group" v-if="Array.isArray(item?.[valueAttribute])">
-            <label
+            <p
               v-if="Array.isArray(item?.[valueAttribute])"
               class="lx-bar-group-label"
               :title="item?.[nameAttribute]"
             >
               {{ item?.[nameAttribute] }}
-            </label>
+            </p>
 
             <data
               v-for="subItem in item[valueAttribute]"
@@ -805,13 +791,13 @@ watch(
           <template v-for="(item, index) in items" :key="item[idAttribute]">
             <!-- If item has sub-items, render each subItem as its own <data> tag -->
             <div class="lx-bar-group" v-if="Array.isArray(item?.[valueAttribute])">
-              <label
+              <p
                 v-if="Array.isArray(item?.[valueAttribute])"
                 class="lx-bar-group-label"
                 :title="item?.[nameAttribute]"
               >
                 {{ item?.[nameAttribute] }}
-              </label>
+              </p>
 
               <data
                 v-for="subItem in item[valueAttribute]"

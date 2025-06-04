@@ -100,9 +100,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         <div
           class="input-slider-filled"
           :style="`width: ${fillingUp}%; background-color: var(${color})`"
-        ></div>
-        <div class="input-slider-full"></div>
-        <label></label>
+        />
+        <div class="input-slider-full" />
       </div>
 
       <div class="input-slider-range-label">
