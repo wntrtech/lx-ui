@@ -1,5 +1,7 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { loadEnv } from 'vite';
+import useLx from '@/hooks/useLx';
 
 /**
  * @typedef {Object} PortalVersionOptions
@@ -23,13 +25,15 @@ export function lxVitePortalVersionPlugin(options = {}) {
    */
   async function generateVersionData() {
     try {
+      const env = loadEnv(useLx().getGlobals()?.environment, process.cwd(), '');
+
       // Get package.json path
       const packageJsonPath = path.resolve(process.cwd(), 'package.json');
-
       // Read package.json and extract version
       const packageJson = JSON.parse(await fs.readFile(packageJsonPath, 'utf-8'));
+
       return {
-        version: packageJson.version,
+        version: env.CUSTOM_VERSION || packageJson.version,
         buildTime: new Date().toISOString(),
       };
     } catch (error) {
