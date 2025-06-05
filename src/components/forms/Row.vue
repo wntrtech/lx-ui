@@ -193,6 +193,14 @@ const validatedColumnSpan = computed(() => {
   return res;
 });
 
+const actionDefinitionsDefaults = computed(() => {
+  if (!props.actionDefinitions || !props.actionDefinitions.length) return [];
+  return props.actionDefinitions.map((action) => ({
+    ...action,
+    value: action?.value || false,
+  }));
+});
+
 const idComputed = computed(() => props.id);
 provide('rowId', idComputed);
 </script>
@@ -272,11 +280,15 @@ provide('rowId', idComputed);
             variant="icon-only"
           />
           <template #panel>
-            <div class="lx-action-controller" v-for="action in actionDefinitions" :key="action.id">
+            <div
+              class="lx-action-controller"
+              v-for="action in actionDefinitionsDefaults"
+              :key="action.id"
+            >
               <div class="lx-action-toggle" v-if="action?.kind === 'toggle'">
                 <p v-if="action?.kind === 'toggle'">{{ action?.name }}</p>
                 <LxToggle
-                  :modelValue="action.value || false"
+                  v-model="action.value"
                   :tooltip="action.name"
                   @update:modelValue="
                     (newValue) => {
@@ -369,12 +381,16 @@ provide('rowId', idComputed);
             variant="icon-only"
           />
           <template #panel>
-            <div class="lx-action-controller" v-for="action in actionDefinitions" :key="action.id">
+            <div
+              class="lx-action-controller"
+              v-for="action in actionDefinitionsDefaults"
+              :key="action.id"
+            >
               <div class="lx-action-toggle" v-if="action?.kind === 'toggle'">
                 <p v-if="action?.kind === 'toggle'">{{ action?.name }}</p>
                 <LxToggle
                   v-if="action?.kind === 'toggle'"
-                  :modelValue="action.value || false"
+                  v-model="action.value"
                   :tooltip="action.name"
                   @update:modelValue="
                     (newValue) => {

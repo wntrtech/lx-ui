@@ -1376,6 +1376,11 @@ p .lx-person-display-wrapper {
   fill: var(--color-data);
 }
 
+.lx-row > .lx-row-header > div > .lx-button:hover> .lx-button-content-wrapper svg,
+.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:hover > .lx-button-content-wrapper svg {
+  fill: var(--color-button-ghost-icon-hover);
+}
+
 .lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:hover > .lx-button-content-wrappersvg {
   fill: var(--color-interactive-hover-foreground);
 }

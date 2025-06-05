@@ -19,7 +19,6 @@ const props = defineProps({
   iconVariant: { type: String, default: 'default' },
   kind: { type: String, default: 'default' },
   variant: { type: String, default: 'default' }, // default, icon-only
-  size: { type: String, default: 'default' },
   destructive: { type: Boolean, default: false },
   href: { type: Object, default: () => {} },
   disabled: { type: Boolean, default: false },

@@ -2066,6 +2066,30 @@ a.lx-button.lx-button-ghost svg {
   overflow: visible;
 }
 
+/* LxDropDownMenu action definitions */
+
+.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group{
+    border-bottom: 1px solid var(--color-chrome)
+}
+
+.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group.lx-dropdown-menu-no-panel:last-child{
+    border-bottom: none;
+}
+
+.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.5rem 0.5rem 1rem;
+}
+
+.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper > p{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 0.5rem;
+}
+
 @media (max-width: 1900px) {
   .lx .lx-button.lx-button-main {
     width: calc(var(--aside-size) - var(--row-size));
