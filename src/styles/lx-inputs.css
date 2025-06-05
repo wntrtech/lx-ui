@@ -3292,8 +3292,59 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-region);
 }
 
+.lx .lx-form-grid .lx-appendable-list .lx-file-wrapper,
+.lx .lx-modal .lx-appendable-list .lx-file-wrapper,
+.lx .lx-region .lx-appendable-list .lx-file-wrapper,
 .lx-file-wrapper {
   background-color: var(--color-region);
+}
+
+.lx.lx-theme-contrast .lx-appendable-list .lx-file-wrapper .lx-list-item {
+  height: calc(var(--input-container-height) - 0.15rem);
+}
+
+.lx .lx-appendable-list .lx-file-upload-wrapper.compact .lx-file-wrapper .lx-file-name-main-data-wrapper {
+  grid-template-rows: 1.5fr 1fr;
+}
+
+.lx .lx-appendable-list .lx-uploaded-file-list-wrapper .lx-list-item-container {
+  --list-item-min-height: var(--input-container-height);
+  --list-item-header-min-height: calc(var(--input-container-height) - 0.15rem);
+}
+
+.lx .lx-appendable-list-compact .lx-uploaded-file-list-wrapper .lx-list-item-container {
+  height: var(--input-container-height);
+}
+
+.lx:not(.lx-theme-contrast) .lx-appendable-list .lx-uploaded-file-list-wrapper .lx-list-item-container {
+  border: 0;
+}
+
+.lx .lx-appendable-list .lx-uploaded-file-list-wrapper .lx-download-icon {
+  height: 100%;
+}
+
+.lx .lx-appendable-list .lx-uploaded-file-list-wrapper {
+  margin-top: 0;
+}
+
+.lx .lx-appendable-list .lx-file-info-button > .lx-button,
+.lx .lx-appendable-list .lx-upload-buttons .lx-button {
+  --button-ghost-icon-only-height: var(--input-container-height);
+  --button-ghost-icon-only-min-width: var(--input-container-height);
+}
+
+.lx .lx-appendable-list .lx-file-main-part {
+  height: var(--input-container-height);
+}
+
+.lx-appendable-list .lx-uploaded-file-preview-wrapper.small-preview .lx-file-preview .lx-button {
+  margin-top: 1.95rem;
+}
+
+.lx.lx-theme-contrast .lx-appendable-list .lx-upload-buttons .lx-button,
+.lx.lx-theme-contrast .lx-appendable-list .lx-file-main-part {
+  height: calc(var(--input-container-height) - 0.15rem);
 }
 
 .lx-form-grid > .lx-main .lx-file-wrapper,
@@ -3589,6 +3640,10 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-file-name-main-data-wrapper .lx-file-main-additional-info.lx-secondary {
   margin-top: 0;
+}
+
+.lx-theme-contrast .lx-list-item.lx-list-item-interactive .lx-file-name-main-data-wrapper .lx-file-main-additional-info.lx-secondary {
+  color: var(--contrast-foreground);
 }
 
 .lx-file-upload-wrapper .lx-list-wrapper .lx-info-wrapper {
@@ -4480,8 +4535,9 @@ h2.lx-section-header + p.lx-invalidation-message,
   clip-path: polygon(0 0, 100% 0%, 100% 100%);
 }
 
-.lx-text-input-wrapper .lx-input-flag-wrapper .lx-flag .flag{
+.lx-text-input-wrapper .lx-input-flag-wrapper .lx-flag .flag {
   scale: 0.8;
+  z-index: 2;
 }
 
 
@@ -4713,11 +4769,13 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-region .lx-badge,
 .lx-modal .lx-badge,
 .lx-form-grid .lx-badge,
-.lx-list .lx-badge {
+.lx-list .lx-badge,
+.lx-appendable-list .lx-badge {
   background-color: var(--color-badge-region-background);
 }
 
-.lx-form-grid .lx-list .lx-badge {
+.lx-form-grid .lx-list .lx-badge,
+.lx-region .lx-appendable-list .lx-badge {
   background-color: var(--color-badge-background);
 }
 
