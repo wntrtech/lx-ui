@@ -12,7 +12,6 @@ import CharacterCount from '@tiptap/extension-character-count';
 import TextStyle from '@tiptap/extension-text-style';
 import { Color } from '@tiptap/extension-color';
 import { Markdown } from 'tiptap-markdown';
-import { TextAlign } from '@tiptap/extension-text-align';
 
 import PlaceholderData from '@/components/markdownExtensions/PlaceholderData';
 import ImageComponent from '@/components/markdownExtensions/Image';
@@ -54,7 +53,6 @@ const props = defineProps({
   showImagePicker: { type: Boolean, default: false },
   showUnderlineToggle: { type: Boolean, default: false },
   showHeadingPicker: { type: Boolean, default: false },
-  showAlignment: { type: Boolean, default: false },
   imageMaxSize: { type: Number, default: 3000000 }, // 3MB
   dictionary: { type: Object, default: null },
   labelId: { type: String, default: null },
@@ -97,9 +95,6 @@ const textsDefault = {
   inputTypeUrl: 'Saite',
   inputTypeFile: 'Datne',
   invalidLinkMessage: 'Saite tika ievadīta nekorektā formā!',
-  alignLeft: 'Izlīdzināt pa kreisi',
-  alignRight: 'Izlīdzināt pa labi',
-  alignCenter: 'Centrēt',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -259,24 +254,6 @@ const listActionsButtons = computed(() => [
   },
 ]);
 
-const textAlignmentButtons = computed(() => [
-  {
-    name: 'alignLeft',
-    icon: 'align-left',
-    alignment: 'left',
-  },
-  {
-    name: 'alignCenter',
-    icon: 'align-center',
-    alignment: 'center',
-  },
-  {
-    name: 'alignRight',
-    icon: 'align-right',
-    alignment: 'right',
-  },
-]);
-
 const colorPickerColors = [
   { name: 'black', var: 'var(--color-data)' },
   { name: 'red', var: 'var(--color-red)' },
@@ -324,12 +301,6 @@ function createEditorExtensions() {
 
     CharacterCount.configure({
       limit: props.maxlength,
-    }),
-
-    TextAlign.configure({
-      defaultAlignment: 'left',
-      types: ['heading', 'paragraph'],
-      alignments: ['left', 'center', 'right'],
     }),
   ];
 
@@ -773,20 +744,6 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
               :active="editor.isActive(button.isActiveCheck)"
               @click="editor.chain().focus()[button.command]().run()"
             />
-
-            <template v-if="showAlignment">
-              <LxButton
-                v-for="button in textAlignmentButtons"
-                :key="button.name"
-                :icon="button.icon"
-                :label="displayTexts[button.name]"
-                :disabled="isDisabled"
-                :active="editor.isActive({ textAlign: button.alignment })"
-                kind="ghost"
-                variant="icon-only"
-                @click="editor.chain().focus().setTextAlign(button.alignment).run()"
-              />
-            </template>
           </LxToolbarGroup>
 
           <LxToolbarGroup v-if="props.showLinkEditor || props.showImagePicker" class="left-group">
