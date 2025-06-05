@@ -382,6 +382,7 @@ onMounted(() => {
         class="lx-main-button"
         :class="[{ 'lx-nav-bar-hidden': !hideNavBar }]"
         tabindex="0"
+        role="button"
         v-on:keyup.enter="goHome"
         v-on:keyup.space="goHome"
         @click="goHome"
@@ -429,6 +430,8 @@ onMounted(() => {
         <div v-else></div>
         <div
           class="lx-additional-page-header"
+          aria-hidden="true"
+          role="button"
           :tabindex="y <= 140 ? -1 : 0"
           v-on:keyup.enter="scrollUp"
           v-on:keyup.space="scrollUp"

@@ -94,7 +94,7 @@ const gradientComputed = computed(() => {
     xmlns="http://www.w3.org/2000/svg"
     :viewBox="viewBoxType"
     :style="gradientComputed"
-    :aria-hidden="!meaningful"
+    :aria-hidden="value === 'none' ? true : !meaningful"
     focusable="false"
   >
     <title>{{ props.title }}</title>

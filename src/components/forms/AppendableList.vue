@@ -210,7 +210,12 @@ defineExpose({ clearModel });
           @actionClick="(val) => actionClick(val, item._lx_appendableKey, item[idAttribute])"
           @selectingClick="changeSelecting"
         >
-          <LxForm kind="stripped" :columnCount="columnCount" :required-mode="props.requiredMode">
+          <LxForm
+            kind="stripped"
+            :role="group"
+            :columnCount="columnCount"
+            :required-mode="props.requiredMode"
+          >
             <slot name="customItem" v-bind="{ item }" />
           </LxForm>
 
@@ -224,7 +229,12 @@ defineExpose({ clearModel });
       </template>
 
       <template v-else>
-        <LxForm kind="stripped" :columnCount="columnCount" :required-mode="props.requiredMode">
+        <LxForm
+          kind="stripped"
+          :role="group"
+          :columnCount="columnCount"
+          :required-mode="props.requiredMode"
+        >
           <slot name="customItem" v-bind="{ item, index }" />
         </LxForm>
 

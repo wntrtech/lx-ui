@@ -253,6 +253,15 @@ const columnCountComputed = computed(() => {
   return res;
 });
 
+const ariaRole = computed(() =>
+  props.label &&
+  !props.id.endsWith('default') &&
+  sectionIndexType !== 'tabs' &&
+  sectionIndexType !== 'wizard'
+    ? 'region'
+    : 'group'
+);
+
 onMounted(() => {
   checkElements();
 });
@@ -287,7 +296,7 @@ provide('sectionOrientation', sectionOrientation);
         { 'lx-form-section-4': columnCountComputed === 4 },
         { 'lx-form-section-8': columnCountComputed === 8 },
       ]"
-      role="region"
+      :role="ariaRole"
       :aria-describedby="description ? `${id}-desc` : null"
     >
       <header v-if="description">
@@ -310,7 +319,7 @@ provide('sectionOrientation', sectionOrientation);
       { 'lx-form-section-4': columnCountComputed === 4 },
       { 'lx-form-section-8': columnCountComputed === 8 },
     ]"
-    role="region"
+    :role="ariaRole"
     :aria-labelledby="label ? `${id}-label` : null"
     :aria-describedby="description ? `${id}-desc` : null"
   >

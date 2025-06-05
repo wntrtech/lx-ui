@@ -239,6 +239,7 @@ const props = defineProps({
    * @since 0.3.5
    */
   texts: { type: Object, default: () => {} },
+  role: { type: String, default: 'form' }, // form || group
 });
 
 const textsDefault = {
@@ -668,7 +669,7 @@ defineExpose({ highlightRow, clearHighlights });
   <article
     :id="id"
     class="lx-form-grid"
-    role="form"
+    :role="role"
     :class="[{ 'lx-form-grid-stripped': kind === 'stripped' }]"
     ref="form"
     :aria-labelledby="showHeader && kind !== 'stripped' ? `${id}-header` : null"

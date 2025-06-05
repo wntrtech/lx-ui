@@ -1225,6 +1225,7 @@ onMounted(() => {
             <template #content>
               <div
                 ref="refListbox"
+                :aria-labelledby="labelledBy"
                 class="lx-dropdown-default-content"
                 :style="{ width: panelWidth + 'px' }"
                 tabindex="-1"

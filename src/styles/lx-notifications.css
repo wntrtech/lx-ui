@@ -117,6 +117,10 @@ p.lx-subtitle {
   height: 1rem;
 }
 
+.lx .lx-notifications-list:empty {
+  display: none;
+}
+
 @media (max-width: 800px) {
   .lx .lx-notifications-list {
     width: 100%;
@@ -128,9 +132,5 @@ p.lx-subtitle {
 
   .lx .lx-notifications-list .lx-notification .lx-main {
     width: 100%;
-  }
-  
-  .lx .lx-notifications-list:empty{
-    visibility: hidden;
   }
 }
