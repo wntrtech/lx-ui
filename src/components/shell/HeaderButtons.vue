@@ -67,6 +67,10 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  reduceMotionOff: 'Nē',
+  reduceMotionOn: 'Jā',
+  systemFontsOff: 'Nē',
+  systemFontsOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
 };
@@ -353,11 +357,25 @@ function triggerUserMenu() {
           </div>
           <div class="lx-animations-controller">
             <p>{{ displayTexts.animations }}</p>
-            <LxToggle v-model="animationsModel" @click="triggerThemeMenu"></LxToggle>
+            <LxToggle
+              v-model="animationsModel"
+              :texts="{
+                valueYes: displayTexts.reduceMotionOn,
+                valueNo: displayTexts.reduceMotionOff,
+              }"
+              @click="triggerThemeMenu"
+            ></LxToggle>
           </div>
           <div class="lx-fonts-controller">
             <p>{{ displayTexts.fonts }}</p>
-            <LxToggle v-model="deviceFontsModel" @click="triggerThemeMenu"></LxToggle>
+            <LxToggle
+              v-model="deviceFontsModel"
+              :texts="{
+                valueYes: displayTexts.systemFontsOn,
+                valueNo: displayTexts.systemFontsOff,
+              }"
+              @click="triggerThemeMenu"
+            ></LxToggle>
           </div>
         </template>
       </LxDropDownMenu>
@@ -667,11 +685,25 @@ function triggerUserMenu() {
               </div>
               <div class="lx-animations-controller">
                 <p>{{ displayTexts.animations }}</p>
-                <LxToggle v-model="animationsModel" />
+                <LxToggle
+                  v-model="animationsModel"
+                  :texts="{
+                    valueYes: displayTexts.reduceMotionOn,
+                    valueNo: displayTexts.reduceMotionOff,
+                  }"
+                  @click="triggerThemeMenu"
+                />
               </div>
               <div class="lx-fonts-controller">
                 <p>{{ displayTexts.fonts }}</p>
-                <LxToggle v-model="deviceFontsModel" />
+                <LxToggle
+                  v-model="deviceFontsModel"
+                  :texts="{
+                    valueYes: displayTexts.systemFontsOn,
+                    valueNo: displayTexts.systemFontsOff,
+                  }"
+                  @click="triggerThemeMenu"
+                />
               </div>
             </template>
           </LxDropDownMenu>

@@ -53,11 +53,11 @@ const booleanTexts = computed(() => ({
 const tooltipValue = computed(() => {
   let res = '';
 
-  if (!props.tooltip && (!slots.on || !slots.off))
+  if (!props.tooltip && (!slots.on || !slots.off)) {
     res = formatValueBool(model.value, booleanTexts.value);
-  else if (props.tooltip && (!slots.on || !slots.off))
+  } else if (props.tooltip && (!slots.on || !slots.off)) {
     res = `${props.tooltip}: ${formatValueBool(model.value, booleanTexts.value)}`;
-  else if (props.tooltip) {
+  } else if (props.tooltip) {
     res = props.tooltip;
   }
   return res;

@@ -177,6 +177,10 @@ const textsDefault = {
   themeContrast: 'Kontrastainais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  reduceMotionOff: 'Nē',
+  reduceMotionOn: 'Jā',
+  systemFontsOff: 'Nē',
+  systemFontsOn: 'Jā',
   confirmModalSecondaryDefaultLabel: 'Nē',
   confirmModalPrimaryDefaultLabel: 'Jā',
   previousAlertTitle: 'Iepriekšējais paziņojums',
@@ -250,10 +254,6 @@ const deviceFontsModel = computed({
   get() {
     if (props.hasDeviceFonts !== null) {
       return props.hasDeviceFonts;
-    }
-    const storedValue = localStorage.getItem(deviceFontsStorageKey.value);
-    if (storedValue) {
-      return JSON.parse(storedValue);
     }
     return fontToggle.value;
   },
@@ -517,6 +517,9 @@ onMounted(() => {
     animationsModel.value = JSON.parse(localStorage.getItem(storageKey));
   }
   animationModeChange(animationsModel.value, storageKey);
+
+  const storedValue = localStorage.getItem(deviceFontsStorageKey.value);
+  fontToggle.value = storedValue ? JSON.parse(storedValue) : false;
 
   applyDeviceFonts(deviceFontsModel.value);
 

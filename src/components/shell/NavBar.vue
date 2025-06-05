@@ -47,6 +47,10 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  reduceMotionOff: 'Nē',
+  reduceMotionOn: 'Jā',
+  systemFontsOff: 'Nē',
+  systemFontsOn: 'Jā',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

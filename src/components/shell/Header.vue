@@ -89,6 +89,10 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  reduceMotionOff: 'Nē',
+  reduceMotionOn: 'Jā',
+  systemFontsOff: 'Nē',
+  systemFontsOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
 };
