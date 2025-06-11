@@ -30,6 +30,10 @@ export default (authUrl, publicUrl, clientId, scope, authSessionKey) => ({
     return apiAuth(authUrl, authSessionKey).patch('/api/1.0/session', { role: roleCode });
   },
 
+  modules() {
+    return apiAuth(authUrl, authSessionKey).get('/api/1.0/modules');
+  },
+
   status() {
     return apiAuth(authUrl, authSessionKey).get('/api/1.0/session');
   },

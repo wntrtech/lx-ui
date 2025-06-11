@@ -27,6 +27,7 @@ import {
  * hasPermissionExport: (name: string) => boolean;
  * hasPermissionDelete: (name: string) => boolean;
  * getSessionKey: (oneTimeToken: string) => Promise<string>;
+ * modules: () => Promise<any>;
  * roles: () => Promise<any>; } }} authService
  */
 export default (
@@ -61,6 +62,10 @@ export default (
       email: null,
     };
     const returnPath = useStorage('returnPath', null, sessionStorage);
+    const modules = useStorage('lx-shell-modules', [], storage(), {
+      deep: true,
+      listenToStorageChanges: true,
+    });
     const session = useStorage('lx-auth-session', { ...initState }, storage(), {
       deep: true,
       listenToStorageChanges: true,
@@ -142,6 +147,22 @@ export default (
         returnPath.value = retPath;
       }
       return service.authorize(authType, clientID);
+    }
+    async function fetchModules() {
+      const resp = await service.modules();
+      if (resp.status === 200) {
+        modules.value = resp.data.map((module) => ({
+          id: module.code,
+          name: module.name,
+          brandColor: module.color,
+          brandColorDark: module.darkColor,
+          icon: module.lxLogo,
+          iconSet: module.lxLogoSet || '',
+          group: module.lxCategory,
+          url: module.url,
+          kind: module.lxCategory ? 'secondary' : 'primary',
+        }));
+      }
     }
     async function fetchSession() {
       try {
@@ -234,6 +255,7 @@ export default (
       /** @type {typeof initState} */
       // @ts-ignore
       session,
+      modules,
       /** @type {typeof Boolean} */
       // @ts-ignore
       showSessionEndCountdown: computed(
@@ -255,6 +277,7 @@ export default (
       // @ts-ignore
       isAuthorized,
       fetchSession,
+      fetchModules,
       keepAlive,
       login,
       logout,
