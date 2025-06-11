@@ -757,14 +757,6 @@
   pointer-events: none;
 }
 
-.lx-toggle-wrapper .lx-invalidation-icon {
-  top: 50%;
-  right: 0.75rem;
-  -webkit-transform: translateY(-50%);
-  transform: translateY(-50%);
-  left: 3.25rem;
-}
-
 .lx .lx-input-wrapper.lx-disabled .lx-modifier-icon,
 .lx .lx-input-wrapper.lx-disabled svg.thumb {
   fill: var(--color-input-disabled-icon);
@@ -1097,12 +1089,24 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 /*** LxToggle styles ***/
 
+.lx-toggle-wrapper .lx-invalidation-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1.75rem;
+  height: 2.3rem; /* lx-toggle-appearance height + top & bottom margin = 1.5 + 0.4 + 0.4 */
+}
+
+.lx-toggle-wrapper.lx-small .lx-invalidation-icon-wrapper {
+  height: 1.8rem;
+}
+
 .lx-toggle-wrapper {
   position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   width: 100%;
 }
 

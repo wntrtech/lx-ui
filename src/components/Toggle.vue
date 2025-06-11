@@ -113,7 +113,6 @@ onMounted(() => {
       :data-invalid="invalid ? '' : null"
       :title="tooltipValue"
     >
-      <LxIcon v-show="invalid && !hasSlots" customClass="lx-invalidation-icon" value="invalid" />
       <!-- it's labelled by the label below, or if that's absent, by aria-label -->
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label-->
       <input
@@ -148,6 +147,9 @@ onMounted(() => {
             <slot name="on" />
           </span>
         </label>
+      </div>
+      <div v-show="invalid && !hasSlots" class="lx-invalidation-icon-wrapper">
+        <LxIcon customClass="lx-invalidation-icon" value="invalid" />
       </div>
     </div>
     <div v-if="invalid && !readOnly" class="lx-invalidation-message">{{ invalidationMessage }}</div>
