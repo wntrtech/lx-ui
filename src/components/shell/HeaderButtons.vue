@@ -158,8 +158,9 @@ function logOut() {
   emits('log-out');
 }
 
-function languageChange(locale) {
-  selectedLanguageModel.value = locale;
+function languageChange(id) {
+  const language = props.languages.find((lang) => lang?.id === id);
+  selectedLanguageModel.value = language;
 }
 
 function alertItemClicked(alert) {
@@ -324,6 +325,76 @@ function triggerShowAllClick() {
 
 const dropDownMenu = ref(null);
 
+const themeDisplayItems = computed(() => {
+  const res = [];
+  const themes = props.availableThemes?.map((item) => ({
+    id: item,
+    icon: themeIcons[item],
+    name: themeNames.value[item],
+    group: 'theme',
+    active: item === props.theme,
+  }));
+  if (themes && themes.length > 0) themes.forEach((x) => res.push(x));
+
+  res.push({
+    id: 'animations',
+    kind: 'toggle',
+    name: displayTexts.value.animations,
+    texts: {
+      valueYes: displayTexts.value.reduceMotionOn,
+      valueNo: displayTexts.value.reduceMotionOff,
+    },
+    group: 'animations',
+    value: animationsModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
+    id: 'touch',
+    kind: 'toggle',
+    name: displayTexts.value.touchSensitive,
+    texts: {
+      valueYes: displayTexts.value.touchModeOn,
+      valueNo: displayTexts.value.touchModeOff,
+    },
+    group: 'animations',
+    value: touchModeModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
+    id: 'fonts',
+    kind: 'toggle',
+    name: displayTexts.value.fonts,
+    texts: {
+      valueYes: displayTexts.value.systemFontsOn,
+      valueNo: displayTexts.value.systemFontsOff,
+    },
+    group: 'fonts',
+    value: deviceFontsModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  return res;
+});
+
+function themeDropdownClicked(id, value) {
+  if (id === 'animations') {
+    animationsModel.value = value;
+  } else if (id === 'fonts') {
+    deviceFontsModel.value = value;
+  } else if (id === 'touch') {
+    touchModeModel.value = value;
+  } else {
+    themeChange(id);
+  }
+}
+
+const languagesDisplayItems = computed(() =>
+  props.languages?.map((item) => ({
+    id: item?.id,
+    name: item?.name,
+    active: selectedLanguageModel.value?.id === item?.id,
+  }))
+);
+
 function triggerUserMenu() {
   if (dropDownMenu.value) {
     dropDownMenu.value.openMenu();
@@ -347,7 +418,11 @@ function triggerUserMenu() {
     </div>
 
     <div class="lx-theme-menu" v-if="hasThemePicker">
-      <LxDropDownMenu ref="themeMenu">
+      <LxDropDownMenu
+        ref="themeMenu"
+        :actionDefinitions="themeDisplayItems"
+        @actionClick="themeDropdownClicked"
+      >
         <div class="lx-toolbar">
           <LxButton
             customClass="lx-header-button"
@@ -358,54 +433,6 @@ function triggerUserMenu() {
             :label="displayTexts.themeTitle"
           />
         </div>
-        <template v-slot:panel>
-          <div class="lx-button-set" role="group">
-            <LxButton
-              v-for="item in availableThemes"
-              :key="item"
-              :icon="themeIcons[item]"
-              :label="themeNames[item]"
-              :active="theme === item ? true : false"
-              @click="themeChange(item)"
-            />
-          </div>
-          <div class="lx-animations-controller">
-            <p>{{ displayTexts.animations }}</p>
-            <LxToggle
-              v-model="animationsModel"
-              :texts="{
-                valueYes: displayTexts.reduceMotionOn,
-                valueNo: displayTexts.reduceMotionOff,
-              }"
-              :size="props.isTouchSensitive ? 'm' : 's'"
-              @click="triggerThemeMenu"
-            ></LxToggle>
-          </div>
-          <div class="lx-touch-mode-controller">
-            <p>{{ displayTexts.touchSensitive }}</p>
-            <LxToggle
-              v-model="touchModeModel"
-              :texts="{
-                valueYes: displayTexts.touchModeOn,
-                valueNo: displayTexts.touchModeOff,
-              }"
-              :size="props.isTouchSensitive ? 'm' : 's'"
-              @click="triggerThemeMenu"
-            ></LxToggle>
-          </div>
-          <div class="lx-fonts-controller">
-            <p>{{ displayTexts.fonts }}</p>
-            <LxToggle
-              v-model="deviceFontsModel"
-              :texts="{
-                valueYes: displayTexts.systemFontsOn,
-                valueNo: displayTexts.systemFontsOff,
-              }"
-              :size="props.isTouchSensitive ? 'm' : 's'"
-              @click="triggerThemeMenu"
-            ></LxToggle>
-          </div>
-        </template>
       </LxDropDownMenu>
     </div>
 
@@ -538,7 +565,7 @@ function triggerUserMenu() {
     </div>
 
     <div class="lx-language-menu" v-if="hasLanguagePicker">
-      <LxDropDownMenu>
+      <LxDropDownMenu :actionDefinitions="languagesDisplayItems" @actionClick="languageChange">
         <LxButton
           customClass="lx-header-button"
           variant="icon-only"
@@ -546,19 +573,6 @@ function triggerUserMenu() {
           icon="language"
           :label="displayTexts.languagesTitle"
         />
-
-        <template v-slot:panel>
-          <div class="lx-button-set">
-            <LxButton
-              v-for="item in languages"
-              kind="ghost"
-              :key="item?.languages"
-              :active="selectedLanguageModel.id === item.id ? true : false"
-              :label="item?.name"
-              @click="languageChange(item)"
-            />
-          </div>
-        </template>
       </LxDropDownMenu>
     </div>
 
@@ -665,7 +679,7 @@ function triggerUserMenu() {
     <ul class="header-items">
       <li v-if="hasLanguagePicker" class="lx-language-picker">
         <div class="lx-language-menu">
-          <LxDropDownMenu>
+          <LxDropDownMenu :actionDefinitions="languagesDisplayItems" @actionClick="languageChange">
             <div class="lx-toolbar">
               <LxButton
                 customClass="lx-header-button"
@@ -674,24 +688,15 @@ function triggerUserMenu() {
                 icon="language"
               />
             </div>
-            <template v-slot:panel>
-              <div class="lx-button-set">
-                <LxButton
-                  v-for="item in languages"
-                  kind="ghost"
-                  :key="item?.languages"
-                  :active="selectedLanguageModel.id === item.id ? true : false"
-                  :label="item?.name"
-                  @click="languageChange(item)"
-                />
-              </div>
-            </template>
           </LxDropDownMenu>
         </div>
       </li>
       <li v-if="hasThemePicker" class="lx-theme-picker">
         <div class="lx-theme-menu">
-          <LxDropDownMenu>
+          <LxDropDownMenu
+            :action-definitions="themeDisplayItems"
+            @actionClick="themeDropdownClicked"
+          >
             <div class="lx-toolbar">
               <LxButton
                 customClass="lx-header-button"
@@ -700,53 +705,6 @@ function triggerUserMenu() {
                 :icon="themeIcon"
               />
             </div>
-            <template v-slot:panel>
-              <div class="lx-button-set">
-                <LxButton
-                  v-for="item in availableThemes"
-                  :key="item"
-                  :icon="themeIcons[item]"
-                  :label="themeNames[item]"
-                  :active="theme === item ? true : false"
-                  @click="themeChange(item)"
-                />
-              </div>
-              <div class="lx-animations-controller">
-                <p>{{ displayTexts.animations }}</p>
-                <LxToggle
-                  v-model="animationsModel"
-                  :texts="{
-                    valueYes: displayTexts.reduceMotionOn,
-                    valueNo: displayTexts.reduceMotionOff,
-                  }"
-                  :size="props.isTouchSensitive ? 'm' : 's'"
-                  @click="triggerThemeMenu"
-                />
-              </div>
-              <div class="lx-touch-mode-controller">
-                <p>{{ displayTexts.touchSensitive }}</p>
-                <LxToggle
-                  v-model="touchModeModel"
-                  :texts="{
-                    valueYes: displayTexts.touchModeOn,
-                    valueNo: displayTexts.touchModeOff,
-                  }"
-                  :size="props.isTouchSensitive ? 'm' : 's'"
-                />
-              </div>
-              <div class="lx-fonts-controller">
-                <p>{{ displayTexts.fonts }}</p>
-                <LxToggle
-                  v-model="deviceFontsModel"
-                  :texts="{
-                    valueYes: displayTexts.systemFontsOn,
-                    valueNo: displayTexts.systemFontsOff,
-                  }"
-                  :size="props.isTouchSensitive ? 'm' : 's'"
-                  @click="triggerThemeMenu"
-                />
-              </div>
-            </template>
           </LxDropDownMenu>
         </div>
       </li>

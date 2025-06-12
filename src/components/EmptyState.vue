@@ -54,29 +54,16 @@ function actionClicked(actionName) {
         class="lx-list-item-actions"
         v-if="actionDefinitions?.length && actionDefinitions?.length > 3"
       >
-        <LxDropDownMenu>
+        <LxDropDownMenu
+          :actionDefinitions="actionDefinitions"
+          @actionClick="(id) => actionClicked(id)"
+        >
           <LxButton
             icon="overflow-menu"
             kind="tertiary"
             :label="displayTexts.overflowMenu"
             variant="icon-only"
           />
-          <template v-slot:panel>
-            <div class="lx-button-set">
-              <LxButton
-                v-for="action in actionDefinitions"
-                :key="action?.id"
-                :icon="action?.icon"
-                :label="action?.name"
-                :tabindex="0"
-                :destructive="action?.destructive"
-                :disabled="action?.disabled"
-                :loading="action.loading"
-                :busy="action?.busy"
-                @click="actionClicked(action?.id)"
-              />
-            </div>
-          </template>
         </LxDropDownMenu>
       </div>
     </div>

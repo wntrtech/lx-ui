@@ -39,8 +39,8 @@ describe('LxWidget', () => {
       expect(props.showFooter).toBe(false);
       expect(props.showFooter).toBeTypeOf('boolean');
       expect(props.href).toBeNull();
-      expect(props.actions).toEqual([]);
-      expect(props.actions).toBeTypeOf('object');
+      expect(props.actionDefinitions).toEqual([]);
+      expect(props.actionDefinitions).toBeTypeOf('object');
       expect(props.kind).toBe('default');
       expect(props.kind).toBeTypeOf('string');
       expect(props.coverImage).toBe('');
@@ -57,7 +57,7 @@ describe('LxWidget', () => {
           showHeader: false,
           showFooter: true,
           href: { url: 'http://example.com' },
-          actions: ['action1', 'action2'],
+          actionDefinitions: ['action1', 'action2'],
           kind: 'fancy',
           coverImage: 'http://example.com/image.jpg',
         },
@@ -82,8 +82,8 @@ describe('LxWidget', () => {
       expect(props.showFooter).toBeTypeOf('boolean');
       expect(props.href).toEqual({ url: 'http://example.com' });
       expect(props.href).toBeTypeOf('object');
-      expect(props.actions).toEqual(['action1', 'action2']);
-      expect(props.actions).toBeTypeOf('object');
+      expect(props.actionDefinitions).toEqual(['action1', 'action2']);
+      expect(props.actionDefinitions).toBeTypeOf('object');
       expect(props.kind).toBe('fancy');
       expect(props.kind).toBeTypeOf('string');
       expect(props.coverImage).toBe('http://example.com/image.jpg');

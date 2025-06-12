@@ -176,7 +176,7 @@ function toggleClick(event) {
   actionDropDown.value?.preventClose(event);
 }
 
-function actionClicked(id, actionId, value) {
+function actionClicked(id, actionId, value = undefined) {
   emits('actionClick', id, actionId, value);
 }
 
@@ -272,47 +272,18 @@ provide('rowId', idComputed);
           />
         </template>
 
-        <LxDropDownMenu ref="actionDropDown" v-else-if="actionDefinitions?.length > 1">
+        <LxDropDownMenu
+          ref="actionDropDown"
+          v-else-if="actionDefinitions?.length > 1"
+          :actionDefinitions="actionDefinitionsDefaults"
+          @actionClick="(actionId, value) => actionClicked(id, actionId, value)"
+        >
           <LxButton
             icon="overflow-menu"
             kind="ghost"
             :label="requiredTexts?.overflowMenu"
             variant="icon-only"
           />
-          <template #panel>
-            <div
-              class="lx-action-controller"
-              v-for="action in actionDefinitionsDefaults"
-              :key="action.id"
-            >
-              <div class="lx-action-toggle" v-if="action?.kind === 'toggle'">
-                <p v-if="action?.kind === 'toggle'">{{ action?.name }}</p>
-                <LxToggle
-                  v-model="action.value"
-                  :tooltip="action.name"
-                  @update:modelValue="
-                    (newValue) => {
-                      actionClicked(id, action.id, newValue);
-                    }
-                  "
-                  @click="toggleClick($event)"
-                >
-                </LxToggle>
-              </div>
-
-              <LxButton
-                v-else
-                kind="ghost"
-                :label="action?.name"
-                :icon="action?.icon"
-                :disabled="action?.disabled"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
-                @click="actionClicked(id, action.id)"
-              />
-            </div>
-          </template>
         </LxDropDownMenu>
       </div>
     </div>
@@ -373,47 +344,18 @@ provide('rowId', idComputed);
           />
         </template>
 
-        <LxDropDownMenu ref="actionDropDown" v-else-if="actionDefinitions?.length > 1">
+        <LxDropDownMenu
+          ref="actionDropDown"
+          v-else-if="actionDefinitions?.length > 1"
+          :actionDefinitions="actionDefinitionsDefaults"
+          @actionClick="(actionId, value) => actionClicked(id, actionId, value)"
+        >
           <LxButton
             icon="overflow-menu"
             kind="ghost"
             :label="requiredTexts?.overflowMenu"
             variant="icon-only"
           />
-          <template #panel>
-            <div
-              class="lx-action-controller"
-              v-for="action in actionDefinitionsDefaults"
-              :key="action.id"
-            >
-              <div class="lx-action-toggle" v-if="action?.kind === 'toggle'">
-                <p v-if="action?.kind === 'toggle'">{{ action?.name }}</p>
-                <LxToggle
-                  v-if="action?.kind === 'toggle'"
-                  v-model="action.value"
-                  :tooltip="action.name"
-                  @update:modelValue="
-                    (newValue) => {
-                      actionClicked(id, action.id, newValue);
-                    }
-                  "
-                  @click="toggleClick($event)"
-                >
-                </LxToggle>
-              </div>
-              <LxButton
-                v-else
-                kind="ghost"
-                :label="action?.name"
-                :icon="action?.icon"
-                :disabled="action?.disabled"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
-                @click="actionClicked(id, action.id)"
-              />
-            </div>
-          </template>
         </LxDropDownMenu>
       </div>
     </div>

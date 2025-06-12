@@ -34,7 +34,7 @@ const props = defineProps({
     type: Object,
     default: null,
   },
-  actions: { type: Array, default: () => [] },
+  actionDefinitions: { type: Array, default: () => [] },
   kind: {
     type: String,
     default: 'default', // default, fancy
@@ -53,8 +53,8 @@ const emits = defineEmits(['actionClick']);
 
 const size = computed(() => `lx-widget-${props.width}-${props.height}`);
 
-function actionClicked(actionName) {
-  emits('actionClick', actionName);
+function actionClicked(id) {
+  emits('actionClick', id);
 }
 </script>
 <template>
@@ -66,20 +66,25 @@ function actionClicked(actionName) {
   >
     <header v-if="showHeader">
       <p>{{ label }}</p>
-      <div class="lx-widget-toolbar-button" v-if="actions && actions?.length === 1">
+      <div
+        class="lx-widget-toolbar-button"
+        v-if="actionDefinitions && actionDefinitions?.length === 1"
+      >
         <LxButton
-          v-for="action in actions"
-          :key="action.actionName"
           kind="ghost"
           tabindex="0"
-          :icon="action.icon"
+          :icon="actionDefinitions?.[0]?.icon"
           variant="icon-only"
-          :label="action.label"
-          :destructive="action.isDestructive"
-          @click="actionClicked(action.actionName)"
+          :label="actionDefinitions?.[0]?.label"
+          :destructive="actionDefinitions?.[0]?.destructive"
+          @click="actionClicked(actionDefinitions?.[0]?.id)"
         />
       </div>
-      <LxDropDownMenu v-if="actions && actions?.length > 1">
+      <LxDropDownMenu
+        v-if="actionDefinitions && actionDefinitions?.length > 1"
+        :actionDefinitions="actionDefinitions"
+        @actionClick="(id) => actionClicked(id)"
+      >
         <div class="lx-widget-toolbar-button">
           <LxButton
             icon="overflow-menu"
@@ -88,19 +93,6 @@ function actionClicked(actionName) {
             variant="icon-only"
           />
         </div>
-        <template v-slot:panel>
-          <div class="lx-button-set">
-            <LxButton
-              v-for="action in actions"
-              :key="action.actionName"
-              :icon="action.icon"
-              :label="action.label"
-              tabindex="0"
-              :destructive="action.isDestructive"
-              @click="actionClicked(action.actionName)"
-            />
-          </div>
-        </template>
       </LxDropDownMenu>
     </header>
     <article class="lx-main">

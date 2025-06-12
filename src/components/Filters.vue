@@ -96,6 +96,13 @@ function focus() {
   expander.value.focus();
 }
 
+const fastFilterDisplay = computed(() =>
+  props.fastFilters.map((item) => ({
+    id: item[props.fastIdAttribute],
+    name: item[props.fastNameAttribute],
+  }))
+);
+
 defineExpose({ toggleExpander, focus });
 </script>
 <template>
@@ -139,7 +146,11 @@ defineExpose({ toggleExpander, focus });
             :disabled="disabled"
             @click="filterSearch"
           />
-          <LxDropDownMenu v-if="fastFilters && fastFilters.length > 1">
+          <LxDropDownMenu
+            v-if="fastFilters && fastFilters.length > 1"
+            :actionDefinitions="fastFilterDisplay"
+            @actionClick="(id) => fastFilterClick(id)"
+          >
             <LxButton
               id="fast-filter-menu"
               kind="tertiary"
@@ -147,16 +158,6 @@ defineExpose({ toggleExpander, focus });
               :label="displayTexts.fastFiltersLabel"
               :disabled="disabled"
             />
-            <template v-slot:panel>
-              <div class="lx-button-set">
-                <LxButton
-                  v-for="item in fastFilters"
-                  :key="item[fastIdAttribute]"
-                  :label="item[fastNameAttribute]"
-                  @click="fastFilterClick(item[fastIdAttribute])"
-                />
-              </div>
-            </template>
           </LxDropDownMenu>
           <LxButton
             id="fast-filter-button"

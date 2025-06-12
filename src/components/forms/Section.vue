@@ -344,30 +344,17 @@ provide('sectionOrientation', sectionOrientation);
           kind="ghost"
           @click="emits('actionClick', actionDefinitions?.[0]?.id)"
         />
-        <LxDropDownMenu v-else>
+        <LxDropDownMenu
+          v-else
+          :actionDefinitions="actionDefinitions"
+          @actionClick="(id) => emits('actionClick', id)"
+        >
           <LxButton
             icon="overflow-menu"
             kind="ghost"
             :label="rowRequiredTexts.overflowMenu"
             variant="icon-only"
           />
-          <template #panel>
-            <div class="lx-button-set">
-              <LxButton
-                v-for="action in actionDefinitions"
-                :key="action?.id"
-                :icon="action?.icon"
-                :icon-set="action?.iconSet"
-                :label="action?.name || action?.title"
-                :title="action?.title || action?.name"
-                :variant="action?.name ? 'default' : 'icon-only'"
-                :destructive="action?.destructive"
-                :disabled="action?.disabled"
-                kind="ghost"
-                @click="emits('actionClick', action?.id)"
-              />
-            </div>
-          </template>
         </LxDropDownMenu>
       </div>
     </header>

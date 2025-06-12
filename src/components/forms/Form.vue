@@ -451,6 +451,8 @@ const hasPostHeaderInfoSlot = computed(
 );
 // TODO: computed for all button tooltips
 
+const combinedFooterActions = computed(() => secondaryButtons.value.concat(tertiaryButtons.value));
+
 const sectionLocations = ref({});
 
 const visibilities = ref({});
@@ -1030,46 +1032,13 @@ defineExpose({ highlightRow, clearHighlights });
           kind="primary"
           @click="clickHandler(button.id)"
         />
-        <LxDropDownMenu custom-class="responsive-overflow" v-if="notPrimaryButtonCount > 1">
+        <LxDropDownMenu
+          custom-class="responsive-overflow"
+          v-if="notPrimaryButtonCount > 1"
+          :actionDefinitions="combinedFooterActions"
+          @actionClicked="(id) => clickHandler(id)"
+        >
           <LxButton kind="secondary" icon="overflow-menu" :label="displayTexts?.otherActions" />
-          <template #panel>
-            <LxButton
-              v-for="button in secondaryButtons"
-              :id="`${id}-action-${button.id}`"
-              :key="button.id"
-              :label="button.name"
-              :disabled="button.disabled"
-              :destructive="button.destructive"
-              :icon="button.icon"
-              :title="button.title || button.tooltip"
-              :loading="button.loading"
-              :busy="button.busy"
-              :active="button.active"
-              :badge="button.badge"
-              :badge-type="button.badgeType"
-              :badge-title="button.badgeTitle"
-              kind="ghost"
-              @click="clickHandler(button.id)"
-            />
-            <LxButton
-              v-for="button in tertiaryButtons"
-              :id="`${id}-action-${button.id}`"
-              :key="button.id"
-              :label="button.name"
-              :disabled="button.disabled"
-              :destructive="button.destructive"
-              :icon="button.icon"
-              :title="button.title || button.tooltip"
-              :loading="button.loading"
-              :busy="button.busy"
-              :active="button.active"
-              :badge="button.badge"
-              :badge-type="button.badgeType"
-              :badge-title="button.badgeTitle"
-              kind="ghost"
-              @click="clickHandler(button.id)"
-            />
-          </template>
         </LxDropDownMenu>
         <LxButton
           v-for="button in secondaryButtons"

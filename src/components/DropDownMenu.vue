@@ -34,14 +34,14 @@ function preventClose(event) {
 
 const groupedItems = computed(() => {
   const res = props.actionDefinitions.reduce((acc, action) => {
-    if (!action.group) {
+    if (!action?.group) {
       if (!acc.lx_group) {
         acc.lx_group = [];
       }
       acc.lx_group.push(action);
     } else {
-      if (!acc[action.group]) acc[action.group] = [];
-      acc[action.group].push(action);
+      if (!acc[action?.group]) acc[action?.group] = [];
+      acc[action?.group].push(action);
     }
 
     if (action?.kind === 'toggle' && action?.value === undefined) {
@@ -108,6 +108,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   v-model="action.value"
                   :texts="action?.texts"
                   :tooltip="action?.title"
+                  :size="action?.size"
                   @update:modelValue="
                     (newValue) => {
                       actionClicked(action?.id, newValue);
@@ -160,6 +161,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                   v-model="action.value"
                   :texts="action?.texts"
                   :tooltip="action?.title"
+                  :size="action?.size"
                   @update:modelValue="
                     (newValue) => {
                       actionClicked(action?.id, newValue);

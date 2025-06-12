@@ -2,6 +2,14 @@
 
 ## 1.8 → 1.9
 
+### LxWidget actions prop
+
+LxWidget `actions` prop has been renamed to `actionDefinitions`.
+
+LxWidget `actionDefinitions` `isDestructive` attribute has been renamed to `destructive`.
+
+LxWidget `actionClick` emit now returns actions id, so make sure it is defined.
+
 ### removed slots
 
 The components `LxAutoComplete`, `LxButton`, and `LxDropDown` no longer have a default slot.

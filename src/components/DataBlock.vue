@@ -200,7 +200,10 @@ const expandIconTitle = computed(() => {
             @click="actionClicked(action.id, props.id)"
           />
         </template>
-        <LxDropDownMenu>
+        <LxDropDownMenu
+          :actionDefinitions="actionDefinitions"
+          @actionClick="(id) => actionClicked(id, props.id)"
+        >
           <div class="lx-toolbar" v-if="actionDefinitions.length >= 2">
             <LxButton
               icon="overflow-menu"
@@ -210,20 +213,6 @@ const expandIconTitle = computed(() => {
               variant="icon-only"
             />
           </div>
-          <template #panel>
-            <div class="lx-button-set">
-              <LxButton
-                v-for="action in actionDefinitions"
-                :key="action.id"
-                :icon="action.icon"
-                :label="action.name"
-                tabindex="0"
-                :destructive="action.destructive"
-                :disabled="isDisabled || action.disabled"
-                @click="actionClicked(action.id, props.id)"
-              />
-            </div>
-          </template>
           <template v-slot:toolbar />
         </LxDropDownMenu>
       </div>

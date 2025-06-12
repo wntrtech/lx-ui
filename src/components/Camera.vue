@@ -160,6 +160,15 @@ function handleCameraError() {
   lxDevUtils.logError('Error switching cameras', useLx().getGlobals()?.environment);
 }
 
+const cameraListDisplay = computed(() =>
+  camerasList.value.map((camera) => ({
+    ...camera,
+    id: camera.deviceId,
+    name: camera.label || camera.deviceId,
+    active: selectedCamera.value?.deviceId === camera.deviceId,
+  }))
+);
+
 async function switchCamera(val) {
   await stopStream();
   await getCameraDevices();
@@ -174,6 +183,13 @@ async function switchCamera(val) {
     handleCameraError();
   } finally {
     loading.value = false;
+  }
+}
+
+function changeCamera(actionId) {
+  const camera = camerasList.value.find((x) => x?.deviceId === actionId);
+  if (camera) {
+    switchCamera(camera);
   }
 }
 
@@ -296,7 +312,11 @@ onUnmounted(() => {
             :disabled="error || loading"
             @click="switchCamera()"
           />
-          <LxDropDownMenu v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'">
+          <LxDropDownMenu
+            v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'"
+            :actionDefinitions="cameraListDisplay"
+            @actionClick="(id) => changeCamera(id)"
+          >
             <LxButton
               :label="displayTexts.changeCamera"
               variant="icon-only"
@@ -304,16 +324,6 @@ onUnmounted(() => {
               icon="menu"
               :disabled="error || loading"
             />
-            <template #panel>
-              <LxButton
-                v-for="camera in camerasList"
-                :key="camera.deviceId"
-                :label="camera.label || camera.deviceId"
-                kind="ghost"
-                :active="selectedCamera?.deviceId === camera?.deviceId"
-                @click="switchCamera(camera)"
-              />
-            </template>
           </LxDropDownMenu>
         </LxToolbarGroup>
       </template>

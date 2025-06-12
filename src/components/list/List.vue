@@ -1169,25 +1169,16 @@ function focusFirstFocusableElementAfter() {
                 class="selection-action-buttons-small"
                 v-if="selectionActionDefinitions?.length > 0"
               >
-                <LxDropDownMenu>
+                <LxDropDownMenu
+                  :actionDefinitions="selectionActionDefinitions"
+                  @actionClick="(id) => selectionActionClick(id, selectedItems)"
+                >
                   <LxButton
                     icon="menu"
                     kind="ghost"
                     :label="displayTexts.overflowMenu"
                     variant="icon-only"
                   />
-                  <template #panel>
-                    <LxButton
-                      v-for="selectAction in selectionActionDefinitions"
-                      :key="selectAction.id"
-                      :icon="selectAction.icon"
-                      :label="selectAction.name"
-                      :destructive="selectAction.destructive"
-                      :disabled="selectAction.disabled"
-                      kind="ghost"
-                      @click="selectionActionClick(selectAction.id, selectedItems)"
-                    />
-                  </template>
                 </LxDropDownMenu>
               </div>
             </div>

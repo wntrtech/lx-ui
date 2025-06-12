@@ -105,6 +105,15 @@ const getCameraDevices = async () => {
   }
 };
 
+const cameraListDisplay = computed(() =>
+  camerasList.value.map((camera) => ({
+    ...camera,
+    id: camera.deviceId,
+    name: camera.label || camera.deviceId,
+    active: selectedCamera.value?.deviceId === camera.deviceId,
+  }))
+);
+
 const showPreview = ref(false);
 
 function switchCamera(val) {
@@ -125,6 +134,11 @@ function switchCamera(val) {
       showPreview.value = true;
     });
   }
+}
+
+function changeCamera(id) {
+  const camera = camerasList.value.find((cam) => cam.deviceId === id);
+  if (camera) switchCamera(camera);
 }
 
 watch(
@@ -211,18 +225,12 @@ onMounted(async () => {
         :label="displayTexts.changeCamera"
         @click="switchCamera()"
       />
-      <LxDropDownMenu v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'">
+      <LxDropDownMenu
+        v-if="camerasList?.length > 1 && cameraSwitcherMode === 'list'"
+        :actionDefinitions="cameraListDisplay"
+        @actionClick="(id) => changeCamera(id)"
+      >
         <LxButton :label="displayTexts.changeCamera" variant="icon-only" kind="ghost" icon="menu" />
-        <template #panel>
-          <LxButton
-            v-for="camera in camerasList"
-            :key="camera.deviceId"
-            :label="camera.label ? camera.label : camera.deviceId"
-            kind="ghost"
-            :active="selectedCamera?.deviceId === camera?.deviceId"
-            @click="switchCamera(camera)"
-          />
-        </template>
       </LxDropDownMenu>
     </div>
     <div class="lx-qr-scanner">

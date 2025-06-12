@@ -188,9 +188,10 @@ function openContextPersonModal() {
   contextPersonModal.value.open();
 }
 
-function languageChange(locale) {
-  emits('language-changed', locale);
-  selectedLanguageModel.value = locale;
+function languageChange(id) {
+  const language = props.languages.find((lang) => lang?.id === id);
+  emits('language-changed', language);
+  selectedLanguageModel.value = language;
 }
 
 const selectedContextPersonModel = computed({
@@ -319,11 +320,6 @@ function themeChange(theme) {
   }, 1000);
   themeModel.value = theme;
 }
-
-function triggerThemeMenu(e) {
-  themeMenu.value.preventClose(e);
-}
-
 const iconMap = {
   success: 'notification-success',
   warning: 'notification-warning',
@@ -413,6 +409,76 @@ const navItemsUserMenu = computed(() =>
 );
 
 const userInfoMenu = ref(false);
+
+const themeDisplayItems = computed(() => {
+  const res = [];
+  const themes = props.availableThemes?.map((item) => ({
+    id: item,
+    icon: themeIcons[item],
+    name: themeNames.value[item],
+    group: 'theme',
+    active: item === props.theme,
+  }));
+  if (themes && themes.length > 0) themes.forEach((x) => res.push(x));
+
+  res.push({
+    id: 'animations',
+    kind: 'toggle',
+    name: displayTexts.value.animations,
+    texts: {
+      valueYes: displayTexts.value.reduceMotionOn,
+      valueNo: displayTexts.value.reduceMotionOff,
+    },
+    group: 'animations',
+    value: animationsModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
+    id: 'touch',
+    kind: 'toggle',
+    name: displayTexts.value.touchSensitive,
+    texts: {
+      valueYes: displayTexts.value.touchModeOn,
+      valueNo: displayTexts.value.touchModeOff,
+    },
+    group: 'animations',
+    value: touchModeModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
+    id: 'fonts',
+    kind: 'toggle',
+    name: displayTexts.value.fonts,
+    texts: {
+      valueYes: displayTexts.value.systemFontsOn,
+      valueNo: displayTexts.value.systemFontsOff,
+    },
+    group: 'fonts',
+    value: deviceFontsModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  return res;
+});
+
+function themeDropdownClicked(id, value) {
+  if (id === 'animations') {
+    animationsModel.value = value;
+  } else if (id === 'fonts') {
+    deviceFontsModel.value = value;
+  } else if (id === 'touch') {
+    touchModeModel.value = value;
+  } else {
+    themeChange(id);
+  }
+}
+
+const languagesDisplayItems = computed(() =>
+  props.languages?.map((item) => ({
+    id: item?.id,
+    name: item?.name,
+    active: selectedLanguageModel.value?.id === item?.id,
+  }))
+);
 </script>
 <template>
   <div class="lx-header" :class="[{ 'lx-nav-panel-expanded': !navBarSwitch }]">
@@ -685,72 +751,30 @@ const userInfoMenu = ref(false);
           </ul>
           <ul v-if="hasLanguagePicker || hasThemePicker">
             <li v-if="hasLanguagePicker" class="lx-user-menu-item language-picker">
-              <LxDropDownMenu>
+              <LxDropDownMenu
+                :actionDefinitions="languagesDisplayItems"
+                @actionClick="languageChange"
+              >
                 <LxButton
                   customClass="lx-header-button"
                   :label="displayTexts.languagesTitle"
                   kind="ghost"
                   icon="language"
                 />
-
-                <template v-slot:panel>
-                  <div class="lx-button-set">
-                    <LxButton
-                      v-for="item in languages"
-                      kind="ghost"
-                      :key="item?.languages"
-                      :active="selectedLanguageModel.id === item.id ? true : false"
-                      :label="item?.name"
-                      @click="languageChange(item)"
-                    />
-                  </div>
-                </template>
               </LxDropDownMenu>
             </li>
             <li v-if="hasThemePicker" class="lx-user-menu-item theme-picker">
-              <LxDropDownMenu ref="themeMenu">
+              <LxDropDownMenu
+                ref="themeMenu"
+                :actionDefinitions="themeDisplayItems"
+                @actionClick="themeDropdownClicked"
+              >
                 <LxButton
                   customClass="lx-header-button"
                   :label="displayTexts.themeTitle"
                   kind="ghost"
                   :icon="themeIcon"
                 />
-                <template v-slot:panel>
-                  <div class="lx-button-set">
-                    <LxButton
-                      v-for="item in availableThemes"
-                      :key="item"
-                      :icon="themeIcons[item]"
-                      :label="themeNames[item]"
-                      :active="theme === item ? true : false"
-                      @click="themeChange(item)"
-                    />
-                  </div>
-                  <div class="lx-animations-controller">
-                    <p>{{ displayTexts.animations }}</p>
-                    <LxToggle
-                      v-model="animationsModel"
-                      @click="triggerThemeMenu"
-                      :size="props.isTouchSensitive ? 'm' : 's'"
-                    />
-                  </div>
-                  <div class="lx-touch-mode-controller">
-                    <p>{{ displayTexts.touchSensitive }}</p>
-                    <LxToggle
-                      v-model="touchModeModel"
-                      @click="triggerThemeMenu"
-                      :size="props.isTouchSensitive ? 'm' : 's'"
-                    />
-                  </div>
-                  <div class="lx-fonts-controller">
-                    <p>{{ displayTexts.fonts }}</p>
-                    <LxToggle
-                      v-model="deviceFontsModel"
-                      @click="triggerThemeMenu"
-                      :size="props.isTouchSensitive ? 'm' : 's'"
-                    />
-                  </div>
-                </template>
               </LxDropDownMenu>
             </li>
           </ul>
