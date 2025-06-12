@@ -11,6 +11,7 @@ import LxEmptyState from '@/components/EmptyState.vue';
 
 import { shortenUserName, safeString } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { useWindowSize } from '@vueuse/core';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
@@ -44,6 +45,15 @@ const props = defineProps({
   megaMenuHasShowAll: { type: Boolean, default: false },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
+
+  hasCustomButton: { type: Boolean, default: false },
+  customButtonIcon: { type: String, default: null },
+  customButtonBadge: { type: String, default: null },
+  customButtonBadgeType: { type: String, default: 'default' },
+  customButtonBadgeIcon: { type: String, default: null },
+  customButtonOpened: { type: Boolean, default: false },
+  customButtonBlink: { type: Boolean, default: false },
+  customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
 
   texts: {
     type: Object,
@@ -97,7 +107,12 @@ const emits = defineEmits([
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
+  'update:customButtonOpened',
+  'customButtonClick',
 ]);
+
+const windowSize = useWindowSize();
+const windowWidth = computed(() => windowSize.width.value);
 
 const themeIcon = ref('theme');
 const themeMenu = ref();
@@ -400,6 +415,36 @@ function triggerUserMenu() {
     dropDownMenu.value.openMenu();
   }
 }
+
+const customButton = ref();
+
+const customButtonOpenedModal = computed({
+  get() {
+    return props.customButtonOpened;
+  },
+  set(value) {
+    emits('update:customButtonOpened', value);
+  },
+});
+
+watch(
+  () => props.customButtonOpened,
+  (newValue, oldValue) => {
+    if (customButton.value && newValue !== oldValue) {
+      customButton.value.menuOpen = newValue;
+    }
+  },
+  { immediate: true }
+);
+
+watch(
+  () => customButton.value?.menuOpen,
+  (newValue, oldValue) => {
+    if (newValue !== oldValue) {
+      customButtonOpenedModal.value = newValue;
+    }
+  }
+);
 </script>
 
 <template>
@@ -415,6 +460,44 @@ function triggerUserMenu() {
         :title="displayTexts.helpTitle"
         @click="helpClicked"
       />
+    </div>
+    <div
+      v-if="hasCustomButton"
+      class="lx-shell-custom-button"
+      :class="[{ 'lx-shell-custom-button-opened': customButton?.menuOpen }]"
+    >
+      <LxButton
+        v-if="customButtonKind === 'button'"
+        id="lx-shell-custom-button"
+        kind="ghost"
+        variant="icon-only"
+        :label="displayTexts.customButton"
+        :icon="customButtonIcon"
+        :badge="customButtonBadge"
+        :badgeType="customButtonBadgeType"
+        :badgeIcon="customButtonBadgeIcon"
+        customClass="lx-header-button"
+        @click="emits('customButtonClick')"
+      />
+      <LxDropDownMenu ref="customButton" v-else>
+        <LxButton
+          id="lx-shell-custom-button"
+          kind="ghost"
+          variant="icon-only"
+          :label="displayTexts.customButton"
+          :icon="customButtonIcon"
+          :badge="customButtonBadge"
+          :badgeType="customButtonBadgeType"
+          :badgeIcon="customButtonBadgeIcon"
+          customClass="lx-header-button"
+        />
+        <template #panel v-if="$slots.customButtonPanel">
+          <slot name="customButtonPanel" />
+        </template>
+        <template #clickSafePanel v-if="$slots.customButtonSafePanel && !$slots.customButtonPanel">
+          <slot name="customButtonSafePanel" />
+        </template>
+      </LxDropDownMenu>
     </div>
 
     <div class="lx-theme-menu" v-if="hasThemePicker">
@@ -576,7 +659,7 @@ function triggerUserMenu() {
       </LxDropDownMenu>
     </div>
 
-    <div class="lx-mega-menu" v-if="hasMegaMenu">
+    <div class="lx-mega-menu" v-if="hasMegaMenu && (windowWidth > 500 || mode === 'cover')">
       <LxMegaMenu
         :items="megaMenuItems"
         :groupDefinitions="megaMenuGroupDefinitions"

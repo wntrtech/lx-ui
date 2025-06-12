@@ -66,6 +66,16 @@ const props = defineProps({
   megaMenuHasShowAll: { type: Boolean, default: false },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
+
+  hasCustomButton: { type: Boolean, default: false },
+  customButtonIcon: { type: String, default: null },
+  customButtonBadge: { type: String, default: null },
+  customButtonBadgeType: { type: String, default: 'default' },
+  customButtonBadgeIcon: { type: String, default: null },
+  customButtonOpened: { type: Boolean, default: false },
+  customButtonBlink: { type: Boolean, default: false },
+  customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
+
   texts: { type: Object, default: () => {} },
 });
 
@@ -126,6 +136,8 @@ const emits = defineEmits([
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
+  'update:customButtonOpened',
+  'customButtonClick',
 ]);
 
 const alternativeProfilesModal = ref();
@@ -369,6 +381,15 @@ watch(width, () => {
   });
 });
 
+const customButtonOpenedModal = computed({
+  get() {
+    return props.customButtonOpened;
+  },
+  set(value) {
+    emits('update:customButtonOpened', value);
+  },
+});
+
 onMounted(() => {
   if (width.value <= 1900) {
     navBarShortMode.value = true;
@@ -480,6 +501,13 @@ onMounted(() => {
         :megaMenuItems="megaMenuItems"
         :megaMenuHasShowAll="megaMenuHasShowAll"
         :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+        :hasCustomButton="hasCustomButton"
+        :customButtonIcon="customButtonIcon"
+        :customButtonBadge="customButtonBadge"
+        :customButtonBadgeType="customButtonBadgeType"
+        :customButtonBadgeIcon="customButtonBadgeIcon"
+        :customButtonKind="customButtonKind"
+        v-model:customButtonOpened="customButtonOpenedModal"
         v-model:selectedLanguage="selectedLanguageModel"
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
@@ -495,8 +523,16 @@ onMounted(() => {
         @alerts-click="alertsClicked"
         @help-click="helpClicked"
         @log-out="logOut"
+        @customButtonClick="emits('customButtonClick')"
         :texts="displayTexts"
-      />
+      >
+        <template #customButtonPanel v-if="$slots.customButtonPanel">
+          <slot name="customButtonPanel" />
+        </template>
+        <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+          <slot name="customButtonSafePanel" />
+        </template>
+      </LxHeaderButtons>
       <LxButton
         v-if="!hideNavBar"
         id="nav-toggle"
@@ -532,6 +568,13 @@ onMounted(() => {
       :megaMenuHasShowAll="megaMenuHasShowAll"
       :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
       v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+      :hasCustomButton="hasCustomButton"
+      :customButtonIcon="customButtonIcon"
+      :customButtonBadge="customButtonBadge"
+      :customButtonBadgeType="customButtonBadgeType"
+      :customButtonBadgeIcon="customButtonBadgeIcon"
+      :customButtonKind="customButtonKind"
+      v-model:customButtonOpened="customButtonOpenedModal"
       @mega-menu-show-all-click="triggerShowAllClick"
       v-model:selectedLanguage="selectedLanguageModel"
       v-model:theme="themeModel"
@@ -546,8 +589,16 @@ onMounted(() => {
       @alerts-click="alertsClicked"
       @help-click="helpClicked"
       @log-out="logOut"
+      @customButtonClick="emits('customButtonClick')"
       :texts="displayTexts"
-    />
+    >
+      <template #customButtonPanel v-if="$slots.customButtonPanel">
+        <slot name="customButtonPanel" />
+      </template>
+      <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+        <slot name="customButtonSafePanel" />
+      </template>
+    </LxHeaderButtons>
   </div>
 
   <LxModal

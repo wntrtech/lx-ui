@@ -63,6 +63,9 @@ const emits = defineEmits([
   'update:nav-bar-switch',
   'update:selectedMegaMenuItem',
   'navClick',
+  'update:customButtonOpened',
+  'update:customButtonBlink',
+  'customButtonClick',
 ]);
 
 const props = defineProps({
@@ -145,6 +148,15 @@ const props = defineProps({
 
   hasSkipLink: { type: Boolean, default: true },
 
+  hasCustomButton: { type: Boolean, default: false },
+  customButtonIcon: { type: String, default: null },
+  customButtonBadge: { type: String, default: null },
+  customButtonBadgeType: { type: String, default: 'default' },
+  customButtonBadgeIcon: { type: String, default: null },
+  customButtonOpened: { type: Boolean, default: false },
+  customButtonBlink: { type: Boolean, default: false },
+  customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
+
   overrideDefaultStyles: { type: Boolean, default: true },
 
   texts: { type: Object, default: () => {} },
@@ -200,6 +212,7 @@ const textsDefault = {
   svgTitle: 'Paziņojums',
   skipLinkLabel: 'Pāriet uz lapas saturu',
   skipLinkTitle: 'Pāriet uz lapas saturu',
+  customButton: 'Pielāgojamā poga',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -697,6 +710,54 @@ function focusFirstMainFocusableElement() {
     }
   }
 }
+
+const customButtonOpenedModal = computed({
+  get() {
+    return props.customButtonOpened;
+  },
+  set(value) {
+    emits('update:customButtonOpened', value);
+  },
+});
+
+let blinkTimeout = null;
+
+function removeBlink() {
+  const button = document.getElementById('lx-shell-custom-button');
+  if (!button) return;
+
+  if (blinkTimeout) {
+    clearTimeout(blinkTimeout);
+    blinkTimeout = null;
+  }
+  button.classList.remove('custom-button-blink');
+  button.classList.remove('custom-button-after-blink');
+}
+
+function blink() {
+  const button = document.getElementById('lx-shell-custom-button');
+  if (!button) return;
+  removeBlink();
+
+  button.classList.add('custom-button-blink');
+
+  blinkTimeout = setTimeout(() => {
+    button.classList.remove('custom-button-blink');
+    button.classList.add('custom-button-after-blink');
+    blinkTimeout = null;
+  }, 5000);
+}
+
+watch(
+  () => props.customButtonBlink,
+  (newValue) => {
+    if (newValue) {
+      blink();
+    } else {
+      removeBlink();
+    }
+  }
+);
 </script>
 <template>
   <transition name="shell-switch">
@@ -730,6 +791,13 @@ function focusFirstMainFocusableElement() {
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :hasCustomButton="hasCustomButton"
+          :customButtonIcon="customButtonIcon"
+          :customButtonBadge="customButtonBadge"
+          :customButtonBadgeType="customButtonBadgeType"
+          :customButtonBadgeIcon="customButtonBadgeIcon"
+          :customButtonKind="customButtonKind"
+          v-model:customButtonOpened="customButtonOpenedModal"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
@@ -746,6 +814,7 @@ function focusFirstMainFocusableElement() {
           @nav-toggle="navToggle"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
+          @customButtonClick="emits('customButtonClick')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -758,6 +827,12 @@ function focusFirstMainFocusableElement() {
             :title="`${systemName} logo`"
             :desc="`${systemName}: ${systemSubheader}`"
           />
+          <template #customButtonPanel v-if="$slots.customButtonPanel">
+            <slot name="customButtonPanel" />
+          </template>
+          <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+            <slot name="customButtonSafePanel" />
+          </template>
         </LxMainHeader>
       </header>
       <main ref="main" class="lx-main">
@@ -863,6 +938,13 @@ function focusFirstMainFocusableElement() {
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :hasCustomButton="hasCustomButton"
+          :customButtonIcon="customButtonIcon"
+          :customButtonBadge="customButtonBadge"
+          :customButtonBadgeType="customButtonBadgeType"
+          :customButtonBadgeIcon="customButtonBadgeIcon"
+          :customButtonKind="customButtonKind"
+          v-model:customButtonOpened="customButtonOpenedModal"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
@@ -884,12 +966,19 @@ function focusFirstMainFocusableElement() {
           @go-back="goBack"
           @log-out="logOut"
           @nav-toggle="navToggle"
+          @customButtonClick="emits('customButtonClick')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
             <slot name="logoSmall" />
           </template>
           <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
+          <template #customButtonPanel v-if="$slots.customButtonPanel">
+            <slot name="customButtonPanel" />
+          </template>
+          <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+            <slot name="customButtonSafePanel" />
+          </template>
         </LxMainHeader>
       </header>
       <nav ref="nav" aria-label="navigation panel" v-if="!hideNavBar">
@@ -907,6 +996,12 @@ function focusFirstMainFocusableElement() {
           v-model:isTouchSensitive="touchModeModel"
           :selectedNavItems="navItemsSelected"
           :texts="displayTexts"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           @nav-toggle="navToggle"
           @navClick="navClick"
         />
@@ -991,6 +1086,13 @@ function focusFirstMainFocusableElement() {
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuHasShowAll="megaMenuHasShowAll"
+          :hasCustomButton="hasCustomButton"
+          :customButtonIcon="customButtonIcon"
+          :customButtonBadge="customButtonBadge"
+          :customButtonBadgeType="customButtonBadgeType"
+          :customButtonBadgeIcon="customButtonBadgeIcon"
+          :customButtonKind="customButtonKind"
+          v-model:customButtonOpened="customButtonOpenedModal"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
@@ -1013,12 +1115,19 @@ function focusFirstMainFocusableElement() {
           @go-back="goBack"
           @log-out="logOut"
           @nav-toggle="navToggle"
+          @customButtonClick="emits('customButtonClick')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
             <slot name="logoSmall" />
           </template>
           <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
+          <template #customButtonPanel v-if="$slots.customButtonPanel">
+            <slot name="customButtonPanel" />
+          </template>
+          <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+            <slot name="customButtonSafePanel" />
+          </template>
         </LxMainHeader>
       </header>
       <nav ref="nav" aria-label="navigation panel" v-if="!hideNavBar">
@@ -1029,6 +1138,12 @@ function focusFirstMainFocusableElement() {
           :available-themes="availableThemes"
           :has-language-picker="hasLanguagePicker"
           :languages="languages"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
@@ -1408,6 +1523,13 @@ function focusFirstMainFocusableElement() {
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+          :hasCustomButton="hasCustomButton"
+          :customButtonIcon="customButtonIcon"
+          :customButtonBadge="customButtonBadge"
+          :customButtonBadgeType="customButtonBadgeType"
+          :customButtonBadgeIcon="customButtonBadgeIcon"
+          :customButtonKind="customButtonKind"
+          v-model:customButtonOpened="customButtonOpenedModal"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
@@ -1423,12 +1545,19 @@ function focusFirstMainFocusableElement() {
           @nav-toggle="navToggle"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
+          @customButtonClick="emits('customButtonClick')"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
             <slot name="logoSmall" />
           </template>
           <LxIcon v-if="systemIcon" :value="systemIcon" icon-set="brand" />
+          <template #customButtonPanel v-if="$slots.customButtonPanel">
+            <slot name="customButtonPanel" />
+          </template>
+          <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+            <slot name="customButtonSafePanel" />
+          </template>
         </LxMainHeader>
       </header>
       <nav ref="nav" aria-label="navigation panel" v-if="!hideNavBar">
@@ -1445,6 +1574,12 @@ function focusFirstMainFocusableElement() {
           :languages="languages"
           :selectedNavItems="navItemsSelected"
           :texts="displayTexts"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           @nav-toggle="navToggle"
           @navClick="navClick"
         />

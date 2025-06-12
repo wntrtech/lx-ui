@@ -367,6 +367,25 @@
   display: none;
 }
 
+
+.lx .lx-layout-public nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item .popper-wrapper{
+  width: 100%;
+}
+
+.lx .lx-layout-public nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item::before{
+  position: absolute;
+  z-index: 10;
+  content: " ";
+  width: 100%;
+  border: 1px solid var(--color-chrome);
+  opacity: 1;
+  transition: opacity .1s ease-out;
+}
+
+.lx-layout.lx-layout-public .lx-shell-custom-button  .lx-button:not(#userMenuButton)>.lx-button-content-wrapper .lx-badge {
+    border-color: var(--color-region);
+}
+
 /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
 @media (max-height: calc(8rem * 5)) {
   .lx-layout.lx-layout-public.lx-collapsed>header {

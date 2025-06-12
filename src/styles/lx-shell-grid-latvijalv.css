@@ -493,7 +493,25 @@
   .lx .lx-layout.lx-layout-latvijalv.no-nav-items>header>.lx-header .lx-group.lx-right-group #nav-toggle{
     display: none;
   }
-  
+
+  .lx .lx-layout-latvijalv nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item .popper-wrapper{
+    width: 100%;
+  }
+
+  .lx .lx-layout-latvijalv nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item::before{
+    position: absolute;
+    z-index: 10;
+    content: " ";
+    width: 100%;
+    border: 1px solid var(--color-chrome);
+    opacity: 1;
+    transition: opacity .1s ease-out;
+  }
+
+  .lx-layout.lx-layout-latvijalv .lx-shell-custom-button .lx-button:not(#userMenuButton)>.lx-button-content-wrapper .lx-badge {
+    border-color: var(--color-region);
+  }
+    
   /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
   @media (max-height: calc(8rem * 5)) {
     .lx-layout.lx-layout-latvijalv.lx-collapsed>header {

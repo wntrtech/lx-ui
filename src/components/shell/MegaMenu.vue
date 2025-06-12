@@ -12,6 +12,7 @@ const props = defineProps({
   hasShowAll: { type: Boolean, default: false },
   groupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
+  buttonVariant: { type: String, default: 'icon-only' },
   texts: {
     type: Object,
     required: false,
@@ -114,7 +115,7 @@ function getIconSet(item) {
     <div class="lx-toolbar">
       <LxButton
         customClass="lx-header-button"
-        variant="icon-only"
+        :variant="buttonVariant"
         kind="ghost"
         icon="apps"
         :label="displayTexts.megaMenuTitle"

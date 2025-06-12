@@ -768,3 +768,23 @@
 .lx:not(.lx-no-animations) .secondary-menu-item {
   transition: background-color 0.1s ease-in, color 0.1s ease-in, border-color 0.1s ease-in;
 }
+
+@keyframes blink-animation {
+  50% {
+    background-color: var(--color-orange);
+  }
+}
+
+@keyframes blink-icon-animation {
+  50% {
+      fill: var(--color-badge-foreground);
+  }
+}
+
+.lx:not(.lx-no-animations) .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-blink {
+  animation: blink-animation 1s ease-in-out infinite;
+}
+
+.lx:not(.lx-no-animations) .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-blink svg {
+  animation: blink-icon-animation 1s ease-in-out infinite;
+}

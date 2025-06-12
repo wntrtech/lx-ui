@@ -5,6 +5,7 @@ import { useWindowSize } from '@vueuse/core';
 
 import LxButton from '@/components/Button.vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
+import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
@@ -30,6 +31,13 @@ const props = defineProps({
   languages: { type: Array, default: () => [] },
   selectedLanguage: { type: Object, default: null },
   layoutMode: { type: String, default: 'default' },
+
+  hasMegaMenu: { type: Boolean, default: false },
+  megaMenuItems: { type: Array, default: () => [] },
+  megaMenuHasShowAll: { type: Boolean, default: false },
+  megaMenuGroupDefinitions: { type: Array, default: null },
+  selectedMegaMenuItem: { type: String, default: null },
+
   texts: {
     type: Object,
     required: false,
@@ -85,6 +93,8 @@ const emits = defineEmits([
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'navClick',
+  'update:selectedMegaMenuItem',
+  'megaMenuShowAllClick',
 ]);
 
 function navToggle(ev) {
@@ -140,6 +150,15 @@ const touchModeModel = computed({
   },
 });
 
+const selectedMegaMenuItemModel = computed({
+  get() {
+    return props.selectedMegaMenuItem;
+  },
+  set(value) {
+    emits('update:selectedMegaMenuItem', value);
+  },
+});
+
 const getTabIndex = computed(() => {
   if ((props.layoutMode !== 'default' && props.layoutMode !== 'digives') || width.value > 1900)
     return 0;
@@ -149,6 +168,10 @@ const getTabIndex = computed(() => {
 function navClick(id) {
   emits('navClick', id);
   emits('nav-toggle', true);
+}
+
+function triggerShowAllClick() {
+  emits('megaMenuShowAllClick');
 }
 </script>
 <template>
@@ -219,6 +242,17 @@ function navClick(id) {
           :iconSet="item?.iconSet"
           :tabindex="getTabIndex"
           @click="navClick(item?.id)"
+        />
+      </li>
+      <li v-if="props.hasMegaMenu && width <= 500" class="lx-mega-menu-nav-item lx-mega-menu">
+        <LxMegaMenu
+          :items="megaMenuItems"
+          :groupDefinitions="megaMenuGroupDefinitions"
+          :hasShowAll="megaMenuHasShowAll"
+          :texts="displayTexts"
+          buttonVariant="default"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          @mega-menu-show-all-click="triggerShowAllClick"
         />
       </li>
     </ul>

@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxToggle from '@/components/Toggle.vue';
+import { onClickOutside } from '@vueuse/core';
 
 const props = defineProps({
   placement: { type: String, default: 'bottom' },
@@ -55,6 +56,10 @@ const groupedItems = computed(() => {
   return res;
 });
 
+const dropDownWrapper = ref();
+
+onClickOutside(dropDownWrapper, closeMenu);
+
 function actionClicked(id, value = undefined) {
   emits('actionClick', id, value);
 }
@@ -64,7 +69,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
 
 <template>
   <div
-    v-click-away="closeMenu"
+    ref="dropDownWrapper"
     class="lx-context-container"
     :class="[{ 'lx-selected': menuOpen }, customClass]"
   >
