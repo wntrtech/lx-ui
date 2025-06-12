@@ -9,7 +9,7 @@ import {
   nextTick,
   inject,
 } from 'vue';
-import { generateUUID } from '@/utils/stringUtils';
+import { generateUUID, kebabToCamel } from '@/utils/stringUtils';
 import LxFlag from '@/components/Flag.vue';
 import LxContentSwitcher from '@/components/ContentSwitcher.vue';
 import LxButton from '@/components/Button.vue';
@@ -19,7 +19,7 @@ import LxEmptyState from '@/components/EmptyState.vue';
 import { lxDevUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
 import { useElementSize } from '@vueuse/core';
-import { kebabToCamel, getTexts } from '@/utils/visualPickerUtils';
+import { getTexts } from '@/utils/visualPickerUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({

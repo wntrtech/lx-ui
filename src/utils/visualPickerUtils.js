@@ -202,18 +202,6 @@ const latvia = {
   '0056000': 'Ventspils novads',
 };
 
-export function kebabToCamel(kebabStr) {
-  return kebabStr
-    .split('-')
-    .map((word, index) => {
-      if (index === 0) {
-        return word.toLowerCase();
-      }
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    })
-    .join('');
-}
-
 export function getTexts(kind) {
   switch (kind) {
     case 'europe':

@@ -143,3 +143,15 @@ export function removeExtension(fileName) {
 export function capitalizeFirstLetter(string) {
   return `${string.charAt(0).toUpperCase()}${string.slice(1)}`;
 }
+
+export function kebabToCamel(kebabStr) {
+  return kebabStr
+    .split('-')
+    .map((word, index) => {
+      if (index === 0) {
+        return word.toLowerCase();
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join('');
+}
