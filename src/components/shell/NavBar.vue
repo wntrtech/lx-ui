@@ -25,6 +25,7 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
   hasDeviceFonts: { type: Boolean, default: false },
+  isTouchSensitive: { type: Boolean, default: false },
   hasLanguagePicker: { type: Boolean, default: false },
   languages: { type: Array, default: () => [] },
   selectedLanguage: { type: Object, default: null },
@@ -49,6 +50,8 @@ const textsDefault = {
   fonts: 'Iekārtas fonti',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
+  touchModeOff: 'Nē',
+  touchModeOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
 };
@@ -80,6 +83,7 @@ const emits = defineEmits([
   'update:theme',
   'update:hasAnimations',
   'update:hasDeviceFonts',
+  'update:isTouchSensitive',
   'navClick',
 ]);
 
@@ -124,6 +128,15 @@ const deviceFontsModel = computed({
   },
   set(value) {
     emits('update:hasDeviceFonts', value);
+  },
+});
+
+const touchModeModel = computed({
+  get() {
+    return props.isTouchSensitive;
+  },
+  set(value) {
+    emits('update:isTouchSensitive', value);
   },
 });
 
@@ -185,6 +198,7 @@ function navClick(id) {
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
         v-model:hasDeviceFonts="deviceFontsModel"
+        v-model:isTouchSensitive="touchModeModel"
         :texts="displayTexts"
       />
     </ul>

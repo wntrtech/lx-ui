@@ -38,6 +38,7 @@
   --gap-form-small: 2rem var(--gap-form-small-side) 1rem var(--gap-form-small-side);
 
   --row-size: 3rem;
+  --row-dynamic: var(--row-size);
   --nav-row-size: 3rem;
   --public-nav-header-size: calc(var(--nav-row-size) + var(--row-size));
   --notification-size: 28rem;
@@ -230,7 +231,7 @@
   --button-dropdown-grid-areas: 'content icon';
   --button-dropdown-grid-template-columns: 1fr auto;
   --button-dropdown-grid-template-rows: 1fr;
-  --button-dropdown-height: var(--row-size);
+  --button-dropdown-height: var(--row-size-dynamic);
   --button-dropdown-icon-height: 1.5rem;
   --button-dropdown-icon-width: 1.55rem;
   --button-dropdown-margin: 0;
@@ -535,4 +536,16 @@
   --badge-min-height: 1.5rem;
   --badge-gap: 0.25rem;
   --badge-icon-width: 1rem;
+}
+
+@media (pointer: coarse), (pointer: none) {
+  .lx{
+  --row-size-dynamic: var(--row-size);
+  }
+}
+
+@media (pointer: fine) {
+  .lx{
+  --row-size-dynamic: 2rem;
+  }
 }

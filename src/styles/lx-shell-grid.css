@@ -1539,12 +1539,24 @@
 }
 
 .lx-animations-controller,
-.lx-fonts-controller {
+.lx-fonts-controller,
+.lx-touch-mode-controller {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 0 0.5rem 1rem;
+  height: calc(var(--row-size-dynamic) + 0.2rem);
+  padding: 0.1rem 0.5rem 0.1rem 1rem;
   border-top: 1px solid var(--color-chrome);
+}
+
+.lx-touch-mode .lx-animations-controller,
+.lx-touch-mode .lx-fonts-controller,
+.lx-touch-mode .lx-touch-mode-controller {
+  padding: 0.1rem 0 0.1rem 1rem;
+}
+
+.lx-touch-mode-controller {
+  border-top-color: transparent;
 }
 
 .lx-cover

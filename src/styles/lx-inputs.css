@@ -1987,12 +1987,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   margin-left: -0.1rem;
 }
 
-@media (pointer: coarse) {
-  .lx-dropdown-default-content .lx-value-picker-item {
-    min-height: var(--row-size) !important;
-  }
-}
-
 /*** Misc input state + placeholder styles ***/
 
 ::-webkit-input-placeholder {
@@ -2872,7 +2866,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-dropdown-default-content .lx-value-picker-item {
   line-height: 1em;
-  height: auto;
+  height: var(--row-size-dynamic);
   padding: 0.5rem 1rem;
   outline-color: var(--color-focus-background);
   border: 2px solid transparent;
