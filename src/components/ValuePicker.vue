@@ -111,26 +111,18 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 onMounted(() => {
   const updateModelValue = (value) => emits('update:modelValue', value);
 
+  // Handle existing value
   if (model.value) {
-    if (!Array.isArray(model.value) && (props.alwaysAsArray || props.kind === 'multiple')) {
+    const shouldBeArray = props.alwaysAsArray || props.kind === 'multiple';
+    if (!Array.isArray(model.value) && shouldBeArray) {
       updateModelValue([model.value]);
     }
-  } else if (props.kind === 'multiple') {
-    if (
-      props.variant === 'default' ||
-      props.variant === 'default-custom' ||
-      props.variant === 'tiles' ||
-      props.variant === 'tiles-custom' ||
-      props.variant === 'tags' ||
-      props.variant === 'tags-custom' ||
-      props.variant === 'indicator' ||
-      props.variant === 'horizontal' ||
-      props.variant === 'horizontal-custom'
-    ) {
-      updateModelValue(null);
-    } else {
-      updateModelValue([]);
-    }
+    return;
+  }
+
+  // Handle missing value
+  if (props.kind === 'multiple') {
+    updateModelValue([]);
   } else if (props.kind === 'single') {
     updateModelValue(null);
   }

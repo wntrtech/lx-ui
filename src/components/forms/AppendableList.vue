@@ -144,9 +144,9 @@ const allActions = computed(() => {
   return props.actionDefinitions;
 });
 
-function actionClick(val, deleteKey, item) {
-  if (val === 'appendableListDelete') removeItem(deleteKey);
-  else emits('actionClick', val, item);
+function actionClick(val, item, itemKey) {
+  if (val === 'appendableListDelete') removeItem(itemKey);
+  emits('actionClick', val, item, itemKey);
 }
 
 const selectedValues = computed({
@@ -207,7 +207,7 @@ defineExpose({ clearModel });
           :forceUppercase="forceUppercase"
           :hasSelecting="hasSelecting"
           :selectingKind="selectingKind"
-          @actionClick="(val) => actionClick(val, item._lx_appendableKey, item[idAttribute])"
+          @actionClick="(val) => actionClick(val, item[idAttribute], item._lx_appendableKey)"
           @selectingClick="changeSelecting"
         >
           <LxForm
@@ -247,7 +247,9 @@ defineExpose({ clearModel });
               :label="displayTexts.removeItem"
               :destructive="true"
               kind="ghost"
-              @click="removeItem(item._lx_appendableKey)"
+              @click="
+                () => actionClick('appendableListDelete', item[idAttribute], item._lx_appendableKey)
+              "
             />
           </div>
         </div>
