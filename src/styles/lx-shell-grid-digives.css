@@ -7,7 +7,6 @@
   grid-template-columns: 1fr 20rem 20rem;
   grid-template-rows: calc(var(--row-size) * 2) var(--row-size);
   background-color: var(--color-region);
-  color: black;
 }
 
 .lx-header-digives.with-context-person {
@@ -189,10 +188,10 @@
   display: flex;
 }
 
-.lx-layout.lx-layout-default.lx-hide-nav-bar > nav .lx-nav-panel.lx-responsive,
-.lx-layout.lx-layout-default.lx-hide-nav-bar > nav .lx-nav-panel,
-.lx-layout.lx-layout-default.lx-hide-nav-bar > nav,
-.lx-layout.lx-layout-default.lx-collapsed > nav {
+.lx-layout.lx-layout-default.lx-layout-digives.lx-hide-nav-bar > nav .lx-nav-panel.lx-responsive,
+.lx-layout.lx-layout-default.lx-layout-digives.lx-hide-nav-bar > nav .lx-nav-panel,
+.lx-layout.lx-layout-default.lx-layout-digives.lx-hide-nav-bar > nav,
+.lx-layout.lx-layout-default.lx-layout-digives.lx-collapsed > nav  {
   display: none;
 }
 

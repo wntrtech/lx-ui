@@ -11,6 +11,8 @@ import LxNavBar from '@/components/shell/NavBar.vue';
 import LxNavBarDigives from '@/components/shell/NavBarDigives.vue';
 
 import { lxDevUtils } from '@/utils';
+import LxMainHeaderDigivesLite from '@/components/shell/HeaderDigivesLite.vue';
+import LxNavBarDigivesLite from '@/components/shell/NavBarDigivesLite.vue';
 
 import Notification from '@/components/Notification.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -21,6 +23,8 @@ import LxSkipLink from '@/components/SkipLink.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import LxAlertWidget from '@/components/AlertWidget.vue';
 import LxMainHeaderDigimaks from '@/components/shell/HeaderDigimaks.vue';
+import LxRow from '@/components/forms/Row.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const themeModel = useColorMode({
@@ -69,7 +73,7 @@ const emits = defineEmits([
 ]);
 
 const props = defineProps({
-  mode: { type: String, default: 'default' }, // public, cover, digives, digimaks, latvijalv
+  mode: { type: String, default: 'default' }, // public, cover, digives, digives-lite, digimaks, latvijalv
   systemNameShort: { type: String, required: true },
   systemName: { type: String, required: true },
   systemSubheader: { type: String, default: null },
@@ -174,6 +178,7 @@ const textsDefault = {
   contextPersonTitle: 'Saistīto personu dati',
   close: 'Aizvērt',
   contextPersonsLabel: 'Izvēlēties personu',
+  contextPersonsInfoLabel: 'Pacients',
   contextPersonsOwnData: 'Skatīt manus datus',
   alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
   contextPersonsButtonLabel: 'Konteksta personas',
@@ -476,8 +481,15 @@ const navBarSwitchModel = computed({
 const navBarSwitchBasic = shallowRef(true);
 
 function navToggle(value) {
-  if (props.mode === 'digives' || props.mode === 'digimaks') navBarSwitchModel.value = value;
-  else navBarSwitchBasic.value = value;
+  if (props.mode === 'digives-lite' && window.innerWidth < 1000) {
+    navBarSwitchModel.value = value;
+    return;
+  }
+  if (props.mode === 'digives' || props.mode === 'digimaks') {
+    navBarSwitchModel.value = value;
+  } else {
+    navBarSwitchBasic.value = value;
+  }
 }
 function navToggleButton() {
   if (props.mode === 'digives') {
@@ -1362,6 +1374,191 @@ watch(
             <p class="lx-secondary" v-if="alert?.description">{{ alert?.description }}</p>
           </li>
         </ul>
+        <LxPageHeader
+          v-if="pageHeaderVisible"
+          :label="pageTitle"
+          :description="pageDescription"
+          :backLabel="pageBackLabel"
+          :backPath="pageBackPath"
+          :show-back-button="pageBackButtonVisible"
+          :breadcrumbs="pageBreadcrumbs"
+          :hide-header-text="hideHeaderText"
+          @go-back="goBack"
+        />
+        <transition name="nav">
+          <slot />
+        </transition>
+        <div class="lx-loader-screen" v-if="navigating">
+          <div class="spinner">
+            <LxLoader :loading="true" />
+          </div>
+        </div>
+      </main>
+      <footer ref="footer">
+        <div>
+          <slot name="footer" />
+        </div>
+      </footer>
+      <div ref="modals" id="modals"></div>
+    </div>
+    <div
+      v-else-if="mode === 'digives-lite'"
+      class="lx-layout lx-layout-default lx-layout-digives-lite"
+      :class="[
+        { 'lx-collapsed': navBarSwitchModel },
+        { 'lx-hide-nav-bar': hideNavBar },
+        { 'lx-collapsed-null': navBarSwitchModel === null },
+        { 'lx-override': overrideDefaultStyles },
+      ]"
+    >
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
+        @click="focusFirstMainFocusableElement"
+      />
+      <header ref="header">
+        <LxMainHeaderDigivesLite
+          :userInfo="userInfo"
+          :hasAvatar="hasAvatar"
+          :alternative-profiles-info="alternativeProfilesInfo"
+          :context-persons-info="contextPersonsInfo"
+          :nav-items="navItems"
+          v-model:nav-bar-switch="navBarSwitchModel"
+          :hide-nav-bar="hideNavBar"
+          :systemNameShort="systemNameShort"
+          :systemSubheader="systemSubheader"
+          :system-name-formatted="systemNameFormatted"
+          :page-label="pageTitle"
+          :home-path="pageIndexPath"
+          :backLabel="pageBackLabel"
+          :backPath="pageBackPath"
+          :show-back-button="pageBackButtonVisible"
+          :breadcrumbs="pageBreadcrumbs"
+          :has-language-picker="hasLanguagePicker"
+          :languages="languages"
+          :system-icon="systemIcon"
+          :hasThemePicker="hasThemePicker"
+          :availableThemes="availableThemes"
+          :has-alerts="hasAlerts"
+          :alerts-kind="alertsKind"
+          :alerts="alerts"
+          :alert-count="alertCount"
+          :alert-level="alertLevel"
+          :has-help="hasHelp"
+          :environment="environment"
+          :headerNavDisable="headerNavDisable"
+          :headerNavReadOnly="headerNavReadOnly"
+          :hasCustomButton="hasCustomButton"
+          :customButtonIcon="customButtonIcon"
+          :customButtonBadge="customButtonBadge"
+          :customButtonBadgeType="customButtonBadgeType"
+          :customButtonBadgeIcon="customButtonBadgeIcon"
+          :customButtonKind="customButtonKind"
+          v-model:customButtonOpened="customButtonOpenedModal"
+          v-model:theme="themeModel"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:selectedContextPerson="selectedContextPersonModel"
+          v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
+          @language-changed="languageChanged"
+          @alert-item-click="alertItemClicked"
+          @alerts-click="alertsClicked"
+          @help-click="helpClicked"
+          @go-home="goHome"
+          @go-back="goBack"
+          @log-out="logOut"
+          @nav-toggle="navToggle"
+          @context-person-changed="contextPersonChanged"
+          @alternative-profile-changed="alternativeProfileChanged"
+          @navClick="navClick"
+          @customButtonClick="emits('customButtonClick')"
+          :texts="displayTexts"
+        >
+          <template #customButtonPanel v-if="$slots.customButtonPanel">
+            <slot name="customButtonPanel" />
+          </template>
+          <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+            <slot name="customButtonSafePanel" />
+          </template>
+        </LxMainHeaderDigivesLite>
+      </header>
+      <div class="small-nav-bar-button" v-if="userInfo">
+        <div
+          class="shell-buttons patient-info"
+          :class="[{ 'without-context-person': !selectedContextPersonModel }]"
+        >
+          <LxInfoWrapper :disabled="!selectedContextPersonModel">
+            <LxIcon :value="selectedContextPersonModel ? 'patient-active' : 'patient-inactive'" />
+
+            <template #panel>
+              <LxRow :label="displayTexts.contextPersonsInfoLabel">
+                <p class="lx-data">{{ selectedContextPersonModel?.name }}</p>
+                <p class="lx-data">{{ selectedContextPersonModel?.description }}</p>
+              </LxRow>
+            </template>
+          </LxInfoWrapper>
+        </div>
+      </div>
+      <nav ref="nav" aria-label="navigation panel">
+        <LxNavBarDigivesLite
+          v-model:nav-bar-switch="navBarSwitchModel"
+          v-model:selectedContextPerson="selectedContextPersonModel"
+          v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          :nav-items="navItems"
+          :selectedNavItems="navItemsSelected"
+          :userInfo="userInfo"
+          :hasAvatar="hasAvatar"
+          :alternative-profiles-info="alternativeProfilesInfo"
+          :context-persons-info="contextPersonsInfo"
+          :texts="displayTexts"
+          :headerNavDisable="headerNavDisable"
+          :headerNavReadOnly="headerNavReadOnly"
+          :hasThemePicker="hasThemePicker"
+          :availableThemes="availableThemes"
+          :has-alerts="hasAlerts"
+          :alerts-kind="alertsKind"
+          :alerts="alerts"
+          :alert-count="alertCount"
+          :alert-level="alertLevel"
+          :has-help="hasHelp"
+          :has-language-picker="hasLanguagePicker"
+          :languages="languages"
+          :hasCustomButton="hasCustomButton"
+          :customButtonIcon="customButtonIcon"
+          :customButtonBadge="customButtonBadge"
+          :customButtonBadgeType="customButtonBadgeType"
+          :customButtonBadgeIcon="customButtonBadgeIcon"
+          :customButtonKind="customButtonKind"
+          v-model:customButtonOpened="customButtonOpenedModal"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:theme="themeModel"
+          v-model:hasAnimations="animationsModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
+          @customButtonClick="emits('customButtonClick')"
+          @language-changed="languageChanged"
+          @context-person-changed="contextPersonChanged"
+          @alternative-profile-changed="alternativeProfileChanged"
+          @alert-item-click="alertItemClicked"
+          @alerts-click="alertsClicked"
+          @help-click="helpClicked"
+          @log-out="logOut"
+          @navClick="navClick"
+          @nav-toggle="navToggle"
+        >
+          <template #customButtonPanel v-if="$slots.customButtonPanel">
+            <slot name="customButtonPanel" />
+          </template>
+          <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+            <slot name="customButtonSafePanel" />
+          </template>
+        </LxNavBarDigivesLite>
+      </nav>
+
+      <main ref="main" class="lx-main">
         <LxPageHeader
           v-if="pageHeaderVisible"
           :label="pageTitle"

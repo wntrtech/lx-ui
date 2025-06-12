@@ -1024,7 +1024,8 @@
 .lx .lx-layout .lx-header > .lx-group > .lx-help-button::before,
 .lx .lx-layout .lx-header > .lx-group > .lx-theme-menu::before,
 .lx .lx-layout .lx-header > .lx-group > .lx-mega-menu::before,
-.lx .lx-layout .lx-header > .lx-group > .lx-shell-custom-button::before {
+.lx .lx-layout .lx-header > .lx-group > .lx-shell-custom-button::before,
+.lx .lx-layout .lx-header > .lx-group > .lx-shell-custom-button::before  {
   position: absolute;
   z-index: 10;
   content: ' ';

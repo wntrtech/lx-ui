@@ -1,6 +1,6 @@
 @import '@/styles/lx-reset.css';
 @import '@/styles/lx-fonts-carbon.css';
-@import '@/styles/lx-fonts-digives.css';
+@import '@/styles/lx-fonts-digives-lite.css';
 @import '@/styles/lx-pt-carbon.css';
 @import '@/styles/lx-ut-carbon-light.css';
 @import '@/styles/lx-ut-carbon-dark.css';
@@ -23,7 +23,7 @@
 @import '@/styles/lx-treelist.css';
 @import '@/styles/lx-map.css';
 @import '@/styles/lx-shell-grid.css';
-@import '@/styles/lx-shell-grid-digives.css';
+@import '@/styles/lx-shell-grid-digives-lite.css';
 @import '@/styles/lx-forms-grid.css';
 @import '@/styles/lx-date-pickers.css';
 @import '@/styles/lx-stack.css';

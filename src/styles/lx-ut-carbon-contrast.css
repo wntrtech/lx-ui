@@ -9,6 +9,7 @@
   --contrast-hover: #00ffff;
 
   --color-brand: var(--contrast-foreground);
+  --color-brand-secondary: var(--contrast-foreground);
   --color-interactive-background: var(--contrast-interactive);
   --color-interactive-foreground: var(--contrast-background);
   --color-interactive-hover-background: var(--contrast-hover);

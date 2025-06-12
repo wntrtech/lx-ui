@@ -10,6 +10,7 @@ function generateInput() {
 
   const excludedFiles = [
     'lx-bt-digives.css',
+    'lx-bt-digives-lite.css',
     'lx-bt-eikis.css',
     'lx-bt-visvaris-social.css',
     'lx-bt-visvaris-misc.css',
@@ -42,6 +43,7 @@ function generateInput() {
 function generateRollupInput(baseDir, extension = '.css') {
   const cssBundles = [
     'lx-bt-digives',
+    'lx-bt-digives-lite',
     'lx-bt-eikis',
     'lx-bt-visvaris-social',
     'lx-bt-visvaris-misc',
