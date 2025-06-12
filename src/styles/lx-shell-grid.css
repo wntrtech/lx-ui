@@ -221,9 +221,13 @@
   padding-right: 1rem;
   width: 100%;
   transform: translateY(var(--nav-row-size));
-  transition: transform 0.2s ease-out;
   user-select: none;
   pointer-events: none;
+}
+
+.lx.lx-no-animations .lx-layout.lx-layout-default > nav .lx-nav-panel,
+.lx.lx-no-animations .lx-layout.lx-layout-default > header .lx-header .lx-additional-nav-menu {
+  transition: none;
 }
 
 .lx-layout.lx-layout-default > header .lx-header .lx-additional-nav-menu.lx-active {

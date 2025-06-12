@@ -788,3 +788,6 @@
 .lx:not(.lx-no-animations) .lx-shell-custom-button:not(.lx-shell-custom-button-opened) .custom-button-blink svg {
   animation: blink-icon-animation 1s ease-in-out infinite;
 }
+.lx:not(.lx-no-animations) .lx-layout.lx-layout-default > header .lx-header .lx-additional-nav-menu {
+  transition: transform 0.2s ease-out;
+}
