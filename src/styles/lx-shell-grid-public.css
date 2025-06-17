@@ -310,16 +310,6 @@
   border-color: var(--color-header-hover-background);
 }
 
-.lx-layout .lx-alert-menu ol {
-  padding-inline-start: 0;
-  gap: var(--gap-buttons);
-  display: grid;
-}
-
-.lx-layout .lx-alert-menu .lx-alert-clickable {
-  cursor: pointer;
-}
-
 .lx-layout.lx-layout-public .lx-toolbar.lx-sticky,
 .lx-layout.lx-layout-public .lx-form-grid>header.lx-sticky,
 .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid>aside.lx-index>ul,

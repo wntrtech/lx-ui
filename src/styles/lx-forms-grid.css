@@ -1418,13 +1418,19 @@ p .lx-person-display-wrapper {
   fill: var(--color-data);
 }
 
-.lx-row > .lx-row-header > div > .lx-button:hover> .lx-button-content-wrapper svg,
-.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:hover > .lx-button-content-wrapper svg {
-  fill: var(--color-button-ghost-icon-hover);
+.lx-row > .lx-row-header > div > .lx-button > .lx-button-content-wrapper svg, 
+.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button > .lx-button-content-wrapper svg  {
+    fill: var(--color-button-toolbar-ghost-icon);
 }
 
-.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:hover > .lx-button-content-wrappersvg {
-  fill: var(--color-interactive-hover-foreground);
+.lx-row > .lx-row-header > div > .lx-button:hover >.lx-button-content-wrapper svg, 
+.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:hover > .lx-button-content-wrapper svg {
+  fill: var(--color-button-toolbar-ghost-icon-hover)
+}
+
+.lx-row >  .lx-row-header > div > .lx-button:active > .lx-button-content-wrapper svg, 
+.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button:active > .lx-button-content-wrapper svg  {
+    fill: var(--color-button-toolbar-ghost-icon-active);
 }
 
 .lx .lx-filter .lx-form.lx-form-region:has(>.lx-form-grid) {
@@ -1706,6 +1712,21 @@ p .lx-person-display-wrapper {
 
 .lx-form-grid > .lx-main > .lx-form-section > .lx-row > .lx-vertical > .lx-context-container {
   align-items: flex-start;
+}
+
+.lx-form-grid > header > .lx-group.lx-single-header-button  .lx-button svg,
+.lx-form-grid > header > .lx-group > .lx-context-container .lx-button svg {
+    fill: var(--color-button-toolbar-ghost-icon);
+}
+
+.lx-form-grid > header > .lx-group.lx-single-header-button > .lx-button:hover svg,
+.lx-form-grid > header > .lx-group > .lx-context-container .lx-button:hover svg {
+    fill: var(--color-button-toolbar-ghost-icon-hover);
+}
+
+.lx-form-grid > header > .lx-group.lx-single-header-button > .lx-button:active svg,
+.lx-form-grid > header > .lx-group > .lx-context-container .lx-button:active svg {
+    fill: var(--color-button-toolbar-ghost-icon-active);
 }
 
 @media (max-width: 1900px) {

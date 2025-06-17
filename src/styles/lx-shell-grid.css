@@ -1019,6 +1019,16 @@
   border: none !important;
 }
 
+.lx-layout .lx-alert-menu ol {
+  padding-inline-start: 0;
+  gap: var(--gap-buttons);
+  display: grid;
+}
+
+.lx-layout .lx-alert-menu .lx-alert-clickable {
+  cursor: pointer;
+}
+
 .lx .lx-layout .lx-header > .lx-group > .lx-language-menu::before,
 .lx .lx-layout .lx-header > .lx-group > .lx-alert-menu::before,
 .lx .lx-layout .lx-header > .lx-group > .lx-help-button::before,
