@@ -499,6 +499,16 @@ svg .lx-shade {
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row > div.lx-horizontal > p.lx-data,
 .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main .lx-row > div.lx-vertical > p.lx-data,
 .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main .lx-row > div.lx-horizontal > p.lx-data,
+.lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-stack p.lx-data,
+.lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-stack p.lx-data,
+.lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-stack .lx-field-wrapper p.lx-data,
+.lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-stack .lx-field-wrapper p.lx-data,
+.lx-form-grid > .lx-main .lx-row > div.lx-vertical > .lx-stack .lx-field-wrapper > span > p.lx-data,
+.lx-form-grid > .lx-main .lx-row > div.lx-horizontal > .lx-stack .lx-field-wrapper > span > p.lx-data,
+.lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row > div.lx-vertical > .lx-stack p.lx-data,
+.lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row > div.lx-horizontal > .lx-stack p.lx-data,
+.lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main .lx-row > div.lx-vertical > .lx-stack p.lx-data,
+.lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main .lx-row > div.lx-horizontal > .lx-stack p.lx-data,
 .lx-form-grid
   > .lx-tab-control
   > .lx-tab-body
@@ -530,6 +540,38 @@ svg .lx-shade {
   .lx-row
   > div.lx-vertical
   > .lx-field-wrapper
+  p.lx-data,
+.lx-form-grid
+  > .lx-tab-control
+  > .lx-tab-body
+  > .lx-main
+  .lx-row
+  > div.lx-horizontal
+  > .lx-stack .lx-field-wrapper
+  p.lx-data,
+.lx-form-grid
+  > .lx-tab-control
+  > .lx-tab-body
+  > .lx-main
+  .lx-row
+  > div.lx-vertical
+  > .lx-stack .lx-field-wrapper
+  p.lx-data,
+.lx-form-grid
+  > .lx-wizard
+  > .lx-wizard-body
+  > .lx-main
+  .lx-row
+  > div.lx-horizontal
+  > .lx-stack .lx-field-wrapper
+  p.lx-data,
+.lx-form-grid
+  > .lx-wizard
+  > .lx-wizard-body
+  > .lx-main
+  .lx-row
+  > div.lx-vertical
+  > .lx-stack .lx-field-wrapper
   p.lx-data {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
