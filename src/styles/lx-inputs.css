@@ -4373,6 +4373,10 @@ h2.lx-section-header + p.lx-invalidation-message,
   flex-shrink: 0;
 }
 
+.lx-file-upload-wrapper .lx-draggable-upload-wrapper.lx-disabled > svg {
+  fill: var(--color-disabled-foreground);
+}
+
 .lx-file-upload-wrapper .lx-list-item .lx-file-wrapper .lx-file-preview > img,
 .lx-file-upload-wrapper .lx-list-item .compact-wrapper .lx-info-wrapper .popper .lx-file-preview > img {
   height: 100%;
