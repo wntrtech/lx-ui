@@ -1036,7 +1036,7 @@ defineExpose({ highlightRow, clearHighlights });
           custom-class="responsive-overflow"
           v-if="notPrimaryButtonCount > 1"
           :actionDefinitions="combinedFooterActions"
-          @actionClicked="(id) => clickHandler(id)"
+          @actionClick="(id) => clickHandler(id)"
         >
           <LxButton kind="secondary" icon="overflow-menu" :label="displayTexts?.otherActions" />
         </LxDropDownMenu>
