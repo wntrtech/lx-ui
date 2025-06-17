@@ -128,8 +128,11 @@ export async function beforeEach(to, from, next, appStore, authStore, successCal
 
   // Track navigation state for version checking
   trackNavigationState(to);
-  // Check for version change on route change
-  await isAppVersionChanged(undefined);
+
+  // Check for version change on route change if we're navigating from a known route
+  if (from.name) {
+    await isAppVersionChanged(undefined);
+  }
 
   // If allowed to be anonymous:
   const allowAnonymous = to.matched.some((record) => record.meta.anonymous);
