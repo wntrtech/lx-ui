@@ -2,6 +2,10 @@
 
 ## 1.8 → 1.9
 
+### viewStore goBack value
+
+The default value of `goBack` in `viewStore` has been changed to `null`. Make sure to update any checks that relied on it being `false`.
+
 ### LxWidget actions prop
 
 LxWidget `actions` prop has been renamed to `actionDefinitions`.

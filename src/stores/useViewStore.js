@@ -2,7 +2,7 @@ export default {
   state: () => ({
     header: true,
     navBar: true,
-    goBack: false,
+    goBack: null,
     backName: null,
     description: null,
     blockNav: false,
