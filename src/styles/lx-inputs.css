@@ -4727,6 +4727,10 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-region-2);
 }
 
+.lx-layout .lx-form-grid .lx-article.lx-rich-text-wrapper {
+    margin-top: 0;
+    margin-bottom: 0;
+}
 /*LxQr*/
 .lx-qr-wrapper > svg{
   height: 100%;
