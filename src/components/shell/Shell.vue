@@ -1765,18 +1765,24 @@ watch(
     :label="confirmDialogData?.$state.confirmDialogState.title"
     :button-primary-visible="true"
     :button-primary-label="
-      confirmDialogData?.$state.confirmDialogState.primaryLabel
-        ? confirmDialogData.$state.confirmDialogState.primaryLabel
-        : displayTexts.confirmModalPrimaryDefaultLabel
+      confirmDialogData?.$state.confirmDialogState.primaryLabel ||
+      displayTexts.confirmModalPrimaryDefaultLabel
     "
-    :button-primary-busy="confirmPrimaryButtonBusy"
+    :button-primary-busy="
+      confirmDialogData?.$state.confirmDialogState.primaryBusy !== null
+        ? confirmDialogData?.$state.confirmDialogState.primaryBusy
+        : confirmPrimaryButtonBusy
+    "
     :button-secondary-visible="true"
     :button-secondary-label="
-      confirmDialogData?.$state.confirmDialogState.secondaryLabel
-        ? confirmDialogData.$state.confirmDialogState.secondaryLabel
-        : displayTexts.confirmModalSecondaryDefaultLabel
+      confirmDialogData?.$state.confirmDialogState.secondaryLabel ||
+      displayTexts.confirmModalSecondaryDefaultLabel
     "
-    :button-secondary-busy="confirmSecondaryButtonBusy"
+    :button-secondary-busy="
+      confirmDialogData?.$state.confirmDialogState.secondaryBusy !== null
+        ? confirmDialogData?.$state.confirmDialogState.secondaryBusy
+        : confirmSecondaryButtonBusy
+    "
     :button-secondary-is-cancel="false"
     :buttonPrimaryIsDestructive="confirmPrimaryButtonDestructive"
     :disableClosing="true"

@@ -11,7 +11,9 @@ export default {
       secondaryLabel,
       primaryCallback,
       secondaryCallback,
-      escEnabled = true
+      escEnabled = true,
+      primaryBusy = null,
+      secondaryBusy = null
     ) {
       this.confirmDialogState = {
         title,
@@ -21,6 +23,8 @@ export default {
         primaryCallback,
         secondaryCallback,
         escEnabled,
+        primaryBusy,
+        secondaryBusy,
       };
       this.isOpen = true;
     },
