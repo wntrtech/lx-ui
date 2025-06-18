@@ -23,7 +23,7 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   variant: { type: String, default: 'default' }, // 'default' or 'highlighted'
-
+  renderMode: { type: String, default: 'default' }, // 'default' or 'dynamic'
   badge: { type: String, default: '' },
   badgeIcon: { type: String, default: null },
   badgeType: { type: String, default: 'default' }, // default, good, info, warning, important,
@@ -197,7 +197,11 @@ defineExpose({ focus });
       </template>
     </header>
     <transition name="expander-transition">
-      <article v-show="isExpandedRaw" class="lx-body">
+      <article
+        v-if="renderMode === 'dynamic' ? isExpandedRaw : true"
+        v-show="renderMode === 'default' ? isExpandedRaw : true"
+        class="lx-body"
+      >
         <div v-if="invalid" class="lx-invalidation-message">{{ invalidationMessage }}</div>
         <slot></slot>
       </article>

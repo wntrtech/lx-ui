@@ -163,6 +163,12 @@ const props = defineProps({
    */
   orientation: { type: String, default: null }, // vertical || horizontal
   /**
+   * The rendering mode for expander.
+   * @type {String}
+   * @since 1.9.0
+   */
+  expanderRenderMode: { type: String, default: 'default' }, // 'default' or 'dynamic'
+  /**
    * The object containing text translations for the section.
    * @type {Object}
    * @since 1.2.3
@@ -285,6 +291,7 @@ provide('sectionOrientation', sectionOrientation);
     :badge-type="badgeType"
     :badge-title="badgeTitle"
     :customClass="customClass"
+    :render-mode="expanderRenderMode"
   >
     <section
       :id="id"
