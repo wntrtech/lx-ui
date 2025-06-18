@@ -522,6 +522,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  padding-inline: 0;
 }
 
 .lx-expander header.lx-head:hover h4+.lx-description,
