@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, computed, onMounted, watch, ref, inject } from 'vue';
+import { computed, onMounted, watch, ref, inject } from 'vue';
 import { IMaskDirective as vImask } from 'vue-imask';
 import { Money3Component } from 'v-money3';
 import LxIcon from '@/components/Icon.vue';
@@ -71,23 +71,22 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
+const emits = defineEmits(['update:modelValue']);
+
 // Russia (+7) and Kazakhstan (+7) share the same country code
 // The United States (+1) shares its code with Canada and many Caribbean nations.
 
 const flags = flagMap;
 
-const input = shallowRef();
+const input = ref();
 const valueRaw = ref();
 
 function focus() {
   if (input.value !== null && input.value !== undefined) input.value.focus();
 }
 
-const emits = defineEmits(['update:modelValue']);
-
-defineExpose({ focus });
-
 const minValueComp = computed(() => 10 ** Number(props.maxlength || 20) - 1);
+
 const maxLengthValue = computed(() => {
   if (!props.maxlength) return null;
   return (props.mask === 'decimal' || props.mask === 'integer') && props.signed
@@ -284,9 +283,11 @@ function showPasswordChange() {
 }
 
 function onBlur() {
-  if (props.mask === 'decimal' && model.value === '-0') model.value = '0';
-  else if (props.mask === 'decimal' && model.value === 0 && valueRaw.value === '-0')
+  if (props.mask === 'decimal' && model.value === '-0') {
+    model.value = '0';
+  } else if (props.mask === 'decimal' && model.value === 0 && valueRaw.value === '-0') {
     valueRaw.value = '0';
+  }
 }
 
 function isReadOnlyEmail() {
@@ -456,7 +457,6 @@ watch(
     if (newMask && newInputValue?.value) {
       if (newMask !== 'currency') {
         maskUpdate();
-        model.value = convertValue(newInputValue?.value);
       }
     }
   },
@@ -465,8 +465,11 @@ watch(
 
 onMounted(() => {
   maskUpdate();
-  if (props.mask === 'decimal') valueRaw.value = props.modelValue?.toString()?.replace('.', ',');
-  else valueRaw.value = props.modelValue?.toString();
+  if (props.mask === 'decimal') {
+    valueRaw.value = props.modelValue?.toString()?.replace('.', ',');
+  } else {
+    valueRaw.value = props.modelValue?.toString();
+  }
 
   if (
     model.value &&
@@ -476,6 +479,8 @@ onMounted(() => {
     model.value = model.value.toString().substring(0, Number(maxLengthValue.value));
   }
 });
+
+defineExpose({ focus });
 </script>
 <template>
   <div class="lx-field-wrapper">
