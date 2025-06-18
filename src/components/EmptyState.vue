@@ -29,7 +29,7 @@ function actionClicked(actionName) {
 <template>
   <div class="lx-empty-state-wrapper">
     <div class="lx-empty-state-data">
-      <LxIcon v-show="icon" :value="icon" />
+      <LxIcon v-if="icon" :value="icon" />
       <p class="lx-primary">{{ label }}</p>
       <p v-if="description" class="lx-secondary">{{ description }}</p>
       <div
