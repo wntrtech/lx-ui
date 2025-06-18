@@ -344,6 +344,16 @@
   cursor: pointer;
 }
 
+.lx-data-block-wrapper.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover p.lx-primary,
+.lx-data-block-wrapper.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover p.lx-secondary {
+  color: var(--color-region-hover-foreground);
+}
+
+.lx-data-block-wrapper.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-icons > .lx-icon,
+.lx-data-block-wrapper.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-indications > svg {
+  fill: var(--color-region-hover-foreground);
+}
+
 .lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-content,
 .lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-icons,
 .lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-indications,
