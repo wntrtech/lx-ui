@@ -5,6 +5,7 @@ import {
   useElementBounding,
   useElementSize,
   useMutationObserver,
+  useDebounceFn,
 } from '@vueuse/core';
 
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
@@ -25,15 +26,18 @@ import LxAppendableList from '@/components/forms/AppendableList.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
+import LxTextInput from '@/components/TextInput.vue';
 
 const emits = defineEmits([
   'actionClick',
+  'update:searchString',
   'selectPage',
   'sortingChanged',
   'selectionChanged',
   'itemsPerPageChanged',
   'selectionActionClicked',
   'emptyStateActionClick',
+  'searched',
 ]);
 
 const props = defineProps({
@@ -80,7 +84,41 @@ const props = defineProps({
   emptyStateIcon: { type: String, default: '' },
   clickableRole: { type: String, default: 'link' }, // 'link' or 'button'
   texts: { type: Object, default: () => ({}) },
+  hasSearch: { type: Boolean, default: false },
+  searchMode: { type: String, default: 'default' }, // default, compact
+  searchString: { type: String, default: '' },
+  searchSide: { type: String, default: 'server' }, // server, TODO add client search
 });
+
+const query = ref(props.searchString);
+const queryRaw = ref(props.searchString);
+
+const modelSearchString = computed({
+  get() {
+    return props.searchString;
+  },
+  set(value) {
+    emits('update:searchString', value);
+  },
+});
+
+watch(modelSearchString, (newValue, oldValue) => {
+  if (newValue !== oldValue) queryRaw.value = modelSearchString.value;
+});
+
+const debouncedSearchReq = useDebounceFn(async () => {
+  nextTick(() => {
+    modelSearchString.value = queryRaw.value;
+  });
+}, 200);
+
+watch(
+  queryRaw,
+  async () => {
+    await debouncedSearchReq();
+  },
+  { immediate: true }
+);
 
 const textsDefault = {
   valueYes: 'Jā',
@@ -109,6 +147,7 @@ const textsDefault = {
   nextPage: 'Nākamā lapa',
   previousPage: 'Iepriekšējā lapa',
   clear: 'Attīrīt izvēles',
+  clearSearch: 'Notīrīt meklēšanas ievadi',
   itemsPerPage: 'Ierakstu skaits vienā lapā:',
   itemsPerPageLabel: 'ieraksti lapā',
   selectAllRows: 'Izvēlēties visu',
@@ -117,17 +156,25 @@ const textsDefault = {
   iconsResponsiveRowLabel: 'Ikonas',
   moreActions: 'Papildu darbības',
   actions: 'Darbības',
+  openSearch: 'Atvērt meklētāju',
+  closeSearch: 'Aizvērt meklētāju',
   personDisplay: {
     name: 'Vārds, uzvārds',
     description: 'Apraksts',
     role: 'Loma',
     institution: 'Iestāde',
   },
+  placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
+  search: 'Meklēt',
+  close: 'Aizvērt',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
+const searchField = ref(false);
+const queryInputDefault = ref();
 const sortedColumns = ref({});
+const queryInputCompact = ref();
 
 function isValueEmpty(value) {
   return value === null || value === undefined || value === '';
@@ -801,6 +848,7 @@ const toolbarActions = computed(() => {
       ];
     }
     const selectActions = [...props.selectionActionDefinitions];
+
     selectActions.forEach((obj) => {
       const clonedObj = { ...obj };
       clonedObj.area = 'right';
@@ -812,9 +860,34 @@ const toolbarActions = computed(() => {
   return res.value;
 });
 
+const autoSearchMode = computed(() => {
+  if (props.searchMode === 'compact') {
+    return 'compact';
+  }
+  if (props.searchMode === 'default' && !props.hasSelecting) {
+    return 'default';
+  }
+  return 'compact';
+});
+
+function toggleSearch() {
+  query.value = '';
+  queryRaw.value = '';
+
+  searchField.value = !searchField.value;
+  nextTick(() => {
+    if (searchField.value && autoSearchMode.value === 'default') {
+      queryInputDefault.value.focus();
+    } else if (searchField.value && autoSearchMode.value === 'compact') {
+      queryInputCompact.value.focus();
+    }
+  });
+}
+
 function toolbarClick(action) {
   if (action === 'checkAll') selectRows();
   else if (action === 'checkNone' || action === 'checkIndeterminate') cancelSelection();
+  else if (action === 'search' || action === 'close') toggleSearch();
   else selectionActionClicked(action, selectedRows.value);
 }
 
@@ -953,6 +1026,16 @@ const topOutOfBounds = computed(() => {
   return `${keyOpacity}: 0; ${keySize}: ${headerHeight}px;`;
 });
 
+function serverSideSearch() {
+  if (props.searchSide === 'server') emits('searched', foldToAscii(queryRaw.value));
+}
+
+function clear() {
+  query.value = '';
+  queryRaw.value = '';
+  if (props.searchSide === 'server') serverSideSearch();
+}
+
 watch(
   [
     columnsComputed,
@@ -1031,20 +1114,60 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
       <p :id="`${id}-description`" class="lx-description">{{ description }}</p>
     </header>
-
     <LxToolbar
       v-if="(toolbarActions?.length > 0 || $slots.toolbar) && (props.showToolbar || hasSelecting)"
       :actionDefinitions="toolbarActions"
       :disabled="props.busy"
       :loading="props.loading"
+      :busy="props.busy"
       @action-click="toolbarClick"
       :class="[
         { 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length },
         { 'lx-grid-toolbar': true },
+        { 'is-expanded': searchField },
+        'first-row',
       ]"
     >
-      <template #leftArea v-if="hasSelecting && selectedRows && selectedRows.length !== 0">
-        <p>{{ selectedLabel }}</p>
+      <template #leftArea>
+        <p v-if="hasSelecting && selectedRows && selectedRows.length !== 0">
+          {{ selectedLabel }}
+        </p>
+        <div
+          v-if="hasSearch && !hasSelecting && autoSearchMode === 'default'"
+          class="lx-search-wrapper"
+        >
+          <LxTextInput
+            v-if="hasSearch"
+            ref="queryInputDefault"
+            v-model="queryRaw"
+            :kind="props.searchSide === 'server' ? 'default' : 'search'"
+            :disabled="loading || busy"
+            :placeholder="displayTexts.placeholder"
+            role="search"
+            @keydown.enter="serverSideSearch()"
+          />
+          <LxButton
+            v-if="props.searchSide === 'server' && hasSearch"
+            icon="search"
+            kind="ghost"
+            :busy="busy"
+            :loading="loading"
+            variant="icon-only"
+            :label="displayTexts.search"
+            @click="serverSideSearch()"
+          />
+          <LxButton
+            v-if="query || queryRaw"
+            icon="clear"
+            kind="ghost"
+            :busy="busy"
+            :loading="loading"
+            variant="icon-only"
+            :label="displayTexts.clearSearch"
+            :disabled="loading || busy"
+            @click="clear()"
+          />
+        </div>
       </template>
 
       <template
@@ -1054,8 +1177,77 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         <div class="lx-slot-wrapper">
           <slot name="toolbar" />
         </div>
+        <div
+          v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
+          class="toolbar-search-button"
+          :class="[{ 'is-expanded': searchField }]"
+        >
+          <LxButton
+            kind="ghost"
+            variant="icon-only"
+            :icon="searchField ? 'close' : 'search'"
+            :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
+            :search-field="searchField"
+            @click="toggleSearch"
+          />
+        </div>
+      </template>
+      <template #rightArea v-else-if="hasSelecting && selectedRows.length > 0">
+        <div
+          v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
+          class="toolbar-search-button"
+          :class="[{ 'is-expanded': searchField }]"
+        >
+          <LxButton
+            kind="ghost"
+            variant="icon-only"
+            :icon="searchField ? 'close' : 'search'"
+            :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
+            :search-field="searchField"
+            @click="toggleSearch"
+          />
+        </div>
       </template>
     </LxToolbar>
+
+    <div
+      class="second-row"
+      v-if="hasSearch && searchField && autoSearchMode === 'compact'"
+      :class="[{ 'second-row-selecting': hasSelecting }]"
+    >
+      <LxTextInput
+        v-if="hasSearch"
+        ref="queryInputCompact"
+        v-model="queryRaw"
+        :kind="'default'"
+        :disabled="loading || busy"
+        :placeholder="displayTexts.placeholder"
+        role="search"
+        @keydown.enter="serverSideSearch()"
+      />
+      <div class="lx-group lx-slot-wrapper">
+        <LxButton
+          v-if="searchSide === 'server' && hasSearch"
+          icon="search"
+          kind="ghost"
+          :busy="busy"
+          :disabled="loading"
+          variant="icon-only"
+          :label="displayTexts.search"
+          @click="serverSideSearch()"
+        />
+        <LxButton
+          v-if="query || queryRaw"
+          icon="clear"
+          kind="ghost"
+          :loading="loading"
+          variant="icon-only"
+          :label="displayTexts.clearSearch"
+          :disabled="loading || busy"
+          @click="clear()"
+        />
+      </div>
+    </div>
 
     <div class="lx-grid-header-wrapper" aria-hidden="true">
       <div

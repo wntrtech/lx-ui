@@ -265,7 +265,9 @@ const showDescription = computed(() => description.value && props.size === 'l');
         </template>
 
         <template v-if="variant !== 'icon-only'">
-          <p class="lx-data lx-person-display-name">{{ name }}</p>
+          <p class="lx-data lx-person-display-name">
+            {{ name }}
+          </p>
           <p class="lx-description" v-if="showDescription">{{ description }}</p>
         </template>
         <template v-if="!name && !description">

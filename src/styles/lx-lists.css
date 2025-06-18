@@ -747,29 +747,28 @@
   background-color: var(--color-list-region-background);
 }
 
-.lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button svg {
-  fill: var(--color-brand);
-}
-
 .lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button,
-.lx-list-toolbar .second-row .lx-button:hover {
+.lx .lx-list-toolbar .second-row .lx-button:hover {
   background-color: var(--color-interactive-hover-background);
 }
 
-.lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button svg,
 .lx-list-wrapper .lx-expander .lx-head > .lx-button:hover > .lx-button-content-wrapper svg {
   fill: var(--color-focus-foreground);
 }
 
 .lx-list-wrapper .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button {
   --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
-  --color-button-toolbar-ghost-icon-hover: var(--color-button-toolbar-ghost-icon);
+  --color-button-toolbar-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
 .lx-list-wrapper .tree-list-search > .tree-list-search-item > .lx-list-item-wrapper,
 .lx-list-wrapper > .lx-list-toolbar > .second-row > .lx-field-wrapper,
 .lx-list-wrapper > .lx-list-toolbar > .first-row > .lx-field-wrapper {
   width: 100%;
+}
+
+.lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button svg {
+  fill: var(--color-focus-foreground);
 }
 
 /*** Load button styles ***/

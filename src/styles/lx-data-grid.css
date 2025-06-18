@@ -1289,3 +1289,62 @@
 .lx .lx-data-grid .lx-cell-clickable > span.lx-cell-clickable-button {
   text-decoration: none;
 }
+
+.lx-data-grid-wrapper .lx-component-toolbar  .lx-search-wrapper {
+  display: flex;
+}
+
+/* 2nd toolbar row for DataGrid.vue */
+
+.lx-data-grid-wrapper > .second-row,
+.lx-data-grid-wrapper > .second-row > .lx-slot-wrapper {
+  display: flex;
+}
+
+.lx-data-grid-wrapper > .second-row > .lx-field-wrapper > .lx-text-input-wrapper,
+.lx-data-grid-wrapper > .second-row > .lx-field-wrapper > .lx-text-input-wrapper > .lx-text-input {
+  height: 100%;
+}
+
+.lx-data-grid-wrapper > .second-row > .lx-field-wrapper {
+  min-height: 3rem;
+}
+
+.lx-data-grid-wrapper .second-row,
+.lx-data-grid-wrapper .second-row .lx-field-wrapper,
+.lx-data-grid-wrapper > .first-row .lx-search-wrapper,
+.lx-data-grid-wrapper > .lx-component-toolbar > .left-area,
+.lx-data-grid-wrapper > .first-row .lx-search-wrapper > .lx-field-wrapper,
+.lx-data-grid-wrapper > div:not(.lx-selection-toolbar) > .left-area > .lx-group {
+  width: 100%;
+}
+
+.lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button {
+  --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
+  --color-button-toolbar-ghost-icon-hover: var(--color-interactive-hover-foreground);
+}
+
+.lx-selection-toolbar.is-expanded > .right-area .action-definitions-small > div:last-of-type > .lx-button:not(:hover),
+.lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button,
+.lx .lx-data-grid-wrapper .second-row .lx-button {
+  background-color: var(--color-region-2);
+}
+
+.lx-grid-toolbar.lx-selection-toolbar.is-expanded > .right-area > .action-definitions-small > div:last-of-type > .lx-button,
+.lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button,
+.lx .lx-data-grid-wrapper .second-row .lx-button {
+  --color-button-toolbar-selection-icon: var(--color-data);
+  --color-button-toolbar-selection-icon-focus: var(--color-data);
+}
+
+.lx-data-grid-wrapper .toolbar-search-button.is-expanded:hover .lx-button{
+  background-color: var(--color-interactive-hover-background);
+}
+
+.lx .lx-data-grid-wrapper .second-row .lx-input-wrapper {
+  --color-input-background: var(--color-region-2);
+}
+
+.lx-data-grid-wrapper .lx-component-toolbar.lx-selection-toolbar .right-area {
+  flex-direction: row-reverse;
+}

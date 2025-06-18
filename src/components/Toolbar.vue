@@ -110,7 +110,7 @@ function actionClicked(id) {
             :destructive="action?.destructive"
             :disabled="action?.disabled || props.disabled || props.loading"
             :label="action?.label || action?.name"
-            :variant="action?.label ? 'default' : 'icon-only'"
+            :variant="action?.variant ? action.variant : action?.label ? 'default' : 'icon-only'"
             @click="actionClicked(action.id)"
           />
           <LxDropDownMenu v-if="action?.groupId === group.id && action.nestedGroupId">
@@ -229,7 +229,7 @@ function actionClicked(id) {
             :destructive="action?.destructive"
             :disabled="action?.disabled || props.disabled || props.loading"
             :label="action?.label || action?.name"
-            :variant="action?.label ? 'default' : 'icon-only'"
+            :variant="action?.variant ? action.variant : action?.label ? 'default' : 'icon-only'"
             @click="actionClicked(action.id)"
           />
           <LxDropDownMenu v-if="action?.groupId === group.id && action.nestedGroupId">
