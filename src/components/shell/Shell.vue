@@ -9,7 +9,6 @@ import LxMainHeaderDigives from '@/components/shell/HeaderDigives.vue';
 import LxPageHeader from '@/components/shell/PageHeader.vue';
 import LxNavBar from '@/components/shell/NavBar.vue';
 import LxNavBarDigives from '@/components/shell/NavBarDigives.vue';
-
 import { lxDevUtils } from '@/utils';
 import LxMainHeaderDigivesLite from '@/components/shell/HeaderDigivesLite.vue';
 import LxNavBarDigivesLite from '@/components/shell/NavBarDigivesLite.vue';
@@ -40,7 +39,6 @@ const themeModel = useColorMode({
     none: '',
   },
 });
-
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 
 const emits = defineEmits([
@@ -159,8 +157,8 @@ const props = defineProps({
   customButtonBlink: { type: Boolean, default: false },
   customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
 
+  routeName: { type: String, default: null },
   overrideDefaultStyles: { type: Boolean, default: true },
-
   texts: { type: Object, default: () => {} },
 });
 
@@ -1457,6 +1455,9 @@ watch(
           :customButtonBadgeType="customButtonBadgeType"
           :customButtonBadgeIcon="customButtonBadgeIcon"
           :customButtonKind="customButtonKind"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           v-model:customButtonOpened="customButtonOpenedModal"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
@@ -1483,6 +1484,43 @@ watch(
       </nav>
 
       <main ref="main" class="lx-main">
+        <ul
+          class="lx-digives-alert-list"
+          v-if="alerts?.length > 0 && props.routeName === 'dashboard'"
+        >
+          <li
+            v-for="alert in alerts"
+            :key="alert.id"
+            class="lx-digives-alert"
+            :class="[
+              { 'lx-alert-success': alert?.level === 'success' },
+              { 'lx-alert-warning': alert?.level === 'warning' },
+              { 'lx-alert-error': alert?.level === 'error' },
+            ]"
+            :role="alert?.level === 'error' || alert?.level === 'warning' ? 'alert' : 'status'"
+            aria-live="polite"
+            :aria-label="alert?.name"
+            :aria-labelledby="alert?.name ? `${alert.id}-label` : null"
+            :aria-describedby="alert?.description ? `${alert.id}-desc` : null"
+          >
+            <LxIcon
+              :value="pickIcon(alert.level, 'digives')"
+              :meaningful="true"
+              :title="pickSvgTitle(alert.level)"
+              :icon-set="alert.iconSet || 'cds'"
+            />
+            <p class="lx-primary">{{ alert?.name }}</p>
+            <p class="lx-secondary" v-if="alert?.description">{{ alert?.description }}</p>
+            <LxButton
+              v-if="alert?.clickable"
+              icon="close"
+              kind="ghost"
+              variant="icon-only"
+              :label="displayTexts.close"
+              @click="alertItemClicked(alert)"
+            />
+          </li>
+        </ul>
         <LxPageHeader
           v-if="pageHeaderVisible"
           :label="pageTitle"
