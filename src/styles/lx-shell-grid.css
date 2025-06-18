@@ -1555,14 +1555,6 @@
   cursor: pointer;
 }
 
-.lx:not(.lx-touch-mode) .lx-theme-menu .lx-context-container .popper-wrapper>.popper>.lx-dropdown-panel>.lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {
-    padding: 0.1rem 0.5rem 0.1rem 1rem;
-}
-
-.lx-touch-mode-controller {
-  border-top-color: transparent;
-}
-
 .lx-cover
 > .lx-content
 .cover-main-area

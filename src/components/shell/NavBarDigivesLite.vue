@@ -54,7 +54,6 @@ const props = defineProps({
   customButtonOpened: { type: Boolean, default: false },
   customButtonBlink: { type: Boolean, default: false },
   customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
-  isTouchSensitive: { type: Boolean, default: false },
 });
 
 const textsDefault = {
@@ -73,11 +72,8 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
-  touchSensitive: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
-  touchModeOff: 'Nē',
-  touchModeOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
   showAllLabel: 'Vairāk',
@@ -105,7 +101,6 @@ const emits = defineEmits([
   'help-click',
   'update:customButtonOpened',
   'customButtonClick',
-  'update:isTouchSensitive',
 ]);
 
 const windowSize = useWindowSize();
@@ -140,15 +135,6 @@ const deviceFontsModel = computed({
   },
   set(value) {
     emits('update:hasDeviceFonts', value);
-  },
-});
-
-const touchModeModel = computed({
-  get() {
-    return props.isTouchSensitive;
-  },
-  set(value) {
-    emits('update:isTouchSensitive', value);
   },
 });
 
@@ -563,21 +549,8 @@ watch(
                     valueYes: displayTexts.reduceMotionOn,
                     valueNo: displayTexts.reduceMotionOff,
                   }"
-                  :size="props.isTouchSensitive ? 'm' : 's'"
                   @click="triggerThemeMenu"
                 />
-              </div>
-              <div class="lx-touch-mode-controller">
-                <p>{{ displayTexts.touchSensitive }}</p>
-                <LxToggle
-                  v-model="touchModeModel"
-                  :texts="{
-                    valueYes: displayTexts.touchModeOn,
-                    valueNo: displayTexts.touchModeOff,
-                  }"
-                  :size="props.isTouchSensitive ? 'm' : 's'"
-                  @click="triggerThemeMenu"
-                ></LxToggle>
               </div>
               <div class="lx-fonts-controller">
                 <p>{{ displayTexts.fonts }}</p>
@@ -587,7 +560,6 @@ watch(
                     valueYes: displayTexts.systemFontsOn,
                     valueNo: displayTexts.systemFontsOff,
                   }"
-                  :size="props.isTouchSensitive ? 'm' : 's'"
                   @click="triggerThemeMenu"
                 />
               </div>

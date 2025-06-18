@@ -29,7 +29,6 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
   hasDeviceFonts: { type: Boolean, default: false },
-  isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
   clickSafeAlerts: { type: Boolean, default: false },
@@ -78,11 +77,8 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
-  touchSensitive: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
-  touchModeOff: 'Nē',
-  touchModeOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
   showAllLabel: 'Vairāk',
@@ -105,7 +101,6 @@ const emits = defineEmits([
   'update:theme',
   'update:hasAnimations',
   'update:hasDeviceFonts',
-  'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
   'update:customButtonOpened',
   'customButtonClick',
@@ -321,15 +316,6 @@ const deviceFontsModel = computed({
   },
 });
 
-const touchModeModel = computed({
-  get() {
-    return props.isTouchSensitive;
-  },
-  set(value) {
-    emits('update:isTouchSensitive', value);
-  },
-});
-
 function triggerThemeMenu(e) {
   themeMenu.value.preventClose(e);
 }
@@ -361,19 +347,6 @@ const themeDisplayItems = computed(() => {
     },
     group: 'animations',
     value: animationsModel.value,
-    size: props.isTouchSensitive ? 'm' : 's',
-  });
-  res.push({
-    id: 'touch',
-    kind: 'toggle',
-    name: displayTexts.value.touchSensitive,
-    texts: {
-      valueYes: displayTexts.value.touchModeOn,
-      valueNo: displayTexts.value.touchModeOff,
-    },
-    group: 'animations',
-    value: touchModeModel.value,
-    size: props.isTouchSensitive ? 'm' : 's',
   });
   res.push({
     id: 'fonts',
@@ -385,7 +358,6 @@ const themeDisplayItems = computed(() => {
     },
     group: 'fonts',
     value: deviceFontsModel.value,
-    size: props.isTouchSensitive ? 'm' : 's',
   });
   return res;
 });
@@ -395,8 +367,6 @@ function themeDropdownClicked(id, value) {
     animationsModel.value = value;
   } else if (id === 'fonts') {
     deviceFontsModel.value = value;
-  } else if (id === 'touch') {
-    touchModeModel.value = value;
   } else {
     themeChange(id);
   }

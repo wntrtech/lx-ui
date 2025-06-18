@@ -278,7 +278,7 @@ Customized values for contrast mode:
 | `--button-dropdown-grid-areas`                     | 'content icon'                                           |
 | `--button-dropdown-grid-template-columns`          | 1fr auto                                                 |
 | `--button-dropdown-grid-template-rows`             | 1fr                                                      |
-| `--button-dropdown-height`                         | `--row-size-dynamic`                                     |
+| `--button-dropdown-height`                         | `--row-size`                                             |
 | `--button-dropdown-icon-height`                    | 1.5rem                                                   |
 | `--button-dropdown-icon-width`                     | 1.55rem                                                  |
 | `--button-dropdown-margin`                         | 0                                                        |

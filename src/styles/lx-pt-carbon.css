@@ -231,7 +231,7 @@
   --button-dropdown-grid-areas: 'content icon';
   --button-dropdown-grid-template-columns: 1fr auto;
   --button-dropdown-grid-template-rows: 1fr;
-  --button-dropdown-height: var(--row-size-dynamic);
+  --button-dropdown-height: var(--row-size);
   --button-dropdown-icon-height: 1.5rem;
   --button-dropdown-icon-width: 1.55rem;
   --button-dropdown-margin: 0;
@@ -537,7 +537,7 @@
   --badge-gap: 0.25rem;
   --badge-icon-width: 1rem;
 }
-
+/* 
 @media (pointer: coarse), (pointer: none) {
   .lx{
   --row-size-dynamic: var(--row-size);
@@ -548,4 +548,4 @@
   .lx{
   --row-size-dynamic: 2rem;
   }
-}
+} */
