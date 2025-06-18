@@ -854,8 +854,13 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-radio-button-label-wrapper,
 .lx-checkbox-label-wrapper {
-  justify-content: center;
+  justify-content: start;
   align-items: center;
+}
+
+.lx-data-grid-wrapper .lx-radio-button-wrapper .lx-radio-button-label-wrapper,
+.lx-data-grid-wrapper .lx-checkbox-label-wrapper {
+  justify-content: center;
 }
 
 .lx-radio-button-appearance,
