@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onBeforeMount, watch } from 'vue';
+import { computed, onBeforeMount, watch, ref } from 'vue';
 
 import LxFormBuilder from '@/components/forms/FormBuilder.vue';
 import LxViewLayout from '@/components/ViewLayout.vue';
@@ -12,11 +12,15 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import LxFormBuilderItem from '@/components/forms/FormBuilderItem.vue';
 import LxFilterBuilder from '@/components/FilterBuilder.vue';
 
+import { useVuelidate } from '@vuelidate/core';
+import { required, helpers, minValue, maxValue, minLength, maxLength } from '@vuelidate/validators';
+
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   modelValue: { type: Object, default: null },
   schema: { type: Object, default: null },
   readOnly: { type: Boolean, default: false },
+  validations: { type: Object, default: null },
   texts: { type: Object, default: () => {} },
 });
 
@@ -111,6 +115,208 @@ function componentEmit(emitName, key, value = undefined, additionalParams = unde
   emits('emit', emitName, key, value, additionalParams);
 }
 
+function replaceErrorMessage(message, value) {
+  return message.replace('{0}', value);
+}
+
+function isNumber(type) {
+  return type === 'number' || type === 'integer';
+}
+
+// Creates rule for 'modelValue' validation based on the provided schema
+const buildRules = (schema) => {
+  const req = schema?.required;
+  const res = {};
+
+  req?.forEach((property) => {
+    res[property] = res[property] || {};
+    res[property].required = helpers.withMessage(() => displayTexts.value.required, required);
+  });
+
+  if (schema?.properties) {
+    Object.entries(schema.properties).forEach(([key, value]) => {
+      // Recursively handle nested objects
+      if (value?.type === 'object' && value?.properties) {
+        res[key] = buildRules(value);
+      } else {
+        if (isNumber(value?.type)) {
+          if (value?.minimum !== undefined) {
+            res[key] = res[key] || {};
+            res[key].minValue = helpers.withMessage(
+              ({ $params }) => replaceErrorMessage(displayTexts.value.minimum, $params.min),
+              minValue(value.minimum)
+            );
+          }
+          if (value?.exclusiveMinimum !== undefined) {
+            const exclusiveMinimum = (param) =>
+              helpers.withParams(
+                { type: 'exclusiveMinimum', value: param },
+                (targetValue) => targetValue > param
+              );
+            res[key] = res[key] || {};
+            res[key].exclusiveMinimum = helpers.withMessage(
+              () =>
+                replaceErrorMessage(displayTexts.value.exclusiveMinimum, value.exclusiveMinimum),
+              exclusiveMinimum(value.exclusiveMinimum)
+            );
+          }
+          if (value?.maximum !== undefined) {
+            res[key] = res[key] || {};
+            res[key].maxValue = helpers.withMessage(
+              ({ $params }) => replaceErrorMessage(displayTexts.value.maximum, $params.max),
+              maxValue(value.maximum)
+            );
+          }
+          if (value?.exclusiveMaximum !== undefined) {
+            const exclusiveMaximum = (param) =>
+              helpers.withParams(
+                { type: 'exclusiveMaximum', value: param },
+                (targetValue) => targetValue < param
+              );
+            res[key] = res[key] || {};
+            res[key].exclusiveMaximum = helpers.withMessage(
+              () =>
+                replaceErrorMessage(displayTexts.value.exclusiveMaximum, value.exclusiveMaximum),
+              exclusiveMaximum(value.exclusiveMaximum)
+            );
+          }
+          if (value?.multipleOf !== undefined) {
+            const multipleOf = (param) =>
+              helpers.withParams(
+                { type: 'multipleOf', value: param },
+                (targetValue) => targetValue % param === 0
+              );
+            res[key] = res[key] || {};
+            res[key].multipleOf = helpers.withMessage(
+              () => replaceErrorMessage(displayTexts.value.multipleOf, value.multipleOf),
+              multipleOf(value.multipleOf)
+            );
+          }
+        }
+        if (value?.minLength !== undefined && value?.type === 'string') {
+          res[key] = res[key] || {};
+          res[key].minLength = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(displayTexts.value.minLength, $params.min),
+            minLength(value.minLength)
+          );
+        }
+        if (value?.maxLength !== undefined && value?.type === 'string') {
+          res[key] = res[key] || {};
+          res[key].maxLength = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(displayTexts.value.maxLength, $params.max),
+            maxLength(value.maxLength)
+          );
+        }
+        if (value?.pattern && value?.type === 'string') {
+          const pattern = (param) =>
+            helpers.withParams({ type: 'pattern', value: param }, (targetValue) =>
+              new RegExp(param).test(targetValue)
+            );
+          res[key] = res[key] || {};
+          res[key].pattern = helpers.withMessage(
+            () => replaceErrorMessage(displayTexts.value.pattern, value.pattern),
+            pattern(value.pattern)
+          );
+        }
+        if (value?.minItems !== undefined && value?.type === 'array') {
+          res[key] = res[key] || {};
+          res[key].minItems = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(displayTexts.value.minItems, $params.min),
+            minLength(value.minItems)
+          );
+        }
+        if (value?.maxItems !== undefined && value?.type === 'array') {
+          res[key] = res[key] || {};
+          res[key].maxItems = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(displayTexts.value.maxItems, $params.max),
+            maxLength(value.maxItems)
+          );
+        }
+        if (value?.uniqueItems && value?.type === 'array') {
+          const uniqueItems = (targetValue) => new Set(targetValue)?.size === targetValue?.length;
+          res[key] = res[key] || {};
+          res[key].uniqueItems = helpers.withMessage(
+            () => displayTexts.value.uniqueItems,
+            uniqueItems
+          );
+        }
+      }
+    });
+  }
+
+  if (schema?.minProperties !== undefined && schema?.type === 'object') {
+    const minProperties = (param) =>
+      helpers.withParams(
+        { type: 'minProperties', value: param },
+        (targetValue) => Object.keys(targetValue).length >= param
+      );
+    res.minProperties = helpers.withMessage(
+      () => replaceErrorMessage(displayTexts.value.minProperties, schema.minProperties),
+      minProperties(schema.minProperties)
+    );
+  }
+  if (schema?.maxProperties !== undefined && schema?.type === 'object') {
+    const maxProperties = (param) =>
+      helpers.withParams(
+        { type: 'maxProperties', value: param },
+        (targetValue) => Object.keys(targetValue).length <= param
+      );
+    res.maxProperties = helpers.withMessage(
+      () => replaceErrorMessage(displayTexts.value.maxProperties, schema.maxProperties),
+      maxProperties(schema.maxProperties)
+    );
+  }
+
+  return res;
+};
+
+const rules = computed(() => {
+  if (!props.schema) return { modelClone: {} };
+  return { modelClone: buildRules(props.schema) };
+});
+
+const vv = ref();
+
+const otherBuilderRefs = ref({});
+
+function validateOtherBuilders() {
+  Object.values(otherBuilderRefs.value)?.forEach((el) => {
+    el.validateModel();
+  });
+}
+
+/**
+ * Validates the model based on the provided rules in schema prop.
+ *
+ * @return {Array} An array of validation errors, if any.
+ */
+function validateModel() {
+  const res = [];
+  validateOtherBuilders();
+  const modelClone = JSON.parse(JSON.stringify(model.value));
+  vv.value = useVuelidate(rules, { modelClone }, { $autoDirty: true });
+  vv.value.value.modelClone.$touch();
+
+  const errorsArray = vv.value.value?.$errors;
+  errorsArray?.forEach((x) => {
+    const item = {};
+    item.propertyPath = x.$propertyPath;
+    item.validator = x.$validator;
+    item.message = x.$message;
+    item.value = x.$params;
+    res.push(item);
+  });
+
+  return res;
+}
+
+function clearValidations() {
+  vv.value.value.modelClone.$reset();
+  Object.values(otherBuilderRefs.value)?.forEach((el) => {
+    el.clearValidations();
+  });
+}
+
 watch(
   () => props.schema,
   () => {
@@ -121,7 +327,9 @@ watch(
 onBeforeMount(async () => {
   await addDefaultValues();
 });
+
 // TODO: add mode prop
+defineExpose({ validateModel, clearValidations });
 </script>
 <template>
   <LxViewLayout v-if="isSchemaValid" :kind="viewKind">
@@ -129,6 +337,7 @@ onBeforeMount(async () => {
       <template v-for="(row, name) in schema?.properties" :key="name">
         <LxFilterBuilder
           v-if="row?.lx?.displayType === 'filters' && row?.type === 'object'"
+          :ref="(el) => (otherBuilderRefs[id + '-' + name] = el)"
           v-model="model[name]"
           :schema="row"
           :id="id + '-' + name"
@@ -207,10 +416,12 @@ onBeforeMount(async () => {
               >
                 <LxFormBuilder
                   v-if="model?.[name]"
+                  :ref="(el) => (otherBuilderRefs[id + '-' + name + '-' + itemName] = el)"
                   v-model="model[name][itemName]"
                   :schema="item"
                   :readOnly="readOnly"
                   :texts="displayTexts"
+                  :validations="validations?.[name]?.[itemName]"
                   @rowActionClick="
                     (a, b, c, d) => rowActionClicked(a, b, `${name}.${itemName}.${c}`, d)
                   "
@@ -222,10 +433,12 @@ onBeforeMount(async () => {
 
           <LxFormBuilder
             v-if="model"
+            :ref="(el) => (otherBuilderRefs[id + '-' + name] = el)"
             v-model="model[name]"
             :schema="row"
             :readOnly="readOnly"
             :texts="displayTexts"
+            :validations="validations?.[name]"
             @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, `${name}.${c}`, d)"
             @emit="(a, b, c, d) => componentEmit(a, `${name}.${b}`, c, d)"
           />
@@ -269,7 +482,10 @@ onBeforeMount(async () => {
                   :row="item2"
                   :name="itemName2"
                   :readOnly="readOnly"
+                  :parentName="`${name}.${itemName}`"
+                  :vv="vv"
                   :texts="displayTexts"
+                  :validations="validations?.[name]?.[itemName]"
                   @rowActionClick="
                     (a, b, c, d) => rowActionClicked(a, b, `${name}.${itemName}.${c}`, d)
                   "
@@ -285,7 +501,10 @@ onBeforeMount(async () => {
               :row="item"
               :name="itemName"
               :readOnly="readOnly"
+              :parentName="`${name}`"
+              :vv="vv"
               :texts="displayTexts"
+              :validations="validations?.[name]"
               @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, `${name}.${c}`, d)"
               @emit="(a, b, c, d) => componentEmit(a, `${name}.${b}`, c, d)"
             />
@@ -301,6 +520,8 @@ onBeforeMount(async () => {
           :name="name"
           :readOnly="readOnly"
           :texts="displayTexts"
+          :vv="vv"
+          :validations="validations"
           @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
           @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
         />

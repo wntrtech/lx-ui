@@ -57,9 +57,9 @@ const props = defineProps({
   name: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
   vv: { type: Object, default: null },
-  invalidationMessage: { type: String, default: null },
   orderedObject: { type: Object, default: () => {} },
   parentName: { type: String, default: null },
+  validations: { type: Object, default: null },
   texts: { type: Object, default: () => {} },
 });
 
@@ -202,7 +202,7 @@ function otherSelect(row) {
   return null;
 }
 
-function componentSelect(row, name) {
+function componentSelect(row, name, log = false) {
   if (row?.lx?.wrapper === 'placeholder') return 'lxPlaceholder';
   const res = otherSelect(row);
   if (res) return res;
@@ -220,7 +220,7 @@ function componentSelect(row, name) {
   }
   if (objectSelect(row, name) !== '') return objectSelect(row, name);
 
-  if (name)
+  if (name && log)
     lxDevUtils.log(
       `Property '${name}' couldn't be rendered`,
       useLx().getGlobals()?.environment,
@@ -228,6 +228,8 @@ function componentSelect(row, name) {
     );
   return 'lxPlaceholder';
 }
+
+const selectedComponent = computed(() => componentSelect(props.row, props.name, true));
 
 function rowActionClicked(action, value, schemaName, index) {
   emits(
@@ -372,10 +374,37 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     }
   }
 }
+
+const isInvalid = computed(() => {
+  if (props.validations?.[props.name]) return true;
+  if (!props.vv?.value?.modelClone) return false;
+  if (props.parentName) {
+    const parentKeys = props.parentName.split('.');
+    let parentObj = props.vv.value.modelClone;
+    parentObj = parentKeys.reduce((obj, key) => (obj ? obj[key] : undefined), parentObj);
+    return parentObj?.[props.name]?.$error;
+  }
+  return props.vv.value.modelClone?.[props.name]?.$error;
+});
+
+const invalidMessage = computed(() => {
+  if (props.validations?.[props.name]) return props.validations?.[props.name];
+  let res = null;
+  if (!props.vv?.value?.modelClone) return null;
+  if (props.parentName) {
+    const parentKeys = props.parentName.split('.');
+    let parentObj = props.vv.value.modelClone;
+    parentObj = parentKeys.reduce((obj, key) => (obj ? obj[key] : undefined), parentObj);
+    return parentObj?.[props.name]?.$errors?.[0]?.$message;
+  }
+  res = props.vv.value.modelClone?.[props.name]?.$errors?.[0]?.$message;
+
+  return res;
+});
 </script>
 <template>
   <LxTextInput
-    v-if="componentSelect(row, name) === 'textInputDefault'"
+    v-if="selectedComponent === 'textInputDefault'"
     :id="id + '-' + name"
     :mask="
       stringNumberMask(
@@ -393,13 +422,13 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     :placeholder="examplesValue(displaySchema?.properties[name])"
     :signed="displaySchema?.properties[name]?.lx?.signed"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
-    :invalid="vv?.value?.modelClone?.[name]?.$error"
-    :invalidation-message="invalidationMessage"
+    :invalid="isInvalid"
+    :invalidation-message="invalidMessage"
     :custom-mask-value="displaySchema?.properties[name]?.lx?.customMaskValue"
     v-model="model[name]"
   />
   <LxTextArea
-    v-else-if="componentSelect(row, name) === 'textArea'"
+    v-else-if="selectedComponent === 'textArea'"
     :id="id + '-' + name"
     :maxlength="displaySchema?.properties[name]?.maxLength"
     :placeholder="examplesValue(displaySchema?.properties[name])"
@@ -408,12 +437,12 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
     :tooltip="displaySchema?.properties[name]?.lx?.tooltip"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
-    :invalid="vv?.value?.modelClone?.[name]?.$error"
-    :invalidation-message="invalidationMessage"
+    :invalid="isInvalid"
+    :invalidation-message="invalidMessage"
     v-model="model[name]"
   />
   <LxDateTimePicker
-    v-else-if="componentSelect(row, name) === 'dateTimePicker'"
+    v-else-if="selectedComponent === 'dateTimePicker'"
     :id="id + '-' + name"
     :kind="
       displaySchema?.properties[name]?.format === 'date-time'
@@ -434,12 +463,12 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     :dictionary="displaySchema?.properties[name]?.lx?.dictionary"
     :variant="displaySchema?.properties[name]?.lx?.variant"
     :readOnly="isReadOnly(row)"
-    :invalid="vv?.value?.modelClone?.[name]?.$error"
-    :invalidation-message="invalidationMessage"
+    :invalid="isInvalid"
+    :invalidation-message="invalidMessage"
     v-model="model[name]"
   />
   <LxTextInput
-    v-else-if="componentSelect(row, name) === 'textInputInteger'"
+    v-else-if="selectedComponent === 'textInputInteger'"
     :id="id + '-' + name"
     mask="integer"
     :maxlength="displaySchema?.properties[name]?.maxLength"
@@ -451,19 +480,19 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     :convert-to-string="displaySchema?.properties[name]?.lx?.convertToString"
     :placeholder="examplesValue(displaySchema?.properties[name])"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
-    :invalid="vv?.value?.modelClone?.[name]?.$error"
-    :invalidation-message="invalidationMessage"
+    :invalid="isInvalid"
+    :invalidation-message="invalidMessage"
     v-model="model[name]"
   />
   <LxToggle
-    v-else-if="componentSelect(row, name) === 'toggle'"
+    v-else-if="selectedComponent === 'toggle'"
     :id="id + '-' + name"
     :size="displaySchema?.properties[name]?.lx?.size"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
     :tooltip="displaySchema?.properties[name]?.lx?.tooltip"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
-    :invalid="vv?.value?.modelClone?.[name]?.$error"
-    :invalidation-message="invalidationMessage"
+    :invalid="isInvalid"
+    :invalidation-message="invalidMessage"
     v-model="model[name]"
   >
     <template #on>
@@ -483,7 +512,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     </template>
   </LxToggle>
   <LxValuePicker
-    v-else-if="componentSelect(row, name) === 'valuePicker'"
+    v-else-if="selectedComponent === 'valuePicker'"
     :id="id + '-' + name"
     :kind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
     :items="
@@ -509,12 +538,12 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     :search-attributes="displaySchema?.properties[name]?.lx?.searchAttributes"
     :has-select-all="displaySchema?.properties[name]?.lx?.hasSelectAll"
     :read-only-render-type="displaySchema?.properties[name]?.lx?.readOnlyRenderType"
-    :invalid="vv?.value?.modelClone?.[name]?.$error"
-    :invalidation-message="invalidationMessage"
+    :invalid="isInvalid"
+    :invalidation-message="invalidMessage"
     v-model="model[name]"
   />
   <LxDataBlock
-    v-else-if="componentSelect(row, name) === 'dataBlock'"
+    v-else-if="selectedComponent === 'dataBlock'"
     :expandable="true"
     :size="displaySchema?.properties[name]?.lx?.size"
     :icon="displaySchema?.properties[name]?.lx?.icon"
@@ -650,13 +679,9 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
       </template>
     </LxForm>
   </LxDataBlock>
-  <div
-    v-else-if="
-      componentSelect(row, name) === 'objectButton' || componentSelect(row, name) === 'objectList'
-    "
-  >
+  <div v-else-if="selectedComponent === 'objectButton' || selectedComponent === 'objectList'">
     <LxListItem
-      v-if="componentSelect(row, name) === 'objectList'"
+      v-if="selectedComponent === 'objectList'"
       :value="model[name]"
       :label="
         model[name][displaySchema?.properties[name].lx.primaryAttribute]
@@ -678,7 +703,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     />
 
     <LxButton
-      v-if="componentSelect(row, name) === 'objectButton'"
+      v-if="selectedComponent === 'objectButton'"
       :label="texts?.addObject"
       icon="add-item"
       kind="ghost"
@@ -803,7 +828,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     </LxModal>
   </div>
   <LxList
-    v-else-if="componentSelect(row, name) === 'arrayList'"
+    v-else-if="selectedComponent === 'arrayList'"
     :items="model[name]"
     :actionDefinitions="
       displaySchema?.properties[name]?.lx?.actionDefinitions || [
@@ -921,7 +946,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
       </template>
     </template>
   </LxList>
-  <div v-else-if="componentSelect(row, name) === 'arrayListModal'">
+  <div v-else-if="selectedComponent === 'arrayListModal'">
     <LxList
       :items="model[name]"
       :actionDefinitions="
@@ -1313,7 +1338,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     </LxModal>
   </div>
   <LxDataGrid
-    v-else-if="componentSelect(row, name) === 'arrayTable'"
+    v-else-if="selectedComponent === 'arrayTable'"
     :items="model[name]"
     :label="displaySchema?.properties[name]?.lx?.label"
     :description="displaySchema?.properties[name]?.lx?.description"
@@ -1336,7 +1361,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     :sortingMode="displaySchema?.properties[name]?.lx?.sortingMode"
     :texts="displaySchema?.properties[name]?.lx?.texts"
   />
-  <div v-else-if="componentSelect(row, name) === 'arrayTableModal'">
+  <div v-else-if="selectedComponent === 'arrayTableModal'">
     <LxDataGrid
       :items="model[name]"
       :label="displaySchema?.properties[name]?.lx?.label"
@@ -1655,7 +1680,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     </LxModal>
   </div>
   <LxAppendableList
-    v-else-if="componentSelect(row, name) === 'appendableList'"
+    v-else-if="selectedComponent === 'appendableList'"
     v-model="model[name]"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :expandable="displaySchema?.properties[name]?.lx?.expandable"
@@ -1795,7 +1820,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     </template>
   </LxAppendableList>
   <LxAppendableListSimple
-    v-else-if="componentSelect(row, name) === 'smallAppendableList'"
+    v-else-if="selectedComponent === 'smallAppendableList'"
     v-model="model[name]"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :addButtonLabel="displaySchema?.properties[name]?.lx?.addButtonLabel"
@@ -1902,7 +1927,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
   </LxAppendableListSimple>
 
   <LxAutoComplete
-    v-else-if="componentSelect(row, name) === 'autoComplete'"
+    v-else-if="selectedComponent === 'autoComplete'"
     :id="id + '-' + name"
     :items="displaySchema?.properties[name]?.lx?.items"
     :idAttribute="displaySchema?.properties[name]?.lx?.idAttribute"
@@ -1916,8 +1941,8 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     :tooltip="displaySchema?.properties[name]?.lx?.tooltip"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
-    :invalid="vv?.value?.modelClone?.[name]?.$error"
-    :invalidation-message="invalidationMessage"
+    :invalid="isInvalid"
+    :invalidation-message="invalidMessage"
     :loading="displaySchema?.properties[name]?.lx?.loading"
     :hasDetails="displaySchema?.properties[name]?.lx?.hasDetails"
     :selectingKind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
@@ -1932,7 +1957,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     @openDetails="(a) => componentEmit('openDetails', name, a)"
   />
   <LxButton
-    v-else-if="componentSelect(row, name) === 'button'"
+    v-else-if="selectedComponent === 'button'"
     :id="id + '-' + name"
     :label="model[name]?.label || model[name] || displaySchema?.properties[name]?.lx?.label"
     :title="
@@ -2033,7 +2058,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     @click="(_, b) => componentEmit('click', name, b)"
   />
   <LxCamera
-    v-else-if="componentSelect(row, name) === 'camera'"
+    v-else-if="selectedComponent === 'camera'"
     :id="id + '-' + name"
     :cameraSwitcherMode="displaySchema?.properties[name]?.lx?.cameraSwitcherMode"
     :hasFlashlightToggle="displaySchema?.properties[name]?.lx?.hasFlashlightToggle"
@@ -2044,7 +2069,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     v-model="model[name]"
   />
   <LxCheckbox
-    v-else-if="componentSelect(row, name) === 'checkbox'"
+    v-else-if="selectedComponent === 'checkbox'"
     :id="id + '-' + name"
     :groupId="displaySchema?.properties[name]?.lx?.groupId"
     :label="displaySchema?.properties[name]?.lx?.label"
@@ -2056,7 +2081,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     @click="() => componentEmit('click', name)"
   />
   <LxContentSwitcher
-    v-else-if="componentSelect(row, name) === 'contentSwitcher'"
+    v-else-if="selectedComponent === 'contentSwitcher'"
     :id="id + '-' + name"
     :items="displaySchema?.properties[name]?.lx?.items"
     :idAttribute="displaySchema?.properties[name]?.lx?.idAttribute"
@@ -2071,7 +2096,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     v-model="model[name]"
   />
   <LxDataVisualizer
-    v-else-if="componentSelect(row, name) === 'dataVisualizer'"
+    v-else-if="selectedComponent === 'dataVisualizer'"
     :id="id + '-' + name"
     :kind="
       displaySchema?.properties[name]?.type === 'object'
@@ -2136,7 +2161,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     "
     @click="(a) => componentEmit('click', name, a)"
   />
-  <LxDropDownMenu v-else-if="componentSelect(row, name) === 'dropDownMenu'">
+  <LxDropDownMenu v-else-if="selectedComponent === 'dropDownMenu'">
     <LxButton
       :id="id + '-' + name"
       :label="model[name]?.label || model[name] || displaySchema?.properties[name]?.lx?.label"
@@ -2266,7 +2291,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
   </LxDropDownMenu>
 
   <LxFileUploader
-    v-else-if="componentSelect(row, name) === 'file'"
+    v-else-if="selectedComponent === 'file'"
     :id="id + '-' + name"
     :kind="displaySchema?.properties[name]?.lx?.kind"
     :mode="displaySchema?.properties[name]?.lx?.mode"
@@ -2294,7 +2319,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     @downloadFile="(a) => componentEmit('downloadFile', name, a)"
   />
   <LxFileViewer
-    v-else-if="componentSelect(row, name) === 'fileViewer'"
+    v-else-if="selectedComponent === 'fileViewer'"
     :id="id + '-' + name"
     :scrollable="displaySchema?.properties[name]?.lx?.scrollable"
     :width="displaySchema?.properties[name]?.lx?.width"
@@ -2311,7 +2336,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     @download="(a) => componentEmit('download', name, a)"
   />
   <LxFlag
-    v-else-if="componentSelect(row, name) === 'flag'"
+    v-else-if="selectedComponent === 'flag'"
     :value="model?.[name]?.value || model?.[name] || displaySchema?.properties[name]?.lx?.value"
     :size="
       displaySchema?.properties[name]?.type === 'object'
@@ -2325,7 +2350,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     "
   />
   <LxIcon
-    v-else-if="componentSelect(row, name) === 'icon'"
+    v-else-if="selectedComponent === 'icon'"
     :value="model?.[name]?.value || model?.[name] || displaySchema?.properties[name]?.lx?.value"
     :iconSet="
       displaySchema?.properties[name]?.type === 'object'
@@ -2369,7 +2394,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     "
   />
   <LxIllustration
-    v-else-if="componentSelect(row, name) === 'illustration'"
+    v-else-if="selectedComponent === 'illustration'"
     :value="model?.[name]?.value || model?.[name] || displaySchema?.properties[name]?.lx?.value"
     :class="
       displaySchema?.properties[name]?.type === 'object'
@@ -2383,12 +2408,12 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     "
   />
   <LxLink
-    v-else-if="componentSelect(row, name) === 'link'"
+    v-else-if="selectedComponent === 'link'"
     :href="model?.[name]?.href || model?.[name] || displaySchema?.properties[name]?.lx?.href"
   />
 
   <LxMap
-    v-else-if="componentSelect(row, name) === 'map'"
+    v-else-if="selectedComponent === 'map'"
     :id="id + '-' + name"
     :baseLayerDefinitions="model[name].baseLayerDefinitions"
     v-model:selectedBaseLayer="model[name].selectedBaseLayer"
@@ -2405,15 +2430,15 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     @searched="(a) => componentEmit('searched', name, a)"
   />
   <LxMarkdownTextArea
-    v-else-if="componentSelect(row, name) === 'markdownTextArea'"
+    v-else-if="selectedComponent === 'markdownTextArea'"
     :id="id + '-' + name"
     :placeholder="examplesValue(displaySchema?.properties[name])"
     :rows="displaySchema?.properties[name]?.lx?.rows"
     :maxlength="displaySchema?.properties[name]?.maxLength"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
     :showColorPicker="displaySchema?.properties[name]?.lx?.showColorPicker"
-    :invalid="vv?.value?.modelClone?.[name]?.$error"
-    :invalidation-message="invalidationMessage"
+    :invalid="isInvalid"
+    :invalidation-message="invalidMessage"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :showLinkEditor="displaySchema?.properties[name]?.lx?.showLinkEditor"
     :tooltip="displaySchema?.properties[name]?.lx?.tooltip"
@@ -2432,7 +2457,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     "
   />
   <LxNumberSlider
-    v-else-if="componentSelect(row, name) === 'numberSlider'"
+    v-else-if="selectedComponent === 'numberSlider'"
     :id="id + '-' + name"
     :min="displaySchema?.properties[name]?.lx?.min"
     :max="displaySchema?.properties[name]?.lx?.max"
@@ -2444,7 +2469,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     v-model="model[name]"
   />
   <LxPersonDisplay
-    v-else-if="componentSelect(row, name) === 'personDisplay'"
+    v-else-if="selectedComponent === 'personDisplay'"
     :value="model?.[name]"
     :name="displaySchema?.properties[name]?.lx?.name"
     :size="displaySchema?.properties[name]?.lx?.size"
@@ -2467,7 +2492,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     :texts="displaySchema?.properties[name]?.lx?.texts"
   />
   <LxQr
-    v-else-if="componentSelect(row, name) === 'qr'"
+    v-else-if="selectedComponent === 'qr'"
     :id="id + '-' + name"
     :value="model?.[name]?.value || model?.[name] || displaySchema?.properties[name]?.lx?.value"
     :size="
@@ -2482,7 +2507,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     "
   />
   <LxQrScanner
-    v-else-if="componentSelect(row, name) === 'qrScanner'"
+    v-else-if="selectedComponent === 'qrScanner'"
     :id="id + '-' + name"
     :formats="model?.[name]?.formats || displaySchema?.properties[name]?.lx?.formats"
     :hasFileUploader="
@@ -2502,7 +2527,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     @error="(a) => componentEmit('error', name, a)"
   />
   <LxRatings
-    v-else-if="componentSelect(row, name) === 'ratings'"
+    v-else-if="selectedComponent === 'ratings'"
     :mode="displaySchema?.properties[name]?.lx?.mode"
     :kind="displaySchema?.properties[name]?.lx?.kind"
     :variant="displaySchema?.properties[name]?.lx?.variant"
@@ -2511,7 +2536,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     v-model="model[name]"
   />
   <LxRichTextDisplay
-    v-else-if="componentSelect(row, name) === 'richTextDisplay'"
+    v-else-if="selectedComponent === 'richTextDisplay'"
     :id="id + '-' + name"
     :value="model?.[name]?.value || model?.[name] || displaySchema?.properties[name]?.lx?.value"
     :loading="
@@ -2521,7 +2546,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     "
   />
   <LxStateDisplay
-    v-else-if="componentSelect(row, name) === 'stateDisplay'"
+    v-else-if="selectedComponent === 'stateDisplay'"
     :value="model?.[name]?.value || model?.[name] || displaySchema?.properties[name]?.lx?.value"
     :dictionary="
       displaySchema?.properties[name]?.type === 'object'
@@ -2530,7 +2555,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     "
   />
   <LxSteps
-    v-else-if="componentSelect(row, name) === 'steps'"
+    v-else-if="selectedComponent === 'steps'"
     :id="id + '-' + name"
     :items="displaySchema?.properties[name]?.lx?.items"
     :kind="displaySchema?.properties[name]?.lx?.kind"
@@ -2544,7 +2569,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     v-model="model[name]"
   />
   <LxVisualPicker
-    v-else-if="componentSelect(row, name) === 'visualPicker'"
+    v-else-if="selectedComponent === 'visualPicker'"
     :id="id + '-' + name"
     :kind="displaySchema?.properties[name]?.lx?.type === 'string' ? 'single' : 'multiple'"
     :mode="displaySchema?.properties[name]?.lx?.mode"
@@ -2556,19 +2581,19 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
   />
 
   <LxDayInput
-    v-else-if="componentSelect(row, name) === 'dayInput'"
+    v-else-if="selectedComponent === 'dayInput'"
     :id="id + '-' + name"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
     :readOnly="isReadOnly(displaySchema?.properties[name])"
     :kind="displaySchema?.properties[name]?.lx?.kind"
-    :invalid="vv?.value?.modelClone?.[name]?.$error"
-    :invalidationMessage="invalidationMessage"
+    :invalid="isInvalid"
+    :invalidationMessage="invalidMessage"
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"
     v-model="model[name]"
   />
   <LxDrawPad
-    v-else-if="componentSelect(row, name) === 'drawPad'"
+    v-else-if="selectedComponent === 'drawPad'"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
     :width="displaySchema?.properties[name]?.lx?.width"
     :height="displaySchema?.properties[name]?.lx?.height"
@@ -2582,7 +2607,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
     v-model="model[name]"
   />
   <LxLogoDisplay
-    v-else-if="componentSelect(row, name) === 'logoDisplay'"
+    v-else-if="selectedComponent === 'logoDisplay'"
     :value="model?.[name]?.value || model?.[name] || displaySchema?.properties[name]?.lx?.value"
     :kind="
       displaySchema?.properties[name]?.type === 'object'
@@ -2595,7 +2620,7 @@ function dataGridActions(action, id, additionalParameter, name, actionDefinition
         : displaySchema?.properties[name]?.lx?.size
     "
   />
-  <p class="lx-data" v-else-if="componentSelect(row, name) === 'text'">
+  <p class="lx-data" v-else-if="selectedComponent === 'text'">
     {{ model[name] }}
   </p>
 </template>

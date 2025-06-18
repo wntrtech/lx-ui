@@ -167,6 +167,14 @@ const props = defineProps({
     },
   },
   /**
+   * Determines invalidation messages for the filters input fields.
+   *
+   * @type {Object}
+   * @default null
+   * @since 1.9.0
+   */
+  validations: { type: Object, default: null },
+  /**
    * The object containing text translations.
    * @type {Object}
    * @since 1.9.0-beta.3
@@ -402,8 +410,21 @@ const filterDescription = computed(() => {
   return '';
 });
 
+function validateModel() {
+  return formBuilder.value.validateModel();
+}
+
+function clearValidations() {
+  formBuilder.value.clearValidations();
+}
+
 onMounted(() => {
   initialModelValues.value = { ...props.modelValue };
+});
+
+defineExpose({
+  validateModel,
+  clearValidations,
 });
 </script>
 <template>
@@ -438,6 +459,7 @@ onMounted(() => {
       :readOnly="readOnly"
       :mode="mode"
       :texts="displayTexts"
+      :validations="validations"
       @rowActionClick="
         (action, value, schemaName, index) =>
           emits('rowActionClick', action, value, schemaName, index)

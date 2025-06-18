@@ -72,6 +72,14 @@ const props = defineProps({
    */
   mode: { type: String, default: 'default' }, // 'default' || 'no-schema' || 'mixed'
   /**
+   * Determines invalidation messages for the form.
+   *
+   * @type {Object}
+   * @default null
+   * @since 1.9.0
+   */
+  validations: { type: Object, default: null },
+  /**
    * The object containing text translations for the form.
    * @type {Object}
    * @since 1.1.0
@@ -397,150 +405,159 @@ function isNumber(type) {
 }
 
 // Creates rule for 'modelValue' validation based on the provided schema
-const rules = computed(() => {
-  const req = props.schema?.required;
-  const res = { modelClone: {} };
+const buildRules = (schema) => {
+  const req = schema?.required;
+  const res = {};
 
   req?.forEach((property) => {
-    res.modelClone[property] = {};
-    res.modelClone[property].required = helpers.withMessage(
-      () => displayTexts.value.required,
-      required
-    );
+    res[property] = res[property] || {};
+    res[property].required = helpers.withMessage(() => displayTexts.value.required, required);
   });
-  if (props.schema?.properties) {
-    Object.entries(props.schema?.properties)?.forEach(([key, value]) => {
-      if (isNumber(value?.type)) {
-        if (value?.minimum) {
-          res.modelClone[key] = res.modelClone[key] || {};
-          res.modelClone[key].minValue = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.minimum, $params.min),
-            minValue(value?.minimum)
-          );
-        }
-        if (value?.exclusiveMinimum) {
-          const exclusiveMinimum = (param) =>
-            helpers.withParams(
-              { type: 'exclusiveMinimum', value: param },
-              (targetValue) => targetValue > param
-            );
 
-          res.modelClone[key] = res.modelClone[key] || {};
-          res.modelClone[key].exclusiveMinimum = helpers.withMessage(
-            () => replaceErrorMessage(displayTexts.value.exclusiveMinimum, value?.exclusiveMinimum),
-            exclusiveMinimum(value?.exclusiveMinimum)
-          );
-        }
-        if (value?.maximum) {
-          res.modelClone[key] = res.modelClone[key] || {};
-          res.modelClone[key].maxValue = helpers.withMessage(
-            ({ $params }) => replaceErrorMessage(displayTexts.value.maximum, $params.max),
-            maxValue(value?.maximum)
-          );
-        }
-        if (value?.exclusiveMaximum) {
-          const exclusiveMaximum = (param) =>
-            helpers.withParams(
-              { type: 'exclusiveMaximum', value: param },
-              (targetValue) => targetValue < param
+  if (schema?.properties) {
+    Object.entries(schema.properties).forEach(([key, value]) => {
+      // Recursively handle nested objects
+      if (value?.type === 'object' && value?.properties) {
+        res[key] = buildRules(value);
+      } else {
+        if (isNumber(value?.type)) {
+          if (value?.minimum !== undefined) {
+            res[key] = res[key] || {};
+            res[key].minValue = helpers.withMessage(
+              ({ $params }) => replaceErrorMessage(displayTexts.value.minimum, $params.min),
+              minValue(value.minimum)
             );
-          res.modelClone[key] = res.modelClone[key] || {};
-          res.modelClone[key].exclusiveMaximum = helpers.withMessage(
-            () => replaceErrorMessage(displayTexts.value.exclusiveMaximum, value?.exclusiveMaximum),
-            exclusiveMaximum(value?.exclusiveMaximum)
-          );
-        }
-        if (value?.multipleOf) {
-          const multipleOf = (param) =>
-            helpers.withParams(
-              { type: 'multipleOf', value: param },
-              (targetValue) => targetValue % param === 0
+          }
+          if (value?.exclusiveMinimum !== undefined) {
+            const exclusiveMinimum = (param) =>
+              helpers.withParams(
+                { type: 'exclusiveMinimum', value: param },
+                (targetValue) => targetValue > param
+              );
+            res[key] = res[key] || {};
+            res[key].exclusiveMinimum = helpers.withMessage(
+              () =>
+                replaceErrorMessage(displayTexts.value.exclusiveMinimum, value.exclusiveMinimum),
+              exclusiveMinimum(value.exclusiveMinimum)
             );
-          res.modelClone[key] = res.modelClone[key] || {};
-          res.modelClone[key].multipleOf = helpers.withMessage(
-            () => replaceErrorMessage(displayTexts.value.multipleOf, value?.multipleOf),
-            multipleOf(value?.multipleOf)
+          }
+          if (value?.maximum !== undefined) {
+            res[key] = res[key] || {};
+            res[key].maxValue = helpers.withMessage(
+              ({ $params }) => replaceErrorMessage(displayTexts.value.maximum, $params.max),
+              maxValue(value.maximum)
+            );
+          }
+          if (value?.exclusiveMaximum !== undefined) {
+            const exclusiveMaximum = (param) =>
+              helpers.withParams(
+                { type: 'exclusiveMaximum', value: param },
+                (targetValue) => targetValue < param
+              );
+            res[key] = res[key] || {};
+            res[key].exclusiveMaximum = helpers.withMessage(
+              () =>
+                replaceErrorMessage(displayTexts.value.exclusiveMaximum, value.exclusiveMaximum),
+              exclusiveMaximum(value.exclusiveMaximum)
+            );
+          }
+          if (value?.multipleOf !== undefined) {
+            const multipleOf = (param) =>
+              helpers.withParams(
+                { type: 'multipleOf', value: param },
+                (targetValue) => targetValue % param === 0
+              );
+            res[key] = res[key] || {};
+            res[key].multipleOf = helpers.withMessage(
+              () => replaceErrorMessage(displayTexts.value.multipleOf, value.multipleOf),
+              multipleOf(value.multipleOf)
+            );
+          }
+        }
+        if (value?.minLength !== undefined && value?.type === 'string') {
+          res[key] = res[key] || {};
+          res[key].minLength = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(displayTexts.value.minLength, $params.min),
+            minLength(value.minLength)
           );
         }
-      }
-      if (value?.minLength && value?.type === 'string') {
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].minLength = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(displayTexts.value.minLength, $params.min),
-          minLength(value?.minLength)
-        );
-      }
-      if (value?.maxLength && value?.type === 'string') {
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].maxLength = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(displayTexts.value.maxLength, $params.max),
-          maxLength(value?.maxLength)
-        );
-      }
-      if (value?.pattern && value?.type === 'string') {
-        const pattern = (param) =>
-          helpers.withParams({ type: 'pattern', value: param }, (targetValue) =>
-            new RegExp(param).test(targetValue)
+        if (value?.maxLength !== undefined && value?.type === 'string') {
+          res[key] = res[key] || {};
+          res[key].maxLength = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(displayTexts.value.maxLength, $params.max),
+            maxLength(value.maxLength)
           );
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].pattern = helpers.withMessage(
-          () => replaceErrorMessage(displayTexts.value.pattern, value?.pattern),
-          pattern(value?.pattern)
-        );
-      }
-      if (value?.minItems && value?.type === 'array') {
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].minItems = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(displayTexts.value.minItems, $params.min),
-          minLength(value?.minItems)
-        );
-      }
-      if (value?.maxItems && value?.type === 'array') {
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].maxItems = helpers.withMessage(
-          ({ $params }) => replaceErrorMessage(displayTexts.value.maxItems, $params.max),
-          maxLength(value?.maxItems)
-        );
-      }
-      if (value?.uniqueItems && value?.type === 'array') {
-        const uniqueItems = (targetValue) => new Set(targetValue)?.size === targetValue?.length;
-        res.modelClone[key] = res.modelClone[key] || {};
-        res.modelClone[key].uniqueItems = helpers.withMessage(
-          () => displayTexts.value.uniqueItems,
-          uniqueItems
-        );
+        }
+        if (value?.pattern && value?.type === 'string') {
+          const pattern = (param) =>
+            helpers.withParams({ type: 'pattern', value: param }, (targetValue) =>
+              new RegExp(param).test(targetValue)
+            );
+          res[key] = res[key] || {};
+          res[key].pattern = helpers.withMessage(
+            () => replaceErrorMessage(displayTexts.value.pattern, value.pattern),
+            pattern(value.pattern)
+          );
+        }
+        if (value?.minItems !== undefined && value?.type === 'array') {
+          res[key] = res[key] || {};
+          res[key].minItems = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(displayTexts.value.minItems, $params.min),
+            minLength(value.minItems)
+          );
+        }
+        if (value?.maxItems !== undefined && value?.type === 'array') {
+          res[key] = res[key] || {};
+          res[key].maxItems = helpers.withMessage(
+            ({ $params }) => replaceErrorMessage(displayTexts.value.maxItems, $params.max),
+            maxLength(value.maxItems)
+          );
+        }
+        if (value?.uniqueItems && value?.type === 'array') {
+          const uniqueItems = (targetValue) => new Set(targetValue)?.size === targetValue?.length;
+          res[key] = res[key] || {};
+          res[key].uniqueItems = helpers.withMessage(
+            () => displayTexts.value.uniqueItems,
+            uniqueItems
+          );
+        }
       }
     });
-    if (props.schema?.minProperties && props.schema?.type === 'object') {
-      const minProperties = (param) =>
-        helpers.withParams(
-          { type: 'minProperties', value: param },
-          (targetValue) => Object.keys(targetValue).length >= param
-        );
-      res.modelClone.minProperties = helpers.withMessage(
-        () => replaceErrorMessage(displayTexts.value.minProperties, props.schema?.minProperties),
-        minProperties(props.schema?.minProperties)
-      );
-    }
-    if (props.schema?.maxProperties && props.schema?.type === 'object') {
-      const maxProperties = (param) =>
-        helpers.withParams(
-          { type: 'maxProperties', value: param },
-          (targetValue) => Object.keys(targetValue).length <= param
-        );
-      res.modelClone.maxProperties = helpers.withMessage(
-        () => replaceErrorMessage(displayTexts.value.maxProperties, props.schema?.maxProperties),
-        maxProperties(props.schema?.maxProperties)
-      );
-    }
   }
+
+  if (schema?.minProperties !== undefined && schema?.type === 'object') {
+    const minProperties = (param) =>
+      helpers.withParams(
+        { type: 'minProperties', value: param },
+        (targetValue) => Object.keys(targetValue).length >= param
+      );
+    res.minProperties = helpers.withMessage(
+      () => replaceErrorMessage(displayTexts.value.minProperties, schema.minProperties),
+      minProperties(schema.minProperties)
+    );
+  }
+  if (schema?.maxProperties !== undefined && schema?.type === 'object') {
+    const maxProperties = (param) =>
+      helpers.withParams(
+        { type: 'maxProperties', value: param },
+        (targetValue) => Object.keys(targetValue).length <= param
+      );
+    res.maxProperties = helpers.withMessage(
+      () => replaceErrorMessage(displayTexts.value.maxProperties, schema.maxProperties),
+      maxProperties(schema.maxProperties)
+    );
+  }
+
   return res;
+};
+
+const rules = computed(() => {
+  if (!props.schema) return { modelClone: {} };
+  return { modelClone: buildRules(props.schema) };
 });
 
 const vv = ref();
-function returnErrorMessage(name) {
-  return vv.value?.value?.modelClone?.[name]?.$errors?.[0]?.$message;
-}
+
 /**
  * Validates the model based on the provided rules in schema prop.
  *
@@ -642,10 +659,10 @@ defineExpose({ validateModel, clearValidations, componentSelect });
                   :name="nestedItemName"
                   :displaySchema="displaySchema?.properties[name]?.properties[itemName]"
                   :vv="vv"
-                  :invalidationMessage="returnErrorMessage(nestedItemName)"
                   :orderedObject="orderedObject?.[name]?.properties?.[itemName]?.properties"
                   :texts="displayTexts"
                   :parentName="`${name}.${itemName}`"
+                  :validations="validations?.[name]?.[itemName]"
                   @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
                   @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
                 />
@@ -660,10 +677,10 @@ defineExpose({ validateModel, clearValidations, componentSelect });
               :name="itemName"
               :displaySchema="displaySchema?.properties[name]"
               :vv="vv"
-              :invalidationMessage="returnErrorMessage(name)"
               :orderedObject="orderedObject?.[name]?.properties"
               :parentName="name"
               :texts="displayTexts"
+              :validations="validations?.[name]"
               @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
               @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
             />
@@ -679,9 +696,9 @@ defineExpose({ validateModel, clearValidations, componentSelect });
           :displaySchema="displaySchema"
           :schema="schema"
           :vv="vv"
-          :invalidationMessage="returnErrorMessage(name)"
           :orderedObject="orderedObject"
           :texts="displayTexts"
+          :validations="validations"
           @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
           @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
         />
