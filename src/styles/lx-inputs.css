@@ -689,7 +689,11 @@
 .lx .lx-form .lx-input-wrapper,
 .lx .lx-override .lx-form input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
 .lx .lx-override .lx-form textarea,
-.lx .lx-form .lx-rotator-tag {
+.lx .lx-form .lx-rotator-tag,
+.lx .lx-data-block-wrapper .lx-input-wrapper,
+.lx .lx-data-block-wrapper .lx-rotator-tag,
+.lx .lx-override .lx-data-block-wrapper input:where(:not([type="file"]):not([type="color"]):not([type="image"])),
+.lx .lx-override .lx-data-block-wrapper textarea {
   background-color: var(--color-input-region-background);
 }
 
@@ -704,7 +708,19 @@
 .lx .lx-modal .lx-appendable-list .lx-input-wrapper,
 .lx .lx-modal .lx-appendable-list .lx-rotator-tag,
 .lx .lx-override .lx-modal .lx-appendable-list input,
-.lx .lx-override .lx-modal .lx-appendable-list textarea {
+.lx .lx-override .lx-modal .lx-appendable-list textarea,
+.lx .lx-region .lx-data-block-wrapper .lx-input-wrapper,
+.lx .lx-region .lx-data-block-wrapper .lx-rotator-tag,
+.lx-override .lx-region .lx-data-block-wrapper input,
+.lx-override .lx-region .lx-data-block-wrapper textarea,
+.lx .lx-modal .lx-data-block-wrapper .lx-input-wrapper,
+.lx .lx-modal .lx-data-block-wrapper .lx-rotator-tag,
+.lx-override .lx-modal .lx-data-block-wrapper input,
+.lx-override .lx-modal .lx-data-block-wrapper textarea,
+.lx .lx-form-grid .lx-data-block-wrapper .lx-input-wrapper,
+.lx .lx-form-grid .lx-data-block-wrapper .lx-rotator-tag,
+.lx-override .lx-form-grid .lx-data-block-wrapper input,
+.lx-override .lx-form-grid .lx-data-block-wrapper textarea {
   background-color: var(--color-input-background);
 }
 
