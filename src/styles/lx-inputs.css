@@ -1467,7 +1467,12 @@ h2.lx-section-header + p.lx-invalidation-message,
   display: flex;
   align-items: flex-start;
   line-height: 1rem;
-  padding: 0.65rem 0;
+  padding: 0.25rem 0;
+}
+
+.lx-touch-mode .lx-autocomplete-default .lx-dropdown-default-content .lx-value-picker-item.autocomplete-multiple,
+.lx-touch-mode .lx-value-picker-dropdown-wrapper .lx-dropdown-default-content .lx-value-picker-item {
+  padding: 0.8rem 0 0.7rem 0;
 }
 
 .lx-autocomplete-default
@@ -1991,12 +1996,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   padding-right: 0.2rem;
   margin-left: -0.1rem;
 }
-
-@media (pointer: coarse) {		
-  .lx-dropdown-default-content .lx-value-picker-item {		
-    min-height: var(--row-size) !important;		
-  }		
-}		
 
 /*** Misc input state + placeholder styles ***/
 
@@ -2878,7 +2877,8 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-dropdown-default-content .lx-value-picker-item {
   line-height: 1em;
   height: auto;
-  padding: 0.5rem 1rem;
+  min-height: var(--row-size-dynamic);
+  padding: 0.25rem 1rem;
   outline-color: var(--color-focus-background);
   border: 2px solid transparent;
 }

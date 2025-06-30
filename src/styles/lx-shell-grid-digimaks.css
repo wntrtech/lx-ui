@@ -256,6 +256,13 @@
   grid-template-columns: auto 1fr;
 }
 
+.lx:not(.lx-touch-mode) .lx-layout-digimaks .theme-picker .popper-wrapper 
+  > .popper 
+  > .lx-dropdown-panel 
+  > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {
+  padding: 0.15rem 0.35rem 0.15rem 1.1rem;
+}
+ 
 .lx-layout-digimaks .lx-nav-panel .lx-user-menu > ul > li.lx-user-menu-item .lx-context-container {
   align-items: flex-start;
 }

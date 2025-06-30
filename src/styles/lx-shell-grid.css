@@ -1556,6 +1556,17 @@
   cursor: pointer;
 }
 
+.lx:not(.lx-touch-mode) .lx-theme-menu .lx-context-container .popper-wrapper
+  > .popper
+  > .lx-dropdown-panel
+  > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {		
+  padding: 0.15rem 0.35rem 0.15rem 1.1rem;		
+}
+
+.lx-touch-mode-controller {		
+  border-top-color: transparent;		
+}
+
 .lx-cover
 > .lx-content
 .cover-main-area

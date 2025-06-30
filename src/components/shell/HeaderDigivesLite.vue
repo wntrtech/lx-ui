@@ -43,6 +43,7 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
   hasDeviceFonts: { type: Boolean, default: false },
+  isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
   alerts: { type: Array, default: () => [] },
@@ -90,10 +91,13 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
+  touchModeOff: 'Nē',
+  touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
   contextPersonsInfoLabel: 'Pacients',
@@ -124,6 +128,7 @@ const emits = defineEmits([
   'update:theme',
   'update:hasAnimations',
   'update:hasDeviceFonts',
+  'update:isTouchSensitive',
   'update:selected-language',
   'go-home',
   'help-click',
@@ -177,6 +182,15 @@ const deviceFontsModel = computed({
   },
   set(value) {
     emits('update:hasDeviceFonts', value);
+  },
+});
+
+const touchModeModel = computed({
+  get() {
+    return props.isTouchSensitive;
+  },
+  set(value) {
+    emits('update:isTouchSensitive', value);
   },
 });
 
@@ -531,8 +545,21 @@ watch(
                   valueYes: displayTexts.reduceMotionOn,
                   valueNo: displayTexts.reduceMotionOff,
                 }"
+                :size="props.isTouchSensitive ? 'm' : 's'"
                 @click="triggerThemeMenu"
-              ></LxToggle>
+              />
+            </div>
+            <div class="lx-touch-mode-controller">
+              <p>{{ displayTexts.touchMode }}</p>
+              <LxToggle
+                v-model="touchModeModel"
+                :texts="{
+                  valueYes: displayTexts.touchModeOn,
+                  valueNo: displayTexts.touchModeOff,
+                }"
+                :size="props.isTouchSensitive ? 'm' : 's'"
+                @click="triggerThemeMenu"
+              />
             </div>
             <div class="lx-fonts-controller">
               <p>{{ displayTexts.fonts }}</p>
@@ -542,8 +569,9 @@ watch(
                   valueYes: displayTexts.systemFontsOn,
                   valueNo: displayTexts.systemFontsOff,
                 }"
+                :size="props.isTouchSensitive ? 'm' : 's'"
                 @click="triggerThemeMenu"
-              ></LxToggle>
+              />
             </div>
           </template>
         </LxDropDownMenu>

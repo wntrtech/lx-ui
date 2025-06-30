@@ -1,6 +1,11 @@
 <script setup>
 import { computed, shallowRef, onMounted, watch, ref, nextTick } from 'vue';
-import { useColorMode, usePreferredReducedMotion, useMutationObserver } from '@vueuse/core';
+import {
+  useColorMode,
+  usePreferredReducedMotion,
+  useMutationObserver,
+  useMediaQuery,
+} from '@vueuse/core';
 
 import useLx from '@/hooks/useLx';
 
@@ -58,6 +63,7 @@ const emits = defineEmits([
   'update:selected-alternative-profile',
   'update:hasAnimations',
   'update:hasDeviceFonts',
+  'update:isTouchSensitive',
   'idleModalPrimary',
   'idleModalSecondary',
   'confirmModalClosed',
@@ -103,6 +109,7 @@ const props = defineProps({
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   hasAnimations: { type: Boolean, default: null },
   hasDeviceFonts: { type: Boolean, default: null },
+  isTouchSensitive: { type: Boolean, default: null },
 
   hasLanguagePicker: { type: Boolean, default: false },
   languages: { type: Array, default: () => [] },
@@ -192,10 +199,13 @@ const textsDefault = {
   themeContrast: 'Kontrastainais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
+  touchModeOff: 'Nē',
+  touchModeOn: 'Jā',
   confirmModalSecondaryDefaultLabel: 'Nē',
   confirmModalPrimaryDefaultLabel: 'Jā',
   previousAlertTitle: 'Iepriekšējais paziņojums',
@@ -329,6 +339,65 @@ watch(
   () => animationsModel.value,
   (newValue) => {
     animationModeChange(newValue);
+  }
+);
+
+const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
+
+const touchModeToggle = ref(false);
+
+const touchModeStorageKey = ref(
+  `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-touch-mode`
+);
+
+const touchModeModel = computed({
+  get() {
+    if (props.isTouchSensitive !== touchModeToggle.value) {
+      return touchModeToggle.value;
+    }
+    return props.isTouchSensitive;
+  },
+  set(value) {
+    if (props.hasThemePicker) {
+      emits('update:isTouchSensitive', value);
+    }
+    touchModeToggle.value = value;
+  },
+});
+
+function touchModeChange(value) {
+  if (lxElement) {
+    lxElement.style.setProperty(
+      '--row-size-dynamic',
+      value ? getComputedStyle(lxElement).getPropertyValue('--row-size') : '2rem'
+    );
+    lxElement.classList.toggle('lx-touch-mode', value);
+  }
+
+  localStorage.setItem(touchModeStorageKey.value, JSON.stringify(value));
+  touchModeToggle.value = value;
+}
+
+watch(
+  () => props.isTouchSensitive,
+  (value) => {
+    if (value !== null && value !== touchModeToggle.value) {
+      touchModeToggle.value = value;
+    }
+  }
+);
+
+watch(
+  () => touchModeToggle.value,
+  (value) => {
+    touchModeChange(value);
+  }
+);
+
+watch(
+  () => isTouchMode.value,
+  (value) => {
+    touchModeChange(value);
   }
 );
 
@@ -546,6 +615,18 @@ onMounted(() => {
 
   applyDeviceFonts(deviceFontsModel.value);
 
+  if (props.isTouchSensitive === null) {
+    const stored = localStorage.getItem(touchModeStorageKey.value);
+    if (stored !== null) {
+      touchModeToggle.value = JSON.parse(stored);
+    } else {
+      touchModeToggle.value = isTouchMode.value;
+    }
+  } else {
+    touchModeToggle.value = props.isTouchSensitive;
+  }
+  touchModeChange(touchModeToggle.value);
+
   defineVars();
 
   useMutationObserver(
@@ -747,6 +828,7 @@ watch(
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           @language-changed="languageChanged"
           @help-click="helpClicked"
           @log-out="logOut"
@@ -891,6 +973,7 @@ watch(
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
           v-model:selectedContextPerson="selectedContextPersonModel"
@@ -932,6 +1015,7 @@ watch(
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           :selectedNavItems="navItemsSelected"
           :texts="displayTexts"
           :hasMegaMenu="hasMegaMenu"
@@ -1038,6 +1122,7 @@ watch(
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           :alternative-profiles-info="alternativeProfilesInfo"
           :context-persons-info="contextPersonsInfo"
           v-model:selectedContextPerson="selectedContextPersonModel"
@@ -1085,6 +1170,7 @@ watch(
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           :selectedNavItems="navItemsSelected"
           :texts="displayTexts"
           @nav-toggle="navToggle"
@@ -1386,6 +1472,7 @@ watch(
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           @language-changed="languageChanged"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
@@ -1463,6 +1550,7 @@ watch(
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           @customButtonClick="emits('customButtonClick')"
           @language-changed="languageChanged"
           @context-person-changed="contextPersonChanged"
@@ -1610,6 +1698,7 @@ watch(
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
@@ -1692,6 +1781,7 @@ watch(
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           @language-changed="languageChanged"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
@@ -1723,6 +1813,7 @@ watch(
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
           v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
           :nav-items="navItems"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"

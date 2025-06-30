@@ -26,6 +26,7 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
   hasDeviceFonts: { type: Boolean, default: false },
+  isTouchSensitive: { type: Boolean, default: false },
   hasLanguagePicker: { type: Boolean, default: false },
   languages: { type: Array, default: () => [] },
   selectedLanguage: { type: Object, default: null },
@@ -55,10 +56,13 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
+  touchModeOff: 'Nē',
+  touchModeOn: 'Jā',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -88,6 +92,7 @@ const emits = defineEmits([
   'update:theme',
   'update:hasAnimations',
   'update:hasDeviceFonts',
+  'update:isTouchSensitive',
   'navClick',
   'update:selectedMegaMenuItem',
   'megaMenuShowAllClick',
@@ -143,6 +148,15 @@ const selectedMegaMenuItemModel = computed({
   },
   set(value) {
     emits('update:selectedMegaMenuItem', value);
+  },
+});
+
+const touchModeModel = computed({
+  get() {
+    return props.isTouchSensitive;
+  },
+  set(value) {
+    emits('update:isTouchSensitive', value);
   },
 });
 
@@ -208,6 +222,7 @@ function triggerShowAllClick() {
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
         v-model:hasDeviceFonts="deviceFontsModel"
+        v-model:isTouchSensitive="touchModeModel"
         :texts="displayTexts"
       />
     </ul>

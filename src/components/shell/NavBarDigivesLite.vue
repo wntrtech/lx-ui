@@ -34,6 +34,7 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
   hasDeviceFonts: { type: Boolean, default: false },
+  isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   hasLanguagePicker: { type: Boolean, default: false },
   languages: { type: Array, default: () => [] },
@@ -76,10 +77,13 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
+  touchModeOff: 'Nē',
+  touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
   contextPersonsInfoLabel: 'Pacients',
@@ -98,6 +102,7 @@ const emits = defineEmits([
   'update:theme',
   'update:hasAnimations',
   'update:hasDeviceFonts',
+  'update:isTouchSensitive',
   'alerts-click',
   'alert-item-click',
   'update:selected-language',
@@ -149,6 +154,15 @@ const deviceFontsModel = computed({
   },
   set(value) {
     emits('update:hasDeviceFonts', value);
+  },
+});
+
+const touchModeModel = computed({
+  get() {
+    return props.isTouchSensitive;
+  },
+  set(value) {
+    emits('update:isTouchSensitive', value);
   },
 });
 
@@ -638,6 +652,19 @@ const isSelectedInNavItems = computed(() => {
                     valueYes: displayTexts.reduceMotionOn,
                     valueNo: displayTexts.reduceMotionOff,
                   }"
+                  :size="props.isTouchSensitive ? 'm' : 's'"
+                  @click="triggerThemeMenu"
+                />
+              </div>
+              <div class="lx-touch-mode-controller">
+                <p>{{ displayTexts.touchMode }}</p>
+                <LxToggle
+                  v-model="touchModeModel"
+                  :texts="{
+                    valueYes: displayTexts.touchModeOn,
+                    valueNo: displayTexts.touchModeOff,
+                  }"
+                  :size="props.isTouchSensitive ? 'm' : 's'"
                   @click="triggerThemeMenu"
                 />
               </div>
@@ -649,6 +676,7 @@ const isSelectedInNavItems = computed(() => {
                     valueYes: displayTexts.systemFontsOn,
                     valueNo: displayTexts.systemFontsOff,
                   }"
+                  :size="props.isTouchSensitive ? 'm' : 's'"
                   @click="triggerThemeMenu"
                 />
               </div>

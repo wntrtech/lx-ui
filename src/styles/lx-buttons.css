@@ -492,6 +492,15 @@ a.lx-button.lx-button-ghost svg {
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button svg,
 .lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button svg,
 .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button svg {
+  height: calc(var(--button-dropdown-icon-height) - 0.25rem);		
+  width: calc(var(--button-dropdown-icon-width) - 0.25rem);		
+  fill: var(--color-button-dropdown-icon);
+}
+
+.lx-touch-mode .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button svg,
+.lx-touch-mode .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button svg,
+.lx-touch-mode .lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button svg,
+.lx-touch-mode .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button svg {
   height: var(--button-dropdown-icon-height);
   width: var(--button-dropdown-icon-width);
   fill: var(--color-button-dropdown-icon);
@@ -2090,14 +2099,14 @@ a.lx-button.lx-button-ghost svg {
     border-bottom: none;
 }
 
-.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper{
+.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0.5rem 0.5rem 0.5rem 1rem;
 }
 
-.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper > p{
+.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper > p {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

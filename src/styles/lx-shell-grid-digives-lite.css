@@ -614,17 +614,28 @@
 }
 
 .lx-layout-digives-lite .lx-animations-controller,
-.lx-layout-digives-lite .lx-fonts-controller {
+.lx-layout-digives-lite .lx-fonts-controller,
+.lx-layout-digives-lite .lx-touch-mode-controller {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 0 0.5rem 1rem;
+    height: calc(var(--row-size-dynamic) + 0.2rem);
+    padding: 0.15rem 0.35rem 0.15rem 1.1rem;
 }
 
 .lx-animations-controller {
     border-top: 1px solid var(--color-chrome);
 }
 
+.lx-touch-mode-controller {		
+    border-bottom: 1px solid var(--color-chrome);		
+}
+
+.lx-touch-mode .lx-animations-controller,
+.lx-touch-mode .lx-fonts-controller,
+.lx-touch-mode .lx-touch-mode-controller {
+    padding: 0.1rem 0 0.1rem 1rem;
+}
 
 .lx-layout-digives-lite>.lx-main:not(:has(.lx-digives-alert-list)) .lx-header:has(.lx-toolbar) {
     margin-top: 0;

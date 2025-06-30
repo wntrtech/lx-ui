@@ -39,6 +39,7 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
   hasDeviceFonts: { type: Boolean, default: false },
+  isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
   clickSafeAlerts: { type: Boolean, default: false },
@@ -99,10 +100,13 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
+  touchModeOff: 'Nē',
+  touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
 };
@@ -131,6 +135,7 @@ const emits = defineEmits([
   'update:theme',
   'update:hasAnimations',
   'update:hasDeviceFonts',
+  'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
   'update:customButtonOpened',
   'customButtonClick',
@@ -234,6 +239,15 @@ const deviceFontsModel = computed({
   },
   set(value) {
     emits('update:hasDeviceFonts', value);
+  },
+});
+
+const touchModeModel = computed({
+  get() {
+    return props.isTouchSensitive;
+  },
+  set(value) {
+    emits('update:isTouchSensitive', value);
   },
 });
 
@@ -499,6 +513,7 @@ onMounted(() => {
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
         v-model:hasDeviceFonts="deviceFontsModel"
+        v-model:isTouchSensitive="touchModeModel"
         v-model:selectedContextPerson="selectedContextPersonModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
         @mega-menu-show-all-click="triggerShowAllClick"
@@ -566,6 +581,7 @@ onMounted(() => {
       v-model:theme="themeModel"
       v-model:hasAnimations="animationsModel"
       v-model:hasDeviceFonts="deviceFontsModel"
+      v-model:isTouchSensitive="touchModeModel"
       v-model:selectedContextPerson="selectedContextPersonModel"
       @open-alternative-profiles-modal="openAlternativeProfilesModal"
       @open-context-person-modal="openContextPersonModal"

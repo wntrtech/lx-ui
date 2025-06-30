@@ -29,6 +29,7 @@ const props = defineProps({
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
   hasDeviceFonts: { type: Boolean, default: false },
+  isTouchSensitive: { type: Boolean, default: true },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
   clickSafeAlerts: { type: Boolean, default: false },
@@ -73,10 +74,13 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
+  touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
+  touchModeOff: 'Nē',
+  touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
   userTitle: 'Lietotājs',
@@ -102,6 +106,7 @@ const emits = defineEmits([
   'update:theme',
   'update:hasAnimations',
   'update:hasDeviceFonts',
+  'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
 ]);
 
@@ -154,6 +159,15 @@ const deviceFontsModel = computed({
   },
   set(value) {
     emits('update:hasDeviceFonts', value);
+  },
+});
+
+const touchModeModel = computed({
+  get() {
+    return props.isTouchSensitive;
+  },
+  set(value) {
+    emits('update:isTouchSensitive', value);
   },
 });
 
@@ -415,8 +429,21 @@ const themeDisplayItems = computed(() => {
       valueYes: displayTexts.value.reduceMotionOn,
       valueNo: displayTexts.value.reduceMotionOff,
     },
-    group: 'animations',
+    group: 'animations-touch',
     value: animationsModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
+    id: 'touchMode',
+    kind: 'toggle',
+    name: displayTexts.value.touchMode,
+    texts: {
+      valueYes: displayTexts.value.touchModeOn,
+      valueNo: displayTexts.value.touchModeOff,
+    },
+    group: 'animations-touch',
+    value: touchModeModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
   });
   res.push({
     id: 'fonts',
@@ -428,6 +455,7 @@ const themeDisplayItems = computed(() => {
     },
     group: 'fonts',
     value: deviceFontsModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
   });
   return res;
 });
@@ -435,6 +463,8 @@ const themeDisplayItems = computed(() => {
 function themeDropdownClicked(id, value) {
   if (id === 'animations') {
     animationsModel.value = value;
+  } else if (id === 'touchMode') {
+    touchModeModel.value = value;
   } else if (id === 'fonts') {
     deviceFontsModel.value = value;
   } else {

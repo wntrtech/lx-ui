@@ -678,7 +678,7 @@ svg .lx-shade {
 }
 
 .lx-form-grid > aside.lx-index > ul li {
-  height: var(--row-size);
+  height: var(--row-size-dynamic);
   background-color: transparent;
   border-left: 2px solid var(--color-chrome);
   padding: 0.5rem 1rem;
