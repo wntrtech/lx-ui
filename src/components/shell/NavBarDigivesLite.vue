@@ -385,6 +385,68 @@ const isSelectedInNavItems = computed(() => {
   const navItemsNames = navItemsPrimary.value.map((item) => item.to?.name);
   return Object.keys(props.selectedNavItems).some((key) => navItemsNames.includes(key));
 });
+
+const themeDisplayItems = computed(() => {
+  const res = [];
+  const themes = props.availableThemes?.map((item) => ({
+    id: item,
+    icon: themeIcons[item],
+    name: themeNames.value[item],
+    group: 'theme',
+    active: item === props.theme,
+  }));
+  if (themes && themes.length > 0) themes.forEach((x) => res.push(x));
+
+  res.push({
+    id: 'animations',
+    kind: 'toggle',
+    name: displayTexts.value.animations,
+    texts: {
+      valueYes: displayTexts.value.reduceMotionOn,
+      valueNo: displayTexts.value.reduceMotionOff,
+    },
+    group: 'animations-touch',
+    value: animationsModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
+    id: 'touchMode',
+    kind: 'toggle',
+    name: displayTexts.value.touchMode,
+    texts: {
+      valueYes: displayTexts.value.touchModeOn,
+      valueNo: displayTexts.value.touchModeOff,
+    },
+    group: 'animations-touch',
+    value: touchModeModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
+    id: 'fonts',
+    kind: 'toggle',
+    name: displayTexts.value.fonts,
+    texts: {
+      valueYes: displayTexts.value.systemFontsOn,
+      valueNo: displayTexts.value.systemFontsOff,
+    },
+    group: 'fonts',
+    value: deviceFontsModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  return res;
+});
+
+function themeDropdownClicked(id, value) {
+  if (id === 'animations') {
+    animationsModel.value = value;
+  } else if (id === 'touchMode') {
+    touchModeModel.value = value;
+  } else if (id === 'fonts') {
+    deviceFontsModel.value = value;
+  } else {
+    themeChange(id);
+  }
+}
 </script>
 <template>
   <div
@@ -624,7 +686,11 @@ const isSelectedInNavItems = computed(() => {
       </li>
       <li v-if="hasThemePicker" class="lx-theme-picker">
         <div class="lx-theme-menu">
-          <LxDropDownMenu>
+          <LxDropDownMenu
+            ref="themeMenu"
+            :actionDefinitions="themeDisplayItems"
+            @actionClick="themeDropdownClicked"
+          >
             <div class="lx-toolbar">
               <LxButton
                 customClass="lx-header-button"
@@ -633,54 +699,6 @@ const isSelectedInNavItems = computed(() => {
                 :icon="themeIcon"
               />
             </div>
-            <template v-slot:panel>
-              <div class="lx-button-set">
-                <LxButton
-                  v-for="item in availableThemes"
-                  :key="item"
-                  :icon="themeIcons[item]"
-                  :label="themeNames[item]"
-                  :active="theme === item ? true : false"
-                  @click="themeChange(item)"
-                />
-              </div>
-              <div class="lx-animations-controller">
-                <p>{{ displayTexts.animations }}</p>
-                <LxToggle
-                  v-model="animationsModel"
-                  :texts="{
-                    valueYes: displayTexts.reduceMotionOn,
-                    valueNo: displayTexts.reduceMotionOff,
-                  }"
-                  :size="props.isTouchSensitive ? 'm' : 's'"
-                  @click="triggerThemeMenu"
-                />
-              </div>
-              <div class="lx-touch-mode-controller">
-                <p>{{ displayTexts.touchMode }}</p>
-                <LxToggle
-                  v-model="touchModeModel"
-                  :texts="{
-                    valueYes: displayTexts.touchModeOn,
-                    valueNo: displayTexts.touchModeOff,
-                  }"
-                  :size="props.isTouchSensitive ? 'm' : 's'"
-                  @click="triggerThemeMenu"
-                />
-              </div>
-              <div class="lx-fonts-controller">
-                <p>{{ displayTexts.fonts }}</p>
-                <LxToggle
-                  v-model="deviceFontsModel"
-                  :texts="{
-                    valueYes: displayTexts.systemFontsOn,
-                    valueNo: displayTexts.systemFontsOff,
-                  }"
-                  :size="props.isTouchSensitive ? 'm' : 's'"
-                  @click="triggerThemeMenu"
-                />
-              </div>
-            </template>
           </LxDropDownMenu>
         </div>
       </li>

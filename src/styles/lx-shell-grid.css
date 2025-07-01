@@ -1559,6 +1559,14 @@
 .lx:not(.lx-touch-mode) .lx-theme-menu .lx-context-container .popper-wrapper
   > .popper
   > .lx-dropdown-panel
+  > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper,	
+.lx:not(.lx-touch-mode) .theme-menu .lx-context-container .popper-wrapper
+  > .popper
+  > .lx-dropdown-panel
+  > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper,
+.lx:not(.lx-touch-mode) .theme-picker .lx-context-container .popper-wrapper
+  > .popper
+  > .lx-dropdown-panel
   > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {		
   padding: 0.15rem 0.35rem 0.15rem 1.1rem;		
 }
