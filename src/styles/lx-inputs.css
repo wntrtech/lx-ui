@@ -1153,6 +1153,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-toggle-appearance {
   position: relative;
+  flex-shrink: 0;
   width: 3rem;
   height: 1.5rem;
   background-color: var(--color-toggle-background-false);

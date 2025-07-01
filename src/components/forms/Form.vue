@@ -855,7 +855,6 @@ defineExpose({ highlightRow, clearHighlights });
             custom-class="additional-button-icon"
             :label="displayTexts?.otherActions"
           />
-
           <LxButton
             :icon="index?.length > 0 && props.indexType === 'default' ? 'menu' : 'overflow-menu'"
             kind="ghost"
@@ -894,22 +893,27 @@ defineExpose({ highlightRow, clearHighlights });
             >
               <hr />
               <p class="lx-description additional-buttons-label">Satura rādītājs</p>
-              <div
-                class="additional-index-button"
-                v-for="i in index"
-                :key="i.id"
-                ref="indexItems"
-                :class="[
-                  { 'lx-selected': findIfSectionSelected(i.id) },
-                  { 'lx-invalid': i?.invalid },
-                ]"
-                v-on:keyup.enter="scrollTo(i.id)"
-                v-on:keyup.space="scrollTo(i.id)"
-                @click="scrollTo(i.id)"
-                :title="i.invalid ? i.invalidationMessage : ''"
-              >
-                <p>{{ i.name }}</p>
-                <LxIcon value="invalid" v-if="i.invalid" />
+              <div class="lx-button-set">
+                <div
+                  class="additional-index-button lx-button lx-button-ghost"
+                  v-for="i in index"
+                  :key="i.id"
+                  ref="indexItems"
+                  :class="[
+                    { 'lx-active': findIfSectionSelected(i.id) },
+                    { 'lx-invalid': i?.invalid },
+                  ]"
+                  v-on:keyup.enter="scrollTo(i.id)"
+                  v-on:keyup.space="scrollTo(i.id)"
+                  @click="scrollTo(i.id)"
+                  :title="i.invalid ? i.invalidationMessage : ''"
+                  tabindex="0"
+                >
+                  <div class="lx-button-content-wrapper">
+                    <p>{{ i.name }}</p>
+                    <LxIcon value="invalid" v-if="i.invalid" />
+                  </div>
+                </div>
               </div>
             </div>
           </template>
@@ -928,23 +932,28 @@ defineExpose({ highlightRow, clearHighlights });
             :label="displayTexts.overflowMenu"
           />
           <template #panel>
-            <div
-              class="additional-index-button"
-              v-for="i in index"
-              :id="`${id}-action-${i.id}`"
-              :key="i.id"
-              ref="indexItems"
-              :class="[
-                { 'lx-selected': findIfSectionSelected(i.id) },
-                { 'lx-invalid': i?.invalid },
-              ]"
-              v-on:keyup.enter="scrollTo(i.id)"
-              v-on:keyup.space="scrollTo(i.id)"
-              @click="scrollTo(i.id)"
-              :title="i.invalid ? i.invalidationMessage : ''"
-            >
-              <p>{{ i.name }}</p>
-              <LxIcon value="invalid" v-if="i.invalid" />
+            <div class="lx-button-set">
+              <div
+                class="additional-index-button lx-button lx-button-ghost"
+                v-for="i in index"
+                :id="`${id}-action-${i.id}`"
+                :key="i.id"
+                ref="indexItems"
+                :class="[
+                  { 'lx-active': findIfSectionSelected(i.id) },
+                  { 'lx-invalid': i?.invalid },
+                ]"
+                v-on:keyup.enter="scrollTo(i.id)"
+                v-on:keyup.space="scrollTo(i.id)"
+                @click="scrollTo(i.id)"
+                :title="i.invalid ? i.invalidationMessage : ''"
+                tabindex="0"
+              >
+                <div class="lx-button-content-wrapper">
+                  <p>{{ i.name }}</p>
+                  <LxIcon value="invalid" v-if="i.invalid" />
+                </div>
+              </div>
             </div>
           </template>
         </LxDropDownMenu>
