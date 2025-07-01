@@ -293,11 +293,11 @@ test('LxDateTimePicker min/max outside of today in future', async () => {
 
   wrapper = mount(LxDateTimePicker, {
     props: {
-      modelValue: '2025-05-14',
+      modelValue: '2030-05-14',
       variant: 'picker',
       kind: 'date',
-      minDate: new Date('2025-06-01'),
-      maxDate: new Date('2025-07-28'),
+      minDate: new Date('2030-06-01'),
+      maxDate: new Date('2030-07-28'),
     },
     global: {
       stubs: ['router-link'],
@@ -348,8 +348,8 @@ test('LxDateTimePicker min/max outside of today in future different year', async
       modelValue: '2025-05-14',
       variant: 'picker',
       kind: 'date',
-      minDate: new Date('2026-06-01'),
-      maxDate: new Date('2026-07-28'),
+      minDate: new Date('2030-06-01'),
+      maxDate: new Date('2030-07-28'),
     },
     global: {
       stubs: ['router-link'],
@@ -365,7 +365,7 @@ test('LxDateTimePicker min/max outside of today in future different year', async
 
   const yearSelectButton = wrapper.find('.lx-button.lx-calendar-years-select-button');
   expect(yearSelectButton).toBeTruthy();
-  expect(yearSelectButton.attributes('aria-label')).toBe('2026');
+  expect(yearSelectButton.attributes('aria-label')).toBe('2030');
 });
 
 test('LxDateTimePicker min outside of today in future, max in not provided', async () => {
@@ -376,7 +376,7 @@ test('LxDateTimePicker min outside of today in future, max in not provided', asy
       modelValue: '2025-05-14',
       variant: 'default',
       kind: 'date',
-      minDate: new Date('2026-06-01'),
+      minDate: new Date('2030-06-01'),
     },
     global: {
       stubs: ['router-link'],
