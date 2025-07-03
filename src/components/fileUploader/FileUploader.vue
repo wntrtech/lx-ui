@@ -12,6 +12,7 @@ import FileUploaderDetails from '@/components/fileUploader/FileUploaderDetails.v
 import FileUploaderItem from '@/components/fileUploader/FileUploaderItem.vue';
 import LxCamera from '@/components/Camera.vue';
 import LxIcon from '@/components/Icon.vue';
+import LxLoader from '@/components/Loader.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -542,7 +543,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :aria-label="displayTexts.draggablePlaceholder"
         >
           <p>{{ displayTexts.draggablePlaceholder }}</p>
-          <LxIcon value="upload" />
+          <LxLoader :loading="true" size="s" v-if="busy" />
+          <LxIcon value="upload" v-else />
         </div>
         <LxButton
           v-if="showCameraButton"
@@ -610,7 +612,8 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :aria-label="displayTexts.draggablePlaceholder"
         >
           <p>{{ displayTexts.draggablePlaceholder }}</p>
-          <LxIcon value="upload" />
+          <LxLoader :loading="true" size="s" v-if="busy" />
+          <LxIcon value="upload" v-else />
         </div>
         <LxButton
           v-if="showCameraButton"

@@ -1934,7 +1934,6 @@ a.lx-button.lx-button-ghost svg {
 
 /*** Loader styles ***/
 .lx-button .lx-loader-container {
-  height: 1.5rem;
   height: 1.55rem;
   justify-content: center;
   justify-self: var(--button-icon-justify);

@@ -4401,6 +4401,12 @@ h2.lx-section-header + p.lx-invalidation-message,
   flex-shrink: 0;
 }
 
+.lx-file-upload-wrapper .lx-draggable-upload-wrapper > .lx-loader-wrapper{
+  height: auto;
+  display: flex;
+  margin-right: 1rem;
+}
+
 .lx-file-upload-wrapper .lx-draggable-upload-wrapper.lx-disabled > svg {
   fill: var(--color-disabled-foreground);
 }
