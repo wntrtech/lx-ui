@@ -45,7 +45,7 @@ function getType(itemValue) {
 
 function listDisplayText(itemValue, item, itemName) {
   return formatValue(
-    item?.[itemName],
+    item?.[itemName] || itemValue?.lx?.value,
     getType(itemValue),
     itemValue?.lx?.texts
       ? { yes: itemValue?.lx?.texts?.valueYes, no: itemValue?.lx?.texts?.valueNo }

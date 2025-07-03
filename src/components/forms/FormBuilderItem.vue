@@ -266,7 +266,6 @@ function deleteObject(name) {
 
 function initializeObject(name) {
   const res = {};
-  // Object.entries(props.schema?.properties[name])?.forEach(([key]) => {
   Object.entries(props.displaySchema?.properties[name])?.forEach(([key]) => {
     res[key] = '';
   });
@@ -401,8 +400,16 @@ const invalidMessage = computed(() => {
 
   return res;
 });
+
+function getCustomVariant(row) {
+  if (row?.lx?.hasCustomItems) {
+    if (!row?.lx?.variant?.endsWith('-custom')) return `${row?.lx?.variant || 'default'}-custom`;
+  }
+  return row?.lx?.variant;
+}
 </script>
 <template>
+  <!-- TODO: if type number / decimal / integer then conferToString - false -->
   <LxTextInput
     v-if="selectedComponent === 'textInputDefault'"
     :id="id + '-' + name"
@@ -516,9 +523,7 @@ const invalidMessage = computed(() => {
     :id="id + '-' + name"
     :kind="displaySchema?.properties[name]?.type === 'array' ? 'multiple' : 'single'"
     :items="
-      displaySchema?.properties[name]?.lx?.items
-        ? displaySchema?.properties[name]?.lx?.items
-        : enumToObject(displaySchema?.properties[name])
+      displaySchema?.properties[name]?.lx?.items || enumToObject(displaySchema?.properties[name])
     "
     :id-attribute="displaySchema?.properties[name]?.lx?.idAttribute"
     :name-attribute="displaySchema?.properties[name]?.lx?.nameAttribute"
@@ -526,7 +531,7 @@ const invalidMessage = computed(() => {
     :icon-set-attribute="displaySchema?.properties[name]?.lx?.iconSetAttribute"
     :category-attribute="displaySchema?.properties[name]?.lx?.categoryAttribute"
     :description-attribute="displaySchema?.properties[name]?.lx?.descriptionAttribute"
-    :variant="displaySchema?.properties[name]?.lx?.variant"
+    :variant="getCustomVariant(displaySchema?.properties[name])"
     :has-search="displaySchema?.properties[name]?.lx?.hasSearch"
     :always-as-array="displaySchema?.properties[name]?.lx?.alwaysAsArray"
     :nullable="displaySchema?.properties[name]?.lx?.nullable"
@@ -541,7 +546,90 @@ const invalidMessage = computed(() => {
     :invalid="isInvalid"
     :invalidation-message="invalidMessage"
     v-model="model[name]"
-  />
+  >
+    <template
+      #customItem="item"
+      v-if="displaySchema?.properties[name]?.lx?.hasCustomItems === 'default'"
+    >
+      <LxStack
+        :orientation="displaySchema?.properties[name]?.lx?.stack?.orientation"
+        :kind="displaySchema?.properties[name]?.lx?.stack?.kind"
+        :mode="displaySchema?.properties[name]?.lx?.stack?.mode || 'grid'"
+        :horizontal-alignment="displaySchema?.properties[name]?.lx?.stack?.horizontalAlignment"
+        :vertical-alignment="displaySchema?.properties[name]?.lx?.stack?.verticalAlignment"
+        :horizontal-config="displaySchema?.properties[name]?.lx?.stack?.horizontalConfig"
+        :vertical-config="displaySchema?.properties[name]?.lx?.stack?.verticalConfig"
+      >
+        <template
+          v-for="(itemValue, itemName) in displaySchema?.properties[name]?.lx?.customItems
+            ?.properties"
+          :key="itemName"
+        >
+          <LxFormBuilderListItem
+            :itemValue="itemValue"
+            :itemName="itemName"
+            :item="item"
+            :useStyles="true"
+          />
+        </template>
+      </LxStack>
+    </template>
+    <template
+      #customItem="item"
+      v-else-if="displaySchema?.properties[name]?.lx?.hasCustomItems === 'nested'"
+    >
+      <template
+        v-for="(itemValue, itemName) in displaySchema?.properties[name]?.lx?.customItems
+          ?.properties"
+        :key="itemName"
+      >
+        <LxStack
+          v-if="itemValue?.lx?.displayType === 'stack'"
+          :orientation="itemValue?.lx?.orientation"
+          :kind="itemValue?.lx?.kind"
+          :mode="itemValue?.lx?.mode"
+          :horizontal-alignment="itemValue?.lx?.horizontalAlignment"
+          :vertical-alignment="itemValue?.lx?.verticalAlignment"
+          :horizontal-config="itemValue?.lx?.horizontalConfig"
+          :vertical-config="itemValue?.lx?.verticalConfig"
+        >
+          <template
+            v-for="(nestedItemValue, nestedItemName) in itemValue?.properties"
+            :key="nestedItemName"
+          >
+            <LxStack
+              v-if="nestedItemValue?.lx?.displayType === 'stack'"
+              :orientation="nestedItemValue?.lx?.orientation"
+              :kind="nestedItemValue?.lx?.kind"
+              :mode="nestedItemValue?.lx?.mode"
+              :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+              :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+              :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+              :vertical-config="nestedItemValue?.lx?.verticalConfig"
+            >
+              <template
+                v-for="(innerNestedItemValue, innerNestedItemName) in nestedItemValue?.properties"
+                :key="innerNestedItemName"
+              >
+                <LxFormBuilderListItem
+                  :itemValue="innerNestedItemValue"
+                  :itemName="innerNestedItemName"
+                  :item="item?.[itemName]?.[nestedItemName]"
+                />
+              </template>
+            </LxStack>
+            <LxFormBuilderListItem
+              v-else
+              :itemValue="nestedItemValue"
+              :itemName="nestedItemName"
+              :item="item?.[itemName]"
+            />
+          </template>
+        </LxStack>
+        <LxFormBuilderListItem :itemValue="itemValue" :itemName="itemName" :item="item" v-else />
+      </template>
+    </template>
+  </LxValuePicker>
   <LxDataBlock
     v-else-if="selectedComponent === 'dataBlock'"
     :expandable="true"
@@ -549,14 +637,11 @@ const invalidMessage = computed(() => {
     :icon="displaySchema?.properties[name]?.lx?.icon"
     :icon-set="displaySchema?.properties[name]?.lx?.iconSet"
     :name="
-      model?.[name]?.[displaySchema?.properties?.[name]?.lx?.nameAttribute]
-        ? model?.[name]?.[displaySchema?.properties?.[name]?.lx?.nameAttribute]
-        : model?.[name]?.name
+      model?.[name]?.[displaySchema?.properties?.[name]?.lx?.nameAttribute] || model?.[name]?.name
     "
     :description="
-      model?.[name]?.[displaySchema?.properties?.[name]?.lx?.descriptionAttribute]
-        ? model?.[name]?.[displaySchema?.properties?.[name]?.lx?.descriptionAttribute]
-        : model?.[name]?.description
+      model?.[name]?.[displaySchema?.properties?.[name]?.lx?.descriptionAttribute] ||
+      model?.[name]?.description
     "
     :force-uppercase="displaySchema?.properties[name]?.lx?.forceUppercase"
     :disabled="displaySchema?.properties[name]?.lx?.disabled"
@@ -571,13 +656,13 @@ const invalidMessage = computed(() => {
       kind="stripped"
     >
       <template
-        v-for="(item, itemName) in displaySchema?.properties[name]?.items?.properties"
+        v-for="(item, itemName) in displaySchema?.properties[name]?.properties"
         :key="itemName"
       >
         <LxPlaceholder v-if="componentSelect(item, itemName) === 'lxPlaceholder'" />
         <LxRow
           v-else
-          :label="item?.title ? item?.title : itemName"
+          :label="item?.title || itemName"
           :rowSpan="item?.lx?.rowSpan"
           :columnSpan="item?.lx?.columnSpan"
           :action-definitions="item?.lx?.actionDefinitions"
@@ -654,14 +739,14 @@ const invalidMessage = computed(() => {
           <LxValuePicker
             v-else-if="componentSelect(item, itemName) === 'valuePicker'"
             :kind="item?.type === 'array' ? 'multiple' : 'single'"
-            :items="item?.lx?.items"
+            :items="item?.lx?.items || enumToObject(item)"
             :id-attribute="item?.lx?.idAttribute"
             :name-attribute="item?.lx?.nameAttribute"
             :icon-attribute="item?.lx?.iconAttribute"
             :icon-set-attribute="item?.lx?.iconSetAttribute"
             :category-attribute="item?.lx?.categoryAttribute"
             :description-attribute="item?.lx?.descriptionAttribute"
-            :variant="item?.lx?.variant"
+            :variant="getCustomVariant(item)"
             :has-search="item?.lx?.hasSearch"
             :always-as-array="item?.lx?.alwaysAsArray"
             :nullable="item?.lx?.nullable"
@@ -674,7 +759,89 @@ const invalidMessage = computed(() => {
             :read-only-render-type="item?.lx?.readOnlyRenderType"
             :readOnly="isReadOnly(item)"
             v-model="model[name][itemName]"
-          />
+          >
+            <template #customItem="customItem" v-if="item?.lx?.hasCustomItems === 'default'">
+              <LxStack
+                :orientation="item?.lx?.stack?.orientation"
+                :kind="item?.lx?.stack?.kind"
+                :mode="item?.lx?.stack?.mode || 'grid'"
+                :horizontal-alignment="item?.lx?.stack?.horizontalAlignment"
+                :vertical-alignment="item?.lx?.stack?.verticalAlignment"
+                :horizontal-config="item?.lx?.stack?.horizontalConfig"
+                :vertical-config="item?.lx?.stack?.verticalConfig"
+              >
+                <template
+                  v-for="(stackItemValue, stackItemName) in item?.lx?.customItems?.properties"
+                  :key="stackItemName"
+                >
+                  <LxFormBuilderListItem
+                    :itemValue="stackItemValue"
+                    :itemName="stackItemName"
+                    :item="customItem"
+                    :useStyles="true"
+                  />
+                </template>
+              </LxStack>
+            </template>
+            <template #customItem="customItem" v-else-if="item?.lx?.hasCustomItems === 'nested'">
+              <template
+                v-for="(stackItemValue, stackItemName) in item?.lx?.customItems?.properties"
+                :key="stackItemName"
+              >
+                <LxStack
+                  v-if="stackItemValue?.lx?.displayType === 'stack'"
+                  :orientation="stackItemValue?.lx?.orientation"
+                  :kind="stackItemValue?.lx?.kind"
+                  :mode="stackItemValue?.lx?.mode"
+                  :horizontal-alignment="stackItemValue?.lx?.horizontalAlignment"
+                  :vertical-alignment="stackItemValue?.lx?.verticalAlignment"
+                  :horizontal-config="stackItemValue?.lx?.horizontalConfig"
+                  :vertical-config="stackItemValue?.lx?.verticalConfig"
+                >
+                  <template
+                    v-for="(nestedItemValue, nestedItemName) in stackItemValue?.properties"
+                    :key="nestedItemName"
+                  >
+                    <LxStack
+                      v-if="nestedItemValue?.lx?.displayType === 'stack'"
+                      :orientation="nestedItemValue?.lx?.orientation"
+                      :kind="nestedItemValue?.lx?.kind"
+                      :mode="nestedItemValue?.lx?.mode"
+                      :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+                      :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+                      :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+                      :vertical-config="nestedItemValue?.lx?.verticalConfig"
+                    >
+                      <template
+                        v-for="(
+                          innerNestedItemValue, innerNestedItemName
+                        ) in nestedItemValue?.properties"
+                        :key="innerNestedItemName"
+                      >
+                        <LxFormBuilderListItem
+                          :itemValue="innerNestedItemValue"
+                          :itemName="innerNestedItemName"
+                          :item="customItem?.[itemName]?.[nestedItemName]"
+                        />
+                      </template>
+                    </LxStack>
+                    <LxFormBuilderListItem
+                      v-else
+                      :itemValue="nestedItemValue"
+                      :itemName="nestedItemName"
+                      :item="customItem?.[itemName]"
+                    />
+                  </template>
+                </LxStack>
+                <LxFormBuilderListItem
+                  :itemValue="stackItemValue"
+                  :itemName="stackItemName"
+                  :item="customItem"
+                  v-else
+                />
+              </template>
+            </template>
+          </LxValuePicker>
         </LxRow>
       </template>
     </LxForm>
@@ -683,15 +850,10 @@ const invalidMessage = computed(() => {
     <LxListItem
       v-if="selectedComponent === 'objectList'"
       :value="model[name]"
-      :label="
-        model[name][displaySchema?.properties[name].lx.primaryAttribute]
-          ? model[name][displaySchema?.properties[name].lx.primaryAttribute]
-          : model[name].name
-      "
+      :label="model[name][displaySchema?.properties[name].lx.primaryAttribute] || model[name]?.name"
       :description="
-        model[name][displaySchema?.properties[name].lx.secondaryAttribute]
-          ? model[name][displaySchema?.properties[name].lx.secondaryAttribute]
-          : model[name].description
+        model[name][displaySchema?.properties[name].lx.secondaryAttribute] ||
+        model[name]?.description
       "
       icon="edit"
       :clickable="true"
@@ -801,14 +963,14 @@ const invalidMessage = computed(() => {
             <LxValuePicker
               v-else-if="componentSelect(item, itemName) === 'valuePicker'"
               :kind="item?.type === 'array' ? 'multiple' : 'single'"
-              :items="item?.lx?.items"
+              :items="item?.lx?.items || enumToObject(item)"
               :id-attribute="item?.lx?.idAttribute"
               :name-attribute="item?.lx?.nameAttribute"
               :icon-attribute="item?.lx?.iconAttribute"
               :icon-set-attribute="item?.lx?.iconSetAttribute"
               :category-attribute="item?.lx?.categoryAttribute"
               :description-attribute="item?.lx?.descriptionAttribute"
-              :variant="item?.lx?.variant"
+              :variant="getCustomVariant(item)"
               :has-search="item?.lx?.hasSearch"
               :always-as-array="item?.lx?.alwaysAsArray"
               :nullable="item?.lx?.nullable"
@@ -821,7 +983,89 @@ const invalidMessage = computed(() => {
               :has-select-all="item?.lx?.hasSelectAll"
               :read-only-render-type="item?.lx?.readOnlyRenderType"
               v-model="model[name][itemName]"
-            />
+            >
+              <template #customItem="customItem" v-if="item?.lx?.hasCustomItems === 'default'">
+                <LxStack
+                  :orientation="item?.lx?.stack?.orientation"
+                  :kind="item?.lx?.stack?.kind"
+                  :mode="item?.lx?.stack?.mode || 'grid'"
+                  :horizontal-alignment="item?.lx?.stack?.horizontalAlignment"
+                  :vertical-alignment="item?.lx?.stack?.verticalAlignment"
+                  :horizontal-config="item?.lx?.stack?.horizontalConfig"
+                  :vertical-config="item?.lx?.stack?.verticalConfig"
+                >
+                  <template
+                    v-for="(stackItemValue, stackItemName) in item?.lx?.customItems?.properties"
+                    :key="stackItemName"
+                  >
+                    <LxFormBuilderListItem
+                      :itemValue="stackItemValue"
+                      :itemName="stackItemName"
+                      :item="customItem"
+                      :useStyles="true"
+                    />
+                  </template>
+                </LxStack>
+              </template>
+              <template #customItem="customItem" v-else-if="item?.lx?.hasCustomItems === 'nested'">
+                <template
+                  v-for="(stackItemValue, stackItemName) in item?.lx?.customItems?.properties"
+                  :key="stackItemName"
+                >
+                  <LxStack
+                    v-if="stackItemValue?.lx?.displayType === 'stack'"
+                    :orientation="stackItemValue?.lx?.orientation"
+                    :kind="stackItemValue?.lx?.kind"
+                    :mode="stackItemValue?.lx?.mode"
+                    :horizontal-alignment="stackItemValue?.lx?.horizontalAlignment"
+                    :vertical-alignment="stackItemValue?.lx?.verticalAlignment"
+                    :horizontal-config="stackItemValue?.lx?.horizontalConfig"
+                    :vertical-config="stackItemValue?.lx?.verticalConfig"
+                  >
+                    <template
+                      v-for="(nestedItemValue, nestedItemName) in stackItemValue?.properties"
+                      :key="nestedItemName"
+                    >
+                      <LxStack
+                        v-if="nestedItemValue?.lx?.displayType === 'stack'"
+                        :orientation="nestedItemValue?.lx?.orientation"
+                        :kind="nestedItemValue?.lx?.kind"
+                        :mode="nestedItemValue?.lx?.mode"
+                        :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+                        :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+                        :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+                        :vertical-config="nestedItemValue?.lx?.verticalConfig"
+                      >
+                        <template
+                          v-for="(
+                            innerNestedItemValue, innerNestedItemName
+                          ) in nestedItemValue?.properties"
+                          :key="innerNestedItemName"
+                        >
+                          <LxFormBuilderListItem
+                            :itemValue="innerNestedItemValue"
+                            :itemName="innerNestedItemName"
+                            :item="customItem?.[itemName]?.[nestedItemName]"
+                          />
+                        </template>
+                      </LxStack>
+                      <LxFormBuilderListItem
+                        v-else
+                        :itemValue="nestedItemValue"
+                        :itemName="nestedItemName"
+                        :item="customItem?.[itemName]"
+                      />
+                    </template>
+                  </LxStack>
+                  <LxFormBuilderListItem
+                    :itemValue="stackItemValue"
+                    :itemName="stackItemName"
+                    :item="customItem"
+                    v-else
+                  />
+                </template>
+              </template>
+            </LxValuePicker>
           </LxRow>
         </template>
       </LxForm>
@@ -1172,14 +1416,14 @@ const invalidMessage = computed(() => {
             <LxValuePicker
               v-else-if="componentSelect(itemValue, itemName) === 'valuePicker'"
               :kind="itemValue?.type === 'array' ? 'multiple' : 'single'"
-              :items="itemValue?.lx?.items"
+              :items="itemValue?.lx?.items || enumToObject(itemValue)"
               :id-attribute="itemValue?.lx?.idAttribute"
               :name-attribute="itemValue?.lx?.nameAttribute"
               :icon-attribute="itemValue?.lx?.iconAttribute"
               :icon-set-attribute="itemValue?.lx?.iconSetAttribute"
               :category-attribute="itemValue?.lx?.categoryAttribute"
               :description-attribute="itemValue?.lx?.descriptionAttribute"
-              :variant="itemValue?.lx?.variant"
+              :variant="getCustomVariant(itemValue)"
               :has-search="itemValue?.lx?.hasSearch"
               :always-as-array="itemValue?.lx?.alwaysAsArray"
               :nullable="itemValue?.lx?.nullable"
@@ -1192,7 +1436,93 @@ const invalidMessage = computed(() => {
               :search-attributes="itemValue?.lx?.searchAttributes"
               :read-only-render-type="itemValue?.lx?.readOnlyRenderType"
               v-model="arrayModelValue[id + '-' + name][itemName]"
-            />
+            >
+              <template #customItem="customItem" v-if="itemValue?.lx?.hasCustomItems === 'default'">
+                <LxStack
+                  :orientation="itemValue?.lx?.stack?.orientation"
+                  :kind="itemValue?.lx?.stack?.kind"
+                  :mode="itemValue?.lx?.stack?.mode || 'grid'"
+                  :horizontal-alignment="itemValue?.lx?.stack?.horizontalAlignment"
+                  :vertical-alignment="itemValue?.lx?.stack?.verticalAlignment"
+                  :horizontal-config="itemValue?.lx?.stack?.horizontalConfig"
+                  :vertical-config="itemValue?.lx?.stack?.verticalConfig"
+                >
+                  <template
+                    v-for="(stackItemValue, stackItemName) in itemValue?.lx?.customItems
+                      ?.properties"
+                    :key="stackItemName"
+                  >
+                    <LxFormBuilderListItem
+                      :itemValue="stackItemValue"
+                      :itemName="stackItemName"
+                      :item="customItem"
+                      :useStyles="true"
+                    />
+                  </template>
+                </LxStack>
+              </template>
+              <template
+                #customItem="customItem"
+                v-else-if="itemValue?.lx?.hasCustomItems === 'nested'"
+              >
+                <template
+                  v-for="(stackItemValue, stackItemName) in itemValue?.lx?.customItems?.properties"
+                  :key="stackItemName"
+                >
+                  <LxStack
+                    v-if="stackItemValue?.lx?.displayType === 'stack'"
+                    :orientation="stackItemValue?.lx?.orientation"
+                    :kind="stackItemValue?.lx?.kind"
+                    :mode="stackItemValue?.lx?.mode"
+                    :horizontal-alignment="stackItemValue?.lx?.horizontalAlignment"
+                    :vertical-alignment="stackItemValue?.lx?.verticalAlignment"
+                    :horizontal-config="stackItemValue?.lx?.horizontalConfig"
+                    :vertical-config="stackItemValue?.lx?.verticalConfig"
+                  >
+                    <template
+                      v-for="(nestedItemValue, nestedItemName) in stackItemValue?.properties"
+                      :key="nestedItemName"
+                    >
+                      <LxStack
+                        v-if="nestedItemValue?.lx?.displayType === 'stack'"
+                        :orientation="nestedItemValue?.lx?.orientation"
+                        :kind="nestedItemValue?.lx?.kind"
+                        :mode="nestedItemValue?.lx?.mode"
+                        :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+                        :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+                        :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+                        :vertical-config="nestedItemValue?.lx?.verticalConfig"
+                      >
+                        <template
+                          v-for="(
+                            innerNestedItemValue, innerNestedItemName
+                          ) in nestedItemValue?.properties"
+                          :key="innerNestedItemName"
+                        >
+                          <LxFormBuilderListItem
+                            :itemValue="innerNestedItemValue"
+                            :itemName="innerNestedItemName"
+                            :item="customItem?.[itemName]?.[nestedItemName]"
+                          />
+                        </template>
+                      </LxStack>
+                      <LxFormBuilderListItem
+                        v-else
+                        :itemValue="nestedItemValue"
+                        :itemName="nestedItemName"
+                        :item="customItem?.[itemName]"
+                      />
+                    </template>
+                  </LxStack>
+                  <LxFormBuilderListItem
+                    :itemValue="stackItemValue"
+                    :itemName="stackItemName"
+                    :item="customItem"
+                    v-else
+                  />
+                </template>
+              </template>
+            </LxValuePicker>
             <LxAppendableList
               v-else-if="componentSelect(itemValue, itemName) === 'appendableList'"
               v-model="arrayModelValue[id + '-' + name][itemName]"
@@ -1307,14 +1637,14 @@ const invalidMessage = computed(() => {
                       "
                       :id="name + '-' + appendableItemName + '-' + index"
                       :kind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
-                      :items="appendableItem?.lx?.items"
+                      :items="appendableItem?.lx?.items || enumToObject(appendableItem)"
                       :id-attribute="appendableItem?.lx?.idAttribute"
                       :name-attribute="appendableItem?.lx?.nameAttribute"
                       :icon-attribute="appendableItem?.lx?.iconAttribute"
                       :icon-set-attribute="appendableItem?.lx?.iconSetAttribute"
                       :category-attribute="appendableItem?.lx?.categoryAttribute"
                       :description-attribute="appendableItem?.lx?.descriptionAttribute"
-                      :variant="appendableItem?.lx?.variant"
+                      :variant="getCustomVariant(appendableItem)"
                       :has-search="appendableItem?.lx?.hasSearch"
                       :always-as-array="appendableItem?.lx?.alwaysAsArray"
                       :nullable="appendableItem?.lx?.nullable"
@@ -1327,7 +1657,99 @@ const invalidMessage = computed(() => {
                       :search-attributes="appendableItem?.lx?.searchAttributes"
                       :read-only-render-type="appendableItem?.lx?.readOnlyRenderType"
                       v-model="item[appendableItemName]"
-                    />
+                    >
+                      <template
+                        #customItem="customItem"
+                        v-if="appendableItem?.lx?.hasCustomItems === 'default'"
+                      >
+                        <LxStack
+                          :orientation="appendableItem?.lx?.stack?.orientation"
+                          :kind="appendableItem?.lx?.stack?.kind"
+                          :mode="appendableItem?.lx?.stack?.mode || 'grid'"
+                          :horizontal-alignment="appendableItem?.lx?.stack?.horizontalAlignment"
+                          :vertical-alignment="appendableItem?.lx?.stack?.verticalAlignment"
+                          :horizontal-config="appendableItem?.lx?.stack?.horizontalConfig"
+                          :vertical-config="appendableItem?.lx?.stack?.verticalConfig"
+                        >
+                          <template
+                            v-for="(stackItemValue, stackItemName) in appendableItem?.lx
+                              ?.customItems?.properties"
+                            :key="stackItemName"
+                          >
+                            <LxFormBuilderListItem
+                              :itemValue="stackItemValue"
+                              :itemName="stackItemName"
+                              :item="customItem"
+                              :useStyles="true"
+                            />
+                          </template>
+                        </LxStack>
+                      </template>
+                      <template
+                        #customItem="customItem"
+                        v-else-if="appendableItem?.lx?.hasCustomItems === 'nested'"
+                      >
+                        <template
+                          v-for="(stackItemValue, stackItemName) in appendableItem?.lx?.customItems
+                            ?.properties"
+                          :key="stackItemName"
+                        >
+                          <LxStack
+                            v-if="stackItemValue?.lx?.displayType === 'stack'"
+                            :orientation="stackItemValue?.lx?.orientation"
+                            :kind="stackItemValue?.lx?.kind"
+                            :mode="stackItemValue?.lx?.mode"
+                            :horizontal-alignment="stackItemValue?.lx?.horizontalAlignment"
+                            :vertical-alignment="stackItemValue?.lx?.verticalAlignment"
+                            :horizontal-config="stackItemValue?.lx?.horizontalConfig"
+                            :vertical-config="stackItemValue?.lx?.verticalConfig"
+                          >
+                            <template
+                              v-for="(
+                                nestedItemValue, nestedItemName
+                              ) in stackItemValue?.properties"
+                              :key="nestedItemName"
+                            >
+                              <LxStack
+                                v-if="nestedItemValue?.lx?.displayType === 'stack'"
+                                :orientation="nestedItemValue?.lx?.orientation"
+                                :kind="nestedItemValue?.lx?.kind"
+                                :mode="nestedItemValue?.lx?.mode"
+                                :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+                                :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+                                :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+                                :vertical-config="nestedItemValue?.lx?.verticalConfig"
+                              >
+                                <template
+                                  v-for="(
+                                    innerNestedItemValue, innerNestedItemName
+                                  ) in nestedItemValue?.properties"
+                                  :key="innerNestedItemName"
+                                >
+                                  <LxFormBuilderListItem
+                                    :itemValue="innerNestedItemValue"
+                                    :itemName="innerNestedItemName"
+                                    :item="customItem?.[itemName]?.[nestedItemName]"
+                                  />
+                                </template>
+                              </LxStack>
+                              <LxFormBuilderListItem
+                                v-else
+                                :itemValue="nestedItemValue"
+                                :itemName="nestedItemName"
+                                :item="customItem?.[itemName]"
+                              />
+                            </template>
+                          </LxStack>
+                          <LxFormBuilderListItem
+                            :itemValue="stackItemValue"
+                            :itemName="stackItemName"
+                            :item="customItem"
+                            v-else
+                          />
+                        </template>
+                      </template>
+                    </LxValuePicker>
                   </LxRow>
                 </template>
               </template>
@@ -1512,14 +1934,14 @@ const invalidMessage = computed(() => {
             <LxValuePicker
               v-else-if="componentSelect(itemValue, itemName) === 'valuePicker'"
               :kind="itemValue?.type === 'array' ? 'multiple' : 'single'"
-              :items="itemValue?.lx?.items"
+              :items="itemValue?.lx?.items || enumToObject(itemValue)"
               :id-attribute="itemValue?.lx?.idAttribute"
               :name-attribute="itemValue?.lx?.nameAttribute"
               :icon-attribute="itemValue?.lx?.iconAttribute"
               :icon-set-attribute="itemValue?.lx?.iconSetAttribute"
               :category-attribute="itemValue?.lx?.categoryAttribute"
               :description-attribute="itemValue?.lx?.descriptionAttribute"
-              :variant="itemValue?.lx?.variant"
+              :variant="getCustomVariant(itemValue)"
               :has-search="itemValue?.lx?.hasSearch"
               :always-as-array="itemValue?.lx?.alwaysAsArray"
               :nullable="itemValue?.lx?.nullable"
@@ -1532,7 +1954,93 @@ const invalidMessage = computed(() => {
               :search-attributes="itemValue?.lx?.searchAttributes"
               :read-only-render-type="itemValue?.lx?.readOnlyRenderType"
               v-model="arrayModelValue[id + '-' + name][itemName]"
-            />
+            >
+              <template #customItem="customItem" v-if="itemValue?.lx?.hasCustomItems === 'default'">
+                <LxStack
+                  :orientation="itemValue?.lx?.stack?.orientation"
+                  :kind="itemValue?.lx?.stack?.kind"
+                  :mode="itemValue?.lx?.stack?.mode || 'grid'"
+                  :horizontal-alignment="itemValue?.lx?.stack?.horizontalAlignment"
+                  :vertical-alignment="itemValue?.lx?.stack?.verticalAlignment"
+                  :horizontal-config="itemValue?.lx?.stack?.horizontalConfig"
+                  :vertical-config="itemValue?.lx?.stack?.verticalConfig"
+                >
+                  <template
+                    v-for="(stackItemValue, stackItemName) in itemValue?.lx?.customItems
+                      ?.properties"
+                    :key="stackItemName"
+                  >
+                    <LxFormBuilderListItem
+                      :itemValue="stackItemValue"
+                      :itemName="stackItemName"
+                      :item="customItem"
+                      :useStyles="true"
+                    />
+                  </template>
+                </LxStack>
+              </template>
+              <template
+                #customItem="customItem"
+                v-else-if="itemValue?.lx?.hasCustomItems === 'nested'"
+              >
+                <template
+                  v-for="(stackItemValue, stackItemName) in itemValue?.lx?.customItems?.properties"
+                  :key="stackItemName"
+                >
+                  <LxStack
+                    v-if="stackItemValue?.lx?.displayType === 'stack'"
+                    :orientation="stackItemValue?.lx?.orientation"
+                    :kind="stackItemValue?.lx?.kind"
+                    :mode="stackItemValue?.lx?.mode"
+                    :horizontal-alignment="stackItemValue?.lx?.horizontalAlignment"
+                    :vertical-alignment="stackItemValue?.lx?.verticalAlignment"
+                    :horizontal-config="stackItemValue?.lx?.horizontalConfig"
+                    :vertical-config="stackItemValue?.lx?.verticalConfig"
+                  >
+                    <template
+                      v-for="(nestedItemValue, nestedItemName) in stackItemValue?.properties"
+                      :key="nestedItemName"
+                    >
+                      <LxStack
+                        v-if="nestedItemValue?.lx?.displayType === 'stack'"
+                        :orientation="nestedItemValue?.lx?.orientation"
+                        :kind="nestedItemValue?.lx?.kind"
+                        :mode="nestedItemValue?.lx?.mode"
+                        :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+                        :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+                        :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+                        :vertical-config="nestedItemValue?.lx?.verticalConfig"
+                      >
+                        <template
+                          v-for="(
+                            innerNestedItemValue, innerNestedItemName
+                          ) in nestedItemValue?.properties"
+                          :key="innerNestedItemName"
+                        >
+                          <LxFormBuilderListItem
+                            :itemValue="innerNestedItemValue"
+                            :itemName="innerNestedItemName"
+                            :item="customItem?.[itemName]?.[nestedItemName]"
+                          />
+                        </template>
+                      </LxStack>
+                      <LxFormBuilderListItem
+                        v-else
+                        :itemValue="nestedItemValue"
+                        :itemName="nestedItemName"
+                        :item="customItem?.[itemName]"
+                      />
+                    </template>
+                  </LxStack>
+                  <LxFormBuilderListItem
+                    :itemValue="stackItemValue"
+                    :itemName="stackItemName"
+                    :item="customItem"
+                    v-else
+                  />
+                </template>
+              </template>
+            </LxValuePicker>
             <LxAppendableList
               v-else-if="componentSelect(itemValue, itemName) === 'appendableList'"
               v-model="arrayModelValue[id + '-' + name][itemName]"
@@ -1649,14 +2157,14 @@ const invalidMessage = computed(() => {
                       "
                       :id="name + '-' + appendableItemName + '-' + index"
                       :kind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
-                      :items="appendableItem?.lx?.items"
+                      :items="appendableItem?.lx?.items || enumToObject(appendableItem)"
                       :id-attribute="appendableItem?.lx?.idAttribute"
                       :name-attribute="appendableItem?.lx?.nameAttribute"
                       :icon-attribute="appendableItem?.lx?.iconAttribute"
                       :icon-set-attribute="appendableItem?.lx?.iconSetAttribute"
                       :category-attribute="appendableItem?.lx?.categoryAttribute"
                       :description-attribute="appendableItem?.lx?.descriptionAttribute"
-                      :variant="appendableItem?.lx?.variant"
+                      :variant="getCustomVariant(appendableItem)"
                       :has-search="appendableItem?.lx?.hasSearch"
                       :always-as-array="appendableItem?.lx?.alwaysAsArray"
                       :nullable="appendableItem?.lx?.nullable"
@@ -1669,7 +2177,99 @@ const invalidMessage = computed(() => {
                       :search-attributes="appendableItem?.lx?.searchAttributes"
                       :read-only-render-type="appendableItem?.lx?.readOnlyRenderType"
                       v-model="item[appendableItemName]"
-                    />
+                    >
+                      <template
+                        #customItem="customItem"
+                        v-if="appendableItem?.lx?.hasCustomItems === 'default'"
+                      >
+                        <LxStack
+                          :orientation="appendableItem?.lx?.stack?.orientation"
+                          :kind="appendableItem?.lx?.stack?.kind"
+                          :mode="appendableItem?.lx?.stack?.mode || 'grid'"
+                          :horizontal-alignment="appendableItem?.lx?.stack?.horizontalAlignment"
+                          :vertical-alignment="appendableItem?.lx?.stack?.verticalAlignment"
+                          :horizontal-config="appendableItem?.lx?.stack?.horizontalConfig"
+                          :vertical-config="appendableItem?.lx?.stack?.verticalConfig"
+                        >
+                          <template
+                            v-for="(stackItemValue, stackItemName) in appendableItem?.lx
+                              ?.customItems?.properties"
+                            :key="stackItemName"
+                          >
+                            <LxFormBuilderListItem
+                              :itemValue="stackItemValue"
+                              :itemName="stackItemName"
+                              :item="customItem"
+                              :useStyles="true"
+                            />
+                          </template>
+                        </LxStack>
+                      </template>
+                      <template
+                        #customItem="customItem"
+                        v-else-if="appendableItem?.lx?.hasCustomItems === 'nested'"
+                      >
+                        <template
+                          v-for="(stackItemValue, stackItemName) in appendableItem?.lx?.customItems
+                            ?.properties"
+                          :key="stackItemName"
+                        >
+                          <LxStack
+                            v-if="stackItemValue?.lx?.displayType === 'stack'"
+                            :orientation="stackItemValue?.lx?.orientation"
+                            :kind="stackItemValue?.lx?.kind"
+                            :mode="stackItemValue?.lx?.mode"
+                            :horizontal-alignment="stackItemValue?.lx?.horizontalAlignment"
+                            :vertical-alignment="stackItemValue?.lx?.verticalAlignment"
+                            :horizontal-config="stackItemValue?.lx?.horizontalConfig"
+                            :vertical-config="stackItemValue?.lx?.verticalConfig"
+                          >
+                            <template
+                              v-for="(
+                                nestedItemValue, nestedItemName
+                              ) in stackItemValue?.properties"
+                              :key="nestedItemName"
+                            >
+                              <LxStack
+                                v-if="nestedItemValue?.lx?.displayType === 'stack'"
+                                :orientation="nestedItemValue?.lx?.orientation"
+                                :kind="nestedItemValue?.lx?.kind"
+                                :mode="nestedItemValue?.lx?.mode"
+                                :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+                                :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+                                :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+                                :vertical-config="nestedItemValue?.lx?.verticalConfig"
+                              >
+                                <template
+                                  v-for="(
+                                    innerNestedItemValue, innerNestedItemName
+                                  ) in nestedItemValue?.properties"
+                                  :key="innerNestedItemName"
+                                >
+                                  <LxFormBuilderListItem
+                                    :itemValue="innerNestedItemValue"
+                                    :itemName="innerNestedItemName"
+                                    :item="customItem?.[itemName]?.[nestedItemName]"
+                                  />
+                                </template>
+                              </LxStack>
+                              <LxFormBuilderListItem
+                                v-else
+                                :itemValue="nestedItemValue"
+                                :itemName="nestedItemName"
+                                :item="customItem?.[itemName]"
+                              />
+                            </template>
+                          </LxStack>
+                          <LxFormBuilderListItem
+                            :itemValue="stackItemValue"
+                            :itemName="stackItemName"
+                            :item="customItem"
+                            v-else
+                          />
+                        </template>
+                      </template>
+                    </LxValuePicker>
                   </LxRow>
                 </template>
               </template>
@@ -1696,7 +2296,7 @@ const invalidMessage = computed(() => {
   >
     <template #customItem="{ item, index }">
       <template
-        v-for="(appendableItem, appendableItemName) in orderedObject[name]?.items?.properties"
+        v-for="(appendableItem, appendableItemName) in orderedObject?.[name]?.items?.properties"
         :key="appendableItemName"
       >
         <LxPlaceholder
@@ -1794,14 +2394,14 @@ const invalidMessage = computed(() => {
             v-else-if="componentSelect(appendableItem, appendableItemName) === 'valuePicker'"
             :id="name + '-' + appendableItemName + '-' + index"
             :kind="appendableItem?.type === 'array' ? 'multiple' : 'single'"
-            :items="appendableItem?.lx?.items"
+            :items="appendableItem?.lx?.items || enumToObject(appendableItem)"
             :id-attribute="appendableItem?.lx?.idAttribute"
             :name-attribute="appendableItem?.lx?.nameAttribute"
             :icon-attribute="appendableItem?.lx?.iconAttribute"
             :icon-set-attribute="appendableItem?.lx?.iconSetAttribute"
             :category-attribute="appendableItem?.lx?.categoryAttribute"
             :description-attribute="appendableItem?.lx?.descriptionAttribute"
-            :variant="appendableItem?.lx?.variant"
+            :variant="getCustomVariant(appendableItem)"
             :has-search="appendableItem?.lx?.hasSearch"
             :always-as-array="appendableItem?.lx?.alwaysAsArray"
             :nullable="appendableItem?.lx?.nullable"
@@ -1814,7 +2414,97 @@ const invalidMessage = computed(() => {
             :search-attributes="appendableItem?.lx?.searchAttributes"
             :read-only-render-type="appendableItem?.lx?.readOnlyRenderType"
             v-model="item[appendableItemName]"
-          />
+          >
+            <template
+              #customItem="customItem"
+              v-if="appendableItem?.lx?.hasCustomItems === 'default'"
+            >
+              <LxStack
+                :orientation="appendableItem?.lx?.stack?.orientation"
+                :kind="appendableItem?.lx?.stack?.kind"
+                :mode="appendableItem?.lx?.stack?.mode || 'grid'"
+                :horizontal-alignment="appendableItem?.lx?.stack?.horizontalAlignment"
+                :vertical-alignment="appendableItem?.lx?.stack?.verticalAlignment"
+                :horizontal-config="appendableItem?.lx?.stack?.horizontalConfig"
+                :vertical-config="appendableItem?.lx?.stack?.verticalConfig"
+              >
+                <template
+                  v-for="(stackItemValue, stackItemName) in appendableItem?.lx?.customItems
+                    ?.properties"
+                  :key="stackItemName"
+                >
+                  <LxFormBuilderListItem
+                    :itemValue="stackItemValue"
+                    :itemName="stackItemName"
+                    :item="customItem"
+                    :useStyles="true"
+                  />
+                </template>
+              </LxStack>
+            </template>
+            <template
+              #customItem="customItem"
+              v-else-if="appendableItem?.lx?.hasCustomItems === 'nested'"
+            >
+              <template
+                v-for="(stackItemValue, stackItemName) in appendableItem?.lx?.customItems
+                  ?.properties"
+                :key="stackItemName"
+              >
+                <LxStack
+                  v-if="stackItemValue?.lx?.displayType === 'stack'"
+                  :orientation="stackItemValue?.lx?.orientation"
+                  :kind="stackItemValue?.lx?.kind"
+                  :mode="stackItemValue?.lx?.mode"
+                  :horizontal-alignment="stackItemValue?.lx?.horizontalAlignment"
+                  :vertical-alignment="stackItemValue?.lx?.verticalAlignment"
+                  :horizontal-config="stackItemValue?.lx?.horizontalConfig"
+                  :vertical-config="stackItemValue?.lx?.verticalConfig"
+                >
+                  <template
+                    v-for="(nestedItemValue, nestedItemName) in stackItemValue?.properties"
+                    :key="nestedItemName"
+                  >
+                    <LxStack
+                      v-if="nestedItemValue?.lx?.displayType === 'stack'"
+                      :orientation="nestedItemValue?.lx?.orientation"
+                      :kind="nestedItemValue?.lx?.kind"
+                      :mode="nestedItemValue?.lx?.mode"
+                      :horizontal-alignment="nestedItemValue?.lx?.horizontalAlignment"
+                      :vertical-alignment="nestedItemValue?.lx?.verticalAlignment"
+                      :horizontal-config="nestedItemValue?.lx?.horizontalConfig"
+                      :vertical-config="nestedItemValue?.lx?.verticalConfig"
+                    >
+                      <template
+                        v-for="(
+                          innerNestedItemValue, innerNestedItemName
+                        ) in nestedItemValue?.properties"
+                        :key="innerNestedItemName"
+                      >
+                        <LxFormBuilderListItem
+                          :itemValue="innerNestedItemValue"
+                          :itemName="innerNestedItemName"
+                          :item="customItem?.[stackItemName]?.[nestedItemName]"
+                        />
+                      </template>
+                    </LxStack>
+                    <LxFormBuilderListItem
+                      v-else
+                      :itemValue="nestedItemValue"
+                      :itemName="nestedItemName"
+                      :item="customItem?.[stackItemName]"
+                    />
+                  </template>
+                </LxStack>
+                <LxFormBuilderListItem
+                  :itemValue="stackItemValue"
+                  :itemName="stackItemName"
+                  :item="customItem"
+                  v-else
+                />
+              </template>
+            </template>
+          </LxValuePicker>
         </LxRow>
       </template>
     </template>

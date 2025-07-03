@@ -70,7 +70,7 @@ const props = defineProps({
    * @default 'default'
    * @since 1.1.3
    */
-  mode: { type: String, default: 'default' }, // 'default' || 'no-schema' || 'mixed'
+  mode: { type: String, default: 'default' }, // 'default' || 'no-schema' || 'mixed' || 'view-builder'
   /**
    * Determines invalidation messages for the form.
    *
@@ -82,6 +82,7 @@ const props = defineProps({
   /**
    * The object containing text translations for the form.
    * @type {Object}
+   * @default {}
    * @since 1.1.0
    */
   texts: { type: Object, default: () => {} },
@@ -342,7 +343,7 @@ const mixedSchema = computed(() => {
   if (props.mode === 'mixed') {
     try {
       if (props.schema?.hasOwnProperty('required')) res.required = props.schema?.required;
-      Object.entries(schemaGenerator.value?.properties)?.forEach(([key, value]) => {
+      Object.entries(schemaGenerator.value?.properties)?.forEach(([key]) => {
         if (props.schema?.properties?.hasOwnProperty(key)) {
           res.properties[key] = props.schema?.properties[key];
         }
@@ -589,13 +590,13 @@ function clearValidations() {
 
 watch(
   () => props.schema,
-  (newValue) => {
-    if (props.mode !== 'no-schema') addDefaultValues();
+  () => {
+    if (props.mode !== 'no-schema' && props.mode !== 'view-builder') addDefaultValues();
   }
 );
 
 onMounted(() => {
-  if (props.mode !== 'no-schema') addDefaultValues();
+  if (props.mode !== 'no-schema' && props.mode !== 'view-builder') addDefaultValues();
 });
 
 defineExpose({ validateModel, clearValidations, componentSelect });

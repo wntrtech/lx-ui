@@ -1711,6 +1711,11 @@ p .lx-person-display-wrapper {
     --color-button-ghost-icon-active: var(--color-button-toolbar-ghost-icon-active);
 }
 
+.lx-form-grid > header svg {
+    height: 1rem;
+    fill: var(--color-label);
+}
+
 @media (max-width: 1900px) {
   .lx-index {
     display: none;

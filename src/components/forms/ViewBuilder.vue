@@ -6,21 +6,68 @@ import LxViewLayout from '@/components/ViewLayout.vue';
 import LxStack from '@/components/Stack.vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxSection from '@/components/forms/Section.vue';
-import { generateUUID } from '@/utils/stringUtils';
-
-import { getDisplayTexts } from '@/utils/generalUtils';
+import LxRow from '@/components/forms/Row.vue';
 import LxFormBuilderItem from '@/components/forms/FormBuilderItem.vue';
 import LxFilterBuilder from '@/components/FilterBuilder.vue';
+import LxFormBuilderListItem from '@/components/forms/FormBuilderListItem.vue';
+
+import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
+import { lxDevUtils } from '@/utils';
+import useLx from '@/hooks/useLx';
 
 import { useVuelidate } from '@vuelidate/core';
 import { required, helpers, minValue, maxValue, minLength, maxLength } from '@vuelidate/validators';
 
 const props = defineProps({
+  /**
+   ** Unique identifier for the view builder component.
+   * @type {String}
+   * @default generateUUID() - Automatically generates a UUID if not provided.
+   * @since 1.9.0-beta.9
+   */
   id: { type: String, default: () => generateUUID() },
+  /**
+   * The values of the view input components.
+   * @type {Object}
+   * @default null
+   * @since 1.9.0-beta.9
+   */
   modelValue: { type: Object, default: null },
+  /**
+   * The schema object that defines the structure and configuration of the view.
+   * @type {Object}
+   * @default null
+   * @since 1.9.0-beta.9
+   */
   schema: { type: Object, default: null },
+  /**
+   * Determines if the view should be rendered in read-only mode.
+   * @type {Boolean}
+   * @default false
+   * @since 1.9.0-beta.9
+   */
   readOnly: { type: Boolean, default: false },
+  /**
+   * Determines invalidation messages and sets invalid state for the view components.
+   * @type {Object}
+   * @default null
+   * @since 1.9.0
+   */
   validations: { type: Object, default: null },
+  /**
+   * Determines whether the view will be built from modelValue or schema.
+   * @type {String}
+   * @default 'default'
+   * @since 1.10.0-beta.1
+   */
+  mode: { type: String, default: 'default' }, // 'default', 'no-schema', 'mixed'
+  /**
+   * The object containing text translations for the view.
+   * @type {Object}
+   * @default {}
+   * @since 1.9.0-beta.9
+   */
   texts: { type: Object, default: () => {} },
 });
 
@@ -81,7 +128,11 @@ function addDefaultValues() {
           target[key] = value.default;
         }
       }
-      if ((value?.properties && value?.lx?.displayType === 'stack') || value?.items?.properties) {
+      if (
+        (value?.properties && value?.lx?.displayType === 'stack') ||
+        value?.lx?.displayType === 'form' ||
+        value?.items?.properties
+      ) {
         // eslint-disable-next-line no-param-reassign
         target[key] = target[key] || {};
 
@@ -319,22 +370,89 @@ function clearValidations() {
 
 watch(
   () => props.schema,
-  () => {
-    addDefaultValues();
+  (newSchema, oldSchema) => {
+    if (JSON.stringify(newSchema) !== JSON.stringify(oldSchema) && props.mode !== 'no-schema') {
+      addDefaultValues();
+    }
   }
 );
 
 onBeforeMount(async () => {
-  await addDefaultValues();
+  if (props.mode !== 'no-schema') await addDefaultValues();
 });
 
-// TODO: add mode prop
+const schemaGenerator = computed(() => {
+  const res = {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    type: 'object',
+    properties: {
+      form: {
+        type: 'object',
+        lx: {
+          displayType: 'form',
+        },
+        properties: {},
+      },
+    },
+  };
+  Object.entries(model.value)?.forEach(([key, value]) => {
+    if (typeof value === 'string' || typeof value === 'boolean' || typeof value === 'number')
+      res.properties.form.properties[key] = { type: typeof value };
+    else if (Array.isArray(value) && typeof value[0] === 'object') {
+      res.properties.form.properties[key] = {
+        type: 'array',
+        items: { type: 'object', properties: {} },
+      };
+      Object.entries(value[0])?.forEach(([key1, value1]) => {
+        if (key1 !== '_lx_appendableKey') {
+          if (typeof value1 === 'string')
+            res.properties.form.properties[key].items.properties[key1] = { type: 'string' };
+          else if (typeof value1 === 'boolean')
+            res.properties.form.properties[key].items.properties[key1] = { type: 'boolean' };
+        }
+      });
+    } else {
+      res.properties.form.properties[key] = { lx: { wrapper: 'placeholder' } };
+    }
+  });
+  return res;
+});
+
+const mixedSchema = computed(() => {
+  const res = structuredClone(props.schema);
+  if (props.mode === 'mixed') {
+    try {
+      Object.entries(schemaGenerator.value?.properties?.form?.properties)?.forEach(
+        ([key, value]) => {
+          if (!Object.prototype.hasOwnProperty.call(res?.properties, key)) {
+            res.properties[key] = value;
+          }
+        }
+      );
+      return res;
+    } catch (err) {
+      lxDevUtils.log(err, useLx().getGlobals()?.environment, 'warn');
+    }
+  }
+  return res;
+});
+
+const displaySchema = computed(() => {
+  try {
+    if (props.mode === 'no-schema') return schemaGenerator.value;
+    if (props.mode === 'mixed') return mixedSchema.value;
+  } catch (err) {
+    lxDevUtils.log(err, useLx().getGlobals()?.environment, 'warn');
+  }
+  return props.schema;
+});
+
 defineExpose({ validateModel, clearValidations });
 </script>
 <template>
   <LxViewLayout v-if="isSchemaValid" :kind="viewKind">
     <template #filters>
-      <template v-for="(row, name) in schema?.properties" :key="name">
+      <template v-for="(row, name) in displaySchema?.properties" :key="name">
         <LxFilterBuilder
           v-if="row?.lx?.displayType === 'filters' && row?.type === 'object'"
           :ref="(el) => (otherBuilderRefs[id + '-' + name] = el)"
@@ -365,8 +483,8 @@ defineExpose({ validateModel, clearValidations });
         />
       </template>
     </template>
-    <template #default>
-      <template v-for="(row, name) in schema?.properties" :key="name">
+    <template #default v-if="mode !== 'no-schema'">
+      <template v-for="(row, name) in displaySchema?.properties" :key="name">
         <LxForm
           v-if="row?.lx?.displayType === 'form' && row?.type === 'object'"
           :id="id + '-' + name"
@@ -387,12 +505,123 @@ defineExpose({ validateModel, clearValidations });
           :texts="row?.lx?.texts"
           @buttonClick="(a) => componentEmit('buttonClick', name, a)"
         >
-          <!-- TODO: add header slot -->
-          <!-- TODO: add preHeader slot -->
-          <!-- TODO: add preHeaderInfo slot -->
-          <!-- TODO: add postHeader slot -->
-          <!-- TODO: add postHeaderInfo slot -->
           <template #header>{{ row?.title }}</template>
+          <template #pre-header v-if="row?.lx?.preHeader">
+            <template v-for="(item, itemName) in row?.lx?.preHeader?.properties" :key="itemName">
+              <LxStack
+                v-if="item?.lx?.displayType === 'stack'"
+                :id="id + '-' + name + '-' + itemName"
+                :orientation="item?.lx?.orientation"
+                :kind="item?.lx?.kind"
+                :mode="item?.lx?.mode"
+                :horizontal-alignment="item?.lx?.horizontalAlignment"
+                :vertical-alignment="item?.lx?.verticalAlignment"
+                :horizontal-config="item?.lx?.horizontalConfig"
+                :vertical-config="item?.lx?.verticalConfig"
+              >
+                <template
+                  v-for="(nestedItem, nestedItemName) in item?.properties"
+                  :key="nestedItemName"
+                >
+                  <LxStack
+                    v-if="nestedItem?.lx?.displayType === 'stack'"
+                    :id="id + '-' + name + '-' + itemName + '-' + nestedItemName"
+                    :orientation="nestedItem?.lx?.orientation"
+                    :kind="nestedItem?.lx?.kind"
+                    :mode="nestedItem?.lx?.mode"
+                    :horizontal-alignment="nestedItem?.lx?.horizontalAlignment"
+                    :vertical-alignment="nestedItem?.lx?.verticalAlignment"
+                    :horizontal-config="nestedItem?.lx?.horizontalConfig"
+                    :vertical-config="nestedItem?.lx?.verticalConfig"
+                  >
+                    <template
+                      v-for="(innerNestedItem, innerNestedItemName) in nestedItem?.properties"
+                      :key="innerNestedItemName"
+                    >
+                      <LxFormBuilderListItem
+                        :itemValue="innerNestedItem"
+                        :itemName="innerNestedItemName"
+                      />
+                    </template>
+                  </LxStack>
+                  <LxFormBuilderListItem
+                    v-else
+                    :itemValue="nestedItem"
+                    :itemName="nestedItemName"
+                  />
+                </template>
+              </LxStack>
+              <LxFormBuilderListItem :itemValue="item" :itemName="itemName" v-else />
+            </template>
+          </template>
+          <template #pre-header-info v-if="row?.lx?.preHeaderInfo">
+            <LxRow
+              v-for="(item, itemName) in row?.lx?.preHeaderInfo?.properties"
+              :label="item?.title"
+              :hideLabel="item?.lx?.hideLabel || !item?.title"
+              :key="itemName"
+            >
+              <LxFormBuilderListItem :itemValue="item" :itemName="itemName" />
+            </LxRow>
+          </template>
+          <template #post-header-info v-if="row?.lx?.postHeaderInfo">
+            <LxRow
+              v-for="(item, itemName) in row?.lx?.postHeaderInfo?.properties"
+              :label="item?.title"
+              :hideLabel="item?.lx?.hideLabel || !item?.title"
+              :key="itemName"
+            >
+              <LxFormBuilderListItem :itemValue="item" :itemName="itemName" />
+            </LxRow>
+          </template>
+          <template #post-header v-if="row?.lx?.postHeader">
+            <template v-for="(item, itemName) in row?.lx?.postHeader?.properties" :key="itemName">
+              <LxStack
+                v-if="item?.lx?.displayType === 'stack'"
+                :id="id + '-' + name + '-' + itemName"
+                :orientation="item?.lx?.orientation"
+                :kind="item?.lx?.kind"
+                :mode="item?.lx?.mode"
+                :horizontal-alignment="item?.lx?.horizontalAlignment"
+                :vertical-alignment="item?.lx?.verticalAlignment"
+                :horizontal-config="item?.lx?.horizontalConfig"
+                :vertical-config="item?.lx?.verticalConfig"
+              >
+                <template
+                  v-for="(nestedItem, nestedItemName) in item?.properties"
+                  :key="nestedItemName"
+                >
+                  <LxStack
+                    v-if="nestedItem?.lx?.displayType === 'stack'"
+                    :id="id + '-' + name + '-' + itemName + '-' + nestedItemName"
+                    :orientation="nestedItem?.lx?.orientation"
+                    :kind="nestedItem?.lx?.kind"
+                    :mode="nestedItem?.lx?.mode"
+                    :horizontal-alignment="nestedItem?.lx?.horizontalAlignment"
+                    :vertical-alignment="nestedItem?.lx?.verticalAlignment"
+                    :horizontal-config="nestedItem?.lx?.horizontalConfig"
+                    :vertical-config="nestedItem?.lx?.verticalConfig"
+                  >
+                    <template
+                      v-for="(innerNestedItem, innerNestedItemName) in nestedItem?.properties"
+                      :key="innerNestedItemName"
+                    >
+                      <LxFormBuilderListItem
+                        :itemValue="innerNestedItem"
+                        :itemName="innerNestedItemName"
+                      />
+                    </template>
+                  </LxStack>
+                  <LxFormBuilderListItem
+                    v-else
+                    :itemValue="nestedItem"
+                    :itemName="nestedItemName"
+                  />
+                </template>
+              </LxStack>
+              <LxFormBuilderListItem :itemValue="item" :itemName="itemName" v-else />
+            </template>
+          </template>
           <template #sections>
             <template
               v-for="(item, itemName) in schema?.properties?.[name]?.properties"
@@ -422,6 +651,7 @@ defineExpose({ validateModel, clearValidations });
                   :readOnly="readOnly"
                   :texts="displayTexts"
                   :validations="validations?.[name]?.[itemName]"
+                  mode="view-builder"
                   @rowActionClick="
                     (a, b, c, d) => rowActionClicked(a, b, `${name}.${itemName}.${c}`, d)
                   "
@@ -439,6 +669,7 @@ defineExpose({ validateModel, clearValidations });
             :readOnly="readOnly"
             :texts="displayTexts"
             :validations="validations?.[name]"
+            mode="view-builder"
             @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, `${name}.${c}`, d)"
             @emit="(a, b, c, d) => componentEmit(a, `${name}.${b}`, c, d)"
           />
@@ -478,7 +709,7 @@ defineExpose({ validateModel, clearValidations });
                   v-if="model?.[name]"
                   v-model="model[name][itemName]"
                   :schema="schema?.properties?.[name]?.properties?.[itemName]"
-                  :displaySchema="schema?.properties?.[name]?.properties?.[itemName]"
+                  :displaySchema="displaySchema?.properties?.[name]?.properties?.[itemName]"
                   :row="item2"
                   :name="itemName2"
                   :readOnly="readOnly"
@@ -497,7 +728,7 @@ defineExpose({ validateModel, clearValidations });
               v-else-if="item?.lx?.displayType !== 'stack' && model"
               v-model="model[name]"
               :schema="schema?.properties?.[name]"
-              :displaySchema="schema?.properties?.[name]"
+              :displaySchema="displaySchema?.properties?.[name]"
               :row="item"
               :name="itemName"
               :readOnly="readOnly"
@@ -515,7 +746,7 @@ defineExpose({ validateModel, clearValidations });
           v-else-if="row?.lx?.displayType !== 'filters'"
           v-model="model"
           :schema="schema"
-          :displaySchema="schema"
+          :displaySchema="displaySchema"
           :row="row"
           :name="name"
           :readOnly="readOnly"
@@ -526,6 +757,20 @@ defineExpose({ validateModel, clearValidations });
           @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
         />
       </template>
+    </template>
+    <template #default v-else>
+      <LxForm>
+        <LxFormBuilder
+          v-model="model"
+          :schema="displaySchema?.properties?.form"
+          :readOnly="readOnly"
+          :texts="displayTexts"
+          :validations="validations"
+          mode="view-builder"
+          @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
+          @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
+        />
+      </LxForm>
     </template>
   </LxViewLayout>
 </template>

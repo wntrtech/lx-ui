@@ -45,8 +45,15 @@ For more LX features, use custom schema attribute `lx` with these parameters:
 - `wrapper='placeholder'` - LxPlaceholder will be used instead of LxRow
 - `order` - Defines the order for LxRows. LxRows that do not have defined order attribute will be places at end in the same order as defined in schema
 - `actionDefinitions` - LxRow `actionDefinitions` prop
-  - `@rowActionClick` event available to handle LxRow action clicks. 
+  - `@rowActionClick` event available to handle LxRow action clicks.
 
+<br>
+
+`@emit` event is available to handle all custom emits. Can contain up to 4 parameters:
+- emitName – the name of the specific component's emit event;
+- key – the attribute of the component defined in the schema prop;
+- value – the emitted value (defaults to undefined, but used by some emits);
+- additionalParameters – optional additional parameters for the emit (defaults to undefined, used when the value alone is not sufficient).
 
 ### for `type="string"` or `type="integer"` or `type="number"`:
 
@@ -192,7 +199,8 @@ When schema defines an array of objects (property `type="array"` and `items` is 
 This component works similarly to LxAppendableList, only difference is that LxAppendableListSimple operates not with object arrays, but with string, number, boolean arrays.
 
 ### LX attributes for LxAppendableListSimple
-  LxAppendableListSimple has all the same LX attributes, except, `expandable`.
+
+LxAppendableListSimple has all the same LX attributes, except, `expandable`.
 
 ## LxDataBlock
 
@@ -203,7 +211,6 @@ Inside of this rows properties attribute LxForms fields can be defined.
 ## Additional information
 
 If `title` attribute is not defined for a property, property's attribute name is used as LxRow `label` prop.
-
 
 ## Validations
 
@@ -233,15 +240,15 @@ LxFormBuilder implements these **standard** JSON schema attributes as LxForm val
 
 ## Schema Example
 
-```javascript
+```js
 
 const schema = {
   type: 'object',
   required: ['firstName', 'isActive'],
   properties: {
     firstName: {
-      title: 'Vārds',
-      description: 'Personas vārds',
+      title: 'Name',
+      description: 'Person\'s name',
       type: 'string',
       maxLength: 15,
       readOnly: null,
@@ -251,13 +258,13 @@ const schema = {
       },
     },
     lastName: {
-      title: 'Uzvārds',
-      description: 'Personas uzvārds',
+      title: 'Last Name',
+      description: 'Person\'s last name',
       type: 'string',
       maxLength: 15,
     },
     isActive: {
-      title: 'Aktīvs',
+      title: 'Active',
       type: 'boolean',
       lx: {
         labelOn: 'True',
@@ -265,7 +272,7 @@ const schema = {
       },
     },
     description: {
-      title: 'Apraksts',
+      title: 'Description',
       type: 'string',
       lx: {
         kind: 'multiline',
@@ -273,7 +280,7 @@ const schema = {
       },
     },
     favoriteGame: {
-      title: 'Mīļākā spēle',
+      title: 'Favorite game',
       type: 'string',
       lx: {
         hasSearch: true,
@@ -299,7 +306,7 @@ const schema = {
       },
     },
     dislikedGames: {
-      title: 'Spēles, kas nepatīk',
+      title: 'Disliked games',
       type: 'array',
       lx: {
         variant: 'default',
@@ -324,22 +331,22 @@ const schema = {
       },
     },
     birthDate: {
-      title: 'Dzimšanas datums',
+      title: 'Birth date',
       type: 'string',
       format: 'date',
     },
     developers: {
-      title: 'Mīļākie spēlu izstrādātāji',
+      title: 'Favorite game developers',
       type: 'array',
       items: {
         properties: {
           name: {
             type: 'string',
-            title: 'Nosaukumus',
+            title: 'Name',
           },
           comment: {
             type: 'string',
-            title: 'Komentārs',
+            title: 'Comment',
             lx: {
               kind: 'multiline',
             },
@@ -353,7 +360,7 @@ const schema = {
       },
     },
     computer: {
-      title: 'Datora specifikācija',
+      title: 'Computer specification',
       type: 'object',
       properties: {
         type: {
@@ -361,31 +368,31 @@ const schema = {
           title: 'Tips',
           lx: {
             items: [
-              { id: 'desktop', name: 'Stacionārais dators' },
-              { id: 'laptop', name: 'Portatīvais dators' },
+              { id: 'desktop', name: 'Desktop computer' },
+              { id: 'laptop', name: 'Laptop' },
             ],
             variant: 'dropdown',
           },
         },
         cpu: {
-          type: 'string',
-          title: 'Procesors',
+        type: 'string',
+        title: 'Processor',
         },
         gpu: {
-          type: 'string',
-          title: 'Video karte',
+        type: 'string',
+        title: 'Graphics Card',
         },
         psu: {
-          type: 'string',
-          title: 'Barošanas bloks',
+        type: 'string',
+        title: 'Power Supply',
         },
         memory: {
-          type: 'number',
-          title: 'Atmiņa (GB)',
+        type: 'number',
+        title: 'Memory (GB)',
         },
         hasWifi: {
-          type: 'boolean',
-          title: 'WiFi',
+        type: 'boolean',
+        title: 'WiFi',
         },
       },
       lx: {
@@ -396,15 +403,15 @@ const schema = {
     },
     profile: {
       type: 'object',
-      title: 'Spēlētāja profils',
+      title: 'Player profile',
       properties: {
         nickname: {
           type: 'string',
-          title: 'Segvārds',
+          title: 'Nickname',
         },
         level: {
           type: 'integer',
-          title: 'Līmenis',
+          title: 'Level',
         },
       },
       lx: {
@@ -414,17 +421,17 @@ const schema = {
       },
     },
     drivingGames: {
-      title: 'Mīļākās braukšanas spēles',
+      title: 'Favorite driving games',
       type: 'array',
       items: {
         properties: {
           id: {
             type: 'string',
-            title: 'Identifikators',
+            title: 'ID',
           },
           name: {
             type: 'string',
-            title: 'Nosaukums',
+            title: 'Name',
           },
         },
       },
@@ -434,17 +441,17 @@ const schema = {
       },
     },
     mobaGames: {
-      title: 'Mīļākās MOBA spēles',
+      title: 'Favorite MOBA games',
       type: 'array',
       items: {
         properties: {
           id: {
             type: 'string',
-            title: 'Identifikators',
+            title: 'ID',
           },
           name: {
             type: 'string',
-            title: 'Nosaukums',
+            title: 'Name',
           },
         },
       },
@@ -454,21 +461,21 @@ const schema = {
       },
     },
     fpsGames: {
-      title: 'Mīļākās šaušanas spēles',
+      title: 'Favorite shooting games',
       type: 'array',
       items: {
         properties: {
           id: {
-            type: 'string',
-            title: 'Identifikators',
+        type: 'string',
+        title: 'Identifier',
           },
           name: {
-            type: 'string',
-            title: 'Nosaukums',
+        type: 'string',
+        title: 'Name',
           },
           playerCount: {
-            title: 'Spēlētāju skaits',
-            type: 'number',
+        title: 'Player count',
+        type: 'number',
           },
         },
       },
@@ -477,21 +484,21 @@ const schema = {
       },
     },
     sportsGames: {
-      title: 'Mīļākās sporta spēles',
+      title: 'Favorite sports games',
       type: 'array',
       items: {
         properties: {
           id: {
             type: 'string',
-            title: 'Identifikators',
+            title: 'Identifier',
           },
           name: {
             type: 'string',
-            title: 'Nosaukums',
+            title: 'Name',
           },
           multiplayer: {
             type: 'boolean',
-            title: 'Daudzspēlētāju spēle',
+            title: 'Multiplayer game',
           },
         },
       },
@@ -506,20 +513,20 @@ const schema = {
 This schema would generate 15 rows:
 1. **firstName**
   - LxRow occupies 2 LxForm columns 
-  - LxRow label is "Vārds"
-  - LxRow has info slot with content "Personas vārds"
+  - LxRow label is "Name"
+  - LxRow has info slot with content "Person's names"
   - This row is required
   - LxTextInput component is generated in this row
   - LxTextInput has character limit of 15, readOnly set to false, default mask
 2. **lastName**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Uzvārds"
-  - LxRow has info slot with content "Personas uzvārds"
+  - LxRow label is "Last Name"
+  - LxRow has info slot with content "Person's last name"
   - LxTextInput component is generated in this row
   - LxTextInput has character limit of 15, default mask
 3. **isActive**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Aktīvs"
+  - LxRow label is "Active"
   - LxRow has no info slot
   - This row is required
   - LxToggle component is generated in this row
@@ -527,59 +534,59 @@ This schema would generate 15 rows:
   - LxToggle has "False" inserted into off slot
 4. **description**
   - LxRow occupies 2 LxForm columns
-  - LxRow label is "Apraksts"
+  - LxRow label is "Description"
   - LxRow has no info slot
   - LxTextArea component is generated in this row
   - LxTextArea has height of 5 lines
 5. **favoriteGame**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Mīļākā spēle"
+  - LxRow label is "Favorite game"
   - LxRow has no info slot
   - LxValuePicker component with `kind="single"` is generated in this row
   - LxValuePicker has 4 items and variant set to "dropdown"
   - LxValuePicker has search
 6. **dislikedGames**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Spēles, kas nepatīk"
+  - LxRow label is "Disliked games"
   - LxRow has no info slot
   - LxValuePicker component with `kind="multiple"` is generated in this row
   - LxValuePicker has 4 items and variant set to "default"
 7. **birthDate**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Dzimšanas datums"
+  - LxRow label is "Birth date"
   - LxDateTimePicker component with `kind="date"` is generated in this row
 8. **developers**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Mīļākie spēlu izstrādātāji"
+  - LxRow label is "Favorite game developers"
   - LxAppendableList component is generated in this row
 9. **placeholder**
   - LxPlaceholder component is generated in this row
   - LxPlaceholder occupies 1 LxForm column (default)
 10. **computer**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Datora specifikācija"
+  - LxRow label is "Computer specification"
   - LxDataBlock component is generated in this row if model value is not defined or null
 11. **profile**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Spēlētāja profils"
+  - LxRow label is "Player profile"
   - LxListItem component is generated in this row if model value is not defined or null
   - LxButton component that allows to create object is generated in this row if model value is null or undefined
 12. **drivingGames**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Mīļākās braukšanas spēles"
+  - LxRow label is "Favorite driving games"
   - LxList component is generated in this row
 13. **mobaGames**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Mīļākās MOBA spēles"
+  - LxRow label is "Favorite MOBA games"
   - LxList component is generated in this row
   - Every item is openable and editable in modal dialog
 14. **fpsGames**
   - LxRow occupies 1 LxForm column (default)
-  - LxRow label is "Mīļākās šaušanas spēles"
+  - LxRow label is "Favorite shooting games"
   - LxDataGrid component is generated in this row
 15. **sportsGames**
 - LxRow occupies 1 LxForm column (default)
-- LxRow label is "Mīļākās sporta spēles"
+- LxRow label is "Favorite sports games"
 - LxDataGrid component is generated in this row
 - Every item is openable and editable in modal dialog
 
@@ -607,7 +614,7 @@ For example, the LxCamera component can be defined in this way:
 }
 ```
 
-Input component type is the type of componets `modelValue` prop. However container and indicator components can mostly be defined in one of two ways: 
+Input component type is the type of components `modelValue` prop. However container and indicator components can mostly be defined in one of two ways: 
 - type='object' - all props must be defined in `modelValue`;
 - type='string' or type='array' - all props must be defined in `schema`, only the main one can be defined in `modelValue`. 
 
@@ -940,6 +947,43 @@ const model = {
 }
 ```
 
+### Validations
+
+Starting from lx/ui version `1.9.0`, the `validations` prop is available in all builder components.
+It allows you to define custom validation messages whenever needed.
+If an attribute has a non-empty error message in the `validations` prop, the component’s `invalid` prop will be set to `true`, and the `invalidationMessage` prop will contain the defined message.
+
+#### Validations example
+
+Example `schema` prop: 
+```js
+const schema = {
+  type: 'object',
+  properties: {
+    name: {
+      type: 'string',
+    },
+    age: {
+      type: 'number',
+    },
+    isStudent: {
+      type: 'boolean',
+    },
+  }
+}
+```
+Example `validations` prop: 
+```js
+const validations = {
+  name: 'Please enter a name',
+  age: 'Age must be at least 18',
+}
+```
+
+In this example in form there is going to be 3 input fields: 
+- The **name** input field will be in an invalid state and display the message: "Please enter a name";
+- The **age** input field will be in an invalid state and display the message: "Age must be at least 18";
+- The **isStudent** input field will not be in an invalid state.
 
 ## Component examples
 

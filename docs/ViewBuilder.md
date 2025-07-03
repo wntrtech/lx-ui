@@ -95,6 +95,94 @@ Default section contains two input fields for first name and last name.
 The measurement section contains number input field and unit section dropdown for height input, and wight input number field.
 The form also has 2 actions - save and cancel.
 
+#### Form header
+
+```js
+const schema = {
+  type: 'object',
+  properties: {
+    form: {
+      title: 'Document #123456',
+      type: 'object',
+      lx: {
+        displayType: 'form',
+        preHeader: {
+          properties: {
+            state: {
+              type: 'object',
+              lx: {
+                displayType: 'stateDisplay',
+                value: 'active',
+                dictionary: [
+                  {
+                    value: 'active',
+                    displayName: 'Active',
+                    displayType: 'green-full',
+                  },
+                ],
+              },
+            },
+          },
+        },
+        postHeader: {
+          properties: {
+            stack: {
+              type: 'object',
+              lx: {
+                displayType: 'stack',
+                orientation: 'horizontal',
+                verticalAlignment: 'center',
+              },
+              properties: {
+                icon: {
+                  type: 'object',
+                  lx: {
+                    displayType: 'icon',
+                    value: 'calendar',
+                  },
+                },
+                date: {
+                  type: 'string',
+                  format: 'date',
+                  lx: {
+                    value: '2025-06-30',
+                    displayType: 'secondaryText',
+                  },
+                },
+              },
+            },
+          },
+        },
+        postHeaderInfo: {
+          properties: {
+            lastModified: {
+              title: 'Last modified',
+              type: 'string',
+              format: 'date-time',
+              lx: {
+                value: '2025-06-30T12:22:00Z',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+};
+```
+
+This example shows how to define the header part of an LxForm component.
+
+This way you can define all the LxForm header slots - `header`, `pre-header`, `pre-header-info`, `post-header`, `post-header-info`.
+
+In this example, the following elements are placed in the slots:
+- in the `header` slot, the test 'Document #123456' is defined;
+- in the `pre-header` slot, the LxStateDisplay component is defined, which indicates the state 'active';
+- in the `pre-header-info` slot, nothing is defined - the slot remains empty;
+- in the `post-header` slot, the LxStack component is defined, which places an icon and text with the time. This way, the last editing date is displayed;
+- This field specification is defined in the `post-header-info` slot - it displays an explanation and an even more precise edit date, which also includes the time.
+
+
 ### Simple view without form 
 
 ```js
