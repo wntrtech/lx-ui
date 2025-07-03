@@ -27,6 +27,8 @@ import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxTextInput from '@/components/TextInput.vue';
+import { logError } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
 
 const emits = defineEmits([
   'actionClick',
@@ -703,6 +705,12 @@ const rows = computed(() => {
       } else {
         ret = ret.sort(compare(false));
       }
+    }
+    if (ret.length !== new Set(ret.map((x) => x[props.idAttribute])).size) {
+      logError(
+        `DataGrid: Duplicate row IDs found in items. Please ensure that each item has a unique ID for the attribute "${props.idAttribute}".`,
+        useLx().getGlobals()?.environment
+      );
     }
     return ret;
   }
