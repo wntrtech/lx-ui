@@ -29,6 +29,7 @@ function generateInput() {
     'lx-bt-skudra.css',
     'lx-bt-pro-is.css',
     'lx-bt-dorvis.css',
+    'lx-bt-avis.css',
     // add new bundle names here to exclude them from styles folder
   ];
 
@@ -65,6 +66,7 @@ function generateRollupInput(baseDir, extension = '.css') {
     'lx-bt-skudra',
     'lx-bt-pro-is',
     'lx-bt-dorvis',
+    'lx-bt-avis',
     // add new bundle names here
   ];
 
