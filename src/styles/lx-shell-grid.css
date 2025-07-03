@@ -811,6 +811,10 @@
   z-index: 8000;
 }
 
+.lx .lx-info-wrapper .popper {
+  box-shadow: var(--shadow-dropdown);
+}
+
 .lx .popper-wrapper .popper {
   z-index: 8000;
 }
