@@ -92,7 +92,7 @@ onMounted(() => {
   }
 });
 
-function checkIfHihlighted(id) {
+function checkIfHighlighted(id) {
   if (highlightedItemId.value === id) {
     return 0;
   }
@@ -121,7 +121,7 @@ function checkIfHihlighted(id) {
         :key="item[props.idAttribute]"
         :id="item[props.idAttribute]"
         :disabled="disabled"
-        :tabindex="checkIfHihlighted(item[props.idAttribute])"
+        :tabindex="disabled ? '-1' : checkIfHighlighted(item[props.idAttribute])"
         :title="props.tooltip ? `${props.tooltip}: ${item.name}` : item.name"
         role="tab"
         class="lx-content-switcher-item"
