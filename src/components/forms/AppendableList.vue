@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, inject } from 'vue';
+import { computed, onMounted, ref, inject, nextTick } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxForm from '@/components/forms/Form.vue';
 import LxDataBlock from '@/components/DataBlock.vue';
@@ -59,11 +59,39 @@ const model = computed({
   },
 });
 
+function focusLastAddedElement() {
+  nextTick(() => {
+    const lastItem = model.value?.[model.value.length - 1];
+    if (!lastItem || !lastItem._lx_appendableKey) return;
+    const lastItemEl = document.querySelector(
+      `.lx-appendable-list-item[id="${lastItem._lx_appendableKey}"]`
+    );
+    if (!lastItemEl) return;
+    const focusable = lastItemEl.querySelector(
+      'a:not([disabled]), button:not([disabled]), input:not([disabled]), [tabindex="0"]'
+    );
+    if (focusable) focusable.focus();
+  });
+}
 function removeItem(id) {
   const index = model.value.findIndex((x) => x._lx_appendableKey === id);
   const res = [...model.value];
   res.splice(index, 1);
   model.value = res;
+
+  nextTick(() => {
+    const items = document.querySelectorAll(
+      `.lx-appendable-list[id="${props.id}"] .lx-appendable-list-item`
+    );
+    if (!items.length) return;
+    const nextIndex = Math.min(index, items.length - 1);
+    const nextItem = items[nextIndex];
+    if (!nextItem) return;
+    const focusable = nextItem.querySelector(
+      'a:not([disabled]), button:not([disabled]), input:not([disabled]), [tabindex="0"]'
+    );
+    if (focusable) focusable.focus();
+  });
 }
 
 function addItem() {
@@ -76,6 +104,7 @@ function addItem() {
     res.push(object);
   }
   model.value = res;
+  focusLastAddedElement();
 }
 
 const expanded = computed(() => {
@@ -186,12 +215,14 @@ defineExpose({ clearModel });
     class="lx-appendable-list"
     :class="[{ 'lx-appendable-list-compact': kind === 'compact' }]"
     :aria-labelledby="labelledBy"
+    :id="props.id"
     role="list"
   >
     <div
       v-for="(item, index) in model"
       :key="item._lx_appendableKey"
       class="lx-appendable-list-item"
+      :id="item._lx_appendableKey"
       role="listitem"
     >
       <template v-if="expandable">

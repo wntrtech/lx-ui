@@ -502,6 +502,10 @@
     color: var(--color-disabled-foreground);
 }
 
+.lx-data-block header.lx-data-block-header:focus {
+    outline: 2px solid var(--color-focus-background);
+}
+
 .lx-data-block-disabled .lx-data-block>.additional-buttons>.lx-context-container .lx-toolbar .lx-button-content-wrapper svg{
   fill: var(--color-disabled-foreground);
 }
