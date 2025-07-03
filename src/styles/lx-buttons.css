@@ -2056,10 +2056,13 @@ a.lx-button.lx-button-ghost svg {
   height: auto;
   width: calc(100% - 2rem);
 }
+.lx-layout>.lx-skip-link-wrapper {
+    z-index: 9999;
+}
 
 .lx-skip-link-wrapper {
   position: relative;
-  z-index: 9999;
+  z-index: 8099;
   width: 0px;
   height: 0px;
 }

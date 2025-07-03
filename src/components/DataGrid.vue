@@ -15,9 +15,9 @@ import LxButton from '@/components/Button.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxRadioButton from '@/components/RadioButton.vue';
 import LxIcon from '@/components/Icon.vue';
-import LxDropdownMenu from '@/components/DropDownMenu.vue';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxStateDisplay from '@/components/StateDisplay.vue';
-import LxRating from '@/components/Ratings.vue';
+import LxRatings from '@/components/Ratings.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxFlagItemDisplay from '@/components/itemDisplay/FlagItemDisplay.vue';
@@ -83,11 +83,11 @@ const props = defineProps({
   emptyStateActionDefinitions: { type: Array, default: null },
   emptyStateIcon: { type: String, default: '' },
   clickableRole: { type: String, default: 'link' }, // 'link' or 'button'
-  texts: { type: Object, default: () => ({}) },
   hasSearch: { type: Boolean, default: false },
   searchMode: { type: String, default: 'default' }, // default, compact
   searchString: { type: String, default: '' },
   searchSide: { type: String, default: 'server' }, // server, TODO add client search
+  texts: { type: Object, default: () => ({}) },
 });
 
 const query = ref(props.searchString);
@@ -167,6 +167,7 @@ const textsDefault = {
   placeholder: 'Ievadiet nosaukuma vai apraksta daļu, lai sameklētu ierakstus',
   search: 'Meklēt',
   close: 'Aizvērt',
+  skipHeader: 'Pāriet uz tabulas datiem',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -1101,6 +1102,44 @@ onMounted(() => {
   }
 });
 
+const focusableElementsCount = computed(() => {
+  const mainElement = container.value;
+  const focusableSelectors = [
+    'a:not([disabled])',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    '[tabindex="0"]',
+  ];
+  if (mainElement) {
+    return Array.from(mainElement.querySelectorAll(focusableSelectors.join(', '))).filter(
+      (el) => el.offsetParent !== null
+    ).length;
+  }
+  return 0;
+});
+
+function skipHeader() {
+  const mainElement = container.value;
+
+  const focusableSelectors = [
+    'a:not([disabled])',
+    'button:not([disabled])',
+    'input:not([disabled])',
+    '[tabindex="0"]',
+  ];
+
+  if (mainElement) {
+    const focusableElements = Array.from(
+      mainElement.querySelectorAll(focusableSelectors.join(', '))
+    );
+    const firstVisibleElement = focusableElements.find((element) => element.offsetParent !== null);
+
+    if (firstVisibleElement) {
+      firstVisibleElement.focus();
+    }
+  }
+}
+
 defineExpose({ cancelSelection, selectRows, sortBy });
 </script>
 <template>
@@ -1249,25 +1288,32 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       </div>
     </div>
 
-    <div class="lx-grid-header-wrapper" aria-hidden="true">
+    <div class="lx-grid-header-wrapper" aria-hidden="false">
+      <div
+        class="lx-skip-link-wrapper"
+        v-if="columnsComputed.length > 0 && rows.length > 0 && focusableElementsCount > 0"
+      >
+        <LxButton :label="displayTexts.skipHeader" @click="skipHeader" />
+      </div>
       <div
         ref="header"
         class="lx-grid-row"
-        role="row"
+        role="toolbar"
         :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
         @scroll="restrictScroll"
       >
         <div v-if="hasSelecting" class="lx-cell-header lx-cell-selector" role="columnheader"></div>
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+        <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus-->
         <div
           v-for="col in columnsComputed"
           :key="col.id"
           :title="formatTooltip(col.name, col.title)"
-          role="columnheader"
           class="lx-cell-header"
           :aria-sort="getAriaSorting(sortedColumns[col.id])"
           :aria-label="formatTooltip(col.name, col.title)"
-          tabindex="0"
+          :tabindex="hasSorting ? '0' : '-1'"
+          role="button"
           :class="[
             {
               'lx-cell-number':
@@ -1484,7 +1530,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :value="row[col?.attributeName]"
                 :dictionary="col?.dictionary ? col?.dictionary : col?.options"
               />
-              <LxRating
+              <LxRatings
                 v-if="col.type === 'rating'"
                 :disabled="props.busy"
                 mode="read"
@@ -1654,7 +1700,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   "
                 />
 
-                <LxDropdownMenu placement="left-start">
+                <LxDropDownMenu placement="left-start">
                   <div class="lx-toolbar">
                     <LxButton
                       :id="`${id}-${row[idAttribute]}-action`"
@@ -1688,7 +1734,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       />
                     </div>
                   </template>
-                </LxDropdownMenu>
+                </LxDropDownMenu>
               </div>
             </div>
           </TransitionGroup>
@@ -1839,7 +1885,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               :dictionary="col?.dictionary ? col?.dictionary : col?.options"
             />
 
-            <LxRating
+            <LxRatings
               v-else-if="col.type === 'rating'"
               :disabled="props.busy"
               mode="read"
@@ -1951,7 +1997,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         v-if="hasPaging && showItemsCountSelector && !loading"
       >
         {{ displayTexts.itemsPerPage }}
-        <LxDropdownMenu>
+        <LxDropDownMenu>
           <div class="lx-chip">
             {{ itemsPerPage }}
             <LxIcon value="chevron-down" />
@@ -1967,7 +2013,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               />
             </div>
           </template>
-        </LxDropdownMenu>
+        </LxDropDownMenu>
       </div>
 
       <div class="lx-group count-display" v-if="!loading">
