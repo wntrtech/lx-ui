@@ -153,6 +153,30 @@ Customized value for contrast mode:
 | `--color-tile-hover-text-secondary` | `--contrast-background` |
 
 
+## LxCard
+
+### Layout
+
+| Variable name          | Default value                                 |
+|------------------------|-----------------------------------------------|
+| `--card-min-height`    | 12rem                                         |
+| `--card-border`        | 2px solid var(--color-card-background)        |
+| `--card-border-region` | 2px solid var(--color-card-background-region) |
+| `--card-border-radius` | 0                                             |
+| `--card-padding`       | 1rem                                          |
+| `--card-width`         | auto                                          |
+
+
+### Color
+
+| Variable name                   | Light mode value                  | Dark mode value                   |
+|---------------------------------|-----------------------------------|-----------------------------------|
+| `--color-card-foreground`       | `--color-data`                    | `--color-data`                    |
+| `--color-card-background`       | `--color-region`                  | `--color-region`                  |
+| `--color-card-hover-background` | `--color-region-hover-background` | `--color-region-hover-background` |
+| `--color-card-hover-foreground` | `--color-region-hover-foreground` | `--color-region-hover-foreground` |
+
+
 ## LxBadge
 
 ### Layout

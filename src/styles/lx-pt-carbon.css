@@ -94,6 +94,13 @@
   --selected-border: 2px solid var(--color-selected-border);
   --selected-dropdown-border: 2px solid var(--color-selected-dropdown-border);
 
+  --card-min-height: 12rem;
+  --card-border: 2px solid var(--color-card-background);
+  --card-border-region: 2px solid var(--color-card-background-region);
+  --card-border-radius: 0;
+  --card-padding: 1rem;
+  --card-width: auto;
+
   --tile-width: 20rem;
   --tile-width-x2-size: calc(var(--tile-width) * 2 + 1rem);
   --tile-min-height: 12rem;

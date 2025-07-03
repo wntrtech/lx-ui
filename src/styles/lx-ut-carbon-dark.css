@@ -131,6 +131,12 @@
   --color-selected-dropdown-background: var(--color-selected-background);
   --color-selected-dropdown-border: transparent transparent transparent var(--color-selected-border);
 
+  --color-card-foreground: var(--color-data);
+  --color-card-background: var(--color-region);
+  --color-card-background-region: var(--color-region-2);
+  --color-card-hover-background: var(--color-region-hover-background);
+  --color-card-hover-foreground: var(--color-region-hover-foreground);
+
   --color-tile-foreground: var(--color-data);
   --color-tile-hover-foreground: var(--color-data);
   --color-tile-background: var(--color-list-background);

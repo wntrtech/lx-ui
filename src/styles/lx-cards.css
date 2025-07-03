@@ -1,0 +1,89 @@
+.lx-card-wrapper {
+    grid-row: span 4;
+    width: var(--card-width);
+}
+
+.lx-card-wrapper.lx-card-clickable {
+    cursor: pointer;
+}
+
+.lx-card-wrapper .lx-card {
+    display: grid;
+    min-height: var(--card-min-height);
+    background-color: var(--color-card-background);
+    color: var(--color-card-foreground);
+    border: var(--card-border);
+    border-radius: var(--card-border-radius);
+    will-change: transform;
+    transform-style: preserve-3d;
+    grid-template-areas: 'content';
+    outline: none;
+}
+
+.lx-card-wrapper .lx-card p {
+    color: inherit;
+}
+
+.lx-modal .lx-card-wrapper .lx-card,
+.lx-region .lx-card-wrapper .lx-card,
+.lx-form-grid .lx-card-wrapper .lx-card {
+    background-color: var(--color-card-background-region);
+    border: var(--card-border-region);
+}
+
+.lx-form-grid .lx-row .lx-card-wrapper.lx-card-interactive,
+.lx-form-grid .lx-row .lx-card-wrapper.lx-card-has-button,
+.lx-form-grid .lx-row .lx-card-wrapper.lx-card-clickable {
+    margin: 1.15rem 0.5rem;
+}
+
+.lx-card-wrapper.lx-card-interactive .lx-card {
+    touch-action: none;
+}
+
+.lx-card-wrapper.lx-card-interactive .lx-card,
+.lx-card-wrapper.lx-card-clickable .lx-card {
+    user-select: none;
+}
+
+.lx-card-wrapper.lx-card-has-button .lx-card {
+    grid-template-rows: 1fr auto;
+}
+
+.lx-card-wrapper.lx-card-clickable .lx-card:hover {
+    background-color: var(--color-card-hover-background);
+}
+
+.lx-card-clickable .lx-card:hover {
+    color: var(--color-card-hover-foreground);
+}
+
+.lx-card-wrapper .lx-card .lx-card-face {
+    position: relative;
+    grid-area: content;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    transform: rotateX(0deg);
+    will-change: transform;
+    border-radius: var(--card-border-radius);
+    padding: var(--card-padding);
+    color: inherit;
+}
+
+.lx-card-wrapper .lx-card:focus .lx-card-face {
+    outline: 2px solid var(--color-focus-background);
+    outline-offset: -2px;
+}
+
+.lx-card-wrapper .lx-card .lx-card-face.lx-card-back {
+    transform: rotateY(180deg);
+}
+
+.lx-card-wrapper .lx-card-face > .lx-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+}

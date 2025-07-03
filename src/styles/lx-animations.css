@@ -208,6 +208,7 @@
 .lx:not(.lx-no-animations) .lx-widget,
 .lx:not(.lx-no-animations) .lx-handle,
 .lx:not(.lx-no-animations) .lx-list-item,
+.lx:not(.lx-no-animations) .lx-card-face,
 .lx:not(.lx-no-animations) .lx-list-item-wrapper,
 .lx:not(.lx-no-animations) .lx-list-item-container,
 .lx:not(.lx-no-animations) .lx-tile .lx-description {
@@ -790,4 +791,10 @@
 }
 .lx:not(.lx-no-animations) .lx-layout.lx-layout-default > header .lx-header .lx-additional-nav-menu {
   transition: transform 0.2s ease-out;
+}
+
+/* LxCard */
+
+.lx:not(.lx-no-animations) .lx-card-wrapper .lx-card {
+  transition: transform 0.75s cubic-bezier(.03,.98,.52,.99);
 }

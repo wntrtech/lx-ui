@@ -2192,6 +2192,10 @@
     min-height: auto;
   }
 
+  .lx-dashboard .lx-card {
+    min-height: 100%;
+  }
+
   .lx-dashboard .lx-widget-m-s {
     grid-column: span 1;
     grid-row: span 1;

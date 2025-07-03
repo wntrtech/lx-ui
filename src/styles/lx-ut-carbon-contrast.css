@@ -120,6 +120,8 @@
 
   --region-border: 2px solid var(--color-chrome);
 
+  --card-border: 2px solid var(--color-foreground);
+  
   --list-item-border: 2px solid var(--color-foreground);
 
   --color-tile-hover-text-secondary: var(--contrast-background);
