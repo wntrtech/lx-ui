@@ -407,6 +407,7 @@ function updateDescriptionTabIndexes(items) {
         class="lx-value-picker-tile-wrapper"
         :class="[{ 'lx-invalid': invalid }, { 'lx-tile-custom': variant === 'tiles-custom' }]"
         v-if="variant === 'tiles' || variant === 'tiles-custom'"
+        tabindex='-1'
         role="radiogroup"
         :aria-invalid="invalid"
         :title="tooltip"
@@ -424,7 +425,7 @@ function updateDescriptionTabIndexes(items) {
             }"
             :id="getItemId(item[idAttribute])"
             :group-id="groupId"
-            tabindex="0"
+            :tabindex="disabled ? '-1' : '0'"
             :disabled="disabled"
             @click="disabled ? null : selectSingle(item[idAttribute])"
             role="radio"
@@ -480,7 +481,7 @@ function updateDescriptionTabIndexes(items) {
             class="lx-value-picker-tile"
             :id="getItemId(item[idAttribute])"
             :group-id="groupId"
-            tabindex="0"
+            :tabindex="disabled ? '-1' : '0'"
             :class="{
               'lx-value-picker-tile-selected': itemsModel[item[idAttribute]],
             }"
@@ -547,7 +548,7 @@ function updateDescriptionTabIndexes(items) {
               'lx-value-hidden': isElementHidden(item),
             }"
             :disabled="disabled"
-            tabindex="0"
+            :tabindex="disabled ? '-1' : '0'"
             @click="disabled ? null : selectSingle(item[idAttribute])"
             role="radio"
             :aria-checked="
@@ -582,7 +583,7 @@ function updateDescriptionTabIndexes(items) {
               'lx-value-hidden': isElementHidden(item),
             }"
             :disabled="disabled"
-            tabindex="0"
+            :tabindex="disabled ? '-1' : '0'"
             @click="selectMultiple(item[idAttribute])"
             role="checkbox"
             :aria-checked="itemsModel[item[idAttribute]]"

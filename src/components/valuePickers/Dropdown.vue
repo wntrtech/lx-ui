@@ -566,7 +566,7 @@ const columnReadOnly = computed(() => {
         :id="id"
         ref="container"
         :disabled="disabled"
-        tabindex="0"
+        :tabindex="disabled ? '-1' : '0'"
         role="combobox"
         :aria-invalid="invalid"
         :aria-expanded="menuOpen"

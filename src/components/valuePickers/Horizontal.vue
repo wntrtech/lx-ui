@@ -445,6 +445,7 @@ function focusNext() {
       class="lx-value-picker-horizontal-wrapper"
       :class="[{ 'lx-invalid': invalid }, { 'select-all': hasSelectAll && kind === 'multiple' }]"
       :role="props.kind === 'single' ? 'radiogroup' : 'group'"
+      tabindex='-1'
     >
       <template v-if="readOnly">
         <p v-if="readOnlyRenderType === 'row'" class="lx-data">
@@ -496,7 +497,7 @@ function focusNext() {
               @keydown.left.prevent="focusPrevious()"
               @keydown.up.prevent="focusPrevious()"
               @click="selectSingle(item[idAttribute])"
-              :tabindex="getTabIndex(item[idAttribute])">
+              :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])">
               <LxIcon
                 :id="getItemId(item[idAttribute])"
                 :value="itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null) ? 'selected' : 'unselected'"
@@ -527,7 +528,7 @@ function focusNext() {
               :class="{ 'lx-selected': itemsModel[item[idAttribute]] }"
               @click="selectMultiple(item[idAttribute])"
               @keydown.space.prevent="selectMultiple(item[idAttribute])"
-              :tabindex="0"
+              :tabindex="disabled ? '-1' : '0'"
             >
               <LxIcon
                 :id="getItemId(item[idAttribute])"
