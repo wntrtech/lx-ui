@@ -195,8 +195,12 @@ const formIndex = inject('formIndex', null);
 const requiredTexts = inject('requiredTexts', ref(textsDefault));
 const formOrientation = inject('formOrientation', ref(null));
 
+const sectionPrefix = inject('sectionPrefix');
+
+const sectionUUID = computed(() => `${sectionPrefix}-${props.id}`);
+
 const exactIndex = computed(() => {
-  if (formIndex) return formIndex.value?.find((obj) => obj.id === props.id);
+  if (formIndex) return formIndex.value?.find((obj) => obj.id === sectionUUID.value);
   return [];
 });
 
@@ -235,11 +239,11 @@ const globalEnvironment = useLx().getGlobals()?.environment;
 
 function checkElements() {
   const elemList = document.querySelectorAll(
-    `.lx-form-section#${props.id}>:not(.lx-row, .lx-placeholder)`
+    `.lx-form-section#${sectionUUID.value}>:not(.lx-row, .lx-placeholder)`
   );
   if (elemList?.length > 1 || (elemList?.length === 1 && elemList[0].tagName !== 'HEADER')) {
     lxDevUtils.log(
-      `LxSection '${props.id}' contains elements that are not LxRow or LxPlaceholder.`,
+      `LxSection '${sectionUUID.value}' contains elements that are not LxRow or LxPlaceholder.`,
       globalEnvironment,
       'warn'
     );
@@ -250,7 +254,7 @@ const columnCountComputed = computed(() => {
   let res = props.columnCount;
   if (sectionOrientation.value === 'horizontal' && props.columnCount > 2) {
     lxDevUtils.log(
-      `LxSection '${props.id}' with horizontal orientation should have less than 3 columns.`,
+      `LxSection '${sectionUUID.value}' with horizontal orientation should have less than 3 columns.`,
       globalEnvironment,
       'warn'
     );
@@ -294,7 +298,7 @@ provide('sectionOrientation', sectionOrientation);
     :render-mode="expanderRenderMode"
   >
     <section
-      :id="id"
+      :id="sectionUUID"
       class="lx-form-section"
       :class="[
         { 'lx-form-section-1': columnCountComputed === 1 },
@@ -304,10 +308,10 @@ provide('sectionOrientation', sectionOrientation);
         { 'lx-form-section-8': columnCountComputed === 8 },
       ]"
       :role="ariaRole"
-      :aria-describedby="description ? `${id}-desc` : null"
+      :aria-describedby="description ? `${sectionPrefix}-desc` : null"
     >
       <header v-if="description">
-        <legend :id="`${id}-desc`" class="lx-description">
+        <legend :id="`${sectionUUID}-desc`" class="lx-description">
           {{ description }}
         </legend>
       </header>
@@ -317,7 +321,7 @@ provide('sectionOrientation', sectionOrientation);
 
   <section
     v-else
-    :id="id"
+    :id="sectionUUID"
     class="lx-form-section"
     :class="[
       { 'lx-form-section-1': columnCountComputed === 1 },
@@ -327,16 +331,16 @@ provide('sectionOrientation', sectionOrientation);
       { 'lx-form-section-8': columnCountComputed === 8 },
     ]"
     :role="ariaRole"
-    :aria-labelledby="label ? `${id}-label` : null"
-    :aria-describedby="description ? `${id}-desc` : null"
+    :aria-labelledby="label ? `${sectionUUID}-label` : null"
+    :aria-describedby="description ? `${sectionUUID}-desc` : null"
   >
     <header v-if="label || description || actionDefinitions?.length > 0">
       <div>
         <!-- eslint-disable-next-line vuejs-accessibility/role-has-required-aria-props -->
-        <div :id="`${id}-label`" v-if="label" class="heading-3" role="heading">
+        <div :id="`${sectionUUID}-label`" v-if="label" class="heading-3" role="heading">
           {{ label }}
         </div>
-        <legend :id="`${id}-desc`" v-if="description" class="lx-description">
+        <legend :id="`${sectionUUID}-desc`" v-if="description" class="lx-description">
           {{ description }}
         </legend>
       </div>

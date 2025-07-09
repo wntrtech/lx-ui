@@ -257,18 +257,10 @@ const textsDefault = {
 // Merge texts prop with defaults
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-function normalizeId(id) {
-  if (id === 'default') {
-    return `${props.id}-default`;
-  }
-  return id;
-}
-
 // Scrolls to the element with the specified ID
 function scrollTo(id) {
-  const sectionId = normalizeId(id);
   const elementForm = document.getElementById(props.id);
-  const element = elementForm?.querySelector(`#${sectionId}`);
+  const element = elementForm?.querySelector(`#${id}`);
   const topPosition =
     element && element.getBoundingClientRect()
       ? element.getBoundingClientRect().top + window.scrollY
@@ -343,6 +335,12 @@ const bottomOutOfBounds = computed(() => {
 
 const indexTypeRef = computed(() => props.indexType);
 const indexRef = computed(() => props.index);
+const modifiedIndexRef = computed(() =>
+  indexRef.value.map((item) => ({
+    ...item,
+    id: `${props.id}-${item.id}`,
+  }))
+);
 const textsComp = computed(() => ({
   required: displayTexts.value.required,
   optional: displayTexts.value.optional,
@@ -355,8 +353,9 @@ const formOrientation = computed(() => props.orientation);
 provide('requiredTexts', textsComp);
 provide('formMode', requiredMode);
 provide('formIndexType', indexTypeRef);
-provide('formIndex', indexRef);
+provide('formIndex', modifiedIndexRef);
 provide('formOrientation', formOrientation);
+provide('sectionPrefix', props.id);
 
 const wizardModel = ref(null);
 const itemsCopy = ref([...props.index]);
@@ -479,19 +478,18 @@ const selectedSection = computed(() => {
 });
 
 function findIfSectionSelected(id) {
-  const sectionId = normalizeId(id);
-  const res = selectedSection.value?.find((x) => x === sectionId);
+  const res = selectedSection.value?.find((x) => x === id);
   return res !== undefined;
 }
 
 const selectedTabValue = computed(() => {
-  let res = normalizeId(props.index[0]?.id);
+  let res = props.index[0]?.id;
   props.index?.forEach((o) => {
     if (
       (tabControl.value?.isActiveTab(o.id) && props.indexType === 'tabs') ||
       (wizardModel.value === o.id && props.indexType === 'wizard')
     ) {
-      res = normalizeId(o.id);
+      res = o.id;
     }
   });
   return res;
@@ -512,7 +510,7 @@ function hideAll() {
 
   const selectedForm = document.getElementById(props.id);
 
-  const selectedElement = selectedForm?.querySelector(`#${selectedTabValue.value}`);
+  const selectedElement = selectedForm?.querySelector(`#${props.id}-${selectedTabValue.value}`);
   if (selectedElement) {
     selectedElement.style.display = 'grid';
   }
@@ -588,8 +586,6 @@ function setInitialWizardStates(currentStep) {
   }
 }
 
-const defaultSectionId = computed(() => `${props.id}-default`);
-
 function focusFirstFocusableElementAfter() {
   if (form.value) {
     focusNextFocusableElement(form.value);
@@ -602,7 +598,7 @@ watch(
     nextTick(() => {
       const elementForm = document.getElementById(props.id);
       props.index?.forEach((o) => {
-        const sectionId = normalizeId(o.id);
+        const sectionId = `${props.id}-${o.id}`;
         const el = elementForm?.querySelector(`#${sectionId}`);
         const visible = useElementVisibility(el);
         visibilities.value[sectionId] = visible;
@@ -633,7 +629,7 @@ watch(
       nextTick(() => {
         const elementForm = document.getElementById(props.id);
         props.index?.forEach((o) => {
-          const sectionId = normalizeId(o.id);
+          const sectionId = `${props.id}-${o.id}`;
           const el = elementForm?.querySelector(`#${sectionId}`);
           const visible = useElementVisibility(el);
           visibilities.value[sectionId] = visible;
@@ -650,7 +646,7 @@ watch(
 onMounted(() => {
   const elementForm = document.getElementById(props.id);
   props.index?.forEach((o) => {
-    const sectionId = normalizeId(o.id);
+    const sectionId = `${props.id}-${o.id}`;
     const el = elementForm?.querySelector(`#${sectionId}`);
     const visible = useElementVisibility(el);
     visibilities.value[sectionId] = visible;
@@ -669,7 +665,7 @@ defineExpose({ highlightRow, clearHighlights });
 </script>
 <template>
   <article
-    :id="id"
+    :id="props.id"
     class="lx-form-grid"
     :role="role"
     :class="[{ 'lx-form-grid-stripped': kind === 'stripped' }]"
@@ -686,13 +682,13 @@ defineExpose({ highlightRow, clearHighlights });
     />
 
     <aside
-      v-if="props.indexType === 'default' && index?.length > 0"
+      v-if="props.indexType === 'default' && modifiedIndexRef?.length > 0"
       class="lx-index"
       aria-label="navigation block"
     >
       <ul>
         <li
-          v-for="i in index"
+          v-for="i in modifiedIndexRef"
           :key="i.id"
           ref="indexItems"
           :class="[{ 'lx-selected': findIfSectionSelected(i.id) }]"
@@ -706,7 +702,7 @@ defineExpose({ highlightRow, clearHighlights });
             :class="{ 'lx-invalid': i?.invalid }"
             :title="i.invalid ? i.invalidationMessage : ''"
           >
-            {{ sectionLocations[normalizeId(i.id)] }}
+            {{ sectionLocations[`${props.id}-${i.id}`] }}
             <p>{{ i.name }}</p>
             <LxIcon value="invalid" v-if="i?.invalid" />
           </div>
@@ -715,13 +711,13 @@ defineExpose({ highlightRow, clearHighlights });
     </aside>
 
     <aside
-      v-if="props.indexType === 'default' && index?.length > 0"
+      v-if="props.indexType === 'default' && modifiedIndexRef?.length > 0"
       class="lx-index lx-index-small"
       aria-label="navigation block"
     >
       <ul>
         <li
-          v-for="(i, index) in index"
+          v-for="(i, index) in modifiedIndexRef"
           :key="i.id"
           ref="indexItems"
           :class="[{ 'lx-selected': findIfSectionSelected(i.id) }]"
@@ -736,7 +732,7 @@ defineExpose({ highlightRow, clearHighlights });
             :title="i.invalid ? i.invalidationMessage : ''"
           >
             <div class="inner-text">
-              {{ sectionLocations[normalizeId(i.id)] }}
+              {{ sectionLocations[`${props.id}-${i.id}`] }}
 
               {{ index + 1 }}
               <span class="index-hide-collapsed">&nbsp;{{ i.name }} </span>
@@ -974,7 +970,7 @@ defineExpose({ highlightRow, clearHighlights });
           class="lx-main"
           :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
         >
-          <LxSection :id="defaultSectionId" :column-count="columnCount">
+          <LxSection id="default" :column-count="columnCount">
             <slot />
           </LxSection>
           <slot name="sections" />
@@ -994,7 +990,7 @@ defineExpose({ highlightRow, clearHighlights });
           class="lx-main"
           :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
         >
-          <LxSection :id="defaultSectionId" :column-count="columnCount">
+          <LxSection id="default" :column-count="columnCount">
             <slot />
           </LxSection>
           <slot name="sections" />
@@ -1007,7 +1003,7 @@ defineExpose({ highlightRow, clearHighlights });
       v-else
       :class="[{ 'lx-compact-sections': kind === 'compact' || kind === 'stripped' }]"
     >
-      <LxSection :id="defaultSectionId" :column-count="columnCount">
+      <LxSection id="default" :column-count="columnCount">
         <slot />
       </LxSection>
       <slot name="sections" />

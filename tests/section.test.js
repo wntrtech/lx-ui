@@ -32,7 +32,7 @@ test('LxSection id', () => {
 
   const section = wrapper.findAll('section');
   expect(section[0].attributes('id')).toBe('custom-test-id-default');
-  expect(section[1].attributes('id')).toBe('section');
+  expect(section[1].attributes('id')).toBe('custom-test-id-section');
 });
 
 test('LxSection columnCount', () => {
@@ -103,6 +103,9 @@ test('LxSection label', () => {
   expect(LxSection).toBeTruthy();
 
   wrapper = mount(LxForm, {
+    props: {
+      id: 'custom-test-id',
+    },
     slots: {
       sections: h(LxSection, { id: 'one', label: 'Section one' }),
     },
@@ -113,7 +116,7 @@ test('LxSection label', () => {
     },
   });
 
-  const section = wrapper.find('section#one');
+  const section = wrapper.find('section#custom-test-id-one');
   expect(section.find('.heading-3').text()).toBe('Section one');
 });
 
@@ -121,6 +124,9 @@ test('LxSection description', () => {
   expect(LxSection).toBeTruthy();
 
   wrapper = mount(LxForm, {
+    props: {
+      id: 'custom-test-id',
+    },
     slots: {
       sections: h(LxSection, { id: 'one', description: 'Section one description' }),
     },
@@ -131,7 +137,7 @@ test('LxSection description', () => {
     },
   });
 
-  const section = wrapper.find('section#one');
+  const section = wrapper.find('section#custom-test-id-one');
   expect(section.find('.lx-description').text()).toBe('Section one description');
 });
 
@@ -139,6 +145,9 @@ test('LxSection default slot', () => {
   expect(LxSection).toBeTruthy();
 
   wrapper = mount(LxForm, {
+    props: {
+      id: 'custom-test-id',
+    },
     slots: {
       sections: h(
         LxSection,
@@ -155,13 +164,16 @@ test('LxSection default slot', () => {
     },
   });
 
-  expect(wrapper.find('section#one').text()).toBe('Default slot');
+  expect(wrapper.find('section#custom-test-id-one').text()).toBe('Default slot');
 });
 
 test('LxSection requiredMode "none"', () => {
   expect(LxSection).toBeTruthy();
 
   wrapper = mount(LxForm, {
+    props: {
+      id: 'custom-test-id',
+    },
     slots: {
       sections: h(
         LxSection,
@@ -184,7 +196,7 @@ test('LxSection requiredMode "none"', () => {
     },
   });
 
-  const section = wrapper.find('section#one');
+  const section = wrapper.find('section#custom-test-id-one');
   const rows = section.findAll('.lx-row');
   expect(rows[0].find('label').text()).toBe('One');
   expect(rows[1].find('label').text()).toBe('Two');
@@ -195,6 +207,9 @@ test('LxSection requiredMode "required"', () => {
   expect(LxSection).toBeTruthy();
 
   wrapper = mount(LxForm, {
+    props: {
+      id: 'custom-test-id',
+    },
     slots: {
       sections: h(
         LxSection,
@@ -218,7 +233,7 @@ test('LxSection requiredMode "required"', () => {
     },
   });
 
-  const section = wrapper.find('section#one');
+  const section = wrapper.find('section#custom-test-id-one');
   const rows = section.findAll('.lx-row');
   expect(rows[0].find('label').text()).not.toContain('(obligāts)');
   expect(rows[1].find('label').text()).not.toContain('(obligāts)');
@@ -229,6 +244,9 @@ test('LxSection requiredMode "required-asterisk"', () => {
   expect(LxSection).toBeTruthy();
 
   wrapper = mount(LxForm, {
+    props: {
+      id: 'custom-test-id',
+    },
     slots: {
       sections: h(
         LxSection,
@@ -252,7 +270,7 @@ test('LxSection requiredMode "required-asterisk"', () => {
     },
   });
 
-  const section = wrapper.find('section#one');
+  const section = wrapper.find('section#custom-test-id-one');
   const rows = section.findAll('.lx-row');
   expect(rows[0].find('label').text()).not.toContain('*');
   expect(rows[1].find('label').text()).not.toContain('*');
@@ -263,6 +281,9 @@ test('LxSection requiredMode "optional"', () => {
   expect(LxSection).toBeTruthy();
 
   wrapper = mount(LxForm, {
+    props: {
+      id: 'custom-test-id',
+    },
     slots: {
       sections: h(
         LxSection,
@@ -286,7 +307,7 @@ test('LxSection requiredMode "optional"', () => {
     },
   });
 
-  const section = wrapper.find('section#one');
+  const section = wrapper.find('section#custom-test-id-one');
   const rows = section.findAll('.lx-row');
   expect(rows[0].find('label').text()).not.toContain('(neobligāts)');
   expect(rows[1].find('label').text()).toContain('(neobligāts)');
