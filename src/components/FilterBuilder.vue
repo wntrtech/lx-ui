@@ -291,7 +291,7 @@ function formatValuePicker(value, key) {
     if (value?.enum) {
       return `${value?.lx?.filterDescription || ''}${model.value[key]}`;
     }
-    if (value?.lx?.items) {
+    if (value?.lx?.items && typeof value?.lx?.items !== 'function') {
       return `${value?.lx?.filterDescription || ''}${
         value?.lx?.items?.find((x) => x?.[value?.lx?.idAttribute || 'id'] === model.value[key])?.[
           value?.lx?.nameAttribute || 'name'
@@ -343,6 +343,7 @@ function formatDescription(value, key) {
       }${formatValue(model.value[key], 'bool')}`;
 
     case 'valuePicker':
+    case 'autoComplete':
       if (formatValuePicker(value, key)) {
         return formatValuePicker(value, key);
       }

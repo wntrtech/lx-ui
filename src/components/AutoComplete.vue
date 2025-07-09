@@ -1322,7 +1322,7 @@ onMounted(() => {
                                 />
                               </template>
 
-                              <template v-if="variant === 'state'">
+                              <template v-else-if="variant === 'state'">
                                 <LxStateDisplay
                                   :value="item[idAttribute]"
                                   :dictionary="[
@@ -1336,15 +1336,15 @@ onMounted(() => {
                                 />
                               </template>
 
-                              <template v-if="variant === 'default'">
+                              <template v-else-if="variant === 'custom'">
+                                <slot name="customItem" v-bind="item"></slot>
+                              </template>
+
+                              <template v-else>
                                 <LxSearchableText
                                   :value="item[nameAttribute]"
                                   :search-string="query"
                                 />
-                              </template>
-
-                              <template v-if="variant === 'custom'">
-                                <slot name="customItem" v-bind="item"></slot>
                               </template>
                             </label>
                           </div>
