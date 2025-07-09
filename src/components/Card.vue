@@ -45,10 +45,14 @@ const cardWrapperRef = ref(null);
 const isAnimating = ref(false);
 const hoverTilt = ref(null);
 
+const cardPerspective = '--card-perspective';
+const cardRotateX = '--card-rotate-x';
+const cardRotateY = '--card-rotate-y';
+
 const isFlipped = shallowRef(props.modelValue);
 
 function applyTilt(rotateX = 0, rotateY = 0) {
-  hoverTilt.value = `perspective(${BASE_PERSPECTIVE}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  hoverTilt.value = `${cardPerspective}: ${BASE_PERSPECTIVE}px; ${cardRotateX}: ${rotateX}deg; ${cardRotateY}: ${rotateY}deg`;
 }
 
 function onMouseMove(e) {
@@ -141,7 +145,7 @@ watch(
     <div
       class="lx-card"
       ref="cardRef"
-      :style="{ transform: hoverTilt }"
+      :style="`${hoverTilt}`"
       :tabindex="kind === 'clickable' ? 0 : null"
       @click="flipCard('clickable')"
       @keyup.enter.stop.prevent="flipCard('clickable')"

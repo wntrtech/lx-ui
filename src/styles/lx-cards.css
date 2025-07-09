@@ -10,7 +10,7 @@
 .lx-card-wrapper .lx-card {
     display: grid;
     min-height: var(--card-min-height);
-    background-color: var(--color-card-background);
+    background: var(--color-card-background);
     color: var(--color-card-foreground);
     border: var(--card-border);
     border-radius: var(--card-border-radius);
@@ -18,7 +18,16 @@
     transform-style: preserve-3d;
     grid-template-areas: 'content';
     outline: none;
+    transform: perspective(var(--card-perspective)) rotateX(var(--card-rotate-x)) rotateY(var(--card-rotate-y));
 }
+
+.lx.lx-no-animations .lx-card {
+    transform: none;
+}  
+
+.lx.lx-no-animations .lx-card-flipped .lx-card {
+    transform: rotateY(-180deg);
+} 
 
 .lx-card-wrapper .lx-card p {
     color: inherit;
@@ -27,7 +36,7 @@
 .lx-modal .lx-card-wrapper .lx-card,
 .lx-region .lx-card-wrapper .lx-card,
 .lx-form-grid .lx-card-wrapper .lx-card {
-    background-color: var(--color-card-background-region);
+    background: var(--color-card-background-region);
     border: var(--card-border-region);
 }
 
@@ -51,7 +60,7 @@
 }
 
 .lx-card-wrapper.lx-card-clickable .lx-card:hover {
-    background-color: var(--color-card-hover-background);
+    background: var(--color-card-hover-background);
 }
 
 .lx-card-clickable .lx-card:hover {
