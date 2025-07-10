@@ -2,11 +2,17 @@
 import { test, expect, describe, afterEach } from 'vitest';
 import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
 import { mount } from '@vue/test-utils';
-import { directive } from 'vue3-click-away';
 
 // Simple single tests
 
 let wrapper;
+
+const dummyClickAway = {
+  beforeMount() {},
+  mounted() {},
+  beforeUnmount() {},
+  unmounted() {},
+};
 
 afterEach(() => {
   if (wrapper) {
@@ -24,7 +30,7 @@ test('LxDateTimePicker placeholder', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -42,7 +48,7 @@ test('LxDateTimePicker tooltip', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -71,7 +77,7 @@ describe.each([
       global: {
         stubs: ['router-link'],
         directives: {
-          ClickAway: directive,
+          ClickAway: dummyClickAway,
         },
       },
     });
@@ -107,7 +113,7 @@ test('LxDateTimePicker readOnly', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -130,7 +136,7 @@ test('LxDateTimePicker disabled', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -158,7 +164,7 @@ test('LxDateTimePicker invalid', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -176,7 +182,7 @@ test('LxDateTimePicker modelValue', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -199,7 +205,7 @@ test('LxDateTimePicker texts.todayButton', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -224,7 +230,7 @@ test('LxDateTimePicker texts.clearButton', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -249,7 +255,7 @@ test('LxDateTimePicker texts.clear', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -271,7 +277,7 @@ test('LxDateTimePicker min/max', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -302,7 +308,7 @@ test('LxDateTimePicker min/max outside of today in future', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -326,7 +332,7 @@ test('LxDateTimePicker min/max outside of today in future different year', async
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -354,7 +360,7 @@ test('LxDateTimePicker min/max outside of today in future different year', async
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -381,7 +387,7 @@ test('LxDateTimePicker min outside of today in future, max in not provided', asy
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -412,7 +418,7 @@ test('LxDateTimePicker max outside of today in past, min in not provided', async
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -452,7 +458,7 @@ test('LxDateTimePicker kind: default, variant: picker, specialDates, dictionary'
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -523,7 +529,7 @@ test('LxDateTimepicker locale.locale ENG', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -548,7 +554,7 @@ test('LxDateTimepicker locale.locale LV', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -571,7 +577,7 @@ test('LxDateTimePicker modelValue change', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -592,7 +598,7 @@ test('LxDateTimePicker modelValue change to null', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -611,7 +617,7 @@ test('LxDateTimePicker modelValue change to empty string', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -630,7 +636,7 @@ test('LxDateTimePicker modelValue change to undefined', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -649,7 +655,7 @@ test('LxDateTimePicker modelValue change to undefined and back to date', async (
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -670,7 +676,7 @@ test('LxDateTimePicker modelValue change to null and back to date', async () => 
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -691,7 +697,7 @@ test('LxDateTimePicker modelValue change to empty string and back to empty strin
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -715,7 +721,7 @@ test('LxDateTimePicker kind: date, variant: picker', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -740,7 +746,7 @@ test('LxDateTimePicker date click', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -788,7 +794,7 @@ test('LxDateTimePicker clear click', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -831,7 +837,7 @@ test('LxDateTimePicker today click', async () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });

@@ -2,9 +2,15 @@
 import { test, expect, describe, afterEach } from 'vitest';
 import LxDateTimeRange from '@/components/datePicker/DateTimeRange.vue';
 import { mount } from '@vue/test-utils';
-import { directive } from 'vue3-click-away';
 
 let wrapper;
+
+const dummyClickAway = {
+  beforeMount() {},
+  mounted() {},
+  beforeUnmount() {},
+  unmounted() {},
+};
 
 afterEach(() => {
   if (wrapper) {
@@ -30,7 +36,7 @@ describe.each([
       global: {
         stubs: ['router-link'],
         directives: {
-          ClickAway: directive,
+          ClickAway: dummyClickAway,
         },
       },
     });

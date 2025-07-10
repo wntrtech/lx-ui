@@ -1,8 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue';
-import { useWindowSize } from '@vueuse/core';
+import { useWindowSize, onClickOutside } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
-import LxToggle from '@/components/Toggle.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -447,12 +446,15 @@ function themeDropdownClicked(id, value) {
     themeChange(id);
   }
 }
+const navPanel = ref();
+
+onClickOutside(navPanel, toggleNavBar);
 </script>
 <template>
   <div
+    ref="navPanel"
     class="lx-nav-panel digives-lite-nav-panel"
     :class="{ shown: !navBarSwitch }"
-    v-click-away="toggleNavBar"
     tabindex="-1"
   >
     <ul class="lx-nav-group" v-if="windowSize.width.value > 1000 && hasMegaMenu">

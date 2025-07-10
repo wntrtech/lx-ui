@@ -93,7 +93,6 @@
     "vue-imask": "7.3.0",
     "vue-qrcode-reader": "^5.5.1",
     "vue-router": "^4.2.5",
-    "vue3-click-away": "^1.2.4",
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {

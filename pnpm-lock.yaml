@@ -151,9 +151,6 @@ importers:
       vue-router:
         specifier: ^4.2.5
         version: 4.5.0(vue@3.5.17(typescript@5.3.3))
-      vue3-click-away:
-        specifier: ^1.2.4
-        version: 1.2.4
       vuedraggable:
         specifier: ^4.1.0
         version: 4.1.0(vue@3.5.17(typescript@5.3.3))
@@ -3826,9 +3823,6 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '*'
-
-  vue3-click-away@1.2.4:
-    resolution: {integrity: sha512-O9Z2KlvIhJT8OxaFy04eiZE9rc1Mk/bp+70dLok68ko3Kr8AW5dU+j8avSk4GDQu94FllSr4m5ul4BpzlKOw1A==}
 
   vue@3.5.17:
     resolution: {integrity: sha512-LbHV3xPN9BeljML+Xctq4lbz2lVHCR6DtbpTf5XIO6gugpXUN49j2QQPcMj086r9+AkJ0FfUT8xjulKKBkkr9g==}
@@ -8191,8 +8185,6 @@ snapshots:
       '@vue/language-core': 1.8.27(typescript@5.3.3)
       semver: 7.7.1
       typescript: 5.3.3
-
-  vue3-click-away@1.2.4: {}
 
   vue@3.5.17(typescript@5.3.3):
     dependencies:

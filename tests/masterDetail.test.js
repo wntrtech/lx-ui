@@ -3,9 +3,15 @@ import { test, expect, describe, afterEach } from 'vitest';
 import { mount } from '@vue/test-utils';
 import LxMasterDetail from '@/components/MasterDetail.vue';
 import 'regenerator-runtime/runtime';
-import { directive } from 'vue3-click-away';
 
 let wrapper;
+
+const dummyClickAway = {
+  beforeMount() {},
+  mounted() {},
+  beforeUnmount() {},
+  unmounted() {},
+};
 
 afterEach(() => {
   if (wrapper) {
@@ -24,7 +30,7 @@ describe('LxMasterDetail', () => {
         global: {
           stubs: ['router-link'],
           directives: {
-            ClickAway: directive,
+            ClickAway: dummyClickAway,
           },
         },
       });
@@ -75,7 +81,7 @@ describe('LxMasterDetail', () => {
         global: {
           stubs: ['router-link'],
           directives: {
-            ClickAway: directive,
+            ClickAway: dummyClickAway,
           },
         },
       });
@@ -121,7 +127,7 @@ describe('LxMasterDetail', () => {
         global: {
           stubs: ['router-link'],
           directives: {
-            ClickAway: directive,
+            ClickAway: dummyClickAway,
           },
         },
       });
@@ -144,7 +150,7 @@ describe('LxMasterDetail', () => {
         global: {
           stubs: ['router-link'],
           directives: {
-            ClickAway: directive,
+            ClickAway: dummyClickAway,
           },
         },
       });
@@ -162,7 +168,7 @@ describe('LxMasterDetail', () => {
         global: {
           stubs: ['router-link'],
           directives: {
-            ClickAway: directive,
+            ClickAway: dummyClickAway,
           },
         },
       });
@@ -182,7 +188,7 @@ describe('LxMasterDetail', () => {
         global: {
           stubs: ['router-link'],
           directives: {
-            ClickAway: directive,
+            ClickAway: dummyClickAway,
           },
         },
       });
@@ -205,7 +211,7 @@ describe('LxMasterDetail', () => {
         global: {
           stubs: ['router-link'],
           directives: {
-            ClickAway: directive,
+            ClickAway: dummyClickAway,
           },
         },
       });
@@ -225,7 +231,7 @@ describe('LxMasterDetail', () => {
         global: {
           stubs: ['router-link'],
           directives: {
-            ClickAway: directive,
+            ClickAway: dummyClickAway,
           },
         },
       });

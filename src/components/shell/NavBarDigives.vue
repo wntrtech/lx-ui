@@ -5,7 +5,7 @@ import LxButton from '@/components/Button.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxIcon from '@/components/Icon.vue';
-import { useWindowSize } from '@vueuse/core';
+import { useWindowSize, onClickOutside } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
@@ -163,14 +163,13 @@ function triggerContextPersonMenu() {
     contextMenu.value.openMenu();
   }
 }
+
+const navPanel = ref();
+
+onClickOutside(navPanel, toggleNavBar);
 </script>
 <template>
-  <div
-    class="lx-nav-panel"
-    :class="{ shown: !navBarSwitch }"
-    v-click-away="toggleNavBar"
-    tabindex="-1"
-  >
+  <div ref="navPanel" class="lx-nav-panel" :class="{ shown: !navBarSwitch }" tabindex="-1">
     <ul class="lx-nav-group">
       <li
         v-for="item in navItemsPrimary"

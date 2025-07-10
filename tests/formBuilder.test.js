@@ -3,7 +3,6 @@ import LxForm from '@/components/forms/Form.vue';
 import LxFormBuilder from '@/components/forms/FormBuilder.vue';
 import { mount } from '@vue/test-utils';
 import { h } from 'vue';
-import { directive } from 'vue3-click-away';
 
 let wrapper;
 
@@ -12,6 +11,13 @@ afterEach(() => {
     wrapper.unmount();
   }
 });
+
+const dummyClickAway = {
+  beforeMount() {},
+  mounted() {},
+  beforeUnmount() {},
+  unmounted() {},
+};
 
 test('LxFormBuilder with one row', () => {
   const schema = { type: 'object', properties: { name: { type: 'string' } } };
@@ -155,7 +161,7 @@ test('LxFormBuilder with LxDateTimePicker', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -177,7 +183,7 @@ test('LxFormBuilder with LxDateTimePicker time', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
@@ -199,7 +205,7 @@ test('LxFormBuilder with LxDateTimePicker dateTime', () => {
     global: {
       stubs: ['router-link'],
       directives: {
-        ClickAway: directive,
+        ClickAway: dummyClickAway,
       },
     },
   });
