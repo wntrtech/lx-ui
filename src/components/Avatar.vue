@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue';
-import { generateUUID, generateIntegerHash } from '@/utils/stringUtils';
+import { generateUUID, generateIntegerInRange } from '@/utils/stringUtils';
 import { BACKGROUND_COLORS, SHAPE_COLORS, SHAPES } from '@/utils/decorationUtils';
 
 const props = defineProps({
@@ -20,24 +20,21 @@ const props = defineProps({
 
 const background = computed(() => {
   if (props.value) {
-    const hash = generateIntegerHash(props.value, 1);
-    const index = Math.abs(hash % BACKGROUND_COLORS.length);
+    const index = generateIntegerInRange(props.value, BACKGROUND_COLORS.length, 1);
     return `#${BACKGROUND_COLORS[index]}`;
   }
   return 'transparent';
 });
 const shapeColor = computed(() => {
   if (props.value) {
-    const hash = generateIntegerHash(props.value, 2);
-    const index = Math.abs(hash % SHAPE_COLORS.length);
+    const index = generateIntegerInRange(props.value, SHAPE_COLORS.length, 2);
     return `#${SHAPE_COLORS[index]}`;
   }
   return 'transparent';
 });
 const shape = computed(() => {
   if (props.value) {
-    const hash = generateIntegerHash(props.value, 3);
-    const index = Math.abs(hash % 59);
+    const index = generateIntegerInRange(props.value, 59, 3);
     return SHAPES.icons[index + 1];
   }
   return '';

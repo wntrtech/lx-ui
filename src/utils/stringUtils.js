@@ -40,6 +40,18 @@ export function generateIntegerHash(value, seed = 0) {
   return hash;
 }
 
+/**
+ * Generates an integer for a given string value within a specified range.
+ * @param {string} value - The string value to generate an integer for.
+ * @param {number} range - The upper limit of the output value [0 to range - 1].
+ * @param {number} [seed=0] - The seed value for integer calculation.
+ * @returns {number} - The generated integer.
+ */
+export function generateIntegerInRange(value, range, seed = 0) {
+  const hash = generateIntegerHash(value, seed);
+  return Math.abs(hash % range);
+}
+
 export function isPhone(value) {
   return /^(\+[1-9]\d{0,3}-?)?\d{2,11}$/.test(value);
 }
