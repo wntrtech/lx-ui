@@ -544,6 +544,11 @@
   color: var(--color-data);
 }
 
+.lx-expander[data-disabled] header.lx-head h4+.lx-description,
+.lx-expander[data-disabled] header.lx-head .heading-4+.lx-description {
+  color: var(--color-disabled-foreground);
+}
+
 .lx-expander.lx-region {
   background-color: var(--color-region);
 }

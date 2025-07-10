@@ -629,7 +629,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
     </template>
     <div class="lx-uploaded-file-list-wrapper">
       <LxList
-        v-if="!(advancedFilesData.length === 0 && props.kind === 'single')"
+        v-if="readOnly || !(advancedFilesData.length === 0 && props.kind === 'single')"
         id="FilesList"
         :items="advancedFilesData"
         :has-search="props.hasSearch && props.kind === 'multiple'"
