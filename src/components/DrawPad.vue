@@ -227,6 +227,11 @@ const clearCanvas = () => {
   emits('update:modelValue', null);
 };
 
+const getPng = () => {
+  if (!canvas.value) return '';
+  return canvas.value.toDataURL('image/png');
+};
+
 watch(
   [() => props.modelValue, () => props.width, () => props.height],
   ([newSVGData, newWidth, newHeight]) => {
@@ -287,6 +292,7 @@ watch(
     selectedInstrument.value = newInstrument;
   }
 );
+
 watch(
   () => props.color,
   (newColorLabel) => {
@@ -319,6 +325,8 @@ onUnmounted(() => {
     observer.unobserve(container.value);
   }
 });
+
+defineExpose({ getPng });
 </script>
 
 <template>
