@@ -136,6 +136,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                 :badge="action?.badge"
                 :badge-type="action?.badgeType"
                 :active="action?.active"
+                :href="action?.href"
                 @click="actionClicked(action?.id)"
               />
             </div>
@@ -189,6 +190,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                 :badge="action?.badge"
                 :badge-type="action?.badgeType"
                 :active="action?.active"
+                :href="action?.href"
                 @click="actionClicked(action?.id)"
               />
             </div>

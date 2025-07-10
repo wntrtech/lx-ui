@@ -330,10 +330,6 @@ const touchModeModel = computed({
   },
 });
 
-function triggerThemeMenu(e) {
-  themeMenu.value.preventClose(e);
-}
-
 function triggerShowAllClick() {
   emits('megaMenuShowAllClick');
 }

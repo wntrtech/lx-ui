@@ -268,17 +268,20 @@
   overflow: hidden;
 }
 
-.lx-layout.lx-layout-public .lx-nav-group li:first-of-type {
+.lx-layout.lx-layout-public .lx-nav-group li:first-of-type,
+.lx-layout.lx-layout-public .lx-nav-group li:has(.lx-context-container) {
   flex-grow: 0;
   overflow: visible;
 }
 
-.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-button {
+.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected > .lx-button,
+.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected > .lx-context-container .lx-dropdown-toggler .lx-button {
   color: var(--color-button-nav-selected);
   background-color: var(--color-button-nav-selected-background);
 }
 
-.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-button svg {
+.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected .lx-button svg,
+.lx-layout.lx-layout-public .lx-nav-panel ul li.lx-selected > .lx-context-container .lx-dropdown-toggler .lx-button svg {
   fill: var(--color-button-nav-selected);
 }
 

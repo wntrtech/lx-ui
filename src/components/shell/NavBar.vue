@@ -7,6 +7,7 @@ import LxButton from '@/components/Button.vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
 import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import LxDropDownMenu from '@/components/DropDownMenu.vue';
 
 const props = defineProps({
   navItems: {
@@ -63,6 +64,7 @@ const textsDefault = {
   systemFontsOn: 'Jā',
   touchModeOff: 'Nē',
   touchModeOn: 'Jā',
+  overflowNavItems: 'Atvērt papildu izvēlni',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -83,7 +85,35 @@ const allNavItems = computed(() => {
   if (navItemsSecondary.value) {
     res.push(...navItemsSecondary.value);
   }
+  if (res?.length > 7 && props.layoutMode === 'public') return res?.slice(0, 6);
   return res;
+});
+
+// Public shell navItem logic:
+
+// 1300 / 256 (default shell nav item width) ≈ 5
+// If 5 + 1 (first item is icon-only) navItems, then show all of them
+// If 6 + 1 (first item is icon-only) navItems, then show all of them
+// If 7 or more navItems, then show only 5 + 1 and overflow menu
+
+const overflowNavItems = computed(() => {
+  if (props.layoutMode === 'public') {
+    let res = [];
+    if (navItemsPrimary.value) {
+      res.push(...navItemsPrimary.value);
+    }
+    if (navItemsSecondary.value) {
+      res.push(...navItemsSecondary.value);
+    }
+    res = res?.slice(6);
+    return res?.map((item) => ({
+      id: item?.id,
+      name: item?.label,
+      href: item?.to,
+      active: props.selectedNavItems[item?.to?.name],
+    }));
+  }
+  return [];
 });
 
 const emits = defineEmits([
@@ -208,6 +238,22 @@ function triggerShowAllClick() {
           :tabindex="getTabIndex"
           @click="navClick(item?.id)"
         />
+      </li>
+
+      <li
+        v-if="props.layoutMode === 'public' && overflowNavItems?.length > 1 && width >= 900"
+        class="lx-nav-item-overflow"
+        :class="[
+          { 'lx-selected': overflowNavItems?.some((item) => selectedNavItems[item?.href?.name]) },
+        ]"
+      >
+        <LxDropDownMenu :actionDefinitions="overflowNavItems" @action-click="(id) => navClick(id)">
+          <LxButton
+            icon="overflow-menu"
+            :label="displayTexts?.overflowNavItems"
+            variant="icon-only"
+          />
+        </LxDropDownMenu>
       </li>
 
       <LxHeaderButtons

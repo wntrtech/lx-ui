@@ -222,6 +222,7 @@ const textsDefault = {
   skipLinkLabel: 'Pāriet uz lapas saturu',
   skipLinkTitle: 'Pāriet uz lapas saturu',
   customButton: 'Pielāgojamā poga',
+  overflowNavItems: 'Atvērt papildu izvēlni',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -243,7 +244,7 @@ const selectedLanguageModel = computed({
   },
   set(value) {
     if (!props.selectedLanguage) {
-      emits('language-changed', value);
+      emits('languageChanged', value);
     }
     if (props.languages.find((item) => item.id === value.id)) {
       emits('update:selected-language', value);
