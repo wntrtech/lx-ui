@@ -1,5 +1,11 @@
 # LX/UI Migration Guide
 
+## 1.9 → 1.10
+
+### vue update
+
+We have upgraded the `vue` version used for our library to `3.5.17`. Improved render and reactivity performance. Added minor optimizations and fixed bugs for more stable application behavior.
+
 ## 1.8 → 1.9
 
 ### viewStore goBack value
