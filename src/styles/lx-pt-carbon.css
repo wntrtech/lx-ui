@@ -55,6 +55,7 @@
   --content-padding-s: 2rem;
   --aside-border: 0px solid var(--color-chrome);
   --region-border: none;
+  --region-border-transparent: 2px solid transparent;
   --toggle-border: 2px solid transparent;
   --margin-default: 0.25rem;
   --tab-border: 4px solid transparent;

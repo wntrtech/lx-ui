@@ -38,6 +38,7 @@ const props = defineProps({
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark'] },
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
+  hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
@@ -99,10 +100,13 @@ const textsDefault = {
   themeDark: 'Tumšais režīms',
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
+  transparency: 'Samazināt caurspīdīgumu',
   fonts: 'Iekārtas fonti',
   touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
+  reduceTransparencyOff: 'Nē',
+  reduceTransparencyOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
   touchModeOff: 'Nē',
@@ -134,6 +138,7 @@ const emits = defineEmits([
   'update:selected-alternative-profile',
   'update:theme',
   'update:hasAnimations',
+  'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
@@ -230,6 +235,15 @@ const animationsModel = computed({
   },
   set(value) {
     emits('update:hasAnimations', value);
+  },
+});
+
+const transparencyModel = computed({
+  get() {
+    return props.hasReducedTransparency;
+  },
+  set(value) {
+    emits('update:hasReducedTransparency', value);
   },
 });
 
@@ -512,6 +526,7 @@ onMounted(() => {
         v-model:selectedLanguage="selectedLanguageModel"
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
+        v-model:hasReducedTransparency="transparencyModel"
         v-model:hasDeviceFonts="deviceFontsModel"
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedContextPerson="selectedContextPersonModel"
@@ -580,6 +595,7 @@ onMounted(() => {
       v-model:selectedLanguage="selectedLanguageModel"
       v-model:theme="themeModel"
       v-model:hasAnimations="animationsModel"
+      v-model:hasReducedTransparency="transparencyModel"
       v-model:hasDeviceFonts="deviceFontsModel"
       v-model:isTouchSensitive="touchModeModel"
       v-model:selectedContextPerson="selectedContextPersonModel"

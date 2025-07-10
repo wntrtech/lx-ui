@@ -42,6 +42,7 @@ const props = defineProps({
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
+  hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
@@ -90,10 +91,13 @@ const textsDefault = {
   themeDark: 'Tumšais režīms',
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
+  transparency: 'Samazināt caurspīdīgumu',
   fonts: 'Iekārtas fonti',
   touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
+  reduceTransparencyOff: 'Nē',
+  reduceTransparencyOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
   touchModeOff: 'Nē',
@@ -127,6 +131,7 @@ const emits = defineEmits([
   'alert-item-click',
   'update:theme',
   'update:hasAnimations',
+  'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'update:selected-language',
@@ -173,6 +178,15 @@ const animationsModel = computed({
   },
   set(value) {
     emits('update:hasAnimations', value);
+  },
+});
+
+const transparencyModel = computed({
+  get() {
+    return props.hasReducedTransparency;
+  },
+  set(value) {
+    emits('update:hasReducedTransparency', value);
   },
 });
 
@@ -443,6 +457,18 @@ const themeDisplayItems = computed(() => {
     size: props.isTouchSensitive ? 'm' : 's',
   });
   res.push({
+    id: 'transparency',
+    kind: 'toggle',
+    name: displayTexts.value.transparency,
+    texts: {
+      valueYes: displayTexts.value.reduceTransparencyOn,
+      valueNo: displayTexts.value.reduceTransparencyOff,
+    },
+    group: 'animations-touch',
+    value: transparencyModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
     id: 'fonts',
     kind: 'toggle',
     name: displayTexts.value.fonts,
@@ -464,6 +490,8 @@ function themeDropdownClicked(id, value) {
     touchModeModel.value = value;
   } else if (id === 'fonts') {
     deviceFontsModel.value = value;
+  } else if (id === 'transparency') {
+    transparencyModel.value = value;
   } else {
     themeChange(id);
   }

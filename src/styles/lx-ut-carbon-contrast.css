@@ -119,6 +119,7 @@
   --color-placeholder-disabled: var(--contrast-background);
 
   --region-border: 2px solid var(--color-chrome);
+  --region-border-transparent: var(--region-border);
 
   --card-border: 2px solid var(--color-foreground);
   

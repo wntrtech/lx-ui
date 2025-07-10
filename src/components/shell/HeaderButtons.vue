@@ -5,7 +5,6 @@ import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxMegaMenu from '@/components/shell/MegaMenu.vue';
-import LxToggle from '@/components/Toggle.vue';
 import LxAvatar from '@/components/Avatar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 
@@ -28,6 +27,7 @@ const props = defineProps({
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark'] },
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
+  hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
   hasAlerts: { type: Boolean, default: false },
@@ -77,10 +77,13 @@ const textsDefault = {
   themeDark: 'Tumšais režīms',
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
+  transparency: 'Samazināt caurspīdīgumu',
   fonts: 'Iekārtas fonti',
   touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
+  reduceTransparencyOff: 'Nē',
+  reduceTransparencyOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
   touchModeOff: 'Nē',
@@ -104,6 +107,7 @@ const emits = defineEmits([
   'update:selected-language',
   'update:theme',
   'update:hasAnimations',
+  'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
@@ -330,6 +334,15 @@ const touchModeModel = computed({
   },
 });
 
+const transparencyModel = computed({
+  get() {
+    return props.hasReducedTransparency;
+  },
+  set(value) {
+    emits('update:hasReducedTransparency', value);
+  },
+});
+
 function triggerShowAllClick() {
   emits('megaMenuShowAllClick');
 }
@@ -372,6 +385,18 @@ const themeDisplayItems = computed(() => {
     size: props.isTouchSensitive ? 'm' : 's',
   });
   res.push({
+    id: 'transparency',
+    kind: 'toggle',
+    name: displayTexts.value.transparency,
+    texts: {
+      valueYes: displayTexts.value.reduceTransparencyOn,
+      valueNo: displayTexts.value.reduceTransparencyOff,
+    },
+    group: 'animations-touch',
+    value: transparencyModel.value,
+    size: props.isTouchSensitive ? 'm' : 's',
+  });
+  res.push({
     id: 'fonts',
     kind: 'toggle',
     name: displayTexts.value.fonts,
@@ -393,6 +418,8 @@ function themeDropdownClicked(id, value) {
     touchModeModel.value = value;
   } else if (id === 'fonts') {
     deviceFontsModel.value = value;
+  } else if (id === 'transparency') {
+    transparencyModel.value = value;
   } else {
     themeChange(id);
   }

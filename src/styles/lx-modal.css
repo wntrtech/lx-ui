@@ -37,6 +37,10 @@
   min-width: var(--row-size);
 }
 
+.lx.lx-theme-light .lx-curtain {
+    --color-cover-background : rgba(0, 0, 0, 0.5);
+}
+
 .lx-modal {
   background-color: var(--color-region);
   min-height: var(--row-size);

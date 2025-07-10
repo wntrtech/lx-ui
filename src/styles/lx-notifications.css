@@ -18,15 +18,15 @@
 }
 
 .lx .lx-notifications-list .lx-notification {
-  border: var(--region-border);
+  border: var(--region-border-transparent);
   margin: 0 1rem 0 1rem;
 }
 
-.lx .lx-notifications-list .lx-notification:hover {
+.lx.lx-theme-contrast .lx-notifications-list .lx-notification:hover {
   border-color: var(--color-interactive-hover-background);
 }
 
-.lx .lx-notifications-list .lx-notification:active {
+.lx.lx-theme-contrast .lx-notifications-list .lx-notification:active {
   border-color: var(--color-interactive-active-background);
 }
 

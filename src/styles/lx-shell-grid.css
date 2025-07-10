@@ -315,7 +315,7 @@
   position: absolute;
   top: var(--nav-row-size);
   background-color: var(--color-region);
-  border: var(--region-border);
+  border: var(--region-border-transparent);
   width: var(--aside-size);
   box-shadow: var(--shadow-dropdown);
   height: auto;
@@ -1475,6 +1475,10 @@
   opacity: 0;
   animation: navigating-loader-spinner 0.5s ease-in forwards;
   animation-delay: 1s;
+}
+
+.lx.lx-theme-light .lx-loader-screen {
+    --color-background-overlay: rgba(0, 0, 0, 0.5);
 }
 
 .lx-empty-state-wrapper {

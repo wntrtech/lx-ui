@@ -26,6 +26,7 @@ const props = defineProps({
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
   hasAnimations: { type: Boolean, default: true },
+  hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
   isTouchSensitive: { type: Boolean, default: false },
   hasLanguagePicker: { type: Boolean, default: false },
@@ -121,6 +122,7 @@ const emits = defineEmits([
   'update:selected-language',
   'update:theme',
   'update:hasAnimations',
+  'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'navClick',
@@ -160,6 +162,15 @@ const animationsModel = computed({
   },
   set(value) {
     emits('update:hasAnimations', value);
+  },
+});
+
+const transparencyModel = computed({
+  get() {
+    return props.hasReducedTransparency;
+  },
+  set(value) {
+    emits('update:hasReducedTransparency', value);
   },
 });
 
@@ -267,6 +278,7 @@ function triggerShowAllClick() {
         v-model:selectedLanguage="selectedLanguageModel"
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
+        v-model:hasReducedTransparency="transparencyModel"
         v-model:hasDeviceFonts="deviceFontsModel"
         v-model:isTouchSensitive="touchModeModel"
         :texts="displayTexts"

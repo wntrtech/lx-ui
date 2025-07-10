@@ -3,6 +3,7 @@ import { computed, shallowRef, onMounted, watch, ref, nextTick } from 'vue';
 import {
   useColorMode,
   usePreferredReducedMotion,
+  usePreferredReducedTransparency,
   useMutationObserver,
   useMediaQuery,
 } from '@vueuse/core';
@@ -62,6 +63,7 @@ const emits = defineEmits([
   'update:selected-context-person',
   'update:selected-alternative-profile',
   'update:hasAnimations',
+  'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
   'idleModalPrimary',
@@ -108,6 +110,7 @@ const props = defineProps({
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   hasAnimations: { type: Boolean, default: null },
+  hasReducedTransparency: { type: Boolean, default: null },
   hasDeviceFonts: { type: Boolean, default: null },
   isTouchSensitive: { type: Boolean, default: null },
 
@@ -198,10 +201,13 @@ const textsDefault = {
   themeDark: 'Tumšais režīms',
   themeContrast: 'Kontrastainais režīms',
   animations: 'Samazināt kustības',
+  transparency: 'Samazināt caurspīdīgumu',
   fonts: 'Iekārtas fonti',
   touchMode: 'Skārienjūtīgs režīms',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
+  reduceTransparencyOff: 'Nē',
+  reduceTransparencyOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
   touchModeOff: 'Nē',
@@ -316,6 +322,28 @@ const animationsModel = computed({
   },
 });
 
+const transparencyStorageKey = ref(
+  `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-transparency`
+);
+
+const transparencyToggle = ref(false);
+
+const transparencyModel = computed({
+  get() {
+    if (props.hasReducedTransparency === null) {
+      return transparencyToggle.value;
+    }
+    return props.hasReducedTransparency;
+  },
+  set(value) {
+    if (props.hasThemePicker) {
+      emits('update:hasReducedTransparency', value);
+    }
+    localStorage.setItem(transparencyStorageKey.value, JSON.stringify(value));
+    transparencyToggle.value = value;
+  },
+});
+
 const animationsStorageKey = ref(
   `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-animations`
 );
@@ -344,6 +372,29 @@ watch(
 );
 
 const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
+
+function transparencyModeChange(newValue, providedStorageKey) {
+  const element = document.querySelector('.lx');
+
+  const storageKey = providedStorageKey || transparencyStorageKey.value;
+
+  if (newValue) {
+    if (element) {
+      element.classList.add('lx-no-transparency');
+    }
+  } else if (element) {
+    element.classList.remove('lx-no-transparency');
+  }
+
+  localStorage.setItem(storageKey, JSON.stringify(newValue));
+}
+
+watch(
+  () => transparencyModel.value,
+  (newValue) => {
+    transparencyModeChange(newValue);
+  }
+);
 
 const touchModeToggle = ref(false);
 
@@ -611,6 +662,21 @@ onMounted(() => {
   }
   animationModeChange(animationsModel.value, storageKey);
 
+  const transparencyKey = ref(
+    `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-transparency`
+  );
+
+  if (JSON.parse(localStorage.getItem(transparencyKey.value)) === null) {
+    if (usePreferredReducedTransparency().value === 'no-preference') {
+      transparencyToggle.value = false;
+    } else {
+      transparencyToggle.value = true;
+    }
+  } else if (props.hasReducedTransparency === null) {
+    transparencyModel.value = JSON.parse(localStorage.getItem(transparencyKey.value));
+  }
+  transparencyModeChange(transparencyModel.value, transparencyKey);
+
   const storedValue = localStorage.getItem(deviceFontsStorageKey.value);
   fontToggle.value = storedValue ? JSON.parse(storedValue) : false;
 
@@ -828,6 +894,7 @@ watch(
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           @language-changed="languageChanged"
@@ -973,6 +1040,7 @@ watch(
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :alternative-profiles-info="alternativeProfilesInfo"
@@ -1015,6 +1083,7 @@ watch(
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :selectedNavItems="navItemsSelected"
@@ -1122,6 +1191,7 @@ watch(
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :alternative-profiles-info="alternativeProfilesInfo"
@@ -1170,6 +1240,7 @@ watch(
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :selectedNavItems="navItemsSelected"
@@ -1472,6 +1543,7 @@ watch(
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           @language-changed="languageChanged"
@@ -1550,6 +1622,7 @@ watch(
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           @customButtonClick="emits('customButtonClick')"
@@ -1698,6 +1771,7 @@ watch(
           :selectedNavItems="navItemsSelected"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :hasMegaMenu="hasMegaMenu"
@@ -1781,6 +1855,7 @@ watch(
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:theme="themeModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           @language-changed="languageChanged"
@@ -1813,6 +1888,7 @@ watch(
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
           :nav-items="navItems"

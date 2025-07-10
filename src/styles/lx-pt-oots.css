@@ -21,6 +21,7 @@
     --color-nav-hover-background: #bf4e2c;
     --color-nav-chrome: transparent;
     --region-border: 1px solid var(--color-chrome);
+    --region-border-transparent: var(--region-border);
     --list-item-border: 1px solid var(--color-chrome);
     --input-border: 1px solid var(--color-chrome);
     --color-toggle-background-false: #d0d5dc;

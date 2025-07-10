@@ -1,0 +1,41 @@
+.lx.lx-no-transparency:not(.lx-theme-contrast) .lx-data-grid-wrapper>.lx-grid-header-wrapper:after,
+.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid) > footer.lx-sticky::before,
+.lx.lx-no-transparency .lx-form-grid:not(.lx-theme-contrast .lx-form-grid)>header.lx-sticky:not(.lx-form-with-tabs):not(.lx-form-with-steps):after {
+    background: transparent;
+}
+
+.lx.lx-no-transparency .lx-curtain {
+    --color-cover-background : rgba(0, 0, 0, 0.9);
+}
+
+.lx.lx-no-transparency .lx-loader-screen {
+    --color-background-overlay: rgba(0, 0, 0, 0.9);
+}
+
+.lx.lx-no-transparency .lx-info-wrapper .popper,
+.lx.lx-no-transparency .lx-dropdown-default-content,
+.lx.lx-no-transparency .lx-notifications-list .lx-notification .lx-main,
+.lx.lx-no-transparency .lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
+    --shadow-dropdown: 0px transparent;
+}
+
+.lx.lx-no-transparency dialog.lx-modal::backdrop {
+  background-color: transparent;
+}
+
+.lx.lx-no-transparency ::backdrop,
+.lx.lx-no-transparency.lx-theme-dark ::backdrop
+.lx.lx-no-transparency.lx-theme-contrast ::backdrop {
+  --color-cover-background: transparent;
+}
+
+.lx.lx-no-transparency .lx-notifications-list .lx-notification,
+.lx.lx-no-transparency .lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
+    --region-border-transparent: 2px solid var(--color-chrome);
+}
+
+.lx.lx-no-transparency .lx-layout-default.lx-collapsed .lx-nav-panel:hover,
+.lx.lx-no-transparency .lx-layout-default:not(.lx-collapsed) .lx-nav-panel {
+    --shadow-dropdown: 0px 0px transparent;
+    border-right: 2px solid var(--color-chrome);
+}

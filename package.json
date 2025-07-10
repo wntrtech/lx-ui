@@ -66,7 +66,7 @@
     "@vuelidate/core": "^2.0.3",
     "@vuelidate/validators": "^2.0.4",
     "@vueuse/components": "^10.7.2",
-    "@vueuse/core": "^10.7.2",
+    "@vueuse/core": "^13.4.0",
     "@vueuse/integrations": "^11.0.3",
     "avvvatars-vue": "^1.0.2",
     "axios": "^1.8.2",
