@@ -377,10 +377,10 @@
 .lx-region .lx-data-block-header,
 .lx-region .lx-data-block>.additional-buttons,
 .lx-region .lx-data-block-wrapper.lx-data-block-expander.lx-data-block-disabled>.lx-data-block>.lx-data-block-header:hover,
-.modal-display .lx-data-block-content,
-.modal-display .lx-data-block,
-.modal-display .lx-data-block-header,
-.modal-display .lx-data-block>.additional-buttons,
+.lx-modal .lx-data-block-content,
+.lx-modal .lx-data-block,
+.lx-modal .lx-data-block-header,
+.lx-modal .lx-data-block>.additional-buttons,
 .lx-card .lx-data-block-content,
 .lx-card .lx-data-block,
 .lx-card .lx-data-block-header,
@@ -502,8 +502,9 @@
     color: var(--color-disabled-foreground);
 }
 
-.lx-data-block header.lx-data-block-header:focus {
+.lx-data-block-wrapper.lx-data-block-expander header.lx-data-block-header:focus {
     outline: 2px solid var(--color-focus-background);
+    outline-offset: -2px;
 }
 
 .lx-data-block-disabled .lx-data-block>.additional-buttons>.lx-context-container .lx-toolbar .lx-button-content-wrapper svg{

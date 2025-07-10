@@ -907,10 +907,6 @@
     width: 100%;
   }
 
-  .lx-layout.lx-collapsed>nav {
-    z-index: 300;
-  }
-
   .lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive {
     display: flex;
   }

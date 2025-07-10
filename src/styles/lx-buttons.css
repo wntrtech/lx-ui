@@ -10,8 +10,8 @@
 .lx a:hover {
   color: var(--color-interactive-hover-foreground);
   background-color: var(--color-interactive-hover-background);
-  padding: 0.1em 0.5em;
-  margin: -0.1em -0.5em;
+  padding: 0.1rem 0.05rem;
+  margin: -0.1rem -0.05rem;
 }
 
 .lx-link-wrapper a,
