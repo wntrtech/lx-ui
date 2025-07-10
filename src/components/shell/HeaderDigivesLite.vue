@@ -111,7 +111,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 const windowSize = useWindowSize();
-const themeIcon = ref('theme');
+const themeIcon = ref('theme-alternative');
 const themeMenu = ref();
 
 const navItemsUserMenu = computed(() =>
@@ -211,7 +211,7 @@ const touchModeModel = computed({
 function themeChange(theme) {
   themeIcon.value = themeIcons[theme];
   setTimeout(() => {
-    themeIcon.value = 'theme';
+    themeIcon.value = 'theme-alternative';
   }, 1000);
   themeModel.value = theme;
 }

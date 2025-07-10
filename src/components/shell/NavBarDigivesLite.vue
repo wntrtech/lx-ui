@@ -181,11 +181,7 @@ const touchModeModel = computed({
 
 const themeMenu = ref();
 
-function triggerThemeMenu(e) {
-  themeMenu.value.preventClose(e);
-}
-
-const themeIcon = ref('theme');
+const themeIcon = ref('theme-alternative');
 
 const themeIcons = {
   auto: 'theme-auto',
@@ -204,7 +200,7 @@ const themeNames = computed(() => ({
 function themeChange(theme) {
   themeIcon.value = themeIcons[theme];
   setTimeout(() => {
-    themeIcon.value = 'theme';
+    themeIcon.value = 'theme-alternative';
   }, 1000);
   emits('update:theme', theme);
 }
