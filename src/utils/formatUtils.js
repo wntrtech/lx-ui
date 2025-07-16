@@ -29,7 +29,8 @@ export function formatValueArray(value) {
 }
 
 export function formatValueBool(value, texts = { yes: 'Jā', no: 'Nē' }) {
-  return (value === true ? texts.yes : texts.no) || EMPTY_VALUE;
+  if (value === null || value === undefined) return EMPTY_VALUE;
+  return value === true ? texts.yes : texts.no;
 }
 
 export function formatUrl(value) {

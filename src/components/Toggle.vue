@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, onMounted, useSlots, inject } from 'vue';
+import { computed, ref, watch, onMounted, useSlots, inject, nextTick } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import { formatValueBool } from '@/utils/formatUtils';
@@ -36,6 +36,8 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const input = ref({});
 
 function checkModelState() {
+  if (!input.value) return;
+
   if (model.value === null) {
     input.value.indeterminate = true;
     input.value.checked = false;
@@ -72,6 +74,15 @@ function toggleValue() {
 watch(model, () => {
   checkModelState();
 });
+
+watch(
+  () => props.readOnly,
+  () => {
+    nextTick(() => {
+      checkModelState();
+    });
+  }
+);
 
 const rowId = inject('rowId', ref(null));
 const labelledBy = computed(() => props.labelId || rowId.value);
