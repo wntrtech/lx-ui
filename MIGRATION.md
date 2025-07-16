@@ -6,6 +6,12 @@
 
 We have upgraded the `vue` version used for our library to `3.5.17`. Improved render and reactivity performance. Added minor optimizations and fixed bugs for more stable application behavior.
 
+### removed vue3-click-away
+
+We no longer use the `vue3-click-away` library
+instead, we use the built-in `onClickOutside` from `@vueuse/core`.
+In your projects, if you are not using `vue3-click-away`, it is recommended to remove its import from `main.js`.
+
 ## 1.8 → 1.9
 
 ### viewStore goBack value
