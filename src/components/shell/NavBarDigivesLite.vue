@@ -636,9 +636,8 @@ onClickOutside(navPanel, toggleNavBar);
       </li>
     </ul>
     <ul class="lx-nav-group">
-      <li>
+      <li class="lx-help-button" v-if="props.hasHelp">
         <LxButton
-          v-if="props.hasHelp"
           customClass="lx-header-button"
           kind="ghost"
           icon="help"
@@ -687,7 +686,7 @@ onClickOutside(navPanel, toggleNavBar);
           </template>
         </LxDropDownMenu>
       </li>
-      <li v-if="hasLanguagePicker">
+      <li v-if="hasLanguagePicker" class="lx-language-menu">
         <LxDropDownMenu>
           <LxButton
             customClass="lx-header-button"
@@ -854,9 +853,8 @@ onClickOutside(navPanel, toggleNavBar);
           @click="alertsClicked"
         />
       </li>
-      <li>
+      <li class="lx-logout-button" v-if="userInfo">
         <LxButton
-          v-if="userInfo"
           kind="ghost"
           icon="logout"
           :label="displayTexts.logOut"

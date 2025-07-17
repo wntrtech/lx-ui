@@ -10,7 +10,6 @@ import LxIcon from '@/components/Icon.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
-import LxToggle from '@/components/Toggle.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
@@ -543,13 +542,7 @@ function themeDropdownClicked(id, value) {
       </div>
     </div>
 
-    <div
-      class="lx-digives-header-row end-section"
-      v-if="
-        (contextPersonsInfo && contextPersonsInfo.length > 0) ||
-        (selectedContextPerson && headerNavReadOnly)
-      "
-    >
+    <div class="lx-digives-header-row end-section">
       <div class="shell-buttons help" v-if="hasHelp">
         <LxButton
           customClass="lx-header-button"

@@ -53,10 +53,11 @@
   font-weight: var(--font-weight-bold);
   font-size: 1.5rem;
   line-height: 1.1em;
-  margin-top: 0.25rem;
-  margin-bottom: 0.1rem;
+  padding-top: .25rem;
+  padding-bottom: .1rem;
   max-height: 2.3em;
   overflow: hidden;
+
 }
 
 .header-system-title>.header-system-subheader {
@@ -64,6 +65,7 @@
   line-height: 1.1em;
   max-height: 2.3em;
   overflow: hidden;
+    padding-bottom: 2px;
 }
 
 .header-profile-section {
@@ -813,6 +815,12 @@
     padding-bottom: 0;
 }
 
+.lx-layout.lx-layout-digives-lite .popper-wrapper .lx-dropdown-toggler .lx-user-button>.lx-user-info>p.lx-secondary {
+  display: block;
+  width: 100%;
+}
+
+
 @media (max-width: 1800px) {
   .lx-layout.lx-layout-default.lx-layout-digives-lite.lx-collapsed-null nav {
     display: none;
@@ -1006,4 +1014,44 @@
         width: 3rem;
         height: 3rem;
     }
+}
+
+.lx-layout-digives-lite  .lx-user-menu .lx-region.user-menu-context {
+  border-bottom: none;
+}
+
+.lx-layout-digives-lite .lx-user-menu .lx-dropdown-panel ul.lx-group>li:first-child {
+  border-top: 1px solid var(--color-chrome);
+}
+
+@media (max-width: 1260px) {
+  .lx-header-digives-lite {
+    grid-template-columns: 33rem 1fr;
+  }
+  .end-section .lx-user-menu, .end-section .lx-user-menu .popper-wrapper {
+    max-width: 14rem;
+  }
+}
+
+.lx-layout.lx-layout-default.lx-layout-digives-lite > nav .lx-nav-panel.lx-responsive .lx-theme-picker .popper .lx-dropdown-panel button.lx-button,
+.lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-language-menu .popper .lx-dropdown-panel button.lx-button {
+  background-color: transparent;
+}
+.lx-layout.lx-layout-default.lx-layout-digives-lite > nav .lx-nav-panel.lx-responsive .lx-theme-picker .popper .lx-dropdown-panel button.lx-button:hover svg {
+ fill: var(--color-button-nav-icon-hover);
+}
+.lx-layout.lx-layout-default.lx-layout-digives-lite > nav .lx-nav-panel.lx-responsive .lx-theme-picker .popper .lx-dropdown-panel button.lx-button.lx-active,
+.lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-language-menu .popper .lx-dropdown-panel button.lx-button.lx-active  {
+background-color: var(--color-selected-dropdown-background);
+}
+
+
+.lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-theme-picker .lx-toolbar>button.lx-button:hover,
+.lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-alert-menu .lx-dropdown-toggler>button.lx-button:hover,
+.lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-theme-picker .popper .lx-dropdown-panel button.lx-button:hover,
+.lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-language-menu .lx-dropdown-toggler>button.lx-button:hover,
+.lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-language-menu .popper .lx-dropdown-panel button.lx-button:hover,
+.lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-shell-custom-button>button.lx-button:hover,
+.lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-help-button>button.lx-button:hover {
+  background-color: var(--color-button-nav-hover-background);
 }
