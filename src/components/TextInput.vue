@@ -484,24 +484,20 @@ defineExpose({ focus });
 </script>
 <template>
   <div class="lx-field-wrapper">
-    <p
-      v-if="readOnly && props.kind !== 'password' && !isReadOnlyEmail()"
-      class="lx-data"
-      :aria-labelledby="labelledBy"
-    >
-      {{ forcedMaskedValue }}
-      <span
-        v-if="
-          model === null ||
-          model === undefined ||
-          (typeof model === 'string' && model?.trim() === '')
-        "
-        >—</span
-      >
+    <p v-if="readOnly && props.kind !== 'password'" class="lx-data" :aria-labelledby="labelledBy">
+      <a v-if="isReadOnlyEmail()" class="lx-text-input-link" :href="sanitizedEmail">{{ model }}</a>
+      <template v-else>
+        {{ forcedMaskedValue }}
+        <span
+          v-if="
+            model === null ||
+            model === undefined ||
+            (typeof model === 'string' && model?.trim() === '')
+          "
+          >—</span
+        >
+      </template>
     </p>
-
-    <a v-if="isReadOnlyEmail()" :href="sanitizedEmail" :aria-labelledby="labelledBy">{{ model }}</a>
-
     <div
       class="lx-text-input-wrapper lx-input-wrapper"
       :class="[
