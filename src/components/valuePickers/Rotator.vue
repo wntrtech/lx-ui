@@ -15,7 +15,7 @@ const props = defineProps({
   descriptionAttribute: { type: String, default: 'description' },
   groupId: { type: String, default: null },
   variant: { type: String, default: 'tile' },
-  kind: { type: String, default: 'single' }, // Only single is supported
+  kind: { type: String, default: 'single' }, // 'single' || 'multiple'
   nullable: { type: Boolean, default: false },
   placeholder: { type: String, default: null },
   hasSearch: { type: Boolean, default: false },
@@ -77,7 +77,6 @@ function activate() {
   if (props.nullable) {
     itemsModel.value[notSelectedId] = !model.value || model.value.length === 0;
   }
-
   if (Array.isArray(model.value)) {
     model.value?.forEach((id) => {
       if (id) {
@@ -199,8 +198,15 @@ const columnReadOnly = computed(() =>
 );
 
 onMounted(() => {
+  let selectedId;
+  if (Array.isArray(model.value) && model.value.length > 0) {
+    [selectedId] = model.value;
+  } else {
+    selectedId = model.value;
+  }
+
   const initialIndex = rotatorItemsArray.value?.findIndex(
-    (item) => item[props.idAttribute] === model.value
+    (item) => item[props.idAttribute] === selectedId
   );
   currentIndex.value = initialIndex >= 0 ? initialIndex : 0;
 });
@@ -237,6 +243,19 @@ const queueItems = computed(() => {
 
 function getItemId(id) {
   return `${props.id}-item-${id}`;
+}
+
+function isActive(item) {
+  const id = item[props.idAttribute];
+
+  if (props.kind === 'multiple') {
+    if (!Array.isArray(model.value)) {
+      return model.value === id;
+    }
+    return model.value.includes(id);
+  }
+
+  return model.value[0] === id;
 }
 
 // TODO: fix transition bug when there is 3 items, fix also transition bugs with nullable
@@ -307,7 +326,7 @@ function getItemId(id) {
             :key="item?.id"
             :label="item?.name"
             kind="ghost"
-            :active="model === item?.id ? true : false"
+            :active="isActive(item)"
             @click="selectSingle(item?.id)"
           />
         </template>
