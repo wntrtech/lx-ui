@@ -1478,7 +1478,7 @@
 }
 
 .lx.lx-theme-light .lx-loader-screen {
-    --color-background-overlay: rgba(0, 0, 0, 0.5);
+    --color-background-overlay: rgba(238, 238, 238, 0.5);
 }
 
 .lx-empty-state-wrapper {

@@ -8,8 +8,12 @@
     --color-cover-background : rgba(0, 0, 0, 0.9);
 }
 
-.lx.lx-no-transparency .lx-loader-screen {
-    --color-background-overlay: rgba(0, 0, 0, 0.9);
+.lx.lx-theme-light.lx-no-transparency .lx-loader-screen {
+    --color-background-overlay: rgba(238, 238, 238, 0.9);
+}
+
+.lx.lx-theme-dark.lx-no-transparency .lx-loader-screen {
+    --color-background-overlay: rgba(24, 24, 26, 0.9);
 }
 
 .lx.lx-no-transparency .lx-info-wrapper .popper,
@@ -17,6 +21,10 @@
 .lx.lx-no-transparency .lx-notifications-list .lx-notification .lx-main,
 .lx.lx-no-transparency .lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
     --shadow-dropdown: 0px transparent;
+}
+
+.lx.lx-no-transparency .lx-dropdown-default-content {
+    --region-border: var(--region-border-transparent);
 }
 
 .lx.lx-no-transparency dialog.lx-modal::backdrop {
@@ -29,6 +37,7 @@
   --color-cover-background: transparent;
 }
 
+.lx.lx-no-transparency .lx-dropdown-default-content,
 .lx.lx-no-transparency .lx-notifications-list .lx-notification,
 .lx.lx-no-transparency .lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
     --region-border-transparent: 2px solid var(--color-chrome);
