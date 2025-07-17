@@ -1,5 +1,5 @@
 .lx {
-  --color-brand: #9f1853;
+  --color-brand: #a01853;
   --color-brand-secondary: #f58828;
   --color-interactive-background: #9f1853;
   --color-interactive-hover-background: #b11d63;
@@ -29,6 +29,18 @@
 
   --color-button-nav-selected-background: #fae5d7;
 }
+.lx.lx-theme-dark {
+	--color-brand: #cb728c;
+	--color-interactive-background: #cb728c;
+	--color-interactive-hover-background: #9f1853;
+	--color-interactive-secondary-background: #3c3e44;
+	--color-highlight: #291e1f;
+	--color-background: #131516;
+	--color-region: #212123;
+	--color-region-2: #151719;
+	--color-region-hover: #2f2f31;
+	--color-button-nav-selected-background: var(--color-highlight);
+}
 .lx .lx-notifications-list .lx-notification p.lx-title {
   font-weight: var(--font-weight-data) !important;
 }
@@ -40,3 +52,4 @@
   width: 1.25rem;
   height: 1.25rem;
 }
+
