@@ -252,6 +252,7 @@ provide('rowId', idComputed);
             size="s"
             :modelValue="actionDefinitions?.[0]?.value || false"
             :tooltip="actionDefinitions?.[0].name"
+            :disabled="actionDefinitions?.[0]?.disabled"
             @update:modelValue="
               (newValue) => {
                 actionClicked(id, actionDefinitions?.[0].id, newValue);
@@ -322,8 +323,9 @@ provide('rowId', idComputed);
           <LxToggle
             v-if="actionDefinitions?.[0]?.kind === 'toggle'"
             size="s"
-            :modelValue="actionDefinitions[0].value || false"
+            :modelValue="actionDefinitions?.[0].value || false"
             :tooltip="actionDefinitions?.[0].name"
+            :disabled="actionDefinitions?.[0]?.disabled"
             @update:modelValue="
               (newValue) => {
                 actionClicked(id, actionDefinitions?.[0].id, newValue);
