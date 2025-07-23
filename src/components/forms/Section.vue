@@ -204,7 +204,20 @@ const exactIndex = computed(() => {
   return [];
 });
 
-const expandedValue = shallowRef(exactIndex.value?.expanded);
+const expandedValue = computed({
+  get() {
+    if (formIndex) return formIndex.value?.find((obj) => obj.id === sectionUUID.value)?.expanded;
+    return false;
+  },
+  set(value) {
+    formIndex.value = formIndex.value?.map((obj) => {
+      if (obj.id === sectionUUID.value) {
+        return { ...obj, expanded: value };
+      }
+      return obj;
+    });
+  },
+});
 
 const requiredModeValue = computed(() => {
   if (props.requiredMode !== 'none') {

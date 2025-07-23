@@ -31,7 +31,7 @@ function calculateOffset(el, considerRow = true) {
 }
 
 const slots = useSlots();
-const emits = defineEmits(['buttonClick']);
+const emits = defineEmits(['buttonClick', 'update:index']);
 
 /**
  * The Form component represents a form with various sections and rows.
@@ -334,13 +334,17 @@ const bottomOutOfBounds = computed(() => {
 });
 
 const indexTypeRef = computed(() => props.indexType);
-const indexRef = computed(() => props.index);
-const modifiedIndexRef = computed(() =>
-  indexRef.value.map((item) => ({
-    ...item,
-    id: `${props.id}-${item.id}`,
-  }))
-);
+const modifiedIndexRef = computed({
+  get() {
+    return props.index?.map((item) => ({
+      ...item,
+      id: item.id?.startsWith(`${props.id}-`) ? item.id : `${props.id}-${item.id}`,
+    }));
+  },
+  set(value) {
+    emits('update:index', value);
+  },
+});
 const textsComp = computed(() => ({
   required: displayTexts.value.required,
   optional: displayTexts.value.optional,
