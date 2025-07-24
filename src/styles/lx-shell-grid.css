@@ -1026,6 +1026,7 @@
 
 .lx-layout .lx-alert-menu ol {
   padding-inline-start: 0;
+  list-style: none;
   gap: var(--gap-buttons);
   display: grid;
 }

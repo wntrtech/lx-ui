@@ -134,3 +134,110 @@ p.lx-subtitle {
     width: 100%;
   }
 }
+/* LxInfoBox styles */
+
+
+.lx-info-box-button>.lx-info-box-icon {
+  margin-top: 0;
+  margin-right: .5rem;
+  min-width: 1.5rem;
+  min-height: 1.5rem;
+}
+
+.lx-info-box-button {
+  display: flex;
+  padding: .5rem;
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px solid var(--color-chrome);
+  background-color: var(--color-region);
+}
+
+.lx-info-box-button.lx-alert-warning>.lx-info-box-icon>svg {
+  fill: var(--color-notification-warning-foreground);
+}
+
+.lx-info-box-button.lx-alert-error>.lx-info-box-icon>svg {
+  fill: var(--color-notification-error-foreground);
+}
+
+.lx-info-box-button.lx-alert-success>.lx-info-box-icon>svg {
+  fill: var(--color-notification-success-foreground);
+}
+
+.lx-info-box-button .lx-alert-header {
+  font-weight: 700;
+  color: var(--color-data);
+  margin-bottom: 0.25rem;
+}
+
+.lx-info-box-button .lx-alert-description {
+  color: var(--color-data);
+  font-size: var(--small-font-size);
+  margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
+  line-height: 1.1em;
+}
+
+.lx-info-box-button.lx-alert-warning {
+  border-color: var(--color-notification-warning-foreground);
+  background-color: var(--color-notification-warning-background);
+}
+
+.lx-info-box-button.lx-alert-error {
+  border-color: var(--color-notification-error-foreground);
+  background-color: var(--color-notification-error-background);
+}
+
+.lx-info-box-button.lx-alert-success {
+  border-color: var(--color-notification-success-foreground);
+  background-color: var(--color-notification-success-background);
+}
+
+.lx-info-box-action-icon {
+  margin-left: auto;
+  margin-bottom: auto;
+}
+
+.lx-info-box-action-icon .lx-button svg {
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
+}
+
+.lx-info-box-button .lx-alert-data {
+  overflow: hidden;
+}
+
+.lx .lx-layout .lx-info-box-button .lx-alert-data .lx-alert-header .lx-data {
+  overflow: hidden;
+  white-space: normal;
+  text-overflow: ellipsis;
+  word-break: normal;
+  overflow-wrap: normal;
+  line-height: 1.1em;
+}
+
+.lx-info-box-button .lx-alert-description .lx-description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lx-info-box-button.lx-alert-clickable {
+  cursor: pointer;
+}
+
+.lx-info-box-button.lx-alert-clickable:hover {
+  border-color: var(--color-interactive-hover-background);
+}
+
+.lx-info-box-button.lx-alert-clickable:focus {
+  outline: 2px solid var(--color-focus-background);
+}
+
+.lx-info-box-additional-buttons-hidden {
+  visibility: hidden;
+}
+
+.lx-info-box-spacer {
+  margin-left: .5rem;
+}

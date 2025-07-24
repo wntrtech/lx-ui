@@ -34,6 +34,7 @@ export { default as LxFlag } from '@/components/Flag.vue';
 export { default as LxFormBuilder } from '@/components/forms/FormBuilder.vue';
 export { default as LxIcon } from '@/components/Icon.vue';
 export { default as LxIllustration } from '@/components/Illustration.vue';
+export { default as LxInfoBox } from '@/components/InfoBox.vue';
 export { default as LxInfoWrapper } from '@/components/InfoWrapper.vue';
 export { default as LxLink } from '@/components/Link.vue';
 export { default as LxList } from '@/components/list/List.vue';

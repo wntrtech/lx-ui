@@ -6,6 +6,8 @@ import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxToggle from '@/components/Toggle.vue';
+import LxEmptyState from '@/components/EmptyState.vue';
+import LxInfoBox from '@/components/InfoBox.vue';
 import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import { shortenUserName } from '@/utils/stringUtils';
 import LxAvatar from '@/components/Avatar.vue';
@@ -580,35 +582,19 @@ const languagesDisplayItems = computed(() =>
                     <li
                       :aria-labelledby="`alert-${item?.id}-name`"
                       :aria-describedby="`alert-${item?.id}-desc`"
-                      class="lx-alert-button"
-                      :tabindex="item?.clickable ? 0 : null"
-                      :role="item?.clickable ? 'button' : null"
-                      :class="[
-                        { 'lx-alert-success': item?.level === 'success' },
-                        { 'lx-alert-info': item?.level === 'info' },
-                        { 'lx-alert-warning': item?.level === 'warning' },
-                        { 'lx-alert-error': item?.level === 'error' },
-                        { 'lx-alert-clickable': item?.clickable },
-                      ]"
                       v-for="item in alerts"
                       :key="item?.id"
                       @click="alertItemClicked(item)"
-                      @keyup.enter="alertItemClicked(item)"
-                      @keyup.space="alertItemClicked(item)"
+                      @keyup.enter.prevent="alertItemClicked(item)"
+                      @keyup.space.prevent="alertItemClicked(item)"
                     >
-                      <div class="lx-icon">
-                        <LxIcon :value="pickIcon(item.level)" />
-                      </div>
-                      <div class="lx-alert-data">
-                        <div class="lx-alert-header">
-                          <p class="lx-data" :id="`alert-${item?.id}-name`">{{ item?.name }}</p>
-                        </div>
-                        <div class="lx-alert-description">
-                          <p class="lx-description" :id="`alert-${item?.id}-desc`">
-                            {{ item?.description }}
-                          </p>
-                        </div>
-                      </div>
+                      <LxInfoBox
+                        :variant="item?.level"
+                        :label="item?.name"
+                        :description="item?.description"
+                        :id="item?.id"
+                        :kind="item?.clickable ? 'clickable' : 'default'"
+                      />
                     </li>
                   </ol>
                   <LxEmptyState v-else :label="displayTexts.noAlerts"></LxEmptyState>
@@ -629,35 +615,19 @@ const languagesDisplayItems = computed(() =>
                     <li
                       :aria-labelledby="`alert-${item?.id}-name`"
                       :aria-describedby="`alert-${item?.id}-desc`"
-                      class="lx-alert-button"
-                      :tabindex="item?.clickable ? 0 : null"
-                      :role="item?.clickable ? 'button' : null"
-                      :class="[
-                        { 'lx-alert-success': item?.level === 'success' },
-                        { 'lx-alert-info': item?.level === 'info' },
-                        { 'lx-alert-warning': item?.level === 'warning' },
-                        { 'lx-alert-error': item?.level === 'error' },
-                        { 'lx-alert-clickable': item?.clickable },
-                      ]"
                       v-for="item in alerts"
                       :key="item?.id"
                       @click="alertItemClicked(item)"
-                      @keyup.enter="alertItemClicked(item)"
-                      @keyup.space="alertItemClicked(item)"
+                      @keyup.enter.prevent="alertItemClicked(item)"
+                      @keyup.space.prevent="alertItemClicked(item)"
                     >
-                      <div class="lx-icon">
-                        <LxIcon :value="pickIcon(item.level)" />
-                      </div>
-                      <div class="lx-alert-data">
-                        <div class="lx-alert-header">
-                          <p class="lx-data" :id="`alert-${item?.id}-name`">{{ item?.name }}</p>
-                        </div>
-                        <div class="lx-alert-description">
-                          <p class="lx-description" :id="`alert-${item?.id}-desc`">
-                            {{ item?.description }}
-                          </p>
-                        </div>
-                      </div>
+                      <LxInfoBox
+                        :variant="item?.level"
+                        :label="item?.name"
+                        :description="item?.description"
+                        :id="item?.id"
+                        :kind="item?.clickable ? 'clickable' : 'default'"
+                      />
                     </li>
                   </ol>
                   <LxEmptyState v-else :label="displayTexts.noAlerts"></LxEmptyState>

@@ -29,6 +29,7 @@ import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import LxAlertWidget from '@/components/AlertWidget.vue';
 import LxMainHeaderDigimaks from '@/components/shell/HeaderDigimaks.vue';
 import LxRow from '@/components/forms/Row.vue';
+import LxInfoBox from '@/components/InfoBox.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
@@ -1430,30 +1431,31 @@ watch(
             v-for="alert in alerts"
             :key="alert.id"
             class="lx-digives-alert"
-            :class="[
-              { 'lx-alert-success': alert?.level === 'success' },
-              { 'lx-alert-warning': alert?.level === 'warning' },
-              { 'lx-alert-error': alert?.level === 'error' },
-              { 'lx-clickable': alert?.clickable },
-            ]"
             :role="alert?.level === 'error' || alert?.level === 'warning' ? 'alert' : 'status'"
-            aria-live="polite"
-            @click="alertItemClicked(alert)"
-            @keydown.space.prevent="alertItemClicked(alert)"
-            @keydown.enter.prevent="alertItemClicked(alert)"
-            :aria-label="alert?.name"
-            :aria-labelledby="alert?.name ? `${alert.id}-label` : null"
-            :aria-describedby="alert?.description ? `${alert.id}-desc` : null"
-            :tabindex="alert?.clickable ? 0 : null"
+            @click="alert?.clickable && alertItemClicked(alert)"
+            @keydown.space.prevent="alert?.clickable && alertItemClicked(alert)"
+            @keydown.enter.prevent="alert?.clickable && alertItemClicked(alert)"
           >
-            <LxIcon
-              :value="pickIcon(alert.level, 'digives')"
-              :meaningful="true"
-              :title="pickSvgTitle(alert.level)"
-              :icon-set="alert.iconSet || 'cds'"
+            <LxInfoBox
+              :variant="alert?.level"
+              :label="alert?.name"
+              :description="alert?.description"
+              :id="alert?.id"
+              :kind="alert?.clickable ? 'clickable' : 'default'"
+              @actionClick="() => alertItemClicked(alert)"
+              :actionDefinitions="
+                alert?.clickable
+                  ? [
+                      {
+                        id: 'open',
+                        icon: 'open',
+                        title: displayTexts?.open,
+                        destructive: false,
+                      },
+                    ]
+                  : []
+              "
             />
-            <p class="lx-primary">{{ alert?.name }}</p>
-            <p class="lx-secondary" v-if="alert?.description">{{ alert?.description }}</p>
           </li>
         </ul>
         <LxPageHeader
@@ -1654,32 +1656,27 @@ watch(
             v-for="alert in alerts"
             :key="alert.id"
             class="lx-digives-alert"
-            :class="[
-              { 'lx-alert-success': alert?.level === 'success' },
-              { 'lx-alert-warning': alert?.level === 'warning' },
-              { 'lx-alert-error': alert?.level === 'error' },
-            ]"
             :role="alert?.level === 'error' || alert?.level === 'warning' ? 'alert' : 'status'"
-            aria-live="polite"
-            :aria-label="alert?.name"
-            :aria-labelledby="alert?.name ? `${alert.id}-label` : null"
-            :aria-describedby="alert?.description ? `${alert.id}-desc` : null"
           >
-            <LxIcon
-              :value="pickIcon(alert.level, 'digives')"
-              :meaningful="true"
-              :title="pickSvgTitle(alert.level)"
-              :icon-set="alert.iconSet || 'cds'"
-            />
-            <p class="lx-primary">{{ alert?.name }}</p>
-            <p class="lx-secondary" v-if="alert?.description">{{ alert?.description }}</p>
-            <LxButton
-              v-if="alert?.clickable"
-              icon="close"
-              kind="ghost"
-              variant="icon-only"
-              :label="displayTexts.close"
-              @click="alertItemClicked(alert)"
+            <LxInfoBox
+              :variant="alert?.level"
+              :label="alert?.name"
+              :description="alert?.description"
+              :id="alert?.id"
+              :kind="alert?.clickable ? 'button' : 'default'"
+              :actionDefinitions="
+                alert?.clickable
+                  ? [
+                      {
+                        id: 'close',
+                        icon: 'close',
+                        title: displayTexts?.close,
+                        destructive: false,
+                      },
+                    ]
+                  : []
+              "
+              @actionClick="() => alertItemClicked(alert)"
             />
           </li>
         </ul>

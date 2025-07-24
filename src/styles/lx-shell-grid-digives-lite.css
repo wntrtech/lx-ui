@@ -669,7 +669,6 @@
 
 .lx-layout-digives-lite .lx-main>.lx-digives-alert-list>.lx-digives-alert {
     display: grid;
-    grid-template-columns: 3rem 1fr 3rem;
     padding: 0.5rem 0.5rem 0.5rem 0.1rem;
     background-color: var(--color-region);
     border: 2px solid transparent;
