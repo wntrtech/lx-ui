@@ -361,13 +361,13 @@
 }
 
 
-.lx .lx-layout-public nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item .popper-wrapper{
+.lx .lx-layout-public nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item .popper-wrapper,
+.lx .lx-layout-public nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item .popper-wrapper .lx-toolbar > .lx-button{
   width: 100%;
 }
 
 .lx .lx-layout-public nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item::before{
   position: absolute;
-  z-index: 10;
   content: " ";
   width: 100%;
   border: 1px solid var(--color-chrome);

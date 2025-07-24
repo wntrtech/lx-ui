@@ -1043,7 +1043,6 @@
 .lx .lx-layout .lx-header > .lx-group > .lx-shell-custom-button::before,
 .lx .lx-layout .lx-header > .lx-group > .lx-shell-custom-button::before  {
   position: absolute;
-  z-index: 10;
   content: ' ';
   height: 2rem;
   margin-top: 0.5rem;
@@ -1863,7 +1862,6 @@
 
 .lx .lx-layout-default nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item::before{
   position: absolute;
-  z-index: 10;
   content: " ";
   width: 100%;
   border: 1px solid var(--color-chrome);
@@ -2303,7 +2301,6 @@
 
   .lx-nav-panel .lx-nav-group ul.header-items::before {
     position: absolute;
-    z-index: 10;
     content: ' ';
     width: 100%;
     border: 1px solid var(--color-chrome);
