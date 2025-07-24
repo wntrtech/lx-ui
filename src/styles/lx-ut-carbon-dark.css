@@ -176,7 +176,7 @@
   --color-button-active-mode-background: var(--color-highlight);		
   --color-button-active-mode-border: var(--color-button-active-mode-background);		
   --color-button-active-mode-icon: var(--color-button-active-mode);
-  --color-button-destructive: var(--color-interactive-hover-foreground);
+  --color-button-destructive: var(--color-interactive-foreground);
   --color-button-destructive-background: var(--color-destructive);
   --color-button-destructive-border: var(--color-button-destructive-background);
   --color-button-destructive-icon: var(--color-button-destructive);

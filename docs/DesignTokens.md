@@ -604,7 +604,7 @@ Customized values for contrast mode:
 | `--color-button-active-mode-background`                | `--color-highlight`                                    | `--color-highlight`                                    |
 | `--color-button-active-mode-border`                    | `--color-button-active-mode-background`                | `--color-button-active-mode-background`                |
 | `--color-button-active-mode-icon`                      | `--color-button-active-mode`                           | `--color-button-active-mode`                           |
-| `--color-button-destructive`                           | `--color-interactive-hover-foreground`                 | `--color-interactive-hover-foreground`                 |
+| `--color-button-destructive`                           | `--color-interactive-foreground`                       | `--color-interactive-foreground`                       |
 | `--color-button-destructive-background`                | `--color-destructive`                                  | `--color-destructive`                                  |
 | `--color-button-destructive-border`                    | `--color-button-destructive-background`                | `--color-button-destructive-background`                |
 | `--color-button-destructive-icon`                      | `--color-button-destructive`                           | `--color-button-destructive`                           |
