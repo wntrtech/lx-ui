@@ -665,7 +665,7 @@
 .lx-datepicker-default .lx-selected-start-quarter,
 .lx-datepicker-default .lx-selected-end-quarter {
   background-color: var(--color-interactive-background);
-  color: var(--color-interactive-hover-foreground);
+  color: var(--color-interactive-foreground);
   font-weight: var(--font-weight-extra-bold);
 }
 
@@ -843,7 +843,7 @@
 .lx-datepicker-default .lx-calendar-quarter:not(.lx-selected-quarter):not(.lx-selected-start-quarter):not(.lx-selected-end-quarter).hovering-range {
   background-color:var(--color-input-selected-range-background);
   font-weight: var(--font-weight-extra-bold);
-  color: #000;
+  color: var(--contrast-background);
 }
 
 .lx-datepicker-default .lx-calendar-week .lx-calendar-day .lx-calendar-day-content {
