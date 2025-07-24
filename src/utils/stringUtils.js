@@ -18,13 +18,34 @@ export function generateUUID() {
   return uuid;
 }
 
+/* eslint-disable no-bitwise */
+function generateCyrb32Hash(value, seed) {
+  let h1 = 0xdeadbeef ^ seed;
+  let h2 = 0x41c6ce57 ^ seed;
+  for (let i = 0; i < value.length; i += 1) {
+    const charCode = value.charCodeAt(i);
+    h1 = Math.imul(h1 ^ charCode, 2654435761);
+    h2 = Math.imul(h2 ^ charCode, 1597334677);
+  }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+  h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+  h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (h1 ^ h2) >>> 0;
+}
+
 /**
  * Generates an integer hash for a given string value.
  * @param {string} value - The string value to generate hash for.
  * @param {number} [seed=0] - The seed value for the hash calculation.
+ * @param {string} [kind=0] - Determines the hashing method - 'cyrb32' or default.
  * @returns {number} - The generated integer hash.
  */
-export function generateIntegerHash(value, seed = 0) {
+
+export function generateIntegerHash(value, seed = 0, kind = '') {
+  if (kind === 'cyrb32') {
+    return generateCyrb32Hash(value, seed);
+  }
   let hash = seed;
   if (value.length === 0) {
     return hash;
@@ -32,23 +53,23 @@ export function generateIntegerHash(value, seed = 0) {
   for (let i = 0; i < value.length; i += 1) {
     const char = value.charCodeAt(i);
     // Incorporate the seed in the hash calculation
-    // eslint-disable-next-line no-bitwise
     hash = (hash << 5) - hash + char + seed;
-    // eslint-disable-next-line no-bitwise
     hash |= 0; // Convert to 32bit integer
   }
   return hash;
 }
+/* eslint-enable no-bitwise */
 
 /**
  * Generates an integer for a given string value within a specified range.
  * @param {string} value - The string value to generate an integer for.
  * @param {number} range - The upper limit of the output value [0 to range - 1].
  * @param {number} [seed=0] - The seed value for integer calculation.
+ * @param {string} [kind=''] - Determines the hashing method - 'cyrb32' or default.
  * @returns {number} - The generated integer.
  */
-export function generateIntegerInRange(value, range, seed = 0) {
-  const hash = generateIntegerHash(value, seed);
+export function generateIntegerInRange(value, range, seed = 0, kind = '') {
+  const hash = generateIntegerHash(value, seed, kind);
   return Math.abs(hash % range);
 }
 
