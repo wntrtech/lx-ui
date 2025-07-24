@@ -44,6 +44,7 @@ import LxDayInput from '@/components/DayInput.vue';
 import LxDrawPad from '@/components/DrawPad.vue';
 import LxLogoDisplay from '@/components/LogoDisplay.vue';
 import LxAutoComplete from '@/components/AutoComplete.vue';
+import LxDateTimeRange from '@/components/datePicker/DateTimeRange.vue';
 
 import LxStack from '@/components/Stack.vue';
 import LxFormBuilderListItem from '@/components/forms/FormBuilderListItem.vue';
@@ -199,6 +200,7 @@ function otherSelect(row) {
     return 'dataVisualizer';
   if (row?.lx?.displayType === 'file' && row?.type === 'array') return 'file';
   if (row?.lx?.displayType === 'text' && row?.type === 'string') return 'text';
+  if (row?.lx?.displayType === 'dateTimeRange' && row?.type === 'object') return 'dateTimeRange';
   return null;
 }
 
@@ -2850,6 +2852,32 @@ function getCustomVariant(row) {
         : displaySchema?.properties[name]?.lx?.texts
     "
     @click="(a) => componentEmit('click', name, a)"
+  />
+  <LxDateTimeRange
+    v-else-if="selectedComponent === 'dateTimeRange' && model[name]"
+    :id="id + '-' + name"
+    v-model:startDate="model[name].startDate"
+    v-model:endDate="model[name].endDate"
+    :kind="
+      displaySchema?.properties[name]?.format === 'date-time'
+        ? 'dateTime'
+        : displaySchema?.properties[name]?.format
+    "
+    :placeholder="examplesValue(displaySchema?.properties[name])"
+    :tooltip="displaySchema?.properties[name]?.lx?.tooltip"
+    :minDate="displaySchema?.properties[name]?.lx?.minDate"
+    :maxDate="displaySchema?.properties[name]?.lx?.maxDate"
+    :required="displaySchema?.properties[name]?.lx?.required"
+    :readOnly="isReadOnly(displaySchema?.properties[name])"
+    :disabled="displaySchema?.properties[name]?.lx?.disabled"
+    :invalid="isInvalid"
+    :invalidation-message="invalidMessage"
+    :timeAdjust="displaySchema?.properties[name]?.lx?.timeAdjust"
+    :locale="displaySchema?.properties[name]?.lx?.locale"
+    :rangeMonths="displaySchema?.properties[name]?.lx?.rangeMonths"
+    :clearIfNotExact="displaySchema?.properties[name]?.lx?.clearIfNotExact"
+    :labelId="displaySchema?.properties[name]?.lx?.labelId"
+    :texts="displaySchema?.properties[name]?.lx?.texts"
   />
   <LxDropDownMenu v-else-if="selectedComponent === 'dropDownMenu'">
     <LxButton

@@ -379,6 +379,11 @@
     border-color: var(--color-region);
 }
 
+.lx-layout.lx-layout-public > .lx-main .lx-error-landing .lx-header {
+  margin-top: var(--row-size);
+  margin-bottom: var(--gap);
+}
+
 /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
 @media (max-height: calc(8rem * 5)) {
   .lx-layout.lx-layout-public.lx-collapsed>header {

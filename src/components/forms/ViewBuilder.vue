@@ -118,6 +118,12 @@ const isSchemaValid = computed(() => {
 function addDefaultValues() {
   function setDefaults(target, schema) {
     Object.entries(schema?.properties || {}).forEach(([key, value]) => {
+      if (value?.lx?.displayType === 'dateTimeRange') {
+        if (target[key] === undefined || target[key] === null) {
+          // eslint-disable-next-line no-param-reassign
+          target[key] = {};
+        }
+      }
       if (value?.default !== undefined) {
         if (
           target[key] === undefined ||

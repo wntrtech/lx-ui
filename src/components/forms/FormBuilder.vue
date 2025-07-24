@@ -245,6 +245,7 @@ function otherSelect(row) {
     return 'dataVisualizer';
   if (row?.lx?.displayType === 'file' && row?.type === 'array') return 'file';
   if (row?.lx?.displayType === 'text' && row?.type === 'string') return 'text';
+  if (row?.lx?.displayType === 'dateTimeRange' && row?.type === 'object') return 'dateTimeRange';
   return null;
 }
 
@@ -280,6 +281,11 @@ function addDefaultValues() {
   const res = { ...props.modelValue };
   if (props.schema?.properties) {
     Object.entries(props.schema?.properties)?.forEach(([key, value]) => {
+      if (value?.lx?.displayType === 'dateTimeRange') {
+        if (res[key] === undefined || res[key] === null) {
+          res[key] = {};
+        }
+      }
       if (value?.default !== undefined) {
         if (
           res[key] === undefined ||
@@ -292,6 +298,11 @@ function addDefaultValues() {
       if (value?.properties && value?.lx?.displayType === 'stack') {
         res[key] = res[key] || {};
         Object.entries(value?.properties)?.forEach(([key1, value1]) => {
+          if (value1?.lx?.displayType === 'dateTimeRange') {
+            if (res[key][key1] === undefined || res[key][key1] === null) {
+              res[key][key1] = {};
+            }
+          }
           if (value1?.default !== undefined) {
             if (
               res[key][key1] === undefined ||

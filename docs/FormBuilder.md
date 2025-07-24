@@ -1249,6 +1249,37 @@ modelValue:
 }
 ```
 
+### LxDateTimeRange
+schema:
+```js
+{
+  dateTimeRange: {
+    type: 'object',
+    format: 'date',
+    lx: {
+      displayType: 'dateTimeRange',
+      minDate: '2025-01-01',
+      maxDate: '2025-12-31',
+      required: false,
+      disabled: false,
+      timeAdjust: false,
+      rangeMonth: 'next',
+      clearIfNotExact: false,
+    }
+  }
+}
+```
+
+modelValue:
+```js
+{
+  dateTimeRange: {
+    startDate: '2025-06-06',
+    endDate: '2025-07-01',
+  }
+}
+```
+
 ### LxDropDownMenu
 
 #### type="object"
