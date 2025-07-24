@@ -440,7 +440,7 @@ const themeDisplayItems = computed(() => {
     },
     group: 'animations-touch',
     value: transparencyModel.value,
-    size: props.hasReducedTransparency ? 'm' : 's',
+    size: props.isTouchSensitive ? 'm' : 's',
   });
   res.push({
     id: 'fonts',
