@@ -152,7 +152,8 @@
 .lx-list:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
 .tree-item:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
 .tree-list:not(:has(.lx-list-item-container)) .lx-list-item-wrapper:has(.lx-list-item.lx-selected),
-.lx-layout .lx-list-item-container:has(.lx-list-item.lx-selected) {
+.lx-layout .lx-list-item-container:has(.lx-list-item.lx-selected),
+.lx-layout .lx-modal .lx-list-item-container:has(.lx-list-item.lx-selected) {
   background-color: var(--color-selected-background);
   border-color: var(--color-selected-border);
   color: var(--color-selected);
