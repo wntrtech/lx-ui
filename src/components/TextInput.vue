@@ -241,7 +241,7 @@ const config = computed(() => ({
   disabled: false,
   min: null,
   max: maxLengthComp.value,
-  allowBlank: true,
+  allowBlank: false,
   minimumNumberOfCharacters: 0,
   shouldRound: true,
   focusOnRight: false,
