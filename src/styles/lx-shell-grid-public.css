@@ -252,7 +252,6 @@
   justify-content: flex-start;
   grid-template-columns: 1fr;
   grid-column: 2/3;
-  padding: 0 1rem;
   width: auto;
 }
 
@@ -287,8 +286,6 @@
 
 .lx-layout.lx-layout-public>main {
   grid-area: main;
-  margin-left: 1rem;
-  margin-right: 1rem;
 }
 
 .lx-layout.lx-layout-public>footer {
@@ -382,6 +379,10 @@
 .lx-layout.lx-layout-public > .lx-main .lx-error-landing .lx-header {
   margin-top: var(--row-size);
   margin-bottom: var(--gap);
+}
+
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button {
+  width: fit-content;
 }
 
 /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
@@ -584,6 +585,10 @@
   .lx-layout.lx-layout-public .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar), 
   .lx-layout.lx-layout-public .lx-form-grid:not(:has(>header))>.lx-wizard header.lx-toolbar.lx-sticky, .lx-layout-public .lx-data-grid-wrapper .lx-grid-toolbar+.lx-grid-header-wrapper{
     top: calc(var(--nav-row-size));
+  }
+
+  .lx-layout.lx-layout-public>main {
+    margin-inline: 1rem;
   }
 }
 

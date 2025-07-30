@@ -281,7 +281,8 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-public .lx-nav-panel ul .lx-toolbar .lx-button svg,
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar .lx-button svg,
-.lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button svg {
+.lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button svg,
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button svg {
   fill: var(--color-button-nav-public-icon);
 }
 
@@ -289,7 +290,8 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button:hover svg,
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button:hover svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button:hover svg,
-.lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button:hover svg {
+.lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button:hover svg,
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover svg {
   fill: var(--color-button-nav-public-icon-hover);
 }
 
@@ -705,7 +707,8 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button,
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button,
-.lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button {
+.lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button,
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button {
   flex-direction: row;
   justify-content: center;
   padding: var(--button-nav-public-padding);
@@ -751,7 +754,8 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button:hover,
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button:hover,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button:hover,
-.lx-layout-public .lx-nav-panel ul li > .lx-context-container .lx-dropdown-toggler .lx-button:hover {
+.lx-layout-public .lx-nav-panel ul li > .lx-context-container .lx-dropdown-toggler .lx-button:hover,
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover {
   background-color: var(--color-button-nav-public-hover-background);
   border-color: var(--color-button-nav-public-hover-border);
   color: var(--color-button-nav-public-hover);

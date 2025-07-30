@@ -230,6 +230,7 @@ const textsDefault = {
   skipLinkTitle: 'Pāriet uz lapas saturu',
   customButton: 'Pielāgojamā poga',
   overflowNavItems: 'Atvērt papildu izvēlni',
+  scrollUp: 'Atgriezties uz augšu',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

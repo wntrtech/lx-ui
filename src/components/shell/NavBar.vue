@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { vOnClickOutside } from '@vueuse/components';
-import { useWindowSize } from '@vueuse/core';
+import { useWindowSize, useScroll } from '@vueuse/core';
 
 import LxButton from '@/components/Button.vue';
 import LxHeaderButtons from '@/components/shell/HeaderButtons.vue';
@@ -66,11 +66,13 @@ const textsDefault = {
   touchModeOff: 'Nē',
   touchModeOn: 'Jā',
   overflowNavItems: 'Atvērt papildu izvēlni',
+  scrollUp: 'Atgriezties uz augšu',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const width = ref(useWindowSize().width);
+const { y } = useScroll(window);
 
 const navItemsPrimary = computed(() =>
   props.navItems?.filter((item) => !item.type || item.type === 'primary')
@@ -215,6 +217,13 @@ function navClick(id) {
 function triggerShowAllClick() {
   emits('megaMenuShowAllClick');
 }
+
+function scrollUp() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  });
+}
 </script>
 <template>
   <div class="lx-nav-panel" v-on-click-outside="navToggle" :tabindex="-1">
@@ -316,4 +325,13 @@ function triggerShowAllClick() {
       </li>
     </ul>
   </div>
+  <LxButton
+    v-if="layoutMode === 'public' && y > 120 && width > 900"
+    icon="scroll-up"
+    kind="ghost"
+    customClass="scroll-up-button"
+    variant="icon-only"
+    :label="displayTexts.scrollUp"
+    @click="scrollUp()"
+  />
 </template>
