@@ -668,6 +668,7 @@
 
 .lx-layout.lx-layout-cover > header .lx-header > .lx-group:last-of-type {
   backdrop-filter: blur(0.25rem);
+  will-change: transform;
 }
 
 .lx-layout.lx-layout-cover > header .lx-header .lx-group#extra-menu {
