@@ -327,6 +327,26 @@ function formatNoSchemaDescription(value, key) {
   return null;
 }
 
+function formatDateRange(format, description, modelValueKey) {
+  if (
+    (format === 'dateTime' || format === 'date-time') &&
+    (modelValueKey?.startDate || modelValueKey?.endDate)
+  ) {
+    return `${description || ''}${formatDateTime(modelValueKey?.startDate)} - ${formatDateTime(
+      modelValueKey?.endDate
+    )}`;
+  }
+  if (format === 'date' && (modelValueKey?.startDate || modelValueKey?.endDate)) {
+    return `${description || ''}${formatDate(modelValueKey?.startDate)} - ${formatDate(
+      modelValueKey?.endDate
+    )}`;
+  }
+  if (modelValueKey?.startDate || modelValueKey?.endDate) {
+    return `${description || ''}${modelValueKey?.startDate}-${modelValueKey?.endDate}`;
+  }
+  return '';
+}
+
 function formatDescription(value, key) {
   switch (formBuilder.value?.componentSelect(value, key)) {
     case 'textInputDefault':
@@ -336,6 +356,9 @@ function formatDescription(value, key) {
 
     case 'dateTimePicker':
       return formatDateDescription(value?.format, value?.lx?.filterDescription, model.value[key]);
+
+    case 'dateTimeRange':
+      return formatDateRange(value?.format, value?.lx?.filterDescription, model.value[key]);
 
     case 'toggle':
       return `${
@@ -379,6 +402,14 @@ function formatDescription(value, key) {
   }
 }
 
+function deepEqual(a, b) {
+  return JSON.stringify(a) === JSON.stringify(b);
+}
+
+function isObject(value) {
+  return value && typeof value === 'object' && !Array.isArray(value);
+}
+
 const filterDescription = computed(() => {
   if ((props.defaultValues && Object.keys(props.defaultValues)?.length > 0) || props.useDefaults) {
     if (props.schema?.properties && props.mode !== 'no-schema') {
@@ -387,7 +418,9 @@ const filterDescription = computed(() => {
           model.value?.[key] !== null &&
           model.value?.[key] !== undefined &&
           model.value?.[key] !== '' &&
-          model.value?.[key] !== defaultValues.value?.[key]
+          ((!isObject(model.value?.[key]) && model.value?.[key] !== defaultValues.value?.[key]) ||
+            (isObject(model.value?.[key]) &&
+              !deepEqual(model.value?.[key], defaultValues.value?.[key])))
         ) {
           const formattedDesc = formatDescription(value, key);
           if (formattedDesc) acc.push(formattedDesc);

@@ -139,7 +139,15 @@ const isSchemaValid = computed(() => {
 });
 
 function isNotDate(row) {
-  return row?.format !== 'date' && row?.format !== 'time' && row?.format !== 'date-time';
+  return (
+    row?.format !== 'date' &&
+    row?.format !== 'time' &&
+    row?.format !== 'date-time' &&
+    row?.format !== 'year' &&
+    row?.format !== 'month' &&
+    row?.format !== 'month-year' &&
+    row?.format !== 'quarters'
+  );
 }
 
 function stringSelect(row) {
