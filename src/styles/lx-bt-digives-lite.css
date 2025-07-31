@@ -1,6 +1,6 @@
 @import '@/styles/lx-reset.css';
 @import '@/styles/lx-fonts-carbon.css';
-@import '@/styles/lx-fonts-digives-lite.css';
+
 @import '@/styles/lx-pt-carbon.css';
 @import '@/styles/lx-ut-carbon-light.css';
 @import '@/styles/lx-ut-carbon-dark.css';
@@ -29,3 +29,5 @@
 @import '@/styles/lx-stack.css';
 @import '@/styles/lx-transparency.css';
 @import '@/styles/lx-cards.css';
+@import '@/styles/lx-fonts-digives-lite.css';
+

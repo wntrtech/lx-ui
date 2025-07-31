@@ -105,6 +105,7 @@ const textsDefault = {
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
   contextPersonsInfoLabel: 'Pacients',
+  contextPersonsInfoTitle: 'Konteksta persona',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -742,8 +743,8 @@ function themeDropdownClicked(id, value) {
         :class="[{ 'without-context-person': !selectedContextPersonModel }]"
         v-if="userInfo"
       >
-        <LxInfoWrapper :disabled="!selectedContextPersonModel">
-          <LxIcon :value="selectedContextPersonModel ? 'patient-active' : 'patient-inactive'" />
+        <LxInfoWrapper v-if="selectedContextPersonModel">
+          <LxIcon value="patient-active" />
 
           <template #panel>
             <LxRow :label="displayTexts.contextPersonsInfoLabel">
@@ -752,6 +753,12 @@ function themeDropdownClicked(id, value) {
             </LxRow>
           </template>
         </LxInfoWrapper>
+        <LxIcon
+          v-else
+          class="patient-inactive-icon"
+          value="patient-inactive"
+          :title="displayTexts.contextPersonsInfoTitle"
+        />
       </div>
       <div class="lx-user-menu" :class="[{ opened: dropDownMenu?.menuOpen }]" v-if="userInfo">
         <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
@@ -799,6 +806,7 @@ function themeDropdownClicked(id, value) {
                   :href="item.to"
                   :icon="item.icon"
                   :disabled="headerNavDisable"
+                  @click="emits('navClick', item?.id)"
                 />
               </li>
             </ul>

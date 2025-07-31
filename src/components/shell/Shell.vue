@@ -186,6 +186,7 @@ const textsDefault = {
   close: 'Aizvērt',
   contextPersonsLabel: 'Izvēlēties personu',
   contextPersonsInfoLabel: 'Pacients',
+  contextPersonsInfoTitle: 'Konteksta persona',
   contextPersonsOwnData: 'Skatīt manus datus',
   alternativeProfilesLabel: 'Izvēlieties alternatīvu profilu',
   contextPersonsButtonLabel: 'Konteksta personas',
@@ -1576,9 +1577,8 @@ watch(
           class="shell-buttons patient-info"
           :class="[{ 'without-context-person': !selectedContextPersonModel }]"
         >
-          <LxInfoWrapper :disabled="!selectedContextPersonModel">
-            <LxIcon :value="selectedContextPersonModel ? 'patient-active' : 'patient-inactive'" />
-
+          <LxInfoWrapper v-if="selectedContextPersonModel">
+            <LxIcon value="patient-active" />
             <template #panel>
               <LxRow :label="displayTexts.contextPersonsInfoLabel">
                 <p class="lx-data">{{ selectedContextPersonModel?.name }}</p>
@@ -1586,6 +1586,12 @@ watch(
               </LxRow>
             </template>
           </LxInfoWrapper>
+          <LxIcon
+            v-else
+            class="patient-inactive-icon"
+            value="patient-inactive"
+            :title="displayTexts.contextPersonsInfoTitle"
+          />
         </div>
       </div>
       <nav ref="nav" aria-label="navigation panel">
@@ -1650,13 +1656,13 @@ watch(
 
       <main ref="main" class="lx-main">
         <ul
-          class="lx-digives-alert-list"
+          class="lx-digives-lite-alert-list"
           v-if="alerts?.length > 0 && props.routeName === 'dashboard'"
         >
           <li
             v-for="alert in alerts"
             :key="alert.id"
-            class="lx-digives-alert"
+            class="lx-digives-lite-alert"
             :role="alert?.level === 'error' || alert?.level === 'warning' ? 'alert' : 'status'"
           >
             <LxInfoBox

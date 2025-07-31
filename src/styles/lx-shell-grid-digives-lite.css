@@ -547,6 +547,23 @@
   fill: var(--color-brand)
 }
 
+.shell-buttons.patient-info.without-context-person .patient-inactive-icon {
+  margin: 0.75rem;
+  width: 1.55rem;
+  height: 1.5rem;
+}
+.shell-buttons.patient-info.without-context-person:hover .patient-inactive-icon {
+  cursor: help;
+}
+
+.lx-nav-panel.lx-responsive.digives-lite-nav-panel>.lx-nav-group .lx-user-menu .lx-user-button .lx-user-info {
+  padding-right: 4rem;
+}
+
+.lx-layout.lx-layout-default.lx-layout-digives-lite .lx-user-menu .lx-user-button .lx-user-info>p.lx-primary {
+  font-weight: var(--font-weight-bold);
+}
+
 .lx-user-button .lx-user-info p {
   white-space: nowrap;
   overflow: hidden;
@@ -638,120 +655,49 @@
 .lx-touch-mode .lx-touch-mode-controller {
     padding: 0.1rem 0 0.1rem 1rem;
 }
+.lx-layout.lx-layout-default.lx-layout-digives-lite main.lx-main>ul.lx-digives-lite-alert-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  padding-top: 1rem;
 
-.lx-layout-digives-lite>.lx-main:not(:has(.lx-digives-alert-list)) .lx-header:has(.lx-toolbar) {
-    margin-top: 0;
 }
 
-.lx-layout-digives-lite>.lx-main:not(:has(.lx-digives-alert-list)) .lx-header:not(:has(.lx-toolbar)) {
-    margin-top: var(--row-size);
+.lx-layout.lx-layout-default.lx-layout-digives-lite main.lx-main>ul.lx-digives-lite-alert-list>li {
+  padding: .5rem .5rem .5rem .1rem;
 }
 
-.lx-layout-digives-lite>.lx-main:has(.lx-digives-alert-list) .lx-header:has(.lx-toolbar) {
-    margin-top: var(--gap);
+.lx-layout.lx-layout-default.lx-layout-digives-lite main.lx-main>ul.lx-digives-lite-alert-list>li .lx-description {
+  font-weight: 400;
+  font-size: var(--small-font-size);
+  color: var(--color-label);
+  line-height: 1.1em;
+  padding-top: .05rem;
 }
 
-.lx-layout-digives-lite>.lx-main:has(.lx-digives-alert-list) .lx-header:not(:has(.lx-toolbar)) {
-    margin-top: calc(var(--row-size) + var(--gap));
+
+.lx-layout-digives-lite .lx-main>.lx-digives-lite-alert-list>.lx-digives-lite-alert .lx-alert-success {
+  border: 2px solid var(--color-green-20);
+  border-left: 4px solid var(--color-notification-success-foreground);
+  background-color: var(--color-notification-success-background);
 }
 
-.lx-layout-digives-lite ul.lx-digives-alert-list {
-    padding: 0;
-    margin: 0;
+.lx-layout-digives-lite .lx-main>.lx-digives-lite-alert-list>.lx-digives-lite-alert .lx-alert-warning {
+  border: 2px solid var(--color-orange-20);
+  border-left: 4px solid var(--color-notification-warning-foreground);
+  background-color: var(--color-notification-warning-background);
 }
 
-.lx-layout-digives-lite .lx-main>.lx-digives-alert-list {
-    padding-top: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+.lx-layout-digives-lite .lx-main>.lx-digives-lite-alert-list>.lx-digives-lite-alert .lx-alert-error {
+  border: 2px solid var(--color-red-20);
+  border-left: 4px solid var(--color-notification-error-foreground);
+  background-color: var(--color-notification-error-background);
 }
 
-.lx-layout-digives-lite .lx-main>.lx-digives-alert-list>.lx-digives-alert {
-    display: grid;
-    padding: 0.5rem 0.5rem 0.5rem 0.1rem;
-    background-color: var(--color-region);
-    border: 2px solid transparent;
-    border-left: 4px solid var(--color-chrome);
-}
-
-.lx-layout-digives-lite .lx-digives-alert>svg {
-    grid-row: span 2;
-    justify-self: center;
-    align-self: start;
-    height: 1.5rem;
-    width: 1.5rem;
-}
-
-.lx-layout-digives-lite .lx-digives-alert.lx-clickable {
-    cursor: pointer;
-}
-
-.lx-layout-digives-lite .lx-main>.lx-digives-alert-list>.lx-digives-alert>.lx-primary {
-    font-weight: var(--font-weight-bold);
-}
-
-.lx-layout-digives-lite .lx-main>.lx-digives-alert-list>.lx-digives-alert.lx-alert-success {
-    border: 2px solid var(--color-green-20);
-    border-left: 4px solid var(--color-notification-success-foreground);
-    background-color: var(--color-notification-success-background);
-}
-
-.lx-layout-digives-lite .lx-main>.lx-digives-alert-list>.lx-digives-alert.lx-alert-warning {
-    border: 2px solid var(--color-orange-20);
-    border-left: 4px solid var(--color-notification-warning-foreground);
-    background-color: var(--color-notification-warning-background);
-}
-
-.lx-layout-digives-lite .lx-main>.lx-digives-alert-list>.lx-digives-alert.lx-alert-error {
-    border: 2px solid var(--color-red-20);
-    border-left: 4px solid var(--color-notification-error-foreground);
-    background-color: var(--color-notification-error-background);
-}
-
-.lx-layout-digives-lite .lx-digives-alert.lx-alert-success>svg {
-    fill: var(--color-notification-success-foreground);
-}
-
-.lx-layout-digives-lite .lx-digives-alert.lx-alert-warning>svg {
-    fill: var(--color-notification-warning-foreground);
-}
-
-.lx-layout-digives-lite .lx-digives-alert.lx-alert-error>svg {
-    fill: var(--color-notification-error-foreground);
-}
-
-.lx .lx-layout-digives-lite .lx-digives-alert.lx-alert-success .lx-primary {
-    color: var(--color-notification-success-foreground);
-}
-
-.lx .lx-layout-digives-lite .lx-digives-alert.lx-alert-error .lx-primary {
-    color: var(--color-notification-error-foreground);
-}
-
-.lx-layout-digives-lite .lx-main>.lx-digives-alert-list>.lx-digives-alert.lx-clickable:hover {
-    border: 2px solid var(--color-brand);
-    padding-left: calc(0.1rem + 2px);
-}
-
-.lx-layout-digives-lite .lx-digives-alert.lx-clickable:focus {
-    outline: 2px solid var(--color-focus-background);
-}
-
-.lx-layout-digives-lite .lx-digives-alert-list li.lx-digives-alert .lx-secondary {
-    grid-row: 2;
-    grid-column: 2;
-}
-
-.lx-layout-digives-lite .lx-digives-alert-list li.lx-digives-alert .lx-button {
-    grid-row: span 2;
-}
 
 .lx .lx-layout-digives-lite+ul.lx-notifications-list {
     top: calc(var(--row-size) + 2.5rem) !important;
 }
-
-
 
 .lx-layout.lx-layout-digives-lite .lx-nav-panel ul li.lx-mega-menu-item .lx-button-content-wrapper:not(.lx-dropdown-panel .lx-button-content-wrapper) {
     --button-primary-grid-areas: "content icon";
@@ -991,7 +937,8 @@
 }
 
 
-@media (max-width: 400px) {
+
+@media (max-width: 600px) {
     .lx-header-digives-lite .header-system-title .header-system-subheader {
         display: none;
     }

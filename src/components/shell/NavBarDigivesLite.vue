@@ -91,6 +91,7 @@ const textsDefault = {
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
   contextPersonsInfoLabel: 'Pacients',
+  contextPersonsInfoTitle: 'Konteksta persona',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -494,7 +495,12 @@ onClickOutside(navPanel, toggleNavBar);
         ]"
       >
         <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
-        <LxButton :label="item.name" :tabindex="5" @click="megaMenuItemClick(item?.id)" />
+        <LxButton
+          :label="item.name"
+          :title="item?.description"
+          :tabindex="5"
+          @click="megaMenuItemClick(item?.id)"
+        />
         <ul class="nested-nav" v-if="selectedMegaMenuItemModel === item.id">
           <li
             v-for="item in navItemsPrimary"
@@ -504,6 +510,7 @@ onClickOutside(navPanel, toggleNavBar);
             <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
             <LxButton
               :label="item.label"
+              :title="item?.description"
               :href="item.to"
               :tabindex="5"
               @click="navClick(item?.id)"
@@ -581,6 +588,7 @@ onClickOutside(navPanel, toggleNavBar);
                   :href="item.to"
                   :icon="item.icon"
                   :disabled="headerNavDisable"
+                  @click="emits('navClick', item?.id)"
                 />
               </li>
             </ul>
@@ -599,7 +607,12 @@ onClickOutside(navPanel, toggleNavBar);
           ]"
         >
           <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
-          <LxButton :label="item.name" :tabindex="5" @click="megaMenuItemClick(item?.id)" />
+          <LxButton
+            :label="item.name"
+            :title="item?.description"
+            :tabindex="5"
+            @click="megaMenuItemClick(item?.id)"
+          />
           <ul class="nested-nav" v-if="selectedMegaMenuItemModel === item.id">
             <li
               v-for="item in navItemsPrimary"
@@ -609,6 +622,7 @@ onClickOutside(navPanel, toggleNavBar);
               <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
               <LxButton
                 :label="item.label"
+                :title="item?.description"
                 :href="item.to"
                 :tabindex="5"
                 @click="navClick(item?.id)"
