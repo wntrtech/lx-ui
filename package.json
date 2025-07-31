@@ -127,7 +127,8 @@
     "overrides": {
       "vue-dompurify-html>dompurify": "3.2.4",
       "cross-spawn": "7.0.6",
-      "imask>@babel/runtime-corejs3": "7.26.10"
+      "imask>@babel/runtime-corejs3": "7.26.10",
+      "linkifyjs": "4.3.2"
     }
   },
   "peerDependencies": {

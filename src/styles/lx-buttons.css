@@ -635,10 +635,19 @@ a.lx-button.lx-button-ghost svg {
 
 /* Destructive icon styles */
 
-.lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover svg {
-  fill: var(--color-button-destructive-icon) !important;
+.lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button.lx-destructive:not(.lx-disabled):hover svg {
+  fill: var(--color-button-destructive-icon);
 }
 
+.lx .lx-layout .lx-button.lx-button.lx-destructive:not(.lx-disabled):active svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button.lx-button.lx-destructive:not(.lx-disabled):active svg {
+  fill: var(--color-button-primary-icon-active);
+}
+
+.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button.lx-destructive:focus svg{
+  fill: var(--color-button-dropdown-icon-focus);
+}
 /* Disabled icon styles */
 
 .lx .lx-layout .lx-button.lx-disabled svg {
@@ -1652,8 +1661,8 @@ a.lx-button.lx-button-ghost svg {
 }
 
 /* Active styles */
-
 .lx .lx-button:active,
+.lx .lx-layout.lx-override .lx-button.lx-button.lx-destructive:not(.lx-disabled):active,
 .lx-override button:active,
 .lx .lx-layout.lx-override input[type="button"]:where(:active),
 .lx .lx-layout.lx-override input[type="submit"]:where(:active),
@@ -1691,13 +1700,14 @@ a.lx-button.lx-button-ghost svg {
 /*** Destructive styles ***/
 
 .lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover,
+.lx .lx-layout .lx-dropdown-panel .lx-button.lx-destructive:not(.lx-disabled):hover,
 .lx-layout.lx-override button.lx-destructive:not(.lx-disabled):hover,
 .lx-layout.lx-override button.lx-destructive:not([disabled]):hover,
 .lx .lx-layout.lx-override input[type="button"].lx-destructive:not(.lx-disabled):hover,
 .lx .lx-layout.lx-override input[type="button"].lx-destructive:not([disabled]):hover {
-  background-color: var(--color-button-destructive-background) !important;
-  border-color: var(--color-button-destructive-border) !important;
-  color: var(--color-button-destructive) !important;
+  background-color: var(--color-button-destructive-background);
+  border-color: var(--color-button-destructive-border);
+  color: var(--color-button-destructive);
 }
 
 /*** Disabled styles ***/
