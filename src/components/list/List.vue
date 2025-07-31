@@ -66,7 +66,6 @@ const props = defineProps({
   mode: { type: String, default: 'client' }, // client, server,
   searchMode: { type: String, default: 'default' }, // default, compact
   labelId: { type: String, default: null },
-
   hasSkipLink: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
 });
@@ -720,7 +719,7 @@ const selectIcon = computed(() => {
   return 'radiobutton-filled';
 });
 
-function selectRows(arr = null) {
+function selectRows(arr = null, shouldFocus = true) {
   function filterSelectable(items) {
     return items.filter(isSelectable);
   }
@@ -740,17 +739,21 @@ function selectRows(arr = null) {
       filterSelectable(arr)?.map((x) => x?.[props.idAttribute]?.toString())
     );
   }
-  nextTick(() => {
-    document.getElementById(`${props.id}-cancel-select-all`)?.focus();
-  });
+  if (shouldFocus) {
+    nextTick(() => {
+      document.getElementById(`${props.id}-cancel-select-all`)?.focus();
+    });
+  }
 }
 const isItemSelected = (itemId) => !!selectedItemsRaw.value[itemId];
 
-function cancelSelection() {
+function cancelSelection(shouldFocus = true) {
   selectedItemsRaw.value = {};
-  nextTick(() => {
-    document.getElementById(`${props.id}-select-all`)?.focus();
-  });
+  if (shouldFocus) {
+    nextTick(() => {
+      document.getElementById(`${props.id}-select-all`)?.focus();
+    });
+  }
 }
 
 const selectedLabel = computed(() => {
