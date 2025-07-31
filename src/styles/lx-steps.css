@@ -62,6 +62,10 @@
     margin-top: 0.1rem;
 }
 
+.lx-form-grid>.lx-main .lx-row .lx-steps-label {
+  color: var(--color-data);
+}
+
 .lx-steps-icon {
     margin-top: 0.25rem;
     margin-right: 0.3rem;

@@ -785,7 +785,7 @@
 .lx .popper .lx-info-wrapper-panel .lx-secondary,
 .lx .popper .lx-info-wrapper-panel p.lx-data,
 .lx .popper p.lx-simple-popper-content,
-.lx .lx-form-grid>.lx-main .lx-row > div.lx-vertical > .lx-field-wrapper .popper p.lx-data  {
+.lx .lx-form-grid>.lx-main .lx-row>div.lx-vertical .lx-field-wrapper .popper p.lx-data {
   color: var(--color-tooltip-foreground);
 }
 

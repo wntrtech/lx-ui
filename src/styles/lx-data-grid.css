@@ -436,7 +436,9 @@
 .lx-grid-row:hover .lx-cell-extra .lx-person-icon-display > svg {
   fill: var(--color-data);
 }
-
+.lx-form-grid>.lx-main .lx-row>div.lx-vertical>.lx-stack .lx-info-wrapper p.lx-data.lx-person-display-name {
+  color: var(--color-data);
+}
 .lx .lx-data-grid span.lx-cell-tooltip {
   cursor: help;
 }
@@ -923,6 +925,57 @@
 .lx .popper-wrapper>div:focus,
 .lx .popper-wrapper>div:focus-visible {
   outline: 2px solid var(--color-focus-background);
+}
+.lx-info-wrapper .lx-row .lx-vertical *,
+.lx-form-grid>.lx-main .lx-info-wrapper .lx-row>div.lx-vertical>p.lx-data,
+.lx-row>.lx-row-header>.lx-info-wrapper .popper .lx-info-wrapper-panel p.lx-data,
+.lx-form-grid>.lx-main .lx-row>div.lx-vertical>.lx-stack .lx-info-wrapper p.lx-data,
+.lx-info-wrapper .lx-form-grid>.lx-main .lx-row>div.lx-vertical>p.lx-data,
+.lx .lx-form-grid>.lx-main .lx-row>div.lx-vertical .lx-field-wrapper .popper p.lx-data,
+.lx .popper .lx-info-wrapper-panel p.lx-data {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  font-weight: var(--data-weight);
+  color: var(--color-tooltip-foreground);
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  line-height: 1.25em;
+}
+
+.lx .lx-cell .popper .lx-info-wrapper-panel p.lx-data {
+  line-height: 1.1em;
+}
+
+.lx-info-wrapper-panel .lx-row {
+  padding: 0 2px;
+}
+
+.lx-info-wrapper-panel .lx-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.lx .popper .lx-info-wrapper-panel label:not(.lx-state>.lx-primary) {
+  font-size: var(--label-font-size);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lx .lx-form-grid .lx-row .lx-info-wrapper-panel>.lx-row>.lx-vertical>p.lx-data {
+  color: var(--color-tooltip-foreground);
+  min-height: auto;
+}
+
+.lx .lx-form-grid .lx-row .lx-info-wrapper-content>.lx-person-display>p.lx-data.lx-person-display-name {
+  min-height: auto;
+}
+
+.lx-form-grid>.lx-main .lx-info-wrapper .lx-row>div.lx-vertical {
+  min-height: auto;
 }
 
 .lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
