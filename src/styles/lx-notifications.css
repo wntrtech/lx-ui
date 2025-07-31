@@ -169,6 +169,7 @@ p.lx-subtitle {
   font-weight: 700;
   color: var(--color-data);
   margin-bottom: 0.25rem;
+  margin-top: 0.25rem;
 }
 
 .lx-info-box-button .lx-alert-description {
