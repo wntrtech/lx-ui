@@ -776,6 +776,12 @@ svg.leaflet-image-layer.leaflet-interactive path {
   justify-content: space-between;
 }
 
+.lx-map-toolbar .first-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .lx-map-toolbar .lx-map-grayscale > .lx-field-wrapper {
   padding-right: 0.5rem;
 }
@@ -803,6 +809,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
   filter: invert(1) grayscale(var(--map-grayscale));
 }
 
+.lx-map-toolbar .left-area,
+.lx-map-toolbar .right-area,
 .lx-map .lx-map-controls {
   display: flex;
 }

@@ -20,6 +20,7 @@ import LxCheckbox from '@/components/Checkbox.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxTreeList from '@/components/list/TreeList.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
+import LxToolbar from '@/components/Toolbar.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
@@ -48,6 +49,7 @@ const props = defineProps({
   selectableAttribute: { type: String, default: 'selectable' },
   orderAttribute: { type: String, default: 'order' },
   actionDefinitions: { type: Array, default: null },
+  toolbarActionDefinitions: { type: Array, default: () => [] },
   actionsLayout: { type: String, default: 'default' }, // default, vertical
   emptyStateActionDefinitions: { type: Array, default: null },
   emptyStateIcon: { type: String, default: '' },
@@ -123,6 +125,7 @@ const emits = defineEmits([
   'update:items',
   'selectionChanged',
   'selectionActionClick',
+  'toolbarActionClick',
   'update:itemsStates',
   'loadChildren',
 ]);
@@ -749,11 +752,13 @@ const isItemSelected = (itemId) => !!selectedItemsRaw.value[itemId];
 
 function cancelSelection(shouldFocus = true) {
   selectedItemsRaw.value = {};
-  if (shouldFocus) {
-    nextTick(() => {
+  nextTick(() => {
+    if (selectedItems.value.length === 0) {
+      document.getElementById(`${props.id}-toolbar-action-select-all`)?.focus();
+    } else {
       document.getElementById(`${props.id}-select-all`)?.focus();
-    });
-  }
+    }
+  });
 }
 
 const selectedLabel = computed(() => {
@@ -1061,6 +1066,125 @@ function focusFirstFocusableElementAfter() {
     focusNextFocusableElement(listWrapper.value);
   }
 }
+
+const processedToolbarActions = computed(() => {
+  const {
+    toolbarActionDefinitions,
+    loading,
+    busy,
+    hasSearch,
+    searchMode,
+    hasSelecting,
+    selectingKind,
+  } = props;
+
+  if (!toolbarActionDefinitions.length) return [];
+
+  const withDefaults = (action, overrides = {}) => ({
+    ...action,
+    icon: action.icon ?? 'fallback-icon',
+    area: action.area ?? 'right',
+    variant: 'icon-only',
+    kind: 'ghost',
+    groupId: 'lx-default',
+    disabled: loading || busy,
+    ...overrides,
+  });
+
+  const primary = toolbarActionDefinitions.filter((a) => a.kind === 'primary');
+  const secondary = toolbarActionDefinitions.filter((a) => a.kind === 'secondary');
+  const others = toolbarActionDefinitions.filter(
+    (a) => a.kind !== 'primary' && a.kind !== 'secondary'
+  );
+
+  let rightmostAction = null;
+  let demotedActions = [];
+
+  const processGroup = (group) => {
+    if (!group.length) return;
+    const [first, ...rest] = group;
+
+    const firstArea = first.area ?? 'right';
+
+    let defaults;
+    if (firstArea === 'right' && first.kind === 'secondary') {
+      defaults = {
+        kind: 'secondary',
+        variant: 'default',
+      };
+    } else if (first.area !== 'left') {
+      defaults = {
+        kind: 'primary',
+        variant: 'default',
+      };
+    } else {
+      defaults = {
+        kind: 'ghost',
+        variant: 'icon-only',
+      };
+    }
+
+    rightmostAction = withDefaults(first, defaults);
+    demotedActions = rest.map(withDefaults);
+  };
+
+  if (primary.length) {
+    processGroup(primary);
+    demotedActions.push(...secondary.map(withDefaults));
+  } else if (secondary.length) {
+    processGroup(secondary);
+  }
+
+  const otherActions = others.map(withDefaults);
+
+  const result = [...demotedActions, ...otherActions];
+  if (rightmostAction) result.push(rightmostAction);
+
+  if ((hasSearch && searchMode === 'compact') || (hasSearch && hasSelecting)) {
+    result.push({
+      id: 'search',
+      name: searchField.value ? displayTexts.value.closeSearch : displayTexts.value.openSearch,
+      icon: searchField.value ? 'close' : 'search',
+      area: 'right',
+      variant: 'icon-only',
+      kind: 'ghost',
+      groupId: 'lx-default',
+      disabled: loading || busy,
+      customClass: searchField.value ? 'toolbar-search-button is-expanded' : '',
+    });
+  }
+
+  if (hasSelecting && selectingKind === 'multiple') {
+    result.push({
+      id: `select-all`,
+      name: displayTexts.value.selectAllRows,
+      icon: 'checkbox',
+      area: 'right',
+      variant: 'icon-only',
+      kind: 'ghost',
+      groupId: 'lx-default',
+      disabled: loading || busy,
+    });
+  }
+
+  return result;
+});
+
+function toolbarActionClicked(id) {
+  if (id === 'search') {
+    toggleSearch();
+  } else if (id === 'select-all') {
+    selectRows();
+  }
+  emits('toolbarActionClick', id);
+}
+
+const toolbarActions = computed(() => {
+  if (selectedItems.value?.length > 0) {
+    return [];
+  }
+  return processedToolbarActions.value;
+});
 </script>
 
 <template>
@@ -1072,87 +1196,88 @@ function focusFirstFocusableElementAfter() {
       :tabindex="0"
       @click="focusFirstFocusableElementAfter"
     />
-    <div
-      v-if="
-        $slots.toolbar ||
-        (hasSelecting && selectingKind === 'multiple') ||
-        selectedItems?.length !== 0 ||
-        hasSearch
-      "
-      class="lx-list-toolbar"
-      :class="[{ 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 }]"
-    >
-      <div class="first-row">
-        <template v-if="autoSearchMode === 'default' && !hasSelecting">
-          <LxTextInput
-            v-if="hasSearch"
-            ref="queryInputDefault"
-            v-model="queryRaw"
-            :kind="searchSide === 'server' ? 'default' : 'search'"
-            :disabled="loading || busy"
-            :placeholder="displayTexts.placeholder"
-            role="search"
-            @keydown.enter="serverSideSearch()"
-          />
-          <LxButton
-            v-if="searchSide === 'server' && hasSearch"
-            icon="search"
-            kind="ghost"
-            :busy="busy"
-            :disabled="loading"
-            variant="icon-only"
-            :label="displayTexts.search"
-            @click="serverSideSearch()"
-          />
-          <LxButton
-            v-if="query || queryRaw"
-            icon="clear"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.clear"
-            :disabled="loading || busy"
-            @click="clear()"
-          />
+    <div :class="[{ 'lx-selection-toolbar': hasSelecting && selectedItems?.length > 0 }]">
+      <LxToolbar
+        :id="`${props.id}-toolbar`"
+        :actionDefinitions="toolbarActions"
+        :disabled="busy"
+        :loading="loading"
+        @actionClick="toolbarActionClicked"
+      >
+        <template #leftArea>
+          <template v-if="autoSearchMode === 'default' && !hasSelecting">
+            <LxTextInput
+              v-if="hasSearch"
+              ref="queryInputDefault"
+              v-model="queryRaw"
+              :kind="searchSide === 'server' ? 'default' : 'search'"
+              :disabled="loading || busy"
+              :placeholder="displayTexts.placeholder"
+              role="search"
+              @keydown.enter="serverSideSearch()"
+            />
+            <LxButton
+              v-if="searchSide === 'server' && hasSearch"
+              icon="search"
+              kind="ghost"
+              :busy="busy"
+              :disabled="loading"
+              variant="icon-only"
+              :label="displayTexts.search"
+              @click="serverSideSearch()"
+            />
+            <LxButton
+              v-if="query || queryRaw"
+              icon="clear"
+              kind="ghost"
+              variant="icon-only"
+              :label="displayTexts.clear"
+              :disabled="loading || busy"
+              @click="clear()"
+            />
+          </template>
+          <p v-if="hasSelecting && selectedItems?.length > 0">
+            {{ selectedLabel }}
+          </p>
         </template>
-        <p v-if="hasSelecting && selectedItems?.length > 0">
-          {{ selectedLabel }}
-        </p>
-
-        <div class="right-area">
+        <template #rightArea>
           <slot
             v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
             name="toolbar"
           />
-          <template v-if="selectedItems?.length === 0">
-            <div
-              class="toolbar-search-button"
-              :class="[{ 'is-expanded': searchField }]"
-              v-if="autoSearchMode === 'compact'"
-            >
+          <template v-if="props.toolbarActionDefinitions?.length === 0">
+            <template v-if="selectedItems?.length === 0">
+              <div
+                class="toolbar-search-button"
+                :class="[{ 'is-expanded': searchField }]"
+                v-if="autoSearchMode === 'compact'"
+              >
+                <LxButton
+                  kind="ghost"
+                  :icon="searchField ? 'close' : 'search'"
+                  variant="icon-only"
+                  :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
+                  :disabled="loading || busy"
+                  @click="toggleSearch"
+                  v-if="hasSearch"
+                />
+              </div>
               <LxButton
+                :id="`${id}-select-all`"
+                icon="checkbox"
                 kind="ghost"
-                :icon="searchField ? 'close' : 'search'"
+                v-if="
+                  selectableItems?.length !== 0 &&
+                  hasSelecting &&
+                  selectingKind === 'multiple' &&
+                  kind !== 'draggable'
+                "
+                :disabled="loading || busy"
                 variant="icon-only"
-                :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
-                @click="toggleSearch"
-                v-if="hasSearch"
+                :label="displayTexts.selectAllRows"
+                @click="selectRows()"
               />
-            </div>
-            <LxButton
-              :id="`${id}-select-all`"
-              icon="checkbox"
-              kind="ghost"
-              v-if="
-                selectableItems?.length !== 0 &&
-                hasSelecting &&
-                selectingKind === 'multiple' &&
-                kind !== 'draggable'
-              "
-              :disabled="loading || busy"
-              variant="icon-only"
-              :label="displayTexts.selectAllRows"
-              @click="selectRows()"
-            />
+            </template>
           </template>
           <template v-if="selectedItems?.length > 0">
             <div class="selection-action-button-toolbar" v-if="hasSelecting">
@@ -1163,7 +1288,7 @@ function focusFirstFocusableElementAfter() {
                   :icon="selectAction.icon"
                   :label="selectAction.name"
                   :destructive="selectAction.destructive"
-                  :disabled="selectAction.disabled"
+                  :disabled="selectAction.disabled || busy || loading"
                   kind="ghost"
                   @click="selectionActionClick(selectAction.id, selectedItems)"
                 />
@@ -1198,6 +1323,7 @@ function focusFirstFocusableElementAfter() {
                 :icon="searchField ? 'close' : 'search'"
                 :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
                 variant="icon-only"
+                :disabled="loading || busy"
                 @click="toggleSearch"
               />
             </div>
@@ -1208,48 +1334,52 @@ function focusFirstFocusableElementAfter() {
               variant="icon-only"
               :label="displayTexts.clearSelected"
               kind="ghost"
+              :disabled="loading || busy"
               @click="cancelSelection()"
             />
           </template>
-        </div>
-      </div>
-      <div
-        class="second-row"
-        v-if="hasSearch && searchField && autoSearchMode === 'compact'"
-        :class="[{ 'second-row-selecting': hasSelecting }]"
-      >
-        <LxTextInput
-          v-if="hasSearch"
-          ref="queryInputCompact"
-          v-model="queryRaw"
-          :kind="searchSide === 'server' ? 'default' : 'search'"
-          :disabled="loading || busy"
-          :placeholder="displayTexts.placeholder"
-          role="search"
-          @keydown.enter="serverSideSearch()"
-        />
-        <div class="lx-group lx-slot-wrapper">
-          <LxButton
-            v-if="searchSide === 'server' && hasSearch"
-            icon="search"
-            kind="ghost"
-            :busy="busy"
-            :disabled="loading"
-            variant="icon-only"
-            :label="displayTexts.search"
-            @click="serverSideSearch()"
-          />
-          <LxButton
-            v-if="query || queryRaw"
-            icon="clear"
-            kind="ghost"
-            variant="icon-only"
-            :label="displayTexts.clear"
-            :disabled="loading || busy"
-            @click="clear()"
-          />
-        </div>
-      </div>
+        </template>
+        <template #secondRow>
+          <div
+            class="second-row"
+            v-if="hasSearch && searchField && autoSearchMode === 'compact'"
+            :class="[{ 'second-row-selecting': hasSelecting }]"
+          >
+            <LxTextInput
+              v-if="hasSearch"
+              ref="queryInputCompact"
+              v-model="queryRaw"
+              :kind="'default'"
+              :disabled="loading || busy"
+              :placeholder="displayTexts.placeholder"
+              role="search"
+              @keydown.enter="serverSideSearch()"
+            />
+            <div class="lx-group lx-slot-wrapper">
+              <LxButton
+                v-if="searchSide === 'server' && hasSearch"
+                icon="search"
+                kind="ghost"
+                :busy="busy"
+                :disabled="loading"
+                variant="icon-only"
+                :label="displayTexts.search"
+                @click="serverSideSearch()"
+              />
+              <LxButton
+                v-if="query || queryRaw"
+                icon="clear"
+                kind="ghost"
+                :loading="loading"
+                variant="icon-only"
+                :label="displayTexts.clear"
+                :disabled="loading || busy"
+                @click="clear()"
+              />
+            </div>
+          </div>
+        </template>
+      </LxToolbar>
     </div>
     <div v-if="groupDefinitions && filteredUngroupedItems && filteredUngroupedItems.length > 0">
       <ul

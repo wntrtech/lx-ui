@@ -1161,139 +1161,140 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
       <p :id="`${id}-description`" class="lx-description">{{ description }}</p>
     </header>
-    <LxToolbar
-      v-if="(toolbarActions?.length > 0 || $slots.toolbar) && (props.showToolbar || hasSelecting)"
-      :actionDefinitions="toolbarActions"
-      :disabled="props.busy"
-      :loading="props.loading"
-      :busy="props.busy"
-      @action-click="toolbarClick"
-      :class="[
-        { 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length },
-        { 'lx-grid-toolbar': true },
-        { 'is-expanded': searchField },
-        'first-row',
-      ]"
-    >
-      <template #leftArea>
-        <p v-if="hasSelecting && selectedRows && selectedRows.length !== 0">
-          {{ selectedLabel }}
-        </p>
-        <div
-          v-if="hasSearch && !hasSelecting && autoSearchMode === 'default'"
-          class="lx-search-wrapper"
-        >
-          <LxTextInput
-            v-if="hasSearch"
-            ref="queryInputDefault"
-            v-model="queryRaw"
-            :kind="props.searchSide === 'server' ? 'default' : 'search'"
-            :disabled="loading || busy"
-            :placeholder="displayTexts.placeholder"
-            role="search"
-            @keydown.enter="serverSideSearch()"
-          />
-          <LxButton
-            v-if="props.searchSide === 'server' && hasSearch"
-            icon="search"
-            kind="ghost"
-            :busy="busy"
-            :loading="loading"
-            variant="icon-only"
-            :label="displayTexts.search"
-            @click="serverSideSearch()"
-          />
-          <LxButton
-            v-if="query || queryRaw"
-            icon="clear"
-            kind="ghost"
-            :busy="busy"
-            :loading="loading"
-            variant="icon-only"
-            :label="displayTexts.clearSearch"
-            :disabled="loading || busy"
-            @click="clear()"
-          />
-        </div>
-      </template>
-
-      <template
-        #rightArea
-        v-if="(!hasSelecting && props.showToolbar) || (hasSelecting && selectedRows.length === 0)"
+    <div :class="[{ 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length }]">
+      <LxToolbar
+        v-if="(toolbarActions?.length > 0 || $slots.toolbar) && (props.showToolbar || hasSelecting)"
+        :actionDefinitions="toolbarActions"
+        :disabled="props.busy"
+        :loading="props.loading"
+        @action-click="toolbarClick"
+        :class="[{ 'lx-grid-toolbar': true }]"
       >
-        <div class="lx-slot-wrapper">
-          <slot name="toolbar" />
-        </div>
-        <div
-          v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
-          class="toolbar-search-button"
-          :class="[{ 'is-expanded': searchField }]"
-        >
-          <LxButton
-            kind="ghost"
-            variant="icon-only"
-            :icon="searchField ? 'close' : 'search'"
-            :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
-            :search-field="searchField"
-            @click="toggleSearch"
-          />
-        </div>
-      </template>
-      <template #rightArea v-else-if="hasSelecting && selectedRows.length > 0">
-        <div
-          v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
-          class="toolbar-search-button"
-          :class="[{ 'is-expanded': searchField }]"
-        >
-          <LxButton
-            kind="ghost"
-            variant="icon-only"
-            :icon="searchField ? 'close' : 'search'"
-            :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
-            :search-field="searchField"
-            @click="toggleSearch"
-          />
-        </div>
-      </template>
-    </LxToolbar>
+        <template #leftArea>
+          <p v-if="hasSelecting && selectedRows && selectedRows.length !== 0">
+            {{ selectedLabel }}
+          </p>
+          <div
+            v-if="hasSearch && !hasSelecting && autoSearchMode === 'default'"
+            class="lx-search-wrapper"
+          >
+            <LxTextInput
+              v-if="hasSearch"
+              ref="queryInputDefault"
+              v-model="queryRaw"
+              :kind="props.searchSide === 'server' ? 'default' : 'search'"
+              :disabled="loading || busy"
+              :placeholder="displayTexts.placeholder"
+              role="search"
+              @keydown.enter="serverSideSearch()"
+            />
+            <LxButton
+              v-if="props.searchSide === 'server' && hasSearch"
+              icon="search"
+              kind="ghost"
+              :busy="busy"
+              :loading="loading"
+              variant="icon-only"
+              :label="displayTexts.search"
+              @click="serverSideSearch()"
+            />
+            <LxButton
+              v-if="query || queryRaw"
+              icon="clear"
+              kind="ghost"
+              :busy="busy"
+              :loading="loading"
+              variant="icon-only"
+              :label="displayTexts.clearSearch"
+              :disabled="loading || busy"
+              @click="clear()"
+            />
+          </div>
+        </template>
 
-    <div
-      class="second-row"
-      v-if="hasSearch && searchField && autoSearchMode === 'compact'"
-      :class="[{ 'second-row-selecting': hasSelecting }]"
-    >
-      <LxTextInput
-        v-if="hasSearch"
-        ref="queryInputCompact"
-        v-model="queryRaw"
-        :kind="'default'"
-        :disabled="loading || busy"
-        :placeholder="displayTexts.placeholder"
-        role="search"
-        @keydown.enter="serverSideSearch()"
-      />
-      <div class="lx-group lx-slot-wrapper">
-        <LxButton
-          v-if="searchSide === 'server' && hasSearch"
-          icon="search"
-          kind="ghost"
-          :busy="busy"
-          :disabled="loading"
-          variant="icon-only"
-          :label="displayTexts.search"
-          @click="serverSideSearch()"
-        />
-        <LxButton
-          v-if="query || queryRaw"
-          icon="clear"
-          kind="ghost"
-          :loading="loading"
-          variant="icon-only"
-          :label="displayTexts.clearSearch"
-          :disabled="loading || busy"
-          @click="clear()"
-        />
-      </div>
+        <template
+          #rightArea
+          v-if="(!hasSelecting && props.showToolbar) || (hasSelecting && selectedRows.length === 0)"
+        >
+          <div class="lx-slot-wrapper">
+            <slot name="toolbar" />
+          </div>
+          <div
+            v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
+            class="toolbar-search-button"
+            :class="[{ 'is-expanded': searchField }]"
+          >
+            <LxButton
+              kind="ghost"
+              variant="icon-only"
+              :icon="searchField ? 'close' : 'search'"
+              :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
+              :search-field="searchField"
+              :disabled="loading || busy"
+              @click="toggleSearch"
+            />
+          </div>
+        </template>
+
+        <template #rightArea v-else-if="hasSelecting && selectedRows.length > 0">
+          <div
+            v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
+            class="toolbar-search-button"
+            :class="[{ 'is-expanded': searchField }]"
+          >
+            <LxButton
+              kind="ghost"
+              variant="icon-only"
+              :icon="searchField ? 'close' : 'search'"
+              :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
+              :search-field="searchField"
+              :disabled="loading || busy"
+              @click="toggleSearch"
+            />
+          </div>
+        </template>
+
+        <template #secondRow>
+          <div
+            class="second-row"
+            v-if="hasSearch && searchField && autoSearchMode === 'compact'"
+            :class="[{ 'second-row-selecting': hasSelecting }]"
+          >
+            <LxTextInput
+              v-if="hasSearch"
+              ref="queryInputCompact"
+              v-model="queryRaw"
+              :kind="'default'"
+              :disabled="loading || busy"
+              :placeholder="displayTexts.placeholder"
+              role="search"
+              @keydown.enter="serverSideSearch()"
+            />
+            <div class="lx-group lx-slot-wrapper">
+              <LxButton
+                v-if="searchSide === 'server' && hasSearch"
+                icon="search"
+                kind="ghost"
+                :busy="busy"
+                :disabled="loading"
+                variant="icon-only"
+                :label="displayTexts.search"
+                @click="serverSideSearch()"
+              />
+              <LxButton
+                v-if="query || queryRaw"
+                icon="clear"
+                kind="ghost"
+                :loading="loading"
+                variant="icon-only"
+                :label="displayTexts.clearSearch"
+                :disabled="loading || busy"
+                @click="clear()"
+              />
+            </div>
+          </div>
+        </template>
+      </LxToolbar>
     </div>
 
     <div class="lx-grid-header-wrapper" aria-hidden="false">

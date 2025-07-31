@@ -399,6 +399,7 @@ a.lx-button.lx-button-ghost svg {
 
 /* Toolbar ghost icon styles */
 
+.lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost svg,
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost svg,
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost svg,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost svg,
@@ -425,21 +426,21 @@ a.lx-button.lx-button-ghost svg {
 .lx-list-toolbar .lx-button.lx-button-ghost:focus:hover svg,
 .lx-component-toolbar .lx-button.lx-button-ghost:focus:hover svg,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:focus:hover svg,
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus:hover svg  {
+.lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:focus:hover svg  {
   fill: var(--color-button-toolbar-ghost-icon-hover);
 }
 
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost:active svg,
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:active svg,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:active svg,
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:active svg {
+.lx-component-toolbar .second-row .lx-button.lx-button-ghost:active svg {
   fill: var(--color-button-toolbar-ghost-icon-active);
 }
 
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost.lx-disabled svg,
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-disabled svg,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-disabled svg,
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost.lx-disabled svg {
+.lx-component-toolbar .second-row .lx-button.lx-button-ghost.lx-disabled svg {
   fill: var(--color-button-toolbar-ghost-icon-disabled);
 }
 
@@ -459,7 +460,7 @@ a.lx-button.lx-button-ghost svg {
 /* Toolbar selection icon styles */
 
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) svg,
-.lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost svg {
+.lx-selection-toolbar .lx-component-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) svg {
   height: var(--button-toolbar-selection-icon-height);
   width: var(--button-toolbar-selection-icon-width);
   fill: var(--color-button-toolbar-selection-icon);
@@ -840,7 +841,8 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-list-wrapper .lx-list-toolbar .lx-button:hover,
-.lx-layout .lx-component-toolbar .lx-button:hover {
+.lx .lx-layout .lx-component-toolbar .lx-button:hover,
+.lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-button:hover {
   background-color: var(--color-button-toolbar-primary-hover-background);
   border-color: var(--color-button-toolbar-primary-hover-border);
   color: var(--color-button-toolbar-primary-hover);
@@ -867,7 +869,8 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-list-wrapper .lx-list-toolbar .lx-button.lx-disabled,
-.lx .lx-layout .lx-component-toolbar .lx-button.lx-disabled {
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled,
+.lx .lx-layout .lx-list-wrapper .lx-component-toolbar.lx-disabled .lx-group .lx-button.lx-disabled {
   background-color: var(--color-button-toolbar-primary-disabled-background);
   color: var(--color-button-toolbar-primary-disabled);
   border-color: var(--color-button-toolbar-primary-disabled-border);
@@ -1046,17 +1049,19 @@ a.lx-button.lx-button-ghost svg {
   text-align: var(--button-toolbar-ghost-text-align);
 }
 
+.lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover,
+.lx .lx-layout .lx-form-grid .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover,
+.lx .lx-layout .lx-modal .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover,
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost:hover,
-.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:hover,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:hover,
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:hover {
+.lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:hover {
   background-color: var(--color-button-toolbar-ghost-hover-background);
   border-color: var(--color-button-toolbar-ghost-hover-border);
   color: var(--color-button-toolbar-ghost-hover);
 }
 
+.lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus,
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost:focus,
-.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:focus,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:focus,
 .lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus {
   background-color: var(--color-button-toolbar-ghost-focus-background);
@@ -1065,32 +1070,38 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-list-toolbar .lx-button.lx-button-ghost:focus:hover,
-.lx-component-toolbar .lx-button.lx-button-ghost:focus:hover,
+.lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus:hover,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:focus:hover,
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus:hover {
+.lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:focus:hover {
   background-color: var(--color-button-toolbar-ghost-hover-background);
   color: var(--color-button-toolbar-ghost-hover);
 }
 
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost:active,
-.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:active,
+.lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:active,
+.lx .lx-layout .lx-form-grid .lx-component-toolbar .lx-button.lx-button-ghost:active,
 .lx-layout .toolbar-search-button .lx-button.lx-button-ghost:active,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:active,
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:active {
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active {
   background-color: var(--color-button-toolbar-ghost-active-background);
   border-color: var(--color-button-toolbar-ghost-active-border);
   color: var(--color-button-toolbar-ghost-active);
 }
 
-.lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost.lx-disabled,
-.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-disabled,
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-disabled {
+    background-color: var(--color-button-toolbar-selection-disabled-background);
+}
+
+.lx-list-wrapper .lx-component-toolbar.lx-disabled .left-area,
+.lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-group .lx-button.lx-button-ghost.lx-disabled,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-disabled,
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost.lx-disabled {
+.lx .lx-layout .lx-component-toolbar .second-row .lx-button.lx-button-ghost.lx-disabled {
   background-color: var(--color-button-toolbar-ghost-disabled-background);
   color: var(--color-button-toolbar-ghost-disabled);
   border-color: var(--color-button-toolbar-ghost-disabled-border);
 }
 
+.lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost.lx-active,
 .lx .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost.lx-active,
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active,
 .lx .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-active {
@@ -1100,7 +1111,6 @@ a.lx-button.lx-button-ghost svg {
 }
 
 /* Selection toolbar button styles */
-
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button),
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost {
   padding: var(--button-toolbar-selection-padding);
@@ -1127,7 +1137,7 @@ a.lx-button.lx-button-ghost svg {
   gap: var(--button-toolbar-selection-gap);
 }
 
-.lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) .lx-button-content,
+.lx-selection-toolbar .lx-component-toolbar .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button) .lx-button-content,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost .lx-button-content {
   text-align: var(--button-toolbar-selection-text-align);
 }
@@ -1147,19 +1157,23 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-selection-toolbar .first-row .lx-button:focus:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):hover,
-.lx-component-toolbar.lx-selection-toolbar .lx-button:focus:hover {
+.lx-selection-toolbar .lx-component-toolbar .lx-button:focus:hover {
   background-color: var(--color-button-toolbar-selection-hover-background);
   color: var(--color-button-toolbar-selection-hover);
 }
 
+/* .lx-selection-toolbar .lx-component-toolbar .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):active, */
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button):active,
 .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost:active {
   background-color: var(--color-button-toolbar-selection-active-background);
   border-color: var(--color-button-toolbar-selection-active-border);
   color: var(--color-button-toolbar-selection-active);
 }
+
 .lx-selection-toolbar .first-row .lx-button-ghost:not(.is-expanded .lx-button):not(.lx-dropdown-panel .lx-button).lx-disabled,
-.lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost.lx-disabled {
+.lx-selection-toolbar .first-row .toolbar-search-button.is-expanded .lx-button.lx-button-ghost.lx-button-icon-only.lx-disabled,
+.lx .lx-layout .lx-component-toolbar.lx-selection-toolbar .lx-button.lx-button-ghost.lx-disabled,
+.lx .lx-layout .lx-selection-toolbar .lx-component-toolbar.lx-disabled .left-area {
   background-color: var(--color-button-toolbar-selection-disabled-background);
   color: var(--color-button-toolbar-selection-disabled);
   border-color: var(--color-button-toolbar-selection-disabled-border);
@@ -1751,6 +1765,9 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx .lx-button.lx-button-ghost.lx-disabled,
+.lx .lx-layout .lx-component-toolbar .lx-group .lx-button.lx-button-ghost.lx-disabled,
+.lx .lx-layout .lx-camera .lx-button.lx-button-ghost.lx-disabled,
+.lx .lx-layout .lx-markdown-text-area-wrapper .lx-button.lx-button-ghost.lx-disabled,
 .lx-override button.lx-button-ghost.lx-disabled,
 .lx-override button.lx-button-ghost[disabled],
 .lx-layout.lx-override input[type="button"].lx-button-ghost.lx-disabled,
@@ -2210,7 +2227,11 @@ a.lx-button.lx-button-ghost svg {
 }
 
 @media (max-width: 800px) {
-   .lx-data-grid-wrapper .lx-component-toolbar .right-area .action-definitions-small {
-      display: flex;
-  } 
+  .lx-component-toolbar .right-area > .action-definitions-small {
+    display: flex;
+  }
+}
+
+.lx-list-wrapper .lx-component-toolbar .left-area .lx-group.action-definitions-group {
+  width: fit-content;
 }

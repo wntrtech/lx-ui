@@ -1300,6 +1300,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 /*** Search toolbar styles ***/
 
 .lx .lx-layout .first-row .lx-input-wrapper,
+.lx .lx-layout .left-area .lx-input-wrapper,
 .lx .lx-layout .lx-search-wrapper .lx-input-wrapper,
 .lx .lx-layout .lx-search-toolbar .lx-input-wrapper,
 .lx .lx-layout .lx-search-wrapper input.lx-input-area,
@@ -3223,6 +3224,27 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-bottom: 1px solid var(--color-chrome);
 }
 
+.lx-list-wrapper .lx-component-toolbar.lx-disabled .left-area {
+  background-color: var(--color-button-toolbar-ghost-disabled-background);
+  color: var(--color-button-toolbar-ghost-disabled);
+  border-color: var(--color-button-toolbar-ghost-disabled-border);
+}
+
+.lx-component-toolbar.lx-disabled .left-area {
+  background-color: var(--color-button-toolbar-selection-disabled-background);
+  color: var(--color-button-toolbar-selection-disabled);
+  border-color: var(--color-button-toolbar-selection-disabled-border);
+}
+
+.lx-data-grid-wrapper > .lx-selection-toolbar > .lx-component-toolbar.lx-disabled .left-area > .lx-group > p,
+.lx-list-wrapper > .lx-selection-toolbar > .lx-component-toolbar.lx-disabled .left-area > .lx-group > p {
+  color: var(--color-button-toolbar-selection-disabled);
+}
+
+.lx-component-toolbar:not(.second-row):not(:has(.left-area .action-definitions-group)):not(:has(.right-area .action-definitions-group)):not(:has(.right-area .lx-group:not(:empty))):not(:has(.left-area .lx-group:not(:empty))) {
+  border-bottom: 1px solid transparent;
+}
+
 .lx-component-toolbar.lx-toolbar-no-borders {
   border-top: none;
   border-bottom: none;
@@ -3598,7 +3620,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-data);
 }
 
-.lx-upload-files-skeleton .lx-empty-state-wrapper {
+.lx-upload-files-skeleton .lx-empty-state-wrapper,
+.lx-file-upload-wrapper > .lx-uploaded-file-list-wrapper > .lx-list-wrapper > div {
   display: none;
 }
 

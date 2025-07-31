@@ -177,6 +177,9 @@
 .lx .lx-form-region .lx-list-item-container,
 .lx .lx-form-grid .lx-list-item-container,
 .lx .lx-region .lx-list-item-container,
+.lx .lx-region .lx-component-toolbar .second-row,
+.lx .lx-modal .lx-component-toolbar.lx-disabled .second-row,
+.lx .lx-form-grid .lx-component-toolbar.lx-disabled .second-row,
 .lx .lx-curtain .lx-modal .draggable-list-item-wrapper .lx-handle,
 .lx .lx-form-region .draggable-list-item-wrapper .lx-handle,
 .lx .lx-form-grid .draggable-list-item-wrapper .lx-handle,
@@ -625,7 +628,8 @@
 
 /*** Toolbar styles ***/
 
-.lx-list-wrapper .lx-list-toolbar {
+.lx-list-wrapper .lx-list-toolbar,
+.lx-list-wrapper .lx-component-toolbar {
   margin-bottom: var(--list-item-gap);
 }
 
@@ -651,13 +655,16 @@
   --button-primary-grid-template-columns: minmax(max-content, 1fr) auto;
 }
 
+.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-text,
 .lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons,
-.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-text {
+.lx-list-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
   display: flex;
   align-items: center;
 }
 
-.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons-small {
+.lx-list-wrapper .lx-component-toolbar .toolbar-action-buttons-small,
+.lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons-small,
+.lx-list-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons-small {
   display: none;
 }
 
@@ -669,6 +676,7 @@
   width: auto;
 }
 
+.lx-list-wrapper .lx-component-toolbar,
 .lx-list-wrapper > .lx-list-toolbar {
   display: flex;
   flex-direction: column;
@@ -682,23 +690,35 @@
   height: var(--row-size);
 }
 
+.lx-component-toolbar .first-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .lx-list-toolbar > .first-row:only-child,
 .lx-list-toolbar > .second-row,
 .lx-list-toolbar > :last-child {
   border-bottom: 1px solid var(--color-chrome);
 }
 
+.lx-list-wrapper .lx-component-toolbar {
+  border-top: 1px solid transparent;
+}
+
 .lx-list-toolbar > .first-row:not(:only-child) {
   border-bottom: none;
 }
 
+.lx-selection-toolbar > .lx-component-toolbar .first-row,
 .lx-list-toolbar.lx-selection-toolbar > .first-row {
   background-color: var(--color-brand);
   border-bottom: 0;
   justify-content: space-between;
 }
 
-.lx-list-toolbar > .first-row > p {
+.lx-list-toolbar > .first-row > p,
+.lx-component-toolbar .left-area  .lx-group > p {
   padding-left: 1rem;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -712,15 +732,22 @@
 
 .lx-list-toolbar .right-area,
 .lx-list-toolbar > .second-row,
+.lx-component-toolbar .second-row,
+.lx-component-toolbar .left-area,
+.lx-component-toolbar .right-area,
 .lx-list-toolbar .lx-group.lx-slot-wrapper {
   display: flex;
 }
 
+.lx .lx-layout .lx-component-toolbar > .left-area .lx-text-input,
+.lx .lx-layout .lx-component-toolbar .second-row .lx-text-input,
 .lx .lx-layout .lx-list-toolbar > .second-row .lx-text-input,
+.lx .lx-layout .lx-component-toolbar > .first-row .lx-text-input,
 .lx .lx-layout .lx-list-toolbar > .first-row .lx-text-input {
   height: var(--row-size);
 }
 
+.lx-list-wrapper .lx-component-toolbar:has(.toolbar-search-button.is-expanded),
 .lx-list-wrapper .lx-list-toolbar:has(.toolbar-search-button.is-expanded) {
   gap: 0.15rem;
 }
@@ -729,27 +756,45 @@
   color: var(--color-label);
 }
 
+.lx-list-wrapper > .lx-selection-toolbar > .lx-component-toolbar p,
 .lx-list-wrapper .lx-list-toolbar.lx-selection-toolbar > .first-row > p {
   color: var(--color-interactive-foreground);
 }
 
+
+.lx .lx-data-grid-wrapper .toolbar-search-button.is-expanded .lx-button
 .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-list-wrapper > .lx-list-toolbar .second-row .lx-text-input-wrapper .lx-text-input,
 .lx-list-toolbar .second-row .lx-button {
   background-color: var(--color-region);
 }
 
+.lx .lx-region .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx .lx-region .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
+.lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
+.lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar .second-row .lx-button,
+.lx .lx-modal .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
+.lx .lx-modal .lx-component-toolbar .second-row .lx-button,
 .lx-region .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button,
-.lx-region .lx-list-wrapper > .lx-list-toolbar .second-row .lx-text-input-wrapper .lx-text-input,
-.lx-region .lx-list-toolbar .second-row .lx-button,
+.lx-region .lx-list-wrapper .lx-component-toolbar .second-row .lx-text-input-wrapper .lx-text-input,
+.lx-region .lx-list-wrapper .lx-list-toolbar .second-row .lx-text-input-wrapper .lx-text-input,
+.lx .lx-region .lx-component-toolbar .second-row .lx-button,
 .lx-form-grid .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-form-grid .lx-list-wrapper > .lx-list-toolbar .second-row .lx-text-input-wrapper .lx-text-input,
 .lx-form-grid .lx-list-toolbar .second-row .lx-button {
   background-color: var(--color-list-region-background);
 }
 
+.lx .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
+.lx-list-wrapper .lx-component-toolbar .second-row {
+    background-color: var(--color-region);
+}
+
+.lx-component-toolbar .toolbar-search-button.is-expanded:hover .lx-button,
 .lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button,
-.lx .lx-list-toolbar .second-row .lx-button:hover {
+.lx .lx-list-toolbar .second-row .lx-button:hover
+.lx .lx-component-toolbar .second-row .lx-button:hover {
   background-color: var(--color-interactive-hover-background);
 }
 
@@ -757,6 +802,8 @@
   fill: var(--color-focus-foreground);
 }
 
+.lx .lx-list-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-list-wrapper .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button {
   --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
   --color-button-toolbar-ghost-icon-hover: var(--color-interactive-hover-foreground);
@@ -768,6 +815,7 @@
   width: 100%;
 }
 
+.lx-component-toolbar .toolbar-search-button.is-expanded:hover .lx-button svg,
 .lx-list-toolbar .toolbar-search-button.is-expanded:hover .lx-button svg {
   fill: var(--color-focus-foreground);
 }
@@ -1059,6 +1107,7 @@ a.lx-tile:not(.lx-disabled):hover {
   fill: var(--color-tile-hover-foreground);
 }
 
+.lx-list-wrapper .lx-component-toolbar .toolbar-action-buttons,
 .lx-tile .lx-tile-item-loader, .lx-tile .lx-loader-wrapper {
   display: flex;
 }
@@ -1206,11 +1255,13 @@ li .lx-list-item.lx-inactive {
     flex-direction: column;
   }
 
-  .lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons {
+  .lx-list-wrapper .lx-component-toolbar .toolbar-action-buttons,
+  .lx-list-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
     display: none;
   }
 
-  .lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-buttons-small {
+  .lx-list-wrapper .lx-component-toolbar .toolbar-action-buttons-small,
+  .lx-list-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons-small {
     display: flex;
   }
 }
