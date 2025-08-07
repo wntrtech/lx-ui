@@ -729,7 +729,7 @@ svg .lx-shade {
 }
 
 .lx-modal > .lx-main .lx-form-grid > .lx-main .lx-row,
-.lx-modal > .lx-main .lx-form-grid > .lx-main .lx-row .lx-vertical {
+.lx-modal > .lx-main .lx-form-grid > .lx-main .lx-row .lx-vertical:not(:has(.lx-loader-wrapper)) {
   overflow-x: hidden;
 }
 
