@@ -634,7 +634,7 @@ watch(
   () => props.mode,
   (newValue) => {
     nextTick(() => {
-      if (newValue === 'cover') defineVars();
+      if (newValue === 'cover' || newValue === 'cover-digives-lite') defineVars();
     });
   }
 );
@@ -856,6 +856,134 @@ watch(
       ref="shell"
       v-if="mode === 'cover'"
       class="lx-layout lx-layout-cover"
+      :class="{ 'lx-override': overrideDefaultStyles }"
+    >
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
+        @click="focusFirstMainFocusableElement"
+      />
+      <header ref="header">
+        <LxMainHeader
+          :mode="mode"
+          :alternative-profiles-info="alternativeProfilesInfo"
+          :context-persons-info="contextPersonsInfo"
+          :nav-items="navItems"
+          :userInfo="userInfo"
+          :hideNavBar="true"
+          :has-language-picker="hasLanguagePicker"
+          :languages="languages"
+          :has-help="hasHelp"
+          :has-theme-picker="hasThemePicker"
+          :available-themes="availableThemes"
+          :environment="environment"
+          :headerNavDisable="headerNavDisable"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          :hasCustomButton="hasCustomButton"
+          :customButtonIcon="customButtonIcon"
+          :customButtonBadge="customButtonBadge"
+          :customButtonBadgeType="customButtonBadgeType"
+          :customButtonBadgeIcon="customButtonBadgeIcon"
+          :customButtonKind="customButtonKind"
+          v-model:customButtonOpened="customButtonOpenedModal"
+          @mega-menu-show-all-click="triggerShowAllClick"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+          v-model:selectedContextPerson="selectedContextPersonModel"
+          v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:theme="themeModel"
+          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
+          @language-changed="languageChanged"
+          @help-click="helpClicked"
+          @log-out="logOut"
+          @nav-toggle="navToggle"
+          @context-person-changed="contextPersonChanged"
+          @alternative-profile-changed="alternativeProfileChanged"
+          @customButtonClick="emits('customButtonClick')"
+          :texts="displayTexts"
+        >
+          <template v-if="!systemIcon" #logo>
+            <slot name="logoSmall" />
+          </template>
+          <LxIcon
+            v-if="systemIcon"
+            :value="systemIcon"
+            icon-set="brand"
+            :title="`${systemName} logo`"
+            :desc="`${systemName}: ${systemSubheader}`"
+          />
+          <template #customButtonPanel v-if="$slots.customButtonPanel">
+            <slot name="customButtonPanel" />
+          </template>
+          <template #customButtonSafePanel v-if="$slots.customButtonSafePanel">
+            <slot name="customButtonSafePanel" />
+          </template>
+        </LxMainHeader>
+      </header>
+      <main ref="main" class="lx-main">
+        <div class="lx-cover">
+          <slot name="backdrop" />
+          <div class="lx-content">
+            <div class="lx-logo">
+              <template v-if="hasCoverLogo">
+                <img v-if="coverLogo" :src="coverLogo" alt="Logo" />
+                <slot v-else name="logo" />
+              </template>
+              <template v-else>
+                <LxIcon
+                  :value="systemIcon"
+                  icon-set="brand"
+                  :title="`${systemName} logo`"
+                  :desc="`${systemName}: ${systemSubheader}`"
+                />
+              </template>
+            </div>
+            <div>
+              <div
+                class="heading-1"
+                v-if="systemNameFormatted"
+                v-clean-html="systemNameFormatted"
+              />
+              <div class="heading-1" v-else>{{ systemName }}</div>
+              <p class="lx-description">{{ systemSubheader }}</p>
+            </div>
+            <div class="cover-main-area">
+              <slot name="coverArea" />
+              <LxAlertWidget
+                v-if="alerts?.length > 0"
+                :alerts="alerts"
+                :nextAlertTitle="displayTexts.nextAlertTitle"
+                :previousAlertTitle="displayTexts.previousAlertTitle"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="lx-loader-screen" v-if="navigating">
+          <div class="spinner">
+            <LxLoader :loading="true" />
+          </div>
+        </div>
+      </main>
+      <footer ref="footer">
+        <div></div>
+        <div>
+          <slot name="footer" />
+        </div>
+        <div></div>
+      </footer>
+      <div ref="modals" id="modals"></div>
+    </div>
+    <div
+      ref="shell"
+      v-if="mode === 'cover-digives-lite'"
+      class="lx-layout lx-layout-cover-digives-lite"
       :class="{ 'lx-override': overrideDefaultStyles }"
     >
       <LxSkipLink

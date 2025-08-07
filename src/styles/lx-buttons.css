@@ -1780,7 +1780,9 @@ a.lx-button.lx-button-ghost svg {
 /*** User button styles ***/
 
 .lx .lx-layout.lx-layout-cover .lx-header .lx-user-button:hover,
-.lx .lx-layout.lx-layout-cover .lx-header .lx-selected .lx-user-button {
+.lx .lx-layout.lx-layout-cover .lx-header .lx-selected .lx-user-button,
+.lx .lx-layout.lx-layout-cover-digives-lite .lx-header .lx-user-button:hover,
+.lx .lx-layout.lx-layout-cover-digives-lite .lx-header .lx-selected .lx-user-button {
   background-color: var(--color-interactive-hover-background);
   color: var(--color-interactive-hover-foreground);
   border-color: var(--color-interactive-hover-background);
@@ -1794,23 +1796,27 @@ a.lx-button.lx-button-ghost svg {
   margin-right: 0.66rem;
 }
 
-.lx .lx-layout-cover #userMenuButton {
+.lx .lx-layout-cover #userMenuButton,
+.lx .lx-layout-cover-digives-lite #userMenuButton {
   background-color: transparent;
   backdrop-filter: blur(1rem);
   color: var(--color-interactive-background);
   border-color: transparent;
 }
 
-.lx .lx-layout-cover #userMenuButton:hover {
+.lx .lx-layout-cover #userMenuButton:hover,
+.lx .lx-layout-cover-digives-lite #userMenuButton:hover {
   background-color: var(--color-region-hover);
   color: var(--color-interactive-hover-background);
 }
 
-.lx .lx-layout-cover #userMenuButton svg {
+.lx .lx-layout-cover #userMenuButton svg,
+.lx .lx-layout-cover-digives-lite #userMenuButton svg {
   fill: var(--color-interactive-background);
 }
 
-.lx .lx-layout-cover #userMenuButton:hover svg {
+.lx .lx-layout-cover #userMenuButton:hover svg,
+.lx .lx-layout-cover-digives-lite #userMenuButton:hover svg {
   fill: var(--color-interactive-hover-background);
 }
 

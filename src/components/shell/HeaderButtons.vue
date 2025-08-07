@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, ref } from 'vue';
+import { computed, watch, ref, onMounted } from 'vue';
 
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -122,6 +122,14 @@ const windowWidth = computed(() => windowSize.width.value);
 const themeIcon = ref('theme');
 const themeMenu = ref();
 
+onMounted(() => {
+  if (props.mode === 'cover-digives-lite') {
+    themeIcon.value = 'theme-alternative';
+  } else {
+    themeIcon.value = 'theme';
+  }
+});
+
 function openAlternativeProfilesModal() {
   emits('openAlternativeProfilesModal');
 }
@@ -168,7 +176,7 @@ const selectedMegaMenuItemModel = computed({
 });
 
 const helpLabel = computed(() => {
-  if (props.mode === 'cover') {
+  if (props.mode === 'cover' || props.mode === 'cover-digives-lite') {
     return displayTexts.value.helpTitle;
   }
   return '';
@@ -216,7 +224,11 @@ const themeNames = computed(() => ({
 function themeChange(theme) {
   themeIcon.value = themeIcons[theme];
   setTimeout(() => {
-    themeIcon.value = 'theme';
+    if (props.mode === 'cover-digives-lite') {
+      themeIcon.value = 'theme-alternative';
+    } else {
+      themeIcon.value = 'theme';
+    }
   }, 1000);
   emits('update:theme', theme);
 }
@@ -479,7 +491,7 @@ watch(
         kind="ghost"
         icon="help"
         :label="helpLabel || displayTexts.helpTitle"
-        :variant="mode === 'cover' ? 'default' : 'icon-only'"
+        :variant="mode === 'cover' || mode === 'cover-digives-lite' ? 'default' : 'icon-only'"
         :disabled="headerNavDisable"
         :title="displayTexts.helpTitle"
         @click="helpClicked"
@@ -651,7 +663,10 @@ watch(
       </LxDropDownMenu>
     </div>
 
-    <div class="lx-mega-menu" v-if="hasMegaMenu && (windowWidth > 500 || mode === 'cover')">
+    <div
+      class="lx-mega-menu"
+      v-if="hasMegaMenu && (windowWidth > 500 || mode === 'cover' || mode === 'cover-digives-lite')"
+    >
       <LxMegaMenu
         :items="megaMenuItems"
         :groupDefinitions="megaMenuGroupDefinitions"
