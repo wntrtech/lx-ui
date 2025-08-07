@@ -1862,6 +1862,10 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-badge-foreground);
 } 
 
+.lx-button:not(#userMenuButton) .lx-badge .lx-badge-icon {
+  fill: var(--color-badge-foreground);
+}
+
 .lx-button.lx-button-secondary .lx-badge {
   inset: var(--button-primary-badge-inset);
 }
