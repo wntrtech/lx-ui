@@ -28,6 +28,7 @@ import LxSkipLink from '@/components/SkipLink.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import LxAlertWidget from '@/components/AlertWidget.vue';
 import LxMainHeaderDigimaks from '@/components/shell/HeaderDigimaks.vue';
+import LxMainHeaderDigimaksLite from '@/components/shell/HeaderDigimaksLite.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
@@ -79,7 +80,7 @@ const emits = defineEmits([
 ]);
 
 const props = defineProps({
-  mode: { type: String, default: 'default' }, // public, cover, digives, digives-lite, digimaks, latvijalv
+  mode: { type: String, default: 'default' }, // public, cover, digives, digives-lite, digimaks, digimaks-lite, latvijalv
   systemNameShort: { type: String, required: true },
   systemName: { type: String, required: true },
   systemSubheader: { type: String, default: null },
@@ -232,6 +233,7 @@ const textsDefault = {
   customButton: 'Pielāgojamā poga',
   overflowNavItems: 'Atvērt papildu izvēlni',
   scrollUp: 'Atgriezties uz augšu',
+  settings: 'Iestatījumi',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -551,7 +553,7 @@ function navToggle(value) {
     navBarSwitchModel.value = value;
     return;
   }
-  if (props.mode === 'digives' || props.mode === 'digimaks') {
+  if (props.mode === 'digives' || props.mode === 'digimaks' || props.mode === 'digimaks-lite') {
     navBarSwitchModel.value = value;
   } else {
     navBarSwitchBasic.value = value;
@@ -1922,6 +1924,95 @@ watch(
           @nav-toggle="navToggle"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
+          :texts="displayTexts"
+        />
+      </header>
+      <div ref="modals" id="modals" />
+    </div>
+    <div
+      v-else-if="mode === 'digimaks-lite'"
+      class="lx-layout lx-layout-digimaks"
+      :class="{ 'lx-override': overrideDefaultStyles }"
+    >
+      <LxSkipLink
+        v-if="props.hasSkipLink"
+        :label="displayTexts.skipLinkLabel"
+        :title="displayTexts.skipLinkTitle"
+        @click="focusFirstMainFocusableElement"
+      />
+      <main class="lx-main" ref="main">
+        <transition name="nav">
+          <slot />
+        </transition>
+        <div class="lx-loader-screen" v-if="navigating">
+          <div class="spinner">
+            <LxLoader :loading="true" />
+          </div>
+        </div>
+      </main>
+      <footer ref="footer">
+        <div>
+          <slot name="footer" />
+        </div>
+      </footer>
+      <header ref="header">
+        <LxMainHeaderDigimaksLite
+          :userInfo="userInfo"
+          :alternativeProfilesInfo="alternativeProfilesInfo"
+          :contextPersonsInfo="contextPersonsInfo"
+          :navItems="navItems"
+          :hideNavBar="hideNavBar"
+          :hasLanguagePicker="hasLanguagePicker"
+          :languages="languages"
+          :hasThemePicker="hasThemePicker"
+          :availableThemes="availableThemes"
+          :hasAlerts="hasAlerts"
+          :alertsKind="alertsKind"
+          :alerts="alerts"
+          :alertLevel="alertLevel"
+          :hasHelp="hasHelp"
+          :headerNavDisable="headerNavDisable"
+          :hasMegaMenu="hasMegaMenu"
+          :megaMenuItems="megaMenuItems"
+          :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+          :megaMenuHasShowAll="megaMenuHasShowAll"
+          :selectedNavItems="navItemsSelected"
+          :pageLabel="pageLabel"
+          :pageBackLabel="pageBackLabel"
+          :pageIndexPath="pageIndexPath"
+          :pageBackPath="pageBackPath"
+          :pageBackButtonVisible="pageBackButtonVisible"
+          :breadcrumbs="pageBreadcrumbs"
+          :hasCustomButton="hasCustomButton"
+          :hideHeaderText="hideHeaderText"
+          :customButtonIcon="customButtonIcon"
+          :customButtonBadge="customButtonBadge"
+          :customButtonBadgeType="customButtonBadgeType"
+          :customButtonBadgeIcon="customButtonBadgeIcon"
+          :customButtonKind="customButtonKind"
+          v-model:customButtonOpened="customButtonOpenedModal"
+          v-model:selectedLanguage="selectedLanguageModel"
+          v-model:selectedContextPerson="selectedContextPersonModel"
+          v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          v-model:theme="themeModel"
+          v-model:hasAnimations="animationsModel"
+          v-model:hasReducedTransparency="transparencyModel"
+          v-model:hasDeviceFonts="deviceFontsModel"
+          v-model:isTouchSensitive="touchModeModel"
+          v-model:navBarSwitch="navBarSwitchModel"
+          v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+          @customButtonClick="emits('customButtonClick')"
+          @megaMenuShowAllClick="triggerShowAllClick"
+          @languageChanged="languageChanged"
+          @alertItemClick="alertItemClicked"
+          @alertsClick="alertsClicked"
+          @helpClick="helpClicked"
+          @goHome="goHome"
+          @goBack="goBack"
+          @logOut="logOut"
+          @navToggle="navToggle"
+          @contextPersonChanged="contextPersonChanged"
+          @alternativeProfileChanged="alternativeProfileChanged"
           :texts="displayTexts"
         />
       </header>

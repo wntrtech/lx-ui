@@ -34,7 +34,7 @@ const props = defineProps({
   breadcrumbs: {
     type: Array,
     required: false,
-    default: () => [], // { to: '{ name: 'aaa'}', label: 'Home' }],
+    default: () => [], // { to: '{ name: 'home'}', label: 'Home' }],
   },
   hideHeaderText: { type: Boolean, default: false },
   texts: { type: Object, default: () => {} },

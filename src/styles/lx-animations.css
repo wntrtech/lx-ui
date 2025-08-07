@@ -798,3 +798,20 @@
 .lx:not(.lx-no-animations) .lx-card-wrapper .lx-card {
   transition: transform 0.75s cubic-bezier(.03,.98,.52,.99);
 }
+
+/* LxShell digimaks-lite */
+
+.lx:not(.lx-no-animations) .slide-enter-active,
+.lx:not(.lx-no-animations) .slide-leave-active {
+  transition: transform 0.25s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateY(100%);
+}
+
+.slide-enter-to,
+.slide-leave-from {
+  transform: translateY(0);
+} 

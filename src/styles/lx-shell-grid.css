@@ -1880,11 +1880,12 @@
 
 .lx-view-layout {
   display: grid;
-  grid-template-areas: 
-      "filters"
-      "main"
-      "aside";
-  gap: var(--gap);
+  grid-template-areas:
+          "filters"
+            "main"
+            "aside"
+            "footer";
+    gap: var(--gap);
 }
 
 .lx-view-layout > .filters-container{
@@ -1898,6 +1899,16 @@
 .lx-view-layout > .aside-container{
   grid-area: aside;
 }
+
+.lx-view-layout > .footer-container{
+  grid-area: footer;
+}
+
+.lx-view-layout > .header-container{
+  display: flex;
+  justify-content: flex-end;
+}
+
 
 .lx .lx-layout-default nav .lx-nav-panel .lx-nav-group .lx-mega-menu-nav-item .popper-wrapper{
   width: 100%;
