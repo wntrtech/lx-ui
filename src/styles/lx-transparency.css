@@ -45,6 +45,14 @@
 
 .lx.lx-no-transparency .lx-layout-default.lx-collapsed .lx-nav-panel:hover,
 .lx.lx-no-transparency .lx-layout-default:not(.lx-collapsed) .lx-nav-panel {
+  --shadow-dropdown: 0px 0px transparent;
+  border-right: 2px solid var(--color-chrome);
+}
+
+@media (min-width: 1901px) {
+  .lx.lx-no-transparency .lx-layout-default.lx-collapsed .lx-nav-panel,
+  .lx.lx-no-transparency .lx-layout-default:not(.lx-collapsed) .lx-nav-panel {
     --shadow-dropdown: 0px 0px transparent;
     border-right: 2px solid var(--color-chrome);
+  }
 }
