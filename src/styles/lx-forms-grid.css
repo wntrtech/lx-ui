@@ -1729,6 +1729,8 @@ p .lx-person-display-wrapper {
     width: var(--row-size);
     right: calc(0px - var(--row-size));
     transition: width 0.1s ease-out;
+    contain: layout;
+    z-index: 11;
   }
 
   .lx-index-small > ul {
