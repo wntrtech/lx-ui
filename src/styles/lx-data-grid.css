@@ -1058,11 +1058,6 @@
   padding-left: 1rem;
 }
 
-.lx-data-grid .lx-cell-action .lx-context-container .lx-dropdown-panel .lx-button {
-  width: 100%;
-  height: var(--row-size);
-}
-
 .lx-data-grid-wrapper .lx-data-block-content .flag-column .lx-item-display,
 .lx-data-grid-wrapper .lx-data-block-content .flag-column .lx-item-display .lx-flag {
   display: flex;
