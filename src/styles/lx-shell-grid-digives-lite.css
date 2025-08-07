@@ -1001,3 +1001,17 @@ background-color: var(--color-selected-dropdown-background);
 .lx-layout.lx-layout-default.lx-layout-digives-lite>nav .lx-nav-panel.lx-responsive .lx-help-button>button.lx-button:hover {
   background-color: var(--color-button-nav-hover-background);
 }
+
+.lx-layout-digives-lite .lx-data-with-flag .lx-flag {
+  padding: 0;
+  margin: 0;
+  width: 2rem;
+  height: 2rem;
+  display: block;
+}
+.lx-layout-digives-lite .lx-data-with-flag .lx-flag .flag.normal-flag {
+  padding: 0;
+  margin: 0;
+  margin-top: -0.3rem;
+  margin-left: -1rem;
+}

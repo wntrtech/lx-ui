@@ -3,7 +3,7 @@ import { computed, watch, ref } from 'vue';
 
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { useWindowSize } from '@vueuse/core';
-
+import { formatDate } from '@/utils/dateUtils';
 import LxButton from '@/components/Button.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -11,6 +11,7 @@ import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
+import LxFlag from '@/components/Flag.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
@@ -106,6 +107,7 @@ const textsDefault = {
   megaMenuTitle: 'Lietotnes',
   contextPersonsInfoLabel: 'Pacients',
   contextPersonsInfoTitle: 'Konteksta persona',
+  contextPersonsBirthDate: 'Dzimšanas datums',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -749,7 +751,23 @@ function themeDropdownClicked(id, value) {
           <template #panel>
             <LxRow :label="displayTexts.contextPersonsInfoLabel">
               <p class="lx-data">{{ selectedContextPersonModel?.name }}</p>
-              <p class="lx-data">{{ selectedContextPersonModel?.description }}</p>
+              <div class="lx-data-with-flag">
+                <LxFlag
+                  v-if="selectedContextPersonModel?.flag"
+                  :value="selectedContextPersonModel.flag"
+                  :title="selectedContextPersonModel?.flagTitle"
+                >
+                </LxFlag>
+                <p class="lx-data">
+                  {{ selectedContextPersonModel?.description }}
+                </p>
+              </div>
+            </LxRow>
+            <LxRow
+              :label="displayTexts.contextPersonsBirthDate"
+              v-if="selectedContextPersonModel?.birthDate"
+            >
+              <p class="lx-data">{{ formatDate(selectedContextPersonModel?.birthDate) }}</p>
             </LxRow>
           </template>
         </LxInfoWrapper>

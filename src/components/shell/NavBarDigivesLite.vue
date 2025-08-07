@@ -474,6 +474,8 @@ function themeDropdownClicked(id, value) {
 }
 const navPanel = ref();
 
+const isResponsiveView = computed(() => windowSize.width.value < 1000);
+
 onClickOutside(navPanel, toggleNavBar);
 </script>
 <template>
@@ -540,7 +542,7 @@ onClickOutside(navPanel, toggleNavBar);
       </li>
     </ul>
   </div>
-  <div class="lx-nav-panel lx-responsive digives-lite-nav-panel">
+  <div class="lx-nav-panel lx-responsive digives-lite-nav-panel" v-if="isResponsiveView">
     <ul class="lx-nav-group">
       <div class="lx-user-menu" :class="[{ opened: dropDownMenu?.menuOpen }]" v-if="userInfo">
         <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">

@@ -9,7 +9,7 @@ import {
 } from '@vueuse/core';
 
 import useLx from '@/hooks/useLx';
-
+import { formatDate } from '@/utils/dateUtils';
 import LxMainHeader from '@/components/shell/Header.vue';
 import LxMainHeaderDigives from '@/components/shell/HeaderDigives.vue';
 import LxPageHeader from '@/components/shell/PageHeader.vue';
@@ -18,7 +18,7 @@ import LxNavBarDigives from '@/components/shell/NavBarDigives.vue';
 import { lxDevUtils } from '@/utils';
 import LxMainHeaderDigivesLite from '@/components/shell/HeaderDigivesLite.vue';
 import LxNavBarDigivesLite from '@/components/shell/NavBarDigivesLite.vue';
-
+import LxFlag from '@/components/Flag.vue';
 import Notification from '@/components/Notification.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
@@ -233,6 +233,7 @@ const textsDefault = {
   customButton: 'Pielāgojamā poga',
   overflowNavItems: 'Atvērt papildu izvēlni',
   scrollUp: 'Atgriezties uz augšu',
+  contextPersonsBirthDate: 'Dzimšanas datums',
   settings: 'Iestatījumi',
 };
 
@@ -1712,7 +1713,23 @@ watch(
             <template #panel>
               <LxRow :label="displayTexts.contextPersonsInfoLabel">
                 <p class="lx-data">{{ selectedContextPersonModel?.name }}</p>
-                <p class="lx-data">{{ selectedContextPersonModel?.description }}</p>
+                <div class="lx-data-with-flag">
+                  <LxFlag
+                    v-if="selectedContextPersonModel?.flag"
+                    :value="selectedContextPersonModel.flag"
+                    :title="selectedContextPersonModel?.flagTitle"
+                  >
+                  </LxFlag>
+                  <p class="lx-data">
+                    {{ selectedContextPersonModel?.description }}
+                  </p>
+                </div>
+              </LxRow>
+              <LxRow
+                :label="displayTexts.contextPersonsBirthDate"
+                v-if="selectedContextPersonModel?.birthDate"
+              >
+                <p class="lx-data">{{ formatDate(selectedContextPersonModel?.birthDate) }}</p>
               </LxRow>
             </template>
           </LxInfoWrapper>
