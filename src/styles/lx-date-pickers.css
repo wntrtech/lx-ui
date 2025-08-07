@@ -557,15 +557,45 @@
 .lx-calendar-quarter-inner-wrapper.hovering-range.end-quarter {
   background-color: transparent;
 }
-
-.lx-calendar-day-wrapper.hovering-range.start-day::before,
-.lx-calendar-month-wrapper.hovering-range.start-month::before,
-.lx-calendar-year-wrapper.hovering-range.start-year::before,
-.lx-calendar-quarter-inner-wrapper.hovering-range.start-quarter::before {
-  content: '';
+.lx-form-grid .lx-calendar-day-wrapper.hovering-range.start-day:before,
+.lx-form-grid .lx-calendar-month-wrapper.hovering-range.start-month:before,
+.lx-form-grid .lx-calendar-year-wrapper.hovering-range.start-year:before,
+.lx-form-grid .lx-calendar-quarter-inner-wrapper.hovering-range.start-quarter:before,
+.lx-region .lx-calendar-day-wrapper.hovering-range.start-day:before,
+.lx-region .lx-calendar-month-wrapper.hovering-range.start-month:before,
+.lx-region .lx-calendar-year-wrapper.hovering-range.start-year:before,
+.lx-region .lx-calendar-quarter-inner-wrapper.hovering-range.start-quarter:before {
+  content: "";
   position: absolute;
   left: 0;
-  width: 0.6rem;
+  width: .6rem;
+  height: 100%;
+  background-color: var(--color-background);
+}
+
+.lx-calendar-day-wrapper.hovering-range.start-day:before,
+.lx-calendar-month-wrapper.hovering-range.start-month:before,
+.lx-calendar-year-wrapper.hovering-range.start-year:before,
+.lx-calendar-quarter-inner-wrapper.hovering-range.start-quarter:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: .6rem;
+  height: 100%;
+  background-color: var(--color-region);
+}
+.lx-form-grid .lx-calendar-day-wrapper.hovering-range.end-day::after,
+.lx-form-grid .lx-calendar-month-wrapper.hovering-range.end-month::after,
+.lx-form-grid .lx-calendar-year-wrapper.hovering-range.end-year::after,
+.lx-form-grid .lx-calendar-quarter-inner-wrapper.hovering-range.end-quarter::after,
+.lx-region .lx-calendar-day-wrapper.hovering-range.end-day::after,
+.lx-region .lx-calendar-month-wrapper.hovering-range.end-month::after,
+.lx-region .lx-calendar-year-wrapper.hovering-range.end-year::after,
+.lx-region .lx-calendar-quarter-inner-wrapper.hovering-range.end-quarter::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  width: .6rem;
   height: 100%;
   background-color: var(--color-background);
 }
@@ -574,12 +604,12 @@
 .lx-calendar-month-wrapper.hovering-range.end-month::after,
 .lx-calendar-year-wrapper.hovering-range.end-year::after,
 .lx-calendar-quarter-inner-wrapper.hovering-range.end-quarter::after {
-  content: '';
+  content: "";
   position: absolute;
   right: 0;
-  width: 0.6rem;
+  width: .6rem;
   height: 100%;
-  background-color: var(--color-background);
+  background-color: var(--color-region);
 }
 
 .lx-calendar-day-wrapper.hovering-range.start-day.end-day,
