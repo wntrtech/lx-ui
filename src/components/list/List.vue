@@ -1084,35 +1084,50 @@ const processedToolbarActions = computed(() => {
     ...action,
     icon: action.icon ?? 'fallback-icon',
     area: action.area ?? 'right',
-    variant: 'icon-only',
-    kind: 'ghost',
-    groupId: 'lx-default',
+    kind: action.kind ?? 'ghost',
+    variant: action.variant ?? 'icon-only',
+    groupId: action.groupId ?? 'lx-default',
     disabled: loading || busy,
     ...overrides,
   });
 
-  const primary = toolbarActionDefinitions.filter((a) => a.kind === 'primary');
-  const secondary = toolbarActionDefinitions.filter((a) => a.kind === 'secondary');
-  const others = toolbarActionDefinitions.filter(
-    (a) => a.kind !== 'primary' && a.kind !== 'secondary'
-  );
+  const withKindAndVariant = (action, overrides = {}) => ({
+    ...action,
+    kind: 'ghost',
+    variant: 'icon-only',
+    ...overrides,
+  });
+
+  const normalizedActions = toolbarActionDefinitions.map((action) => withDefaults(action));
 
   let rightmostAction = null;
   let demotedActions = [];
 
   const processGroup = (group) => {
     if (!group.length) return;
-    const [first, ...rest] = group;
 
-    const firstArea = first.area ?? 'right';
+    const firstPrimary = group.find(
+      (action) => action.area === 'right' && action.kind === 'primary'
+    );
+    const firstSecondary = group.find(
+      (action) => action.area === 'right' && action.kind === 'secondary'
+    );
+    const firstAction = firstPrimary ?? firstSecondary;
+
+    if (!firstAction) {
+      demotedActions = group.map((action) => withKindAndVariant(action));
+      return;
+    }
+
+    const restWithoutFirst = group.filter((action) => action.id !== firstAction.id);
 
     let defaults;
-    if (firstArea === 'right' && first.kind === 'secondary') {
+    if (firstAction?.area === 'right' && firstAction?.kind === 'secondary') {
       defaults = {
         kind: 'secondary',
         variant: 'default',
       };
-    } else if (first.area !== 'left') {
+    } else if (firstAction?.area !== 'left') {
       defaults = {
         kind: 'primary',
         variant: 'default',
@@ -1124,20 +1139,13 @@ const processedToolbarActions = computed(() => {
       };
     }
 
-    rightmostAction = withDefaults(first, defaults);
-    demotedActions = rest.map(withDefaults);
+    rightmostAction = withDefaults(firstAction, defaults);
+    demotedActions = restWithoutFirst.map((action) => withKindAndVariant(action));
   };
 
-  if (primary.length) {
-    processGroup(primary);
-    demotedActions.push(...secondary.map(withDefaults));
-  } else if (secondary.length) {
-    processGroup(secondary);
-  }
+  processGroup(normalizedActions);
 
-  const otherActions = others.map(withDefaults);
-
-  const result = [...demotedActions, ...otherActions];
+  const result = [...demotedActions];
   if (rightmostAction) result.push(rightmostAction);
 
   if ((hasSearch && searchMode === 'compact') || (hasSearch && hasSelecting)) {

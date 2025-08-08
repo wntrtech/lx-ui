@@ -514,7 +514,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:hover svg,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover svg,
 .lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:hover svg,
-.lx .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:hover svg {
+.lx .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:hover svg,
+.lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover svg,
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover svg {
   fill: var(--color-button-dropdown-icon-hover);
 }
 
@@ -637,6 +639,7 @@ a.lx-button.lx-button-ghost svg {
 /* Destructive icon styles */
 
 .lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover svg,
+.lx .lx-layout .lx-component-toolbar .selection-action-button-toolbar .lx-button.lx-destructive:not(.lx-disabled):hover svg,
 .lx .lx-layout .lx-dropdown-panel .lx-button.lx-destructive:not(.lx-disabled):hover svg {
   fill: var(--color-button-destructive-icon);
 }
@@ -842,7 +845,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-list-wrapper .lx-list-toolbar .lx-button:hover,
 .lx .lx-layout .lx-component-toolbar .lx-button:hover,
-.lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-button:hover {
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover {
   background-color: var(--color-button-toolbar-primary-hover-background);
   border-color: var(--color-button-toolbar-primary-hover-border);
   color: var(--color-button-toolbar-primary-hover);
@@ -1082,7 +1085,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-form-grid .lx-component-toolbar .lx-button.lx-button-ghost:active,
 .lx-layout .toolbar-search-button .lx-button.lx-button-ghost:active,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:active,
-.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active {
+.lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:active {
   background-color: var(--color-button-toolbar-ghost-active-background);
   border-color: var(--color-button-toolbar-ghost-active-border);
   color: var(--color-button-toolbar-ghost-active);
@@ -1309,7 +1312,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:hover,
 .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover,
 .lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:hover,
-.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:hover {
+.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:hover,
+.lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover,
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover {
   background-color: var(--color-button-dropdown-hover-background);
   border-color: var(--color-button-dropdown-hover-border);
   color: var(--color-button-dropdown-hover);
@@ -1677,6 +1682,7 @@ a.lx-button.lx-button-ghost svg {
 /* Active styles */
 .lx .lx-button:active,
 .lx .lx-layout.lx-override .lx-button.lx-button.lx-destructive:not(.lx-disabled):active,
+.lx .lx-layout.lx-override .lx-component-toolbar .lx-button.lx-button.lx-destructive:not(.lx-disabled):active,
 .lx-override button:active,
 .lx .lx-layout.lx-override input[type="button"]:where(:active),
 .lx .lx-layout.lx-override input[type="submit"]:where(:active),
@@ -1714,6 +1720,7 @@ a.lx-button.lx-button-ghost svg {
 /*** Destructive styles ***/
 
 .lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover,
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-button.lx-destructive:not(.lx-disabled):hover,
 .lx .lx-layout .lx-dropdown-panel .lx-button.lx-destructive:not(.lx-disabled):hover,
 .lx-layout.lx-override button.lx-destructive:not(.lx-disabled):hover,
 .lx-layout.lx-override button.lx-destructive:not([disabled]):hover,
@@ -1768,6 +1775,7 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-component-toolbar .lx-group .lx-button.lx-button-ghost.lx-disabled,
 .lx .lx-layout .lx-camera .lx-button.lx-button-ghost.lx-disabled,
 .lx .lx-layout .lx-markdown-text-area-wrapper .lx-button.lx-button-ghost.lx-disabled,
+.lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .first-row .lx-button.lx-disabled,
 .lx-override button.lx-button-ghost.lx-disabled,
 .lx-override button.lx-button-ghost[disabled],
 .lx-layout.lx-override input[type="button"].lx-button-ghost.lx-disabled,

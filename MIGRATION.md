@@ -2,6 +2,12 @@
 
 ## 1.9 → 1.10
 
+### changes to toolbar configuration in LxList & LxDataGrid
+
+If you previously used custom styles or layout inside the toolbar slot (slot="toolbar"), please review your implementation to ensure nothing is broken in the new version. Custom toolbar setups may no longer render correctly without adjustments.
+
+A new approach for defining toolbar buttons has been introduced via toolbarActions. This method simplifies the configuration of actions and provides additional flexibility — buttons can now also be placed on the left side of the toolbar.
+ 
 ### vue update
 
 We have upgraded the `vue` version used for our library to `3.5.17`. Improved render and reactivity performance. Added minor optimizations and fixed bugs for more stable application behavior.

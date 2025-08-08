@@ -38,6 +38,7 @@ const emits = defineEmits([
   'selectionChanged',
   'itemsPerPageChanged',
   'selectionActionClicked',
+  'toolbarActionClicked',
   'emptyStateActionClick',
   'searched',
 ]);
@@ -45,7 +46,7 @@ const emits = defineEmits([
 const props = defineProps({
   id: {
     type: String,
-    default: generateUUID(),
+    default: () => generateUUID(),
   },
   label: { type: String, default: null },
   description: { type: String, default: null },
@@ -82,6 +83,7 @@ const props = defineProps({
   itemsTotal: { type: Number, default: 0 },
   sortingMode: { type: String, default: 'strip' }, // 'default' or 'strip'
   selectionActionDefinitions: { type: Array, default: () => [] },
+  toolbarActionDefinitions: { type: Array, default: () => [] },
   emptyStateActionDefinitions: { type: Array, default: null },
   emptyStateIcon: { type: String, default: '' },
   clickableRole: { type: String, default: 'link' }, // 'link' or 'button'
@@ -371,8 +373,11 @@ const selectedRows = computed(() => {
       }
     }
   });
-  emits('selectionChanged', ret);
   return ret;
+});
+
+watch(selectedRows, (newVal) => {
+  emits('selectionChanged', newVal);
 });
 
 function selectRow(id) {
@@ -382,7 +387,143 @@ function selectRow(id) {
 
 function cancelSelection() {
   selectedRowsRaw.value = {};
+
+  nextTick(() => {
+    if (selectedRows.value.length === 0) {
+      document.getElementById(`${props.id}-toolbar-action-select-all`)?.focus();
+    } else {
+      document.getElementById(`${props.id}-select-all`)?.focus();
+    }
+  });
 }
+
+const processedToolbarActions = computed(() => {
+  const {
+    toolbarActionDefinitions,
+    loading,
+    busy,
+    hasSearch,
+    searchMode,
+    hasSelecting,
+    selectingKind,
+  } = props;
+
+  if (!toolbarActionDefinitions.length) return [];
+
+  const withDefaults = (action, overrides = {}) => ({
+    ...action,
+    icon: action.icon ?? 'fallback-icon',
+    area: action.area ?? 'right',
+    kind: action.kind ?? 'ghost',
+    variant: action.variant ?? 'icon-only',
+    groupId: action.groupId ?? 'lx-default',
+    disabled: loading || busy,
+    ...overrides,
+  });
+
+  const withKindAndVariant = (action, overrides = {}) => ({
+    ...action,
+    kind: 'ghost',
+    variant: 'icon-only',
+    ...overrides,
+  });
+
+  const normalizedActions = toolbarActionDefinitions.map((action) => withDefaults(action));
+
+  let rightmostAction = null;
+  let demotedActions = [];
+
+  const processGroup = (group) => {
+    if (!group.length) return;
+
+    const firstPrimary = group.find(
+      (action) => action.area === 'right' && action.kind === 'primary'
+    );
+    const firstSecondary = group.find(
+      (action) => action.area === 'right' && action.kind === 'secondary'
+    );
+    const firstAction = firstPrimary ?? firstSecondary;
+
+    if (!firstAction) {
+      demotedActions = group.map((action) => withKindAndVariant(action));
+      return;
+    }
+
+    const restWithoutFirst = group.filter((action) => action.id !== firstAction.id);
+
+    let defaults;
+    if (firstAction?.area === 'right' && firstAction?.kind === 'secondary') {
+      defaults = {
+        kind: 'secondary',
+        variant: 'default',
+      };
+    } else if (firstAction?.area !== 'left') {
+      defaults = {
+        kind: 'primary',
+        variant: 'default',
+      };
+    } else {
+      defaults = {
+        kind: 'ghost',
+        variant: 'icon-only',
+      };
+    }
+
+    rightmostAction = withDefaults(firstAction, defaults);
+    demotedActions = restWithoutFirst.map((action) => withKindAndVariant(action));
+  };
+
+  processGroup(normalizedActions);
+
+  const result = [...demotedActions];
+  if (rightmostAction) result.push(rightmostAction);
+
+  if ((hasSearch && searchMode === 'compact') || (hasSearch && hasSelecting)) {
+    result.push({
+      id: 'search',
+      name: searchField.value ? displayTexts.value.closeSearch : displayTexts.value.openSearch,
+      icon: searchField.value ? 'close' : 'search',
+      area: 'right',
+      variant: 'icon-only',
+      kind: 'ghost',
+      groupId: 'lx-default',
+      disabled: loading || busy,
+      customClass: searchField.value ? 'toolbar-search-button is-expanded' : '',
+    });
+  }
+
+  if (hasSelecting && selectingKind === 'multiple') {
+    result.unshift({
+      id: `select-all`,
+      name: displayTexts.value.selectAllRows,
+      icon: 'checkbox',
+      area: 'left',
+      variant: 'icon-only',
+      kind: 'ghost',
+      groupId: 'lx-select-all',
+      disabled: loading || busy,
+    });
+  }
+
+  return result;
+});
+
+const toolbarActions = computed(() => {
+  if (selectedRows.value.length > 0) {
+    return [];
+  }
+  return processedToolbarActions.value;
+});
+
+const selectIcon = computed(() => {
+  if (selectedRows.value.length === props.items.length && props.selectingKind === 'multiple') {
+    return 'checkbox-filled';
+  }
+  if (props.selectingKind === 'multiple') {
+    return 'checkbox-indeterminate';
+  }
+  return 'radiobutton-filled';
+});
 
 function compareOrder(a, b, ascending, getOrder) {
   const orderA = getOrder(a);
@@ -829,46 +970,6 @@ function getAriaSorting(sortDirection) {
   return 'none';
 }
 
-const toolbarActions = computed(() => {
-  const res = ref([]);
-  if (
-    ((!props.hasSelecting && props.showToolbar) ||
-      (props.hasSelecting && selectedRows.value?.length === 0)) &&
-    props.hasSelecting &&
-    props.selectingKind === 'multiple'
-  ) {
-    res.value = [
-      { id: 'checkAll', name: displayTexts.value.selectAllRows, icon: 'checkbox', groupId: '1' },
-    ];
-  } else if (props.hasSelecting && selectedRows.value && selectedRows.value?.length !== 0) {
-    if (props.hasSelecting && selectedRows.value?.length && isSelectedAll.value) {
-      res.value = [
-        { id: 'checkNone', name: displayTexts.value.clear, icon: 'checkbox-filled', groupId: '1' },
-      ];
-    } else {
-      res.value = [
-        {
-          id: 'checkIndeterminate',
-          name: displayTexts.value.clear,
-          icon:
-            props.selectingKind === 'multiple' ? 'checkbox-indeterminate' : 'radiobutton-filled',
-          groupId: '1',
-        },
-      ];
-    }
-    const selectActions = [...props.selectionActionDefinitions];
-
-    selectActions.forEach((obj) => {
-      const clonedObj = { ...obj };
-      clonedObj.area = 'right';
-      clonedObj.groupId = '2';
-      clonedObj.label = obj?.name;
-      res.value.push(clonedObj);
-    });
-  }
-  return res.value;
-});
-
 const autoSearchMode = computed(() => {
   if (props.searchMode === 'compact') {
     return 'compact';
@@ -894,10 +995,12 @@ function toggleSearch() {
 }
 
 function toolbarClick(action) {
-  if (action === 'checkAll') selectRows();
+  if (action === 'select-all') selectRows();
   else if (action === 'checkNone' || action === 'checkIndeterminate') cancelSelection();
   else if (action === 'search' || action === 'close') toggleSearch();
-  else selectionActionClicked(action, selectedRows.value);
+  else if (selectedRows.value.length === 0) {
+    emits('toolbarActionClicked', action);
+  } else selectionActionClicked(action, selectedRows.value);
 }
 
 const actionDefinitionsGroup = computed(() => props.actionDefinitions?.slice(1));
@@ -1163,14 +1266,39 @@ defineExpose({ cancelSelection, selectRows, sortBy });
     </header>
     <div :class="[{ 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length }]">
       <LxToolbar
-        v-if="(toolbarActions?.length > 0 || $slots.toolbar) && (props.showToolbar || hasSelecting)"
+        :id="`${props.id}-toolbar`"
         :actionDefinitions="toolbarActions"
         :disabled="props.busy"
         :loading="props.loading"
-        @action-click="toolbarClick"
         :class="[{ 'lx-grid-toolbar': true }]"
+        @actionClick="toolbarClick"
       >
         <template #leftArea>
+          <LxButton
+            v-if="
+              toolbarActions.length === 0 &&
+              selectedRows.length === 0 &&
+              hasSelecting &&
+              selectingKind === 'multiple'
+            "
+            :id="`${id}-select-all`"
+            icon="checkbox"
+            kind="ghost"
+            :disabled="loading || busy"
+            variant="icon-only"
+            :label="displayTexts.selectAllRows"
+            @click="selectRows()"
+          />
+          <LxButton
+            :id="`${id}-cancel-select-all`"
+            v-if="hasSelecting && selectedRows.length > 0"
+            :icon="selectIcon"
+            variant="icon-only"
+            :label="displayTexts.clearSelected"
+            kind="ghost"
+            :disabled="loading || busy"
+            @click="cancelSelection()"
+          />
           <p v-if="hasSelecting && selectedRows && selectedRows.length !== 0">
             {{ selectedLabel }}
           </p>
@@ -1219,24 +1347,57 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           <div class="lx-slot-wrapper">
             <slot name="toolbar" />
           </div>
-          <div
-            v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
-            class="toolbar-search-button"
-            :class="[{ 'is-expanded': searchField }]"
-          >
-            <LxButton
-              kind="ghost"
-              variant="icon-only"
-              :icon="searchField ? 'close' : 'search'"
-              :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
-              :search-field="searchField"
-              :disabled="loading || busy"
-              @click="toggleSearch"
-            />
-          </div>
+          <template v-if="props.toolbarActionDefinitions?.length === 0">
+            <div
+              v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
+              class="toolbar-search-button"
+              :class="[{ 'is-expanded': searchField }]"
+            >
+              <LxButton
+                kind="ghost"
+                variant="icon-only"
+                :icon="searchField ? 'close' : 'search'"
+                :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
+                :search-field="searchField"
+                :disabled="loading || busy"
+                @click="toggleSearch"
+              />
+            </div>
+          </template>
         </template>
 
         <template #rightArea v-else-if="hasSelecting && selectedRows.length > 0">
+          <div class="selection-action-button-toolbar">
+            <div class="selection-action-buttons">
+              <LxButton
+                v-for="selectAction in selectionActionDefinitions"
+                :key="selectAction.id"
+                :icon="selectAction.icon"
+                :label="selectAction.name"
+                :destructive="selectAction.destructive"
+                :disabled="selectAction.disabled || busy || loading"
+                kind="ghost"
+                @click="selectionActionClicked(selectAction.id, selectedRows)"
+              />
+            </div>
+            <div
+              class="selection-action-buttons-small"
+              v-if="selectionActionDefinitions?.length > 0"
+            >
+              <LxDropDownMenu
+                :actionDefinitions="selectionActionDefinitions"
+                @actionClick="(id) => selectionActionClicked(id, selectedRows)"
+              >
+                <LxButton
+                  icon="menu"
+                  kind="ghost"
+                  :label="displayTexts.overflowMenu"
+                  variant="icon-only"
+                  :disabled="loading || busy"
+                />
+              </LxDropDownMenu>
+            </div>
+          </div>
           <div
             v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
             class="toolbar-search-button"

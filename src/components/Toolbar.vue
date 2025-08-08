@@ -16,7 +16,7 @@ const props = defineProps({
 const emits = defineEmits(['actionClick']);
 
 const leftActions = computed(() =>
-  props.actionDefinitions?.filter((x) => x?.area === 'left' || !x?.area)
+  props.actionDefinitions?.filter((x) => (x?.area === 'left' || !x?.area) && x?.id !== 'select-all')
 );
 const rightActions = computed(() => props.actionDefinitions?.filter((x) => x?.area === 'right'));
 const rightActionsSmall = computed(() =>
@@ -107,6 +107,19 @@ function actionClicked(id) {
   >
     <div class="first-row">
       <div class="left-area">
+        <template v-if="selectAllButton && selectAllButton?.area === 'left'">
+          <LxButton
+            :id="`${id}-action-select-all`"
+            customClass="lx-hide-button"
+            :kind="selectAllButton?.kind || 'ghost'"
+            :tabindex="0"
+            icon="checkbox"
+            variant="icon-only"
+            :label="selectAllButton?.name"
+            :disabled="selectAllButton?.disabled || props.disabled || props.loading"
+            @click="actionClicked(selectAllButton?.id)"
+          />
+        </template>
         <LxToolbarGroup
           v-for="group in leftGroups"
           :key="group.id"
@@ -173,6 +186,18 @@ function actionClicked(id) {
           </template>
         </LxToolbarGroup>
         <LxToolbarGroup class="action-definitions-small" v-if="leftActions?.length > 0">
+          <template v-if="selectAllButton && selectAllButton?.area === 'left'">
+            <LxButton
+              :id="`${id}-action-select-all`"
+              :kind="selectAllButton?.kind || 'ghost'"
+              :tabindex="0"
+              icon="checkbox"
+              variant="icon-only"
+              :label="selectAllButton?.name"
+              :disabled="selectAllButton?.disabled || props.disabled || props.loading"
+              @click="actionClicked(selectAllButton?.id)"
+            />
+          </template>
           <LxDropDownMenu v-if="leftActions?.length > 1">
             <LxButton
               kind="ghost"
@@ -304,6 +329,7 @@ function actionClicked(id) {
               icon="menu"
               label="Papildus darbības"
               variant="icon-only"
+              :disabled="props.disabled || props.loading"
             />
             <template #panel>
               <template v-for="button in rightActionsSmall" :key="button.id">
@@ -343,7 +369,7 @@ function actionClicked(id) {
             @click="actionClicked(searchButton.id)"
           />
           <LxButton
-            v-if="selectAllButton"
+            v-if="selectAllButton && selectAllButton?.area === 'right'"
             :id="`${id}-action-${selectAllButton.id}`"
             kind="ghost"
             variant="icon-only"
