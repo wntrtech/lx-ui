@@ -13,11 +13,11 @@ afterEach(() => {
 });
 
 describe('LxPersonDisplay', () => {
-  let wrapper;
+  let innerWrapper;
 
   afterEach(() => {
-    if (wrapper) {
-      wrapper.unmount();
+    if (innerWrapper) {
+      innerWrapper.unmount();
     }
   });
 
@@ -27,7 +27,7 @@ describe('LxPersonDisplay', () => {
 
   describe('Props', () => {
     test('should have default values', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         global: {
           provide: {
             sectionMode: 'sectionMode',
@@ -38,7 +38,7 @@ describe('LxPersonDisplay', () => {
         },
       });
 
-      const props = wrapper.props();
+      const props = innerWrapper.props();
 
       expect(props.value).toBe(null);
       expect(props.name).toBe(null);
@@ -62,7 +62,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('should accept provided values', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: {
             customId: 'customId',
@@ -103,7 +103,7 @@ describe('LxPersonDisplay', () => {
         },
       });
 
-      const props = wrapper.props();
+      const props = innerWrapper.props();
 
       expect(props.value)
         .toStrictEqual({
@@ -138,7 +138,7 @@ describe('LxPersonDisplay', () => {
 
   describe('Computed Properties and Methods', () => {
     test('formatName should return formatted name', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe' },
         },
@@ -151,14 +151,14 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { vm } = wrapper;
-      const formattedName = vm.formatName(wrapper.props().value);
+      const { vm } = innerWrapper;
+      const formattedName = vm.formatName(innerWrapper.props().value);
 
       expect(formattedName).toBe('John Doe');
     });
 
     test('computed name should return formatted name', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe' },
         },
@@ -171,13 +171,13 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { name } = wrapper.vm;
+      const { name } = innerWrapper.vm;
 
       expect(name).toBe('John Doe');
     });
 
     test('showMultiple should return true for multiple values', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: [
             { firstName: 'John', lastName: 'Doe' },
@@ -193,13 +193,13 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { showMultiple } = wrapper.vm;
+      const { showMultiple } = innerWrapper.vm;
 
       expect(showMultiple).toBe(true);
     });
 
     test('description should return provided description', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', description: 'Developer' },
         },
@@ -212,13 +212,13 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { description } = wrapper.vm;
+      const { description } = innerWrapper.vm;
 
       expect(description).toBe('Developer');
     });
 
     test('role should return provided role', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', role: 'Engineer' },
         },
@@ -231,13 +231,13 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { role } = wrapper.vm;
+      const { role } = innerWrapper.vm;
 
       expect(role).toBe('Engineer');
     });
 
     test('institution should return provided institution', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', institution: 'Tech Inc.' },
         },
@@ -250,13 +250,13 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { institution } = wrapper.vm;
+      const { institution } = innerWrapper.vm;
 
       expect(institution).toBe('Tech Inc.');
     });
 
     test('icon should return provided icon', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', icon: 'flash' },
         },
@@ -269,13 +269,13 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { icon } = wrapper.vm;
+      const { icon } = innerWrapper.vm;
 
       expect(icon).toBe('flash');
     });
 
     test('iconSet should return provided iconSet', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', iconSet: 'cds' },
         },
@@ -288,13 +288,13 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { iconSet } = wrapper.vm;
+      const { iconSet } = innerWrapper.vm;
 
       expect(iconSet).toBe('cds');
     });
 
     test('filteredValues should return filtered array based on attributes', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: [
             { firstName: 'John', lastName: 'Doe', description: 'Developer' },
@@ -316,7 +316,7 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { filteredValues } = wrapper.vm;
+      const { filteredValues } = innerWrapper.vm;
 
       expect(filteredValues).toEqual([
         { firstName: 'John', lastName: 'Doe', description: 'Developer' },
@@ -326,7 +326,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('displayItems should return array of items limited by maxLength', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: [
             { firstName: 'John', lastName: 'Doe' },
@@ -345,7 +345,7 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { displayItems } = wrapper.vm;
+      const { displayItems } = innerWrapper.vm;
 
       expect(displayItems).toEqual([
         { firstName: 'John', lastName: 'Doe' },
@@ -354,7 +354,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('tooltipItems should return array of items', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: [
             { firstName: 'John', lastName: 'Doe' },
@@ -370,7 +370,7 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { tooltipItems } = wrapper.vm;
+      const { tooltipItems } = innerWrapper.vm;
 
       expect(tooltipItems).toEqual([
         { firstName: 'John', lastName: 'Doe' },
@@ -379,7 +379,7 @@ describe('LxPersonDisplay', () => {
     });
 
     test('showDescription should return true if description is set and size is l', () => {
-      wrapper = mount(LxPersonDisplay, {
+      innerWrapper = mount(LxPersonDisplay, {
         props: {
           value: { firstName: 'John', lastName: 'Doe', description: 'Developer' },
           size: 'l',
@@ -393,7 +393,7 @@ describe('LxPersonDisplay', () => {
           },
         },
       });
-      const { showDescription } = wrapper.vm;
+      const { showDescription } = innerWrapper.vm;
 
       expect(showDescription).toBe(true);
     });
