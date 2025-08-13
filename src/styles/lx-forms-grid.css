@@ -1899,9 +1899,13 @@ p .lx-person-display-wrapper {
     height: var(--icon-size);
   }
 
-  .responsive-overflow-header svg {
-    width: var(--icon-size);
+  .responsive-overflow-header > .overflow-icon-container > .lx-info-wrapper svg {
+    height: var(--icon-size);
     fill: var(--color-label);
+  }
+
+  .responsive-overflow-header > .overflow-icon-container > .lx-info-wrapper .lx-info-wrapper-content {
+    height: var(--icon-size);
   }
 
   .lx-form-grid > header > .lx-group.lx-primary .lx-toolbar-chip {
