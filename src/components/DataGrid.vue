@@ -549,7 +549,7 @@ function isValidString(value) {
   return value && value.trim() !== '';
 }
 
-function compareExistance(aExists, bExists, ascending) {
+function compareExistence(aExists, bExists, ascending) {
   if (aExists && !bExists) {
     return ascending ? -1 : 1;
   }
@@ -602,11 +602,11 @@ function compareFlags(a, b, colCode, ascending) {
   if (orderComparison !== 0) return orderComparison;
 
   // flags with names stay on top by default
-  const nameComparison = compareExistance(flagNameA, flagNameB, ascending);
+  const nameComparison = compareExistence(flagNameA, flagNameB, ascending);
   if (nameComparison !== 0) return nameComparison;
 
   // icons that don't appear defined are at the bottom with icons that are ACTUALLY not defined
-  const flagExistanceComparison = compareExistance(isFlagAEmpty, isFlagBEmpty, ascending);
+  const flagExistanceComparison = compareExistence(isFlagAEmpty, isFlagBEmpty, ascending);
   if (flagExistanceComparison !== 0) return flagExistanceComparison;
 
   // flags with only a name stay right below flags with names
@@ -679,7 +679,7 @@ function comparePersonsColumn(personA, personB, ascending) {
   const hasDescriptionB = isValidString(personB.description);
 
   // persons with full name are on top by default
-  const fullNameComparison = compareExistance(hasFullNameA, hasFullNameB, ascending);
+  const fullNameComparison = compareExistence(hasFullNameA, hasFullNameB, ascending);
   if (fullNameComparison !== 0) return fullNameComparison;
 
   // person object arrays stay right below regular person objects
@@ -759,7 +759,7 @@ function compareIcons(a, b, colCode, ascending) {
   if (labelComparison !== 0) return labelComparison;
 
   // icons that don't appear defined are at the bottom with icons that are ACTUALLY not defined
-  const iconExistanceComparison = compareExistance(isIconAEmpty, isIconBEmpty, ascending);
+  const iconExistanceComparison = compareExistence(isIconAEmpty, isIconBEmpty, ascending);
   if (iconExistanceComparison !== 0) return iconExistanceComparison;
 
   const valueA = (typeof iconA === 'object' ? iconA.icon : iconA) || '';
@@ -940,14 +940,6 @@ function sortBy(columnCode, direction = 'asc') {
     }
   }
 }
-const isSelectedAll = computed(() => {
-  let res = false;
-  const num = Number(rows.value.length);
-  if (rows.value.length > props.itemsPerPage) {
-    if (selectedRows.value.length === Number(props.itemsPerPage)) res = true;
-  } else if (selectedRows.value.length === num) res = true;
-  return res;
-});
 
 function primaryColumn() {
   let clickableObject = null;
@@ -1274,6 +1266,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         @actionClick="toolbarClick"
       >
         <template #leftArea>
+          <slot
+            name="leftToolbar"
+            v-if="(hasSelecting && selectedRows?.length === 0) || !hasSelecting"
+          />
           <LxButton
             v-if="
               toolbarActions.length === 0 &&

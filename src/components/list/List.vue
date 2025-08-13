@@ -1214,6 +1214,10 @@ const toolbarActions = computed(() => {
         @actionClick="toolbarActionClicked"
       >
         <template #leftArea>
+          <slot
+            v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
+            name="leftToolbar"
+          />
           <template v-if="autoSearchMode === 'default' && !hasSelecting">
             <LxTextInput
               v-if="hasSearch"
