@@ -112,6 +112,7 @@ const textsDefault = {
   skipLinkLabel: 'Izlaist sarakstu',
   skipLinkTitle: 'Izlaist sarakstu',
   overflowMenu: 'Atvērt papildus iespējas',
+  draggableItem: 'Pārvietojams rokturis',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -1495,6 +1496,7 @@ const toolbarActions = computed(() => {
                         class="lx-handle"
                         :id="`handleId-${element[props.idAttribute]}`"
                         tabindex="0"
+                        :aria-label="displayTexts.draggableItem"
                         @keydown.up.prevent="moveGroupedItem(element, 'forward')"
                         @keydown.down.prevent="moveGroupedItem(element, 'backward')"
                         @keydown.right.prevent="moveGroupedItem(element, 'backward')"
@@ -2021,6 +2023,7 @@ const toolbarActions = computed(() => {
                         class="lx-handle"
                         :id="`handleId-${element[props.idAttribute]}`"
                         tabindex="0"
+                        :aria-label="displayTexts.draggableItem"
                         @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
                         @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
                         @keydown.right.prevent="moveUngroupedItem(element, 'backward')"
@@ -2144,6 +2147,7 @@ const toolbarActions = computed(() => {
                           class="lx-handle"
                           :id="`handleId-${element[props.idAttribute]}`"
                           tabindex="0"
+                          :aria-label="displayTexts.draggableItem"
                           @keydown.up.prevent="moveGroupedItem(element, 'forward')"
                           @keydown.down.prevent="moveGroupedItem(element, 'backward')"
                           @keydown.right.prevent="moveGroupedItem(element, 'backward')"
