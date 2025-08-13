@@ -6,7 +6,7 @@ import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils
 import { formatValue } from '@/utils/formatUtils';
 import { formatDateTime, formatDate } from '@/utils/dateUtils';
 import useLx from '@/hooks/useLx';
-import { lxDevUtils } from '@/utils';
+import { lxDevUtils, lxFormatUtils } from '@/utils';
 
 const props = defineProps({
   /**
@@ -453,7 +453,7 @@ function clearValidations() {
 }
 
 onMounted(() => {
-  initialModelValues.value = { ...props.modelValue };
+  initialModelValues.value = lxFormatUtils.objectClone(props.modelValue || {});
 });
 
 defineExpose({
