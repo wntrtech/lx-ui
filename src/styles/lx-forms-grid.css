@@ -632,8 +632,8 @@ svg .lx-shade {
 .lx-form-grid > .lx-main .lx-row ul.lx-tag-set,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row ul.lx-tag-set,
 .lx-form .lx-row ul.lx-tag-set {
-  margin-top: 0;
-  margin-bottom: 0;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .lx-form.lx-form-region ul.lx-tag-set .lx-tag,
