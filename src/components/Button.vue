@@ -5,6 +5,7 @@ import LxLoader from '@/components/Loader.vue';
 import LxBadge from '@/components/Badge.vue';
 import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 import { lxDevUtils } from '@/utils';
 
 const emits = defineEmits(['click']);
@@ -24,6 +25,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
+  ariaLabel: { type: String, default: null },
 
   badge: { type: String, default: '' },
   badgeIcon: { type: String, default: null },
@@ -48,7 +50,20 @@ const props = defineProps({
   tabindex: { type: [Number, String], default: 0 },
   customClass: { type: String, default: '' },
   openInNewTab: { type: Boolean, default: false },
+  texts: { type: Object, default: () => ({}) },
 });
+
+const textsDefault = {
+  badgeTypes: {
+    default: 'informatīvs paziņojums',
+    info: 'informatīvs paziņojums',
+    warning: 'brīdinājums',
+    good: 'sekmīgs paziņojums',
+    important: 'svarīgs paziņojums',
+  },
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const slots = useSlots();
 
@@ -86,6 +101,29 @@ const accessibleTitle = computed(() => {
   }
   return props.badge ? `${tooltip} (${props.badge})` : tooltip;
 });
+
+const ariaLabelWithBadge = computed(() => {
+  if (props.ariaLabel) return props.ariaLabel;
+
+  if (!props.label) return null;
+
+  if (!props.badge && !props.badgeIcon) return props.label;
+
+  const badgeTypeText =
+    displayTexts.value.badgeTypes[props.badgeType] || displayTexts.value.badgeTypes.default;
+
+  if (props.badge && props.badge.trim() !== '') {
+    if (props.badgeType === 'default') {
+      return props.badgeTitle
+        ? `${props.label} (${props.badgeTitle}: ${props.badge})`
+        : `${props.label} (${props.badge})`;
+    }
+    return props.badgeTitle
+      ? `${props.label} (${badgeTypeText}, ${props.badgeTitle}: ${props.badge})`
+      : `${props.label} (${badgeTypeText}, ${props.badge})`;
+  }
+  return `${props.label} (${badgeTypeText})`;
+});
 </script>
 <template>
   <button
@@ -110,7 +148,7 @@ const accessibleTitle = computed(() => {
     :disabled="isDisabled"
     :aria-disabled="isDisabled"
     :aria-pressed="active ? active : null"
-    :aria-label="label ? label : null"
+    :aria-label="ariaLabelWithBadge"
     :aria-busy="busy"
     :tabindex="tabindex"
     @click="click"
@@ -177,6 +215,7 @@ const accessibleTitle = computed(() => {
     :title="accessibleTitle"
     :tabindex="tabindex"
     :aria-busy="busy"
+    :aria-label="ariaLabelWithBadge"
     :target="openInNewTab ? '_blank' : null"
   >
     <div class="lx-button-content-wrapper">

@@ -10,6 +10,7 @@ import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
 
 const props = defineProps({
+  ariaLabel: { type: String, default: null },
   modelValue: { type: Boolean, default: false },
   id: { type: String, default: () => generateUUID() },
   label: { type: String, default: null },
@@ -34,7 +35,7 @@ const props = defineProps({
       // If badge or badgeIcon is non-empty, badgeTitle must be non-empty
       if ((p.badge || p.badgeIcon) && !v) {
         lxDevUtils.logWarn(
-          `Warning: LxExpander "badgeTitle" is required when "badge" or "badgeIcon" is provided!`,
+          `Warning: LxExpander "badgeTitle" is required when  "badgeIcon" is provided!`,
           useLx().getGlobals()?.environment
         );
         return false;
@@ -52,6 +53,13 @@ const props = defineProps({
 const textsDefault = {
   selectWholeGroup: 'Izvēlēties visu',
   clearSelected: 'Attīrīt izvēles',
+  badgeTypes: {
+    default: 'informatīvs paziņojums',
+    info: 'informatīvs paziņojums',
+    warning: 'brīdinājums',
+    good: 'sekmīgs paziņojums',
+    important: 'svarīgs paziņojums',
+  },
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -85,6 +93,25 @@ const selectedIcon = computed(() => {
     return 'chevron-up';
   }
   return 'chevron-down';
+});
+
+const ariaLabelWithBadge = computed(() => {
+  if (props.ariaLabel) return props.ariaLabel;
+
+  if (!props.label) return null;
+
+  if (!props.badge && !props.badgeIcon) return props.label;
+
+  const badgeTypeText =
+    displayTexts.value.badgeTypes[props.badgeType] || displayTexts.value.badgeTypes.default;
+
+  if (props.badge && props.badge.trim() !== '') {
+    if (props.badgeType === 'default') {
+      return `${props.label} (${props.badge})`;
+    }
+    return `${props.label} (${badgeTypeText}, ${props.badge})`;
+  }
+  return `${props.label} (${badgeTypeText})`;
 });
 
 function selectExpander(event, id) {
@@ -122,8 +149,17 @@ defineExpose({ focus });
       :title="tooltip"
       tabindex="0"
       role="button"
-      :aria-labelledby="label ? `${id}-label` : null"
-      :aria-describedby="description ? `${id}-desc` : null"
+      :aria-label="ariaLabelWithBadge"
+      :aria-describedby="
+        ((badge || badgeIcon) && badgeTitle) || description
+          ? [
+              (badge || badgeIcon) && badgeTitle ? `${id}-label` : null,
+              description ? `${id}-desc` : null,
+            ]
+              .filter(Boolean)
+              .join(' ')
+          : null
+      "
       :aria-expanded="isExpandedRaw"
       :aria-invalid="invalid"
       aria-controls="lx-body"

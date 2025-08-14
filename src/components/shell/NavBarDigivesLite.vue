@@ -92,6 +92,13 @@ const textsDefault = {
   megaMenuTitle: 'Lietotnes',
   contextPersonsInfoLabel: 'Pacients',
   contextPersonsInfoTitle: 'Konteksta persona',
+  badgeTypes: {
+    default: 'informatīvs paziņojums',
+    info: 'informatīvs paziņojums',
+    warning: 'brīdinājums',
+    good: 'sekmīgs paziņojums',
+    important: 'svarīgs paziņojums',
+  },
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -355,7 +362,30 @@ watch(
 );
 
 const customButton = ref();
+const labelText = computed(() => displayTexts.value.alertsTitle);
 
+const ariaLabel = computed(() => {
+  const baseLabel = labelText.value;
+  let label = baseLabel;
+
+  if (alertsCount.value) {
+    const badgeTypeText =
+      displayTexts.value.badgeTypes[alertLevelToBadgeType.value] ||
+      displayTexts.value.badgeTypes.default;
+
+    if (alertsCount.value && alertsCount.value.trim() !== '') {
+      if (alertLevelToBadgeType.value === 'default') {
+        label = `${label} (${alertsCount.value})`;
+      } else {
+        label = `${label} (${badgeTypeText}: ${alertsCount.value})`;
+      }
+    } else {
+      label = `${label} (${badgeTypeText})`;
+    }
+  }
+
+  return label;
+});
 const customButtonOpenedModal = computed({
   get() {
     return props.customButtonOpened;
@@ -754,6 +784,7 @@ onClickOutside(navPanel, toggleNavBar);
             :badge="alertsCount"
             :badge-type="alertLevelToBadgeType"
             :badge-title="displayTexts.alertsTitle"
+            :ariaLabel="ariaLabel"
             :disabled="headerNavDisable"
           />
 
@@ -835,6 +866,7 @@ onClickOutside(navPanel, toggleNavBar);
           :badge="alertsCount"
           :badgeType="alertLevelToBadgeType"
           :badge-title="displayTexts.alertsTitle"
+          :ariaLabel="ariaLabel"
           @click="alertsClicked"
         />
       </li>

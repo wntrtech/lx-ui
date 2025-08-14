@@ -54,6 +54,14 @@ const defaultTexts = {
   search: 'Atlasīt',
   clear: 'Notīrīt',
   fastFiltersLabel: 'Ātrie filtri',
+  filtersApplied: 'Filtri tiek piemēroti',
+  badgeTypes: {
+    default: 'informatīvs paziņojums',
+    info: 'informatīvs paziņojums',
+    warning: 'brīdinājums',
+    good: 'sekmīgs paziņojums',
+    important: 'svarīgs paziņojums',
+  },
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
@@ -89,7 +97,40 @@ function toggleExpander(value = null) {
 const filterBody = ref();
 const filterSize = useElementSize(filterBody);
 
-const labelText = computed(() => (props.label ? props.label : displayTexts.value.filters));
+const labelText = computed(() => {
+  const baseLabel = props.label ? props.label : displayTexts.value.filters;
+  return baseLabel;
+});
+
+const ariaLabel = computed(() => {
+  const baseLabel = labelText.value;
+  let label = baseLabel;
+
+  if (props.usesFilters) {
+    label = `${baseLabel} (${displayTexts.value.filtersApplied})`;
+  }
+
+  if (props.badge || props.badgeIcon) {
+    const badgeTypeText =
+      displayTexts.value.badgeTypes[props.badgeType] || displayTexts.value.badgeTypes.default;
+
+    if (props.badge && props.badge.trim() !== '') {
+      if (props.badgeType === 'default') {
+        label = `${label} (${props.badge})`;
+      } else {
+        label = `${label} (${badgeTypeText}, ${props.badge})`;
+      }
+    } else {
+      label = `${label} (${badgeTypeText})`;
+    }
+  }
+
+  return label;
+});
+
+const badgeTexts = computed(() => ({
+  badgeTypes: displayTexts.value.badgeTypes || {},
+}));
 
 const expander = ref();
 function focus() {
@@ -122,6 +163,8 @@ defineExpose({ toggleExpander, focus });
       class="lx-filter"
       icon="filter"
       :class="[{ 'has-shortlist': $slots.shortlist }]"
+      :ariaLabel="ariaLabel"
+      :texts="badgeTexts"
     >
       <div
         ref="filterBody"

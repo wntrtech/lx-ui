@@ -235,6 +235,13 @@ const textsDefault = {
   scrollUp: 'Atgriezties uz augšu',
   contextPersonsBirthDate: 'Dzimšanas datums',
   settings: 'Iestatījumi',
+  badgeTypes: {
+    default: 'informatīvs paziņojums',
+    info: 'informatīvs paziņojums',
+    warning: 'brīdinājums',
+    good: 'sekmīgs paziņojums',
+    important: 'svarīgs paziņojums',
+  },
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
