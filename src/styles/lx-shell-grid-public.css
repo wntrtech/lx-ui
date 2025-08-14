@@ -516,7 +516,7 @@
 
   .lx .lx-layout.lx-layout-public nav {
     width: var(--row-size);
-    z-index: 1000;
+    z-index: 999;
     top: var(--nav-row-size);
     position: fixed;
     right: 0;
