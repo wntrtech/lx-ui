@@ -318,6 +318,7 @@ onMounted(() => {
     selectedItem.value = allItems?.value?.find((item) => selectedId === getIdAttributeString(item));
   }
 });
+const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.value));
 </script>
 
 <template>
@@ -381,6 +382,7 @@ onMounted(() => {
         class="lx-dropdown-default"
         ref="container"
         :disabled="disabled"
+        :aria-disabled="disabled"
         @keydown.esc.prevent="closeDropDownDefaultOnEsc"
         @keydown.enter.prevent="onEnter"
         @keydown.space.prevent="onEnter"
@@ -389,7 +391,7 @@ onMounted(() => {
         @keydown.tab="focusOnDropDown"
         :tabindex="disabled ? '-1' : tabindex"
         role="combobox"
-        :aria-expanded="menuOpen"
+        :aria-expanded="ariaExpandedState"
         aria-controls="popper-id"
         :aria-labelledby="labelledBy"
       >
