@@ -79,7 +79,7 @@ const textsDefault = {
   zoomOut: 'Attālināt',
   expand: 'Palielināt karti',
   collapse: 'Samazināt karti',
-  moreOptions: 'Papildus izvēles',
+  moreOptions: 'Papildu izvēles',
   grayscaleOn: 'Iespējot pelēktoni',
   grayscaleOff: 'Atspējot pelēktoni',
   grayscale: 'Pelēktonis',
@@ -88,6 +88,7 @@ const textsDefault = {
   currentLocation: 'Pietuvināt atrašanās vietu',
   errorTitle: 'Kļūda kartes attēlošanā',
   errorDescription: 'Nav definēts neviens kartes pamata slānis',
+  overflowMenu: 'Atvērt papildu iespējas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -330,10 +331,11 @@ onUnmounted(() => {
     :class="[{ 'lx-map-fullscreen': isExpanded }, { 'theme-change': !ignoreThemeChange }]"
   >
     <LxToolbar
-      :action-definitions="toolbarActions"
-      @action-click="toolbarActionClick"
       v-if="showToolbar"
+      :action-definitions="toolbarActions"
       class="lx-map-toolbar"
+      :texts="displayTexts"
+      @action-click="toolbarActionClick"
     >
       <template #leftArea v-if="showSearch">
         <div class="lx-map-search">

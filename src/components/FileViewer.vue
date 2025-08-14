@@ -52,6 +52,7 @@ const textsDefault = {
   invalidFileUploadedDescription: 'Augšupielādējiet datni',
   grabToScrollFalse: 'Iespējot ritināšanu',
   grabToScrollTrue: 'Atspējot ritināšanu',
+  overflowMenu: 'Atvērt papildu iespējas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -1433,8 +1434,9 @@ onUnmounted(() => {
     <LxToolbar
       v-if="supportedFileType"
       :action-definitions="toolbarActions"
-      @action-click="toolbarActionClick"
       class="lx-file-viewer-toolbar"
+      :texts="displayTexts"
+      @action-click="toolbarActionClick"
     >
       <template #rightArea>
         <LxToolbarGroup v-if="pdf">

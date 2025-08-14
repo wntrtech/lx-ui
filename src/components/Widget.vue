@@ -46,7 +46,7 @@ const props = defineProps({
   texts: { type: Object, default: () => ({}) },
 });
 
-const textsDefault = { overflowMenu: 'Atvērt papildus iespējas' };
+const textsDefault = { overflowMenu: 'Atvērt papildu iespējas' };
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['actionClick']);

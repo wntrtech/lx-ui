@@ -668,6 +668,8 @@
   display: none;
 }
 
+
+
 .lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-text p {
   color: var(--color-focus-foreground);
 }
@@ -781,7 +783,9 @@
 .lx .lx-region .lx-component-toolbar .second-row .lx-button,
 .lx-form-grid .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-form-grid .lx-list-wrapper > .lx-list-toolbar .second-row .lx-text-input-wrapper .lx-text-input,
-.lx-form-grid .lx-list-toolbar .second-row .lx-button {
+.lx-form-grid .lx-list-toolbar .second-row .lx-button,
+.lx .lx-form-grid .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx .lx-modal .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded {
   background-color: var(--color-list-region-background);
 }
 
@@ -1263,5 +1267,9 @@ li .lx-list-item.lx-inactive {
   .lx-list-wrapper .lx-component-toolbar .toolbar-action-buttons-small,
   .lx-list-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons-small {
     display: flex;
+  }
+
+  .lx-list-wrapper .lx-component-toolbar > .first-row > .left-area > .action-definitions-small {
+    width: fit-content;
   }
 }

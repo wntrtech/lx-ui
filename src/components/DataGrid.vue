@@ -172,6 +172,7 @@ const textsDefault = {
   search: 'Meklēt',
   close: 'Aizvērt',
   skipHeader: 'Pāriet uz tabulas datiem',
+  overflowMenu: 'Atvērt papildu iespējas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -489,6 +490,7 @@ const processedToolbarActions = computed(() => {
       groupId: 'lx-default',
       disabled: loading || busy,
       customClass: searchField.value ? 'toolbar-search-button is-expanded' : '',
+      nonResponsive: true,
     });
   }
 
@@ -502,6 +504,7 @@ const processedToolbarActions = computed(() => {
       kind: 'ghost',
       groupId: 'lx-select-all',
       disabled: loading || busy,
+      nonResponsive: true,
     });
   }
 
@@ -1263,6 +1266,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :disabled="props.busy"
         :loading="props.loading"
         :class="[{ 'lx-grid-toolbar': true }]"
+        :texts="displayTexts"
         @actionClick="toolbarClick"
       >
         <template #leftArea>

@@ -111,8 +111,7 @@ const textsDefault = {
   closeSearch: 'Aizvērt meklētāju',
   skipLinkLabel: 'Izlaist sarakstu',
   skipLinkTitle: 'Izlaist sarakstu',
-  overflowMenu: 'Atvērt papildus iespējas',
-  draggableItem: 'Pārvietojams rokturis',
+  overflowMenu: 'Atvērt papildu iespējas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -1160,6 +1159,7 @@ const processedToolbarActions = computed(() => {
       groupId: 'lx-default',
       disabled: loading || busy,
       customClass: searchField.value ? 'toolbar-search-button is-expanded' : '',
+      nonResponsive: true,
     });
   }
 
@@ -1173,6 +1173,7 @@ const processedToolbarActions = computed(() => {
       kind: 'ghost',
       groupId: 'lx-default',
       disabled: loading || busy,
+      nonResponsive: true,
     });
   }
 
@@ -1211,6 +1212,7 @@ const toolbarActions = computed(() => {
         :actionDefinitions="toolbarActions"
         :disabled="busy"
         :loading="loading"
+        :texts="displayTexts"
         @actionClick="toolbarActionClicked"
       >
         <template #leftArea>

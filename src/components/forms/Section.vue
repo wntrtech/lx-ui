@@ -182,7 +182,7 @@ const props = defineProps({
 const textsDefault = {
   required: '(obligāts)',
   optional: '(neobligāts)',
-  overflowMenu: 'Atvērt papildus iespējas',
+  overflowMenu: 'Atvērt papildu iespējas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

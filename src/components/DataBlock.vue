@@ -35,7 +35,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
-  overflowMenu: 'Atvērt papildus iespējas',
+  overflowMenu: 'Atvērt papildu iespējas',
   expand: 'Atvērt',
   collapse: 'Aizvērt',
 };

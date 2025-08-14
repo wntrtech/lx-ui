@@ -16,7 +16,7 @@ const props = defineProps({
 });
 
 const textsDefault = {
-  overflowMenu: 'Atvērt papildus iespējas',
+  overflowMenu: 'Atvērt papildu iespējas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));

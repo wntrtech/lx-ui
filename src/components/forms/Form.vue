@@ -250,8 +250,8 @@ const textsDefault = {
   skipLinkTitle: 'Izlaist formu',
   previous: 'Iepriekšējais',
   next: 'Nākamais',
-  overflowMenu: 'Atvērt papildus iespējas',
-  additionalActions: 'Papildus darbības',
+  overflowMenu: 'Atvērt papildu iespējas',
+  additionalActions: 'Papildu darbības',
 };
 
 // Merge texts prop with defaults

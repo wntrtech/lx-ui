@@ -150,7 +150,7 @@ const requiredTexts = inject(
   ref({
     required: '(obligāts)',
     optional: '(neobligāts)',
-    overflowMenu: 'Atvērt papildus iespējas',
+    overflowMenu: 'Atvērt papildu iespējas',
   })
 );
 const sectionColumnCount = inject('sectionColumnCount', 1);

@@ -4,6 +4,7 @@ import LxToolbarGroup from '@/components/ToolbarGroup.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import { generateUUID } from '@/utils/stringUtils';
+import { getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -11,22 +12,35 @@ const props = defineProps({
   noBorders: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   loading: { type: Boolean, default: false },
+  texts: {
+    type: Object,
+    default: () => ({}),
+  },
 });
+
+const textsDefault = { overflowMenu: 'Atvērt papildu iespējas' };
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['actionClick']);
 
 const leftActions = computed(() =>
-  props.actionDefinitions?.filter((x) => (x?.area === 'left' || !x?.area) && x?.id !== 'select-all')
+  props.actionDefinitions?.filter((x) => x?.area === 'left' || !x?.area)
 );
+
+const leftActionsSmall = computed(() =>
+  props.actionDefinitions?.filter((x) => (x?.area === 'left' || !x?.area) && !x?.nonResponsive)
+);
+
+const nonResponsiveLeftActions = computed(() =>
+  props.actionDefinitions?.filter((x) => (x?.area === 'left' || !x?.area) && x?.nonResponsive)
+);
+
 const rightActions = computed(() => props.actionDefinitions?.filter((x) => x?.area === 'right'));
 const rightActionsSmall = computed(() =>
-  props.actionDefinitions?.filter(
-    (x) => x?.area === 'right' && x?.id !== 'search' && x?.id !== 'select-all'
-  )
+  props.actionDefinitions?.filter((x) => x?.area === 'right' && !x?.nonResponsive)
 );
-const searchButton = computed(() => props.actionDefinitions?.find((x) => x?.id === 'search'));
-const selectAllButton = computed(() =>
-  props.actionDefinitions?.find((x) => x?.id === 'select-all')
+const nonResponsiveRightActions = computed(() =>
+  props.actionDefinitions?.filter((x) => x?.area === 'right' && x?.nonResponsive)
 );
 
 const leftNestedGroups = computed(() => {
@@ -107,19 +121,6 @@ function actionClicked(id) {
   >
     <div class="first-row">
       <div class="left-area">
-        <template v-if="selectAllButton && selectAllButton?.area === 'left'">
-          <LxButton
-            :id="`${id}-action-select-all`"
-            customClass="lx-hide-button"
-            :kind="selectAllButton?.kind || 'ghost'"
-            :tabindex="0"
-            icon="checkbox"
-            variant="icon-only"
-            :label="selectAllButton?.name"
-            :disabled="selectAllButton?.disabled || props.disabled || props.loading"
-            @click="actionClicked(selectAllButton?.id)"
-          />
-        </template>
         <LxToolbarGroup
           v-for="group in leftGroups"
           :key="group.id"
@@ -186,28 +187,36 @@ function actionClicked(id) {
           </template>
         </LxToolbarGroup>
         <LxToolbarGroup class="action-definitions-small" v-if="leftActions?.length > 0">
-          <template v-if="selectAllButton && selectAllButton?.area === 'left'">
+          <template v-if="nonResponsiveLeftActions?.length > 0">
             <LxButton
-              :id="`${id}-action-select-all`"
-              :kind="selectAllButton?.kind || 'ghost'"
-              :tabindex="0"
-              icon="checkbox"
+              v-for="item in nonResponsiveLeftActions"
+              v-show="!item?.nestedGroupId"
+              :key="item.id"
+              :id="`${id}-action-${item.id}`"
               variant="icon-only"
-              :label="selectAllButton?.name"
-              :disabled="selectAllButton?.disabled || props.disabled || props.loading"
-              @click="actionClicked(selectAllButton?.id)"
+              :kind="item?.kind || 'ghost'"
+              :tabindex="0"
+              :icon="item?.icon"
+              :icon-set="item?.iconSet"
+              :busy="item?.busy"
+              :loading="item?.loading"
+              :active="item?.active"
+              :label="item?.name"
+              :destructive="item?.destructive"
+              :disabled="item?.disabled || props.disabled || props.loading"
+              @click="actionClicked(item.id)"
             />
           </template>
-          <LxDropDownMenu v-if="leftActions?.length > 1">
+          <LxDropDownMenu v-if="leftActionsSmall?.length > 1">
             <LxButton
               kind="ghost"
               :tabindex="0"
               icon="menu"
-              label="Papildus darbības"
+              :label="displayTexts.overflowMenu"
               variant="icon-only"
             />
             <template #panel>
-              <template v-for="button in leftActions" :key="button.id">
+              <template v-for="button in leftActionsSmall" :key="button.id">
                 <LxButton
                   v-if="!button?.nestedGroupId"
                   :id="`${id}-action-${button.id}`"
@@ -227,7 +236,7 @@ function actionClicked(id) {
             </template>
           </LxDropDownMenu>
           <LxButton
-            v-else-if="leftActions?.length === 1 && !leftActions?.[0]?.nestedGroupId"
+            v-else-if="leftActionsSmall?.length === 1 && !leftActionsSmall?.[0]?.nestedGroupId"
             :id="`${id}-action-${leftActions?.[0].id}`"
             :kind="leftActions?.[0]?.kind || 'ghost'"
             :tabindex="0"
@@ -235,7 +244,7 @@ function actionClicked(id) {
             :icon-set="leftActions?.[0]?.iconSet"
             :busy="leftActions?.[0].busy"
             :loading="leftActions?.[0].loading"
-            :active="action?.active"
+            :active="leftActions?.active"
             variant="icon-only"
             :label="leftActions?.[0]?.name"
             :destructive="leftActions?.[0]?.destructive"
@@ -327,7 +336,7 @@ function actionClicked(id) {
               kind="ghost"
               :tabindex="0"
               icon="menu"
-              label="Papildus darbības"
+              :label="displayTexts.overflowMenu"
               variant="icon-only"
               :disabled="props.disabled || props.loading"
             />
@@ -351,55 +360,32 @@ function actionClicked(id) {
               </template>
             </template>
           </LxDropDownMenu>
-          <LxButton
-            v-if="searchButton"
-            :id="`${id}-action-${searchButton.id}`"
-            kind="ghost"
-            variant="icon-only"
-            :tabindex="0"
-            :icon="searchButton?.icon"
-            :icon-set="searchButton?.iconSet"
-            :busy="searchButton?.busy"
-            :loading="searchButton?.loading"
-            :active="action?.active"
-            :label="searchButton?.name"
-            :destructive="searchButton?.destructive"
-            :disabled="searchButton?.disabled || props.disabled || props.loading"
-            :customClass="searchButton?.customClass ?? ''"
-            @click="actionClicked(searchButton.id)"
-          />
-          <LxButton
-            v-if="selectAllButton && selectAllButton?.area === 'right'"
-            :id="`${id}-action-${selectAllButton.id}`"
-            kind="ghost"
-            variant="icon-only"
-            :tabindex="0"
-            :icon="selectAllButton?.icon"
-            :icon-set="selectAllButton?.iconSet"
-            :busy="selectAllButton?.busy"
-            :loading="selectAllButton?.loading"
-            :active="action?.active"
-            :label="selectAllButton?.name"
-            :destructive="selectAllButton?.destructive"
-            :disabled="selectAllButton?.disabled || props.disabled || props.loading"
-            @click="actionClicked(selectAllButton.id)"
-          />
-          <LxButton
-            v-else-if="rightActionsSmall?.length === 1 && !rightActions?.[0]?.nestedGroupId"
-            :id="`${id}-action-${rightActionsSmall?.[0].id}`"
-            :kind="rightActionsSmall?.[0]?.kind || 'ghost'"
-            :tabindex="0"
-            :icon="rightActionsSmall?.[0]?.icon"
-            :icon-set="rightActionsSmall?.[0]?.iconSet"
-            :busy="rightActionsSmall?.[0]?.busy"
-            :loading="rightActionsSmall?.[0]?.loading"
-            variant="icon-only"
-            :label="rightActionsSmall?.[0]?.name"
-            :active="action?.active"
-            :destructive="rightActionsSmall?.[0]?.destructive"
-            :disabled="rightActionsSmall?.[0]?.disabled || props.disabled || props.loading"
-            @click="actionClicked(rightActionsSmall?.[0].id)"
-          />
+          <template
+            v-if="
+              (rightActionsSmall?.length === 1 && !rightActions?.[0]?.nestedGroupId) ||
+              nonResponsiveRightActions?.length > 0
+            "
+          >
+            <LxButton
+              v-for="item in rightActions"
+              v-show="!item?.nestedGroupId && item?.nonResponsive"
+              :key="item.id"
+              :id="`${id}-action-${item.id}`"
+              variant="icon-only"
+              :kind="item?.kind || 'ghost'"
+              :tabindex="0"
+              :icon="item?.icon"
+              :icon-set="item?.iconSet"
+              :busy="item?.busy"
+              :loading="item?.loading"
+              :active="item?.active"
+              :label="item?.name"
+              :destructive="item?.destructive"
+              :disabled="item?.disabled || props.disabled || props.loading"
+              :custom-class="item?.customClass"
+              @click="actionClicked(item.id)"
+            />
+          </template>
         </LxToolbarGroup>
       </div>
     </div>
