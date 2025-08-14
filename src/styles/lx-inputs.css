@@ -1247,7 +1247,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   cursor: not-allowed;
 }
 
-.lx-toggle-wrapper:not([data-disabled]):hover
+.lx:not(.lx-touch-mode) .lx-toggle-wrapper:not([data-disabled]):hover
   .lx-toggle
   + .lx-toggle-label-wrapper
   .lx-toggle-appearance {
@@ -1255,7 +1255,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-color: var(--color-toggle-hover-background);
 }
 
-.lx-toggle-wrapper:not([data-disabled]):hover
+.lx:not(.lx-touch-mode) .lx-toggle-wrapper:not([data-disabled]):hover
   .lx-toggle
   + .lx-toggle-label-wrapper
   .lx-toggle-appearance::before {
