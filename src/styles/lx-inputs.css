@@ -4817,7 +4817,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   gap: var(--badge-gap);
 }
 
-.lx-badge-icon {
+.lx .lx-badge-icon {
   width: var(--badge-icon-width);
 }
 

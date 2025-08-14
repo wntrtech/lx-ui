@@ -381,7 +381,7 @@
 
 .lx .lx-list-item .lx-invalidation-icon,
 .lx .lx-list-item .lx-list-icon,
-.lx-list-item svg:not(.lx-badge-icon),
+.lx-list-item svg,
 .lx-list-item img {
   height: var(--list-icon-height);
   width: var(--list-icon-width);

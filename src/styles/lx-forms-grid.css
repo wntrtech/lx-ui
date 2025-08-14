@@ -1110,9 +1110,9 @@ svg .lx-shade {
   background-color: transparent;
 }
 
-.lx-avatar-display > svg,
-.lx-user-icon-display > svg,
-.lx-person-icon-display > svg {
+.lx .lx-avatar-display > svg,
+.lx .lx-user-icon-display > svg,
+.lx .lx-person-icon-display > svg {
   height: 100%;
   width: 100%;
 }
