@@ -342,6 +342,7 @@ const indicatorTooltips = computed(() => {
         "
         v-if="hasSelectAll && kind === 'multiple'"
         :disabled="disabled"
+        :aria-disabled="disabled"
         @click="selectAll"
         :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
         :label="hasSearch ? '' : areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
@@ -349,6 +350,7 @@ const indicatorTooltips = computed(() => {
       <LxTextInput
         v-if="hasSearch"
         :disabled="disabled"
+        :aria-disabled="disabled"
         ref="queryInput"
         v-model="query"
         kind="search"
@@ -362,6 +364,7 @@ const indicatorTooltips = computed(() => {
         variant="icon-only"
         :label="displayTexts.clearQuery"
         :disabled="disabled"
+        :aria-disabled="disabled"
         @click="query = ''"
       />
     </div>
@@ -388,6 +391,7 @@ const indicatorTooltips = computed(() => {
             [`lx-indicator-${item[categoryAttribute]}`]: item[categoryAttribute] && isSelected(item),
           }"
           :disabled="disabled"
+          :aria-disabled="disabled"
           :readOnly="readOnly"
           :tabindex="disabled ? '-1' : (readOnly ? '-1' : '0')"
           @click="disabled ? null : selectSingle(item[idAttribute])"
@@ -425,6 +429,7 @@ const indicatorTooltips = computed(() => {
             [`lx-indicator-${item[categoryAttribute]}`]: item[categoryAttribute] && itemsModel[item[idAttribute]],
           }"
           :disabled="disabled"
+          :aria-disabled="disabled"
           :readOnly="readOnly"
           :tabindex="disabled ? '-1' : (readOnly ? '-1' : '0')"
           @click="selectMultiple(item[idAttribute])"

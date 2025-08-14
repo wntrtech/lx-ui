@@ -318,6 +318,8 @@ const areAllSelected = computed(() => {
 });
 
 function selectAll() {
+  if (props.disabled) return;
+
   if (areAllSelected.value) {
     model.value = [];
   } else if (areSomeSelected.value) {
@@ -437,7 +439,7 @@ function focusNext() {
         variant="icon-only"
         :disabled="disabled"
         :label="displayTexts.clearQuery"
-        @click="query = ''"
+        @click="disabled ? undefined : (query = '')"
       />
     </div>
 
@@ -475,10 +477,10 @@ function focusNext() {
           >
             <div v-if="variant === 'horizontal'"
               class="lx-value-picker-horizontal-item-container"
-              @click="selectSingle(item[idAttribute])"
               :title="item[descriptionAttribute] || tooltip"
             >
-              <div class="lx-value-picker-horizontal-item-label">
+              <div class="lx-value-picker-horizontal-item-label" 
+                   :id="`${id}-label-${item[idAttribute]}`">
                 <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
               </div>
             </div>
@@ -486,18 +488,22 @@ function focusNext() {
               class="lx-value-picker-horizontal-item-container"
               :title="item[descriptionAttribute] || tooltip"
             >
-              <div class="lx-slot-wrapper" @click="selectSingle(item[idAttribute])">
+              <div class="lx-slot-wrapper" :id="`${id}-label-${item[idAttribute]}`">
                 <slot name="customItem" v-bind="item"></slot>
               </div>
             </div>
             <div class="lx-value-picker-horizontal-icon-wrapper" 
               :class="{ 'lx-selected': itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null)}"
-              @keydown.right.prevent="focusNext()"
-              @keydown.down.prevent="focusNext()"
-              @keydown.left.prevent="focusPrevious()"
-              @keydown.up.prevent="focusPrevious()"
+              @keydown.right.prevent="!disabled && focusNext()"
+              @keydown.down.prevent="!disabled && focusNext()"
+              @keydown.left.prevent="!disabled && focusPrevious()"
+              @keydown.up.prevent="!disabled && focusPrevious()"
               @click="selectSingle(item[idAttribute])"
-              :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])">
+              :tabindex="disabled ? '-1' : getTabIndex(item[idAttribute])"
+              role="radio"
+              :aria-labelledby="`${id}-label-${item[idAttribute]}`"
+              :aria-checked="itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null)"
+              :aria-disabled="disabled">
               <LxIcon
                 :id="getItemId(item[idAttribute])"
                 :value="itemsModel[item[idAttribute]] || (item[idAttribute] === notSelectedId && model === null) ? 'selected' : 'unselected'"
@@ -510,8 +516,10 @@ function focusNext() {
             class="lx-label-wrapper" 
             :group-id="groupId" 
           >
-            <div class="lx-value-picker-horizontal-item-container" v-if="variant === 'horizontal'" @click="selectMultiple(item[idAttribute])">
-              <div class="lx-value-picker-horizontal-item-label">
+            <div class="lx-value-picker-horizontal-item-container" v-if="variant === 'horizontal'" 
+              :title="item[descriptionAttribute] || tooltip">
+              <div class="lx-value-picker-horizontal-item-label" 
+                   :id="`${id}-label-${item[idAttribute]}`">
                 <LxSearchableText :value="item[nameAttribute]" :search-string="query" />
               </div>
             </div>
@@ -520,7 +528,7 @@ function focusNext() {
               v-else-if="variant === 'horizontal-custom'"
               :title="item[descriptionAttribute] || tooltip"
             >
-              <div class="lx-slot-wrapper" @click="selectMultiple(item[idAttribute])">
+              <div class="lx-slot-wrapper" :id="`${id}-label-${item[idAttribute]}`">
                 <slot name="customItem" v-bind="item"></slot>
               </div>
             </div>
@@ -529,6 +537,10 @@ function focusNext() {
               @click="selectMultiple(item[idAttribute])"
               @keydown.space.prevent="selectMultiple(item[idAttribute])"
               :tabindex="disabled ? '-1' : '0'"
+              role="checkbox"
+              :aria-labelledby="`${id}-label-${item[idAttribute]}`"
+              :aria-checked="itemsModel[item[idAttribute]]"
+              :aria-disabled="disabled"
             >
               <LxIcon
                 :id="getItemId(item[idAttribute])"
@@ -538,7 +550,7 @@ function focusNext() {
               />
             </div>
           </div>
-        </div>
+          </div>
       </template>
     </div>
   </div>

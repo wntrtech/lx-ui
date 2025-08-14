@@ -281,15 +281,17 @@ function isActive(item) {
       :class="[{ 'lx-invalid': invalid }]"
       :title="tooltip"
     >
-      <LxDropDownMenu triggerClick="right">
+      <LxDropDownMenu triggerClick="right" :disabled="disabled">
         <div
           class="lx-rotator-dropdown-wrapper lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
           :aria-invalid="invalid"
           :tabindex="disabled ? '-1' : '0'"
           :aria-labelledby="labelId"
-          @click="selectSingle(null)"
-          @keydown.space.prevent="selectSingle(null)"
+          :aria-disabled="disabled"
+          @click="!disabled && selectSingle(null)"
+          @keydown.space.prevent="!disabled && selectSingle(null)"
+          @contextmenu.prevent="disabled"
         >
           <div class="pseudo-input" />
 
