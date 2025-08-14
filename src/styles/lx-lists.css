@@ -775,6 +775,7 @@
 .lx .lx-region .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar .second-row .lx-button,
+.lx .lx-modal .lx-list-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
 .lx .lx-modal .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx .lx-modal .lx-component-toolbar .second-row .lx-button,
 .lx-region .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button,
@@ -1171,10 +1172,18 @@ a.lx-tile:not(.lx-disabled):hover {
 
 /*** Misc styles ***/
 
-.lx-list-wrapper .lx-component-toolbar .left-area .lx-group,
 .lx-list-wrapper .lx-component-toolbar .left-area,
-.lx-list-wrapper .lx-component-toolbar .lx-field-wrapper {
+.lx-list-wrapper .lx-component-toolbar .lx-field-wrapper,
+.lx-list-wrapper .lx-component-toolbar .left-area .lx-group {
   width: 100%;
+}
+
+.lx-list-wrapper .lx-component-toolbar .action-definitions-small {
+  flex: 1;
+}
+
+.lx-list-wrapper .lx-component-toolbar .left-area .lx-group.action-definitions-group {
+    width: fit-content;
 }
 
 .lx-list-wrapper .lx-component-toolbar .left-area .lx-group {

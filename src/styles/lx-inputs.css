@@ -3279,15 +3279,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   justify-content: end;
 }
 
-.lx-grid-toolbar > .right-area,
-.lx-grid-toolbar > .right-area > .lx-group,
-.lx-grid-toolbar > .right-area > .lx-group > .lx-slot-wrapper {
+.lx-grid-toolbar > .right-area {
   flex-grow: 1;
-}
-
-.lx-grid-toolbar > .right-area > .lx-group > .lx-slot-wrapper {
-  display: flex;
-  flex-direction: row-reverse;
 }
 
 .lx-data-grid-wrapper .lx-grid-toolbar {

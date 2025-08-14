@@ -803,9 +803,9 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-list-toolbar .right-area,
 .lx-list-toolbar .selection-action-buttons,
+.lx-component-toolbar .first-row .lx-group,
 .lx-component-toolbar > .right-area > .lx-group:not(:has(> .lx-group)),
 .lx-component-toolbar > .left-area > .lx-group:not(:has(> .lx-group)),
-.lx-grid-toolbar > .right-area > .lx-group > .lx-slot-wrapper,
 .lx-component-toolbar:not(.lx-grid-toolbar) > .left-area > .lx-group > .lx-group {
   column-gap: var(--button-toolbar-gap);
 }
@@ -2248,8 +2248,4 @@ a.lx-button.lx-button-ghost svg {
   .lx-component-toolbar .right-area > .action-definitions-small {
     display: flex;
   }
-}
-
-.lx-list-wrapper .lx-component-toolbar .left-area .lx-group.action-definitions-group {
-  width: fit-content;
 }

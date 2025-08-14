@@ -1344,9 +1344,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           #rightArea
           v-if="(!hasSelecting && props.showToolbar) || (hasSelecting && selectedRows.length === 0)"
         >
-          <div class="lx-slot-wrapper">
-            <slot name="toolbar" />
-          </div>
+          <slot name="toolbar" />
           <template v-if="props.toolbarActionDefinitions?.length === 0">
             <div
               v-if="hasSearch && (hasSelecting || autoSearchMode === 'compact')"
