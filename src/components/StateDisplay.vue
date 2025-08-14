@@ -3,7 +3,7 @@ import { computed } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 
 const props = defineProps({
-  value: { type: [Object, String], default: null },
+  value: { type: [Object, String, Number], default: null },
   dictionary: { type: Array, default: () => [{}] },
 });
 

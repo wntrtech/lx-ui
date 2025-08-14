@@ -235,8 +235,7 @@
 .lx-autocomplete-default-panel .lx-value,
 .lx-dropdown-default-data.dropdown-multiple,
 .lx-rotator .lx-rotator-set .lx-rotator-tag > p,
-.lx-autocomplete-default-panel .lx-value .lx-item-display > p,
-.lx-autocomplete-default-panel .lx-value .lx-state > .lx-primary {
+.lx-autocomplete-default-panel .lx-value .lx-item-display > p {
   color: var(--color-input);
   font-weight: var(--input-text-font-weight);    
 }

@@ -9,7 +9,7 @@ import LxPopper from '@/components/Popper.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
-  modelValue: { type: String, default: null },
+  modelValue: { type: [String, Number], default: null },
   items: { type: Array, required: true },
   idAttribute: { type: String, default: 'id' },
   idAttributeArray: { type: [Array, String], default: 'id' },
@@ -17,7 +17,6 @@ const props = defineProps({
   variant: { type: String, default: 'default' }, // default, country, state, custom
   placeholder: { type: String, default: null },
   nameAttribute: { type: String, default: 'name' },
-  dictionary: { type: Object, default: null },
   tooltip: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
@@ -167,8 +166,20 @@ const filteredItems = ref([]);
 
 watch(
   () => props.items,
-  () => {
-    filteredItems.value = props.items;
+  (newItems) => {
+    filteredItems.value = newItems || [];
+    allItems.value = newItems || [];
+
+    if (model.value && newItems?.length) {
+      const currentExists = newItems.some((item) => getIdAttributeString(item) === model.value);
+      if (!currentExists) {
+        model.value = null;
+      }
+    }
+  },
+  {
+    immediate: true,
+    deep: true,
   }
 );
 
@@ -422,8 +433,8 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                     {
                       value: selectedItem?.id ? selectedItem?.id : props.placeholder,
                       displayName: selectedItem?.name ? selectedItem?.name : props.placeholder,
-                      displayType: props.dictionary?.displayType,
-                      displayShape: props.dictionary?.displayShape,
+                      displayType: selectedItem?.displayType,
+                      displayShape: selectedItem?.displayShape,
                     },
                   ]"
                 />
@@ -487,8 +498,8 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                           {
                             value: item[idAttribute],
                             displayName: item[nameAttribute],
-                            displayType: props.dictionary?.displayType,
-                            displayShape: props.dictionary?.displayShape,
+                            displayType: item.displayType,
+                            displayShape: item.displayShape,
                           },
                         ]"
                       />

@@ -2,6 +2,10 @@
 
 ## 1.9 → 1.10
 
+### LxAutoComplete and LxDropDown
+
+Removed `dictionary` prop, instead you should directly pass the `displayType` and `displayShape` into items prop how it is with other values
+
 ### changes to toolbar configuration in LxList & LxDataGrid
 
 If you previously used custom styles or layout inside the toolbar slot (slot="toolbar"), please review your implementation to ensure nothing is broken in the new version. Custom toolbar setups may no longer render correctly without adjustments.

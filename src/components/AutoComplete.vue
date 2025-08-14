@@ -26,7 +26,6 @@ const props = defineProps({
   items: { type: [Array, Function], default: () => [] },
   idAttribute: { type: String, default: 'id' },
   nameAttribute: { type: String, default: 'name' },
-  dictionary: { type: Object, default: null },
   groupId: { type: String, default: null },
   queryMinLength: { type: Number, default: 0 },
   queryMaxLength: { type: Number, default: null },
@@ -999,8 +998,8 @@ onMounted(() => {
               {
                 value: selectedItem?.[idAttribute],
                 displayName: selectedItem?.[nameAttribute],
-                displayType: props.dictionary?.displayType,
-                displayShape: props.dictionary?.displayShape,
+                displayType: selectedItem?.displayType,
+                displayShape: selectedItem?.displayShape,
               },
             ]"
           />
@@ -1130,8 +1129,8 @@ onMounted(() => {
                                 {
                                   value: selectedItem?.[idAttribute],
                                   displayName: selectedItem[nameAttribute],
-                                  displayType: props.dictionary?.displayType,
-                                  displayShape: props.dictionary?.displayShape,
+                                  displayType: selectedItem?.displayType,
+                                  displayShape: selectedItem?.displayShape,
                                 },
                               ]"
                             />
@@ -1329,8 +1328,8 @@ onMounted(() => {
                                     {
                                       value: item[idAttribute],
                                       displayName: item[nameAttribute],
-                                      displayType: props.dictionary?.displayType,
-                                      displayShape: props.dictionary?.displayShape,
+                                      displayType: item?.displayType,
+                                      displayShape: item?.displayShape,
                                     },
                                   ]"
                                 />
