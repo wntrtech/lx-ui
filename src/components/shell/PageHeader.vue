@@ -42,6 +42,7 @@ const props = defineProps({
 
 const defaultTexts = {
   defaultBack: 'Atpakaļ',
+  defaultBackTooltip: 'Atgriezties uz',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
@@ -49,6 +50,12 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
 const goBackLabel = computed(() => {
   if (props.breadcrumbs.length === 1) {
     return props.breadcrumbs[0]?.label;
+  }
+  return props.backLabel ? props.backLabel : displayTexts.value.defaultBack;
+});
+const goBackTitle = computed(() => {
+  if (props.breadcrumbs.length === 1) {
+    return `${displayTexts.value.defaultBackTooltip} "${props.breadcrumbs[0]?.label}"`;
   }
   return props.backLabel ? props.backLabel : displayTexts.value.defaultBack;
 });
@@ -79,6 +86,7 @@ function goBack() {
               kind="ghost"
               :variant="breadcrumbs.length > 1 ? 'icon-only' : 'default'"
               :label="goBackLabel"
+              :title="goBackTitle"
               @click="goBack"
             />
           </div>

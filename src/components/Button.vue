@@ -91,15 +91,26 @@ const click = (e) => {
 const isIconOnly = computed(() =>
   Boolean(props.variant === 'icon-only' || (!props.label && !slots.default && props.icon))
 );
-
 const isTextOnly = computed(() => Boolean((props.label || slots.default) && !props.icon));
 
 const accessibleTitle = computed(() => {
-  let tooltip = props.title ? props.title : props.label;
+  let tooltip = props.title;
+
+  const isBusyWithTooltip = props.busy && props.busyTooltip;
+
+  if (isIconOnly.value && props.title !== props.label) {
+    return props.label;
+  }
+  if (!isBusyWithTooltip && (!props.title || props.title === props.label)) {
+    return null;
+  }
+
+  tooltip = props.title;
   if (props.busy) {
     tooltip = props.busyTooltip ? props.busyTooltip : tooltip;
   }
-  return props.badge ? `${tooltip} (${props.badge})` : tooltip;
+
+  return tooltip;
 });
 
 const ariaLabelWithBadge = computed(() => {
@@ -150,6 +161,7 @@ const ariaLabelWithBadge = computed(() => {
     :aria-pressed="active ? active : null"
     :aria-label="ariaLabelWithBadge"
     :aria-busy="busy"
+    :aria-describedby="accessibleTitle ? `${id}-description` : null"
     :tabindex="tabindex"
     @click="click"
     @keydown.enter.stop.prevent="() => null"
@@ -216,6 +228,7 @@ const ariaLabelWithBadge = computed(() => {
     :tabindex="tabindex"
     :aria-busy="busy"
     :aria-label="ariaLabelWithBadge"
+    :aria-describedby="accessibleTitle ? `${id}-description` : null"
     :target="openInNewTab ? '_blank' : null"
   >
     <div class="lx-button-content-wrapper">
@@ -255,4 +268,7 @@ const ariaLabelWithBadge = computed(() => {
     </div>
   </router-link>
   <div class="lx-invisible" aria-live="polite" v-if="props.busy">{{ props.busyTooltip }}</div>
+  <p :id="`${id}-description`" class="lx-invisible" v-if="accessibleTitle && !isIconOnly">
+    {{ accessibleTitle }}
+  </p>
 </template>
