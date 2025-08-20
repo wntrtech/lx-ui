@@ -1015,3 +1015,9 @@ background-color: var(--color-selected-dropdown-background);
   margin-top: -0.3rem;
   margin-left: -1rem;
 }
+
+.lx-layout-digives-lite .no-patient-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

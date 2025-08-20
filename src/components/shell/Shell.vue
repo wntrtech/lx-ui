@@ -1740,12 +1740,13 @@ watch(
               </LxRow>
             </template>
           </LxInfoWrapper>
-          <LxIcon
-            v-else
-            class="patient-inactive-icon"
-            value="patient-inactive"
-            :title="displayTexts.contextPersonsInfoTitle"
-          />
+          <div v-else class="no-patient-icon" :title="displayTexts.contextPersonsInfoTitle">
+            <LxIcon
+              class="patient-inactive-icon"
+              value="patient-inactive"
+              :title="displayTexts.contextPersonsInfoTitle"
+            />
+          </div>
         </div>
       </div>
       <nav ref="nav" aria-label="navigation panel">

@@ -804,12 +804,13 @@ function themeDropdownClicked(id, value) {
             </LxRow>
           </template>
         </LxInfoWrapper>
-        <LxIcon
-          v-else
-          class="patient-inactive-icon"
-          value="patient-inactive"
-          :title="displayTexts.contextPersonsInfoTitle"
-        />
+        <div v-else class="no-patient-icon" :title="displayTexts.contextPersonsInfoTitle">
+          <LxIcon
+            class="patient-inactive-icon"
+            value="patient-inactive"
+            :title="displayTexts.contextPersonsInfoTitle"
+          />
+        </div>
       </div>
       <div class="lx-user-menu" :class="[{ opened: dropDownMenu?.menuOpen }]" v-if="userInfo">
         <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
