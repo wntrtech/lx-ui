@@ -9,7 +9,14 @@ import { getDisplayTexts } from '@/utils/generalUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
 
-const emits = defineEmits(['filter', 'resetFilters', 'update:expanded', 'fastFilterClick']);
+const emits = defineEmits([
+  'filter',
+  'resetFilters',
+  'update:expanded',
+  'fastFilterClick',
+  'saveFilter',
+  'editFilter',
+]);
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -21,6 +28,7 @@ const props = defineProps({
   expanded: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   fastFilters: { type: Array, default: () => [] },
+  enableFilterEditing: { type: Boolean, default: false },
   fastIdAttribute: { type: String, default: 'id' },
   fastNameAttribute: { type: String, default: 'name' },
   badge: { type: String, default: '' },
@@ -55,6 +63,8 @@ const defaultTexts = {
   clear: 'Notīrīt',
   fastFiltersLabel: 'Ātrie filtri',
   filtersApplied: 'Filtri tiek piemēroti',
+  saveFilter: 'Saglabāt',
+  editFilter: 'Rediģēt',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
@@ -74,7 +84,13 @@ const filterReset = (e) => {
 };
 
 function fastFilterClick(e) {
-  emits('fastFilterClick', e);
+  if (e === 'saveFilter') {
+    emits('saveFilter', e);
+  } else if (e === 'editFilter') {
+    emits('editFilter', e);
+  } else {
+    emits('fastFilterClick', e);
+  }
 }
 
 const isExpanded = computed({
@@ -137,12 +153,31 @@ function focus() {
   expander.value.focus();
 }
 
-const fastFilterDisplay = computed(() =>
-  props.fastFilters.map((item) => ({
+const fastFilterDisplay = computed(() => {
+  const fastFilters = props.fastFilters.map((item) => ({
     id: item[props.fastIdAttribute],
     name: item[props.fastNameAttribute],
-  }))
-);
+  }));
+
+  if (props.enableFilterEditing) {
+    const saveButton = {
+      id: 'saveFilter',
+      label: displayTexts.value.saveFilter,
+      icon: 'save',
+      group: 'savedFilters',
+    };
+
+    const editButton = {
+      id: 'editFilter',
+      label: displayTexts.value.editFilter,
+      icon: 'edit',
+      group: 'savedFilters',
+    };
+
+    return [saveButton, editButton, ...fastFilters];
+  }
+  return fastFilters;
+});
 
 defineExpose({ toggleExpander, focus });
 </script>
