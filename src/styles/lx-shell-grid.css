@@ -708,11 +708,13 @@
 .lx-layout.lx-layout-cover .lx-main .lx-cover,
 .lx-layout.lx-layout-cover-digives-lite .lx-main .lx-cover {
   display: grid;
-  height: 100vh;
+  min-height: 100vh;
   background-image: var(--lx-cover-image-light);
   background-size: 100% auto;
   background-repeat: no-repeat;
   background-position: top center;
+  padding-bottom: var(--row-size);
+  padding-top: calc(var(--row-size) * 2);
 }
 
 .lx.lx-theme-dark .lx-layout.lx-layout-cover .lx-main .lx-cover,
