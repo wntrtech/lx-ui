@@ -106,9 +106,16 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           >
             <div v-for="action in group" :key="action?.id">
               <div v-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
-                <p>{{ action?.name || action?.label }}</p>
+                <label
+                  class="lx-dropdown-toggle-label"
+                  :id="`${action.id}-label`"
+                  :for="action?.id"
+                >
+                  {{ action?.name || action?.label }}
+                </label>
                 <LxToggle
                   :id="action?.id"
+                  :labelId="`${action.id}-label`"
                   :disabled="action?.disabled"
                   v-model="action.value"
                   :texts="action?.texts"
@@ -160,9 +167,16 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           >
             <div v-for="action in group" :key="action?.id">
               <div v-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
-                <p>{{ action?.name || action?.label }}</p>
+                <label
+                  class="lx-dropdown-toggle-label"
+                  :id="`${action.id}-label`"
+                  :for="action?.id"
+                >
+                  {{ action?.name || action?.label }}
+                </label>
                 <LxToggle
                   :id="action?.id"
+                  :labelId="`${action.id}-label`"
                   :disabled="action?.disabled"
                   v-model="action.value"
                   :texts="action?.texts"

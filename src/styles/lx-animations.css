@@ -400,7 +400,7 @@
   animation: expand-collapse-row 0.1s ease-out;
 }
 
-.lx:not(.lx-no-animations) .lx-data-block header p.lx-primary.lx-title {
+.lx:not(.lx-no-animations) .lx-data-block header .lx-primary.lx-title {
   transition: font-size ease-out 0.1s;
 }
 
@@ -534,7 +534,7 @@
   transition: background-color 0.1s ease;
 }
 
-.lx:not(.lx-no-animations) .lx-content-switcher .lx-content-switcher-item p {
+.lx:not(.lx-no-animations) .lx-content-switcher .lx-content-switcher-item > div {
   transition: color 0.1s ease;
 }
 

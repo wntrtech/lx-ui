@@ -1143,13 +1143,13 @@ onMounted(() => {
                               (variant === 'state' && selectingKind === 'multiple')
                             "
                           >
-                            <p class="lx-input-text">{{ getName(false) }}</p>
+                            {{ getName(false) }}
                           </template>
                         </div>
                       </template>
                       <template v-if="shouldShowPlaceholder">
                         <div class="lx-placeholder lx-input-area">
-                          <p class="lx-input-text">{{ getName() }}</p>
+                          {{ getName() }}
                         </div>
                       </template>
                       <div

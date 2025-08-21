@@ -306,7 +306,8 @@
 
 .lx-input-wrapper.lx-disabled .lx-markdown-text-area p,
 .lx-input-wrapper.lx-disabled .lx-markdown-text-area a,
-.lx-input-wrapper.lx-disabled .lx-input-text {
+.lx-input-wrapper.lx-disabled .lx-input-text,
+.lx-input-wrapper.lx-disabled .lx-input-area {
   color: var(--color-input-disabled) !important;
 }
 
@@ -2221,7 +2222,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   border: 1px solid var(--color-content-switcher-foreground);
 }
 
-.lx-content-switcher .lx-content-switcher-item.lx-selected p {
+.lx-content-switcher .lx-content-switcher-item.lx-selected > div {
   color: var(--color-background);
 }
 
@@ -2238,7 +2239,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   color: var(--color-region-hover-foreground);
 }
 
-.lx-content-switcher .lx-content-switcher-item:not(.lx-selected):hover p {
+.lx-content-switcher .lx-content-switcher-item:not(.lx-selected):hover > div {
   color: var(--color-region-hover-foreground);
 }
 
@@ -2272,7 +2273,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   border: 1px solid var(--color-region);
 }
 
-.lx-content-switcher .lx-content-switcher-item.lx-disabled p {
+.lx-content-switcher .lx-content-switcher-item.lx-disabled > div {
   color: var(--color-disabled-foreground);
 }
 
@@ -2304,7 +2305,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   fill: var(--color-background);
 }
 
-.lx-content-switcher-item > p {
+.lx-content-switcher-item > div {
   line-height: 1.2rem;
   text-overflow: ellipsis;
   text-wrap: nowrap;
@@ -2969,7 +2970,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   grid-column: 1 / -1;
   width: 100%;
   height: var(--input-container-height);
-  padding-bottom: 0.1rem;
   outline: 2px solid transparent;
   outline-offset: -2px;
   border: var(--input-border);

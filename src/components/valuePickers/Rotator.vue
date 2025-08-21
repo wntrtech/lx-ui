@@ -310,7 +310,7 @@ function isActive(item) {
               :id="getItemId(item[idAttribute])"
               class="lx-rotator-tag"
             >
-              <p class="lx-input-text" v-if="variant === 'rotator'">{{ item[nameAttribute] }}</p>
+              <template v-if="variant === 'rotator'"> {{ item[nameAttribute] }}</template>
               <template v-if="variant === 'rotator-custom'">
                 <slot name="customItem" v-bind="item"></slot>
               </template>

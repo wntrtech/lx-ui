@@ -138,8 +138,9 @@ const expandIconTitle = computed(() => {
       <header
         class="lx-data-block-header"
         :for="id"
-        :tabindex="expandable ? 0 : -1"
+        :tabindex="expandable && !disabled ? 0 : -1"
         :aria-invalid="invalid"
+        :aria-describedby="`data-block-${id}-desc`"
         @click="toggleExpander"
         @keydown.space.prevent="toggleExpander"
       >
@@ -165,14 +166,21 @@ const expandIconTitle = computed(() => {
           </div>
           <div v-if="props.icon === null && !hasSelecting" />
           <div class="lx-content">
-            <p
+            <div
               :class="[{ 'lx-primary-uppercase': forceUppercase }]"
               class="lx-primary lx-title"
               :title="name"
             >
               {{ name }}
-            </p>
-            <p class="lx-secondary" :title="description" v-show="description">{{ description }}</p>
+            </div>
+            <div
+              class="lx-secondary"
+              :id="`data-block-${id}-desc`"
+              :title="description"
+              v-show="description"
+            >
+              {{ description }}
+            </div>
           </div>
           <div class="lx-indications" v-if="expandable">
             <LxIcon

@@ -448,8 +448,8 @@ onMounted(() => {
           :desc="systemSubheader"
         />
         <div class="lx-project-name">
-          <p class="lx-primary">{{ systemNameShort }}</p>
-          <p class="lx-description">{{ systemSubheader }}</p>
+          <div class="lx-primary">{{ systemNameShort }}</div>
+          <div class="lx-description">{{ systemSubheader }}</div>
         </div>
 
         <LxBadge

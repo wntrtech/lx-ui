@@ -43,17 +43,16 @@ defineProps({
       :title="tooltip"
       :aria-hidden="true"
     />
-    <p>
-      <span
-        v-if="tooltip && (icon || value)"
-        :id="`${id}-tooltip`"
-        class="lx-invisible"
-        aria-hidden="false"
-        >({{ tooltip }}):</span
-      >
-      <span v-if="value" class="lx-data lx-badge-text">
-        {{ value }}
-      </span>
-    </p>
+    <div
+      v-if="tooltip && (icon || value)"
+      :id="`${id}-tooltip`"
+      class="lx-invisible"
+      aria-hidden="false"
+    >
+      ({{ tooltip }}):
+    </div>
+    <div v-if="value" class="lx-data lx-badge-text">
+      {{ value }}
+    </div>
   </div>
 </template>

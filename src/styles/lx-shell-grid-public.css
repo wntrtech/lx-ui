@@ -83,8 +83,8 @@
   fill: var(--color-header-hover-foreground) !important;
 }
 
-.lx-layout.lx-layout-public>header>.lx-header .lx-main-button:hover p,
-.lx-layout.lx-layout-public>header>.lx-header .lx-main-button:hover p.lx-description {
+.lx-layout.lx-layout-public>header>.lx-header .lx-main-button:hover .lx-primary,
+.lx-layout.lx-layout-public>header>.lx-header .lx-main-button:hover .lx-description {
   color: var(---color-header-hover-foreground) !important;
 }
 
@@ -113,7 +113,7 @@
   display: grid;
 }
 
-.lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button p:not(.lx-description) {
+.lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-primary {
   font-size: var(--h2-font-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-brand);
@@ -123,7 +123,18 @@
   transition: font-size 0.2s ease-in-out;
 }
 
-.lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button p.lx-description {
+.lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-badge-text {
+  font-size: var(--h2-font-size);
+  font-weight: var(--font-weight-bold);
+  line-height: 1em;
+  transition: font-size 0.2s ease-in-out;
+}
+
+.lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-badge {
+  cursor: pointer;
+}
+
+.lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-description {
   font-size: var(--small-font-size);
   font-weight: var(--font-weight-bold);
   color: var(--color-label);
@@ -188,7 +199,7 @@
   outline-offset: -2px;
 }
 
-.lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info p:not(.lx-secondary) {
+.lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info .lx-primary {
   font-weight: var(--font-weight-bold);
   color: var(--color-data);
   line-height: 1.1em;
@@ -204,7 +215,7 @@
   margin-left: 0.75rem;
 }
 
-.lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info p.lx-secondary {
+.lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info .lx-secondary {
   font-size: var(--small-font-size);
   color: var(--color-label);
   line-height: 1.1em;
@@ -497,11 +508,12 @@
     width: var(--icon-size);
   }
 
-  .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button p.lx-description {
+  .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-description {
     display: none;
   }
 
-  .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button p:not(.lx-description) {
+  .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-primary,
+  .lx .lx-layout.lx-layout-public>header>.lx-header .lx-main-button .lx-badge-text {
     font-size: calc(var(--font-size) * 1.1);
   }
 

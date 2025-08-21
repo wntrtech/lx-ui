@@ -32,7 +32,7 @@
   --color-button-nav-selected-background: #07291a;
 }
 
-.lx-layout.lx-layout-default > header .lx-header .lx-user-button p.lx-secondary {
+.lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-secondary {
   color: var(--color-nav-foreground);
   opacity: 0.5;
 }

@@ -142,9 +142,9 @@ function checkIfHighlighted(id) {
       >
         <!--Fade-in strādā, fade-out vajag noņemt-->
         <Transition :name="`icon-default`">
-          <p class="index-icon" v-if="showIconsMode && !item['icon'] && icon === null">
+          <div class="index-icon" v-if="showIconsMode && !item['icon'] && icon === null">
             {{ index + 1 }}
-          </p>
+          </div>
         </Transition>
 
         <LxIcon
@@ -153,10 +153,9 @@ function checkIfHighlighted(id) {
           :title="item[props.nameAttribute]"
           v-if="(showIconsMode && item['icon']) || (icon && showIconsMode)"
         />
-
-        <p v-if="(kind === 'default' || kind === 'combo') && isWideScreen">
+        <div v-if="(kind === 'default' || kind === 'combo') && isWideScreen">
           {{ item[props.nameAttribute] }}
-        </p>
+        </div>
       </div>
     </div>
   </div>

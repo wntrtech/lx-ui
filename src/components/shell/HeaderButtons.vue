@@ -729,11 +729,11 @@ watch(
           <LxAvatar v-if="hasAvatar" :value="safeString(fullName)" />
 
           <div class="lx-user-info">
-            <p class="lx-primary">
-              <span v-if="!selectedContextPersonModel">{{ fullName }}</span>
-              <span v-else>{{ contextPersonFullName }}</span>
-            </p>
-            <p
+            <div class="lx-primary">
+              <template v-if="!selectedContextPersonModel">{{ fullName }}</template>
+              <template v-else>{{ contextPersonFullName }}</template>
+            </div>
+            <div
               class="lx-secondary"
               :title="
                 selectedContextPersonModel
@@ -741,19 +741,23 @@ watch(
                   : userInfo?.description
               "
             >
-              <span v-if="!selectedContextPersonModel">{{ userInfo?.description }}</span>
-              <span v-else>{{ selectedContextPersonModel?.description }}</span>
-            </p>
+              <template v-if="!selectedContextPersonModel">{{ userInfo?.description }}</template>
+              <template v-else>{{ selectedContextPersonModel?.description }}</template>
+            </div>
           </div>
         </div>
 
         <template #panel>
           <div class="lx-region user-menu-context">
             <LxAvatar size="xl" :value="safeString(fullName)" />
-            <p class="lx-data">{{ fullName }}</p>
-            <p class="lx-description" v-if="userInfo?.description">{{ userInfo?.description }}</p>
-            <p class="lx-description" v-if="userInfo?.role">{{ userInfo?.role }}</p>
-            <p class="lx-description" v-if="userInfo?.institution">{{ userInfo?.institution }}</p>
+            <div class="lx-data">{{ fullName }}</div>
+            <div class="lx-description" v-if="userInfo?.description">
+              {{ userInfo?.description }}
+            </div>
+            <div class="lx-description" v-if="userInfo?.role">{{ userInfo?.role }}</div>
+            <div class="lx-description" v-if="userInfo?.institution">
+              {{ userInfo?.institution }}
+            </div>
           </div>
 
           <LxButton

@@ -146,7 +146,7 @@ function getIconSet(item) {
               :style="specialStyles(item)"
               :title="item?.description"
             />
-            <p class="lx-data">{{ item?.name }}</p>
+            <div class="lx-data">{{ item?.name }}</div>
           </li>
           <li
             v-if="props.hasShowAll"
@@ -157,7 +157,7 @@ function getIconSet(item) {
             tabindex="0"
           >
             <LxIcon value="open" :title="displayTexts.showAllLabel" />
-            <p class="lx-data">{{ displayTexts.showAllLabel }}</p>
+            <div class="lx-data">{{ displayTexts.showAllLabel }}</div>
           </li>
         </ul>
 
@@ -192,7 +192,7 @@ function getIconSet(item) {
                   :style="specialStyles(item)"
                   :title="item?.description"
                 />
-                <p class="lx-data">{{ item?.name }}</p>
+                <div class="lx-data">{{ item?.name }}</div>
               </li>
             </ul>
           </div>

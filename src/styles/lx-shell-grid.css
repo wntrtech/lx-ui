@@ -137,7 +137,8 @@
   max-width: var(--aside-size);
 }
 
-.lx-layout.lx-layout-default > header .lx-header .lx-main-button p {
+.lx-layout.lx-layout-default > header .lx-header .lx-main-button p,
+.lx-layout-default > header .lx-header .lx-main-button .lx-project-name > div {
   font-weight: var(--font-weight-bold);
   color: inherit;
 }
@@ -149,7 +150,7 @@
   overflow: hidden;
 }
 
-.lx-layout.lx-layout-default > header .lx-header .lx-user-button p,
+.lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-user-info > div,
 .lx-layout.lx-layout-cover > header .lx-header .lx-user-button p,
 .lx-layout.lx-layout-cover-digives-lite > header .lx-header .lx-user-button p {
   font-weight: var(--font-weight);
@@ -161,13 +162,15 @@
   line-height: 1.15em;
 }
 
-.lx-layout.lx-layout-default > header .lx-header .lx-user-button p.lx-secondary {
+.lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-secondary {
+  color: var(--color-label);
   font-size: var(--small-font-size);
   margin-top: 0;
 }
 
+.lx-layout-default > header .lx-header .lx-main-button .lx-project-name > div,
 .lx-layout.lx-layout-default > header .lx-header .lx-main-button p,
-.lx-layout.lx-layout-default > header .lx-header .lx-user-button p,
+.lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-user-info > div,
 .lx-layout.lx-layout-cover > header .lx-header .lx-user-button p,
 .lx-layout.lx-layout-cover-digives-lite > header .lx-header .lx-user-button p {
   text-overflow: ellipsis;
@@ -205,9 +208,9 @@
 }
 
 .lx-layout.lx-layout-default > header .lx-header .lx-user-button:hover,
-.lx-layout.lx-layout-default > header .lx-header .lx-user-button:hover p.lx-secondary,
+.lx-layout.lx-layout-default > header .lx-header .lx-user-button:hover .lx-secondary,
 .lx-layout.lx-layout-default > header .lx-header .lx-selected .lx-user-button,
-.lx-layout.lx-layout-default > header .lx-header .lx-selected .lx-user-button p.lx-secondary {
+.lx-layout.lx-layout-default > header .lx-header .lx-selected .lx-user-button .lx-secondary {
   color: var(--color-interactive-hover-foreground);
 }
 
@@ -1146,7 +1149,7 @@
   fill: var(--color-nav-hover-foreground);
 }
 
-.lx-layout.lx-layout-default > header .lx-header .lx-main-button:hover p:not(.lx-badge-text) {
+.lx-layout.lx-layout-default > header .lx-header .lx-main-button:hover .lx-project-name > div {
   color: var(--color-nav-hover-foreground);
 }
 
@@ -1361,7 +1364,7 @@
   display: none;
 }
 
-.lx-header .lx-user-menu .lx-user-info p {
+.lx-header .lx-user-menu .lx-user-info > div {
   color: inherit;
 }
 
@@ -1464,12 +1467,6 @@
 
 .lx-expander .lx-badge.lx-badge-important {
   background: var(--color-red);
-}
-
-.lx-layout > header .lx-header .lx-main-button p {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  display: block;
 }
 
 .lx-illustration {
@@ -1582,8 +1579,8 @@
   border-bottom: 1px solid var(--color-chrome);
 }
 
-.lx-user-menu .lx-region.user-menu-context p.lx-data,
-.lx-user-menu .lx-region.user-menu-context p.lx-description {
+.lx-user-menu .lx-region.user-menu-context .lx-data,
+.lx-user-menu .lx-region.user-menu-context .lx-description {
   margin-bottom: 0.2em;
   text-align: center;
 }
@@ -1784,8 +1781,8 @@
   padding-bottom: .5rem;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul.primary-menu .primary-menu-tile p,
-.lx-mega-menu .lx-mega-menu-container .secondary-menu .secondary-menu-item p {
+.lx-mega-menu .lx-mega-menu-container ul.primary-menu .primary-menu-tile,
+.lx-mega-menu .lx-mega-menu-container .secondary-menu .secondary-menu-item {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1808,7 +1805,7 @@
 }
 
 .lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile svg,
-.lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile p {
+.lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile > div {
   align-self: center;
 }
 
@@ -1862,7 +1859,12 @@
   fill: var(--color-selected);
 }
 
-.primary-menu-tile.selected p {
+.primary-menu-tile .lx-data,
+.secondary-menu-item .lx-data {
+  color: var(--color-data);
+}
+
+.primary-menu-tile.selected .lx-data {
   color: var(--color-selected);
 }
 
@@ -1870,7 +1872,7 @@
   fill: var(--color-selected-dropdown);
 }
 
-.secondary-menu-item.selected p {
+.secondary-menu-item.selected .lx-data {
   color: var(--color-selected-dropdown);
 }
 

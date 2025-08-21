@@ -1860,6 +1860,7 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-badge-foreground);
   font-weight: bold;
   background: var(--color-data);
+  color: var(--color-data);
   min-width: 1.5rem;
   min-height: 1.5rem;
   border-radius: 1rem;
@@ -2169,11 +2170,12 @@ a.lx-button.lx-button-ghost svg {
     padding: 0.5rem 0.5rem 0.5rem 1rem;
 }
 
-.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper > p {
+.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper > .lx-dropdown-toggle-label {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     padding-right: 0.5rem;
+    color: var(--color-data);
 }
 
 @media (max-width: 1900px) {

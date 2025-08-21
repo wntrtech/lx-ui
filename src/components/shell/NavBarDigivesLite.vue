@@ -587,15 +587,15 @@ onClickOutside(navPanel, toggleNavBar);
             </div>
 
             <div class="lx-user-info">
-              <p class="lx-primary" :title="fullName">
+              <div class="lx-primary" :title="fullName">
                 <span>{{ fullName }}</span>
-              </p>
-              <p class="lx-secondary" :title="userInfo?.description">
+              </div>
+              <div class="lx-secondary" :title="userInfo?.description">
                 <span>{{ userInfo?.description }}</span>
-              </p>
-              <p class="lx-secondary" :title="userInfo?.institution">
+              </div>
+              <div class="lx-secondary" :title="userInfo?.institution">
                 <span>{{ userInfo.institution }}</span>
-              </p>
+              </div>
             </div>
             <div class="lx-chevron">
               <LxIcon :value="dropDownMenu?.menuOpen ? 'chevron-up' : 'chevron-down'" />
@@ -607,10 +607,14 @@ onClickOutside(navPanel, toggleNavBar);
               <div class="lx-avatar-display lx-avatar-display-xl">
                 <LxIcon value="doctor" />
               </div>
-              <p class="lx-data">{{ fullName }}</p>
-              <p class="lx-description" v-if="userInfo?.description">{{ userInfo?.description }}</p>
-              <p class="lx-description" v-if="userInfo?.role">{{ userInfo?.role }}</p>
-              <p class="lx-description" v-if="userInfo?.institution">{{ userInfo?.institution }}</p>
+              <div class="lx-data">{{ fullName }}</div>
+              <div class="lx-description" v-if="userInfo?.description">
+                {{ userInfo?.description }}
+              </div>
+              <div class="lx-description" v-if="userInfo?.role">{{ userInfo?.role }}</div>
+              <div class="lx-description" v-if="userInfo?.institution">
+                {{ userInfo?.institution }}
+              </div>
             </div>
             <ul class="lx-group" role="group">
               <li v-for="item in navItemsUserMenu" :key="item.label">

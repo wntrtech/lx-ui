@@ -36,9 +36,9 @@ function getRouteTitle(route) {
 </script>
 <template>
   <div class="lx-sitemap-wrapper">
-    <p v-if="label" class="lx-sitemap-label">
+    <div v-if="label" class="lx-sitemap-label">
       {{ label }}
-    </p>
+    </div>
     <ul class="lx-sitemap" :id="id" :aria-label="label ? label : null">
       <li class="lx-sitemap-item" v-for="route in visibleRoutes" :key="route.path">
         <RouterLink class="lx-sitemap-link" :to="route.path">

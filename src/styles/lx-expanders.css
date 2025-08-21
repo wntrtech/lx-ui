@@ -316,7 +316,7 @@
   background-color: transparent;
 }
 
-.lx-data-block-header>.lx-content>p {
+.lx-data-block-header>.lx-content>div {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -348,13 +348,13 @@
   cursor: pointer;
 }
 
-.lx-data-block-wrapper.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover p.lx-primary,
-.lx-data-block-wrapper.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover p.lx-secondary {
+.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-primary,
+.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-secondary {
   color: var(--color-region-hover-foreground);
 }
 
-.lx-data-block-wrapper.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-icons > .lx-icon,
-.lx-data-block-wrapper.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-indications > svg {
+.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-icons > .lx-icon,
+.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-indications > svg {
   fill: var(--color-region-hover-foreground);
 }
 
@@ -423,7 +423,7 @@
   fill: var(--color-disabled-foreground);
 }
 
-.lx-data-block-wrapper.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-content>p {
+.lx-data-block-wrapper.lx-data-block-disabled>.lx-data-block>.lx-data-block-header>.lx-content>div {
   color: var(--color-disabled-foreground);
 }
 
@@ -445,17 +445,17 @@
   margin-top: 2rem;
 }
 
-.lx .lx-data-block p.lx-primary {
+.lx .lx-data-block .lx-primary {
   width: 100%;
   font-weight: bold;
   line-height: 1.2em;
 }
 
-.lx .lx-data-block header p.lx-primary.lx-title {
+.lx .lx-data-block header .lx-primary.lx-title {
   padding: 0.1rem 0 0.2rem 0;
 }
 
-.lx .lx-data-block p.lx-secondary {
+.lx .lx-data-block .lx-secondary {
   width: 100%;
   font-size: var(--small-font-size);
   color: var(--color-label);
@@ -506,7 +506,7 @@
     color: var(--color-disabled-foreground);
 }
 
-.lx-data-block-wrapper.lx-data-block-expander header.lx-data-block-header:focus {
+.lx-data-block-wrapper:not(.lx-data-block-disabled).lx-data-block-expander header.lx-data-block-header:focus {
     outline: 2px solid var(--color-focus-background);
     outline-offset: -2px;
 }

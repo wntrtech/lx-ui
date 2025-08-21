@@ -669,8 +669,8 @@ const customButton = ref();
             <div class="lx-user-menu-display" v-if="userInfo">
               <LxAvatar />
               <div>
-                <p class="lx-primary">{{ fullName }}</p>
-                <p class="lx-secondary">{{ userInfo?.description }}</p>
+                <div class="lx-primary">{{ fullName }}</div>
+                <div class="lx-secondary">{{ userInfo?.description }}</div>
               </div>
             </div>
             <LxForm kind="stripped">

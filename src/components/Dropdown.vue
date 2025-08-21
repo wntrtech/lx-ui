@@ -451,10 +451,10 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                 <span class="lx-input-text"> {{ name }} </span>
               </div>
               <div class="lx-dropdown-default-data lx-input-area" :title="tooltip" v-else>
-                <p class="lx-input-text">{{ name }}</p>
+                {{ name }}
               </div>
               <div v-if="isPlaceholderVisible()" class="lx-placeholder lx-input-area">
-                <p class="lx-input-text">{{ placeholder }}</p>
+                {{ placeholder }}
               </div>
               <div v-if="invalid" class="lx-invalidation-icon-wrapper">
                 <LxIcon customClass="lx-invalidation-icon" value="invalid" />
