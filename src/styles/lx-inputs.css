@@ -3262,7 +3262,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   border-left: none;
 }
 
-.lx-component-toolbar .left-area .lx-group {
+.lx-component-toolbar .left-area > .lx-group {
   border-right: 1px solid var(--color-chrome);
 }
 

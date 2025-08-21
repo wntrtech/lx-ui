@@ -741,6 +741,12 @@
   display: flex;
 }
 
+.lx-component-toolbar .first-row > .left-area > .lx-group:only-child:has(> .lx-group:empty),
+.lx-list-wrapper .lx-component-toolbar:has(> .first-row > .left-area > .lx-group:only-child:empty):has(> .first-row > .right-area > .lx-group:only-child:empty),
+.lx-data-grid-wrapper .lx-component-toolbar:has(> .first-row > .left-area > .lx-group:only-child:empty):has(> .first-row > .right-area > .lx-group:only-child:empty) {
+  display: none;
+}
+
 .lx .lx-layout .lx-component-toolbar > .left-area .lx-text-input,
 .lx .lx-layout .lx-component-toolbar .second-row .lx-text-input,
 .lx .lx-layout .lx-list-toolbar > .second-row .lx-text-input,

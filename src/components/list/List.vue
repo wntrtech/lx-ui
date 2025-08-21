@@ -1265,7 +1265,7 @@ const toolbarActions = computed(() => {
               <div
                 class="toolbar-search-button"
                 :class="[{ 'is-expanded': searchField }]"
-                v-if="autoSearchMode === 'compact'"
+                v-if="autoSearchMode === 'compact' && hasSearch"
               >
                 <LxButton
                   kind="ghost"
@@ -1274,7 +1274,6 @@ const toolbarActions = computed(() => {
                   :label="searchField ? displayTexts.closeSearch : displayTexts.openSearch"
                   :disabled="loading || busy"
                   @click="toggleSearch"
-                  v-if="hasSearch"
                 />
               </div>
               <LxButton
