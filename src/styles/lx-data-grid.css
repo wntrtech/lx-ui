@@ -702,7 +702,10 @@
   background-color: var(--color-data);
   opacity: 0.05;
 }
-
+.lx .lx-data-grid-wrapper .lx-cell-header:focus {
+  outline: 2px solid var(--color-focus-background);
+  outline-offset: -2px;
+}
 .lx-data-grid .lx-skeleton .lx-grid-row:nth-child(3n) .lx-skeleton-placeholder {
   width: 75%;
 }

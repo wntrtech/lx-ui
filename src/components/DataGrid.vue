@@ -173,6 +173,8 @@ const textsDefault = {
   close: 'Aizvērt',
   skipHeader: 'Pāriet uz tabulas datiem',
   overflowMenu: 'Atvērt papildu iespējas',
+  loadingStart: 'Ielādē sākas',
+  loadingEnd: 'Ielādē beidzas',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -1063,12 +1065,11 @@ function syncHeaderScroll() {
   }
 }
 
-function restrictScroll(e) {
-  // TEMPORARY FIX: Prevent horizontal scrolling on the header (still scrolls but snaps back)
-  e.preventDefault();
-  syncHeaderScroll();
+function syncContainerScroll() {
+  if (header.value && container.value) {
+    container.value.scrollLeft = header.value.scrollLeft;
+  }
 }
-
 function syncColumnWidths() {
   if (!header.value || !container.value) return;
 
@@ -1202,10 +1203,22 @@ watch(
   }
 );
 
+const showLoadingAlert = ref(false);
+
 onMounted(() => {
   if (props.items && !props.idAttribute) {
     throw new Error('"idAttribute" prop is required on DataGrid Component');
   }
+
+  watch(
+    () => props.loading,
+    (newValue, oldValue) => {
+      if (oldValue !== undefined) {
+        showLoadingAlert.value = true;
+      }
+    },
+    { immediate: false }
+  );
 });
 
 const focusableElementsCount = computed(() => {
@@ -1468,7 +1481,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         class="lx-grid-row"
         role="toolbar"
         :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
-        @scroll="restrictScroll"
+        @scroll="syncContainerScroll"
       >
         <div v-if="hasSelecting" class="lx-cell-header lx-cell-selector" role="columnheader"></div>
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
@@ -1929,6 +1942,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           <div class="lx-cell lx-cell-m"><div class="lx-skeleton-placeholder"></div></div>
           <div class="lx-cell lx-cell"><div class="lx-skeleton-placeholder"></div></div>
         </div>
+        <p v-if="loading && showLoadingAlert" class="lx-invisible" aria-live="polite" role="status">
+          {{ displayTexts.loadingStart }}
+        </p>
+        <p
+          v-if="!loading && showLoadingAlert"
+          class="lx-invisible"
+          aria-live="polite"
+          role="status"
+        >
+          {{ displayTexts.loadingEnd }}
+        </p>
       </div>
     </article>
 
