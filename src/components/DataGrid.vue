@@ -2189,11 +2189,13 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         v-if="hasPaging && showItemsCountSelector && !loading"
       >
         {{ displayTexts.itemsPerPage }}
-        <LxDropDownMenu>
-          <div class="lx-chip">
-            {{ itemsPerPage }}
-            <LxIcon value="chevron-down" />
-          </div>
+        <LxDropDownMenu :disabled="isDisabled">
+          <LxButton
+            :label="itemsPerPage.toString()"
+            icon="chevron-down"
+            kind="ghost"
+            customClass="lx-chip"
+          />
           <template #panel>
             <div class="lx-button-set">
               <LxButton
