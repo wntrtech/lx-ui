@@ -630,13 +630,13 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
 
 <template>
   <div :id="props.id" class="lx-field-wrapper" ref="markdownWrapper">
+    <!--eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
     <div
       v-if="!readOnly"
       class="lx-markdown-text-area-wrapper"
       :data-disabled="isDisabled ? '' : null"
       :data-invalid="invalid ? '' : null"
       @click="focus()"
-      @keydown="focus()"
     >
       <LxToolbar v-if="editor">
         <template #leftArea>
