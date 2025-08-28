@@ -525,7 +525,6 @@ watch(
         :label="helpLabel || displayTexts.helpTitle"
         :variant="mode === 'cover' || mode === 'cover-digives-lite' ? 'default' : 'icon-only'"
         :disabled="headerNavDisable"
-        :title="displayTexts.helpTitle"
         @click="helpClicked"
       />
     </div>

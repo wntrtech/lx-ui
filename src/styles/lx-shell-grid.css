@@ -163,7 +163,7 @@
 }
 
 .lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-secondary {
-  color: var(--color-label);
+  color: var(--color-nav-foreground);
   font-size: var(--small-font-size);
   margin-top: 0;
 }

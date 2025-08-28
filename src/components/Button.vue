@@ -98,8 +98,8 @@ const accessibleTitle = computed(() => {
 
   const isBusyWithTooltip = props.busy && props.busyTooltip;
 
-  if (isIconOnly.value && props.title !== props.label) {
-    return props.label;
+  if (isIconOnly.value) {
+    return props.title ? props.title : props.label;
   }
   if (!isBusyWithTooltip && (!props.title || props.title === props.label)) {
     return null;
