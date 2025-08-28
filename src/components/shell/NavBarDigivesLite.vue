@@ -418,8 +418,18 @@ function megaMenuItemClick(id) {
   emits('update:selectedMegaMenuItem', id);
 }
 
-const megaMenyPrimaryItems = computed(() =>
-  props.megaMenuItems.filter((item) => item.kind === 'primary')
+const megaMenuAllowedItems = computed(() =>
+  props.megaMenuItems
+    .filter((item) => item.kind === 'primary' || item.kind === 'special')
+    .sort((a, b) => {
+      if (a.kind === 'special' && b.kind !== 'special') {
+        return 1;
+      }
+      if (b.kind === 'special' && a.kind !== 'special') {
+        return -1;
+      }
+      return 0;
+    })
 );
 
 const isSelectedInNavItems = computed(() => {
@@ -517,7 +527,7 @@ onClickOutside(navPanel, toggleNavBar);
   >
     <ul class="lx-nav-group" v-if="windowSize.width.value > 1000 && hasMegaMenu">
       <li
-        v-for="item in megaMenyPrimaryItems"
+        v-for="item in megaMenuAllowedItems.filter((i) => i.kind === 'primary')"
         :key="item.id"
         class="lx-mega-menu-item"
         :class="[
@@ -530,6 +540,45 @@ onClickOutside(navPanel, toggleNavBar);
         <LxButton
           :label="item.name"
           :title="item?.description"
+          :tabindex="5"
+          @click="megaMenuItemClick(item?.id)"
+        />
+        <ul class="nested-nav" v-if="selectedMegaMenuItemModel === item.id">
+          <li
+            v-for="item in navItemsPrimary"
+            :key="item.label"
+            :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
+          >
+            <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
+            <LxButton
+              :label="item.label"
+              :title="item?.description"
+              :href="item.to"
+              :tabindex="5"
+              @click="navClick(item?.id)"
+            />
+          </li>
+        </ul>
+      </li>
+      <div
+        class="nav-item-separator"
+        v-if="megaMenuAllowedItems.filter((i) => i.kind === 'special').length > 0"
+      ></div>
+      <li
+        v-for="item in megaMenuAllowedItems.filter((i) => i.kind === 'special')"
+        :key="item.id"
+        class="lx-mega-menu-item lx-special"
+        :class="[
+          {
+            'lx-selected': !isSelectedInNavItems && selectedMegaMenuItemModel === item.id,
+          },
+        ]"
+      >
+        <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
+        <LxButton
+          :label="item.name"
+          :title="item?.description"
+          :icon="item?.icon"
           :tabindex="5"
           @click="megaMenuItemClick(item?.id)"
         />
@@ -633,7 +682,7 @@ onClickOutside(navPanel, toggleNavBar);
       </div>
       <template v-if="props.hasMegaMenu">
         <li
-          v-for="item in megaMenyPrimaryItems"
+          v-for="item in megaMenuAllowedItems.filter((i) => i.kind === 'primary')"
           :key="item.id"
           class="lx-mega-menu-item"
           :class="[
@@ -646,6 +695,45 @@ onClickOutside(navPanel, toggleNavBar);
           <LxButton
             :label="item.name"
             :title="item?.description"
+            :tabindex="5"
+            @click="megaMenuItemClick(item?.id)"
+          />
+          <ul class="nested-nav" v-if="selectedMegaMenuItemModel === item.id">
+            <li
+              v-for="item in navItemsPrimary"
+              :key="item.label"
+              :class="[{ 'lx-selected': selectedNavItems[item.to?.name] }]"
+            >
+              <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
+              <LxButton
+                :label="item.label"
+                :title="item?.description"
+                :href="item.to"
+                :tabindex="5"
+                @click="navClick(item?.id)"
+              />
+            </li>
+          </ul>
+        </li>
+        <div
+          class="nav-item-separator"
+          v-if="megaMenuAllowedItems.filter((i) => i.kind === 'special').length > 0"
+        ></div>
+        <li
+          v-for="item in megaMenuAllowedItems.filter((i) => i.kind === 'special')"
+          :key="item.id"
+          class="lx-mega-menu-item lx-special"
+          :class="[
+            {
+              'lx-selected': !isSelectedInNavItems && selectedMegaMenuItemModel === item.id,
+            },
+          ]"
+        >
+          <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
+          <LxButton
+            :label="item.name"
+            :title="item?.description"
+            :icon="item.icon"
             :tabindex="5"
             @click="megaMenuItemClick(item?.id)"
           />
