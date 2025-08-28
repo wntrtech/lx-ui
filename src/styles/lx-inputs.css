@@ -1364,8 +1364,22 @@ h2.lx-section-header + p.lx-invalidation-message,
   height: 100%;
 }
 
-.lx-toolbar.lx-search-toolbar.lx-list-toolbar.lx-value-picker-search {
-  margin-bottom: 1rem;
+.lx-value-picker-wrapper .lx-component-toolbar {
+  margin-bottom: 0.5rem;
+}
+
+.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area,
+.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group,
+.lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group > .lx-field-wrapper {
+  width: 100%;
+}
+
+.lx-value-picker-wrapper .lx-component-toolbar {
+  border-top: 1px solid transparent;
+}
+
+.lx-value-picker-wrapper .lx-component-toolbar .left-area > .lx-group {
+  border-right: 1px solid transparent;
 }
 
 .lx-value-picker-horizontal-container {
@@ -1974,24 +1988,23 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-value-picker-default-wrapper.select-all > .lx-value-picker-default-item {
-  padding-left: 0.9rem;
+  padding-left: 0.85rem;
 }
 
-.lx .lx-value-picker-default-wrapper.select-all .lx-toolbar.lx-search-toolbar.lx-list-toolbar,
-.lx .lx-toolbar.lx-search-toolbar.lx-list-toolbar.select-all {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+.lx-value-picker-default-wrapper.select-all > .lx-component-toolbar > .first-row .lx-button,
+.lx-value-picker-indicators > .lx-component-toolbar > .first-row .lx-button {
+  --button-toolbar-ghost-grid-areas: "icon content";
+  --button-toolbar-ghost-grid-template-columns: auto 1fr;
 }
 
-.lx .lx-value-picker-horizontal-container:has(.select-all) .lx-toolbar.lx-search-toolbar.lx-list-toolbar {
-  grid-template-columns: auto 1fr;
+.lx-value-picker-tile-tag-container > .lx-component-toolbar > .first-row .lx-button {
+  --button-toolbar-ghost-grid-areas: "icon content";
+  --button-toolbar-ghost-grid-template-columns: auto 1fr;
 }
 
-.lx-value-picker-default-wrapper.select-all > .lx-toolbar > .lx-button,
-.lx-toolbar.lx-value-picker-search.select-all > .lx-button {
-  flex-direction: row;
-  gap: 0.65rem;
-  padding: 0 0.65rem;
+.lx-value-picker-horizontal-container > .lx-component-toolbar > .first-row .lx-button {
+  --button-toolbar-ghost-grid-areas: "icon content";
+  --button-toolbar-ghost-grid-template-columns: auto 1fr;
 }
 
 .lx-value-picker-dropdown-wrapper .lx-value-picker-item.select-all,

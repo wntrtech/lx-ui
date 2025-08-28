@@ -7,6 +7,7 @@ import useLx from '@/hooks/useLx';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
+import LxToolbar from '@/components/Toolbar.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -325,13 +326,19 @@ const indicatorTooltips = computed(() => {
 });
 </script>
 
-<template>
+<template>  
     <div
-      v-if="hasSearch && !props.readOnly"
-      class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
-      :class="[{ 'select-all': hasSelectAll && kind === 'multiple' }]"
+      class="lx-value-picker-indicators"
+      :class="[{ 'lx-invalid': invalid }]"
+      v-if="variant === 'indicator'"
+      :id="id"
+      :title="tooltip"
+      :aria-invalid="invalid"
+      :aria-labelledby="labelId"
     >
+    <LxToolbar v-if="hasSearch || (hasSelectAll && kind === 'multiple')">
       <LxButton
+        v-if="hasSelectAll && kind === 'multiple'"
         kind="ghost"
         :icon="
           areSomeSelected
@@ -340,12 +347,12 @@ const indicatorTooltips = computed(() => {
               : 'checkbox-indeterminate'
             : 'checkbox'
         "
-        v-if="hasSelectAll && kind === 'multiple'"
         :disabled="disabled"
         :aria-disabled="disabled"
-        @click="selectAll"
         :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-        :label="hasSearch ? '' : areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+        :label="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+        :variant="hasSearch ? 'icon-only' : 'default'"
+        @click="selectAll"
       />
       <LxTextInput
         v-if="hasSearch"
@@ -367,16 +374,7 @@ const indicatorTooltips = computed(() => {
         :aria-disabled="disabled"
         @click="query = ''"
       />
-    </div>
-    <div
-      class="lx-value-picker-indicators"
-      :class="[{ 'lx-invalid': invalid }]"
-      v-if="variant === 'indicator'"
-      :id="id"
-      :title="tooltip"
-      :aria-invalid="invalid"
-      :aria-labelledby="labelId"
-    >
+    </LxToolbar>
       <ul class="lx-indicator-set" v-if="kind === 'single'">
         <li
           v-for="item in itemsDisplay"

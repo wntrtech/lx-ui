@@ -310,7 +310,10 @@ test('LxValuePicker default hasSearch', () => {
   });
 
   expect(
-    wrapper.find('.lx-value-picker-default-wrapper').find('.lx-value-picker-search').exists()
+    wrapper
+      .find('.lx-value-picker-default-wrapper')
+      .find('.lx-component-toolbar .lx-search-input')
+      .exists()
   ).toBe(true);
 });
 
@@ -341,7 +344,7 @@ test('LxValuePicker tags hasSearch', () => {
     },
   });
 
-  expect(wrapper.find('.lx-value-picker-search').exists()).toBe(true);
+  expect(wrapper.find('.lx-component-toolbar .lx-search-input').exists()).toBe(true);
 });
 
 test('LxValuePicker tiles hasSearch', () => {
@@ -354,7 +357,7 @@ test('LxValuePicker tiles hasSearch', () => {
     },
   });
 
-  expect(wrapper.find('.lx-value-picker-search').exists()).toBe(true);
+  expect(wrapper.find('.lx-component-toolbar .lx-search-input').exists()).toBe(true);
 });
 
 /* Tooltip */
@@ -872,7 +875,7 @@ test('LxValuePicker default search', async () => {
     },
   });
 
-  const search = wrapper.get('.lx-value-picker-search input');
+  const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-value-picker-default-item');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
   expect(items[1].classes()).not.toContain('lx-value-hidden');
@@ -901,7 +904,7 @@ test('LxValuePicker default search 2', async () => {
     },
   });
 
-  const search = wrapper.get('.lx-value-picker-search input');
+  const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-value-picker-default-item');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
   expect(items[1].classes()).not.toContain('lx-value-hidden');
@@ -959,7 +962,7 @@ test('LxValuePicker tags search', async () => {
     },
   });
 
-  const search = wrapper.get('.lx-value-picker-search input');
+  const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-tag');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
   expect(items[1].classes()).not.toContain('lx-value-hidden');
@@ -988,7 +991,7 @@ test('LxValuePicker tiles search', async () => {
     },
   });
 
-  const search = wrapper.get('.lx-value-picker-search input');
+  const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   let items = wrapper.findAll('.lx-value-picker-tile');
   expect(items.length).toBe(3);
   await search.setValue('o');
@@ -1017,7 +1020,7 @@ test('LxValuePicker default searchAttributes', async () => {
     },
   });
 
-  const search = wrapper.get('.lx-value-picker-search input');
+  const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-value-picker-default-item');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
   expect(items[1].classes()).not.toContain('lx-value-hidden');
@@ -1050,7 +1053,7 @@ test('LxValuePicker tags searchAttributes', async () => {
       stubs: ['router-link'],
     },
   });
-  const search = wrapper.get('.lx-value-picker-search input');
+  const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   const items = wrapper.findAll('.lx-tag');
   expect(items[0].classes()).not.toContain('lx-value-hidden');
   expect(items[1].classes()).not.toContain('lx-value-hidden');
@@ -1084,7 +1087,7 @@ test('LxValuePicker tiles searchAttributes', async () => {
     },
   });
 
-  const search = wrapper.get('.lx-value-picker-search input');
+  const search = wrapper.get('.lx-component-toolbar .lx-search-input');
   let items = wrapper.findAll('.lx-value-picker-tile');
   expect(items.length).toBe(3);
   await search.setValue('ThreeDescription');

@@ -9,6 +9,7 @@ import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxIcon from '@/components/Icon.vue';
+import LxToolbar from '@/components/Toolbar.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -404,10 +405,7 @@ function focusNext() {
 </script>
 <template>
   <div class="lx-value-picker-horizontal-container" :id="id">
-    <div
-      v-if="hasSearch && !readOnly"
-      class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
-    >
+    <LxToolbar v-if="hasSearch || (hasSelectAll && kind === 'multiple')">
       <LxButton
         v-if="hasSelectAll && kind === 'multiple'"
         kind="ghost"
@@ -420,7 +418,8 @@ function focusNext() {
         "
         :disabled="disabled"
         :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-        :label="hasSearch ? '' : areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+        :label="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+        :variant="hasSearch ? 'icon-only' : 'default'"
         @click="selectAll"
       />
       <LxTextInput
@@ -441,7 +440,7 @@ function focusNext() {
         :label="displayTexts.clearQuery"
         @click="disabled ? undefined : (query = '')"
       />
-    </div>
+    </LxToolbar>
 
     <div
       class="lx-value-picker-horizontal-wrapper"

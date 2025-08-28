@@ -10,6 +10,7 @@ import LxCheckbox from '@/components/Checkbox.vue';
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
+import LxToolbar from '@/components/Toolbar.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -386,11 +387,9 @@ function getTabIndex(id) {
     </template>
 
     <template v-else>
-      <div
-        v-if="hasSearch"
-        class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
-      >
+      <LxToolbar v-if="hasSearch || (hasSelectAll && kind === 'multiple')">
         <LxButton
+          v-if="hasSelectAll && kind === 'multiple'"
           kind="ghost"
           :icon="
             areSomeSelected
@@ -399,11 +398,11 @@ function getTabIndex(id) {
                 : 'checkbox-indeterminate'
               : 'checkbox'
           "
-          v-if="hasSelectAll && kind === 'multiple'"
           :disabled="disabled"
-          @click="selectAll"
           :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-          :label="hasSearch ? '' : areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+          :label="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+          :variant="hasSearch ? 'icon-only' : 'default'"
+          @click="selectAll"
         />
         <LxTextInput
           v-if="hasSearch"
@@ -423,7 +422,7 @@ function getTabIndex(id) {
           :label="displayTexts.clearQuery"
           @click="query = ''"
         />
-      </div>
+      </LxToolbar>
 
       <div
         v-if="!readOnly"

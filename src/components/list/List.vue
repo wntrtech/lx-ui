@@ -1220,7 +1220,7 @@ const toolbarActions = computed(() => {
             v-if="(hasSelecting && selectedItems?.length === 0) || !hasSelecting"
             name="leftToolbar"
           />
-          <template v-if="autoSearchMode === 'default' && !hasSelecting">
+          <template v-if="hasSearch && !hasSelecting && autoSearchMode === 'default'">
             <LxTextInput
               v-if="hasSearch"
               ref="queryInputDefault"

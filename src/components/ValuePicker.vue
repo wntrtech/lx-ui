@@ -131,203 +131,205 @@ onMounted(() => {
 
 <template>
   <div class="lx-field-wrapper" ref="refRoot">
-    <LxValuePickerDefault
-      v-if="variant === 'default' || variant === 'default-custom'"
-      :role="kind === 'single' ? 'radiogroup' : 'group'"
-      :id="id"
-      v-model="model"
-      :items="stringifiedItems"
-      :idAttribute="idAttribute"
-      :nameAttribute="nameAttribute"
-      :descriptionAttribute="descriptionAttribute"
-      :groupId="groupId"
-      :kind="kind"
-      :disabled="disabled"
-      :aria-disabled="disabled"
-      :invalid="invalid"
-      :invalidation-message="invalidationMessage"
-      :texts="displayTexts"
-      :placeholder="placeholder"
-      :tooltip="tooltip"
-      :has-search="hasSearch"
-      :always-as-array="alwaysAsArray"
-      :nullable="nullable"
-      :readOnly="readOnly"
-      :readOnlyRenderType="readOnlyRenderType"
-      :variant="variant"
-      :search-attributes="searchAttributes"
-      :hasSelectAll="hasSelectAll"
-      :labelId="labelledBy"
-    >
-      <template v-slot:customItem="slotData" v-if="$slots.customItem">
-        <slot name="customItem" v-bind="slotData" />
-      </template>
-    </LxValuePickerDefault>
+    <div class="lx-value-picker-wrapper">
+      <LxValuePickerDefault
+        v-if="variant === 'default' || variant === 'default-custom'"
+        :role="kind === 'single' ? 'radiogroup' : 'group'"
+        :id="id"
+        v-model="model"
+        :items="stringifiedItems"
+        :idAttribute="idAttribute"
+        :nameAttribute="nameAttribute"
+        :descriptionAttribute="descriptionAttribute"
+        :groupId="groupId"
+        :kind="kind"
+        :disabled="disabled"
+        :aria-disabled="disabled"
+        :invalid="invalid"
+        :invalidation-message="invalidationMessage"
+        :texts="displayTexts"
+        :placeholder="placeholder"
+        :tooltip="tooltip"
+        :has-search="hasSearch"
+        :always-as-array="alwaysAsArray"
+        :nullable="nullable"
+        :readOnly="readOnly"
+        :readOnlyRenderType="readOnlyRenderType"
+        :variant="variant"
+        :search-attributes="searchAttributes"
+        :hasSelectAll="hasSelectAll"
+        :labelId="labelledBy"
+      >
+        <template v-slot:customItem="slotData" v-if="$slots.customItem">
+          <slot name="customItem" v-bind="slotData" />
+        </template>
+      </LxValuePickerDefault>
 
-    <LxValuePickerDropDown
-      v-if="variant === 'dropdown' || variant === 'dropdown-custom'"
-      :id="id"
-      v-model="model"
-      :items="stringifiedItems"
-      :idAttribute="idAttribute"
-      :nameAttribute="nameAttribute"
-      :descriptionAttribute="descriptionAttribute"
-      :groupId="groupId"
-      :kind="kind"
-      :disabled="disabled"
-      :aria-disabled="disabled"
-      :invalid="invalid"
-      :invalidation-message="invalidationMessage"
-      :texts="displayTexts"
-      :placeholder="placeholder"
-      :tooltip="tooltip"
-      :has-search="hasSearch"
-      :always-as-array="alwaysAsArray"
-      :nullable="nullable"
-      :readOnly="readOnly"
-      :readOnlyRenderType="readOnlyRenderType"
-      :variant="variant"
-      :search-attributes="searchAttributes"
-      :hasSelectAll="hasSelectAll"
-      :labelId="labelledBy"
-    >
-      <template v-slot:customItemDropdown="slotData">
-        <slot name="customItem" v-bind="slotData" />
-      </template>
-    </LxValuePickerDropDown>
+      <LxValuePickerDropDown
+        v-if="variant === 'dropdown' || variant === 'dropdown-custom'"
+        :id="id"
+        v-model="model"
+        :items="stringifiedItems"
+        :idAttribute="idAttribute"
+        :nameAttribute="nameAttribute"
+        :descriptionAttribute="descriptionAttribute"
+        :groupId="groupId"
+        :kind="kind"
+        :disabled="disabled"
+        :aria-disabled="disabled"
+        :invalid="invalid"
+        :invalidation-message="invalidationMessage"
+        :texts="displayTexts"
+        :placeholder="placeholder"
+        :tooltip="tooltip"
+        :has-search="hasSearch"
+        :always-as-array="alwaysAsArray"
+        :nullable="nullable"
+        :readOnly="readOnly"
+        :readOnlyRenderType="readOnlyRenderType"
+        :variant="variant"
+        :search-attributes="searchAttributes"
+        :hasSelectAll="hasSelectAll"
+        :labelId="labelledBy"
+      >
+        <template v-slot:customItemDropdown="slotData">
+          <slot name="customItem" v-bind="slotData" />
+        </template>
+      </LxValuePickerDropDown>
 
-    <LxValuePickerTileTag
-      v-if="
-        variant === 'tiles' ||
-        variant === 'tags' ||
-        variant === 'tiles-custom' ||
-        variant === 'tags-custom'
-      "
-      :id="id"
-      v-model="model"
-      :items="stringifiedItems"
-      :idAttribute="idAttribute"
-      :nameAttribute="nameAttribute"
-      :descriptionAttribute="descriptionAttribute"
-      :groupId="groupId"
-      :variant="variant"
-      :kind="kind"
-      :disabled="disabled"
-      :aria-disabled="disabled"
-      :invalid="invalid"
-      :invalidation-message="invalidationMessage"
-      :texts="displayTexts"
-      :placeholder="placeholder"
-      :tooltip="tooltip"
-      :always-as-array="alwaysAsArray"
-      :has-search="hasSearch"
-      :nullable="nullable"
-      :readOnly="readOnly"
-      :readOnlyRenderType="readOnlyRenderType"
-      :search-attributes="searchAttributes"
-      :hasSelectAll="hasSelectAll"
-      :labelId="labelledBy"
-    >
-      <template v-slot:customItem="slotData" v-if="$slots.customItem">
-        <slot name="customItem" v-bind="slotData" />
-      </template>
-    </LxValuePickerTileTag>
+      <LxValuePickerTileTag
+        v-if="
+          variant === 'tiles' ||
+          variant === 'tags' ||
+          variant === 'tiles-custom' ||
+          variant === 'tags-custom'
+        "
+        :id="id"
+        v-model="model"
+        :items="stringifiedItems"
+        :idAttribute="idAttribute"
+        :nameAttribute="nameAttribute"
+        :descriptionAttribute="descriptionAttribute"
+        :groupId="groupId"
+        :variant="variant"
+        :kind="kind"
+        :disabled="disabled"
+        :aria-disabled="disabled"
+        :invalid="invalid"
+        :invalidation-message="invalidationMessage"
+        :texts="displayTexts"
+        :placeholder="placeholder"
+        :tooltip="tooltip"
+        :always-as-array="alwaysAsArray"
+        :has-search="hasSearch"
+        :nullable="nullable"
+        :readOnly="readOnly"
+        :readOnlyRenderType="readOnlyRenderType"
+        :search-attributes="searchAttributes"
+        :hasSelectAll="hasSelectAll"
+        :labelId="labelledBy"
+      >
+        <template v-slot:customItem="slotData" v-if="$slots.customItem">
+          <slot name="customItem" v-bind="slotData" />
+        </template>
+      </LxValuePickerTileTag>
 
-    <LxValuePickerRotator
-      v-if="variant === 'rotator' || variant === 'rotator-custom'"
-      :id="id"
-      v-model="model"
-      :items="stringifiedItems"
-      :idAttribute="idAttribute"
-      :nameAttribute="nameAttribute"
-      :descriptionAttribute="descriptionAttribute"
-      :groupId="groupId"
-      :variant="variant"
-      :kind="kind"
-      :disabled="disabled"
-      :aria-disabled="disabled"
-      :invalid="invalid"
-      :invalidation-message="invalidationMessage"
-      :texts="displayTexts"
-      :placeholder="placeholder"
-      :tooltip="tooltip"
-      :always-as-array="alwaysAsArray"
-      :has-search="hasSearch"
-      :nullable="nullable"
-      :readOnly="readOnly"
-      :readOnlyRenderType="readOnlyRenderType"
-      :search-attributes="searchAttributes"
-      :labelId="labelledBy"
-    >
-      <template v-slot:customItem="slotData" v-if="$slots.customItem">
-        <slot name="customItem" v-bind="slotData" />
-      </template>
-    </LxValuePickerRotator>
+      <LxValuePickerRotator
+        v-if="variant === 'rotator' || variant === 'rotator-custom'"
+        :id="id"
+        v-model="model"
+        :items="stringifiedItems"
+        :idAttribute="idAttribute"
+        :nameAttribute="nameAttribute"
+        :descriptionAttribute="descriptionAttribute"
+        :groupId="groupId"
+        :variant="variant"
+        :kind="kind"
+        :disabled="disabled"
+        :aria-disabled="disabled"
+        :invalid="invalid"
+        :invalidation-message="invalidationMessage"
+        :texts="displayTexts"
+        :placeholder="placeholder"
+        :tooltip="tooltip"
+        :always-as-array="alwaysAsArray"
+        :has-search="hasSearch"
+        :nullable="nullable"
+        :readOnly="readOnly"
+        :readOnlyRenderType="readOnlyRenderType"
+        :search-attributes="searchAttributes"
+        :labelId="labelledBy"
+      >
+        <template v-slot:customItem="slotData" v-if="$slots.customItem">
+          <slot name="customItem" v-bind="slotData" />
+        </template>
+      </LxValuePickerRotator>
 
-    <LxValuePickerIndicator
-      v-if="variant === 'indicator'"
-      :id="id"
-      v-model="model"
-      :items="stringifiedItems"
-      :idAttribute="idAttribute"
-      :nameAttribute="nameAttribute"
-      :iconAttribute="iconAttribute"
-      :iconSetAttribute="iconSetAttribute"
-      :categoryAttribute="categoryAttribute"
-      :descriptionAttribute="descriptionAttribute"
-      :groupId="groupId"
-      :variant="variant"
-      :kind="kind"
-      :disabled="disabled"
-      :aria-disabled="disabled"
-      :invalid="invalid"
-      :invalidation-message="invalidationMessage"
-      :texts="displayTexts"
-      :placeholder="placeholder"
-      :tooltip="tooltip"
-      :always-as-array="alwaysAsArray"
-      :has-search="hasSearch"
-      :nullable="nullable"
-      :readOnly="readOnly"
-      :readOnlyRenderType="readOnlyRenderType"
-      :search-attributes="searchAttributes"
-      :hasSelectAll="hasSelectAll"
-      :labelId="labelledBy"
-    >
-      <template v-slot:customItem="slotData" v-if="$slots.customItem">
-        <slot name="customItem" v-bind="slotData" />
-      </template>
-    </LxValuePickerIndicator>
+      <LxValuePickerIndicator
+        v-if="variant === 'indicator'"
+        :id="id"
+        v-model="model"
+        :items="stringifiedItems"
+        :idAttribute="idAttribute"
+        :nameAttribute="nameAttribute"
+        :iconAttribute="iconAttribute"
+        :iconSetAttribute="iconSetAttribute"
+        :categoryAttribute="categoryAttribute"
+        :descriptionAttribute="descriptionAttribute"
+        :groupId="groupId"
+        :variant="variant"
+        :kind="kind"
+        :disabled="disabled"
+        :aria-disabled="disabled"
+        :invalid="invalid"
+        :invalidation-message="invalidationMessage"
+        :texts="displayTexts"
+        :placeholder="placeholder"
+        :tooltip="tooltip"
+        :always-as-array="alwaysAsArray"
+        :has-search="hasSearch"
+        :nullable="nullable"
+        :readOnly="readOnly"
+        :readOnlyRenderType="readOnlyRenderType"
+        :search-attributes="searchAttributes"
+        :hasSelectAll="hasSelectAll"
+        :labelId="labelledBy"
+      >
+        <template v-slot:customItem="slotData" v-if="$slots.customItem">
+          <slot name="customItem" v-bind="slotData" />
+        </template>
+      </LxValuePickerIndicator>
 
-    <LxValuePickerHorizontal
-      v-if="variant === 'horizontal' || variant === 'horizontal-custom'"
-      :id="id"
-      v-model="model"
-      :items="stringifiedItems"
-      :idAttribute="idAttribute"
-      :nameAttribute="nameAttribute"
-      :descriptionAttribute="descriptionAttribute"
-      :groupId="groupId"
-      :kind="kind"
-      :disabled="disabled"
-      :aria-disabled="disabled"
-      :invalid="invalid"
-      :invalidation-message="invalidationMessage"
-      :texts="displayTexts"
-      :placeholder="placeholder"
-      :tooltip="tooltip"
-      :has-search="hasSearch"
-      :always-as-array="alwaysAsArray"
-      :nullable="nullable"
-      :readOnly="readOnly"
-      :readOnlyRenderType="readOnlyRenderType"
-      :variant="variant"
-      :search-attributes="searchAttributes"
-      :hasSelectAll="hasSelectAll"
-    >
-      <template v-slot:customItem="slotData" v-if="$slots.customItem">
-        <slot name="customItem" v-bind="slotData" />
-      </template>
-    </LxValuePickerHorizontal>
+      <LxValuePickerHorizontal
+        v-if="variant === 'horizontal' || variant === 'horizontal-custom'"
+        :id="id"
+        v-model="model"
+        :items="stringifiedItems"
+        :idAttribute="idAttribute"
+        :nameAttribute="nameAttribute"
+        :descriptionAttribute="descriptionAttribute"
+        :groupId="groupId"
+        :kind="kind"
+        :disabled="disabled"
+        :aria-disabled="disabled"
+        :invalid="invalid"
+        :invalidation-message="invalidationMessage"
+        :texts="displayTexts"
+        :placeholder="placeholder"
+        :tooltip="tooltip"
+        :has-search="hasSearch"
+        :always-as-array="alwaysAsArray"
+        :nullable="nullable"
+        :readOnly="readOnly"
+        :readOnlyRenderType="readOnlyRenderType"
+        :variant="variant"
+        :search-attributes="searchAttributes"
+        :hasSelectAll="hasSelectAll"
+      >
+        <template v-slot:customItem="slotData" v-if="$slots.customItem">
+          <slot name="customItem" v-bind="slotData" />
+        </template>
+      </LxValuePickerHorizontal>
+    </div>
   </div>
 </template>

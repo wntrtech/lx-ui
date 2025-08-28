@@ -7,6 +7,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
+import LxToolbar from '@/components/Toolbar.vue';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -363,11 +364,7 @@ function updateDescriptionTabIndexes(items) {
     </template>
 
     <template v-else>
-      <div
-        v-if="hasSearch"
-        class="lx-toolbar lx-search-toolbar lx-list-toolbar lx-value-picker-search"
-        :class="[{ 'select-all': hasSelectAll && kind === 'multiple' }]"
-      >
+      <LxToolbar v-if="hasSearch || (hasSelectAll && kind === 'multiple')">
         <LxButton
           v-if="hasSelectAll && kind === 'multiple'"
           kind="ghost"
@@ -380,7 +377,8 @@ function updateDescriptionTabIndexes(items) {
           "
           :disabled="disabled"
           :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-          :label="hasSearch ? '' : areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+          :label="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+          :variant="hasSearch ? 'icon-only' : 'default'"
           @click="selectAll"
         />
         <LxTextInput
@@ -402,7 +400,8 @@ function updateDescriptionTabIndexes(items) {
           :disabled="disabled"
           @click="query = ''"
         />
-      </div>
+      </LxToolbar>
+      
       <div
         class="lx-value-picker-tile-wrapper"
         :class="[{ 'lx-invalid': invalid }, { 'lx-tile-custom': variant === 'tiles-custom' }]"
