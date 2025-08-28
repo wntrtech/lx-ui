@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxToggle from '@/components/Toggle.vue';
@@ -58,11 +58,25 @@ const groupedItems = computed(() => {
 
 const dropDownWrapper = ref();
 
+function handleFocusOut(event) {
+  if (!dropDownWrapper.value.contains(event.relatedTarget)) {
+    closeMenu();
+  }
+}
+
 onClickOutside(dropDownWrapper, closeMenu);
 
 function actionClicked(id, value = undefined) {
   emits('actionClick', id, value);
 }
+
+onMounted(() => {
+  dropDownWrapper.value?.addEventListener('focusout', handleFocusOut);
+});
+
+onBeforeUnmount(() => {
+  dropDownWrapper.value?.removeEventListener('focusout', handleFocusOut);
+});
 
 defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
 </script>
@@ -84,6 +98,10 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       <div
         v-if="props.triggerClick === 'right'"
         class="lx-dropdown-toggler"
+        :tabindex="disabled ? -1 : 0"
+        @keyup.enter="openMenu"
+        @keyup.space="openMenu"
+        @keydown.space.prevent
         @contextmenu.prevent="openMenu"
       >
         <slot />
@@ -92,6 +110,10 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       <div
         v-else
         class="lx-dropdown-toggler"
+        :tabindex="disabled ? -1 : 0"
+        @keyup.enter="openMenu"
+        @keyup.space="openMenu"
+        @keydown.space.prevent
         @click="props.triggerClick === 'left' ? openMenu() : null"
       >
         <slot />

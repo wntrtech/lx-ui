@@ -581,6 +581,7 @@ watch(
             :icon="themeIcon"
             :disabled="headerNavDisable"
             :label="displayTexts.themeTitle"
+            :tabindex="-1"
           />
         </div>
       </LxDropDownMenu>
@@ -599,6 +600,7 @@ watch(
           :badge-title="displayTexts.alertsTitle"
           :ariaLabel="ariaLabel"
           :disabled="headerNavDisable"
+          :tabindex="-1"
         />
 
         <template v-if="clickSafeAlerts" v-slot:clickSafePanel>
@@ -692,6 +694,7 @@ watch(
           kind="ghost"
           icon="language"
           :label="displayTexts.languagesTitle"
+          :tabindex="-1"
         />
       </LxDropDownMenu>
     </div>
@@ -705,6 +708,7 @@ watch(
         :groupDefinitions="megaMenuGroupDefinitions"
         :hasShowAll="megaMenuHasShowAll"
         :texts="displayTexts"
+        :tabindex="-1"
         @mega-menu-show-all-click="triggerShowAllClick"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
       />

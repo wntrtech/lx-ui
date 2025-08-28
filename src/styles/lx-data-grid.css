@@ -920,11 +920,15 @@
   width: 100%;
 }
 
-.lx .lx-info-wrapper-content:focus,
+.lx .lx-info-wrapper-content:focus {
+  outline: 2px solid var(--color-focus-background);     
+}
+
 .lx .popper-wrapper>div:focus,
 .lx .popper-wrapper>div:focus-visible {
-  outline: 2px solid var(--color-focus-background);
+    outline: none;
 }
+
 .lx-info-wrapper .lx-row .lx-vertical *,
 .lx-form-grid>.lx-main .lx-info-wrapper .lx-row>div.lx-vertical>p.lx-data,
 .lx-row>.lx-row-header>.lx-info-wrapper .popper .lx-info-wrapper-panel p.lx-data,

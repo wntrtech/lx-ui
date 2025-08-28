@@ -566,73 +566,89 @@ a.lx-button.lx-button-ghost svg {
 
 /* Hover icon styles */
 
-.lx .lx-button:hover svg {
+.lx .lx-button:hover svg,
+.popper-wrapper > .lx-dropdown-toggler:hover .lx-button svg {
   fill: var(--color-button-primary-icon-hover);
 }
 
-.lx-button.lx-button-secondary:hover svg {
+.lx-button.lx-button-secondary:hover svg,
+.popper-wrapper > .lx-dropdown-toggler:hover .lx-button.lx-button-secondary svg {
   fill: var(--color-button-secondary-icon-hover);
 }
 
-.lx-button.lx-button-tertiary:hover svg {
+.lx-button.lx-button-tertiary:hover svg,
+.popper-wrapper > .lx-dropdown-toggler:hover .lx-button.lx-button-tertiary svg {
   fill: var(--color-button-tertiary-icon-hover);
 }
 
-.lx-button.lx-button-ghost:hover svg {
+.lx-button.lx-button-ghost:hover svg,
+.popper-wrapper > .lx-dropdown-toggler:hover .lx-button.lx-button-ghost svg {
   fill: var(--color-button-ghost-icon-hover);
 }
 
 /* Focus icon styles */
 
-.lx .lx-button:focus svg {
+.lx .lx-button:focus svg,
+.popper-wrapper > .lx-dropdown-toggler:focus .lx-button svg {
   fill: var(--color-button-primary-icon-focus);
 }
 
-.lx-button.lx-button-secondary:focus svg {
+.lx-button.lx-button-secondary:focus svg,
+.popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-secondary svg {
   fill: var(--color-button-secondary-icon-focus);
 }
 
-.lx-button.lx-button-tertiary:focus svg {
+.lx-button.lx-button-tertiary:focus svg,
+.popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-tertiary svg {
   fill: var(--color-button-tertiary-icon-focus);
 }
 
-.lx-button.lx-button-ghost:focus svg {
+.lx-button.lx-button-ghost:focus svg,
+.popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost svg {
   fill: var(--color-button-ghost-icon-focus);
 }
 
 /* Focus-hover icon styles */
 
-.lx-button:focus:hover svg {
+.lx-button:focus:hover svg,
+.popper-wrapper > .lx-dropdown-toggler:focus:hover .lx-button svg {
   fill: var(--color-button-primary-icon-hover);
 }
 
-.lx-button.lx-button-secondary:focus:hover svg {
+.lx-button.lx-button-secondary:focus:hover svg,
+.popper-wrapper > .lx-dropdown-toggler:focus:hover .lx-button.lx-button-secondary svg {
   fill: var(--color-button-secondary-icon-hover);
 }
 
-.lx-button.lx-button-tertiary:focus:hover svg {
+.lx-button.lx-button-tertiary:focus:hover svg,
+.popper-wrapper > .lx-dropdown-toggler:focus:hover .lx-button.lx-button-tertiary svg {
   fill: var(--color-button-tertiary-icon-hover);
 }
 
-.lx-button.lx-button-ghost:focus:hover svg {
+.lx-button.lx-button-ghost:focus:hover svg,
+.popper-wrapper > .lx-dropdown-toggler:focus:hover .lx-button.lx-button-ghost svg {
   fill: var(--color-button-ghost-icon-hover);
 }
 
 /* Active icon styles */
 
-.lx .lx-button:active svg {
+.lx .lx-button:active svg,
+.popper-wrapper > .lx-dropdown-toggler:active .lx-button svg {
   fill: var(--color-button-primary-icon-active);
 }
 
-.lx .lx-button.lx-button-secondary:active svg {
+.lx .lx-button.lx-button-secondary:active svg,
+.popper-wrapper > .lx-dropdown-toggler:active .lx-button.lx-button-secondary svg {
   fill: var(--color-button-secondary-icon-active);
 }
 
-.lx .lx-button.lx-button-tertiary:active svg {
+.lx .lx-button.lx-button-tertiary:active svg,
+.popper-wrapper > .lx-dropdown-toggler:active .lx-button.lx-button-tertiary svg {
   fill: var(--color-button-tertiary-icon-active);
 }
 
-.lx .lx-button.lx-button-ghost:active svg {
+.lx .lx-button.lx-button-ghost:active svg,
+.popper-wrapper > .lx-dropdown-toggler:active .lx-button.lx-button-ghost svg {
   fill: var(--color-button-ghost-icon-active);
 }
 
@@ -1582,6 +1598,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-button:hover,
 .lx-override button:hover,
+.popper-wrapper > .lx-dropdown-toggler:hover .lx-button,
 .lx .lx-layout.lx-override input[type="button"]:where(:hover),
 .lx .lx-layout.lx-override input[type="submit"]:where(:hover),
 .lx .lx-layout.lx-override input[type="reset"]:where(:hover),
@@ -1593,6 +1610,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-secondary:hover,
 .lx-override button.lx-button-secondary:hover,
+.popper-wrapper > .lx-dropdown-toggler:hover .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:hover) {
   background-color: var(--color-button-secondary-hover-background);
   color: var(--color-button-secondary-hover);
@@ -1601,6 +1619,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-tertiary:hover,
 .lx-override button.lx-button-tertiary:hover,
+.popper-wrapper > .lx-dropdown-toggler:hover .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:hover) {
   background-color: var(--color-button-tertiary-hover-background);
   color: var(--color-button-tertiary-hover);
@@ -1609,6 +1628,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-ghost:hover,
 .lx-override button.lx-button-ghost:hover,
+.popper-wrapper > .lx-dropdown-toggler:hover .lx-button.lx-button-ghost,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:hover) {
   background-color: var(--color-button-ghost-hover-background);
   color: var(--color-button-ghost-hover);
@@ -1619,6 +1639,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-button:focus,
 .lx-override button:focus,
+.popper-wrapper > .lx-dropdown-toggler:focus .lx-button,
 .lx .lx-layout.lx-override input[type="button"]:where(:focus),
 .lx .lx-layout.lx-override input[type="submit"]:where(:focus),
 .lx .lx-layout.lx-override input[type="reset"]:where(:focus),
@@ -1632,6 +1653,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-secondary:focus,
 .lx-override button.lx-button-secondary:focus,
+.popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus) {
   background-color: var(--color-button-secondary-focus-background);
   border-color: var(--color-button-secondary-focus-border);
@@ -1640,6 +1662,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-tertiary:focus,
 .lx-override button.lx-button-tertiary:focus,
+.popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus) {
   background-color: var(--color-button-tertiary-focus-background);
   border-color: var(--color-button-tertiary-focus-border);
@@ -1648,6 +1671,8 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-ghost:focus,
 .lx-override button.lx-button-ghost:focus,
+.popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
+.lx-header .popper-wrapper > .lx-dropdown-toggler:focus .lx-button,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus) {
   background-color: var(--color-button-ghost-focus-background);
   border-color: var(--color-button-ghost-focus-border);
@@ -1658,6 +1683,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button:focus:hover,
 .lx-override button:focus:where(:hover),
+.popper-wrapper > .lx-dropdown-toggler:focus:where(:hover) .lx-button,
 .lx .lx-layout.lx-override input[type="button"]:where(:focus:hover),
 .lx .lx-layout.lx-override input[type="submit"]:where(:focus:hover),
 .lx .lx-layout.lx-override input[type="reset"]:where(:focus:hover),
@@ -1668,6 +1694,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-secondary:focus:hover,
 .lx-override button.lx-button-secondary:focus:where(:hover),
+.popper-wrapper > .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:focus:hover) {
   background-color: var(--color-button-secondary-hover-background);
   color: var(--color-button-secondary-hover);
@@ -1675,6 +1702,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-tertiary:focus:hover,
 .lx-override button.lx-button-tertiary:focus:where(:hover),
+.popper-wrapper > .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:focus:hover) {
   background-color: var(--color-button-tertiary-hover-background);
   color: var(--color-button-tertiary-hover);
@@ -1682,6 +1710,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx-button.lx-button-ghost:focus:hover,
 .lx-override button.lx-button-ghost:focus:where(:hover),
+.popper-wrapper > .lx-dropdown-toggler:focus:where(:hover) .lx-button.lx-button-ghost,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:focus:hover) {
   background-color: var(--color-button-ghost-hover-background);
   color: var(--color-button-ghost-hover);
@@ -1689,6 +1718,7 @@ a.lx-button.lx-button-ghost svg {
 
 /* Active styles */
 .lx .lx-button:active,
+.popper-wrapper > .lx-dropdown-toggler:active .lx-button,
 .lx .lx-layout.lx-override .lx-button.lx-button.lx-destructive:not(.lx-disabled):active,
 .lx .lx-layout.lx-override .lx-component-toolbar .lx-button.lx-button.lx-destructive:not(.lx-disabled):active,
 .lx-override button:active,
@@ -1703,6 +1733,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-button.lx-button-secondary:active,
 .lx-override button.lx-button-secondary:active,
+.popper-wrapper > .lx-dropdown-toggler:active .lx-button.lx-button-secondary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-secondary:where(:active) {
   background-color: var(--color-button-secondary-active-background);
   color: var(--color-button-secondary-active);
@@ -1711,6 +1742,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-button.lx-button-tertiary:active,
 .lx-override button.lx-button-tertiary:active,
+.popper-wrapper > .lx-dropdown-toggler:active .lx-button.lx-button-tertiary,
 .lx .lx-layout.lx-override input[type="button"].lx-button-tertiary:where(:active) {
   background-color: var(--color-button-tertiary-active-background);
   color: var(--color-button-tertiary-active);
@@ -1719,6 +1751,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-button.lx-button-ghost:active,
 .lx-override button.lx-button-ghost:active,
+.popper-wrapper > .lx-dropdown-toggler:active .lx-button.lx-button-ghost,
 .lx .lx-layout.lx-override input[type="button"].lx-button-ghost:where(:active) {
   background-color: var(--color-button-ghost-active-background);
   color: var(--color-button-ghost-active);
