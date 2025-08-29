@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed } from 'vue';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxToggle from '@/components/Toggle.vue';
@@ -58,25 +58,11 @@ const groupedItems = computed(() => {
 
 const dropDownWrapper = ref();
 
-function handleFocusOut(event) {
-  if (!dropDownWrapper.value.contains(event.relatedTarget)) {
-    closeMenu();
-  }
-}
-
 onClickOutside(dropDownWrapper, closeMenu);
 
 function actionClicked(id, value = undefined) {
   emits('actionClick', id, value);
 }
-
-onMounted(() => {
-  dropDownWrapper.value?.addEventListener('focusout', handleFocusOut);
-});
-
-onBeforeUnmount(() => {
-  dropDownWrapper.value?.removeEventListener('focusout', handleFocusOut);
-});
 
 defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
 </script>
