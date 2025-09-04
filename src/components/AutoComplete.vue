@@ -1115,6 +1115,7 @@ onMounted(() => {
                           class="lx-value lx-input-area"
                           :title="selectingKind === 'single' ? getName(false) : ''"
                         >
+                        <div>
                           <template v-if="variant === 'country' && selectingKind === 'single'">
                             <LxFlagItemDisplay
                               :value="selectedItem"
@@ -1145,11 +1146,14 @@ onMounted(() => {
                           >
                             {{ getName(false) }}
                           </template>
+                          </div>
                         </div>
                       </template>
                       <template v-if="shouldShowPlaceholder">
                         <div class="lx-placeholder lx-input-area">
+                          <div>
                           {{ getName() }}
+                          </div>
                         </div>
                       </template>
                       <div
