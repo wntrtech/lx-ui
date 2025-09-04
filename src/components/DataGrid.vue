@@ -1794,6 +1794,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               <LxPersonDisplay
                 v-if="col.type === 'person'"
                 :value="row[col.attributeName]"
+                :customAttributes="col.options?.customAttributes"
                 :texts="row[col.attributeName]?.texts || displayTexts.personDisplay"
                 size="s"
               />
@@ -2107,6 +2108,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             <LxPersonDisplay
               v-else-if="col.type === 'person'"
               :value="item[col.attributeName]"
+              :customAttributes="col.options?.customAttributes"
               :texts="item[col.attributeName]?.texts || displayTexts.personDisplay"
               size="s"
             />

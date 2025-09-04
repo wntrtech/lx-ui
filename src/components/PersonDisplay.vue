@@ -84,6 +84,10 @@ const props = defineProps({
     type: Number,
     default: 3,
   },
+  customAttributes: {
+    type: Array,
+    default: () => [],
+  },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -319,19 +323,36 @@ const showDescription = computed(() => description.value && props.size === 'l');
         </div>
       </div>
       <template #panel>
-        <template v-if="!showMultiple">
-          <LxRow :label="displayTexts.name" v-if="name"
-            ><p class="lx-data">{{ name }}</p></LxRow
+        <template
+          v-if="
+            customAttributes?.length > 0 &&
+            value &&
+            typeof value === 'object' &&
+            !Array.isArray(value)
+          "
+        >
+          <LxRow
+            v-for="(key, index) in customAttributes"
+            :key="index"
+            :label="key?.name"
+            v-show="value?.[key?.attributeName]"
           >
-          <LxRow :label="displayTexts.description" v-if="description && description !== '—'"
-            ><p class="lx-data">{{ description }}</p></LxRow
-          >
-          <LxRow :label="displayTexts.role" v-if="role && name"
-            ><p class="lx-data">{{ role }}</p></LxRow
-          >
-          <LxRow :label="displayTexts.institution" v-if="institution && name"
-            ><p class="lx-data">{{ institution }}</p></LxRow
-          >
+            <p class="lx-data">{{ value?.[key?.attributeName] }}</p>
+          </LxRow>
+        </template>
+        <template v-else-if="!showMultiple">
+          <LxRow :label="displayTexts.name" v-if="name">
+            <p class="lx-data">{{ name }}</p>
+          </LxRow>
+          <LxRow :label="displayTexts.description" v-if="description && description !== '—'">
+            <p class="lx-data">{{ description }}</p>
+          </LxRow>
+          <LxRow :label="displayTexts.role" v-if="role && name">
+            <p class="lx-data">{{ role }}</p>
+          </LxRow>
+          <LxRow :label="displayTexts.institution" v-if="institution && name">
+            <p class="lx-data">{{ institution }}</p>
+          </LxRow>
         </template>
         <template v-else>
           <LxRow v-for="i in tooltipItems.slice(0, 10)" :key="i" :show-label="false">
