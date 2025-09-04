@@ -95,7 +95,7 @@ export function restoreRouteAndNotify(router, notify, notifyText) {
 
   if (versionUpdateFlag && savedRoute && reloadPending) {
     // Default notification text if no text where provided
-    const defaultNotifyText = 'Lapas pārlādē tika veikta, jo ir pieejama jauna lietotnes versija!';
+    const defaultNotifyText = 'Notika lapas pārlāde, lai atjaunotu lietotnes versiju';
     notify.pushWarning(notifyText || defaultNotifyText, null, 0);
     sessionStorage.removeItem('version_update_notification');
 

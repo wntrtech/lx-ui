@@ -99,7 +99,7 @@
 
 .lx .lx-notifications-list .lx-notification p.lx-title,
 p.lx-subtitle {
-  line-height: 1.1rem;
+  line-height: 1.25rem;
   margin-bottom: 0.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
