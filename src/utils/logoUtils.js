@@ -13,6 +13,8 @@ const logoAltTexts = {
   eid: 'eID logo',
   'smart-id': 'Smart ID logo',
   'latvija-lv': 'Latvija.lv logo',
+  digimaks: 'Digimaks logo',
+  dorvis: 'Dōrvis logo',
 };
 
 const logoMap = {};
