@@ -175,35 +175,43 @@ const model = computed({
   },
 });
 
+const isHeadingSelected = computed(() => editor.value.isActive('heading'));
+
 const actionDefinitions = computed(() => [
   {
     id: 'Heading1',
     label: displayTexts.value.headingH1,
+    active: editor.value.isActive('heading', { level: 1 }),
     level: 1,
   },
   {
     id: 'Heading2',
     label: displayTexts.value.headingH2,
+    active: editor.value.isActive('heading', { level: 2 }),
     level: 2,
   },
   {
     id: 'Heading3',
     label: displayTexts.value.headingH3,
+    active: editor.value.isActive('heading', { level: 3 }),
     level: 3,
   },
   {
     id: 'Heading4',
     label: displayTexts.value.headingH4,
+    active: editor.value.isActive('heading', { level: 4 }),
     level: 4,
   },
   {
     id: 'Heading5',
     label: displayTexts.value.headingH5,
+    active: editor.value.isActive('heading', { level: 5 }),
     level: 5,
   },
   {
     id: 'Heading6',
     label: displayTexts.value.headingH6,
+    active: editor.value.isActive('heading', { level: 6 }),
     level: 6,
   },
 ]);
@@ -282,7 +290,9 @@ function concatEscapedWords(words) {
 function createEditorExtensions() {
   const ext = [
     Markdown,
-    StarterKit,
+    StarterKit.configure({
+      heading: false,
+    }),
     TextStyle,
     Color,
     ImageComponent,
@@ -710,7 +720,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
                 variant="icon-only"
                 :label="displayTexts.heading"
                 :disabled="isSelectionEmpty || isDisabled"
-                :active="editor.isActive('heading')"
+                :active="isHeadingSelected"
               />
               <template #panel>
                 <div class="lx-button-set">
@@ -719,7 +729,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
                     :key="action.id"
                     :label="action.label"
                     tabindex="0"
-                    :active="editor.isActive('heading', { level: action.level })"
+                    :active="action.active"
                     @click="
                       editor
                         .chain()

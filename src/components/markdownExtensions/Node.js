@@ -3,8 +3,10 @@ import { Node } from '@tiptap/core';
 const HiddenIdNode = Node.create({
   name: 'hiddenIdNode',
 
-  defaultOptions: {
-    HTMLAttributes: {},
+  addOptions() {
+    return {
+      HTMLAttributes: {},
+    };
   },
 
   group: 'block',
