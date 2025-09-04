@@ -394,9 +394,6 @@ test('LxForm indexes', () => {
       stubs: {
         'router-link': true,
       },
-      directives: {
-        'click-away': true,
-      },
     },
   });
 

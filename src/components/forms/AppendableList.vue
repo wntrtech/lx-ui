@@ -243,7 +243,7 @@ defineExpose({ clearModel });
         >
           <LxForm
             kind="stripped"
-            :role="group"
+            role="group"
             :columnCount="columnCount"
             :required-mode="props.requiredMode"
           >
@@ -262,7 +262,7 @@ defineExpose({ clearModel });
       <template v-else>
         <LxForm
           kind="stripped"
-          :role="group"
+          role="group"
           :columnCount="columnCount"
           :required-mode="props.requiredMode"
         >

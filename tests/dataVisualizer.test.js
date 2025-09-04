@@ -1,6 +1,6 @@
 import { test, expect, afterEach } from 'vitest';
 import LxDataVisualizer from '@/components/DataVisualizer.vue';
-import { mount } from '@vue/test-utils';
+import { mount, RouterLinkStub } from '@vue/test-utils';
 
 let wrapper;
 
@@ -240,6 +240,11 @@ test('LxDataVisualizer contentSwitcher', async () => {
         { id: 'two', name: 'two', value: 250 },
         { id: 'three', name: 'three', value: 1000 },
       ],
+    },
+    global: {
+      stubs: {
+        RouterLink: RouterLinkStub,
+      },
     },
   });
 
