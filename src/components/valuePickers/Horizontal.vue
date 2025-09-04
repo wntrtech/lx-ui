@@ -36,6 +36,16 @@ const props = defineProps({
   texts: { type: Object, default: () => {} },
 });
 
+const textsDefault = {
+  clearQuery: 'Notīrīt meklēšanu',
+  clearChosen: 'Notīrīt visas izvēlētās vērtības',
+  notSelected: 'Nav izvēlēts',
+  searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
+  selectAll: 'Izvēlēties visu',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
 const emits = defineEmits(['update:modelValue']);
 
 const model = computed({
@@ -51,7 +61,7 @@ const itemsModel = ref({});
 const itemsDisplay = computed( () => { 
     const res = [... props.items];
     if(props.kind === 'single' && props.nullable)  
-      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: props.displayTexts.notSelected});
+      res.unshift({[props.idAttribute]: 'notSelected', [props.nameAttribute]: displayTexts.value.notSelected});
   
     return res
   }
@@ -59,15 +69,6 @@ const itemsDisplay = computed( () => {
 const notSelectedId = 'notSelected';
 let currentIndex = 0;
 
-const textsDefault = {
-  clearQuery: 'Notīrīt meklēšanu',
-  clearChosen: 'Notīrīt visas izvēlētās vērtības',
-  notSelected: 'Nav izvēlēts',
-  searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
-  selectAll: 'Izvēlēties visu',
-};
-
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 onMounted(() => {
   if (!model.value && props.kind === 'multiple') {
