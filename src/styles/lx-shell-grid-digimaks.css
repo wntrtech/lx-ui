@@ -25,7 +25,7 @@
 }
 
 .lx-layout-digimaks .nav-toggle svg {
-  fill: var(--color-label);
+  --color-button-ghost-icon: var(--color-label);
 }
 
 .lx-layout-digimaks nav {
@@ -102,10 +102,12 @@
   width: var(--button-nav-icon-width);
   --color-button-ghost-icon: var(--color-button-nav-icon);
   --color-button-primary-icon: var(--color-button-nav-icon);
+  --color-button-primary-icon-focus: var(--color-button-nav-icon);
+  --color-button-primary-icon-active: var(--color-interactive-active-foreground);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button:focus svg {
-  fill: var(--color-button-nav-icon);
+.lx-layout-digimaks .lx-nav-panel .lx-nav-group:last-of-type .lx-button:active:not(:hover) svg {
+  --color-button-primary-icon-active: var(--color-button-nav-icon);
 }
 
 .lx-nav-panel .lx-nav-group ul.header-items {

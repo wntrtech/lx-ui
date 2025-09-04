@@ -19,10 +19,26 @@
   --list-item-border-radius: var(--radius-default);
 
   --color-button-nav-selected-background: var(--color-highlight);
+
+  --button-secondary-border: 1px solid var(--color-chrome);
+  --color-button-secondary-background: var(--color-region);
+  --color-button-secondary: var(--color-brand);
+  --color-button-secondary-icon: var(--color-brand);
+  --color-button-secondary-focus-background: var(--color-region);
+  --color-button-secondary-focus: var(--color-brand);
+  --color-button-secondary-icon-focus: var(--color-brand);
 }
 .lx.lx-theme-dark {
   --color-highlight: hsl(264, 50%, 33%);
   --color-background: #18151d;
   --color-region-2: var(--color-background);
   --color-chrome: #0d0c10;
+
+  --button-secondary-border: 1px solid var(--color-chrome);
+  --color-button-secondary-background: var(--color-region);
+  --color-button-secondary: var(--color-brand);
+  --color-button-secondary-icon: var(--color-brand);
+  --color-button-secondary-focus-background: var(--color-region);
+  --color-button-secondary-focus: var(--color-brand);
+  --color-button-secondary-icon-focus: var(--color-brand);
 }

@@ -796,7 +796,7 @@
 /* LxCard */
 
 .lx:not(.lx-no-animations) .lx-card-wrapper .lx-card {
-  transition: transform 0.75s cubic-bezier(.03,.98,.52,.99);
+  transition: transform 0.5s cubic-bezier(.03,.98,.52,.99);
 }
 
 /* LxShell digimaks-lite */

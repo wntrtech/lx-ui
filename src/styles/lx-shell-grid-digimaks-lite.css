@@ -17,7 +17,7 @@
 
 .lx-layout-digimaks .nav-toggle {
   opacity: 1;
-  margin-left: 0;
+  margin-left: 0 !important;
 }
 
 .lx-layout-digimaks header > .lx-header:not(.lx-nav-panel-expanded) > .lx-group.lx-group-header,
@@ -106,10 +106,11 @@
   width: var(--button-nav-icon-width);
   --color-button-ghost-icon: var(--color-button-nav-icon);
   --color-button-primary-icon: var(--color-button-nav-icon);
+  --color-button-primary-icon-focus: var(--color-button-nav-icon);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button:focus svg {
-  fill: var(--color-button-nav-icon);
+.lx-layout-digimaks .lx-nav-panel .lx-nav-group:last-of-type .lx-button:active:not(:hover) svg {
+  --color-button-primary-icon-active: var(--color-button-nav-icon);
 }
 
 .lx-nav-panel .lx-nav-group ul.header-items {
@@ -315,10 +316,16 @@
 }
 
 .lx-layout-digimaks > header > .lx-header:not(.lx-nav-panel-expanded) .lx-button.nav-toggle {
-  background-color: var(--color-background);
+  --color-button-ghost-background: var(--color-background);
+  --color-button-ghost-hover-background: var(--color-background);
   /* TODO: add more styles for hover etc. */
 }
 
+.lx-layout-digimaks > header > .lx-header:not(.lx-nav-panel-expanded) .lx-button.nav-toggle .lx-button-icon {
+  --color-button-ghost-icon: var(--color-brand);
+  --color-button-ghost-icon-focus: var(--color-brand);
+  --color-button-ghost-icon-hover: var(--color-brand);
+}
 
 .lx-layout-digimaks > header > .lx-header .lx-left-group {
   display: flex;
@@ -332,12 +339,15 @@
 }
 
 .lx-layout-digimaks > header > .lx-header .lx-button.lx-nav-back {
-  background-color: var(--color-background);
+  --color-button-ghost-background: var(--color-background);
+  --color-button-ghost-hover-background: var(--color-background);
   /* TODO: add other styles */
 }
 
-.lx-layout-digimaks > header > .lx-header .lx-button.lx-nav-back  svg {
-  fill: var(--color-data);
+.lx-layout-digimaks > header > .lx-header .lx-button.lx-nav-back svg {
+  --color-button-ghost-icon: var(--color-data);
+  --color-button-ghost-icon-focus: var(--color-data);
+  --color-button-ghost-icon-hover: var(--color-data);
   /* TODO: add other styles */
 }
 
