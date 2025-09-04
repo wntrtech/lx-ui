@@ -29,6 +29,7 @@ import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxTextInput from '@/components/TextInput.vue';
 import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
+import { formatValueArray } from '@/utils/formatUtils';
 
 const emits = defineEmits([
   'actionClick',
@@ -251,7 +252,6 @@ function formatValue(value, type, options = null) {
       return formatFull(value);
     case 'dateTime':
       return formatDateTime(value);
-
     case 'date':
       return formatDate(value);
     case 'array':
@@ -840,9 +840,39 @@ function compare(ascending) {
   };
 }
 
+function primaryColumn() {
+  let clickableObject = null;
+  let primaryObject = null;
+
+  columnsComputed.value.forEach((obj) => {
+    if (obj.kind === 'clickable' && !clickableObject) {
+      clickableObject = obj;
+    } else if (obj.kind === 'primary' && !primaryObject) {
+      primaryObject = obj;
+    }
+  });
+
+  return clickableObject || primaryObject || columnsComputed.value[0];
+}
+
 const rows = computed(() => {
   if (props.items) {
     let ret = JSON.parse(JSON.stringify([...props.items]));
+
+    const attributeName = primaryColumn()?.attributeName;
+
+    ret = ret.map((row) => {
+      if (Array.isArray(row[attributeName])) {
+        if (typeof row[attributeName][0] === 'object' || row[attributeName].length === 0) {
+          return {
+            ...row,
+            [attributeName]: formatValueArray(row[attributeName]),
+          };
+        }
+        return { ...row, [attributeName]: row[attributeName].join(', ') };
+      }
+      return row;
+    });
 
     const colCode = Object.keys(sortedColumns.value)[0];
     if (sortedColumns.value[colCode] && props.sortingSide === 'client') {
@@ -944,21 +974,6 @@ function sortBy(columnCode, direction = 'asc') {
       else setSorting(columnCode, null);
     }
   }
-}
-
-function primaryColumn() {
-  let clickableObject = null;
-  let primaryObject = null;
-
-  columnsComputed.value.forEach((obj) => {
-    if (obj.kind === 'clickable' && !clickableObject) {
-      clickableObject = obj;
-    } else if (obj.kind === 'primary' && !primaryObject) {
-      primaryObject = obj;
-    }
-  });
-
-  return clickableObject || primaryObject || columnsComputed.value[0];
 }
 
 function getAriaSorting(sortDirection) {
