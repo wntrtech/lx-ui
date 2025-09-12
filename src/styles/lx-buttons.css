@@ -2279,6 +2279,10 @@ a.lx-button.lx-button-ghost svg {
   #userMenuButton .lx-badge {
     display: none;
   }
+
+  .lx-component-toolbar .first-row .left-area .action-definitions-small {
+    display: flex;
+  }
 }
 
 @media (max-width: 500px) {

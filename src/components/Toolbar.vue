@@ -330,7 +330,10 @@ function actionClicked(id) {
             </LxDropDownMenu>
           </template>
         </LxToolbarGroup>
-        <LxToolbarGroup class="action-definitions-small" v-if="rightActionsSmall?.length > 0">
+        <LxToolbarGroup
+          class="action-definitions-small"
+          v-if="rightActionsSmall?.length > 0 || nonResponsiveRightActions?.length > 0"
+        >
           <LxDropDownMenu v-if="rightActionsSmall?.length > 1">
             <LxButton
               kind="ghost"
@@ -367,7 +370,7 @@ function actionClicked(id) {
             "
           >
             <LxButton
-              v-for="item in rightActions"
+              v-for="item in nonResponsiveRightActions"
               v-show="!item?.nestedGroupId && item?.nonResponsive"
               :key="item.id"
               :id="`${id}-action-${item.id}`"
@@ -386,6 +389,24 @@ function actionClicked(id) {
               @click="actionClicked(item.id)"
             />
           </template>
+          <LxButton
+            v-if="rightActionsSmall?.length === 1 && !rightActionsSmall?.[0]?.nestedGroupId"
+            :key="rightActionsSmall?.[0]?.id"
+            :id="`${id}-action-${rightActionsSmall?.[0]?.id}`"
+            variant="icon-only"
+            :kind="rightActionsSmall?.[0]?.kind || 'ghost'"
+            :tabindex="0"
+            :icon="rightActionsSmall?.[0]?.icon"
+            :icon-set="rightActionsSmall?.[0]?.iconSet"
+            :busy="rightActionsSmall?.[0]?.busy"
+            :loading="rightActionsSmall?.[0]?.loading"
+            :active="rightActionsSmall?.[0]?.active"
+            :label="rightActionsSmall?.[0]?.name"
+            :destructive="rightActionsSmall?.[0]?.destructive"
+            :disabled="rightActionsSmall?.[0]?.disabled || props.disabled || props.loading"
+            :custom-class="rightActionsSmall?.[0]?.customClass"
+            @click="actionClicked(rightActionsSmall?.[0]?.id)"
+          />
         </LxToolbarGroup>
       </div>
     </div>
