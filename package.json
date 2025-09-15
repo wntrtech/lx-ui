@@ -69,7 +69,7 @@
     "@vueuse/core": "^13.4.0",
     "@vueuse/integrations": "^11.0.3",
     "avvvatars-vue": "^1.0.2",
-    "axios": "^1.8.2",
+    "axios": "^1.12.2",
     "c2pa": "^0.22.3",
     "cyrillic-to-translit-js": "^3.2.1",
     "date-fns": "^3.3.1",

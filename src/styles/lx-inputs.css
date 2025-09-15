@@ -4858,3 +4858,9 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-list .lx-list-item-container .lx-list-item-wrapper .lx-list-item .lx-badge .lx-badge-text {
   color: var(--color-badge-text-color); 
 }
+
+@media (max-height: 499px) {
+  .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
+    position: static;
+  }
+}

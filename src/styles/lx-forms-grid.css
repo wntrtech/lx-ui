@@ -2085,3 +2085,12 @@ p .lx-person-display-wrapper {
     margin-right: 0.5rem;
   }
 }
+
+@media (max-height: 499px) {
+  .lx-form-grid > .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-form-grid > .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+  .lx-form-grid>footer.lx-sticky,
+  .lx-form-grid>header.lx-sticky {
+    position: static;
+  }
+}

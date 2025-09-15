@@ -778,3 +778,9 @@
     flex-direction: column;
   }
 }
+
+@media (max-height: 499px) {
+  .lx-layout-digives .lx-form-grid > header.lx-sticky {
+    position: static;
+  }
+}
