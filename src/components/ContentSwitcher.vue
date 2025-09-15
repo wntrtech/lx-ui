@@ -3,10 +3,10 @@ import { computed, ref, onMounted, inject } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import useLx from '@/hooks/useLx';
 import { useWindowSize } from '@vueuse/core';
-import { lxDevUtils } from '@/utils';
+import { lxDevUtils, lxStringUtils } from '@/utils';
 
 const props = defineProps({
-  id: { type: String, default: null },
+  id: { type: String, default: () => lxStringUtils.generateUUID() },
   modelValue: { type: String, default: null },
   items: { type: Array, default: () => [] },
   idAttribute: { type: String, default: 'id' },
@@ -58,7 +58,7 @@ function focusPreviousTab() {
   } else {
     highlightedItemId.value = props.items[props.items.length - 1][props.idAttribute];
   }
-  document.getElementById(highlightedItemId.value).focus();
+  document.getElementById(`${props.id}-${highlightedItemId.value}`).focus();
 }
 function focusNextTab() {
   const index = props.items.findIndex((obj) => obj[props.idAttribute] === highlightedItemId.value);
@@ -67,7 +67,7 @@ function focusNextTab() {
   } else {
     highlightedItemId.value = props.items[0][props.idAttribute];
   }
-  document.getElementById(highlightedItemId.value).focus();
+  document.getElementById(`${props.id}-${highlightedItemId.value}`).focus();
 }
 
 const showIconsMode = computed(
@@ -119,7 +119,7 @@ function checkIfHighlighted(id) {
       <div
         v-for="(item, index) in items"
         :key="item[props.idAttribute]"
-        :id="item[props.idAttribute]"
+        :id="`${id}-${item[props.idAttribute]}`"
         :disabled="disabled"
         :tabindex="disabled ? '-1' : checkIfHighlighted(item[props.idAttribute])"
         :title="props.tooltip ? `${props.tooltip}: ${item.name}` : item.name"
