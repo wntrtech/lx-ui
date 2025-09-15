@@ -80,4 +80,4 @@ Read more about development in [ℹ️ Development manual](https://github.com/wn
 
 LX/UI now includes several Vite plugins to enhance your development experience and application security. These plugins are designed to seamlessly integrate with your Vite-based projects.
 
-For detailed information on available plugins and their usage, please refer to our [ℹ️ Vite Plugins Documentation](https://github.com/wntrtech/lx-ui/blob/main/VITE_PLUGINS.md).
+For detailed information on available plugins and their usage, please refer to our [ℹ️ Vite Plugins Documentation](https://github.com/wntrtech/lx-ui/blob/main/docs/VITE_PLUGINS.md).
