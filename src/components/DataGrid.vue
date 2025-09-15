@@ -1274,6 +1274,20 @@ function skipHeader() {
   }
 }
 
+const manyRowsSelected = computed(
+  () => Object.values(selectedRowsRaw.value).filter(Boolean).length > 1
+);
+
+watch(
+  () => props.selectingKind,
+  (newKind) => {
+    if (newKind === 'single' && props.hasSelecting && manyRowsSelected.value) {
+      selectedRowsRaw.value = {};
+      emits('selectionChanged', []);
+    }
+  }
+);
+
 defineExpose({ cancelSelection, selectRows, sortBy });
 </script>
 <template>
