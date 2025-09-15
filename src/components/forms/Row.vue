@@ -265,6 +265,7 @@ provide('rowId', idComputed);
             variant="icon-only"
             :label="actionDefinitions?.[0]?.name"
             :icon="actionDefinitions?.[0]?.icon || 'default'"
+            :iconSet="actionDefinitions?.[0]?.iconSet"
             :disabled="actionDefinitions?.[0]?.disabled"
             :loading="actionDefinitions?.[0]?.loading"
             :busy="actionDefinitions?.[0]?.busy"

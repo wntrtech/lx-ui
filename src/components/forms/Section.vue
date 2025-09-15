@@ -361,6 +361,7 @@ provide('sectionOrientation', sectionOrientation);
         <LxButton
           v-if="actionDefinitions?.length === 1"
           :icon="actionDefinitions?.[0]?.icon"
+          :iconSet="actionDefinitions?.[0]?.iconSet"
           variant="icon-only"
           :label="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.name"
           :disabled="actionDefinitions?.[0]?.disabled"
