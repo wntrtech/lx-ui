@@ -647,6 +647,46 @@ watch(
   }
 );
 
+/**
+ * Sets the selected index for the forms based on the provided index ID.
+ * @param {string} indexId - The identifier(id) of the index to select.
+ */
+function setSelectedIndex(indexId) {
+  const indexExists = props.index.some((o) => o?.id === indexId);
+  if (!indexExists) return;
+
+  if (props.indexType === 'tabs') {
+    tabControl.value?.setActiveTab(indexId);
+    hideAll();
+  } else if (props.indexType === 'wizard') {
+    wizardModel.value = indexId;
+    const selectedItem = itemsCopy.value.find((o) => o?.id === indexId);
+    const selectedIndex = itemsCopy.value.indexOf(selectedItem);
+
+    itemsCopy.value = itemsCopy.value.map((item, index) => {
+      const newItem = item;
+      if (item !== selectedItem) {
+        if (item.state !== 'invalid' && index > selectedIndex) {
+          newItem.state = undefined;
+        } else if (item.state !== 'invalid' && index < selectedIndex) {
+          newItem.state = 'complete';
+        }
+        newItem.isCurrentStep = false;
+      } else {
+        newItem.isCurrentStep = true;
+        if (item.state !== 'invalid') {
+          newItem.state = 'current';
+        }
+      }
+      return newItem;
+    });
+
+    hideAll();
+  } else if (props.indexType === 'default') {
+    scrollTo(`${props.id}-${indexId}`);
+  }
+}
+
 onMounted(() => {
   const elementForm = document.getElementById(props.id);
   props.index?.forEach((o) => {
@@ -665,7 +705,7 @@ onMounted(() => {
   if (props.indexType === 'tabs' || props.indexType === 'wizard') hideAll();
 });
 
-defineExpose({ highlightRow, clearHighlights });
+defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
 </script>
 <template>
   <article
