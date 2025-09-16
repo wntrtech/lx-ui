@@ -1782,7 +1782,9 @@ p .lx-person-display-wrapper {
 
 @media (max-width: 1400px) {
   .lx-form-grid > .lx-main > .lx-form-section-8,
-  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-8 {
+  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-8,
+  .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section-8,
+  .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section-8 {
     grid-template-columns: repeat(4, 1fr);
   }
 }
@@ -1801,7 +1803,11 @@ p .lx-person-display-wrapper {
   .lx-form-grid > .lx-main > .lx-form-section-4,
   .lx-form-grid > .lx-main > .lx-form-section-8,
   .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-4,
-  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-8 {
+  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-8,
+  .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section-8,
+  .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section-4,
+  .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section-8,
+  .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section-4 {
     grid-template-columns: repeat(3, 1fr);
   }
 
@@ -1847,7 +1853,13 @@ p .lx-person-display-wrapper {
   .lx-form-grid > .lx-main > .lx-form-section-8,
   .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-3,
   .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-4,
-  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-8 {
+  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-8,
+  .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section-3,
+  .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section-4,
+  .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section-8,
+  .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section-3,
+  .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section-4,
+  .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section-8 {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -1985,15 +1997,10 @@ p .lx-person-display-wrapper {
 }
 
 @media (max-width: 700px) {
-  .lx-form-grid > .lx-main > .lx-form-section-1,
-  .lx-form-grid > .lx-main > .lx-form-section-2,
-  .lx-form-grid > .lx-main > .lx-form-section-3,
-  .lx-form-grid > .lx-main > .lx-form-section-4,
-  .lx-form-grid > .lx-main > .lx-form-section-8,
-  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-2,
-  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-3,
-  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-4,
-  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section-8 {
+  .lx-form-grid > .lx-main > .lx-form-section,
+  .lx-form-grid > .lx-main > .lx-expander > .lx-body > .lx-form-section,
+  .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main > .lx-form-section,
+  .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main > .lx-form-section {
     grid-template-columns: repeat(1, 1fr);
   }
 

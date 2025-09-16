@@ -58,11 +58,6 @@ const strokeWidth = ref(3);
 const strokeLineJoint = ref('round');
 const paths = ref([]);
 const currentPath = ref([]);
-const textsRef = ref({
-  paintbrush: displayTexts.value.paintbrush,
-  color: displayTexts.value.color,
-  clear: displayTexts.value.clear,
-});
 const container = ref(null);
 
 let observer = null;
@@ -275,18 +270,6 @@ watch(
 );
 
 watch(
-  () => displayTexts,
-  (newTexts) => {
-    textsRef.value = {
-      paintbrush: newTexts.paintbrush,
-      color: newTexts.color,
-      clear: newTexts.clear,
-    };
-  },
-  { deep: true }
-);
-
-watch(
   () => props.instrument,
   (newInstrument) => {
     selectedInstrument.value = newInstrument;
@@ -339,7 +322,7 @@ defineExpose({ getPng });
               icon="brush"
               kind="ghost"
               variant="icon-only"
-              :label="textsRef.paintbrush"
+              :label="displayTexts.paintbrush"
               :disabled="disabled"
               :active="selectedInstrument === 'brush'"
               @click="updatedInstrument('brush')"
@@ -351,7 +334,7 @@ defineExpose({ getPng });
               icon="color"
               kind="ghost"
               variant="icon-only"
-              :label="textsRef.color"
+              :label="displayTexts.color"
               :disabled="props.disabled"
             />
             <template #panel>
@@ -382,7 +365,7 @@ defineExpose({ getPng });
             icon="reset"
             kind="ghost"
             variant="icon-only"
-            :label="textsRef.clear"
+            :label="displayTexts.clear"
             :disabled="disabled"
             @click="clearCanvas"
           />
