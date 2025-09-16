@@ -80,7 +80,7 @@ const lv = {
   TF: 'Francijas Dienvidjūru un Antarktikas Zemes',
   GA: 'Gabona',
   GM: 'Gambija',
-  GE: 'Gruzijā',
+  GE: 'Gruzija',
   DE: 'Vācija',
   GH: 'Gana',
   GI: 'Gibraltārs',

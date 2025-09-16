@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { textSearch } from '@/utils/stringUtils';
 import useLx from '@/hooks/useLx';
 import { lxDevUtils } from '@/utils';
@@ -194,14 +194,18 @@ function selectSingle(id) {
     itemsModel.value[model.value[0].toString()] = false;
   }
 
-  // Select the new item
-  if (id === notSelectedId) {
-    model.value = null;
-    itemsModel.value.notSelected = true;
-  } else {
-    model.value = [id];
-    itemsModel.value[id] = true;
-  }
+  // nextTick necessary to fix false to nullable bug
+  nextTick(() => {
+      // Select the new item
+    if (id === notSelectedId) {
+      model.value = null;
+      itemsModel.value.notSelected = true;
+    } else {
+      model.value = [id];
+      itemsModel.value[id] = true;
+    }
+  });
+
 }
 
 watch(
