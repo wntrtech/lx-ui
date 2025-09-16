@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch, computed, inject } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
-import { logError } from '@/utils/devUtils';
+import { logError, logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import LxButton from '@/components/Button.vue';
@@ -15,7 +15,7 @@ const props = defineProps({
   width: { type: String, default: '500' },
   height: { type: String, default: '400' },
   instrument: { type: String, default: 'brush' }, // "brush"
-  color: { type: String, default: 'black' }, // "black", "red", "orange", "yellow", "green", "teal", "blue", "purple", "gray"
+  color: { type: String, default: 'black' }, // "black", "red", "orange", "yellow", "green", "teal", "blue", "purple", "label"
   showInstruments: { type: Boolean, default: false },
   showColorPicker: { type: Boolean, default: false },
   showClearAll: { type: Boolean, default: false },
@@ -95,9 +95,9 @@ const resizeCanvas = () => {
 const getColorOrVariableByLabel = (label, returnType = 'color') => {
   const colorObj = colorsList.value.find((color) => color.label === label);
   if (returnType === 'color') {
-    return colorObj.value;
+    return colorObj?.value || colorsList.value[0].value;
   }
-  return colorObj.variable;
+  return colorObj?.variable || colorsList.value[0].variable;
 };
 
 const selectedColorLabel = ref(props.color);
@@ -194,10 +194,6 @@ const stopDrawing = () => {
 const updateColor = (color, label, variable) => {
   selectedColor.value = color;
   selectedColorVariable.value = variable;
-
-  if (selectedInstrument.value === 'brush') {
-    context.value.strokeStyle = color;
-  }
   emits('update:color', {
     colorLabel: label,
     colorValue: color,
@@ -279,9 +275,19 @@ watch(
 watch(
   () => props.color,
   (newColorLabel) => {
-    selectedColor.value = getColorOrVariableByLabel(newColorLabel);
-    selectedColorLabel.value = newColorLabel;
-    selectedColorVariable.value = getColorOrVariableByLabel(newColorLabel, 'variable');
+    if (!colorsList.value.some((c) => c.label === newColorLabel)) {
+      logWarn(
+        `Color not found, defaulting to: ${colorsList.value[0].label}`,
+        useLx().getGlobals()?.environment
+      );
+
+      const defaultColor = colorsList.value[0];
+      updateColor(defaultColor.value, defaultColor.label, defaultColor.variable);
+    } else {
+      selectedColor.value = getColorOrVariableByLabel(newColorLabel);
+      selectedColorLabel.value = newColorLabel;
+      selectedColorVariable.value = getColorOrVariableByLabel(newColorLabel, 'variable');
+    }
   }
 );
 
