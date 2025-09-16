@@ -752,13 +752,15 @@ const isItemSelected = (itemId) => !!selectedItemsRaw.value[itemId];
 
 function cancelSelection(shouldFocus = true) {
   selectedItemsRaw.value = {};
-  nextTick(() => {
-    if (selectedItems.value.length === 0) {
-      document.getElementById(`${props.id}-toolbar-action-select-all`)?.focus();
-    } else {
-      document.getElementById(`${props.id}-select-all`)?.focus();
-    }
-  });
+  if (shouldFocus) {
+    nextTick(() => {
+      if (selectedItems.value.length === 0) {
+        document.getElementById(`${props.id}-toolbar-action-select-all`)?.focus();
+      } else {
+        document.getElementById(`${props.id}-select-all`)?.focus();
+      }
+    });
+  }
 }
 
 const selectedLabel = computed(() => {

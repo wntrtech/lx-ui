@@ -252,6 +252,7 @@ const textsDefault = {
   next: 'Nākamais',
   overflowMenu: 'Atvērt papildu iespējas',
   additionalActions: 'Papildu darbības',
+  tableOfContents: 'Satura rādītājs',
 };
 
 // Merge texts prop with defaults
@@ -932,11 +933,13 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
               v-if="props.indexType === 'default' && index?.length > 0"
             >
               <hr />
-              <p class="lx-description additional-buttons-label">Satura rādītājs</p>
+              <p class="lx-description additional-buttons-label">
+                {{ displayTexts.tableOfContents }}
+              </p>
               <div class="lx-button-set">
                 <div
                   class="additional-index-button lx-button lx-button-ghost"
-                  v-for="i in index"
+                  v-for="i in modifiedIndexRef"
                   :key="i.id"
                   ref="indexItems"
                   :class="[
@@ -975,7 +978,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
             <div class="lx-button-set">
               <div
                 class="additional-index-button lx-button lx-button-ghost"
-                v-for="i in index"
+                v-for="i in modifiedIndexRef"
                 :id="`${id}-action-${i.id}`"
                 :key="i.id"
                 ref="indexItems"
