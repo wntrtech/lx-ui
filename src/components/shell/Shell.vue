@@ -608,8 +608,37 @@ function idleModalSecondaryClicked() {
   emits('idleModalSecondary');
 }
 
-function confirmModalClosed() {
-  emits('confirmModalClosed');
+async function onClosedConfirmModal() {
+  const state = props.confirmDialogData?.$state?.confirmDialogState;
+  const cb = state?.closeCallback;
+
+  if (cb) {
+    try {
+      if (
+        props.confirmClosesOnSecondary &&
+        typeof props.confirmDialogData?.confirm === 'function'
+      ) {
+        await props.confirmDialogData.confirm(cb);
+      } else if (typeof cb === 'function') {
+        await cb();
+      } else {
+        lxDevUtils.logError('closeCallback is not a function', useLx().getGlobals()?.environment);
+      }
+    } catch (e) {
+      lxDevUtils.logError(
+        `Error while processing closeCallback: ${String(e)}`,
+        useLx().getGlobals()?.environment
+      );
+    }
+  }
+  try {
+    emits?.('confirmModalClosed');
+  } catch (e) {
+    lxDevUtils.logError(
+      `Failed to emit confirmModalClosed: ${String(e)}`,
+      useLx().getGlobals()?.environment
+    );
+  }
 }
 
 const computedBackgrounds = computed(() => ({
@@ -2239,7 +2268,7 @@ watch(
     "
     :button-secondary-is-cancel="false"
     :buttonPrimaryIsDestructive="confirmPrimaryButtonDestructive"
-    :disableClosing="true"
+    :disableClosing="confirmDialogData?.$state.confirmDialogState?.disableClosing ?? false"
     :escEnabled="confirmDialogData?.$state.confirmDialogState.escEnabled"
     @primary-action="
       confirmClosesOnPrimary
@@ -2251,7 +2280,7 @@ watch(
         ? confirmDialogData?.confirm(confirmDialogData?.$state.confirmDialogState.secondaryCallback)
         : confirmDialogData?.$state.confirmDialogState.secondaryCallback()
     "
-    @closed="confirmModalClosed"
+    @closed="onClosedConfirmModal"
   >
     <p>{{ confirmDialogData?.$state.confirmDialogState.message }}</p>
   </LxModal>
