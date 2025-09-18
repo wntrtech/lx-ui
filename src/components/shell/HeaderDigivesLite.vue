@@ -108,6 +108,8 @@ const textsDefault = {
   contextPersonsInfoLabel: 'Pacients',
   contextPersonsInfoTitle: 'Konteksta persona',
   contextPersonsBirthDate: 'Dzimšanas datums',
+  contextPersonsTooltipLabel: 'Konteksta persona',
+  contextPersonsTooltipDescription: 'Konteksta personas apraksts',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
@@ -302,27 +304,12 @@ watch(
   }
 );
 
-function triggerThemeMenu(e) {
-  themeMenu.value.preventClose(e);
-}
-
 function alertItemClicked(alert) {
   if (alert.clickable) {
     setTimeout(() => {
       emits('alert-item-click', alert);
     }, 50);
   }
-}
-
-const iconMap = {
-  success: 'notification-success',
-  warning: 'notification-warning',
-  error: 'notification-error',
-  info: 'notification-info',
-};
-
-function pickIcon(level) {
-  return iconMap[level] || iconMap.info;
 }
 
 function alertsClicked() {
@@ -333,11 +320,6 @@ function helpClicked() {
 }
 
 const dropDownMenu = ref(null);
-function triggerUserMenu() {
-  if (dropDownMenu.value) {
-    dropDownMenu.value.openMenu();
-  }
-}
 
 const badgeLevelMap = {
   success: 'good',
@@ -641,10 +623,10 @@ function themeDropdownClicked(id, value) {
         >
           <div class="lx-toolbar">
             <LxButton
+              tabindex="-1"
               customClass="lx-header-button"
               variant="icon-only"
               kind="ghost"
-              tabindex="-1"
               :icon="themeIcon"
               :disabled="headerNavDisable"
               :label="displayTexts.themeTitle"
@@ -655,11 +637,11 @@ function themeDropdownClicked(id, value) {
       <div class="shell-buttons language-menu" v-if="hasLanguagePicker">
         <LxDropDownMenu>
           <LxButton
+            tabindex="-1"
             customClass="lx-header-button"
             variant="icon-only"
             kind="ghost"
             icon="language"
-            tabindex="-1"
             :label="displayTexts.languagesTitle"
           />
 
@@ -782,7 +764,11 @@ function themeDropdownClicked(id, value) {
         :class="[{ 'without-context-person': !selectedContextPersonModel }]"
         v-if="userInfo"
       >
-        <LxInfoWrapper v-if="selectedContextPersonModel">
+        <LxInfoWrapper
+          v-if="selectedContextPersonModel"
+          :label="displayTexts.contextPersonsTooltipLabel"
+          :description="displayTexts.contextPersonsTooltipDescription"
+        >
           <LxIcon value="patient-active" />
 
           <template #panel>
@@ -818,7 +804,7 @@ function themeDropdownClicked(id, value) {
       </div>
       <div class="lx-user-menu" :class="[{ opened: dropDownMenu?.menuOpen }]" v-if="userInfo">
         <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
-          <div class="lx-user-button" tabindex="-1">
+          <div class="lx-user-button" tabindex="-1" role="button">
             <div class="lx-avatar" v-if="!hasAvatar">
               <LxIcon value="doctor" customClass="lx-icon" />
             </div>

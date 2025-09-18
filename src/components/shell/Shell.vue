@@ -235,6 +235,8 @@ const textsDefault = {
   scrollUp: 'Atgriezties uz augšu',
   contextPersonsBirthDate: 'Dzimšanas datums',
   settings: 'Iestatījumi',
+  contextPersonsTooltipLabel: 'Konteksta persona',
+  contextPersonsTooltipDescription: 'Konteksta personas apraksts',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',

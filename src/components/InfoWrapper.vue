@@ -17,6 +17,8 @@ const props = defineProps({
   content: { default: null },
   locked: { type: Boolean, default: false },
   focusable: { type: Boolean, default: true },
+  label: { type: String, default: null },
+  description: { type: String, default: null },
 });
 
 const showPopper = ref(false);
@@ -26,6 +28,13 @@ const resolvedPlacement = ref();
 
 let openTimeout = null;
 let closeTimeout = null;
+
+const ariaLabel = computed(() => {
+  if (!props.label && !props.description) return null;
+  return `${props.label ? `${props.label}${props.description ? '. ' : ''}` : ''}${
+    props.description ? props.description : ''
+  }`;
+});
 
 const spacerStyle = computed(() => {
   const correction = 1;
@@ -140,6 +149,8 @@ defineExpose({ handleOpen, handleClose, showPopper });
       <div
         ref="triggerRef"
         class="lx-info-wrapper-content"
+        :aria-label="ariaLabel"
+        :aria-describedby="`${id}-description`"
         :tabindex="$slots.panel && focusable && !disabled ? '0' : '-1'"
         @focusin="handleFocusIn"
         @focusout="handleMouseLeave"
