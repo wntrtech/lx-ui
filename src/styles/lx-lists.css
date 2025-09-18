@@ -166,7 +166,7 @@
   background-color: var(--color-list-hover-background);
 }
 
-/*** Form + region + modal styles ***/
+/*** Form + region + modal + appendable list styles ***/
 
 .lx .lx-form-grid .lx-row > .lx-vertical > div > .lx-list-item-wrapper > .lx-list-item,
 .lx .lx-curtain .lx-modal .lx-list-item-wrapper,
@@ -185,6 +185,15 @@
 .lx .lx-form-grid .draggable-list-item-wrapper .lx-handle,
 .lx .lx-region .draggable-list-item-wrapper .lx-handle {
   background-color: var(--color-list-region-background);
+}
+
+.lx .lx-form-grid .lx-appendable-list .lx-list-item-container,
+.lx .lx-region .lx-appendable-list .lx-list-item-container,
+.lx .lx-modal .lx-appendable-list .lx-list-item-container,
+.lx .lx-form-grid .lx-appendable-list .lx-list-item-wrapper,
+.lx .lx-region .lx-appendable-list .lx-list-item-wrapper,
+.lx .lx-modal .lx-appendable-list .lx-list-item-wrapper {
+  background-color: var(--color-list-background);
 }
 
 /*** Checkbox + radio button styles ***/
