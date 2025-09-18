@@ -333,6 +333,19 @@
   color: var(--color-placeholder);
 }
 
+.lx-markdown-text-area code,
+.lx-rich-text-wrapper code {
+  white-space: break-spaces;
+  word-break: break-word;
+}
+
+.lx-rich-text-wrapper > p,
+.lx-rich-text-wrapper > div,
+.lx-rich-text-wrapper > ul li,
+.lx-rich-text-wrapper > ol li {
+  word-break: break-word;
+}
+
 /*** LxDTP + LxDTR + LxDayInput styles ***/
 
 .lx-date-time-picker-wrapper.lx-date,
@@ -4795,6 +4808,7 @@ h2.lx-section-header + p.lx-invalidation-message,
     margin-top: 0;
     margin-bottom: 0;
 }
+
 /*LxQr*/
 .lx-qr-wrapper > svg{
   height: 100%;
