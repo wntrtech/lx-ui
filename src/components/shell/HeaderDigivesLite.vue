@@ -613,6 +613,7 @@ function themeDropdownClicked(id, value) {
               id="lx-shell-custom-button"
               kind="ghost"
               variant="icon-only"
+              tabindex="-1"
               :label="displayTexts.customButton"
               :icon="customButtonIcon"
               :badge="customButtonBadge"
@@ -643,6 +644,7 @@ function themeDropdownClicked(id, value) {
               customClass="lx-header-button"
               variant="icon-only"
               kind="ghost"
+              tabindex="-1"
               :icon="themeIcon"
               :disabled="headerNavDisable"
               :label="displayTexts.themeTitle"
@@ -657,6 +659,7 @@ function themeDropdownClicked(id, value) {
             variant="icon-only"
             kind="ghost"
             icon="language"
+            tabindex="-1"
             :label="displayTexts.languagesTitle"
           />
 
@@ -682,6 +685,7 @@ function themeDropdownClicked(id, value) {
               variant="icon-only"
               kind="ghost"
               icon="notifications"
+              tabindex="-1"
               :label="displayTexts.alertsTitle"
               :badge="alertsCount"
               :badge-type="alertLevelToBadgeType"
@@ -814,12 +818,7 @@ function themeDropdownClicked(id, value) {
       </div>
       <div class="lx-user-menu" :class="[{ opened: dropDownMenu?.menuOpen }]" v-if="userInfo">
         <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
-          <div
-            class="lx-user-button"
-            tabindex="0"
-            @keydown.space.prevent="triggerUserMenu"
-            @keydown.enter.prevent="triggerUserMenu"
-          >
+          <div class="lx-user-button" tabindex="-1">
             <div class="lx-avatar" v-if="!hasAvatar">
               <LxIcon value="doctor" customClass="lx-icon" />
             </div>

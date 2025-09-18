@@ -510,6 +510,7 @@ const customButton = ref();
                   :disabled="headerNavDisable"
                   :badgeType="alertLevelToBadgeType"
                   kind="ghost"
+                  tabindex="-1"
                   variant="icon-only"
                 />
 
@@ -710,6 +711,7 @@ const customButton = ref();
                 <LxButton
                   id="lx-shell-custom-button"
                   kind="tertiary"
+                  tabindex="-1"
                   :label="displayTexts.customButton"
                   :icon="customButtonIcon"
                   :badge="customButtonBadge"

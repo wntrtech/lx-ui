@@ -91,6 +91,7 @@ const textsDefault = {
   touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
+  userMenuTitle: 'Lietotāja izvēle',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
@@ -551,6 +552,7 @@ watch(
           id="lx-shell-custom-button"
           kind="ghost"
           variant="icon-only"
+          tabindex="-1"
           :label="displayTexts.customButton"
           :icon="customButtonIcon"
           :badge="customButtonBadge"
@@ -717,10 +719,11 @@ watch(
     <div class="lx-user-menu" v-if="userInfo">
       <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
         <div
+          :title="displayTexts.userMenuTitle"
+          :aria-label="displayTexts.userMenuTitle"
           class="lx-user-button"
-          tabindex="0"
-          @keydown.space.prevent="triggerUserMenu"
-          @keydown.enter.prevent="triggerUserMenu"
+          role="button"
+          tabindex="-1"
         >
           <div class="lx-avatar" v-if="!hasAvatar">
             <LxIcon

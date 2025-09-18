@@ -150,6 +150,10 @@
   overflow: hidden;
 }
 
+.lx-user-menu .lx-user-button .lx-user-info {
+  margin-right: 0.5rem;
+}
+
 .lx-layout.lx-layout-default > header .lx-header .lx-user-button .lx-user-info > div,
 .lx-layout.lx-layout-cover > header .lx-header .lx-user-button p,
 .lx-layout.lx-layout-cover-digives-lite > header .lx-header .lx-user-button p {
@@ -1098,8 +1102,7 @@
 .lx .lx-layout.lx-layout-cover .lx-header .lx-selected .lx-user-button .lx-avatar svg,
 .lx .lx-layout.lx-layout-cover-digives-lite .lx-header > .lx-group .lx-button.lx-header-button:hover svg,
 .lx .lx-layout.lx-layout-cover-digives-lite .lx-header .lx-user-button:hover .lx-avatar svg,
-.lx .lx-layout.lx-layout-cover-digives-lite .lx-header .lx-selected .lx-user-button .lx-avatar svg
- {
+.lx .lx-layout.lx-layout-cover-digives-lite .lx-header .lx-selected .lx-user-button .lx-avatar svg {
   fill: var(--color-interactive-hover-foreground);
 }
 

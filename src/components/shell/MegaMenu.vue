@@ -118,6 +118,7 @@ function getIconSet(item) {
         :variant="buttonVariant"
         kind="ghost"
         icon="apps"
+        :tabindex="-1"
         :label="displayTexts.megaMenuTitle"
       />
     </div>

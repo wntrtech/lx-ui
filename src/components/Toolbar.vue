@@ -153,7 +153,7 @@ function actionClicked(id) {
                 v-if="action?.groupId === group.id && action.nestedGroupId"
                 :id="`${id}-action-${action.id}`"
                 :kind="action?.kind || 'ghost'"
-                :tabindex="0"
+                :tabindex="-1"
                 :icon="action?.icon || 'menu'"
                 :icon-set="action?.iconSet"
                 :busy="action?.busy"
@@ -210,7 +210,7 @@ function actionClicked(id) {
           <LxDropDownMenu v-if="leftActionsSmall?.length > 1">
             <LxButton
               kind="ghost"
-              :tabindex="0"
+              :tabindex="-1"
               icon="menu"
               :label="displayTexts.overflowMenu"
               variant="icon-only"
@@ -297,7 +297,7 @@ function actionClicked(id) {
                 v-if="action?.groupId === group.id && action.nestedGroupId"
                 :id="`${id}-action-${action.id}`"
                 :kind="action?.kind || 'ghost'"
-                :tabindex="0"
+                :tabindex="-1"
                 :icon="action?.icon || 'menu'"
                 :icon-set="action?.iconSet"
                 :busy="action?.busy"
@@ -337,7 +337,7 @@ function actionClicked(id) {
           <LxDropDownMenu v-if="rightActionsSmall?.length > 1">
             <LxButton
               kind="ghost"
-              :tabindex="0"
+              :tabindex="-1"
               icon="menu"
               :label="displayTexts.overflowMenu"
               variant="icon-only"

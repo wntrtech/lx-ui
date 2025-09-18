@@ -1651,6 +1651,11 @@ a.lx-button.lx-button-ghost svg {
   z-index: 1;
 }
 
+.lx .lx-user-menu .lx-dropdown-toggler:focus .lx-user-button {
+    outline: 2px solid var(--color-focus-background);
+    outline-offset: -2px;
+}
+
 .lx-button.lx-button-secondary:focus,
 .lx-override button.lx-button-secondary:focus,
 .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-secondary,
