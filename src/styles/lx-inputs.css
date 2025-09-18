@@ -1760,6 +1760,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   .lx-value-picker-indicators
   .lx-indicator-set
   .lx-indicator.lx-indicators-selected[readOnly='true'] {
+  background-color: var(--color-content-switcher-foreground);
   border-color: var(--color-content-switcher-foreground);
 }
 

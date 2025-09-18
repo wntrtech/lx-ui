@@ -1767,6 +1767,7 @@ a.lx-button.lx-button-ghost svg {
 
 .lx .lx-layout .lx-button.lx-destructive:not(.lx-disabled):hover,
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-button.lx-destructive:not(.lx-disabled):hover,
+.lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-destructive:not(.lx-disabled):hover,
 .lx .lx-layout .lx-dropdown-panel .lx-button.lx-destructive:not(.lx-disabled):hover,
 .lx-layout.lx-override button.lx-destructive:not(.lx-disabled):hover,
 .lx-layout.lx-override button.lx-destructive:not([disabled]):hover,

@@ -849,11 +849,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
         </div>
       </div>
 
-      <div
-        class="lx-group"
-        :class="[{ 'lx-single-header-button': props.indexType === 'default' }]"
-        v-if="additionalButtons?.length === 1"
-      >
+      <div class="lx-group lx-single-header-button" v-if="additionalButtons?.length === 1">
         <LxButton
           v-for="button in additionalButtons"
           :id="`${id}-action-${button.id}`"
