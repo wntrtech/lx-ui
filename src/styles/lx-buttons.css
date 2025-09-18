@@ -1057,7 +1057,8 @@ a.lx-button.lx-button-ghost svg {
 }
 
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost > .lx-button-content-wrapper,
-.lx-layout .lx-component-toolbar .lx-button.lx-button-ghost > .lx-button-content-wrapper,
+.lx-component-toolbar .lx-group > .lx-button.lx-button-ghost > .lx-button-content-wrapper,
+.lx-component-toolbar .lx-dropdown-toggler > .lx-button.lx-button-ghost > .lx-button-content-wrapper,
 .lx-qr-scanner-toolbar .lx-button.lx-button-ghost > .lx-button-content-wrapper,
 .lx-component-toolbar + .second-row .lx-button-ghost > .lx-button-content-wrapper {
   grid-template-areas: var(--button-toolbar-ghost-grid-areas);
