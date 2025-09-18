@@ -65,6 +65,8 @@ const navItemsUserMenuEves = computed(() =>
 
 const windowSize = useWindowSize();
 
+const isResponsiveView = computed(() => windowSize.width.value < 1000);
+
 const emits = defineEmits([
   'nav-toggle',
   'contextPersonChanged',
@@ -191,7 +193,7 @@ onClickOutside(navPanel, toggleNavBar);
       </li>
     </ul>
   </div>
-  <div class="lx-nav-panel lx-responsive">
+  <div class="lx-nav-panel lx-responsive" v-if="isResponsiveView">
     <ul class="lx-nav-group">
       <div v-if="alternativeProfilesInfo" class="nav-bar-user-info nav-bar-profile">
         <p>{{ displayTexts.userTitle }}</p>
