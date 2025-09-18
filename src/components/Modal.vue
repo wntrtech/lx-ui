@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue';
+import { ref, nextTick, provide } from 'vue';
 import LxButton from '@/components/Button.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
@@ -34,6 +34,8 @@ const nativeModal = ref();
 const isOpen = ref(false);
 const isOpenModal = ref(false);
 const modalRef = ref();
+const insideModal = ref(true);
+
 const { activate, deactivate } = useFocusTrap(modalRef, {
   allowOutsideClick: true,
   initialFocus: false,
@@ -45,12 +47,14 @@ function open() {
   }
   if (props.kind === 'default') {
     isOpen.value = true;
+
     nextTick(() => {
       activate();
       modalRef.value.focus();
     });
   } else {
     isOpenModal.value = true;
+
     nextTick(() => {
       const dialogId = document.getElementById(props.id);
       dialogId.showModal();
@@ -62,6 +66,7 @@ function open() {
     });
   }
 }
+
 function close(source = null) {
   if (props.kind === 'default') {
     if (source === 'esc') {
@@ -80,6 +85,7 @@ function close(source = null) {
   }
   deactivate();
 }
+
 function handleKeyDown(event) {
   if (event.key === 'Escape') {
     if (props.escEnabled) {
@@ -90,6 +96,7 @@ function handleKeyDown(event) {
     }
   }
 }
+
 function clickPrimary() {
   if (!props.buttonPrimaryDisabled) emits('primaryAction');
 }
@@ -101,6 +108,9 @@ function clickSecondary() {
   }
   emits('secondaryAction');
 }
+
+provide('insideModal', insideModal);
+
 defineExpose({ open, close });
 </script>
 <template>

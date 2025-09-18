@@ -289,35 +289,38 @@ function triggerContextPersonMenu() {
               </div>
               <LxIcon value="chevron-down" />
             </div>
+
             <template v-slot:panel>
-              <div class="lx-button-set">
-                <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
-                <div
-                  class="lx-button"
-                  v-for="item in contextPersonsInfo"
-                  :key="item.code"
-                  :class="[{ 'lx-active': selectedContextPersonModel?.code === item?.code }]"
-                  @click="changePerson(item)"
-                  :tabindex="3"
-                  @keydown.enter="changePerson(item)"
-                  role="button"
-                >
-                  <div class="person-custom-button">
-                    <label>{{ item?.name }}</label>
-                    <div class="lx-description">
-                      {{ item?.description }}
+              <div class="person-data-section-panel">
+                <div class="lx-button-set">
+                  <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
+                  <div
+                    class="lx-button"
+                    v-for="item in contextPersonsInfo"
+                    :key="item.code"
+                    :class="[{ 'lx-active': selectedContextPersonModel?.code === item?.code }]"
+                    @click="changePerson(item)"
+                    :tabindex="3"
+                    @keydown.enter="changePerson(item)"
+                    role="button"
+                  >
+                    <div class="person-custom-button">
+                      <label>{{ item?.name }}</label>
+                      <div class="lx-description">
+                        {{ item?.description }}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <div class="lx-button-set addition-button">
-                <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
-                <LxButton
-                  :label="displayTexts.contextPersonsOwnData"
-                  :tabindex="3"
-                  _active="selectedContextPersonModel === item.code"
-                  @click="changePerson()"
-                />
+                <div class="lx-button-set addition-button">
+                  <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
+                  <LxButton
+                    :label="displayTexts.contextPersonsOwnData"
+                    :tabindex="3"
+                    _active="selectedContextPersonModel === item.code"
+                    @click="changePerson()"
+                  />
+                </div>
               </div>
             </template>
           </LxDropDownMenu>

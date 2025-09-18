@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick, watch, inject } from 'vue';
 import { onClickOutside, useDebounceFn } from '@vueuse/core';
-import LxPopper from '@/components/Popper.vue';
-
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
-
+import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
@@ -87,7 +86,12 @@ const panelWidth = ref();
 const isInputFocused = ref(false);
 const inputReadonly = ref(false);
 
-const infoWrapperRef = ref()
+const infoWrapperRef = ref();
+
+const { activate, deactivate } = useFocusTrap(refListbox, {
+  allowOutsideClick: true,
+  initialFocus: false,
+});
 
 const globalEnvironment = useLx().getGlobals()?.environment;
 
@@ -268,6 +272,19 @@ function initInputFocus() {
 function handleMenuAndInputKeydown(e) {
   const inputElement = document.activeElement;
 
+  if (e.key === 'Tab' && menuOpen.value) {
+    const tabPressed = e.shiftKey ? 'backward' : 'forward';
+
+    deactivate({
+      returnFocus: false,
+    });
+
+    menuOpen.value = false;
+
+    focusNextFocusableElement(refContainer.value, tabPressed === 'forward');
+    return; 
+  }
+
   if (e.shiftKey) {
     if (e.key === 'ArrowUp') {
       handleShiftArrow(inputElement, 'up');
@@ -301,11 +318,11 @@ function handleTouchStart() {
 
 function openMenu() {
   if (!props.disabled && !menuOpen.value) {
-    if (!menuOpen.value) {
-      panelWidth.value = refContainer.value?.offsetWidth;
-    }
+    panelWidth.value = refContainer.value?.offsetWidth;
     menuOpen.value = true;
+
     nextTick(() => {
+      activate();
       initSearchInput();
     });
   }
@@ -320,6 +337,7 @@ function closeOnClickOutside() {
   if (menuOpen.value) {
     menuOpen.value = false;
   }
+  deactivate();
   query.value = null;
   highlightedItemId.value = null;
 }
@@ -328,10 +346,22 @@ function closeMenu() {
   if (menuOpen.value) {
     menuOpen.value = false;
   }
+  deactivate();
+
   highlightedItemId.value = null;
+
   setTimeout(() => {
     query.value = null;
   }, 100);
+
+  nextTick(() => {
+    refQuery.value.focus();
+  });
+}
+
+function closeDropDownDefaultOnEsc() {
+  menuOpen.value = false;
+
   nextTick(() => {
     refQuery.value.focus();
   });
@@ -345,7 +375,9 @@ function toggleMenu(e) {
   openMenu();
 }
 
-onClickOutside(refRoot, closeOnClickOutside);
+onClickOutside(refRoot, closeOnClickOutside, {
+  ignore: ['#poppers'],
+});
 
 function clear() {
   itemsModel.value = {};
@@ -629,7 +661,7 @@ function handleShiftArrow(inputElement, direction) {
   }
 }
 
-function activate() {
+function activateItems() {
   allItems.value.forEach((item) => {
     itemsModel.value[getIdAttributeString(item)?.toString()] = false;
   });
@@ -646,7 +678,7 @@ function activate() {
     }
   }
 }
-activate();
+activateItems();
 
 function handleMultipleSelection(newModelValue) {
   const selectedArray = newModelValue.map((id) => findItemById(id, allItems.value)).filter(Boolean);
@@ -662,7 +694,7 @@ function handleMultipleSelection(newModelValue) {
     // if items are not in allItems, but are in preloadedItems, take them from preloadedItems
     allItems.value = props.preloadedItems;
   }
-  activate();
+  activateItems();
 }
 
 function handleSingleSelection(newModelValue) {
@@ -681,20 +713,24 @@ function handleSingleSelection(newModelValue) {
   itemsModel.value[newModelValue?.toString()] = true;
 }
 
-watch([model, () => allItems.value], ([newModelValue]) => {
-  if (newModelValue && (!Array.isArray(newModelValue) || newModelValue.length > 0)) {
-    if (Array.isArray(newModelValue) && props.selectingKind === 'multiple') {
-      handleMultipleSelection(newModelValue);
+watch(
+  [model, () => allItems.value],
+  ([newModelValue]) => {
+    if (newModelValue && (!Array.isArray(newModelValue) || newModelValue.length > 0)) {
+      if (Array.isArray(newModelValue) && props.selectingKind === 'multiple') {
+        handleMultipleSelection(newModelValue);
+      } else {
+        handleSingleSelection(newModelValue);
+      }
     } else {
-      handleSingleSelection(newModelValue);
+      // Reset everything if newModelValue is empty
+      itemsModel.value = {};
+      selectedItem.value = null;
+      selectedItems.value = [];
     }
-  } else {
-    // Reset everything if newModelValue is empty
-    itemsModel.value = {};
-    selectedItem.value = null;
-    selectedItems.value = [];
-  }
-}, { deep: true });
+  },
+  { deep: true }
+);
 
 function selectMultiple(item) {
   const idModel = ref(itemsModel.value[getIdAttributeString(item)]);
@@ -871,7 +907,7 @@ const showListOptions = computed(() => {
 watch(
   () => [props.items, props.preloadedItems],
   (newValue, oldValue) => {
-    activate();
+    activateItems();
     const [items, preloadedItems] = newValue;
     const [oldItems, oldPreloadedItems] = oldValue || [[], null];
 
@@ -895,7 +931,7 @@ watch(
 watch(
   () => props.selectingKind,
   (newValue) => {
-    activate();
+    activateItems();
     selectedItem.value = null;
     selectedItems.value = null;
     itemsModel.value = {};
@@ -959,7 +995,7 @@ function selectAll() {
 }
 
 onMounted(() => {
-  activate();
+  activateItems();
 });
 </script>
 
@@ -1011,125 +1047,122 @@ onMounted(() => {
     </p>
 
     <template v-else>
-      
-        <div
-          class="lx-autocomplete-default"
-          ref="refContainer"
-          :class="[
-            { 'lx-opened': menuOpen },
-            { 'lx-invalid': invalid },
-            { 'lx-disabled': disabled },
-          ]"
-          :data-invalid="invalid ? '' : null"
-          :data-disabled="disabled ? '' : null"
-          role="combobox"
-          :aria-expanded="menuOpen"
-          :aria-controls="`${id}-popper`"
-          :aria-labelledby="labelledBy"
-          tabindex="-1"
+      <div
+        class="lx-autocomplete-default"
+        ref="refContainer"
+        :class="[{ 'lx-opened': menuOpen }, { 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
+        :data-invalid="invalid ? '' : null"
+        :data-disabled="disabled ? '' : null"
+        role="combobox"
+        :aria-expanded="menuOpen"
+        :aria-controls="`${id}-popper`"
+        :aria-labelledby="labelledBy"
+        tabindex="-1"
+      >
+        <LxPopper
+          :id="`${id}-popper`"
+          offset-distance="0"
+          :disabled="disabled"
+          :show="menuOpen"
+          role="listbox"
         >
-          <LxPopper
-            :id="`${id}-popper`"
-            offset-distance="0"
-            :disabled="disabled"
-            :show="menuOpen"
-            role="listbox"
-          >
-
-            <div class="lx-autocomplete-input-icon-container">
+          <div class="lx-autocomplete-input-icon-container">
+            <div
+              ref="refAutocomplete"
+              class="lx-autocomplete"
+              :title="tooltip"
+              tabindex="-1"
+              @keydown.esc.prevent="closeDropDownDefaultOnEsc"
+              @keydown.enter.prevent="onEnter"
+              @keydown.down.prevent="focusNextInputElement"
+              @keydown.up.prevent="focusPreviousInputElement"
+              @keydown.f3.prevent="openDetails"
+              @keydown="handleMenuAndInputKeydown"
+              @keyup.tab.prevent="focusOnDropDown"
+              @click="toggleMenu"
+            >
               <div
-                ref="refAutocomplete"
-                class="lx-autocomplete"
+                class="lx-autocomplete-default-panel"
+                :class="[{ multiselect: selectingKind === 'multiple' }]"
                 :title="tooltip"
-                tabindex="-1"
-                @click="toggleMenu"
-                @keydown.esc.prevent="closeMenu"
-                @keydown.enter.prevent="onEnter"
-                @keydown.down.prevent="focusNextInputElement"
-                @keydown.up.prevent="focusPreviousInputElement"
-                @keydown.f3.prevent="openDetails"
-                @keyup.tab.prevent="focusOnDropDown"
               >
                 <div
-                  class="lx-autocomplete-default-panel"
-                  :class="[{ multiselect: selectingKind === 'multiple' }]"
-                  :title="tooltip"
+                  class="lx-autocomplete-default-data"
+                  :class="[
+                    { emptyModel: model?.length === 0 || !model || selectingKind === 'single' },
+                  ]"
                 >
                   <div
-                    class="lx-autocomplete-default-data"
-                    :class="[
-                      { emptyModel: model?.length === 0 || !model || selectingKind === 'single' },
-                    ]"
+                    class="lx-text-input-wrapper lx-input-wrapper"
+                    role="search"
+                    :class="[{ 'lx-disabled': disabled }, { 'lx-invalid': invalid }]"
+                    :data-invalid="invalid ? '' : null"
                   >
-                    <div
-                      class="lx-text-input-wrapper lx-input-wrapper"
-                      role="search"
-                      :class="[{ 'lx-disabled': disabled }, { 'lx-invalid': invalid }]"
-                      :data-invalid="invalid ? '' : null"
-                    >
-                      <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag">
-                        <div class="lx-tag-label">{{ model?.length }}</div>
-                        <div class="lx-tag-button">
-                          <LxInfoWrapper
-                            ref="infoWrapperRef"
-                            :disabled="
-                              disabled ||
-                              (selectingKind === 'multiple' && menuOpen)
-                            "
-                            :focusable="false"
-                          >
-                            <LxButton
-                              id="clearButton"
-                              :label="displayTexts.clear"
-                              :disabled="disabled"
-                              kind="secondary"
-                              variant="icon-only"
-                              icon="remove"
-                              @click.stop="clear"
-                            />
-
-                            <template
-                              #panel
-                              v-if="props.selectingKind === 'multiple' && displayTooltipItems?.length > 0"
-                            >
-                              <ul class="lx-list">
-                                <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
-                                  <div class="lx-row">
-                                    <p class="lx-data">{{ item[nameAttribute] }}</p>
-                                  </div>
-                                </li>
-                              </ul>
-                            </template>
-                          </LxInfoWrapper>
-                        </div>
-                      </div>
-                      <input
-                        ref="refQuery"
-                        :placeholder="shouldShowInputPlaceholder ? getName() : null"
-                        :id="id"
-                        v-model="query"
-                        class="lx-text-input lx-value-picker-placeholder lx-input-area"
-                        :aria-labelledby="labelledBy"
-                        :aria-label="getName(false)"
-                        :aria-invalid="invalid"
-                        :aria-busy="loadingState || loading"
-                        :maxlength="queryMaxLength || null"
-                        :tabindex="disabled ? '-1' : '0'"
-                        :readonly="inputReadonly"
-                        :disabled="disabled"
-                        @focusout="handleFocusOut"
-                        @focus="handleInputFocus"
-                        @keydown="handleMenuAndInputKeydown"
-                        @touchstart="handleTouchStart"
-                      />
-                      <div class="lx-invisible" aria-live="polite" v-if="loadingState || loading">
-                        {{ displayTexts.loadingState }}
-                      </div>
-                      <template v-if="shouldShowValuePlaceholder">
-                        <div
-                          class="lx-value lx-input-area"
-                          :title="selectingKind === 'single' ? getName(false) : ''"
+                    <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag">
+                      <div class="lx-tag-label">{{ model?.length }}</div>
+                      <div class="lx-tag-button">
+                        <LxInfoWrapper
+                          ref="infoWrapperRef"
+                          :disabled="
+                            disabled || 
+                            (selectingKind === 'multiple' && menuOpen)
+                          "
+                          :focusable="false"
                         >
+                          <LxButton
+                            id="clearButton"
+                            :label="displayTexts.clear"
+                            :disabled="disabled"
+                            kind="secondary"
+                            variant="icon-only"
+                            icon="remove"
+                            @click.stop="clear"
+                          />
+
+                          <template
+                            #panel
+                            v-if="
+                              props.selectingKind === 'multiple' && displayTooltipItems?.length > 0
+                            "
+                          >
+                            <ul class="lx-list">
+                              <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
+                                <div class="lx-row">
+                                  <p class="lx-data">{{ item[nameAttribute] }}</p>
+                                </div>
+                              </li>
+                            </ul>
+                          </template>
+                        </LxInfoWrapper>
+                      </div>
+                    </div>
+                    <input
+                      ref="refQuery"
+                      :placeholder="shouldShowInputPlaceholder ? getName() : null"
+                      :id="id"
+                      v-model="query"
+                      class="lx-text-input lx-value-picker-placeholder lx-input-area"
+                      :aria-labelledby="labelledBy"
+                      :aria-label="getName(false)"
+                      :aria-invalid="invalid"
+                      :aria-busy="loadingState || loading"
+                      :maxlength="queryMaxLength || null"
+                      :tabindex="disabled ? '-1' : '0'"
+                      :readonly="inputReadonly"
+                      :disabled="disabled"
+                      @focusout="handleFocusOut"
+                      @focus="handleInputFocus"
+                      @keydown="handleMenuAndInputKeydown"
+                      @touchstart="handleTouchStart"
+                    />
+                    <div class="lx-invisible" aria-live="polite" v-if="loadingState || loading">
+                      {{ displayTexts.loadingState }}
+                    </div>
+                    <template v-if="shouldShowValuePlaceholder">
+                      <div
+                        class="lx-value lx-input-area"
+                        :title="selectingKind === 'single' ? getName(false) : ''"
+                      >
                         <div>
                           <template v-if="variant === 'country' && selectingKind === 'single'">
                             <LxFlagItemDisplay
@@ -1161,258 +1194,260 @@ onMounted(() => {
                           >
                             {{ getName(false) }}
                           </template>
-                          </div>
                         </div>
-                      </template>
-                      <template v-if="shouldShowPlaceholder">
-                        <div class="lx-placeholder lx-input-area">
-                          <div>
+                      </div>
+                    </template>
+                    <template v-if="shouldShowPlaceholder">
+                      <div class="lx-placeholder lx-input-area">
+                        <div>
                           {{ getName() }}
-                          </div>
                         </div>
-                      </template>
-                      <div
-                        v-if="invalid && !(loadingState || loading)"
-                        class="lx-invalidation-icon-wrapper"
-                      >
-                        <LxIcon customClass="lx-invalidation-icon" value="invalid" />
                       </div>
-                      <div v-if="shouldShowIcon" class="lx-input-icon-wrapper">
-                        <LxIcon customClass="lx-modifier-icon" :value="icon" />
-                      </div>
-                      <LxButton
-                        v-if="
-                          selectingKind === 'single' &&
-                          !invalid &&
-                          hasValue &&
-                          !(loadingState || loading)
-                        "
-                        id="clearButton"
-                        :disabled="disabled"
-                        icon="close"
-                        kind="ghost"
-                        variant="icon-only"
-                        :label="displayTexts.clear"
-                        @click="clear"
-                      />
-                      <LxButton
-                        v-if="
-                          selectingKind === 'single' &&
-                          invalid &&
-                          hasValue &&
-                          !(loadingState || loading)
-                        "
-                        id="clearButton"
-                        :disabled="disabled"
-                        icon="close"
-                        kind="ghost"
-                        variant="icon-only"
-                        :label="displayTexts.clear"
-                        @click="clear"
-                      />
-                      <LxButton
-                        v-if="shouldShowDetailsBtn"
-                        id="detailsButton"
-                        :disabled="disabled"
-                        icon="search-details"
-                        kind="ghost"
-                        variant="icon-only"
-                        :label="displayTexts.detailsButton"
-                        @click="openDetails"
-                        @keydown.enter="openDetails"
-                        @keydown.tab="focusOnDropDown"
-                        @keydown.f3.prevent="openDetails"
-                      />
-                      <div
-                        class="lx-autocomplete-loader"
-                        v-if="loadingState || loading"
-                        :title="displayTexts.loadingState"
-                      >
-                        <LxLoader loading size="s" />
-                      </div>
+                    </template>
+                    <div
+                      v-if="invalid && !(loadingState || loading)"
+                      class="lx-invalidation-icon-wrapper"
+                    >
+                      <LxIcon customClass="lx-invalidation-icon" value="invalid" />
                     </div>
-                    <div v-if="invalid" class="lx-invalidation-message" @click.stop>
-                      {{ invalidationMessage }}
+                    <div v-if="shouldShowIcon" class="lx-input-icon-wrapper">
+                      <LxIcon customClass="lx-modifier-icon" :value="icon" />
                     </div>
+                    <LxButton
+                      v-if="
+                        selectingKind === 'single' &&
+                        !invalid &&
+                        hasValue &&
+                        !(loadingState || loading)
+                      "
+                      id="clearButton"
+                      :disabled="disabled"
+                      icon="close"
+                      kind="ghost"
+                      variant="icon-only"
+                      :label="displayTexts.clear"
+                      @click="clear"
+                    />
+                    <LxButton
+                      v-if="
+                        selectingKind === 'single' &&
+                        invalid &&
+                        hasValue &&
+                        !(loadingState || loading)
+                      "
+                      id="clearButton"
+                      :disabled="disabled"
+                      icon="close"
+                      kind="ghost"
+                      variant="icon-only"
+                      :label="displayTexts.clear"
+                      @click="clear"
+                    />
+                    <LxButton
+                      v-if="shouldShowDetailsBtn"
+                      id="detailsButton"
+                      :disabled="disabled"
+                      icon="search-details"
+                      kind="ghost"
+                      variant="icon-only"
+                      :label="displayTexts.detailsButton"
+                      @keydown.enter="openDetails"
+                      @keydown.tab="focusOnDropDown"
+                      @keydown.f3.prevent="openDetails"
+                      @click="openDetails"
+                    />
+                    <div
+                      class="lx-autocomplete-loader"
+                      v-if="loadingState || loading"
+                      :title="displayTexts.loadingState"
+                    >
+                      <LxLoader loading size="s" />
+                    </div>
+                  </div>
+                  <div v-if="invalid" class="lx-invalidation-message" @click.stop>
+                    {{ invalidationMessage }}
                   </div>
                 </div>
               </div>
             </div>
-          
+          </div>
 
-            <template #content>
-              <div
-                ref="refListbox"
-                :aria-labelledby="labelledBy"
-                class="lx-dropdown-default-content"
-                :style="{ width: panelWidth + 'px' }"
-                tabindex="-1"
-              >
-                <slot name="panel" @click="closeMenu()">
-                  <transition name="appear-down">
-                    <div
-                      v-show="menuOpen && !loading"
-                      class="lx-dropdown-panel"
-                      tabindex="-1"
-                      role="listbox"
-                      @keydown.esc.prevent="closeMenu"
-                      @keydown.enter="onEnter"
-                      @keydown.up.prevent="focusPreviousInputElement"
-                      @keydown.down.prevent="focusNextInputElement"
-                      @keydown.f3.prevent="openDetails"
-                      @keydown.tab="closeMenu"
-                      @keydown.backspace="initInputFocus"
-                      @keydown="handleMenuAndInputKeydown"
-                    >
-                      <template v-if="filteredItems?.length">
-                        <div
-                          v-if="
-                            hasSelectAll &&
-                            typeof props.items !== 'function' &&
-                            selectingKind === 'multiple'
+          <template #content>
+            <div
+              ref="refListbox"
+              tabindex="-1"
+              :aria-labelledby="labelledBy"
+              class="lx-dropdown-default-content"
+              :style="{ width: panelWidth + 'px' }"
+              @keydown.esc.prevent="closeDropDownDefaultOnEsc"
+              @keydown.enter="onEnter"
+              @keydown.space.prevent="onEnter"
+              @keydown.up.prevent="focusPreviousInputElement"
+              @keydown.down.prevent="focusNextInputElement"
+              @keydown.f3.prevent="openDetails"
+              @keydown.backspace="initInputFocus"
+              @keydown="handleMenuAndInputKeydown"
+            >
+              <slot name="panel" @click="closeMenu()">
+                <transition name="appear-down">
+                  <div
+                    v-show="menuOpen && !loading"
+                    class="lx-dropdown-panel"
+                    tabindex="-1"
+                    role="listbox"
+                  >
+                    <template v-if="filteredItems?.length">
+                      <div
+                        v-if="
+                          hasSelectAll &&
+                          typeof props.items !== 'function' &&
+                          selectingKind === 'multiple'
+                        "
+                        class="lx-value-picker-item select-all"
+                        tabindex="-1"
+                        role="option"
+                        @click="selectAll"
+                        :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+                      >
+                        <LxIcon
+                          :value="
+                            areSomeSelected
+                              ? areAllSelected
+                                ? 'checkbox-filled'
+                                : 'checkbox-indeterminate'
+                              : 'checkbox'
                           "
-                          class="lx-value-picker-item select-all"
-                          tabindex="-1"
+                        />
+                        <span>{{
+                          areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
+                        }}</span>
+                      </div>
+                      <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
+                        <div
+                          :tabindex="
+                            highlightedItemId && highlightedItemId === getIdAttributeString(item)
+                              ? '0'
+                              : !highlightedItemId
+                              ? index === 0
+                                ? '0'
+                                : '-1'
+                              : '-1'
+                          "
                           role="option"
-                          @click="selectAll"
-                          :title="
-                            areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
+                          :aria-selected="isItemSelected(item)"
+                          class="lx-value-picker-item"
+                          :class="[
+                            {
+                              'lx-selected': isItemSelected(item),
+                              'lx-highlighted-item':
+                                highlightedItemId &&
+                                highlightedItemId === getIdAttributeString(item),
+                              'autocomplete-multiple': selectingKind === 'multiple',
+                              'autocomplete-default-item': variant === 'default',
+                            },
+                          ]"
+                          :id="getItemId(getIdAttributeString(item))"
+                          :group-id="groupId"
+                          :label="item[nameAttribute]"
+                          :disabled="loading"
+                          :title="item[nameAttribute]"
+                          @click.prevent="
+                            props.selectingKind === 'single'
+                              ? selectSingle(item)
+                              : selectMultiple(item)
                           "
                         >
-                          <LxIcon
-                            :value="
-                              areSomeSelected
-                                ? areAllSelected
-                                  ? 'checkbox-filled'
-                                  : 'checkbox-indeterminate'
-                                : 'checkbox'
-                            "
-                          />
-                          <span>{{
-                            areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
-                          }}</span>
-                        </div>
-                        <template v-for="item in filteredItems" :key="item[idAttribute]">
-                          <div
-                            @click.prevent="
-                              props.selectingKind === 'single'
-                                ? selectSingle(item)
-                                : selectMultiple(item)
-                            "
-                            @keydown.tab="closeMenu"
-                            tabindex="-1"
-                            role="option"
-                            :aria-selected="isItemSelected(item)"
-                            class="lx-value-picker-item"
-                            :class="[
-                              {
-                                'lx-selected': isItemSelected(item),
-                                'lx-highlighted-item':
-                                  highlightedItemId &&
-                                  highlightedItemId === getIdAttributeString(item),
-                                'autocomplete-multiple': selectingKind === 'multiple',
-                                'autocomplete-default-item': variant === 'default',
-                              },
-                            ]"
-                            :id="getItemId(getIdAttributeString(item))"
+                          <LxCheckbox
+                            v-if="selectingKind === 'multiple'"
+                            :id="getItemId(item[idAttribute])"
                             :group-id="groupId"
-                            :label="item[nameAttribute]"
-                            :disabled="loading"
-                            :title="item[nameAttribute]"
-                          >
-                            <LxCheckbox
-                              v-if="selectingKind === 'multiple'"
-                              :id="getItemId(item[idAttribute])"
-                              :group-id="groupId"
-                              v-model="itemsModel[item[idAttribute]]"
-                              :disabled="disabled"
-                              :value="item[idAttribute]"
-                              tabindex="-1"
-                              :labelId="getLabelId(item[idAttribute])"
-                              @click="selectMultiple(item)"
-                            />
-                            <label :for="item[idAttribute]" :id="getLabelId(item[idAttribute])">
-                              <template v-if="variant === 'country'">
-                                <LxFlagItemDisplay
-                                  :value="item"
-                                  :id-attribute="idAttribute"
-                                  :name-attribute="nameAttribute"
-                                />
-                              </template>
+                            v-model="itemsModel[item[idAttribute]]"
+                            :disabled="disabled"
+                            :value="item[idAttribute]"
+                            tabindex="-1"
+                            :labelId="getLabelId(item[idAttribute])"
+                            @click="selectMultiple(item)"
+                          />
+                          <label :for="item[idAttribute]" :id="getLabelId(item[idAttribute])">
+                            <template v-if="variant === 'country'">
+                              <LxFlagItemDisplay
+                                :value="item"
+                                :id-attribute="idAttribute"
+                                :name-attribute="nameAttribute"
+                              />
+                            </template>
 
-                              <template v-else-if="variant === 'state'">
-                                <LxStateDisplay
-                                  :value="item[idAttribute]"
-                                  :dictionary="[
-                                    {
-                                      value: item[idAttribute],
-                                      displayName: item[nameAttribute],
-                                      displayType: item?.displayType,
-                                      displayShape: item?.displayShape,
-                                    },
-                                  ]"
-                                />
-                              </template>
+                            <template v-else-if="variant === 'state'">
+                              <LxStateDisplay
+                                :value="item[idAttribute]"
+                                :dictionary="[
+                                  {
+                                    value: item[idAttribute],
+                                    displayName: item[nameAttribute],
+                                    displayType: item?.displayType,
+                                    displayShape: item?.displayShape,
+                                  },
+                                ]"
+                              />
+                            </template>
 
-                              <template v-else-if="variant === 'custom'">
-                                <slot name="customItem" v-bind="item"></slot>
-                              </template>
+                            <template v-else-if="variant === 'custom'">
+                              <slot name="customItem" v-bind="item"></slot>
+                            </template>
 
-                              <template v-else>
-                                <LxSearchableText
-                                  :value="item[nameAttribute]"
-                                  :search-string="query"
-                                />
-                              </template>
-                            </label>
-                          </div>
-                        </template>
-                      </template>
-                      <template
-                        v-if="
-                          finalQuery &&
-                          finalQuery.length >= props.queryMinLength &&
-                          !filteredItems?.length &&
-                          !loadingState
-                        "
-                      >
-                        <div class="lx-empty">
-                          <LxIcon value="info" />
-                          <p>
-                            {{ displayTexts.empty }} "<span class="lx-highlighted-item">{{
-                              query.toLowerCase()
-                            }}</span
-                            >"
-                          </p>
+                            <template v-else>
+                              <LxSearchableText
+                                :value="item[nameAttribute]"
+                                :search-string="query"
+                              />
+                            </template>
+                          </label>
                         </div>
                       </template>
-                      <template
-                        v-if="
-                          queryMinLength !== 0 &&
-                          (!finalQuery || finalQuery.length < queryMinLength) &&
-                          (!filteredItems || filteredItems?.length === 0)
-                        "
-                      >
-                        <div class="lx-empty">
-                          <LxIcon value="info" />
-                          <p>
-                            {{
-                              props.queryMinLength % 10 === 1 && props.queryMinLength !== 11
-                                ? displayTexts.tryEndingWith1?.replace('{0}', props.queryMinLength)
-                                : displayTexts.try?.replace('{0}', props.queryMinLength)
-                            }}
-                          </p>
-                        </div>
-                      </template>
-                    </div>
-                  </transition>
-                </slot>
-              </div>
-            </template>
-          </LxPopper>
-        </div>
-
-        
+                    </template>
+                    <template
+                      v-if="
+                        finalQuery &&
+                        finalQuery.length >= props.queryMinLength &&
+                        !filteredItems?.length &&
+                        !loadingState
+                      "
+                    >
+                      <div class="lx-empty">
+                        <LxIcon value="info" />
+                        <p>
+                          {{ displayTexts.empty }} "<span class="lx-highlighted-item">{{
+                            query.toLowerCase()
+                          }}</span
+                          >"
+                        </p>
+                      </div>
+                    </template>
+                    <template
+                      v-if="
+                        queryMinLength !== 0 &&
+                        (!finalQuery || finalQuery.length < queryMinLength) &&
+                        (!filteredItems || filteredItems?.length === 0)
+                      "
+                    >
+                      <div class="lx-empty">
+                        <LxIcon value="info" />
+                        <p>
+                          {{
+                            props.queryMinLength % 10 === 1 && props.queryMinLength !== 11
+                              ? displayTexts.tryEndingWith1?.replace('{0}', props.queryMinLength)
+                              : displayTexts.try?.replace('{0}', props.queryMinLength)
+                          }}
+                        </p>
+                      </div>
+                    </template>
+                  </div>
+                </transition>
+              </slot>
+            </div>
+          </template>
+        </LxPopper>
+      </div>
 
       <LxModal ref="detailedModeModal" :label="displayTexts.detailsModalLabel" size="m">
         <template v-if="$slots.details && selectingKind === 'multiple'">

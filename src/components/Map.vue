@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, shallowRef, watch, nextTick, onMounted, onUnmounted } from 'vue';
+import { computed, ref, shallowRef, watch, nextTick, onMounted, onUnmounted, provide } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import {
@@ -71,6 +71,9 @@ const props = defineProps({
   hasUserLocation: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
 });
+
+const showMap = ref(true);
+const isExpanded = shallowRef(false);
 
 const textsDefault = {
   clear: 'Notīrīt',
@@ -240,8 +243,7 @@ function updateSelectedOverlay() {
   });
   selectedOverlayLayer.value = res;
 }
-const showMap = ref(true);
-const isExpanded = shallowRef(false);
+
 function toggleExpand() {
   showMap.value = false;
   nextTick(() => {
@@ -308,6 +310,8 @@ const toolbarActions = computed(() => [
   },
 ]);
 
+const insideFullscreenMap = computed(() => isExpanded.value);
+
 function toolbarActionClick(action) {
   if (action === 'zoomIn') zoomIn();
   else if (action === 'zoomOut') zoomOut();
@@ -323,6 +327,8 @@ onMounted(() => {
 onUnmounted(() => {
   navigator.geolocation.clearWatch(watchPositionId.value);
 });
+
+provide('insideFullscreenMap', insideFullscreenMap);
 </script>
 <template>
   <div
@@ -382,26 +388,33 @@ onUnmounted(() => {
                 variant="icon-only"
               />
               <template #clickSafePanel>
-                <p class="lx-menu-label">{{ displayTexts.grayscale }}:</p>
-                <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" />
-                <div v-if="baseLayerDefinitions?.length > 1">
-                  <hr />
-                  <p class="lx-menu-label">{{ displayTexts.baseLayers }}:</p>
-                  <LxButton
-                    v-for="layer in baseLayerDefinitions"
-                    :key="layer?.id"
-                    :label="layer?.name"
-                    kind="ghost"
-                    :active="selectedBaseLayer === layer?.id ? true : false"
-                    @click="selectBaseLayer(layer?.id)"
-                  />
-                </div>
-                <div v-if="overlayLayerDefinitions?.length > 0">
-                  <hr />
-                  <p class="lx-menu-label">{{ displayTexts.overlayLayers }}:</p>
-                  <div class="overlay-layer" v-for="layer in allOverlayObj" :key="layer.id">
-                    <LxToggle v-model="layer.show" @update:model-value="updateSelectedOverlay()" />
-                    <p>{{ layer?.name }}</p>
+                <div class="lx-map-menu">
+                  <p class="lx-menu-label">{{ displayTexts.grayscale }}:</p>
+                  <LxNumberSlider v-model="grayscaleRef" :min="0" :max="100" :step="1" />
+                  <div v-if="baseLayerDefinitions?.length > 1">
+                    <hr />
+                    <p class="lx-menu-label">{{ displayTexts.baseLayers }}:</p>
+                    <div class="lx-button-set">
+                      <LxButton
+                        v-for="layer in baseLayerDefinitions"
+                        :key="layer?.id"
+                        :label="layer?.name"
+                        kind="ghost"
+                        :active="selectedBaseLayer === layer?.id ? true : false"
+                        @click="selectBaseLayer(layer?.id)"
+                      />
+                    </div>
+                  </div>
+                  <div v-if="overlayLayerDefinitions?.length > 0">
+                    <hr />
+                    <p class="lx-menu-label">{{ displayTexts.overlayLayers }}:</p>
+                    <div class="overlay-layer" v-for="layer in allOverlayObj" :key="layer.id">
+                      <LxToggle
+                        v-model="layer.show"
+                        @update:model-value="updateSelectedOverlay()"
+                      />
+                      <p>{{ layer?.name }}</p>
+                    </div>
                   </div>
                 </div>
               </template>

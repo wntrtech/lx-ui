@@ -677,8 +677,6 @@
   display: none;
 }
 
-
-
 .lx-list-wrapper > .lx-list-toolbar .selection-action-button-toolbar > .selection-action-text p {
   color: var(--color-focus-foreground);
 }

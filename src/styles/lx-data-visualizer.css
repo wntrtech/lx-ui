@@ -335,12 +335,7 @@
   border-radius: 50%;
 }
 
-.lx-data-visualizer
-  .lx-target-wrapper-multiple
-  .target-value-multiple
-  > .lx-info-wrapper
-  .lx-info-wrapper-content
-  > div {
+.lx .lx-layout div.target-value-multiple-inner {
   text-align: center;
 }
 

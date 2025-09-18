@@ -72,12 +72,12 @@ const handleClose = () => {
 };
 
 const handleMouseEnter = () => {
-  if (!props.hover || props.disabled) return;
+  if ((!props.hover || props.disabled) && !showPopper.value) return;
   handleOpen();
 };
 
 const handleMouseLeave = (event) => {
-  if (!props.hover || props.disabled) return;
+  if ((!props.hover || props.disabled) && showPopper.value) return;
 
   const { relatedTarget } = event;
   const triggerEl = triggerRef.value;
@@ -109,6 +109,12 @@ function handlePlacementChange(newPlacement) {
   resolvedPlacement.value = newPlacement;
 }
 
+function togglePopperOnMobile() {
+  if (window.matchMedia('(hover: none)').matches) {
+    showPopper.value = !showPopper.value;
+  }
+}
+
 onMounted(() => {
   const el = triggerRef.value?.firstElementChild;
   if (el && el instanceof HTMLElement) {
@@ -126,41 +132,46 @@ onBeforeUnmount(() => {
 defineExpose({ handleOpen, handleClose, showPopper });
 </script>
 <template>
-  <div class="lx-info-wrapper" ref="popperRef">
-    <LxPopper
-      :id="`${id}-popper`"
-      :placement="placement"
-      :offset-skid="offsetSkid"
-      :offset-distance="offsetDistance"
-      :hover="hover"
-      :arrowPointer="arrow"
-      :arrow-padding="arrowPadding"
-      :disabled="disabled"
-      :open-delay="openDelay"
-      :close-delay="closeDelay"
-      :content="content"
-      :show="showPopper"
-      :locked="locked"
-      emitPlacement
+  <LxPopper
+    :id="`${id}-popper`"
+    :placement="placement"
+    :offset-skid="offsetSkid"
+    :offset-distance="offsetDistance"
+    :hover="hover"
+    :arrowPointer="arrow"
+    :arrow-padding="arrowPadding"
+    :disabled="disabled"
+    :open-delay="openDelay"
+    :close-delay="closeDelay"
+    :content="content"
+    :show="showPopper"
+    :locked="locked"
+    emitPlacement
+    @update:placement="handlePlacementChange"
+  >
+    <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
+    <div
+      ref="triggerRef"
+      class="lx-info-wrapper-content"
+      :aria-label="ariaLabel"
+      :aria-describedby="`${id}-description`"
+      :tabindex="$slots.panel && focusable && !disabled ? '0' : '-1'"
+      @focusin="handleFocusIn"
       @focusout="handleMouseLeave"
+      @mouseenter="handleMouseEnter"
       @mouseleave="handleMouseLeave"
-      @update:placement="handlePlacementChange"
+      @click="togglePopperOnMobile"
     >
+      <slot />
+    </div>
+
+    <template #content v-if="$slots.panel">
       <div
-        ref="triggerRef"
-        class="lx-info-wrapper-content"
-        :aria-label="ariaLabel"
-        :aria-describedby="`${id}-description`"
-        :tabindex="$slots.panel && focusable && !disabled ? '0' : '-1'"
-        @focusin="handleFocusIn"
+        ref="popperRef"
+        class="lx-info-wrapper"
         @focusout="handleMouseLeave"
-        @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
       >
-        <slot />
-      </div>
-
-      <template #content v-if="$slots.panel">
         <div
           :id="`${id}-description`"
           class="lx-info-wrapper-panel"
@@ -197,7 +208,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
         >
           <slot name="panel" />
         </div>
-      </template>
-    </LxPopper>
-  </div>
+      </div>
+    </template>
+  </LxPopper>
 </template>

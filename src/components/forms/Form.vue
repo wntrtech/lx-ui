@@ -906,24 +906,28 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
             >
               {{ displayTexts.additionalActions }}
             </p>
-            <LxButton
-              v-for="button in additionalButtons"
-              :id="`${id}-action-${button.id}`"
-              :key="button.id"
-              :label="button.name"
-              :disabled="button.disabled"
-              :destructive="button.destructive"
-              :icon="button.icon"
-              :title="button.title || button.tooltip"
-              :loading="button.loading"
-              :busy="button.busy"
-              :active="button.active"
-              :badge="button.badge"
-              :badge-type="button.badgeType"
-              :badge-title="button.badgeTitle"
-              kind="ghost"
-              @click="clickHandler(button.id)"
-            />
+
+            <div class="lx-button-set">
+              <LxButton
+                v-for="button in additionalButtons"
+                :id="`${id}-action-${button.id}`"
+                :key="button.id"
+                :label="button.name"
+                :disabled="button.disabled"
+                :destructive="button.destructive"
+                :icon="button.icon"
+                :title="button.title || button.tooltip"
+                :loading="button.loading"
+                :busy="button.busy"
+                :active="button.active"
+                :badge="button.badge"
+                :badge-type="button.badgeType"
+                :badge-title="button.badgeTitle"
+                kind="ghost"
+                @click="clickHandler(button.id)"
+              />
+            </div>
+
             <div
               class="responsive-default-index-button"
               v-if="props.indexType === 'default' && index?.length > 0"
@@ -973,10 +977,10 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           <template #panel>
             <div class="lx-button-set">
               <div
-                class="additional-index-button lx-button lx-button-ghost"
                 v-for="i in modifiedIndexRef"
                 :id="`${id}-action-${i.id}`"
                 :key="i.id"
+                class="additional-index-button lx-button lx-button-ghost"
                 ref="indexItems"
                 :class="[
                   { 'lx-active': findIfSectionSelected(i.id) },
@@ -984,9 +988,9 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
                 ]"
                 v-on:keyup.enter="scrollTo(i.id)"
                 v-on:keyup.space="scrollTo(i.id)"
-                @click="scrollTo(i.id)"
                 :title="i.invalid ? i.invalidationMessage : ''"
                 tabindex="0"
+                @click="scrollTo(i.id)"
               >
                 <div class="lx-button-content-wrapper">
                   <p>{{ i.name }}</p>
@@ -1080,6 +1084,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           kind="primary"
           @click="clickHandler(button.id)"
         />
+
         <LxDropDownMenu
           custom-class="responsive-overflow"
           v-if="notPrimaryButtonCount > 1"
@@ -1088,6 +1093,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
         >
           <LxButton kind="secondary" icon="overflow-menu" :label="displayTexts?.otherActions" />
         </LxDropDownMenu>
+
         <LxButton
           v-for="button in secondaryButtons"
           :id="`${id}-action-${button.id}`"
@@ -1110,9 +1116,11 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           @click="clickHandler(button.id)"
         />
       </div>
+
       <div :class="$slots.footer ? 'lx-group lx-footer-slot' : 'lx-group'">
         <slot name="footer" />
       </div>
+
       <div class="lx-group lx-responsive-l">
         <LxButton
           v-for="button in tertiaryButtons"

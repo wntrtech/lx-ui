@@ -1,52 +1,97 @@
-function isElementFocusable(element) {
-  return element && element.offsetParent !== null && !element.disabled;
-}
-
 const focusableSelectors = [
   'a:not([disabled])',
   'button:not([disabled])',
   'input:not([disabled])',
-  '[tabindex="0"]',
+  'textarea:not([disabled])',
+  'select:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
 ];
 
-function findFocusableElement(element) {
-  if (element.matches(focusableSelectors.join(',')) && isElementFocusable(element)) {
-    return element;
-  }
+function findFocusableElements(element) {
+  if (!element) return [];
 
-  return Array.from(element.children).map(findFocusableElement).find(Boolean) || null;
+  const candidates = [
+    ...(element.matches(focusableSelectors.join(', ')) &&
+    !element.disabled &&
+    element.offsetParent !== null
+      ? [element]
+      : []),
+    ...element.querySelectorAll(focusableSelectors.join(', ')),
+  ];
+
+  return candidates.filter((el) => !el.disabled && el.offsetParent !== null);
 }
 
-export function focusNextFocusableElement(startElement) {
-  let currentElement = startElement.nextElementSibling;
+export function focusNextFocusableElement(startElement, forward = true) {
+  if (!startElement) return;
 
-  while (currentElement) {
-    const focusable = findFocusableElement(currentElement);
-    if (focusable) {
-      focusable.focus();
-      return;
-    }
-    currentElement = currentElement.nextElementSibling;
-  }
+  const allFocusable = Array.from(document.querySelectorAll(focusableSelectors.join(', '))).filter(
+    // @ts-ignore
+    (el) => !el.disabled && el.offsetParent !== null
+  );
 
-  currentElement = startElement.parentElement;
-  while (currentElement && currentElement !== document.body) {
-    let sibling = currentElement.nextElementSibling;
-    while (sibling) {
-      const focusable = findFocusableElement(sibling);
-      if (focusable) {
-        focusable.focus();
+  if (forward) {
+    let currentElement = startElement.nextElementSibling;
+
+    while (currentElement) {
+      const focusable = findFocusableElements(currentElement);
+      if (focusable.length > 0) {
+        focusable[0].focus();
         return;
       }
-      sibling = sibling.nextElementSibling;
+      currentElement = currentElement.nextElementSibling;
     }
-    currentElement = currentElement.parentElement;
-  }
 
-  // If no next focusable element is found, focus the first focusable element in the document
-  const firstFocusableElement = document.querySelector(focusableSelectors.join(', '));
-  if (firstFocusableElement) {
-    firstFocusableElement.focus();
+    currentElement = startElement.parentElement;
+    while (currentElement && currentElement !== document.body) {
+      let sibling = currentElement.nextElementSibling;
+      while (sibling) {
+        const focusable = findFocusableElements(sibling);
+        if (focusable.length > 0) {
+          focusable[0].focus();
+          return;
+        }
+        sibling = sibling.nextElementSibling;
+      }
+      currentElement = currentElement.parentElement;
+    }
+
+    // If no next focusable element is found, focus the first focusable element in the document
+    const firstFocusableElement = allFocusable[0];
+    if (firstFocusableElement) {
+      firstFocusableElement.focus();
+    }
+  } else {
+    let currentElement = startElement.previousElementSibling;
+
+    while (currentElement) {
+      const focusable = findFocusableElements(currentElement);
+      if (focusable.length > 0) {
+        focusable[focusable.length - 1].focus();
+        return;
+      }
+      currentElement = currentElement.previousElementSibling;
+    }
+
+    currentElement = startElement.parentElement;
+    while (currentElement && currentElement !== document.body) {
+      let sibling = currentElement.previousElementSibling;
+      while (sibling) {
+        const focusable = findFocusableElements(sibling);
+        if (focusable.length > 0) {
+          focusable[focusable.length - 1].focus();
+          return;
+        }
+        sibling = sibling.previousElementSibling;
+      }
+      currentElement = currentElement.parentElement;
+    }
+
+    // If no next focusable element is found, focus the first focusable element in the document
+    const lastFocusableElement = allFocusable[allFocusable.length - 1];
+    if (lastFocusableElement) {
+      lastFocusableElement.focus();
+    }
   }
 }
 

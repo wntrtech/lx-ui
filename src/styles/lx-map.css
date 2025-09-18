@@ -829,8 +829,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
   border-left: 1px solid var(--color-chrome);
 }
 
-.lx-map-grayscale .lx-context-container .lx-dropdown-panel {
+.lx .lx-layout .lx-dropdown-panel:has(.lx-map-menu) {
   width: 100%;
+  background-color: var(--color-background)
 }
 
 .lx-map-grayscale .lx-context-container .lx-dropdown-panel .input-slider .input-slider-full {
@@ -899,7 +900,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
   border: 1px solid var(--color-chrome);
 }
 
-.lx-map .lx-menu-label {
+.lx .lx-layout .lx-dropdown-panel:has(.lx-map-menu) .lx-menu-label {
   font-size: var(--font-size-small);
   color: var(--color-label);
   display: block;

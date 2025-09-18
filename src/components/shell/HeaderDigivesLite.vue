@@ -687,7 +687,12 @@ function themeDropdownClicked(id, value) {
                   @click="alertsClicked"
                 />
               </div>
-              <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
+              <ol
+                class="lx-alert-menu-list"
+                role="group"
+                aria-live="polite"
+                v-if="alerts?.length > 0"
+              >
                 <li
                   :aria-labelledby="`alert-${item?.id}-name`"
                   :aria-describedby="`alert-${item?.id}-desc`"
@@ -720,7 +725,12 @@ function themeDropdownClicked(id, value) {
                   @click="alertsClicked"
                 />
               </div>
-              <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
+              <ol
+                class="lx-alert-menu-list"
+                role="group"
+                aria-live="polite"
+                v-if="alerts?.length > 0"
+              >
                 <li
                   :aria-labelledby="`alert-${item?.id}-name`"
                   :aria-describedby="`alert-${item?.id}-desc`"
@@ -826,31 +836,34 @@ function themeDropdownClicked(id, value) {
           </div>
 
           <template #panel>
-            <div class="lx-region user-menu-context">
-              <div class="lx-avatar-display lx-avatar-display-xl">
-                <LxIcon value="doctor" />
+            <div class="user-menu-panel">
+              <div class="lx-region user-menu-context">
+                <div class="lx-avatar-display lx-avatar-display-xl">
+                  <LxIcon value="doctor" />
+                </div>
+                <div class="lx-data">{{ fullName }}</div>
+                <div class="lx-description" v-if="userInfo?.description">
+                  {{ userInfo?.description }}
+                </div>
+                <div class="lx-description" v-if="userInfo?.role">{{ userInfo?.role }}</div>
+                <div class="lx-description" v-if="userInfo?.institution">
+                  {{ userInfo?.institution }}
+                </div>
               </div>
-              <div class="lx-data">{{ fullName }}</div>
-              <div class="lx-description" v-if="userInfo?.description">
-                {{ userInfo?.description }}
-              </div>
-              <div class="lx-description" v-if="userInfo?.role">{{ userInfo?.role }}</div>
-              <div class="lx-description" v-if="userInfo?.institution">
-                {{ userInfo?.institution }}
-              </div>
+
+              <ul class="lx-group" role="group">
+                <li v-for="item in navItemsUserMenu" :key="item.label">
+                  <LxButton
+                    kind="ghost"
+                    :label="item.label"
+                    :href="item.to"
+                    :icon="item.icon"
+                    :disabled="headerNavDisable"
+                    @click="emits('navClick', item?.id)"
+                  />
+                </li>
+              </ul>
             </div>
-            <ul class="lx-group" role="group">
-              <li v-for="item in navItemsUserMenu" :key="item.label">
-                <LxButton
-                  kind="ghost"
-                  :label="item.label"
-                  :href="item.to"
-                  :icon="item.icon"
-                  :disabled="headerNavDisable"
-                  @click="emits('navClick', item?.id)"
-                />
-              </li>
-            </ul>
           </template>
         </LxDropDownMenu>
       </div>

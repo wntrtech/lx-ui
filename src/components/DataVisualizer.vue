@@ -639,11 +639,13 @@ watch(
             <div class="target-value" v-if="target.list?.length == 1" :title="target.absoluteValue">
               {{ target.absoluteValue }}
             </div>
+
             <div class="target-value-multiple" v-else>
               <LxInfoWrapper offsetDistance="8">
-                <div>
+                <div class="target-value-multiple-inner">
                   {{ target.count }}
                 </div>
+
                 <template #panel>
                   <div>
                     <div v-for="item in target.list" :key="item">
@@ -654,6 +656,7 @@ watch(
               </LxInfoWrapper>
             </div>
           </div>
+
           <div class="lx-target" />
         </div>
       </div>
@@ -769,9 +772,10 @@ watch(
 
               <div class="target-value-multiple" v-else>
                 <LxInfoWrapper offsetDistance="8">
-                  <div>
+                  <div class="target-value-multiple-inner">
                     {{ target.count }}
                   </div>
+
                   <template #panel>
                     <div>
                       <div v-for="item in target.list" :key="item">

@@ -377,9 +377,8 @@ code {
   fill: var(--color-interactive-active-foreground);
 }
 
-.lx-context-container .lx-dropdown-panel {
+.lx .lx-layout .lx-dropdown-panel {
   padding: var(--padding-dropdown);
-  position: absolute;
   top: var(--nav-row-size);
   background-color: var(--color-region);
   width: var(--aside-size);
@@ -435,7 +434,7 @@ code {
   line-height: 1em;
 }
 
-.lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
+.lx .lx-layout .popper .lx-dropdown-panel {
   padding: 0.5rem;
   position: static;
   box-shadow: var(--shadow-dropdown);
@@ -1172,18 +1171,18 @@ code {
 
 /* InfoWrapper */
 
-.lx .lx-info-wrapper .popper {
+.lx .lx-layout .popper  .lx-info-wrapper-panel {
   background-color: var(--color-tooltip-background);
   padding: 0.5rem 1rem;
   color: var(--color-tooltip-foreground);
 }
 
-.lx-info-wrapper .lx-info-wrapper-panel .lx-row {
+.lx .lx-layout .lx-info-wrapper-panel .lx-row {
   width: var(--aside-size);
 }
 
-.lx-info-wrapper .lx-info-wrapper-panel .lx-secondary,
-.lx .popper .lx-info-wrapper-panel label {
+.lx .lx-layout .lx-info-wrapper-panel .lx-secondary,
+.lx .lx-layout .popper .lx-info-wrapper-panel label {
   opacity: 0.75;
 }
 

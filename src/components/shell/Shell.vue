@@ -681,6 +681,7 @@ watch(
 );
 
 const modals = ref(null);
+const poppers = ref(null);
 const header = ref(null);
 const main = ref(null);
 const nav = ref(null);
@@ -1020,7 +1021,9 @@ watch(
         <div></div>
       </footer>
       <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
     </div>
+
     <div
       ref="shell"
       v-if="mode === 'cover-digives-lite'"
@@ -1148,7 +1151,9 @@ watch(
         <div></div>
       </footer>
       <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
     </div>
+
     <div
       v-if="mode === 'public'"
       class="lx-layout lx-layout-public"
@@ -1299,7 +1304,9 @@ watch(
         <div></div>
       </footer>
       <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
     </div>
+
     <div
       v-if="mode === 'latvijalv'"
       class="lx-layout lx-layout-latvijalv"
@@ -1496,7 +1503,9 @@ watch(
         <div></div>
       </footer>
       <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
     </div>
+
     <div
       v-else-if="mode === 'digives'"
       class="lx-layout lx-layout-default lx-layout-digives"
@@ -1655,7 +1664,9 @@ watch(
         </div>
       </footer>
       <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
     </div>
+
     <div
       v-else-if="mode === 'digives-lite'"
       class="lx-layout lx-layout-default lx-layout-digives-lite"
@@ -1899,7 +1910,9 @@ watch(
         </div>
       </footer>
       <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
     </div>
+
     <div
       v-else-if="mode === 'digimaks'"
       class="lx-layout lx-layout-digimaks"
@@ -1983,7 +1996,8 @@ watch(
           :texts="displayTexts"
         />
       </header>
-      <div ref="modals" id="modals" />
+      <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
     </div>
     <div
       v-else-if="mode === 'digimaks-lite'"
@@ -2072,7 +2086,8 @@ watch(
           :texts="displayTexts"
         />
       </header>
-      <div ref="modals" id="modals" />
+      <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
     </div>
     <div
       v-else
@@ -2217,6 +2232,7 @@ watch(
         <div></div>
       </footer>
       <div ref="modals" id="modals"></div>
+      <div ref="poppers" id="poppers"></div>
     </div>
   </transition>
   <LxModal

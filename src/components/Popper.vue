@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, inject, onMounted, ref, watch } from 'vue';
 import { useFloating, flip, shift, arrow, offset, autoUpdate } from '@floating-ui/vue';
 import { generateUUID } from '@/utils/stringUtils';
 
@@ -10,7 +10,6 @@ const props = defineProps({
   offsetSkid: { type: String, default: '0' },
   disabled: { type: Boolean, default: false },
   arrowPointer: { type: Boolean, default: false },
-  wrapperClass: { type: String, default: '' },
   panelClass: { type: String, default: '' },
   arrowPadding: { type: String, default: '5' },
   content: { default: null },
@@ -116,6 +115,12 @@ watch(plc, (newPlacement) => {
   emits('update:placement', newPlacement);
 });
 
+// Automatically detect if inside higher context
+const insideModal = inject('insideModal', ref(false));
+const insideFullscreenMap = inject('insideFullscreenMap', ref(false));
+
+const needsHighZ = computed(() => insideModal.value || insideFullscreenMap.value);
+
 onMounted(() => {
   emits('update:placement', basePlacement.value);
 });
@@ -125,34 +130,42 @@ onMounted(() => {
   <div :id="id" ref="reference" class="popper-wrapper">
     <slot />
 
-    <div v-if="show && !disabled" ref="floating" :style="floatingStyles" class="popper">
-      <slot v-if="$slots.content" name="content" />
-      <p v-else-if="content" class="lx-simple-popper-content">{{ content }}</p>
-
+    <Teleport to="#poppers" v-if="show && !disabled">
       <div
-        v-if="arrowPointer"
-        ref="floatingArrow"
-        class="popper-floating-arrow"
-        :style="{
-          position: 'absolute',
-          left: plc.startsWith('right')
-            ? '-5px'
-            : plc.startsWith('left')
-            ? 'auto'
-            : middlewareData.arrow?.x != null
-            ? `${middlewareData.arrow.x - Number(props.offsetSkid)}px`
-            : '',
-          right: plc.startsWith('left') ? '-5px' : '',
-          top: plc.startsWith('top')
-            ? 'auto'
-            : plc.startsWith('bottom')
-            ? '-5px'
-            : middlewareData.arrow?.y != null
-            ? `${middlewareData.arrow.y}px`
-            : '',
-          bottom: plc.startsWith('top') ? '-5px' : '',
-        }"
-      />
-    </div>
+        v-if="show && !disabled"
+        ref="floating"
+        :style="floatingStyles"
+        class="popper"
+        :class="[panelClass, { 'higher-z-index': needsHighZ }]"
+      >
+        <slot v-if="$slots.content" name="content" />
+        <p v-else-if="content" class="lx-simple-popper-content">{{ content }}</p>
+
+        <div
+          v-if="arrowPointer"
+          ref="floatingArrow"
+          class="popper-floating-arrow"
+          :style="{
+            position: 'absolute',
+            left: plc.startsWith('right')
+              ? '-5px'
+              : plc.startsWith('left')
+              ? 'auto'
+              : middlewareData.arrow?.x != null
+              ? `${middlewareData.arrow.x - Number(props.offsetSkid)}px`
+              : '',
+            right: plc.startsWith('left') ? '-5px' : '',
+            top: plc.startsWith('top')
+              ? 'auto'
+              : plc.startsWith('bottom')
+              ? '-5px'
+              : middlewareData.arrow?.y != null
+              ? `${middlewareData.arrow.y}px`
+              : '',
+            bottom: plc.startsWith('top') ? '-5px' : '',
+          }"
+        />
+      </div>
+    </Teleport>
   </div>
 </template>

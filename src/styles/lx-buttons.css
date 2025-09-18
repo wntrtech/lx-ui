@@ -450,10 +450,10 @@ a.lx-button.lx-button-ghost svg {
   fill: var(--color-selected);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-active:not(.lx-disabled) svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active:not(.lx-disabled) svg,
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button.lx-active:not(.lx-disabled) svg,
-.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button.lx-active:not(.lx-disabled) svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button.lx-active:not(.lx-disabled) svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-active:not(.lx-disabled) svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button.lx-active:not(.lx-disabled) svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button.lx-active:not(.lx-disabled) svg {
   fill: var(--color-selected-dropdown);
 }
 
@@ -493,50 +493,51 @@ a.lx-button.lx-button-ghost svg {
 
 /* Dropdown icon styles */
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button svg,
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button svg,
-.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button svg {
   height: calc(var(--button-dropdown-icon-height) - 0.25rem);		
   width: calc(var(--button-dropdown-icon-width) - 0.25rem);		
   fill: var(--color-button-dropdown-icon);
 }
 
-.lx-touch-mode .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button svg,
-.lx-touch-mode .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button svg,
-.lx-touch-mode .lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button svg,
-.lx-touch-mode .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button svg {
+.lx.lx-touch-mode .lx-dropdown-panel .user-menu-panel .lx-button svg,
+.lx.lx-touch-mode .lx-dropdown-panel .lx-button-set .lx-button svg,
+.lx.lx-touch-mode .lx-layout .lx-dropdown-panel > div > .lx-button svg,
+.lx.lx-touch-mode .lx-layout .lx-dropdown-panel > .lx-button svg {
   height: var(--button-dropdown-icon-height);
   width: var(--button-dropdown-icon-width);
   fill: var(--color-button-dropdown-icon);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:hover svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover svg,
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:hover svg,
-.lx .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:hover svg,
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:hover svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:hover svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:hover svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:hover svg,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover svg,
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover svg {
   fill: var(--color-button-dropdown-icon-hover);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:active svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:active svg,
-.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:active svg,
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:active svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:active svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:active svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:active svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:active svg {
   fill: var(--color-button-dropdown-icon-active);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:focus svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:focus svg,
-.lx .lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:focus svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:focus svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:focus svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:focus svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:focus svg {
   fill: var(--color-button-dropdown-icon-focus);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-disabled svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled svg,
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button.lx-disabled svg,
-.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button.lx-disabled svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button.lx-disabled svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button.lx-disabled svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button.lx-disabled svg {
   fill: var(--color-button-dropdown-icon-disabled);
 }
 
@@ -664,7 +665,7 @@ a.lx-button.lx-button-ghost svg {
   fill: var(--color-button-primary-icon-active);
 }
 
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button.lx-destructive:focus svg{
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button.lx-destructive:focus svg{
   fill: var(--color-button-dropdown-icon-focus);
 }
 /* Disabled icon styles */
@@ -1289,15 +1290,15 @@ a.lx-button.lx-button-ghost svg {
   outline: 2px solid transparent;
 }
 
-.lx-layout .lx-context-container .lx-dropdown-panel .lx-button-set {
+.lx .lx-layout .lx-dropdown-panel .lx-button-set {
   flex-direction: column;
   gap: var(--button-dropdown-set-gap);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button,
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button,
-.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button,
+.lx .lx-layout .lx-dropdown-panel > .lx-button {
   padding: var(--button-dropdown-padding);
   margin: var(--button-dropdown-margin);
   text-decoration: var(--button-dropdown-text-decoration);
@@ -1313,10 +1314,10 @@ a.lx-button.lx-button-ghost svg {
   outline-offset: var(--button-dropdown-outline-offset);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button-content-wrapper,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button-content-wrapper,
-.lx-context-container .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper,
-.lx-context-container .lx-dropdown-panel > .lx-button .lx-button-content-wrapper {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button-content-wrapper,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button-content-wrapper,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button .lx-button-content-wrapper,
+.lx .lx-layout.lx-dropdown-panel > .lx-button .lx-button-content-wrapper {
   grid-template-areas: var(--button-dropdown-grid-areas);
   grid-template-columns: var(--button-dropdown-grid-template-columns);
   grid-template-rows: var(--button-dropdown-grid-template-rows);
@@ -1324,17 +1325,17 @@ a.lx-button.lx-button-ghost svg {
   gap: var(--button-dropdown-gap);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button-content,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button-content,
-.lx-context-container .lx-dropdown-panel > div > .lx-button .lx-button-content,
-.lx-context-container .lx-dropdown-panel > .lx-button .lx-button-content {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button-content,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button-content,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button .lx-button-content,
+.lx .lx-layout .lx-dropdown-panel > .lx-button .lx-button-content {
   text-align: var(--button-dropdown-text-align);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:hover,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover,
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:hover,
-.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:hover,
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:hover,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:hover,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:hover,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:hover,
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover,
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .lx-dropdown-panel .lx-button.lx-button-ghost:hover {
   background-color: var(--color-button-dropdown-hover-background);
@@ -1342,28 +1343,28 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-button-dropdown-hover);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:active,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:active,
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button:active,
-.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button:active {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:active,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:active,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:active,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:active {
   background-color: var(--color-button-dropdown-active-background);
   border-color: var(--color-button-dropdown-active-border);
   color: var(--color-button-dropdown-active);
 }
 
-.lx-layout .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:focus,
-.lx-layout .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:focus,
-.lx-layout .lx-context-container .popper .lx-dropdown-panel > div > .lx-button:focus,
-.lx-layout .lx-context-container .popper .lx-dropdown-panel > .lx-button:focus {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:focus,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:focus,
+.lx .lx-layout .popper .lx-dropdown-panel > div > .lx-button:focus,
+.lx .lx-layout .popper .lx-dropdown-panel > .lx-button:focus {
   background-color: var(--color-button-dropdown-focus-background);
   border-color: var(--color-button-dropdown-focus-border);
   color: var(--color-button-dropdown-focus);
 }
 
-.lx-layout .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-disabled,
-.lx-layout .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
-.lx-layout .lx-context-container .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
-.lx-layout .lx-context-container .popper .lx-dropdown-panel > .lx-button.lx-disabled {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button.lx-disabled,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
+.lx .lx-layout .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
+.lx .lx-layout .popper .lx-dropdown-panel > .lx-button.lx-disabled {
   background-color: var(--color-button-dropdown-disabled-background);
   color: var(--color-button-dropdown-disabled);
   border-color: var(--color-button-dropdown-disabled-border);
@@ -1530,7 +1531,7 @@ a.lx-button.lx-button-ghost svg {
   min-width: var(--button-ghost-icon-only-min-width);
 }
 
-.lx .lx-button.lx-button-icon-only .lx-button-content-wrapper {
+.lx .lx-layout .lx-button.lx-button-icon-only .lx-button-content-wrapper {
   gap: 0;
   --button-primary-grid-areas: 'icon';
   --button-primary-grid-template-columns: 1fr;
@@ -1583,10 +1584,10 @@ a.lx-button.lx-button-ghost svg {
   border-color: var(--color-button-active-mode-border);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-active:not(.lx-disabled),
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-active:not(.lx-disabled),
-.lx-layout .lx-context-container .lx-dropdown-panel > div > .lx-button.lx-active:not(.lx-disabled),
-.lx-layout .lx-context-container .lx-dropdown-panel > .lx-button.lx-active:not(.lx-disabled) {
+.lx-user-menu .lx-dropdown-panel .lx-button.lx-active:not(.lx-disabled),
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-active:not(.lx-disabled),
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button.lx-active:not(.lx-disabled),
+.lx .lx-layout .lx-dropdown-panel > .lx-button.lx-active:not(.lx-disabled) {
   background-color: var(--color-selected-dropdown-background);
   color: var(--color-selected-dropdown);
   border-color: var(--color-selected-dropdown-border);
@@ -2150,7 +2151,7 @@ a.lx-button.lx-button-ghost svg {
 
 /* Skiplink styles */
 
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-divider {
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-divider {
   border-bottom: 2px solid var(--color-background);
   margin: 1rem;
   margin-bottom: 0.25rem;
@@ -2158,6 +2159,7 @@ a.lx-button.lx-button-ghost svg {
   height: auto;
   width: calc(100% - 2rem);
 }
+
 .lx-layout>.lx-skip-link-wrapper {
     z-index: 9999;
 }
@@ -2196,22 +2198,22 @@ a.lx-button.lx-button-ghost svg {
 
 /* LxDropDownMenu action definitions */
 
-.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group{
-    border-bottom: 1px solid var(--color-chrome)
+.lx .lx-layout .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group{
+  border-bottom: 1px solid var(--color-chrome)
 }
 
-.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group.lx-dropdown-menu-no-panel:last-child{
-    border-bottom: none;
+.lx .lx-layout .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group.lx-dropdown-menu-no-panel:last-child{
+  border-bottom: none;
 }
 
-.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.5rem 0.5rem 0.5rem 1rem;
+.lx .lx-layout .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
 }
 
-.lx-context-container .popper-wrapper > .popper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper > .lx-dropdown-toggle-label {
+.lx .lx-layout .popper > .lx-dropdown-panel-wrapper > .lx-dropdown-panel > .lx-dropdown-menu-group .lx-dropdown-menu-toggle-wrapper > .lx-dropdown-toggle-label {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

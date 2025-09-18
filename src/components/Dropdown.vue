@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, watch, nextTick, inject } from 'vue';
+import { onClickOutside } from '@vueuse/core';
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import LxIcon from '@/components/Icon.vue';
 import LxStateDisplay from '@/components/StateDisplay.vue';
 import LxFlag from '@/components/Flag.vue';
-import { generateUUID } from '@/utils/stringUtils';
-import { onClickOutside } from '@vueuse/core';
 import LxPopper from '@/components/Popper.vue';
+import { generateUUID } from '@/utils/stringUtils';
+import { focusNextFocusableElement } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -36,7 +38,13 @@ const menuOpen = ref(false);
 const allItems = ref(props.items);
 const panelWidth = ref();
 const highlightedItemId = ref(null);
-const activeDropdown = ref(null);
+
+const panelRef = ref();
+
+const { activate, deactivate } = useFocusTrap(panelRef, {
+  allowOutsideClick: true,
+  initialFocus: false,
+});
 
 const model = computed({
   get() {
@@ -98,18 +106,26 @@ const getIdAttributeString = (item) => {
 function focusOnDropDown() {
   if (menuOpen.value) {
     menuOpen.value = false;
+    deactivate();
+
     nextTick(() => {
       container.value.focus();
     });
   }
 }
 
-function closeDropDownDefault() {
-  menuOpen.value = false;
+function closeDropDownDefault(returnFocus = true) {
+  if (menuOpen.value) {
+    menuOpen.value = false;
+  }
+  deactivate({
+    returnFocus,
+  });
 }
 
 function closeDropDownDefaultOnEsc() {
   menuOpen.value = false;
+
   nextTick(() => {
     container.value.focus();
   });
@@ -121,10 +137,11 @@ function getItemId(id) {
 
 function openDropDownDefault() {
   if (!menuOpen.value) {
-    menuOpen.value = true;
     panelWidth.value = container.value?.offsetWidth;
-    activeDropdown.value = container.value;
+    menuOpen.value = true;
+
     nextTick(() => {
+      activate();
       const formElements = document.querySelectorAll(
         `#${props.id} div.lx-dropdown-default-content > div.lx-value-picker-item`
       );
@@ -184,7 +201,14 @@ watch(
 );
 
 const refRoot = ref();
-onClickOutside(refRoot, closeDropDownDefault);
+
+function clickOutsideHandler() {
+  closeDropDownDefault(false);
+}
+
+onClickOutside(refRoot, clickOutsideHandler, {
+  ignore: ['#poppers'],
+});
 
 function onEnter() {
   if (!menuOpen.value) {
@@ -245,8 +269,8 @@ function onUp() {
 function focusNextInputElement() {
   onDown();
   nextTick(() => {
-    if (activeDropdown.value) {
-      const highlightedItems = activeDropdown.value.querySelectorAll(
+    if (panelRef.value) {
+      const highlightedItems = panelRef.value.querySelectorAll(
         '.lx-value-picker-item.lx-highlighted-item'
       );
       highlightedItems[0]?.focus();
@@ -257,14 +281,29 @@ function focusNextInputElement() {
 function focusPreviousInputElement() {
   onUp();
   nextTick(() => {
-    if (activeDropdown.value) {
-      const highlightedItems = activeDropdown.value.querySelectorAll(
+    if (panelRef.value) {
+      const highlightedItems = panelRef.value.querySelectorAll(
         '.lx-value-picker-item.lx-highlighted-item'
       );
       highlightedItems[0]?.focus();
     }
   });
 }
+
+const handleKeydown = (e) => {
+  if (e.key === 'Tab' && menuOpen.value) {
+    const tabPressed = e.shiftKey ? 'backward' : 'forward';
+
+    deactivate({
+      returnFocus: false,
+    });
+
+    menuOpen.value = false;
+
+    focusNextFocusableElement(container.value, tabPressed === 'forward');
+  }
+};
+
 function selectSingle(item) {
   try {
     selectedIdValue.value = getIdAttributeString(item);
@@ -272,6 +311,7 @@ function selectSingle(item) {
     closeDropDownDefault();
   }
 }
+
 const selectedItemStored = ref(null);
 const selectedItem = ref(null);
 
@@ -394,17 +434,17 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
         ref="container"
         :disabled="disabled"
         :aria-disabled="disabled"
-        @keydown.esc.prevent="closeDropDownDefaultOnEsc"
-        @keydown.enter.prevent="onEnter"
-        @keydown.space.prevent="onEnter"
-        @keydown.down.prevent="focusNextInputElement"
-        @keydown.up.prevent="focusPreviousInputElement"
-        @keydown.tab="focusOnDropDown"
         :tabindex="disabled ? '-1' : tabindex"
         role="combobox"
         :aria-expanded="ariaExpandedState"
         aria-controls="popper-id"
         :aria-labelledby="labelledBy"
+        @keydown.esc.prevent="closeDropDownDefaultOnEsc"
+        @keydown.enter.prevent="onEnter"
+        @keydown.space.prevent="onEnter"
+        @keydown.down.prevent="focusNextInputElement"
+        @keydown.up.prevent="focusPreviousInputElement"
+        @keydown="handleKeydown"
       >
         <LxPopper
           :id="`${id}-popper`"
@@ -469,52 +509,69 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
           </div>
           <template #content>
             <div
+              ref="panelRef"
               tabindex="-1"
               class="lx-dropdown-default-content"
               :style="{ width: panelWidth + 'px' }"
+              @keydown.esc.prevent="closeDropDownDefaultOnEsc"
+              @keydown.enter.prevent="onEnter"
+              @keydown.space.prevent="onEnter"
+              @keydown.down.prevent="focusNextInputElement"
+              @keydown.up.prevent="focusPreviousInputElement"
+              @keydown="handleKeydown"
             >
               <slot name="panel" @click="closeDropDownDefault()">
-                <template v-if="filteredItems?.length">
-                  <template v-for="item in filteredItems" :key="item[idAttribute]">
-                    <div
-                      :id="getItemId(getIdAttributeString(item))"
-                      role="option"
-                      tabindex="-1"
-                      :aria-selected="isItemSelected(item)"
-                      @click="selectSingle(item)"
-                      class="lx-value-picker-item"
-                      :class="[
-                        {
-                          'lx-selected': isItemSelected(item),
-                          'lx-highlighted-item':
-                            highlightedItemId && highlightedItemId === getIdAttributeString(item),
-                        },
-                      ]"
-                    >
-                      <LxStateDisplay
-                        v-if="variant === 'state'"
-                        :value="item[idAttribute]"
-                        :dictionary="[
+                <div class="lx-dropdown-panel" tabindex="-1" role="listbox">
+                  <template v-if="filteredItems?.length">
+                    <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
+                      <div
+                        :id="getItemId(getIdAttributeString(item))"
+                        role="option"
+                        :aria-selected="isItemSelected(item)"
+                        class="lx-value-picker-item"
+                        :tabindex="
+                          highlightedItemId && highlightedItemId === getIdAttributeString(item)
+                            ? '0'
+                            : !highlightedItemId
+                            ? index === 0
+                              ? '0'
+                              : '-1'
+                            : '-1'
+                        "
+                        :class="[
                           {
-                            value: item[idAttribute],
-                            displayName: item[nameAttribute],
-                            displayType: item.displayType,
-                            displayShape: item.displayShape,
+                            'lx-selected': isItemSelected(item),
+                            'lx-highlighted-item':
+                              highlightedItemId && highlightedItemId === getIdAttributeString(item),
                           },
                         ]"
-                      />
-                      <template v-else-if="variant === 'country'">
-                        <LxFlag :value="item?.country ? item?.country : 'lv'" size="small" />
-                        {{ item[nameAttribute] }}
-                      </template>
-                      <template v-else-if="variant === 'custom'">
-                        <slot name="customItem" v-bind="item"></slot>
-                      </template>
+                        @click="selectSingle(item)"
+                      >
+                        <LxStateDisplay
+                          v-if="variant === 'state'"
+                          :value="item[idAttribute]"
+                          :dictionary="[
+                            {
+                              value: item[idAttribute],
+                              displayName: item[nameAttribute],
+                              displayType: item.displayType,
+                              displayShape: item.displayShape,
+                            },
+                          ]"
+                        />
+                        <template v-else-if="variant === 'country'">
+                          <LxFlag :value="item?.country ? item?.country : 'lv'" size="small" />
+                          {{ item[nameAttribute] }}
+                        </template>
+                        <template v-else-if="variant === 'custom'">
+                          <slot name="customItem" v-bind="item"></slot>
+                        </template>
 
-                      <template v-else> {{ item[nameAttribute] }}</template>
-                    </div>
+                        <template v-else> {{ item[nameAttribute] }}</template>
+                      </div>
+                    </template>
                   </template>
-                </template>
+                </div>
               </slot>
             </div>
           </template>

@@ -845,14 +845,6 @@ function validateIfExact(e, type = 'startInput') {
   }
 }
 
-const handleFocusOut = (e) => {
-  if (e.relatedTarget && !containerRef.value.contains(e.relatedTarget)) {
-    setTimeout(() => {
-      dropDownMenuRef.value?.closeMenu();
-    }, 200);
-  }
-};
-
 function handleOpen(type) {
   if (props.disabled) return;
   activeInput.value = type;
@@ -1057,7 +1049,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div ref="containerRef" class="lx-datepicker-default" @focusout="handleFocusOut">
+  <div ref="containerRef" class="lx-datepicker-default">
     <div :id="`${id}-lx-range-input-description`" class="lx-invisible">
       {{ inputDescriptionMsg }}
     </div>

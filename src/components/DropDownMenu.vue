@@ -1,9 +1,10 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxToggle from '@/components/Toggle.vue';
 import { onClickOutside } from '@vueuse/core';
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 
 const props = defineProps({
   placement: { type: String, default: 'bottom' },
@@ -17,16 +18,35 @@ const props = defineProps({
 const emits = defineEmits(['actionClick']);
 
 const menuOpen = ref(false);
+const panelRef = ref();
+const dropDownWrapper = ref();
 
-function closeMenu() {
+const { activate, deactivate } = useFocusTrap(panelRef, {
+  allowOutsideClick: true,
+  initialFocus: false,
+});
+
+function closeMenu(source = 'keyboard') {
   if (menuOpen.value) {
     menuOpen.value = false;
   }
+
+  deactivate({
+    returnFocus: (source && source === 'keyboard') || false,
+  });
 }
-function openMenu() {
+
+function openMenu(source = 'keyboard') {
   if (!props.disabled && !menuOpen.value) {
     menuOpen.value = true;
-  } else if (menuOpen.value) closeMenu();
+
+    nextTick(() => {
+      activate();
+      panelRef.value?.focus();
+    });
+  } else if (menuOpen.value) {
+    closeMenu(source);
+  }
 }
 
 function preventClose(event) {
@@ -56,13 +76,23 @@ const groupedItems = computed(() => {
   return res;
 });
 
-const dropDownWrapper = ref();
-
-onClickOutside(dropDownWrapper, closeMenu);
+function handleClick() {
+  if (props.triggerClick === 'left') {
+    openMenu('click');
+  }
+}
 
 function actionClicked(id, value = undefined) {
   emits('actionClick', id, value);
 }
+
+function onClickOutsideHandler() {
+  closeMenu('click');
+}
+
+onClickOutside(dropDownWrapper, onClickOutsideHandler, {
+  ignore: ['#poppers'],
+});
 
 defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
 </script>
@@ -85,8 +115,9 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         v-if="props.triggerClick === 'right'"
         class="lx-dropdown-toggler"
         :tabindex="disabled ? -1 : 0"
-        @keyup.enter="openMenu"
-        @keyup.space="openMenu"
+        @keyup.enter="openMenu('keyboard')"
+        @keyup.space="openMenu('keyboard')"
+        @keydown.esc="closeMenu('keyboard')"
         @keydown.space.prevent
         @contextmenu.prevent="openMenu"
       >
@@ -97,129 +128,136 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         v-else
         class="lx-dropdown-toggler"
         :tabindex="disabled ? -1 : 0"
-        @keyup.enter="openMenu"
-        @keyup.space="openMenu"
+        @keyup.enter="openMenu('keyboard')"
+        @keyup.space="openMenu('keyboard')"
+        @keydown.esc="closeMenu('keyboard')"
         @keydown.space.prevent
-        @click="props.triggerClick === 'left' ? openMenu() : null"
+        @click="handleClick"
       >
         <slot />
       </div>
 
       <template #content>
-        <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel" role="group">
-          <div
-            v-for="(group, groupName) in groupedItems"
-            :key="groupName"
-            class="lx-button-set lx-dropdown-menu-group"
-          >
-            <div v-for="action in group" :key="action?.id">
-              <div v-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
-                <label
-                  class="lx-dropdown-toggle-label"
-                  :id="`${action.id}-label`"
-                  :for="action?.id"
-                >
-                  {{ action?.name || action?.label }}
-                </label>
-                <LxToggle
+        <div ref="panelRef" class="lx-dropdown-panel-wrapper" @keydown.esc="closeMenu('keyboard')">
+          <div v-if="$slots.clickSafePanel" class="lx-dropdown-panel" role="group">
+            <div
+              v-for="(group, groupName) in groupedItems"
+              :key="groupName"
+              class="lx-button-set lx-dropdown-menu-group"
+            >
+              <div v-for="action in group" :key="action?.id">
+                <div v-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
+                  <label
+                    class="lx-dropdown-toggle-label"
+                    :id="`${action.id}-label`"
+                    :for="action?.id"
+                  >
+                    {{ action?.name || action?.label }}
+                  </label>
+                  <LxToggle
+                    :id="action?.id"
+                    :labelId="`${action.id}-label`"
+                    :disabled="action?.disabled"
+                    v-model="action.value"
+                    :texts="action?.texts"
+                    :tooltip="action?.title"
+                    :size="action?.size"
+                    @update:modelValue="
+                      (newValue) => {
+                        actionClicked(action?.id, newValue);
+                      }
+                    "
+                    @click="preventClose"
+                  />
+                </div>
+
+                <LxButton
+                  v-else
                   :id="action?.id"
-                  :labelId="`${action.id}-label`"
+                  :label="action?.name || action?.label"
+                  :title="action?.title"
+                  kind="ghost"
+                  :icon="action?.icon"
+                  :iconSet="action?.iconSet"
                   :disabled="action?.disabled"
-                  v-model="action.value"
-                  :texts="action?.texts"
-                  :tooltip="action?.title"
-                  :size="action?.size"
-                  @update:modelValue="
-                    (newValue) => {
-                      actionClicked(action?.id, newValue);
-                    }
-                  "
-                  @click="preventClose"
+                  :loading="action?.loading"
+                  :busy="action?.busy"
+                  :destructive="action?.destructive"
+                  :badge="action?.badge"
+                  :badge-type="action?.badgeType"
+                  :active="action?.active"
+                  :href="action?.href"
+                  @click="actionClicked(action?.id)"
                 />
               </div>
-              <LxButton
-                v-else
-                :id="action?.id"
-                :label="action?.name || action?.label"
-                :title="action?.title"
-                kind="ghost"
-                :icon="action?.icon"
-                :iconSet="action?.iconSet"
-                :disabled="action?.disabled"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
-                :badge="action?.badge"
-                :badge-type="action?.badgeType"
-                :active="action?.active"
-                :href="action?.href"
-                @click="actionClicked(action?.id)"
-              />
             </div>
+
+            <slot name="clickSafePanel" />
           </div>
-          <slot name="clickSafePanel" />
-        </div>
-        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
-        <div
-          v-if="$slots.panel || (actionDefinitions?.length > 0 && !$slots.clickSafePanel)"
-          class="lx-dropdown-panel"
-          role="group"
-          @click="closeMenu"
-        >
+          <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
           <div
-            v-for="(group, groupName) in groupedItems"
-            :key="groupName"
-            class="lx-button-set lx-dropdown-menu-group"
-            :class="[
-              { 'lx-dropdown-menu-no-panel': !$slots.panel && actionDefinitions?.length > 0 },
-            ]"
+            v-if="$slots.panel || (actionDefinitions?.length > 0 && !$slots.clickSafePanel)"
+            class="lx-dropdown-panel"
+            role="group"
+            @click="closeMenu"
           >
-            <div v-for="action in group" :key="action?.id">
-              <div v-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
-                <label
-                  class="lx-dropdown-toggle-label"
-                  :id="`${action.id}-label`"
-                  :for="action?.id"
-                >
-                  {{ action?.name || action?.label }}
-                </label>
-                <LxToggle
+            <div
+              v-for="(group, groupName) in groupedItems"
+              :key="groupName"
+              class="lx-button-set lx-dropdown-menu-group"
+              :class="[
+                { 'lx-dropdown-menu-no-panel': !$slots.panel && actionDefinitions?.length > 0 },
+              ]"
+            >
+              <div v-for="action in group" :key="action?.id">
+                <div v-if="action?.kind === 'toggle'" class="lx-dropdown-menu-toggle-wrapper">
+                  <label
+                    class="lx-dropdown-toggle-label"
+                    :id="`${action.id}-label`"
+                    :for="action?.id"
+                  >
+                    {{ action?.name || action?.label }}
+                  </label>
+                  <LxToggle
+                    :id="action?.id"
+                    :labelId="`${action.id}-label`"
+                    :disabled="action?.disabled"
+                    v-model="action.value"
+                    :texts="action?.texts"
+                    :tooltip="action?.title"
+                    :size="action?.size"
+                    @update:modelValue="
+                      (newValue) => {
+                        actionClicked(action?.id, newValue);
+                      }
+                    "
+                    @click="preventClose"
+                  />
+                </div>
+
+                <LxButton
+                  v-else
                   :id="action?.id"
-                  :labelId="`${action.id}-label`"
+                  :label="action?.name || action?.label"
+                  :title="action?.title"
+                  kind="ghost"
+                  :icon="action?.icon"
+                  :iconSet="action?.iconSet"
                   :disabled="action?.disabled"
-                  v-model="action.value"
-                  :texts="action?.texts"
-                  :tooltip="action?.title"
-                  :size="action?.size"
-                  @update:modelValue="
-                    (newValue) => {
-                      actionClicked(action?.id, newValue);
-                    }
-                  "
-                  @click="preventClose"
+                  :loading="action?.loading"
+                  :busy="action?.busy"
+                  :destructive="action?.destructive"
+                  :badge="action?.badge"
+                  :badge-type="action?.badgeType"
+                  :active="action?.active"
+                  :href="action?.href"
+                  @click="actionClicked(action?.id)"
                 />
               </div>
-              <LxButton
-                v-else
-                :id="action?.id"
-                :label="action?.name || action?.label"
-                :title="action?.title"
-                kind="ghost"
-                :icon="action?.icon"
-                :iconSet="action?.iconSet"
-                :disabled="action?.disabled"
-                :loading="action?.loading"
-                :busy="action?.busy"
-                :destructive="action?.destructive"
-                :badge="action?.badge"
-                :badge-type="action?.badgeType"
-                :active="action?.active"
-                :href="action?.href"
-                @click="actionClicked(action?.id)"
-              />
             </div>
+
+            <slot name="panel" />
           </div>
-          <slot name="panel" />
         </div>
       </template>
     </LxPopper>

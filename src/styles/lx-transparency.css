@@ -19,7 +19,7 @@
 .lx.lx-no-transparency .lx-info-wrapper .popper,
 .lx.lx-no-transparency .lx-dropdown-default-content,
 .lx.lx-no-transparency .lx-notifications-list .lx-notification .lx-main,
-.lx.lx-no-transparency .lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
+.lx.lx-no-transparency .popper .lx-dropdown-panel {
     --shadow-dropdown: 0px transparent;
 }
 
@@ -39,7 +39,7 @@
 
 .lx.lx-no-transparency .lx-dropdown-default-content,
 .lx.lx-no-transparency .lx-notifications-list .lx-notification,
-.lx.lx-no-transparency .lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
+.lx.lx-no-transparency .popper .lx-dropdown-panel {
     --region-border-transparent: 2px solid var(--color-chrome);
 }
 

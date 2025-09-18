@@ -9,7 +9,8 @@ import LxAutoComplete from '@/components/AutoComplete.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import { onClickOutside } from '@vueuse/core';
 import LxPopper from '@/components/Popper.vue';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 
 const props = defineProps({
   id: { type: String, default: null },
@@ -48,7 +49,13 @@ const hiddenValues = ref([]);
 const highlightedItemId = ref(null);
 const panelWidth = ref();
 const refRoot = ref();
-const activeDropdown = ref(null);
+
+const panelRef = ref();
+
+const { activate, deactivate } = useFocusTrap(panelRef, {
+  allowOutsideClick: true,
+  initialFocus: false,
+});
 
 const textsDefault = {
   clearQuery: 'Notīrīt meklēšanu',
@@ -106,7 +113,7 @@ const itemsDisplay = computed(() => {
   return res;
 });
 
-function activate() {
+function activateItems() {
   // First set all items as not selected
   itemsDisplay.value?.forEach((item) => {
     itemsModel.value[item[props.idAttribute].toString()] = false;
@@ -125,7 +132,7 @@ function activate() {
     }
   }
 }
-activate();
+activateItems();
 
 function clear(e = { stopPropagation: () => {} }) {
   e?.stopPropagation();
@@ -149,7 +156,7 @@ watch(
   },
   ({ value, length }) => {
     if (!value) return;
-    activate();
+    activateItems();
     // TODO need normal solution to avoid v-model = [[]] (v-model = null, variant = dropdown, kind = multiple, alwaysAsArray = true), maybe rework emits
     if (Array.isArray(value) && Array.isArray(value[0])) {
       clear();
@@ -216,7 +223,7 @@ function selectSingle(id) {
 watch(
   () => props.kind,
   (newKind) => {
-    activate();
+    activateItems();
     itemsModel.value = {};
 
     if (newKind === 'multiple') {
@@ -323,24 +330,40 @@ const filteredItems = computed(() => {
 });
 
 function closeDropDownDefault() {
+  if (menuOpen.value) {
+    menuOpen.value = false;
+  }
+  deactivate();
+}
+
+function closeDropDownDefaultOnEsc() {
   menuOpen.value = false;
+
+  nextTick(() => {
+    container.value.focus();
+  });
 }
 
 function openDropDownDefault() {
   if (!menuOpen.value) {
-    menuOpen.value = true;
     panelWidth.value = container.value?.offsetWidth;
-    activeDropdown.value = container.value;
-    setTimeout(() => {
-      const formElements = document.querySelectorAll(`#${props.id} input.lx-checkbox`);
+    menuOpen.value = true;
+
+    nextTick(() => {
+      activate();
+      const formElements = document.querySelectorAll(
+        `#${props.id} div.lx-dropdown-default-content > div.lx-value-picker-item`
+      );
       formElements[highlightedItemId.value - 1]?.focus();
-    }, 150);
+    });
   } else if (menuOpen.value) {
     closeDropDownDefault();
   }
 }
 
-onClickOutside(refRoot, closeDropDownDefault);
+onClickOutside(refRoot, closeDropDownDefault, {
+  ignore: ['#poppers'],
+});
 
 function onEnter() {
   if (document.activeElement?.id === 'clearButton') {
@@ -378,8 +401,8 @@ function onDown() {
 function focusNextInputElement() {
   onDown();
   nextTick(() => {
-    if (activeDropdown.value) {
-      const highlightedItems = activeDropdown.value.querySelectorAll(
+    if (panelRef.value) {
+      const highlightedItems = panelRef.value.querySelectorAll(
         '.lx-value-picker-item.lx-highlighted-item'
       );
       highlightedItems[0]?.focus();
@@ -390,8 +413,8 @@ function focusNextInputElement() {
 function focusPreviousInputElement() {
   onUp();
   nextTick(() => {
-    if (activeDropdown.value) {
-      const highlightedItems = activeDropdown.value.querySelectorAll(
+    if (panelRef.value) {
+      const highlightedItems = panelRef.value.querySelectorAll(
         '.lx-value-picker-item.lx-highlighted-item'
       );
       highlightedItems[0]?.focus();
@@ -432,14 +455,19 @@ const variantAutoComplete = computed(() => {
   return res;
 });
 
-function focusOnDropDown() {
-  if (menuOpen.value) {
-    closeDropDownDefault();
-    setTimeout(() => {
-      container.value.focus();
-    }, 5);
+const handleKeydown = (e) => {
+  if (e.key === 'Tab' && menuOpen.value) {
+    const tabPressed = e.shiftKey ? 'backward' : 'forward';
+
+    deactivate({
+      returnFocus: false,
+    });
+
+    menuOpen.value = false;
+
+    focusNextFocusableElement(container.value, tabPressed === 'forward');
   }
-}
+};
 
 const areSomeSelected = computed(() => {
   let res = false;
@@ -557,27 +585,28 @@ const columnReadOnly = computed(() => {
     </LxDropDown>
 
     <div
-      class="lx-value-picker-dropdown-wrapper"
       v-if="kind === 'multiple' && !hasSearch"
+      class="lx-value-picker-dropdown-wrapper"
       ref="refRoot"
     >
       <div
-        class="lx-dropdown-default"
         :id="id"
+        class="lx-dropdown-default"
         ref="container"
         :disabled="disabled"
+        :aria-disabled="disabled"
         :tabindex="disabled ? '-1' : '0'"
         role="combobox"
-        :aria-invalid="invalid"
         :aria-expanded="menuOpen"
         aria-controls="popper-id"
+        :aria-invalid="invalid"
         :aria-labelledby="labelId"
-        @keydown.esc.prevent="closeDropDownDefault"
+        @keydown.esc.prevent="closeDropDownDefaultOnEsc"
         @keydown.enter.prevent="onEnter"
         @keydown.space.prevent="onEnter"
         @keydown.down.prevent="focusNextInputElement"
         @keydown.up.prevent="focusPreviousInputElement"
-        @keydown.tab="focusOnDropDown"
+        @keydown="handleKeydown"
       >
         <LxPopper
           :id="`${id}-popper`"
@@ -632,70 +661,97 @@ const columnReadOnly = computed(() => {
           </div>
 
           <template #content>
-            <div class="lx-dropdown-default-content" :style="{ width: panelWidth + 'px' }">
+            <div
+              ref="panelRef"
+              tabindex="-1"
+              class="lx-dropdown-default-content"
+              :style="{ width: panelWidth + 'px' }"
+              @keydown.esc.prevent="closeDropDownDefaultOnEsc"
+              @keydown.enter.prevent="onEnter"
+              @keydown.space.prevent="onEnter"
+              @keydown.down.prevent="focusNextInputElement"
+              @keydown.up.prevent="focusPreviousInputElement"
+              @keydown="handleKeydown"
+            >
               <slot name="panel" @click="closeDropDownDefault()">
-                <div
-                  v-if="hasSelectAll"
-                  class="lx-value-picker-item select-all"
-                  tabindex="-1"
-                  role="option"
-                  :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-                  @click="selectAll"
-                >
-                  <LxIcon
-                    :value="
-                      areSomeSelected
-                        ? areAllSelected
-                          ? 'checkbox-filled'
-                          : 'checkbox-indeterminate'
-                        : 'checkbox'
-                    "
-                  />
-                  <span>{{ areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll }}</span>
-                </div>
-                <template v-for="item in filteredItems" :key="item[idAttribute]">
+                <div class="lx-dropdown-panel" tabindex="-1" role="listbox">
                   <div
-                    :title="item[nameAttribute]"
-                    class="lx-value-picker-item"
+                    v-if="hasSelectAll"
+                    class="lx-value-picker-item select-all"
                     tabindex="-1"
                     role="option"
-                    :aria-selected="isItemSelected(item)"
-                    :class="[
-                      {
-                        'lx-highlighted-item':
-                          highlightedItemId && highlightedItemId === getIdAttributeString(item),
-                      },
-                      {
-                        'lx-selected': isItemSelected(item),
-                      },
-                    ]"
-                    :id="getItemId(item[idAttribute])"
-                    @click="selectMultiple(item[idAttribute])"
+                    :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+                    @click="selectAll"
                   >
-                    <LxCheckbox
-                      v-if="kind === 'multiple'"
-                      :id="getItemId(item[idAttribute])"
-                      :group-id="groupId"
-                      v-model="itemsModel[item[idAttribute]]"
-                      :disabled="disabled"
-                      :value="item[idAttribute]?.toString()"
-                      :labelId="getLabelId(item[idAttribute])"
-                      @click="selectMultiple(item[idAttribute])"
+                    <LxIcon
+                      :value="
+                        areSomeSelected
+                          ? areAllSelected
+                            ? 'checkbox-filled'
+                            : 'checkbox-indeterminate'
+                          : 'checkbox'
+                      "
                     />
-
-                    <label :for="item.id">
-                      <LxSearchableText
-                        :value="item[nameAttribute]"
-                        :search-string="query"
-                        v-if="variant === 'dropdown'"
-                      />
-                    </label>
-
-                    <div v-if="variant === 'dropdown-custom'">
-                      <slot name="customItemDropdown" v-bind="item"></slot>
-                    </div>
+                    <span>
+                      {{ areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll }}
+                    </span>
                   </div>
-                </template>
+                  <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
+                    <div
+                      :title="item[nameAttribute]"
+                      class="lx-value-picker-item"
+                      :tabindex="
+                        highlightedItemId && highlightedItemId === getIdAttributeString(item)
+                          ? '0'
+                          : !highlightedItemId
+                          ? index === 0
+                            ? '0'
+                            : '-1'
+                          : '-1'
+                      "
+                      role="option"
+                      :aria-selected="isItemSelected(item)"
+                      :class="[
+                        {
+                          'lx-highlighted-item':
+                            highlightedItemId && highlightedItemId === getIdAttributeString(item),
+                        },
+                        {
+                          'lx-selected': isItemSelected(item),
+                        },
+                        {
+                          'dropdown-multiple': kind === 'multiple',
+                        },
+                      ]"
+                      :id="getItemId(item[idAttribute])"
+                      @click="selectMultiple(item[idAttribute])"
+                    >
+                      <LxCheckbox
+                        v-if="kind === 'multiple'"
+                        tabindex="-1"
+                        :id="getItemId(item[idAttribute])"
+                        :group-id="groupId"
+                        v-model="itemsModel[item[idAttribute]]"
+                        :disabled="disabled"
+                        :value="item[idAttribute]?.toString()"
+                        :labelId="getLabelId(item[idAttribute])"
+                        @click="selectMultiple(item[idAttribute])"
+                      />
+
+                      <label :for="item.id">
+                        <LxSearchableText
+                          :value="item[nameAttribute]"
+                          :search-string="query"
+                          v-if="variant === 'dropdown'"
+                        />
+                      </label>
+
+                      <div v-if="variant === 'dropdown-custom'">
+                        <slot name="customItemDropdown" v-bind="item"></slot>
+                      </div>
+                    </div>
+                  </template>
+                </div>
               </slot>
             </div>
           </template>

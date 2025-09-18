@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { test, expect, describe, afterEach } from 'vitest';
-import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
+import { test, expect, describe, afterEach, beforeEach } from 'vitest';
 import { mount } from '@vue/test-utils';
+import LxDateTimePicker from '@/components/datePicker/DateTimePicker.vue';
 
 // Simple single tests
 
@@ -14,7 +14,14 @@ const dummyClickAway = {
   unmounted() {},
 };
 
+beforeEach(() => {
+  const el = document.createElement('div');
+  el.id = 'poppers';
+  document.body.appendChild(el);
+});
+
 afterEach(() => {
+  document.body.innerHTML = '';
   if (wrapper) {
     wrapper.unmount();
   }
@@ -87,12 +94,12 @@ describe.each([
 
     await pickerInput.trigger('keydown', { key: 'ArrowDown' });
 
-    const calendarContainer = wrapper.find(container);
-    expect(calendarContainer.exists()).toBe(true);
+    const calendarContainer = document.body.querySelector(container);
+    expect(calendarContainer).toBeTruthy();
 
-    const unitContent = calendarContainer.find(unit);
-    expect(unitContent.exists()).toBe(true);
-    expect(unitContent.text()).toMatch(regEx);
+    const unitContent = calendarContainer.querySelector(unit);
+    expect(unitContent).toBeTruthy();
+    expect(unitContent.textContent).toMatch(regEx);
   });
 });
 
@@ -397,12 +404,14 @@ test('LxDateTimePicker min outside of today in future, max in not provided', asy
 
   await pickerInput.trigger('keydown', { key: 'ArrowDown' });
 
-  const calendarContainer = wrapper.find('.lx-calendar-container');
-  expect(calendarContainer.exists()).toBe(true);
+  const calendarContainer = document.body.querySelector('.lx-calendar-container');
+  expect(calendarContainer).toBeTruthy();
 
-  const monthSelectButton = wrapper.find('.lx-button.lx-calendar-months-select-button');
+  const monthSelectButton = calendarContainer.querySelector(
+    '.lx-button.lx-calendar-months-select-button'
+  );
   expect(monthSelectButton).toBeTruthy();
-  expect(monthSelectButton.attributes('aria-label')).toBe('Jūnijs');
+  expect(monthSelectButton.getAttribute('aria-label')).toBe('Jūnijs');
 });
 
 test('LxDateTimePicker max outside of today in past, min in not provided', async () => {
@@ -428,12 +437,14 @@ test('LxDateTimePicker max outside of today in past, min in not provided', async
 
   await pickerInput.trigger('keydown', { key: 'ArrowDown' });
 
-  const calendarContainer = wrapper.find('.lx-calendar-container');
-  expect(calendarContainer.exists()).toBe(true);
+  const calendarContainer = document.body.querySelector('.lx-calendar-container');
+  expect(calendarContainer).toBeTruthy();
 
-  const monthSelectButton = wrapper.find('.lx-button.lx-calendar-months-select-button');
+  const monthSelectButton = calendarContainer.querySelector(
+    '.lx-button.lx-calendar-months-select-button'
+  );
   expect(monthSelectButton).toBeTruthy();
-  expect(monthSelectButton.attributes('aria-label')).toBe('Aprīlis');
+  expect(monthSelectButton.getAttribute('aria-label')).toBe('Aprīlis');
 });
 
 test('LxDateTimePicker kind: default, variant: picker, specialDates, dictionary', async () => {

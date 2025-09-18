@@ -2,6 +2,15 @@
 
 ## 1.9 → 1.10
 
+### Breaking changes
+
+#### LxAutoComplete, LxDropDownMenu, LxDropDown, LxInfoWrapper, LxDateTimePicker, LxDateTimeRange, LxValuePicker :variant='dropdown' 
+
+**Inner LxPopper component is now rendered via `Teleport`** instead of using `position: fixed` inside the component tree.  
+Popper content is moved to the root container (`#poppers`) rather than staying within its parent context.  
+This ensures correct layering when used inside modals or other high-level containers. 
+If your project has **custom CSS overrides targeting `.popper` or its children**, these styles may no longer work as expected.  
+
 ### LxAutoComplete and LxDropDown
 
 Removed `dictionary` prop, instead you should directly pass the `displayType` and `displayShape` into items prop how it is with other values

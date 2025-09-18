@@ -578,7 +578,12 @@ const languagesDisplayItems = computed(() =>
                       @click="alertsClicked"
                     />
                   </div>
-                  <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
+                  <ol
+                    class="lx-alert-menu-list"
+                    role="group"
+                    aria-live="polite"
+                    v-if="alerts?.length > 0"
+                  >
                     <li
                       :aria-labelledby="`alert-${item?.id}-name`"
                       :aria-describedby="`alert-${item?.id}-desc`"
@@ -611,7 +616,12 @@ const languagesDisplayItems = computed(() =>
                       @click="alertsClicked"
                     />
                   </div>
-                  <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
+                  <ol
+                    class="lx-alert-menu-list"
+                    role="group"
+                    aria-live="polite"
+                    v-if="alerts?.length > 0"
+                  >
                     <li
                       :aria-labelledby="`alert-${item?.id}-name`"
                       :aria-describedby="`alert-${item?.id}-desc`"

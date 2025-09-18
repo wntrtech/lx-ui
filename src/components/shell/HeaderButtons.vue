@@ -616,7 +616,7 @@ watch(
               @click="alertsClicked"
             />
           </div>
-          <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
+          <ol class="lx-alert-menu-list" role="group" aria-live="polite" v-if="alerts?.length > 0">
             <li
               :aria-labelledby="`alert-${item?.id}-name`"
               :aria-describedby="`alert-${item?.id}-desc`"
@@ -649,7 +649,7 @@ watch(
               @click="alertsClicked"
             />
           </div>
-          <ol role="group" aria-live="polite" v-if="alerts?.length > 0">
+          <ol class="lx-alert-menu-list" role="group" aria-live="polite" v-if="alerts?.length > 0">
             <li
               :aria-labelledby="`alert-${item?.id}-name`"
               :aria-describedby="`alert-${item?.id}-desc`"
@@ -754,56 +754,59 @@ watch(
         </div>
 
         <template #panel>
-          <div class="lx-region user-menu-context">
-            <LxAvatar size="xl" :value="safeString(fullName)" />
-            <div class="lx-data">{{ fullName }}</div>
-            <div class="lx-description" v-if="userInfo?.description">
-              {{ userInfo?.description }}
+          <div class="user-menu-panel">
+            <div class="lx-region user-menu-context">
+              <LxAvatar size="xl" :value="safeString(fullName)" />
+              <div class="lx-data">{{ fullName }}</div>
+              <div class="lx-description" v-if="userInfo?.description">
+                {{ userInfo?.description }}
+              </div>
+              <div class="lx-description" v-if="userInfo?.role">{{ userInfo?.role }}</div>
+              <div class="lx-description" v-if="userInfo?.institution">
+                {{ userInfo?.institution }}
+              </div>
             </div>
-            <div class="lx-description" v-if="userInfo?.role">{{ userInfo?.role }}</div>
-            <div class="lx-description" v-if="userInfo?.institution">
-              {{ userInfo?.institution }}
-            </div>
+
+            <LxButton
+              v-if="alternativeProfilesInfo"
+              kind="ghost"
+              :label="displayTexts.alternativeProfilesButtonLabel"
+              icon="switch"
+              @click="openAlternativeProfilesModal"
+            />
+
+            <LxButton
+              v-if="contextPersonsInfo"
+              kind="ghost"
+              :label="displayTexts.contextPersonsButtonLabel"
+              icon="context-person"
+              @click="openContextPersonModal"
+            />
+
+            <ul class="lx-group" role="group">
+              <li v-for="item in navItemsUserMenu" :key="item.label">
+                <LxButton
+                  kind="ghost"
+                  :label="item.label"
+                  :href="item.to"
+                  :icon="item.icon"
+                  :disabled="headerNavDisable"
+                />
+              </li>
+            </ul>
+
+            <ul class="lx-group" role="group">
+              <li>
+                <LxButton
+                  kind="ghost"
+                  icon="logout"
+                  :label="displayTexts.logOut"
+                  :destructive="true"
+                  @click="logOut"
+                />
+              </li>
+            </ul>
           </div>
-
-          <LxButton
-            v-if="alternativeProfilesInfo"
-            kind="ghost"
-            :label="displayTexts.alternativeProfilesButtonLabel"
-            icon="switch"
-            @click="openAlternativeProfilesModal"
-          />
-
-          <LxButton
-            v-if="contextPersonsInfo"
-            kind="ghost"
-            :label="displayTexts.contextPersonsButtonLabel"
-            icon="context-person"
-            @click="openContextPersonModal"
-          />
-
-          <ul class="lx-group" role="group">
-            <li v-for="item in navItemsUserMenu" :key="item.label">
-              <LxButton
-                kind="ghost"
-                :label="item.label"
-                :href="item.to"
-                :icon="item.icon"
-                :disabled="headerNavDisable"
-              />
-            </li>
-          </ul>
-          <ul class="lx-group" role="group">
-            <li>
-              <LxButton
-                kind="ghost"
-                icon="logout"
-                :label="displayTexts.logOut"
-                :destructive="true"
-                @click="logOut"
-              />
-            </li>
-          </ul>
         </template>
       </LxDropDownMenu>
     </div>

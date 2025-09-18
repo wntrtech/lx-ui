@@ -520,21 +520,7 @@
   color: var(--color-interactive-hover-foreground);
 }
 
-.lx-header-digives
-  > .person-data-section
-  .custom-context-menu
-  .lx-context-container
-  .popper
-  .lx-button-set
-  .lx-button:has(.person-custom-button),
-.lx-layout-digives
-  .lx-nav-panel
-  .nav-bar-user-info
-  .custom-context-menu
-  .lx-context-container
-  .popper
-  .lx-button-set
-  .lx-button:has(.person-custom-button) {
+.lx-layout-digives .popper .lx-dropdown-panel .person-data-section-panel .lx-button-set .lx-button:has(.person-custom-button) {
   height: auto;
   min-height: var(--row-size);
   padding-top: 0.5rem;
@@ -542,7 +528,10 @@
   line-height: 1.1em;
 }
 
-.lx-header-digives > .person-data-section .custom-context-menu .selected-person-display .lx-primary,
+.lx .lx-layout-digives .popper {
+  z-index: 8100;
+}
+
 .lx-layout-digives
   .lx-nav-panel
   .nav-bar-user-info

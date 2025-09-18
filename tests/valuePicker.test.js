@@ -1,4 +1,4 @@
-import { test, expect, afterEach } from 'vitest';
+import { test, expect, afterEach, beforeEach } from 'vitest';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxValuePickerDefault from '@/components/valuePickers/Default.vue';
 import { mount } from '@vue/test-utils';
@@ -6,7 +6,14 @@ import 'regenerator-runtime/runtime';
 
 let wrapper;
 
+beforeEach(() => {
+  const el = document.createElement('div');
+  el.id = 'poppers';
+  document.body.appendChild(el);
+});
+
 afterEach(() => {
+  document.body.innerHTML = '';
   if (wrapper) {
     wrapper.unmount();
   }
@@ -20,7 +27,6 @@ test('LxValuePicker default', () => {
       variant: 'default',
     },
   });
-  // process.stdout.write(`${wrapper.html()}\n`);
   expect(wrapper.find('.lx-value-picker-default-wrapper').exists()).toBe(true);
 });
 
@@ -298,7 +304,6 @@ test('LxValuePicker default nullable advanced', async () => {
 });
 
 /* hasSearch */
-
 test('LxValuePicker default hasSearch', () => {
   expect(LxValuePicker).toBeTruthy();
 
@@ -499,7 +504,6 @@ test('LxValuePicker tiles readOnly', () => {
 });
 
 /* disabled */
-
 test('LxValuePicker default disabled', () => {
   expect(LxValuePicker).toBeTruthy();
 
@@ -565,7 +569,6 @@ test('LxValuePicker tiles disabled', () => {
 });
 
 /* invalid and invalidationMessage */
-
 test('LxValuePicker default invalid', () => {
   expect(LxValuePicker).toBeTruthy();
 
@@ -628,8 +631,8 @@ test('LxValuePicker tiles invalid', () => {
 
   expect(wrapper.find('.lx-invalidation-message').text()).toBe('Invalid input');
 });
-// modelValue
 
+// modelValue
 test('LxValuePicker default modelValue', async () => {
   expect(LxValuePicker).toBeTruthy();
 
@@ -719,13 +722,24 @@ test('LxValuePicker dropdown modelValue', async () => {
       kind: 'single',
     },
   });
+
   expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('One');
+
   const trigger = wrapper.find('.lx-dropdown-default-panel');
   expect(trigger.exists()).toBe(true);
+
   await trigger.trigger('click');
-  const items = wrapper.findAll('.lx-value-picker-item');
+
+  const dropDownContainer = document.body.querySelector('.lx-dropdown-default-content');
+  expect(dropDownContainer).toBeTruthy();
+
+  const items = dropDownContainer.querySelectorAll('.lx-value-picker-item');
   expect(items.length).toBeGreaterThan(0);
-  await items[1].trigger('click');
+
+  items[1].dispatchEvent(new Event('click', { bubbles: true }));
+
+  await wrapper.vm.$nextTick();
+
   expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('Two');
 });
 
@@ -747,15 +761,28 @@ test('LxValuePicker dropdown modelValue 2', async () => {
       stubs: ['router-link'],
     },
   });
+
   expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('One');
+
   const trigger = wrapper.find('.lx-dropdown-default-panel');
   expect(trigger.exists()).toBe(true);
+
   await trigger.trigger('click');
-  const items = wrapper.findAll('.lx-value-picker-item');
-  await items[1].trigger('click');
+
+  const dropDownContainer = document.body.querySelector('.lx-dropdown-default-content');
+  expect(dropDownContainer).toBeTruthy();
+
+  const items = dropDownContainer.querySelectorAll('.lx-value-picker-item');
+  expect(items.length).toBeGreaterThan(0);
+
+  items[1].dispatchEvent(new Event('click', { bubbles: true }));
+  await wrapper.vm.$nextTick();
   expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('One, Two');
+
   await wrapper.trigger('click');
-  await items[0].trigger('click');
+
+  items[0].dispatchEvent(new Event('click', { bubbles: true }));
+  await wrapper.vm.$nextTick();
   expect(wrapper.find('.lx-dropdown-default-data').text()).toBe('Two');
 });
 
@@ -856,7 +883,6 @@ test('LxValuePicker tiles modelValue 2', async () => {
 });
 
 // search
-
 test('LxValuePicker default search', async () => {
   expect(LxValuePicker).toBeTruthy();
 
@@ -935,13 +961,20 @@ test('LxValuePicker dropdown search', async () => {
 
   const trigger = wrapper.find('.lx-autocomplete');
   expect(trigger.exists()).toBe(true);
+
   await trigger.trigger('click');
+
+  const dropDownContainer = document.body.querySelector('.lx-dropdown-default-content');
+  expect(dropDownContainer).toBeTruthy();
+
   const search = wrapper.find('.lx-text-input');
   await search.setValue('o');
-  const items = wrapper.findAll('.lx-value-picker-item');
+
+  const items = dropDownContainer.querySelectorAll('.lx-value-picker-item');
   expect(items.length).toBe(2);
-  expect(items[0].text()).toBe('One');
-  expect(items[1].text()).toBe('Two');
+
+  expect(items[0].textContent.trim()).toBe('One');
+  expect(items[1].textContent.trim()).toBe('Two');
 });
 
 test('LxValuePicker tags search', async () => {
@@ -1000,7 +1033,6 @@ test('LxValuePicker tiles search', async () => {
 });
 
 // searchAttributes
-
 test('LxValuePicker default searchAttributes', async () => {
   expect(LxValuePicker).toBeTruthy();
 
@@ -1153,11 +1185,20 @@ test('LxValuePicker dropdown hasSelectAll', async () => {
 
   const trigger = wrapper.find('.lx-autocomplete');
   expect(trigger.exists()).toBe(true);
+
   await trigger.trigger('click');
-  expect(wrapper.find('.select-all').exists()).toBe(true);
-  const selectAll = wrapper.find('.select-all');
-  await selectAll.trigger('click');
+
+  const dropDownContainer = document.body.querySelector('.lx-dropdown-default-content');
+  expect(dropDownContainer).toBeTruthy();
+
+  const selectAll = dropDownContainer.querySelector('.lx-value-picker-item.select-all');
+  expect(selectAll).toBeTruthy();
+
+  selectAll.dispatchEvent(new Event('click', { bubbles: true }));
+  await wrapper.vm.$nextTick();
   expect(wrapper.props('modelValue')).toStrictEqual(['one', 'two', 'three']);
-  await selectAll.trigger('click');
+
+  selectAll.dispatchEvent(new Event('click', { bubbles: true }));
+  await wrapper.vm.$nextTick();
   expect(wrapper.props('modelValue')).toStrictEqual([]);
 });

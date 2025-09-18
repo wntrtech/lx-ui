@@ -1840,8 +1840,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       formatValue(row[col.attributeName], col.type, col.options?.displayItemsCount)
                     }}
                   </div>
+
                   <template #panel>
-                    <ul>
+                    <ul class="array-type-list">
                       <li v-for="i in row[col.attributeName]" v-bind:key="i">
                         <div class="lx-row">
                           <p class="lx-data">{{ i }}</p>

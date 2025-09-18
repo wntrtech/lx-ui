@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { test, expect, describe, afterEach } from 'vitest';
+import { test, expect, describe, afterEach, beforeEach } from 'vitest';
 import LxDateTimeRange from '@/components/datePicker/DateTimeRange.vue';
 import { mount } from '@vue/test-utils';
 
@@ -12,7 +12,14 @@ const dummyClickAway = {
   unmounted() {},
 };
 
+beforeEach(() => {
+  const el = document.createElement('div');
+  el.id = 'poppers';
+  document.body.appendChild(el);
+});
+
 afterEach(() => {
+  document.body.innerHTML = '';
   if (wrapper) {
     wrapper.unmount();
   }
@@ -46,11 +53,11 @@ describe.each([
 
     await pickerInput.trigger('keydown', { key: 'ArrowDown' });
 
-    const calendarContainer = wrapper.find(container);
-    expect(calendarContainer.exists()).toBe(true);
+    const calendarContainer = document.body.querySelector(container);
+    expect(calendarContainer).toBeTruthy();
 
-    const unitContent = calendarContainer.find(unit);
-    expect(unitContent.exists()).toBe(true);
-    expect(unitContent.text()).toMatch(regEx);
+    const unitContent = calendarContainer.querySelector(unit);
+    expect(unitContent).toBeTruthy();
+    expect(unitContent.textContent).toMatch(regEx);
   });
 });

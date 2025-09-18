@@ -2058,14 +2058,20 @@ const nextSlideButtonLabel = computed(() => {
   return displayTexts.value.next;
 });
 
-onClickOutside(containerRef, () => {
-  if (props.pickerType === 'single' && props.variant !== 'default') {
-    handleDateTimeSelection();
+onClickOutside(
+  containerRef,
+  () => {
+    if (props.pickerType === 'single' && props.variant !== 'default') {
+      handleDateTimeSelection();
+    }
+    if (props.pickerType === 'range') {
+      handleOutsideClickRangeSelection();
+    }
+  },
+  {
+    ignore: ['#poppers'],
   }
-  if (props.pickerType === 'range') {
-    handleOutsideClickRangeSelection();
-  }
-});
+);
 
 watch(
   () => [selectedDate.value, selectedHour.value, selectedMinute.value],

@@ -162,7 +162,7 @@ header.lx.lx-header-wrapper .lx-header > .lx-group:last-of-type {
   justify-content: flex-end;
 }
 
-.lx-header .lx-user-menu ul.lx-group {
+.lx .lx-layout .user-menu-panel ul.lx-group {
   padding: 0;
   margin: 0;
   list-style: none;
@@ -487,40 +487,40 @@ header.lx.lx-header-wrapper .lx-header>.lx-right-group .lx-button:active {
 
 /** Dropdown icon styles **/
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button svg,
-.lx .lx-context-container .lx-dropdown-panel > div > .lx-button svg,
-.lx .lx-context-container .lx-dropdown-panel > .lx-button svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button svg {
   height: var(--button-dropdown-icon-height);
   width: var(--button-dropdown-icon-width);
   fill: var(--color-button-dropdown-icon);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:hover svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover svg,
-.lx .lx-context-container .lx-dropdown-panel > div > .lx-button:hover svg,
-.lx .lx-context-container .lx-dropdown-panel > .lx-button:hover svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:hover svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:hover svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:hover svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:hover svg {
   fill: var(--color-button-dropdown-icon-hover);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:active svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:active svg,
-.lx .lx-context-container .lx-dropdown-panel > div > .lx-button:active svg,
-.lx .lx-context-container .lx-dropdown-panel > .lx-button:active svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:active svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:active svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:active svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:active svg {
   fill: var(--color-button-dropdown-icon-active);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:focus svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:focus svg,
-.lx .lx-context-container .lx-dropdown-panel > div > .lx-button:focus svg,
-.lx .lx-context-container .lx-dropdown-panel > .lx-button:focus svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:focus svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:focus svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:focus svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:focus svg {
   fill: var(--color-button-dropdown-icon-focus);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-disabled svg,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled svg,
-.lx .lx-context-container .lx-dropdown-panel > div > .lx-button.lx-disabled svg,
-.lx .lx-context-container .lx-dropdown-panel > .lx-button.lx-disabled svg {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button.lx-disabled svg,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled svg,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button.lx-disabled svg,
+.lx .lx-layout .lx-dropdown-panel > .lx-button.lx-disabled svg {
   fill: var(--color-button-dropdown-icon-disabled);
 }
 
@@ -531,7 +531,7 @@ header.lx.lx-header-wrapper .lx-header>.lx-right-group .lx-button:active {
   height: 5rem;
 }
 
-.lx-user-menu .lx-region.user-menu-context {
+.lx .lx-layout .user-menu-panel .lx-region.user-menu-context {
   display: grid;
   gap: 0;
   justify-items: center;
@@ -543,8 +543,8 @@ header.lx.lx-header-wrapper .lx-header>.lx-right-group .lx-button:active {
   color: var(--color-data);
 }
 
-.lx-user-menu .lx-region.user-menu-context p.lx-data,
-.lx-user-menu .lx-region.user-menu-context p.lx-description {
+.lx .lx-layout .user-menu-panel .lx-region.user-menu-context p.lx-data,
+.lx .lx-layout .user-menu-panel .lx-region.user-menu-context p.lx-description {
   margin-bottom: 0.2em;
   text-align: center;
 }
@@ -707,7 +707,7 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
 
 /** Mega menu **/
 
-.lx-mega-menu .lx-dropdown-panel label {
+.lx .lx-dropdown-panel .lx-mega-menu-container label {
   color: var(--color-label);
   font-size: var(--label-font-size);
   overflow: hidden;
@@ -720,18 +720,18 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
   height: 75%;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul {
+.lx .lx-layout .lx-mega-menu-container ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul li svg {
+.lx .lx-layout .lx-mega-menu-container ul li svg {
   width: 2rem;
   height: 2rem;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul.primary-menu {
+.lx .lx-layout .lx-mega-menu-container ul.primary-menu {
   display: grid;
   grid-template-columns: 4.65rem 4.65rem 4.65rem;
   gap: .5rem;
@@ -758,19 +758,19 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
   padding-bottom: 0;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul.primary-menu .primary-menu-tile p,
-.lx-mega-menu .lx-mega-menu-container .secondary-menu .secondary-menu-item p {
+.lx .lx-layout .lx-mega-menu-container ul.primary-menu .primary-menu-tile p,
+.lx .lx-layout .lx-mega-menu-container .secondary-menu .secondary-menu-item p {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.lx-mega-menu .lx-mega-menu-container .secondary-menu .secondary-menu-item svg {
+.lx .lx-layout .lx-mega-menu-container .secondary-menu .secondary-menu-item svg {
   flex-shrink: 0;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile {
+.lx .lx-layout .lx-mega-menu-container ul li.primary-menu-tile {
   display: flex;
   flex-direction: column;
   align-self: center;
@@ -781,23 +781,23 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
   padding: 0.25rem;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile svg,
-.lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile p {
+.lx .lx-layout .lx-mega-menu-container ul li.primary-menu-tile svg,
+.lx .lx-layout .lx-mega-menu-container ul li.primary-menu-tile p {
   align-self: center;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile:hover {
+.lx .lx-layout .lx-mega-menu-container ul li.primary-menu-tile:hover {
   background-color: var(--color-region-hover);
   cursor: pointer;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul.secondary-menu {
+.lx .lx-layout .lx-mega-menu-container ul.secondary-menu {
   padding-top: 0.5rem;
   display: grid;
   gap: 0.5rem;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul li.secondary-menu-item {
+.lx .lx-layout .lx-mega-menu-container ul li.secondary-menu-item {
   display: flex;
   gap: 0.5rem;
   padding-left: 0.5rem;
@@ -807,26 +807,26 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
   border-left: 2px solid transparent;
 }
 
-.lx-mega-menu .lx-mega-menu-container ul li.secondary-menu-item:hover {
+.lx .lx-layout .lx-mega-menu-container ul li.secondary-menu-item:hover {
   background-color: var(--color-region-hover);
   cursor: pointer;
 }
 
-.lx-mega-menu .lx-mega-menu-container .secondary-menu-group {
+.lx .lx-layout .lx-mega-menu-container .secondary-menu-group {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
 }
 
-.lx-mega-menu .lx-mega-menu-container .secondary-menu-group:not(:last-child) {
+.lx .lx-layout .lx-mega-menu-container .secondary-menu-group:not(:last-child) {
   border-bottom: 1px solid var(--color-chrome);
 }
 
-.lx-mega-menu .lx-mega-menu-container ul li.primary-menu-tile.selected {
+.lx .lx-layout .lx-mega-menu-container ul li.primary-menu-tile.selected {
   background-color: var(--color-region-2);
   border: 2px solid var(--color-brand);
 }
 
-.lx-mega-menu .lx-mega-menu-container ul li.secondary-menu-item.selected {
+.lx .lx-layout .lx-mega-menu-container ul li.secondary-menu-item.selected {
   background-color: var(--color-region-2);
   border-left: 2px solid var(--color-brand);
 }
@@ -1085,12 +1085,17 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   position: relative;
 }
 
-.lx .popper-wrapper .popper {
+.lx .lx-layout .popper {
   display: none;
   position: absolute;
   top: var(--nav-row-size);
   right: 1rem;
   z-index: 8000;
+}
+
+.lx .lx-layout .popper.higher-z-index,
+.lx .lx-layout .popper.higher-z-index .popper-floating-arrow {
+  z-index: 9000;
 }
 
 .lx:has(.lx-user-menu) .popper-wrapper:not(.lx-user-menu .popper-wrapper) .popper {
@@ -1118,7 +1123,7 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   right: -6rem;
 }
 
-.lx-context-container .popper-wrapper .popper .lx-dropdown-panel {
+.lx .lx-layout .popper .lx-dropdown-panel {
   padding: 0.5rem;
   position: static;
   box-shadow: var(--shadow-dropdown);
@@ -1129,14 +1134,13 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   width: 100%;
 }
 
-.lx-context-container .lx-dropdown-panel {
+.lx .lx-layout .lx-dropdown-panel {
   padding: var(--padding-dropdown);
-  position: absolute;
   top: var(--nav-row-size);
   background-color: var(--color-region);
-  border: var(--region-border);
   width: var(--aside-size);
   box-shadow: var(--shadow-dropdown);
+  border: var(--region-border);
   height: auto;
   max-height: 75vh;
   overflow-y: auto;
@@ -1149,10 +1153,10 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   gap: 0.5rem;
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button,
-.lx .lx-context-container .lx-dropdown-panel > div > .lx-button,
-.lx .lx-context-container .lx-dropdown-panel > .lx-button {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button,
+.lx .lx-layout .lx-dropdown-panel > .lx-button {
   padding: var(--button-dropdown-padding);
   margin: var(--button-dropdown-margin);
   text-decoration: var(--button-dropdown-text-decoration);
@@ -1168,37 +1172,37 @@ header.lx-header-wrapper .lx-header .lx-additional-nav-menu.lx-active {
   outline-offset: var(--button-dropdown-outline-offset);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:hover,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:hover,
-.lx .lx-context-container .lx-dropdown-panel > div > .lx-button:hover,
-.lx .lx-context-container .lx-dropdown-panel > .lx-button:hover {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:hover,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:hover,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:hover,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:hover {
   background-color: var(--color-button-dropdown-hover-background);
   border-color: var(--color-button-dropdown-hover-border);
   color: var(--color-button-dropdown-hover);
 }
 
-.lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:active,
-.lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:active,
-.lx .lx-context-container .lx-dropdown-panel > div > .lx-button:active,
-.lx .lx-context-container .lx-dropdown-panel > .lx-button:active {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:active,
+.lx .lx-layout  .lx-dropdown-panel .lx-button-set .lx-button:active,
+.lx .lx-layout .lx-dropdown-panel > div > .lx-button:active,
+.lx .lx-layout .lx-dropdown-panel > .lx-button:active {
   background-color: var(--color-button-dropdown-active-background);
   border-color: var(--color-button-dropdown-active-border);
   color: var(--color-button-dropdown-active);
 }
 
-.lx .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button:focus,
-.lx .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button:focus,
-.lx .lx-context-container .popper .lx-dropdown-panel > div > .lx-button:focus,
-.lx .lx-context-container .popper .lx-dropdown-panel > .lx-button:focus {
+.lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button:focus,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button:focus,
+.lx .lx-layout .popper .lx-dropdown-panel > div > .lx-button:focus,
+.lx .lx-layout .popper .lx-dropdown-panel > .lx-button:focus {
   background-color: var(--color-button-dropdown-focus-background);
   border-color: var(--color-button-dropdown-focus-border);
   color: var(--color-button-dropdown-focus);
 }
 
-.lx .lx-user-menu .lx-context-container .lx-dropdown-panel .lx-button.lx-disabled,
-.lx .lx-context-container .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
-.lx .lx-context-container .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
-.lx .lx-context-container .popper .lx-dropdown-panel > .lx-button.lx-disabled {
+.lx .lx-layout .user-menu-panel.lx-dropdown-panel .lx-button.lx-disabled,
+.lx .lx-layout .lx-dropdown-panel .lx-button-set .lx-button.lx-disabled,
+.lx .lx-layout .popper .lx-dropdown-panel > div > .lx-button.lx-disabled,
+.lx .lx-layout .popper .lx-dropdown-panel > .lx-button.lx-disabled {
   background-color: var(--color-button-dropdown-disabled-background);
   color: var(--color-button-dropdown-disabled);
   border-color: var(--color-button-dropdown-disabled-border);
