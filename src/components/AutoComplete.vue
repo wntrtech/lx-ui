@@ -1011,14 +1011,7 @@ onMounted(() => {
     </p>
 
     <template v-else>
-      <LxInfoWrapper
-        ref="infoWrapperRef"
-        :disabled="
-          disabled ||
-          selectingKind === 'single' ||
-          (selectingKind === 'multiple' && (!model || !model?.length || menuOpen))
-        "
-      >
+      
         <div
           class="lx-autocomplete-default"
           ref="refContainer"
@@ -1077,15 +1070,37 @@ onMounted(() => {
                       <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag">
                         <div class="lx-tag-label">{{ model?.length }}</div>
                         <div class="lx-tag-button">
-                          <LxButton
-                            id="clearButton"
-                            :label="displayTexts.clear"
-                            :disabled="disabled"
-                            kind="secondary"
-                            variant="icon-only"
-                            icon="remove"
-                            @click.stop="clear"
-                          />
+                          <LxInfoWrapper
+                            ref="infoWrapperRef"
+                            :disabled="
+                              disabled ||
+                              (selectingKind === 'multiple' && menuOpen)
+                            "
+                            :focusable="false"
+                          >
+                            <LxButton
+                              id="clearButton"
+                              :label="displayTexts.clear"
+                              :disabled="disabled"
+                              kind="secondary"
+                              variant="icon-only"
+                              icon="remove"
+                              @click.stop="clear"
+                            />
+
+                            <template
+                              #panel
+                              v-if="props.selectingKind === 'multiple' && displayTooltipItems?.length > 0"
+                            >
+                              <ul class="lx-list">
+                                <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
+                                  <div class="lx-row">
+                                    <p class="lx-data">{{ item[nameAttribute] }}</p>
+                                  </div>
+                                </li>
+                              </ul>
+                            </template>
+                          </LxInfoWrapper>
                         </div>
                       </div>
                       <input
@@ -1397,19 +1412,7 @@ onMounted(() => {
           </LxPopper>
         </div>
 
-        <template
-          #panel
-          v-if="props.selectingKind === 'multiple' && displayTooltipItems?.length > 0"
-        >
-          <ul class="lx-list">
-            <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
-              <div class="lx-row">
-                <p class="lx-data">{{ item[nameAttribute] }}</p>
-              </div>
-            </li>
-          </ul>
-        </template>
-      </LxInfoWrapper>
+        
 
       <LxModal ref="detailedModeModal" :label="displayTexts.detailsModalLabel" size="m">
         <template v-if="$slots.details && selectingKind === 'multiple'">

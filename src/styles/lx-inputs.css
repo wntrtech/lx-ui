@@ -2920,6 +2920,10 @@ h2.lx-section-header + p.lx-invalidation-message,
   opacity: 1;
 }
 
+.lx .lx-autocomplete-default .popper-wrapper .lx-info-wrapper {
+  background-color: transparent; 
+}
+
 .lx .lx-info-wrapper .lx-autocomplete-default .popper {
   background-color: inherit;
   backdrop-filter: none;
