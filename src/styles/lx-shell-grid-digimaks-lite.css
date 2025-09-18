@@ -11,6 +11,7 @@
 }
 
 .lx-layout-digimaks > header:not(:has(.lx-nav-panel-expanded)) {
+  -webkit-backdrop-filter: blur(0.125rem);
   backdrop-filter: blur(0.125rem);
   background-color: transparent;
 }
@@ -59,7 +60,7 @@
 
 /*** Nav styles ***/
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button {
+.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button {
   padding: var(--button-nav-padding);
   margin: var(--button-nav-margin);
   text-decoration: var(--button-nav-text-decoration);
@@ -75,7 +76,7 @@
   outline-offset: var(--button-nav-outline-offset);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button-content-wrapper {
+.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button-content-wrapper {
   grid-template-areas: var(--button-nav-grid-areas);
   grid-template-columns: var(--button-nav-grid-template-columns);
   grid-template-rows: var(--button-nav-grid-template-rows);
@@ -83,11 +84,11 @@
   gap: var(--button-nav-gap);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button-content {
+.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button-content {
   text-align: var(--button-nav-text-align);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li.lx-selected .lx-button {
+.lx-layout-digimaks .lx-nav-panel-group ul li.lx-selected .lx-button {
   color: var(--color-button-nav-selected);
   background-color: var(--color-button-nav-selected-background);
   border-color: var(--color-button-nav-selected-border);
@@ -95,13 +96,13 @@
   border-collapse: collapse;
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button:hover {
+.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button:hover {
   background-color: var(--color-button-nav-hover-background);
   border-color: var(--color-button-nav-hover-border);
   color: var(--color-button-nav-hover);
 }
 
-.lx-layout-digimaks .lx-nav-panel ul li .lx-button svg {
+.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button svg {
   height: var(--button-nav-icon-height);
   width: var(--button-nav-icon-width);
   --color-button-ghost-icon: var(--color-button-nav-icon);
@@ -435,9 +436,40 @@
   padding-bottom: 1rem;
 }
 
+.lx-layout-digimaks .lx-settings-menu > .lx-form-grid {
+  border: none;
+}
+
 .lx-layout-digimaks .lx-settings-menu > .lx-shell-custom-button .lx-button,
 .lx-layout-digimaks .lx-settings-menu > .settings-button > .lx-button{
   --button-tertiary-width: 100%;
+}
+
+.lx-layout-digimaks .lx-header .lx-shell-custom-button .lx-button.lx-header-button:not(.lx-disabled):hover {
+  background-color: var(--color-button-tertiary-hover-background);
+  border-color: var(--color-button-tertiary-hover-border);
+}
+
+.lx-layout-digimaks .lx-header .lx-shell-custom-button .lx-button.lx-header-button:not(.lx-disabled):hover svg {
+  fill: var(--color-button-tertiary-icon-hover);
+}
+
+.lx-layout-digimaks .lx-settings-menu > ul {
+  list-style-type: none;
+  margin: 0;
+  margin-bottom: 1rem;
+  padding-left: 0;
+  padding-top: 1rem;
+  border-top: 2px solid var(--color-label);
+  border-bottom: 2px solid var(--color-label);
+}
+
+.lx-layout-digimaks .lx-settings-menu > ul li:first-of-type {
+  padding-bottom: 1rem;
+}
+
+.lx-layout-digimaks>header:has(>.lx-header .lx-left-group:empty){
+    height: 0;
 }
 
 .lx-layout-digimaks header>.lx-header:not(.lx-nav-panel-expanded)>.lx-group.lx-group-header {

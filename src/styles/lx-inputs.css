@@ -2254,11 +2254,11 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-content-switcher .lx-content-switcher-item:first-of-type {
-  border-radius: var(--radius-1) 0 0 var(--radius-1);
+  border-radius: calc(var(--radius-1) - 2px) 0 0 calc(var(--radius-1) - 2px);
 }
 
 .lx-content-switcher .lx-content-switcher-item:last-of-type {
-  border-radius: 0 var(--radius-1) var(--radius-1) 0;
+  border-radius: 0 calc(var(--radius-1) - 2px) calc(var(--radius-1) - 2px) 0;
 }
 
 .lx-content-switcher .lx-content-switcher-item:not(.lx-selected):hover {

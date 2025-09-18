@@ -12,6 +12,7 @@ import LxForm from '@/components/forms/Form.vue';
 import LxRow from '@/components/forms/Row.vue';
 import LxValuePicker from '@/components/ValuePicker.vue';
 import LxToggle from '@/components/Toggle.vue';
+import LxEmptyState from '@/components/EmptyState.vue';
 
 import { shortenUserName } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -173,9 +174,7 @@ const themeModel = computed({
     return props.theme;
   },
   set(value) {
-    if (props.hasThemePicker) {
-      emits('update:theme', value);
-    }
+    emits('update:theme', value);
   },
 });
 
@@ -410,6 +409,10 @@ const navItemsPrimary = computed(() =>
 
 const navItemsSecondary = computed(() =>
   props.navItems?.filter((item) => item.type === 'secondary')
+);
+
+const navItemsUserMenu = computed(() =>
+  props.navItems?.filter((item) => item.type === 'user-menu')
 );
 
 const themeItems = computed(() =>
@@ -678,7 +681,7 @@ const customButton = ref();
               <LxRow :label="displayTexts.languagesTitle">
                 <LxValuePicker variant="tags" :items="languages" v-model="languagePickerModel" />
               </LxRow>
-              <LxRow :label="displayTexts.themeTitle">
+              <LxRow v-if="hasThemePicker" :label="displayTexts.themeTitle">
                 <LxValuePicker variant="tags" :items="themeItems" v-model="themeModel" />
               </LxRow>
               <LxRow :label="displayTexts.animations">
@@ -751,8 +754,21 @@ const customButton = ref();
               />
             </div>
 
+            <ul>
+              <li v-for="item in navItemsUserMenu" :key="item.label" class="lx-user-menu-item">
+                <LxButton
+                  kind="tertiary"
+                  :label="item.label"
+                  :href="item.to"
+                  :icon="item.icon"
+                  :disabled="headerNavDisable"
+                />
+              </li>
+            </ul>
+
             <LxButton
               v-if="userInfo"
+              custom-class="logout-button"
               kind="tertiary"
               icon="logout"
               :label="displayTexts.logOut"

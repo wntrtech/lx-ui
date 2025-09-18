@@ -765,9 +765,11 @@
   display: block;
   width: 100%;
 }
+
 .lx-layout.lx-layout-digives-lite main.lx-main .lx-digives-lite-alert-list:has(+ .lx-header.lx-page-header) + .lx-header.lx-page-header {
   margin-top: 1rem;
 }
+
 .nav-item-separator {
 width: 100%;
 margin-top: -1px;
