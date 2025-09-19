@@ -462,3 +462,7 @@
 .lx-data-visualizer .lx-bars-horizontal .bar-wrapper .lx-bar-group .bar-name {
   padding-left: 1.5rem;
 }
+
+.lx .lx-data-visualizer .popper-wrapper .lx-info-wrapper-content:hover {
+  background-color: transparent;
+}

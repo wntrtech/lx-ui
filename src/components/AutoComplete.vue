@@ -85,7 +85,7 @@ const detailsSwitchType = ref('advanced-search');
 const panelWidth = ref();
 const isInputFocused = ref(false);
 const inputReadonly = ref(false);
-
+const highlightedItemId = ref(null);
 const infoWrapperRef = ref();
 
 const { activate, deactivate } = useFocusTrap(refListbox, {
@@ -214,14 +214,30 @@ watch(
     // Proceed with search if props.items is a function
     if (typeof props.items === 'function') {
       const finalQuery = formatFinalQuery(newValue);
-      if ((finalQuery?.length || 0) < props.queryMinLength) {
-        const destroyResults = newValue?.length > oldValue?.length;
-        if (destroyResults) {
-          allItems.value = [];
+
+      const queryLength = finalQuery?.length || 0;
+
+      if (props.queryMinLength > 0) {
+        if (queryLength < props.queryMinLength) {
+          const destroyResults = queryLength > (oldValue?.length || 0);
+          if (destroyResults) {
+            allItems.value = [];
+          }
+          return;
         }
-        return;
+      } else {
+        if (queryLength >= 1) {
+          allItems.value = [];
+          deactivate();
+        }
       }
       await debouncedSearchReq(finalQuery);
+
+      await nextTick();
+
+      if (allItems.value.length !== 0 && !loadingState.value) {
+        activate();
+      }
     }
   },
   { immediate: true }
@@ -272,7 +288,7 @@ function initInputFocus() {
 function handleMenuAndInputKeydown(e) {
   const inputElement = document.activeElement;
 
-  if (e.key === 'Tab' && menuOpen.value) {
+  if (e.key === 'Tab' && menuOpen.value && filteredItems.value.length > 0) {
     const tabPressed = e.shiftKey ? 'backward' : 'forward';
 
     deactivate({
@@ -281,8 +297,8 @@ function handleMenuAndInputKeydown(e) {
 
     menuOpen.value = false;
 
-    focusNextFocusableElement(refContainer.value, tabPressed === 'forward');
-    return; 
+    focusNextFocusableElement(refQuery.value, tabPressed === 'forward');
+    return;
   }
 
   if (e.shiftKey) {
@@ -322,13 +338,13 @@ function openMenu() {
     menuOpen.value = true;
 
     nextTick(() => {
-      activate();
+      if (allItems.value.length !== 0) {
+        activate();
+      }
       initSearchInput();
     });
   }
 }
-
-const highlightedItemId = ref(null);
 
 function closeOnClickOutside() {
   if (infoWrapperRef.value?.showPopper) {
@@ -412,9 +428,8 @@ function focusOnDropDown(e = { target: { id: null }, shiftKey: false, key: '' })
       e.target.id !== 'clearButton' &&
       e.target.id !== 'detailsButton'
     ) {
-      menuOpen.value = true;
       nextTick(() => {
-        initSearchInput();
+        openMenu();
       });
     }
     return;
@@ -422,16 +437,6 @@ function focusOnDropDown(e = { target: { id: null }, shiftKey: false, key: '' })
 
   if (e.key === 'Tab') {
     if (
-      menuOpen.value &&
-      e.target &&
-      e.target.id !== 'clearButton' &&
-      e.target.id !== 'detailsButton'
-    ) {
-      closeMenu();
-      nextTick(() => {
-        refQuery.value.focus();
-      });
-    } else if (
       !menuOpen.value &&
       e.target &&
       e.target.id !== 'clearButton' &&
@@ -1103,10 +1108,7 @@ onMounted(() => {
                       <div class="lx-tag-button">
                         <LxInfoWrapper
                           ref="infoWrapperRef"
-                          :disabled="
-                            disabled || 
-                            (selectingKind === 'multiple' && menuOpen)
-                          "
+                          :disabled="disabled || (selectingKind === 'multiple' && menuOpen)"
                           :focusable="false"
                         >
                           <LxButton

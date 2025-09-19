@@ -91,7 +91,7 @@
     color: var(--color-tooltip-foreground)
 }
 
-.lx-steps-data-block-small>.lx-info-wrapper .lx-info-wrapper-panel svg {
+.lx .lx-layout .lx-info-wrapper svg.lx-steps-icon {
     fill: var(--color-tooltip-foreground);
 }
 
