@@ -744,9 +744,8 @@ const customButton = ref();
               </LxDropDownMenu>
             </div>
 
-            <div class="settings-button">
+            <div v-if="alternativeProfilesInfo" class="settings-button">
               <LxButton
-                v-if="alternativeProfilesInfo"
                 kind="tertiary"
                 :label="displayTexts.alternativeProfilesButtonLabel"
                 icon="switch"
@@ -754,9 +753,8 @@ const customButton = ref();
               />
             </div>
 
-            <div class="settings-button">
+            <div v-if="contextPersonsInfo" class="settings-button">
               <LxButton
-                v-if="contextPersonsInfo"
                 kind="tertiary"
                 :label="displayTexts.contextPersonsButtonLabel"
                 icon="context-person"
@@ -764,7 +762,7 @@ const customButton = ref();
               />
             </div>
 
-            <ul>
+            <ul v-if="userInfo">
               <li v-for="item in navItemsUserMenu" :key="item.label" class="lx-user-menu-item">
                 <LxButton
                   kind="tertiary"
@@ -772,6 +770,8 @@ const customButton = ref();
                   :href="item.to"
                   :icon="item.icon"
                   :disabled="headerNavDisable"
+                  @click="navToggle"
+                  @keydown.enter="navToggle"
                 />
               </li>
             </ul>

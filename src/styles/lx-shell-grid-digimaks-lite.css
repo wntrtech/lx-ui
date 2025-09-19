@@ -438,6 +438,7 @@
 
 .lx-layout-digimaks .lx-settings-menu > .lx-form-grid {
   border: none;
+  padding-bottom: 0;
 }
 
 .lx-layout-digimaks .lx-settings-menu > .lx-shell-custom-button .lx-button,
@@ -468,8 +469,12 @@
   padding-bottom: 1rem;
 }
 
+.lx-layout-digimaks .lx-settings-menu>ul li:first-of-type:only-child {
+  padding-bottom: 0;
+}
+
 .lx-layout-digimaks>header:has(>.lx-header .lx-left-group:empty){
-    height: 0;
+  height: 0;
 }
 
 .lx-layout-digimaks header>.lx-header:not(.lx-nav-panel-expanded)>.lx-group.lx-group-header {
