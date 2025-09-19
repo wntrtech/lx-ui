@@ -175,6 +175,13 @@ const props = defineProps({
    */
   validations: { type: Object, default: null },
   /**
+   * Determines whether the filter panel should close automatically after a filter is applied.
+   * @type {Boolean}
+   * @default true
+   * @since 1.10.0-beta.13
+   */
+  closeOnFilter: { type: Boolean, default: true },
+  /**
    * The object containing text translations.
    * @type {Object}
    * @since 1.9.0-beta.3
@@ -246,9 +253,10 @@ const isExpanded = computed({
 const filterElement = ref();
 
 function filter() {
-  isExpanded.value = false;
-
-  focusNextFocusableElement(filterElement.value?.$el);
+  if (props.closeOnFilter) {
+    isExpanded.value = false;
+    focusNextFocusableElement(filterElement.value?.$el);
+  }
   emits('filter');
 }
 
