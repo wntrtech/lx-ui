@@ -54,13 +54,6 @@ const modifiedItems = computed(() =>
     state: item.invalid ? 'invalid' : item.state,
   }))
 );
-
-watch(
-  () => props.modelValue,
-  () => {
-    model.value = props.modelValue;
-  }
-);
 </script>
 <template>
   <div class="lx-wizard" :style="`${topOutOfBounds}`" ref="wizard">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, nextTick } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDown from '@/components/Dropdown.vue';
@@ -16,6 +16,7 @@ const props = defineProps({
 const textsDefault = {
   previous: 'Iepriekšējais solis',
   next: 'Nākamais solis',
+  tabSelected: 'Tika izvēlēta cilne',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -23,6 +24,13 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const activeItemCode = ref('');
 const activeItem = ref(null);
 const itemRefs = ref([]);
+
+const activeItemName = computed(() => {
+  const selectedItem = props.value.find((item) => item.id === activeItemCode.value);
+  return selectedItem?.name ?? '';
+});
+
+const announcementMessage = ref('');
 
 function setActiveTab(itemCode) {
   activeItemCode.value = itemCode;
@@ -32,11 +40,22 @@ function setActiveTab(itemCode) {
 function isActiveTab(itemCode) {
   return itemCode === activeItemCode.value;
 }
+
+function setAnnouncementMessage() {
+  if (announcementMessage.value) announcementMessage.value = '';
+  nextTick(() => {
+    announcementMessage.value = `${displayTexts.value.tabSelected} "${activeItemName.value}"`;
+  });
+}
+
 function setNextTab() {
   setActiveTab(props.value[props.value.findIndex((o) => o.id === activeItemCode.value) + 1]?.id);
+  setAnnouncementMessage();
 }
+
 function setPreviousTab() {
   setActiveTab(props.value[props.value.findIndex((o) => o.id === activeItemCode.value) - 1]?.id);
+  setAnnouncementMessage();
 }
 
 function calculateOffset(el) {
@@ -75,7 +94,7 @@ onMounted(() => {
   }
 });
 
-defineExpose({ setActiveTab, isActiveTab });
+defineExpose({ setActiveTab, isActiveTab, setAnnouncementMessage });
 </script>
 <template>
   <div class="lx-tab-control" :style="`${topOutOfBounds}`" ref="tabControl">
@@ -98,7 +117,13 @@ defineExpose({ setActiveTab, isActiveTab });
           class="lx-tab"
           :class="[{ 'lx-selected': isActiveTab(t.id) }, { 'lx-invalid': t.invalid }]"
           :title="t.invalid ? t.invalidationMessage : ''"
+          tabindex="0"
+          role="tab"
+          :aria-selected="isActiveTab(t.id)"
           @click="setActiveTab(t.id)"
+          @keyup.enter="setActiveTab(t.id)"
+          @keyup.space="setActiveTab(t.id)"
+          @keydown.space.prevent
         >
           <p class="lx-primary" v-if="kind !== 'icon-only'">{{ t.name }}</p>
           <LxIcon :value="t.icon" customClass="item-icon" v-if="kind !== 'default' && !t.invalid" />
@@ -142,5 +167,9 @@ defineExpose({ setActiveTab, isActiveTab });
         <slot name="body" />
       </transition>
     </article>
+
+    <div aria-live="polite" class="lx-invisible">
+      {{ announcementMessage }}
+    </div>
   </div>
 </template>

@@ -253,6 +253,7 @@ const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
   additionalActions: 'Papildu darbības',
   tableOfContents: 'Satura rādītājs',
+  tabSelected: 'Tika izvēlēta cilne',
 };
 
 // Merge texts prop with defaults
@@ -622,6 +623,17 @@ watch(
 );
 
 watch(
+  () => selectedTabValue.value,
+  () => {
+    if (props.indexType === 'tabs' || props.indexType === 'wizard') {
+      nextTick(() => {
+        hideAll();
+      });
+    }
+  }
+);
+
+watch(
   () => props.indexType,
   (newValue) => {
     if (newValue === 'default' || newValue === 'expanders') {
@@ -658,6 +670,7 @@ function setSelectedIndex(indexId) {
 
   if (props.indexType === 'tabs') {
     tabControl.value?.setActiveTab(indexId);
+    tabControl.value?.setAnnouncementMessage();
     hideAll();
   } else if (props.indexType === 'wizard') {
     wizardModel.value = indexId;
@@ -1006,11 +1019,9 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
     <LxTabControl
       v-if="props.indexType === 'tabs' && index?.length > 0"
       ref="tabControl"
-      :value="props.index"
+      :value="itemsCopy"
       :kind="indexHasIcons ? 'combo' : 'default'"
       :texts="displayTexts"
-      @click="hideAll"
-      @keydown.enter="hideAll"
     >
       <template #body>
         <div

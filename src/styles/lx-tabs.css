@@ -75,7 +75,7 @@
   align-items: flex-end;
   justify-content: flex-start;
   margin-right: 0.5rem;
-  margin-bottom: -1px;
+  margin-bottom: 0px;
   cursor: pointer;
   border-bottom: var(--tab-border);
   max-width: 14rem;
@@ -111,6 +111,10 @@
   cursor: pointer;
   color: var(--color-label);
   font-weight: normal;
+  max-width: 14rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .lx-tab-control .lx-tab-container .lx-tab.lx-selected {
@@ -125,6 +129,11 @@
 
 .lx-tab-control .lx-tab-container .lx-tab:hover {
   background-color: var(--color-region-hover-background);
+}
+
+.lx-tab-control .lx-tab-container .lx-tab:focus {
+  outline: 2px solid var(--color-focus-background);
+  outline-offset: -2px;
 }
 
 .lx-tab-control .lx-tab-container .lx-tab:hover .lx-primary {
