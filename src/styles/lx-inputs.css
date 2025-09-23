@@ -2599,7 +2599,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-orange);
 }
 
-.lx .lx-layout .lx-color-list .lx-color-item.red div {
+.lx .lx-layout .lx-color-list .lx-color-item.yellow div {
   background-color: var(--color-yellow);
 }
 
