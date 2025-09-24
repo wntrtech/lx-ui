@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick } from 'vue';
+import { ref, computed, nextTick, inject } from 'vue';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxToggle from '@/components/Toggle.vue';
@@ -22,6 +22,8 @@ const emits = defineEmits(['actionClick']);
 const menuOpen = ref(false);
 const panelRef = ref();
 const dropDownWrapper = ref();
+
+const isTouchSensitive = inject('isTouchMode', false);
 
 const { activate, deactivate } = useFocusTrap(panelRef, {
   allowOutsideClick: true,
@@ -210,7 +212,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     v-model="action.value"
                     :texts="action?.texts"
                     :tooltip="action?.title"
-                    :size="action?.size"
+                    :size="isTouchSensitive ? 'm' : 's'"
                     @update:modelValue="
                       (newValue) => {
                         actionClicked(action?.id, newValue);
@@ -274,7 +276,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
                     v-model="action.value"
                     :texts="action?.texts"
                     :tooltip="action?.title"
-                    :size="action?.size"
+                    :size="isTouchSensitive ? 'm' : 's'"
                     @update:modelValue="
                       (newValue) => {
                         actionClicked(action?.id, newValue);

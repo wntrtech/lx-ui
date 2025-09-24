@@ -1,5 +1,5 @@
 <script setup>
-import { computed, shallowRef, onMounted, watch, ref, nextTick } from 'vue';
+import { computed, shallowRef, onMounted, watch, ref, nextTick, provide } from 'vue';
 import {
   useColorMode,
   usePreferredReducedMotion,
@@ -431,6 +431,8 @@ const touchModeModel = computed({
     touchModeToggle.value = value;
   },
 });
+
+provide('isTouchMode', touchModeToggle);
 
 function touchModeChange(value) {
   if (lxElement) {
