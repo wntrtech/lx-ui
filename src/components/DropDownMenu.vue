@@ -3,6 +3,8 @@ import { ref, computed, nextTick } from 'vue';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
 import LxToggle from '@/components/Toggle.vue';
+import { logWarn } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
 import { onClickOutside } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 
@@ -55,6 +57,7 @@ function preventClose(event) {
 
 const groupedItems = computed(() => {
   const res = props.actionDefinitions.reduce((acc, action) => {
+    if (action?.kind === 'main') return acc; // skip 'main' items
     if (!action?.group) {
       if (!acc.lx_group) {
         acc.lx_group = [];
@@ -72,8 +75,18 @@ const groupedItems = computed(() => {
 
     return acc;
   }, {});
-
   return res;
+});
+
+const mainButton = computed(() => {
+  const mainButtons = props.actionDefinitions?.filter((x) => x?.kind === 'main');
+  if (mainButtons.length > 1) {
+    logWarn(
+      'LxDropDownMenu: More than one action with kind "main" defined. Only the first one will be used.',
+      useLx()?.environment
+    );
+  }
+  return mainButtons?.[0] || null;
 });
 
 function handleClick() {
@@ -121,7 +134,25 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         @keydown.space.prevent
         @contextmenu.prevent="openMenu"
       >
-        <slot />
+        <LxButton
+          v-if="!$slots.default && mainButton"
+          :id="mainButton?.id"
+          :label="mainButton?.name || mainButton?.label"
+          :title="mainButton?.title"
+          :icon="mainButton?.icon"
+          :iconSet="mainButton?.iconSet"
+          :disabled="mainButton?.disabled"
+          :loading="mainButton?.loading"
+          :busy="mainButton?.busy"
+          :destructive="mainButton?.destructive"
+          :badge="mainButton?.badge"
+          :badgeType="mainButton?.badgeType"
+          :active="mainButton?.active"
+          kind="ghost"
+          variant="icon-only"
+          tabindex="-1"
+        />
+        <slot v-else />
       </div>
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
       <div
@@ -134,7 +165,25 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
         @keydown.space.prevent
         @click="handleClick"
       >
-        <slot />
+        <LxButton
+          v-if="!$slots.default && mainButton"
+          :id="mainButton?.id"
+          :label="mainButton?.name || mainButton?.label"
+          :title="mainButton?.title"
+          :icon="mainButton?.icon"
+          :iconSet="mainButton?.iconSet"
+          :disabled="mainButton?.disabled"
+          :loading="mainButton?.loading"
+          :busy="mainButton?.busy"
+          :destructive="mainButton?.destructive"
+          :badge="mainButton?.badge"
+          :badgeType="mainButton?.badgeType"
+          :active="mainButton?.active"
+          kind="ghost"
+          variant="icon-only"
+          tabindex="-1"
+        />
+        <slot v-else />
       </div>
 
       <template #content>
