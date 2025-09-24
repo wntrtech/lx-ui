@@ -15,6 +15,14 @@ const props = defineProps({
     type: String,
     default: 'name',
   },
+  locale: {
+    type: String,
+    default: null,
+  },
+  meaningful: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const idAttribute = computed(() => {
@@ -43,6 +51,8 @@ const flagTitle = computed(() => {
         :value="value[idAttribute]"
         :title="flagTitle"
         size="small"
+        :locale="locale"
+        :meaningful="meaningful"
       />
       <p class="lx-data" v-if="attributeExists(value, nameAttribute)">
         {{ value[nameAttribute] }}

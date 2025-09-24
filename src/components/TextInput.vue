@@ -59,7 +59,7 @@ const props = defineProps({
   autocomplete: { type: String, default: 'off' },
   options: {
     type: Object,
-    default: () => ({ phone: 'lv' }),
+    default: () => ({ phone: 'lv', locale: null }),
   },
   texts: { type: Object, default: () => ({}) },
 });
@@ -521,10 +521,15 @@ defineExpose({ focus });
           v-if="matchedFlags?.length > 0"
           :class="[{ 'multiple-flags': matchedFlags?.length > 1 }]"
         >
-          <LxFlag v-for="flag in matchedFlags" :key="flag" :value="flag" />
+          <LxFlag
+            v-for="flag in matchedFlags"
+            :key="flag"
+            :value="flag"
+            :locale="options?.locale"
+          />
         </div>
         <div v-else>
-          <LxFlag :value="options?.phone" />
+          <LxFlag :value="options?.phone" :locale="options?.locale" />
         </div>
       </div>
 

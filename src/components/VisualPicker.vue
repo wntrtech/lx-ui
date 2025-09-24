@@ -376,7 +376,7 @@ defineExpose({ addTitles });
         >
           <div v-for="item in selectedItems" :key="item?.id" class="lx-tag">
             <div class="tag-text">
-              <LxFlag :value="item?.id" size="small" v-if="kind === 'europe'" />
+              <LxFlag v-if="kind === 'europe'" :value="item?.id" size="small" :meaningful="false" />
               {{ item?.name }}
             </div>
             <LxButton
@@ -404,7 +404,9 @@ defineExpose({ addTitles });
           @selectionChanged="selectionChanged"
         >
           <template #customItem="{ id, name }" v-if="kind === 'europe'">
-            <div class="list-country-item"><LxFlag :value="id" />{{ name }}</div>
+            <div class="list-country-item">
+              <LxFlag :value="id" :meaningful="false" />{{ name }}
+            </div>
           </template>
         </LxList>
       </div>

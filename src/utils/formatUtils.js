@@ -295,8 +295,6 @@ export function formatDecimal(value, precision = 2) {
       }).format(value);
 }
 
-// Source: https://www.iso.org/iso-3166-country-codes.html
-// Used in translation to LV: https://lv.wikipedia.org/wiki/ISO_3166-1
 export function formatCountryCode(value, language = 'lv', notExistsValue = null) {
   return countryCodeToName(value, language) || notExistsValue;
 }

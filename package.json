@@ -76,6 +76,7 @@
     "exifreader": "^4.22.1",
     "focus-trap": "^7",
     "glob": "^10.3.10",
+    "i18n-iso-countries": "^7.14.0",
     "jsrsasign": "^11.1.0",
     "jszip": "^3.10.1",
     "linkifyjs": "^4.1.3",

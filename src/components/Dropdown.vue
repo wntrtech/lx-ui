@@ -25,6 +25,8 @@ const props = defineProps({
   invalid: { type: Boolean, default: false },
   invalidationMessage: { type: String, default: null },
   labelId: { type: String, default: null },
+  locale: { type: String, default: null }, // lv, en
+  meaningful: { type: Boolean, default: null },
   tabindex: {
     type: [Number, String],
     default: 0,
@@ -487,6 +489,8 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                 <LxFlag
                   :value="selectedItem?.country ? selectedItem?.country : 'lv'"
                   size="small"
+                  :locale="locale"
+                  :meaningful="meaningful"
                 />
                 <span class="lx-input-text"> {{ name }} </span>
               </div>
@@ -560,7 +564,12 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                           ]"
                         />
                         <template v-else-if="variant === 'country'">
-                          <LxFlag :value="item?.country ? item?.country : 'lv'" size="small" />
+                          <LxFlag
+                            :value="item?.country ? item?.country : 'lv'"
+                            size="small"
+                            :locale="locale"
+                            :meaningful="meaningful"
+                          />
                           {{ item[nameAttribute] }}
                         </template>
                         <template v-else-if="variant === 'custom'">

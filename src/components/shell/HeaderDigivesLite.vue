@@ -789,8 +789,7 @@ function themeDropdownClicked(id, value) {
                   v-if="selectedContextPersonModel?.flag"
                   :value="selectedContextPersonModel.flag"
                   :title="selectedContextPersonModel?.flagTitle"
-                >
-                </LxFlag>
+                />
                 <p class="lx-data">
                   {{ selectedContextPersonModel?.description }}
                 </p>

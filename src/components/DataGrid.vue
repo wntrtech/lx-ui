@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted, ref, watch, nextTick } from 'vue';
 import {
   useWindowSize,
@@ -92,6 +92,7 @@ const props = defineProps({
   searchMode: { type: String, default: 'default' }, // default, compact
   searchString: { type: String, default: '' },
   searchSide: { type: String, default: 'server' }, // server, TODO add client search
+  locale: { type: String, default: null }, // lv, en
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -1808,13 +1809,20 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     isValidString(row[col.attributeName])
                   "
                 >
-                  <LxFlag size="small" :value="row[col.attributeName]" />
+                  <LxFlag
+                    size="small"
+                    :value="row[col.attributeName]"
+                    :locale="locale"
+                    :meaningful="row[col.attributeName]?.meaningful || true"
+                  />
                 </div>
                 <div class="flag-column" v-else-if="typeof row[col.attributeName] === 'object'">
                   <LxFlagItemDisplay
                     :value="row[col.attributeName]"
                     nameAttribute="name"
                     idAttribute="id"
+                    :locale="locale"
+                    :meaningful="row[col.attributeName]?.meaningful || false"
                   />
                 </div>
                 <span class="empty-flag-value" v-else>—</span>
@@ -2122,7 +2130,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   item[col.attributeName].trim() !== ''
                 "
               >
-                <LxFlag size="small" :value="item[col.attributeName]" />
+                <LxFlag size="small" :value="item[col.attributeName]" :locale="locale" />
               </div>
 
               <div class="flag-column" v-else-if="typeof item[col.attributeName] === 'object'">

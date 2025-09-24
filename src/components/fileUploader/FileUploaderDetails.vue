@@ -227,9 +227,9 @@ const nomalizedIconAndType = computed(() => {
                   </span>
                 </p>
                 <p class="lx-secondary">
-                  {{ eSignDate ? `${eSignDate}; ` : ''
-                  }}{{ eSignIssuer ? `${eSignIssuer}; ` : '' }}
-                  <LxFlag size="small" :value="country.code" />{{ country.name }}
+                  {{ eSignDate ? `${eSignDate}; ` : '' }}{{ eSignIssuer ? `${eSignIssuer}; ` : '' }}
+                  <LxFlag size="small" :value="country.code" :meaningful="false" />
+                  {{ country.name }}
                 </p>
               </div>
             </template>
