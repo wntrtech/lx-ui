@@ -71,7 +71,13 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:startDate', 'update:endDate']);
+const emits = defineEmits([
+  'update:startDate',
+  'update:endDate',
+  'outOfRange:startDate',
+  'outOfRange:endDate',
+  'outOfRange',
+]);
 
 const { dateFormat, dateTimeFormat } = useLx().getGlobals();
 
@@ -360,6 +366,18 @@ const modelEnd = computed({
 const startMaxDate = computed(() => modelEnd.value || props.maxDate);
 const endMinDate = computed(() => modelStart.value || props.minDate);
 
+function onOutOfRangeStartDate() {
+  emits('outOfRange:startDate');
+}
+
+function onOutOfRangeEndDate() {
+  emits('outOfRange:endDate');
+}
+
+function onOutOfRange() {
+  emits('outOfRange');
+}
+
 onBeforeMount(() => {
   if (props.startDate && props.endDate && props.endDate < props.startDate) {
     model.value = {
@@ -416,6 +434,7 @@ onBeforeMount(() => {
           :clearIfNotExact="clearIfNotExact"
           :texts="displayTexts"
           :labelled-by="labelledBy"
+          @outOfRange="onOutOfRange"
         />
 
         <div v-if="kind === 'legacy'" class="legacy-pickers-wrapper" :aria-labelledby="labelledBy">
@@ -435,6 +454,7 @@ onBeforeMount(() => {
             :clearIfNotExact="clearIfNotExact"
             :texts="displayTexts"
             :labelled-by="displayTexts.startDateLabel"
+            @outOfRange="onOutOfRangeStartDate"
             legacy-mode
           />
 
@@ -455,6 +475,7 @@ onBeforeMount(() => {
             :clearIfNotExact="clearIfNotExact"
             :texts="displayTexts"
             :labelled-by="displayTexts.endDateLabel"
+            @outOfRange="onOutOfRangeEndDate"
             legacy-mode
           />
         </div>

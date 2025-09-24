@@ -82,7 +82,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue']);
+const emits = defineEmits(['update:modelValue', 'outOfRange']);
 
 const containerRef = ref();
 const dropDownMenuRef = ref();
@@ -283,6 +283,7 @@ function validateIfExact(e, type = 'startInput') {
       !canSelectDate(new Date(dateString), props.minDate, props.maxDate, 'date')
     ) {
       const updatedValue = props.clearIfNotExact ? null : new Date();
+      emits('outOfRange');
       emits('update:modelValue', updatedValue);
 
       const newDay = new Date().getDate();
