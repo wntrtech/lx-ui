@@ -1610,6 +1610,13 @@ h2.lx-section-header + p.lx-invalidation-message,
   overflow-y: auto;
 }
 
+.lx-value-picker-default-item .lx-radio-button-appearance,
+.lx-value-picker-default-item .lx-checkbox-appearance,
+.autocomplete-multiple .lx-checkbox-wrapper,
+.dropdown-multiple .lx-checkbox-wrapper {
+  align-self: flex-start;
+}
+
 .lx-value-picker-tile-tag-container {
   display: grid;
 }
