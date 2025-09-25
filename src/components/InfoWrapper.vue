@@ -2,6 +2,7 @@
 import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxPopper from '@/components/Popper.vue';
+import { useDebounceFn } from '@vueuse/core';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -26,9 +27,6 @@ const triggerRef = ref(null);
 const popperRef = ref(null);
 const resolvedPlacement = ref();
 
-let openTimeout = null;
-let closeTimeout = null;
-
 const ariaLabel = computed(() => {
   if (!props.label && !props.description) return null;
   return `${props.label ? `${props.label}${props.description ? '. ' : ''}` : ''}${
@@ -47,33 +45,28 @@ const spacerStyle = computed(() => {
 
 const parseDelay = (v) => Number(v) || 0;
 
-const handleOpen = () => {
-  if (closeTimeout) {
-    clearTimeout(closeTimeout);
-    closeTimeout = null;
-  }
+const oDelay = computed(() => parseDelay(props.openDelay));
+const cDelay = computed(() => parseDelay(props.closeDelay));
 
-  const delay = parseDelay(props.openDelay);
-  openTimeout = setTimeout(() => {
-    showPopper.value = true;
-  }, delay);
+const handleOpen = () => {
+  showPopper.value = true;
 };
 
 const handleClose = () => {
-  if (openTimeout) {
-    clearTimeout(openTimeout);
-    openTimeout = null;
-  }
-
-  const delay = parseDelay(props.closeDelay);
-  closeTimeout = setTimeout(() => {
-    showPopper.value = false;
-  }, delay);
+  showPopper.value = false;
 };
+
+const debouncedOpen = useDebounceFn(async () => {
+  handleOpen();
+}, oDelay);
+
+const debouncedClose = useDebounceFn(async () => {
+  handleClose();
+}, cDelay);
 
 const handleMouseEnter = () => {
   if ((!props.hover || props.disabled) && !showPopper.value) return;
-  handleOpen();
+  debouncedOpen();
 };
 
 const handleMouseLeave = (event) => {
@@ -90,7 +83,7 @@ const handleMouseLeave = (event) => {
     !triggerEl.contains(relatedTarget) &&
     !popperEl.contains(relatedTarget)
   ) {
-    handleClose();
+    debouncedClose();
   }
 };
 
@@ -124,8 +117,6 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  if (openTimeout) clearTimeout(openTimeout);
-  if (closeTimeout) clearTimeout(closeTimeout);
   window.removeEventListener('keydown', handleGlobalKeydown);
 });
 

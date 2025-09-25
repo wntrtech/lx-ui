@@ -83,7 +83,6 @@ const itemsModel = ref({});
 const detailedModeModal = ref();
 const detailsSwitchType = ref('advanced-search');
 const panelWidth = ref();
-const isInputFocused = ref(false);
 const inputReadonly = ref(false);
 const highlightedItemId = ref(null);
 const infoWrapperRef = ref();
@@ -112,7 +111,8 @@ const model = computed({
     return null;
   },
   set: (value) => {
-    emit('update:modelValue', value);
+    const filteredValue = Array.isArray(value) ? value.filter((v) => v !== 'select-all') : value;
+    emit('update:modelValue', filteredValue);
   },
 });
 
@@ -164,6 +164,7 @@ function attributesSearch(item) {
   for (let i = 0; i < props.searchAttributes.length; i += 1) {
     const attrName = props.searchAttributes[i] as string;
     const attrValue = item[attrName as keyof typeof item];
+
     if (textSearch(query.value, attrValue)) {
       return true;
     }
@@ -172,17 +173,29 @@ function attributesSearch(item) {
 }
 
 const filteredItems = computed(() => {
+  let items = allItems.value;
+
   if (Array.isArray(props.items) && query.value?.length > 0) {
     if (Array.isArray(props.searchAttributes) && props.searchAttributes?.length > 0) {
-      return allItems.value.filter(attributesSearch);
+      items = allItems.value.filter(attributesSearch);
+    } else {
+      items = allItems.value.filter((item) => {
+        const name = item[props.nameAttribute];
+        return textSearch(query.value, name);
+      });
     }
-
-    return allItems.value.filter((item) => {
-      const name = item[props.nameAttribute];
-      return textSearch(query.value, name);
-    });
   }
-  return allItems.value;
+
+  if (
+    props.hasSelectAll &&
+    typeof props.items !== 'function' &&
+    props.selectingKind === 'multiple' &&
+    items.length > 0
+  ) {
+    return [{ id: 'select-all', name: 'Select all', value: false }, ...items];
+  }
+
+  return items;
 });
 
 const queryDebounceValue = computed(() =>
@@ -228,16 +241,9 @@ watch(
       } else {
         if (queryLength >= 1) {
           allItems.value = [];
-          deactivate();
         }
       }
       await debouncedSearchReq(finalQuery);
-
-      await nextTick();
-
-      if (allItems.value.length !== 0 && !loadingState.value) {
-        activate();
-      }
     }
   },
   { immediate: true }
@@ -281,24 +287,30 @@ function initSearchInput() {
 }
 
 function initInputFocus() {
+  deactivate({
+    returnFocus: false,
+  });
   highlightedItemId.value = null;
-  refQuery.value.focus();
+
+  nextTick(() => {
+    refQuery.value.focus();
+  });
 }
 
 function handleMenuAndInputKeydown(e) {
   const inputElement = document.activeElement;
 
-  if (e.key === 'Tab' && menuOpen.value && filteredItems.value.length > 0) {
+  if (e.key === 'Tab' && menuOpen.value) {
     const tabPressed = e.shiftKey ? 'backward' : 'forward';
+
+    query.value = null;
+    menuOpen.value = false;
 
     deactivate({
       returnFocus: false,
     });
 
-    menuOpen.value = false;
-
     focusNextFocusableElement(refQuery.value, tabPressed === 'forward');
-    return;
   }
 
   if (e.shiftKey) {
@@ -318,13 +330,12 @@ function handleMenuAndInputKeydown(e) {
 
   if (isPrintableChar || isBackspaceKey || isDeleteKey) {
     if (!menuOpen.value) {
-      query.value = null;
-      menuOpen.value = true;
+      openMenu();
     }
+
     if (model.value && props.selectingKind === 'single') clear();
     inputReadonly.value = false;
     highlightedItemId.value = null;
-    initInputFocus();
   }
 }
 
@@ -338,7 +349,7 @@ function openMenu() {
     menuOpen.value = true;
 
     nextTick(() => {
-      if (allItems.value.length !== 0) {
+      if (filteredItems.value.length > 0) {
         activate();
       }
       initSearchInput();
@@ -353,7 +364,11 @@ function closeOnClickOutside() {
   if (menuOpen.value) {
     menuOpen.value = false;
   }
-  deactivate();
+
+  deactivate({
+    returnFocus: false,
+  });
+
   query.value = null;
   highlightedItemId.value = null;
 }
@@ -362,13 +377,14 @@ function closeMenu() {
   if (menuOpen.value) {
     menuOpen.value = false;
   }
-  deactivate();
+
+  deactivate({
+    returnFocus: false,
+  });
 
   highlightedItemId.value = null;
 
-  setTimeout(() => {
-    query.value = null;
-  }, 100);
+  query.value = null;
 
   nextTick(() => {
     refQuery.value.focus();
@@ -377,6 +393,7 @@ function closeMenu() {
 
 function closeDropDownDefaultOnEsc() {
   menuOpen.value = false;
+  query.value = null;
 
   nextTick(() => {
     refQuery.value.focus();
@@ -420,47 +437,10 @@ function selectSingle(item) {
   }
 }
 
-function focusOnDropDown(e = { target: { id: null }, shiftKey: false, key: '' }) {
-  if (e.shiftKey && e.key === 'Tab') {
-    if (
-      !menuOpen.value &&
-      e.target &&
-      e.target.id !== 'clearButton' &&
-      e.target.id !== 'detailsButton'
-    ) {
-      nextTick(() => {
-        openMenu();
-      });
-    }
-    return;
-  }
-
-  if (e.key === 'Tab') {
-    if (
-      !menuOpen.value &&
-      e.target &&
-      e.target.id !== 'clearButton' &&
-      e.target.id !== 'detailsButton'
-    ) {
-      nextTick(() => {
-        openMenu();
-      });
-    }
-  }
-}
-
 const handleFocusOut = (e) => {
-  isInputFocused.value = false;
   if (!refListbox.value?.contains(e.relatedTarget)) {
     menuOpen.value = false;
-    setTimeout(() => {
-      query.value = null;
-    }, 100);
   }
-};
-
-const handleInputFocus = () => {
-  isInputFocused.value = true;
 };
 
 const shouldShowPlaceholder = computed(() => {
@@ -543,24 +523,6 @@ function handleSelection(selectedValue) {
   sortModel();
 }
 
-function onEnter() {
-  if (handleClearButton()) return;
-  if (handleMenuOpening()) return;
-
-  const selectedValue = getSelectedValue();
-  if (!selectedValue) {
-    focusOnDropDown();
-    return;
-  }
-
-  if (props.selectingKind === 'multiple') {
-    handleSelection(selectedValue);
-  } else {
-    model.value = selectedValue;
-    closeMenu();
-  }
-}
-
 function handleClearButton() {
   if (document.activeElement?.id === 'clearButton') {
     clear();
@@ -577,6 +539,25 @@ function handleMenuOpening() {
     return true;
   }
   return false;
+}
+
+function onEnter() {
+  if (handleClearButton()) return;
+  if (handleMenuOpening()) return;
+}
+
+function handleEnterSelection() {
+  const selectedValue = getSelectedValue();
+  if (!selectedValue) {
+    return;
+  }
+
+  if (props.selectingKind === 'multiple') {
+    handleSelection(selectedValue);
+  } else {
+    model.value = selectedValue;
+    closeMenu();
+  }
 }
 
 function getSelectedValue() {
@@ -909,6 +890,12 @@ const showListOptions = computed(() => {
   return displaySelectedItems.value.length > 0;
 });
 
+const firstFocusableIndex = computed(() =>
+  props.hasSelectAll && typeof props.items !== 'function' && props.selectingKind === 'multiple'
+    ? 1
+    : 0
+);
+
 watch(
   () => [props.items, props.preloadedItems],
   (newValue, oldValue) => {
@@ -963,6 +950,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
 const areSomeSelected = computed(() => {
   let res = false;
   if (typeof props.items === 'function') return null;
+
   props.items.forEach((item) => {
     if (Array.isArray(model.value) && model.value?.includes(item[props.idAttribute])) res = true;
     return true;
@@ -973,6 +961,11 @@ const areSomeSelected = computed(() => {
 const areAllSelected = computed(() => {
   let res = props.items?.length > 0;
   if (typeof props.items === 'function') return null;
+
+  if (!Array.isArray(model.value) || model.value.length === 0) {
+    return false;
+  }
+
   props.items.forEach((item) => {
     if (Array.isArray(model.value)) {
       if (!model.value.includes(item[props.idAttribute])) {
@@ -980,6 +973,7 @@ const areAllSelected = computed(() => {
       }
     }
   });
+
   return res;
 });
 
@@ -987,13 +981,19 @@ function selectAll() {
   if (areAllSelected.value || areSomeSelected.value) {
     model.value = [];
   } else {
-    if (typeof props.items === 'function') return null;
+    if (typeof props.items === 'function') return;
+
     const res = [];
     const itemModelClone = { ...itemsModel.value };
-    allItems.value.forEach(async (item) => {
-      res.push(getIdAttributeString(item));
-      itemModelClone[getIdAttributeString(item)] = true;
-    });
+
+    allItems.value
+      .filter((item) => getIdAttributeString(item) !== 'select-all')
+      .forEach((item) => {
+        const id = getIdAttributeString(item);
+        res.push(id);
+        itemModelClone[id] = true;
+      });
+
     model.value = res;
     itemsModel.value = itemModelClone;
   }
@@ -1083,7 +1083,6 @@ onMounted(() => {
               @keydown.up.prevent="focusPreviousInputElement"
               @keydown.f3.prevent="openDetails"
               @keydown="handleMenuAndInputKeydown"
-              @keyup.tab.prevent="focusOnDropDown"
               @click="toggleMenu"
             >
               <div
@@ -1153,8 +1152,6 @@ onMounted(() => {
                       :readonly="inputReadonly"
                       :disabled="disabled"
                       @focusout="handleFocusOut"
-                      @focus="handleInputFocus"
-                      @keydown="handleMenuAndInputKeydown"
                       @touchstart="handleTouchStart"
                     />
                     <div class="lx-invisible" aria-live="polite" v-if="loadingState || loading">
@@ -1254,7 +1251,6 @@ onMounted(() => {
                       variant="icon-only"
                       :label="displayTexts.detailsButton"
                       @keydown.enter="openDetails"
-                      @keydown.tab="focusOnDropDown"
                       @keydown.f3.prevent="openDetails"
                       @click="openDetails"
                     />
@@ -1282,13 +1278,13 @@ onMounted(() => {
               class="lx-dropdown-default-content"
               :style="{ width: panelWidth + 'px' }"
               @keydown.esc.prevent="closeDropDownDefaultOnEsc"
-              @keydown.enter="onEnter"
-              @keydown.space.prevent="onEnter"
+              @keydown.enter.prevent="handleEnterSelection"
+              @keydown.space.prevent="handleEnterSelection"
               @keydown.up.prevent="focusPreviousInputElement"
               @keydown.down.prevent="focusNextInputElement"
               @keydown.f3.prevent="openDetails"
               @keydown.backspace="initInputFocus"
-              @keydown="handleMenuAndInputKeydown"
+              @keydown.prevent="handleMenuAndInputKeydown"
             >
               <slot name="panel" @click="closeMenu()">
                 <transition name="appear-down">
@@ -1299,38 +1295,58 @@ onMounted(() => {
                     role="listbox"
                   >
                     <template v-if="filteredItems?.length">
-                      <div
-                        v-if="
-                          hasSelectAll &&
-                          typeof props.items !== 'function' &&
-                          selectingKind === 'multiple'
-                        "
-                        class="lx-value-picker-item select-all"
-                        tabindex="-1"
-                        role="option"
-                        @click="selectAll"
-                        :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-                      >
-                        <LxIcon
-                          :value="
-                            areSomeSelected
-                              ? areAllSelected
-                                ? 'checkbox-filled'
-                                : 'checkbox-indeterminate'
-                              : 'checkbox'
-                          "
-                        />
-                        <span>{{
-                          areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
-                        }}</span>
-                      </div>
                       <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
+                        <!-- Inject "Select All" just before the first item -->
                         <div
+                          v-if="
+                            index === 0 &&
+                            hasSelectAll &&
+                            typeof props.items !== 'function' &&
+                            selectingKind === 'multiple' &&
+                            filteredItems.length > 0
+                          "
+                          id="select-all"
+                          class="lx-value-picker-item select-all"
+                          :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
+                          :tabindex="
+                            highlightedItemId === 'select-all'
+                              ? '0'
+                              : !highlightedItemId
+                              ? '0'
+                              : '-1'
+                          "
+                          role="option"
+                          @keydown.enter.prevent="selectAll"
+                          @keydown.space.prevent="selectAll"
+                          @click="selectAll"
+                          :title="
+                            areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
+                          "
+                        >
+                          <LxIcon
+                            :value="
+                              areSomeSelected
+                                ? areAllSelected
+                                  ? 'checkbox-filled'
+                                  : 'checkbox-indeterminate'
+                                : 'checkbox'
+                            "
+                          />
+                          <span>
+                            {{
+                              areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll
+                            }}
+                          </span>
+                        </div>
+
+                        <!-- Normal item rendering -->
+                        <div
+                          v-if="getIdAttributeString(item) !== 'select-all'"
                           :tabindex="
                             highlightedItemId && highlightedItemId === getIdAttributeString(item)
                               ? '0'
                               : !highlightedItemId
-                              ? index === 0
+                              ? index === firstFocusableIndex
                                 ? '0'
                                 : '-1'
                               : '-1'
@@ -1407,6 +1423,7 @@ onMounted(() => {
                         </div>
                       </template>
                     </template>
+
                     <template
                       v-if="
                         finalQuery &&
@@ -1417,6 +1434,12 @@ onMounted(() => {
                     >
                       <div class="lx-empty">
                         <LxIcon value="info" />
+                        <div
+                          v-if="!filteredItems?.length"
+                          class="lx-invisible"
+                          aria-hidden="true"
+                          tabindex="0"
+                        ></div>
                         <p>
                           {{ displayTexts.empty }} "<span class="lx-highlighted-item">{{
                             query.toLowerCase()

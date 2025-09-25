@@ -21,11 +21,11 @@
   font-weight: var(--font-weight);
 }
 
-.lx .lx-layout .lx-calendar-container .lx-datepicker-input-container.range .lx-input-wrapper:has(.lx-date-time-picker.input-active) {
+.lx .lx-layout .lx-datepicker-input-container.range .lx-input-wrapper:has(.lx-date-time-picker.input-active) {
   background-color: var(--color-highlight);
 }
 
-.lx .lx-layout .lx-calendar-container .lx-datepicker-input-container.range .lx-input-wrapper:has(.lx-date-time-picker:focus) {
+.lx .lx-layout .lx-datepicker-input-container.range .lx-input-wrapper:has(.lx-date-time-picker:focus) {
   background-color: var(--color-highlight);
 }
 
@@ -599,12 +599,12 @@
   opacity: 1;
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-weeks .lx-calendar-week .lx-info-wrapper {
+.lx .lx-layout .lx-calendar-container .lx-calendar-weeks .lx-calendar-week .lx-info-wrapper-content {
   cursor: auto;
   height: 1.8rem;
 }
 
-.lx .lx-layout .lx-calendar-container .lx-calendar-weeks .lx-calendar-week .lx-info-wrapper:hover {
+.lx .lx-layout .lx-calendar-container .lx-calendar-weeks .lx-calendar-week .lx-info-wrapper-content:hover {
   background-color: transparent;
 }
 
@@ -630,7 +630,7 @@
   width: 0.185rem;
   height: 0.185rem;
   background-color: var(--color-interactive-background);
-  bottom: 0.25rem;
+  bottom: 0.2rem;
 }
 
 .lx .lx-layout .lx-calendar-container .lx-calendar-day.lx-selected-day.lx-today::before,

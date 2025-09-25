@@ -904,7 +904,7 @@
   cursor: help;
 }
 
-.lx-info-wrapper .lx-info-wrapper-content .lx-data{
+.lx .lx-layout .popper-wrapper .lx-info-wrapper-content .lx-data {
   color: var(--color-data);
 }
 

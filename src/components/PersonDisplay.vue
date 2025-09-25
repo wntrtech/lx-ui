@@ -355,7 +355,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
           </LxRow>
         </template>
         <template v-else>
-          <LxRow v-for="i in tooltipItems.slice(0, 10)" :key="i" :show-label="false">
+          <LxRow v-for="i in tooltipItems.slice(0, 10)" :key="i" :hide-label="true">
             <p class="lx-data">
               {{ (i.firstName && i.lastName) || i.name ? formatName(i) : i.description }}
             </p>

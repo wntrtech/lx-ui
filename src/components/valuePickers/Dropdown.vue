@@ -317,16 +317,24 @@ watch(
 );
 
 const filteredItems = computed(() => {
+  let items = itemsDisplay.value;
+
   if (Array.isArray(props.items) && query.value?.length > 0) {
     if (Array.isArray(props.searchAttributes) && props.searchAttributes?.length > 0) {
-      return props.items.filter(attributesSearch);
+      items = itemsDisplay.value.filter(attributesSearch);
+    } else {
+      items = itemsDisplay.value.filter((item) => {
+        const name = item[props.nameAttribute];
+        return textSearch(query.value, name);
+      });
     }
-    return itemsDisplay.value.filter((item) => {
-      const name = item[props.nameAttribute];
-      return textSearch(query.value, name);
-    });
   }
-  return itemsDisplay.value;
+
+  if (props.hasSelectAll && props.kind === 'multiple') {
+    return [{ id: 'select-all', name: 'Select all', value: false }, ...items];
+  }
+
+  return items;
 });
 
 function closeDropDownDefault() {
@@ -361,7 +369,16 @@ function openDropDownDefault() {
   }
 }
 
-onClickOutside(refRoot, closeDropDownDefault, {
+function closeOnClickOutside() {
+  if (menuOpen.value) {
+    menuOpen.value = false;
+  }
+  deactivate({
+    returnFocus: false,
+  });
+}
+
+onClickOutside(refRoot, closeOnClickOutside, {
   ignore: ['#poppers'],
 });
 
@@ -523,6 +540,10 @@ onMounted(() => {
 const columnReadOnly = computed(() => {
   return selectedItems.value?.map((item) => item[props.nameAttribute]);
 });
+
+const firstFocusableIndex = computed(() =>
+  props.hasSelectAll && props.kind === 'multiple' ? 1 : 0
+);
 </script>
 
 <template>
@@ -675,36 +696,51 @@ const columnReadOnly = computed(() => {
             >
               <slot name="panel" @click="closeDropDownDefault()">
                 <div class="lx-dropdown-panel" tabindex="-1" role="listbox">
-                  <div
-                    v-if="hasSelectAll"
-                    class="lx-value-picker-item select-all"
-                    tabindex="-1"
-                    role="option"
-                    :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
-                    @click="selectAll"
-                  >
-                    <LxIcon
-                      :value="
-                        areSomeSelected
-                          ? areAllSelected
-                            ? 'checkbox-filled'
-                            : 'checkbox-indeterminate'
-                          : 'checkbox'
-                      "
-                    />
-                    <span>
-                      {{ areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll }}
-                    </span>
-                  </div>
                   <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
+                    <!-- Inject "Select All" just before the first item -->
                     <div
+                      v-if="
+                        index === 0 &&
+                        hasSelectAll &&
+                        kind === 'multiple' &&
+                        filteredItems.length > 0
+                      "
+                      id="select-all"
+                      class="lx-value-picker-item select-all"
+                      :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
+                      :tabindex="
+                        highlightedItemId === 'select-all' ? '0' : !highlightedItemId ? '0' : '-1'
+                      "
+                      role="option"
+                      :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
+                      @keydown.enter.prevent="selectAll"
+                      @keydown.space.prevent="selectAll"
+                      @click="selectAll"
+                    >
+                      <LxIcon
+                        :value="
+                          areSomeSelected
+                            ? areAllSelected
+                              ? 'checkbox-filled'
+                              : 'checkbox-indeterminate'
+                            : 'checkbox'
+                        "
+                      />
+                      <span>
+                        {{ areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll }}
+                      </span>
+                    </div>
+
+                    <!-- Normal item rendering -->
+                    <div
+                      v-if="getIdAttributeString(item) !== 'select-all'"
                       :title="item[nameAttribute]"
                       class="lx-value-picker-item"
                       :tabindex="
                         highlightedItemId && highlightedItemId === getIdAttributeString(item)
                           ? '0'
                           : !highlightedItemId
-                          ? index === 0
+                          ? index === firstFocusableIndex
                             ? '0'
                             : '-1'
                           : '-1'
