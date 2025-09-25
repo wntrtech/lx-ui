@@ -5,7 +5,6 @@ import LxIcon from '@/components/Icon.vue';
 import LxModal from '@/components/Modal.vue';
 import LxList from '@/components/list/List.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
-import LxToggle from '@/components/Toggle.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxMegaMenu from '@/components/shell/MegaMenu.vue';

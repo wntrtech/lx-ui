@@ -148,12 +148,18 @@ const emits = defineEmits([
 
 const alternativeProfilesModal = ref();
 const contextPersonModal = ref();
+const settings = ref(false);
+const customButton = ref();
 
-const navToggle = () => {
+function navToggle(closeSettings = false) {
+  if (closeSettings) {
+    settings.value = false;
+  }
   emits('nav-toggle', !props.navBarSwitch);
-};
+}
 
 function logOut() {
+  navToggle();
   emits('log-out');
 }
 
@@ -437,10 +443,6 @@ function goBack() {
   }
   emits('go-back', -1);
 }
-
-const settings = ref(false);
-
-const customButton = ref();
 </script>
 <template>
   <div
@@ -767,24 +769,15 @@ const customButton = ref();
                 <LxButton
                   kind="tertiary"
                   :label="item.label"
-                  :href="item.to"
+                  :href="item.isLogout ? null : item.to"
                   :icon="item.icon"
                   :disabled="headerNavDisable"
-                  @click="navToggle"
-                  @keydown.enter="navToggle"
+                  :destructive="item.isLogout || false"
+                  @click="item.isLogout ? logOut() : navToggle(true)"
+                  @keydown.enter="item.isLogout ? logOut() : navToggle(true)"
                 />
               </li>
             </ul>
-
-            <LxButton
-              v-if="userInfo"
-              custom-class="logout-button"
-              kind="tertiary"
-              icon="logout"
-              :label="displayTexts.logOut"
-              :destructive="true"
-              @click="logOut"
-            />
           </div>
         </transition>
       </div>

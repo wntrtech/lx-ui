@@ -690,7 +690,7 @@ const nav = ref(null);
 const footer = ref(null);
 
 onMounted(() => {
-  if (!props.hasThemePicker) {
+  if (!props.hasThemePicker && props.mode !== 'digimaks-lite') {
     themeModel.value = 'none';
   }
 

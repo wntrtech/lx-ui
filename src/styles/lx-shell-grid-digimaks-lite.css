@@ -309,6 +309,7 @@
 
 .lx-layout-digimaks .lx-nav-panel ul li .lx-button {
   --button-nav-padding: 0rem 1rem 0rem 2rem;
+  --button-tertiary-width: 100%;
 }
 
 .lx-layout-digimaks > .lx-main {
@@ -458,18 +459,16 @@
 .lx-layout-digimaks .lx-settings-menu > ul {
   list-style-type: none;
   margin: 0;
-  margin-bottom: 1rem;
   padding-left: 0;
   padding-top: 1rem;
-  border-top: 2px solid var(--color-label);
-  border-bottom: 2px solid var(--color-label);
+  border-top: 2px solid var(--color-chrome);
 }
 
-.lx-layout-digimaks .lx-settings-menu > ul li:first-of-type {
+.lx-layout-digimaks .lx-settings-menu > ul li {
   padding-bottom: 1rem;
 }
 
-.lx-layout-digimaks .lx-settings-menu>ul li:first-of-type:only-child {
+.lx-layout-digimaks .lx-settings-menu>ul li:last-of-type {
   padding-bottom: 0;
 }
 
