@@ -65,7 +65,7 @@ const navItemsUserMenuEves = computed(() =>
 
 const windowSize = useWindowSize();
 
-const isResponsiveView = computed(() => windowSize.width.value < 1000);
+const isResponsiveView = computed(() => windowSize.width.value <= 1000);
 
 const emits = defineEmits([
   'nav-toggle',

@@ -298,7 +298,7 @@ function toggleNavBar(event) {
   if (
     !props.navBarSwitch &&
     windowSize.width.value < 1800 &&
-    windowSize.width.value > 1000 &&
+    windowSize.width.value >= 1000 &&
     event?.target?.parentNode?.parentNode?.id !== 'lx_nav-toggle' &&
     event?.target?.parentNode?.id !== 'lx_nav-toggle' &&
     event?.target?.id !== 'lx_nav-toggle' &&
@@ -514,7 +514,7 @@ function themeDropdownClicked(id, value) {
 }
 const navPanel = ref();
 
-const isResponsiveView = computed(() => windowSize.width.value < 1000);
+const isResponsiveView = computed(() => windowSize.width.value <= 1000);
 
 onClickOutside(navPanel, toggleNavBar);
 </script>
@@ -525,7 +525,7 @@ onClickOutside(navPanel, toggleNavBar);
     :class="{ shown: !navBarSwitch }"
     tabindex="-1"
   >
-    <ul class="lx-nav-group" v-if="windowSize.width.value > 1000 && hasMegaMenu">
+    <ul class="lx-nav-group" v-if="windowSize.width.value >= 1000 && hasMegaMenu">
       <li
         v-for="item in megaMenuAllowedItems.filter((i) => i.kind === 'primary')"
         :key="item.id"
@@ -600,7 +600,7 @@ onClickOutside(navPanel, toggleNavBar);
         </ul>
       </li>
     </ul>
-    <ul class="lx-nav-group" v-if="windowSize.width.value > 1000 && !hasMegaMenu">
+    <ul class="lx-nav-group" v-if="windowSize.width.value >= 1000 && !hasMegaMenu">
       <li
         v-for="item in navItemsPrimary"
         :key="item.label"
@@ -610,7 +610,7 @@ onClickOutside(navPanel, toggleNavBar);
         <LxButton :label="item.label" :href="item.to" :tabindex="5" @click="navClick(item?.id)" />
       </li>
     </ul>
-    <ul class="lx-nav-group" v-if="windowSize.width.value > 1000">
+    <ul class="lx-nav-group" v-if="windowSize.width.value >= 1000">
       <li
         v-for="item in navItemsSecondary"
         :key="item.label"

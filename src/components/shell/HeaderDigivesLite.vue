@@ -363,7 +363,7 @@ const alertLevelToBadgeType = computed(() => {
 });
 
 const menuIcon = computed(() => {
-  if (windowSize.width.value > 1000) {
+  if (windowSize.width.value >= 1000) {
     return 'menu';
   }
 
