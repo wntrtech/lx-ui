@@ -235,6 +235,7 @@ defineExpose({ toggleExpander, focus });
               icon="flash"
               :label="displayTexts.fastFiltersLabel"
               :disabled="disabled"
+              :tabindex="-1"
             />
           </LxDropDownMenu>
           <LxButton

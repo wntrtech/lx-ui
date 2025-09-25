@@ -2911,7 +2911,7 @@ watch(
                                     !canSelectDate(date, minDateRef, maxDateRef, 'date')
                                   )
                                 "
-                                @keydown.enter.prevent="
+                                @keyup.enter.prevent="
                                   handleSelections(
                                     date,
                                     'date',
@@ -3135,7 +3135,7 @@ watch(
                                 )
                             )
                           "
-                          @keydown.enter.prevent="
+                          @keyup.enter.prevent="
                             handleSelections(
                               month,
                               'month',
@@ -3255,7 +3255,7 @@ watch(
                             )
                           )
                         "
-                        @keydown.enter.prevent="
+                        @keyup.enter.prevent="
                           handleSelections(
                             year,
                             'year',
@@ -3374,7 +3374,7 @@ watch(
                             )
                           )
                         "
-                        @keydown.enter.prevent="
+                        @keyup.enter.prevent="
                           handleSelections(
                             {
                               year: quarter.year,
@@ -3521,7 +3521,7 @@ watch(
                     )
                   )
                 "
-                @keydown.enter.stop.prevent="
+                @keyup.enter.stop.prevent="
                   selectHour(
                     hour,
                     !canSelectTime(
@@ -3644,7 +3644,7 @@ watch(
                     )
                   )
                 "
-                @keydown.enter.stop.prevent="
+                @keyup.enter.stop.prevent="
                   selectMinute(
                     minute,
                     !canSelectTime(

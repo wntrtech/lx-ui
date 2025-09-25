@@ -230,7 +230,13 @@ onMounted(async () => {
         :actionDefinitions="cameraListDisplay"
         @actionClick="(id) => changeCamera(id)"
       >
-        <LxButton :label="displayTexts.changeCamera" variant="icon-only" kind="ghost" icon="menu" />
+        <LxButton
+          :label="displayTexts.changeCamera"
+          variant="icon-only"
+          kind="ghost"
+          icon="menu"
+          tabindex="-1"
+        />
       </LxDropDownMenu>
     </div>
     <div class="lx-qr-scanner">

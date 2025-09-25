@@ -63,6 +63,7 @@ function actionClicked(actionName) {
             kind="tertiary"
             :label="displayTexts.overflowMenu"
             variant="icon-only"
+            tabindex="-1"
           />
         </LxDropDownMenu>
       </div>

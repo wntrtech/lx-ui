@@ -285,6 +285,7 @@ provide('rowId', idComputed);
             kind="ghost"
             :label="requiredTexts?.overflowMenu"
             variant="icon-only"
+            tabindex="-1"
           />
         </LxDropDownMenu>
       </div>
@@ -358,6 +359,7 @@ provide('rowId', idComputed);
             kind="ghost"
             :label="requiredTexts?.overflowMenu"
             variant="icon-only"
+            tabindex="-1"
           />
         </LxDropDownMenu>
       </div>

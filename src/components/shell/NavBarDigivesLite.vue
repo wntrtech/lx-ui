@@ -627,7 +627,7 @@ onClickOutside(navPanel, toggleNavBar);
         <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
           <div
             class="lx-user-button"
-            tabindex="0"
+            tabindex="-1"
             @keydown.space.prevent="triggerUserMenu"
             @keydown.enter.prevent="triggerUserMenu"
           >
@@ -807,6 +807,7 @@ onClickOutside(navPanel, toggleNavBar);
           <LxButton
             id="lx-shell-custom-button"
             kind="ghost"
+            tabindex="-1"
             :label="displayTexts.customButton"
             :icon="customButtonIcon"
             :badge="customButtonBadge"
@@ -831,6 +832,7 @@ onClickOutside(navPanel, toggleNavBar);
             customClass="lx-header-button"
             kind="ghost"
             icon="language"
+            tabindex="-1"
             :label="displayTexts.languagesTitle"
           />
 
@@ -861,6 +863,7 @@ onClickOutside(navPanel, toggleNavBar);
                 :label="displayTexts.themeTitle"
                 kind="ghost"
                 :icon="themeIcon"
+                tabindex="-1"
               />
             </div>
           </LxDropDownMenu>
@@ -872,6 +875,7 @@ onClickOutside(navPanel, toggleNavBar);
             customClass="lx-header-button"
             kind="ghost"
             icon="notifications"
+            tabindex="-1"
             :label="displayTexts.alertsTitle"
             :badge="alertsCount"
             :badge-type="alertLevelToBadgeType"

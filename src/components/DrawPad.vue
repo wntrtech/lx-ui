@@ -340,6 +340,7 @@ defineExpose({ getPng });
               icon="color"
               kind="ghost"
               variant="icon-only"
+              tabindex="-1"
               :label="displayTexts.color"
               :disabled="props.disabled"
             />

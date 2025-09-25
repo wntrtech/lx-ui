@@ -14,6 +14,7 @@ const props = defineProps({
   disabled: { type: Boolean, default: false },
   triggerClick: { type: String, default: 'left' },
   offsetSkid: { type: String, default: null },
+  tabindex: { type: [String, Number], default: null },
   actionDefinitions: { type: Array, default: () => [] },
 });
 
@@ -129,7 +130,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       <div
         v-if="props.triggerClick === 'right'"
         class="lx-dropdown-toggler"
-        :tabindex="disabled ? -1 : 0"
+        :tabindex="disabled ? -1 : tabindex || 0"
         @keyup.enter="openMenu('keyboard')"
         @keyup.space="openMenu('keyboard')"
         @keydown.esc="closeMenu('keyboard')"
@@ -160,7 +161,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       <div
         v-else
         class="lx-dropdown-toggler"
-        :tabindex="disabled ? -1 : 0"
+        :tabindex="disabled ? -1 : tabindex || 0"
         @keyup.enter="openMenu('keyboard')"
         @keyup.space="openMenu('keyboard')"
         @keydown.esc="closeMenu('keyboard')"

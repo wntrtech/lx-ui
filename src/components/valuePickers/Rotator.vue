@@ -286,7 +286,7 @@ function isActive(item) {
           class="lx-rotator-dropdown-wrapper lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
           :aria-invalid="invalid"
-          :tabindex="disabled ? '-1' : '0'"
+          :tabindex="-1"
           :aria-labelledby="labelId"
           :aria-disabled="disabled"
           @click="!disabled && selectSingle(null)"

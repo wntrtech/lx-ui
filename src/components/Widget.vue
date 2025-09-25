@@ -91,6 +91,7 @@ function actionClicked(id) {
             kind="ghost"
             :label="displayTexts.overflowMenu"
             variant="icon-only"
+            tabindex="-1"
           />
         </div>
       </LxDropDownMenu>

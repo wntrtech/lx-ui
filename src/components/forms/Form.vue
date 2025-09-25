@@ -902,6 +902,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
             icon="overflow-menu"
             kind="ghost"
             variant="icon-only"
+            tabindex="-1"
             custom-class="additional-button-icon"
             :label="displayTexts?.otherActions"
           />
@@ -985,6 +986,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
             icon="menu"
             kind="ghost"
             variant="icon-only"
+            tabindex="-1"
             :label="displayTexts.overflowMenu"
           />
           <template #panel>
@@ -1102,7 +1104,12 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           :actionDefinitions="combinedFooterActions"
           @actionClick="(id) => clickHandler(id)"
         >
-          <LxButton kind="secondary" icon="overflow-menu" :label="displayTexts?.otherActions" />
+          <LxButton
+            kind="secondary"
+            icon="overflow-menu"
+            :label="displayTexts?.otherActions"
+            tabindex="-1"
+          />
         </LxDropDownMenu>
 
         <LxButton

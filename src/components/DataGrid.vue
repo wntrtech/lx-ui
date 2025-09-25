@@ -1437,6 +1437,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   kind="ghost"
                   :label="displayTexts.overflowMenu"
                   variant="icon-only"
+                  tabindex="-1"
                   :disabled="loading || busy"
                 />
               </LxDropDownMenu>
@@ -1931,6 +1932,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       :disabled="isDisabled"
                       :label="displayTexts.moreActions"
                       variant="icon-only"
+                      tabindex="-1"
                     />
                   </div>
 
@@ -2237,6 +2239,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             icon="chevron-down"
             kind="ghost"
             customClass="lx-chip"
+            tabindex="-1"
           />
           <template #panel>
             <div class="lx-button-set">

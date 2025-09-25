@@ -2978,11 +2978,7 @@ function getCustomVariant(row) {
           ? model[name]?.active
           : displaySchema?.properties[name]?.lx?.active
       "
-      :tabindex="
-        displaySchema?.properties[name]?.type === 'object'
-          ? model[name]?.tabindex
-          : displaySchema?.properties[name]?.lx?.tabindex
-      "
+      :tabindex="-1"
       :customClass="
         displaySchema?.properties[name]?.type === 'object'
           ? model[name]?.customClass

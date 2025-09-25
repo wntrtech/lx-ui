@@ -914,7 +914,6 @@ const startInputIndex = computed(() => {
   if (activeInput.value === 'endInput' && dropDownMenuRef.value?.menuOpen) return '-1';
   return '0';
 });
-
 const endInputIndex = computed(() => {
   if (activeInput.value === 'startInput' && dropDownMenuRef.value?.menuOpen) return '-1';
   return '0';
@@ -1070,6 +1069,7 @@ onMounted(async () => {
       ref="dropDownMenuRef"
       :placement="computedPlacement"
       :disabled="disabled"
+      tabindex="-1"
     >
       <div
         class="lx-datepicker-input-container"

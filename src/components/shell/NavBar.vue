@@ -272,6 +272,7 @@ function scrollUp() {
             icon="overflow-menu"
             :label="displayTexts?.overflowNavItems"
             variant="icon-only"
+            tabindex="-1"
           />
         </LxDropDownMenu>
       </li>

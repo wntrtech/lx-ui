@@ -823,6 +823,7 @@ watch(
                 :label="displayTexts.languagesTitle"
                 kind="ghost"
                 icon="language"
+                tabindex="-1"
               />
             </div>
           </LxDropDownMenu>
@@ -840,6 +841,7 @@ watch(
                 :label="displayTexts.themeTitle"
                 kind="ghost"
                 :icon="themeIcon"
+                tabindex="-1"
               />
             </div>
           </LxDropDownMenu>

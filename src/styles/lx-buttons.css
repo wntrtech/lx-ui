@@ -419,7 +419,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost:focus svg,
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:focus svg,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:focus svg,
-.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus svg {
+.lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus svg,
+.lx-mega-menu .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost svg,
+.header-items .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost svg {
   fill: var(--color-button-toolbar-ghost-icon-focus);
 }
 
@@ -606,6 +608,15 @@ a.lx-button.lx-button-ghost svg {
 .lx-button.lx-button-ghost:focus svg,
 .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost svg {
   fill: var(--color-button-ghost-icon-focus);
+}
+
+.lx-component-toolbar .popper-wrapper > .lx-dropdown-toggler:focus .lx-button svg,
+.lx-camera .lx-component-toolbar .lx-dropdown-toggler:focus .lx-button-ghost svg,
+.lx-map .popper-wrapper > .lx-dropdown-toggler:focus .lx-button-ghost svg,
+.lx-drawpad-wrapper .popper-wrapper > .lx-dropdown-toggler:focus .lx-button-ghost svg,
+.lx-qr-scanner-wrapper .popper-wrapper > .lx-dropdown-toggler:focus .lx-button-ghost svg, 
+.lx-markdown-text-area-wrapper .popper-wrapper > .lx-dropdown-toggler:focus .lx-button-ghost svg {
+  fill: var(--color-button-toolbar-ghost-icon-focus);
 }
 
 /* Focus-hover icon styles */
@@ -1085,6 +1096,8 @@ a.lx-button.lx-button-ghost svg {
   color: var(--color-button-toolbar-ghost-hover);
 }
 
+.lx-mega-menu .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
+.header-items .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost,
 .lx .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:focus,
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost:focus,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:focus,

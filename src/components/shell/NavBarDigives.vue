@@ -248,7 +248,7 @@ onClickOutside(navPanel, toggleNavBar);
               role="combobox"
               :aria-expanded="contextMenu?.menuOpen"
               aria-controls="popper-id"
-              tabindex="0"
+              tabindex="-1"
               @keydown.enter.prevent="triggerContextPersonMenu"
             >
               <div

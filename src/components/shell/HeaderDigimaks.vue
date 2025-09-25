@@ -564,6 +564,7 @@ const languagesDisplayItems = computed(() =>
                   :badgeType="alertLevelToBadgeType"
                   kind="ghost"
                   variant="icon-only"
+                  tabindex="-1"
                 />
 
                 <template v-if="clickSafeAlerts" v-slot:clickSafePanel>
@@ -767,6 +768,7 @@ const languagesDisplayItems = computed(() =>
                   :label="displayTexts.languagesTitle"
                   kind="ghost"
                   icon="language"
+                  tabindex="-1"
                 />
               </LxDropDownMenu>
             </li>
@@ -781,6 +783,7 @@ const languagesDisplayItems = computed(() =>
                   :label="displayTexts.themeTitle"
                   kind="ghost"
                   :icon="themeIcon"
+                  tabindex="-1"
                 />
               </LxDropDownMenu>
             </li>

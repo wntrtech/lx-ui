@@ -272,7 +272,7 @@ function triggerContextPersonMenu() {
               role="combobox"
               :aria-expanded="contextMenu?.menuOpen"
               aria-controls="popper-id"
-              :tabindex="2"
+              tabindex="2"
               @keydown.enter.prevent="triggerContextPersonMenu"
             >
               <div

@@ -219,6 +219,7 @@ const expandIconTitle = computed(() => {
               :disabled="isDisabled"
               :label="displayTexts.overflowMenu"
               variant="icon-only"
+              tabindex="-1"
             />
           </div>
           <template v-slot:toolbar />

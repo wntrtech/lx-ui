@@ -386,6 +386,7 @@ provide('insideFullscreenMap', insideFullscreenMap);
                 kind="ghost"
                 :label="displayTexts.moreOptions"
                 variant="icon-only"
+                tabindex="-1"
               />
               <template #clickSafePanel>
                 <div class="lx-map-menu">

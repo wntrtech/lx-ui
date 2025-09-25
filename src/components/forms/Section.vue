@@ -379,6 +379,7 @@ provide('sectionOrientation', sectionOrientation);
             kind="ghost"
             :label="rowRequiredTexts.overflowMenu"
             variant="icon-only"
+            tabindex="-1"
           />
         </LxDropDownMenu>
       </div>

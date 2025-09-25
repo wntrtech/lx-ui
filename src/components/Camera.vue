@@ -322,6 +322,7 @@ onUnmounted(() => {
               variant="icon-only"
               kind="ghost"
               icon="menu"
+              tabindex="-1"
               :disabled="error || loading"
             />
           </LxDropDownMenu>

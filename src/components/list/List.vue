@@ -1322,6 +1322,7 @@ const toolbarActions = computed(() => {
                     kind="ghost"
                     :label="displayTexts.overflowMenu"
                     variant="icon-only"
+                    tabindex="-1"
                   />
                 </LxDropDownMenu>
               </div>
