@@ -5,8 +5,10 @@ import LxButton from '@/components/Button.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: () => generateUUID() },
   value: { type: Array, default: () => [] },
   level: { type: Number, default: 1 },
   kind: { type: String, default: 'default' }, // 'default', 'icon-only', 'combo'
@@ -24,6 +26,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const activeItemCode = ref('');
 const activeItem = ref(null);
 const itemRefs = ref([]);
+const highlightedTabId = ref(null);
 
 const activeItemName = computed(() => {
   const selectedItem = props.value.find((item) => item.id === activeItemCode.value);
@@ -34,7 +37,8 @@ const announcementMessage = ref('');
 
 function setActiveTab(itemCode) {
   activeItemCode.value = itemCode;
-  activeItem.value = itemRefs.value.find((o) => o.id === `tab-${itemCode}`);
+  highlightedTabId.value = itemCode;
+  activeItem.value = itemRefs.value.find((o) => o.id === `${props.id}-tab-${itemCode}`);
   activeItem.value.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function isActiveTab(itemCode) {
@@ -49,13 +53,39 @@ function setAnnouncementMessage() {
 }
 
 function setNextTab() {
-  setActiveTab(props.value[props.value.findIndex((o) => o.id === activeItemCode.value) + 1]?.id);
+  const nextActiveTabId =
+    props.value[props.value.findIndex((o) => o.id === activeItemCode.value) + 1]?.id;
+  highlightedTabId.value = nextActiveTabId;
+  setActiveTab(nextActiveTabId);
   setAnnouncementMessage();
 }
 
 function setPreviousTab() {
-  setActiveTab(props.value[props.value.findIndex((o) => o.id === activeItemCode.value) - 1]?.id);
+  const nextActiveTabId =
+    props.value[props.value.findIndex((o) => o.id === activeItemCode.value) - 1]?.id;
+  highlightedTabId.value = nextActiveTabId;
+  setActiveTab(nextActiveTabId);
   setAnnouncementMessage();
+}
+
+function focusPreviousTab() {
+  const index = props.value.findIndex((obj) => obj.id === highlightedTabId.value);
+  if (index > 0) {
+    highlightedTabId.value = props.value[index - 1].id;
+  } else {
+    highlightedTabId.value = props.value[props.value.length - 1].id;
+  }
+  document.getElementById(`${props.id}-tab-${highlightedTabId.value}`).focus();
+}
+
+function focusNextTab() {
+  const index = props.value.findIndex((o) => o.id === highlightedTabId.value);
+  if (index < props.value.length - 1) {
+    highlightedTabId.value = props.value[index + 1].id;
+  } else {
+    highlightedTabId.value = props.value[0].id;
+  }
+  document.getElementById(`${props.id}-tab-${highlightedTabId.value}`).focus();
 }
 
 function calculateOffset(el) {
@@ -92,6 +122,12 @@ onMounted(() => {
   if (props.value && props.value.length > 0) {
     setActiveTab(props.value[0].id);
   }
+
+  if (activeItemCode.value) {
+    highlightedTabId.value = activeItemCode.value;
+  } else if (props.value && props.value.length > 0) {
+    highlightedTabId.value = props.value[0].id;
+  }
 });
 
 defineExpose({ setActiveTab, isActiveTab, setAnnouncementMessage });
@@ -110,19 +146,21 @@ defineExpose({ setActiveTab, isActiveTab, setAnnouncementMessage });
       <div class="lx-tab-container">
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
         <div
-          :id="`tab-${t.id}`"
+          :id="`${id}-tab-${t.id}`"
           v-for="t in props.value"
           :key="t.id"
           ref="itemRefs"
           class="lx-tab"
           :class="[{ 'lx-selected': isActiveTab(t.id) }, { 'lx-invalid': t.invalid }]"
           :title="t.invalid ? t.invalidationMessage : ''"
-          tabindex="0"
+          :tabindex="isActiveTab(t.id) ? '0' : '-1'"
           role="tab"
           :aria-selected="isActiveTab(t.id)"
           @click="setActiveTab(t.id)"
           @keyup.enter="setActiveTab(t.id)"
           @keyup.space="setActiveTab(t.id)"
+          @keydown.left.prevent="focusPreviousTab"
+          @keydown.right.prevent="focusNextTab"
           @keydown.space.prevent
         >
           <p class="lx-primary" v-if="kind !== 'icon-only'">{{ t.name }}</p>
