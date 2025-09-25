@@ -215,6 +215,10 @@ const columnsComputed = computed(() => {
   return ret;
 });
 
+const gridColumnsDisplay = computed(() =>
+  columnsComputed.value.filter((col) => col.kind !== 'extra' || props.showAllColumns)
+);
+
 const selectedRowsRaw = ref({});
 
 function formatBoolean(value) {
@@ -893,7 +897,6 @@ const rows = computed(() => {
   }
   return [];
 });
-
 const pagesTotal = computed(() => Math.ceil(props.itemsTotal / props.itemsPerPage));
 const itemsLabel = computed(() => {
   const num = rows.value.length;
@@ -1513,11 +1516,11 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :style="{ gridTemplateColumns: !loading ? gridTemplateColumns : '' }"
         @scroll="syncContainerScroll"
       >
-        <div v-if="hasSelecting" class="lx-cell-header lx-cell-selector" role="columnheader"></div>
+        <div v-if="hasSelecting" class="lx-cell-header lx-cell-selector" />
         <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
         <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus-->
         <div
-          v-for="col in columnsComputed"
+          v-for="col in gridColumnsDisplay"
           :key="col.id"
           :title="formatTooltip(col.name, col.title)"
           class="lx-cell-header"
@@ -1584,9 +1587,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         <div
           v-if="hasActionButtons"
           class="lx-cell-header lx-cell-action"
-          role="columnheader"
           :title="displayTexts.actions"
-        ></div>
+        />
       </div>
     </div>
     <article
@@ -1607,17 +1609,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         :aria-labelledby="`${id}-label`"
         :aria-describedby="`${id}-description`"
       >
-        <div class="lx-grid-header-hidden" role="row">
-          <div v-if="hasSelecting" class="lx-cell-header" role="columnheader"></div>
+        <div class="lx-invisible" role="row">
+          <div v-if="hasSelecting" class="lx-cell-header" role="columnheader" />
           <div
-            v-for="col in columnsComputed"
+            v-for="col in gridColumnsDisplay"
             :key="col.id"
             :aria-label="formatTooltip(col.name, col.title)"
             role="columnheader"
           >
             {{ col.name }}
           </div>
-          <div v-if="hasActionButtons" role="columnheader"></div>
+          <div v-if="hasActionButtons" role="columnheader" />
         </div>
 
         <div class="lx-grid-content">
@@ -1653,7 +1655,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             <!-- Since key events are assigned to the whole <div> (lx-grid-row) already -->
             <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events -->
             <div
-              v-for="col in columnsComputed"
+              v-for="col in gridColumnsDisplay"
               :key="col.id"
               class="lx-cell"
               role="cell"
@@ -2013,7 +2015,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       :hasSelecting="hasSelecting"
       :selectingKind="selectingKind"
       :actionDefinitions="actionDefinitions"
-      :force-uppercase="false"
+      :forceUppercase="false"
       :columnCount="2"
       :defaultExpanded="false"
       :idAttribute="idAttribute"
