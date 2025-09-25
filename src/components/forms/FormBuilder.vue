@@ -634,8 +634,8 @@ defineExpose({ validateModel, clearValidations, componentSelect });
         :columnSpan="displaySchema?.properties[name]?.lx?.columnSpan"
         :required="isRequiredRow(name)"
         :inputId="id + '-' + name"
-        :action-definitions="displaySchema?.properties[name]?.lx?.actionDefinitions"
-        @action-click="(a, b, c) => rowActionClicked(b, c, name, undefined)"
+        :actionDefinitions="displaySchema?.properties[name]?.lx?.rowActionDefinitions"
+        @actionClick="(a, b, c) => rowActionClicked(b, c, name, undefined)"
       >
         <template #info v-if="row?.description">{{ row?.description }}</template>
         <LxStack
@@ -644,10 +644,10 @@ defineExpose({ validateModel, clearValidations, componentSelect });
           :orientation="row?.lx?.orientation"
           :kind="row?.lx?.kind"
           :mode="row?.lx?.mode"
-          :horizontal-alignment="row?.lx?.horizontalAlignment"
-          :vertical-alignment="row?.lx?.verticalAlignment"
-          :horizontal-config="row?.lx?.horizontalConfig"
-          :vertical-config="row?.lx?.verticalConfig"
+          :horizontalAlignment="row?.lx?.horizontalAlignment"
+          :verticalAlignment="row?.lx?.verticalAlignment"
+          :horizontalConfig="row?.lx?.horizontalConfig"
+          :verticalConfig="row?.lx?.verticalConfig"
         >
           <template
             v-for="(item, itemName) in displaySchema?.properties[name]?.properties"
@@ -659,10 +659,10 @@ defineExpose({ validateModel, clearValidations, componentSelect });
               :orientation="item?.lx?.orientation"
               :kind="item?.lx?.kind"
               :mode="item?.lx?.mode"
-              :horizontal-alignment="item?.lx?.horizontalAlignment"
-              :vertical-alignment="item?.lx?.verticalAlignment"
-              :horizontal-config="item?.lx?.horizontalConfig"
-              :vertical-config="item?.lx?.verticalConfig"
+              :horizontalAlignment="item?.lx?.horizontalAlignment"
+              :verticalAlignment="item?.lx?.verticalAlignment"
+              :horizontalConfig="item?.lx?.horizontalConfig"
+              :verticalConfig="item?.lx?.verticalConfig"
             >
               <template
                 v-for="(nestedItem, nestedItemName) in displaySchema?.properties[name]?.properties[

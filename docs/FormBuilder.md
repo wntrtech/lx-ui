@@ -44,7 +44,7 @@ For more LX features, use custom schema attribute `lx` with these parameters:
 - `placeholder` - LxTextInput, LxTextArea, LxValuePicker `placeholder` prop
 - `wrapper='placeholder'` - LxPlaceholder will be used instead of LxRow
 - `order` - Defines the order for LxRows. LxRows that do not have defined order attribute will be places at end in the same order as defined in schema
-- `actionDefinitions` - LxRow `actionDefinitions` prop
+- `rowActionDefinitions` - LxRow `actionDefinitions` prop
   - `@rowActionClick` event available to handle LxRow action clicks.
 
 <br>

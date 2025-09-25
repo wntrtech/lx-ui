@@ -4,6 +4,35 @@
 
 ### Breaking changes
 
+#### Builder LxRow actionDefinitions
+
+##### Builder LxRow actionDefinitions
+
+Changed the way `actionDefinitions` can be defined for LxRow. Use `rowActionDefinitions` instead of `actionDefinitions`.
+
+```js
+{
+  properties: {
+    firstName: {
+      type: 'string',
+      lx: {
+        rowActionDefinitions: [
+          {
+            id: 'open',
+            name: 'Open',
+            icon: 'open', 
+          }
+        ]
+      }
+    }
+  }
+}
+```
+
+##### Builder LxDataGrid emits
+
+Builder LxDataGrid emits have been standardized to match other component emits.
+
 #### LxAutoComplete, LxDropDownMenu, LxDropDown, LxInfoWrapper, LxDateTimePicker, LxDateTimeRange, LxValuePicker :variant='dropdown' 
 
 **Inner LxPopper component is now rendered via `Teleport`** instead of using `position: fixed` inside the component tree.  
@@ -11,11 +40,11 @@ Popper content is moved to the root container (`#poppers`) rather than staying w
 This ensures correct layering when used inside modals or other high-level containers. 
 If your project has **custom CSS overrides targeting `.popper` or its children**, these styles may no longer work as expected.  
 
-### LxAutoComplete and LxDropDown
+#### LxAutoComplete and LxDropDown
 
 Removed `dictionary` prop, instead you should directly pass the `displayType` and `displayShape` into items prop how it is with other values
 
-### changes to toolbar configuration in LxList & LxDataGrid
+#### changes to toolbar configuration in LxList & LxDataGrid
 
 If you previously used custom styles or layout inside the toolbar slot (slot="toolbar"), please review your implementation to ensure nothing is broken in the new version. Custom toolbar setups may no longer render correctly without adjustments.
 

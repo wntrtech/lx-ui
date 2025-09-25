@@ -373,7 +373,7 @@ function addArrayObject(name) {
 
 function dataGridActions(action, id, additionalParameter, name, actionDefinitions = undefined) {
   if (actionDefinitions && actionDefinitions?.length > 0) {
-    componentEmit(action, name);
+    componentEmit('actionClick', name, action, id);
   } else {
     if (action === 'open') {
       listModalAction('click', id, name);
@@ -1791,7 +1791,12 @@ function getCustomVariant(row) {
     :itemsPerPage="displaySchema?.properties[name]?.lx?.itemsPerPage"
     :totalItems="displaySchema?.properties[name]?.lx?.totalItems"
     :sortingMode="displaySchema?.properties[name]?.lx?.sortingMode"
+    :actionDefinitions="displaySchema?.properties[name]?.lx?.actionDefinitions"
+    :defaultActionName="displaySchema?.properties[name]?.lx?.defaultActionName"
+    :toolbarActionDefinitions="displaySchema?.properties[name]?.lx?.toolbarActionDefinitions"
     :texts="displaySchema?.properties[name]?.lx?.texts"
+    @actionClick="(val, item, _) => componentEmit('actionClick', name, val, item)"
+    @toolbarActionClicked="(val) => componentEmit('toolbarActionClicked', name, val)"
   />
   <div v-else-if="selectedComponent === 'arrayTableModal'">
     <LxDataGrid
@@ -1824,6 +1829,7 @@ function getCustomVariant(row) {
         ]
       "
       :defaultActionName="displaySchema?.properties[name]?.lx?.defaultActionName || 'open'"
+      :toolbarActionDefinitions="displaySchema?.properties[name]?.lx?.toolbarActionDefinitions"
       :texts="displaySchema?.properties[name]?.lx?.texts"
       @actionClick="
         (val, item, additional) =>
@@ -1835,6 +1841,7 @@ function getCustomVariant(row) {
             displaySchema?.properties[name]?.lx?.actionDefinitions
           )
       "
+      @toolbarActionClicked="(val) => componentEmit('toolbarActionClicked', name, val)"
     >
       <template #toolbar>
         <LxButton
