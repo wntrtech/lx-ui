@@ -1,11 +1,6 @@
 <script setup lang="ts">
-import { computed, useSlots, ref, watch, onMounted, nextTick, provide } from 'vue';
-import {
-  useElementVisibility,
-  useElementBounding,
-  useElementSize,
-  useWindowSize,
-} from '@vueuse/core';
+import { computed, useSlots, ref, watch, onMounted, nextTick, provide, onUnmounted } from 'vue';
+import { useElementBounding, useElementSize, useWindowSize } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -16,19 +11,6 @@ import LxIcon from '@/components/Icon.vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxSkipLink from '@/components/SkipLink.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
-
-// Calculates the offset for the form header and footer
-function calculateOffset(el, considerRow = true) {
-  const navRems = getComputedStyle(el).getPropertyValue('--nav-row-size').trim();
-  const headerRems = getComputedStyle(el).getPropertyValue('--row-size').trim();
-  const { fontSize } = getComputedStyle(el);
-  if (considerRow) {
-    return (
-      parseInt(navRems, 10) * parseFloat(fontSize) + parseInt(headerRems, 10) * parseFloat(fontSize)
-    );
-  }
-  return parseInt(navRems, 10) * parseFloat(fontSize);
-}
 
 const slots = useSlots();
 const emits = defineEmits(['buttonClick', 'update:index']);
@@ -263,11 +245,9 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 function scrollTo(id) {
   const elementForm = document.getElementById(props.id);
   const element = elementForm?.querySelector(`#${id}`);
-  const topPosition =
-    element && element.getBoundingClientRect()
-      ? element.getBoundingClientRect().top + window.scrollY
-      : 0;
+  if (!element) return;
 
+  const topPosition = element.getBoundingClientRect().top + window.scrollY;
   const offset = calculateOffset(element);
 
   const targetPosition = topPosition - offset;
@@ -286,6 +266,28 @@ const bounding = useElementBounding(form);
 const windowSize = useWindowSize();
 const headerSize = useElementSize(formHeader);
 const footerSize = useElementSize(formFooter);
+
+function remToPx(remValue) {
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return remValue * rootFontSize;
+}
+
+// Calculates the offset for the form header and footer
+function calculateOffset(el, considerRow = true) {
+  let offset = 0;
+
+  if (props.showHeader && props.stickyHeader && formHeader.value) {
+    offset += formHeader.value.offsetHeight;
+  }
+
+  if (considerRow) {
+    const navRems = parseFloat(getComputedStyle(el).getPropertyValue('--nav-row-size').trim());
+    const navPx = remToPx(navRems);
+    offset += navPx;
+  }
+
+  return offset;
+}
 
 /**
  * Computed property that calculates the CSS properties for the top out of bounds effect.
@@ -598,6 +600,28 @@ function focusFirstFocusableElementAfter() {
   }
 }
 
+function isElementVisible(el) {
+  if (!el) return false;
+  const formHeaderHeight =
+    props.showHeader && props.stickyHeader && formHeader.value ? formHeader.value.offsetHeight : 0;
+  const bottomMargin =
+    props.showFooter && props.stickyFooter && formFooter.value ? formFooter.value.offsetHeight : 0;
+
+  // Temporary extra margin to avoid some cases where the element is barely visible
+  let defaultMargin = 30;
+  if (getComputedStyle(el).getPropertyValue('--nav-row-size') === '9rem') {
+    defaultMargin = 110;
+  }
+
+  const topMargin = formHeaderHeight + defaultMargin;
+  const rect = el.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+  const isVisible = rect.top <= viewportHeight - bottomMargin && rect.bottom >= topMargin;
+
+  return isVisible;
+}
+
 watch(
   () => props.index,
   (value) => {
@@ -606,8 +630,7 @@ watch(
       props.index?.forEach((o) => {
         const sectionId = `${props.id}-${o.id}`;
         const el = elementForm?.querySelector(`#${sectionId}`);
-        const visible = useElementVisibility(el);
-        visibilities.value[sectionId] = visible;
+        visibilities.value[sectionId] = isElementVisible(el);
       });
     });
     itemsCopy.value = value;
@@ -648,8 +671,7 @@ watch(
         props.index?.forEach((o) => {
           const sectionId = `${props.id}-${o.id}`;
           const el = elementForm?.querySelector(`#${sectionId}`);
-          const visible = useElementVisibility(el);
-          visibilities.value[sectionId] = visible;
+          visibilities.value[sectionId] = isElementVisible(el);
         });
       });
     } else {
@@ -703,11 +725,19 @@ function setSelectedIndex(indexId) {
 
 onMounted(() => {
   const elementForm = document.getElementById(props.id);
-  props.index?.forEach((o) => {
-    const sectionId = `${props.id}-${o.id}`;
-    const el = elementForm?.querySelector(`#${sectionId}`);
-    const visible = useElementVisibility(el);
-    visibilities.value[sectionId] = visible;
+  const updateVisibility = () => {
+    props.index?.forEach((o) => {
+      const sectionId = `${props.id}-${o.id}`;
+      const el = elementForm?.querySelector(`#${sectionId}`);
+      visibilities.value[sectionId] = isElementVisible(el);
+    });
+  };
+
+  // Initial visibility check, useElementVisibility with rootMargin doesn't work well without normal root element (and viewPort)
+  updateVisibility();
+  window.addEventListener('scroll', updateVisibility);
+  onUnmounted(() => {
+    window.removeEventListener('scroll', updateVisibility);
   });
 
   const currentStep = itemsCopy.value.find((item) => item.isCurrentStep === true);
