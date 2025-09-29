@@ -472,7 +472,7 @@
   padding-bottom: 0;
 }
 
-.lx-layout-digimaks>header:has(>.lx-header .lx-left-group:empty){
+.lx-layout-digimaks>header:has(>.lx-header .lx-left-group:empty) {
   height: 0;
 }
 
@@ -490,9 +490,10 @@
 
 .lx .lx-layout-digimaks nav .lx-nav-panel {
   height: 100vh;
+  height: 100dvh;
 }
 
-.lx .lx-layout-digimaks nav .lx-nav-panel .lx-nav-header{
+.lx .lx-layout-digimaks nav .lx-nav-panel .lx-nav-header {
   padding-bottom: 0.25rem;
   overflow-x: hidden;
 }

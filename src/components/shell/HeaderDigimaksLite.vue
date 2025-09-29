@@ -235,7 +235,7 @@ const languagePickerModel = computed({
   set(value) {
     const language = props.languages.find((lang) => lang?.id === value);
     emits('language-changed', language);
-    emits('update:selected-language', value);
+    emits('update:selected-language', language);
   },
 });
 
