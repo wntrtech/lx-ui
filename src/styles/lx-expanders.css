@@ -139,19 +139,19 @@
   transform: scale(1);
 }
 
-.lx-expander.lx-invalid .lx-head h4,
-.lx-expander.lx-invalid .lx-head .heading-4 {
+.lx-expander.lx-invalid > .lx-head h4,
+.lx-expander.lx-invalid > .lx-head .heading-4 {
   color: var(--color-bad);
 }
 
-.lx-expander.lx-invalid .lx-head svg {
+.lx-expander.lx-invalid > .lx-head svg {
   height: auto;
   flex-shrink: 0;
   flex-grow: 0;
   fill: var(--color-bad);
 }
 
-.lx-expander.lx-invalid .lx-body .lx-invalidation-message {
+.lx-expander.lx-invalid > .lx-body .lx-invalidation-message {
   display: block;
   overflow: visible;
   max-height: 12.5rem;

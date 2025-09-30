@@ -212,7 +212,7 @@ defineExpose({ focus });
         />
 
         <div class="lx-chevron-icon">
-          <lx-icon :value="selectedIcon" />
+          <LxIcon :value="selectedIcon" />
         </div>
         <LxButton
           v-if="hasSelectButton"
