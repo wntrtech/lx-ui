@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { ref, nextTick, provide } from 'vue';
+import { ref, nextTick, provide, computed } from 'vue';
 import LxButton from '@/components/Button.vue';
+import { logWarn } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 
@@ -26,9 +28,10 @@ const props = defineProps({
   kind: { default: 'default', type: String }, // default or native
   escEnabled: { default: true, type: Boolean },
   buttonCloseLabel: { default: 'Aizvērt', type: String },
+  actionDefinitions: { type: Array, default: () => [] },
 });
 
-const emits = defineEmits(['closed', 'primaryAction', 'secondaryAction']);
+const emits = defineEmits(['closed', 'primaryAction', 'secondaryAction', 'actionClick']);
 
 const nativeModal = ref();
 const isOpen = ref(false);
@@ -109,6 +112,35 @@ function clickSecondary() {
   emits('secondaryAction');
 }
 
+function actionClicked(action) {
+  if (action?.kind === 'secondary' && props.buttonSecondaryIsCancel) {
+    close();
+    return;
+  }
+  emits('actionClick', action?.id);
+}
+
+const actionDefinitionsDisplay = computed(() => {
+  const primary =
+    props.actionDefinitions?.filter((action) => action?.kind === 'primary' || !action?.kind) || [];
+  const secondary = props.actionDefinitions?.filter((action) => action?.kind === 'secondary') || [];
+
+  const env = useLx().environment;
+  if (primary.length > 1) {
+    logWarn(
+      'LxModal: Only one primary action is allowed. All other primary actions will be ignored.',
+      env
+    );
+  }
+  if (secondary.length > 1) {
+    logWarn(
+      'LxModal: Only one secondary action is allowed. All other secondary actions will be ignored.',
+      env
+    );
+  }
+  return [...primary.slice(0, 1), ...secondary.slice(0, 1)];
+});
+
 provide('insideModal', insideModal);
 
 defineExpose({ open, close });
@@ -152,27 +184,51 @@ defineExpose({ open, close });
           </article>
           <footer
             class="lx-button-set"
-            :class="[{ 'lx-two-buttons': buttonPrimaryVisible && buttonSecondaryVisible }]"
+            :class="[
+              {
+                'lx-two-buttons':
+                  (actionDefinitionsDisplay?.length === 0 &&
+                    buttonPrimaryVisible &&
+                    buttonSecondaryVisible) ||
+                  actionDefinitionsDisplay?.length === 2,
+              },
+            ]"
           >
-            <LxButton
-              v-if="buttonPrimaryVisible"
-              :id="`${id}-action-primary`"
-              :label="buttonPrimaryLabel"
-              :loading="buttonPrimaryLoading"
-              :busy="buttonPrimaryBusy"
-              :destructive="buttonPrimaryIsDestructive"
-              :disabled="buttonPrimaryDisabled"
-              @click="clickPrimary()"
-            />
-            <LxButton
-              v-if="buttonSecondaryVisible"
-              :id="`${id}-action-secondary`"
-              kind="secondary"
-              :label="buttonSecondaryLabel"
-              :loading="buttonSecondaryLoading"
-              :busy="buttonSecondaryBusy"
-              @click="clickSecondary()"
-            />
+            <template v-if="actionDefinitionsDisplay?.length > 0">
+              <LxButton
+                v-for="action in actionDefinitionsDisplay"
+                :key="action?.id"
+                :id="`${id}-action-${action?.id}`"
+                :kind="action?.kind"
+                :label="action?.name || action?.label"
+                :loading="action?.loading"
+                :busy="action?.busy"
+                :destructive="action?.destructive"
+                :disabled="action?.disabled"
+                @click="actionClicked(action)"
+              />
+            </template>
+            <template v-else>
+              <LxButton
+                v-if="buttonPrimaryVisible"
+                :id="`${id}-action-primary`"
+                :label="buttonPrimaryLabel"
+                :loading="buttonPrimaryLoading"
+                :busy="buttonPrimaryBusy"
+                :destructive="buttonPrimaryIsDestructive"
+                :disabled="buttonPrimaryDisabled"
+                @click="clickPrimary()"
+              />
+              <LxButton
+                v-if="buttonSecondaryVisible"
+                :id="`${id}-action-secondary`"
+                kind="secondary"
+                :label="buttonSecondaryLabel"
+                :loading="buttonSecondaryLoading"
+                :busy="buttonSecondaryBusy"
+                @click="clickSecondary()"
+              />
+            </template>
           </footer>
         </div>
       </div>
@@ -208,27 +264,51 @@ defineExpose({ open, close });
           </article>
           <footer
             class="lx-button-set"
-            :class="[{ 'lx-two-buttons': buttonPrimaryVisible && buttonSecondaryVisible }]"
+            :class="[
+              {
+                'lx-two-buttons':
+                  (actionDefinitionsDisplay?.length === 0 &&
+                    buttonPrimaryVisible &&
+                    buttonSecondaryVisible) ||
+                  actionDefinitionsDisplay?.length === 2,
+              },
+            ]"
           >
-            <LxButton
-              v-if="buttonPrimaryVisible"
-              :id="`${id}-action-primary`"
-              :label="buttonPrimaryLabel"
-              :loading="buttonPrimaryLoading"
-              :busy="buttonPrimaryBusy"
-              :destructive="buttonPrimaryIsDestructive"
-              :disabled="buttonPrimaryDisabled"
-              @click="clickPrimary()"
-            />
-            <LxButton
-              v-if="buttonSecondaryVisible"
-              :id="`${id}-action-secondary`"
-              kind="secondary"
-              :label="buttonSecondaryLabel"
-              :loading="buttonSecondaryLoading"
-              :busy="buttonSecondaryBusy"
-              @click="clickSecondary()"
-            />
+            <template v-if="actionDefinitionsDisplay?.length > 0">
+              <LxButton
+                v-for="action in actionDefinitionsDisplay"
+                :key="action?.id"
+                :id="`${id}-action-${action?.id}`"
+                :kind="action?.kind"
+                :label="action?.name || action?.label"
+                :loading="action?.loading"
+                :busy="action?.busy"
+                :destructive="action?.destructive"
+                :disabled="action?.disabled"
+                @click="actionClicked(action)"
+              />
+            </template>
+            <template v-else>
+              <LxButton
+                v-if="buttonPrimaryVisible"
+                :id="`${id}-action-primary`"
+                :label="buttonPrimaryLabel"
+                :loading="buttonPrimaryLoading"
+                :busy="buttonPrimaryBusy"
+                :destructive="buttonPrimaryIsDestructive"
+                :disabled="buttonPrimaryDisabled"
+                @click="clickPrimary()"
+              />
+              <LxButton
+                v-if="buttonSecondaryVisible"
+                :id="`${id}-action-secondary`"
+                kind="secondary"
+                :label="buttonSecondaryLabel"
+                :loading="buttonSecondaryLoading"
+                :busy="buttonSecondaryBusy"
+                @click="clickSecondary()"
+              />
+            </template>
           </footer>
         </dialog>
       </div>

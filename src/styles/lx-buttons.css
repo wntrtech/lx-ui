@@ -1458,6 +1458,20 @@ a.lx-button.lx-button-ghost svg {
   max-width: 50%;
 }
 
+/* Modal focus */
+
+.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):focus {
+  background-color: var(--color-button-modal-primary-focus-background);
+  color: var(--color-button-modal-primary-focus);
+  border-color: var(--color-button-modal-primary-focus-border);
+}
+
+.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button):focus {
+  background-color: var(--color-button-modal-secondary-focus-background);
+  color: var(--color-button-modal-secondary-focus);
+  border-color: var(--color-button-modal-secondary-focus-border);
+}
+
 /* Modal hover */
 
 .lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):hover {
@@ -1472,18 +1486,12 @@ a.lx-button.lx-button-ghost svg {
   border-color: var(--color-button-modal-secondary-hover-border);
 }
 
-/* Modal focus */
+/* Modal destructive */
 
-.lx-modal>footer.lx-button-set .lx-button:not(.lx-pseudo-grid .lx-button):focus {
-  background-color: var(--color-button-modal-primary-focus-background);
-  color: var(--color-button-modal-primary-focus);
-  border-color: var(--color-button-modal-primary-focus-border);
-}
-
-.lx-modal>footer.lx-button-set .lx-button.lx-button-secondary:not(.lx-pseudo-grid .lx-button):focus {
-  background-color: var(--color-button-modal-secondary-focus-background);
-  color: var(--color-button-modal-secondary-focus);
-  border-color: var(--color-button-modal-secondary-focus-border);
+.lx-modal>footer.lx-button-set .lx-button.lx-destructive:not(.lx-pseudo-grid .lx-button):not(.lx-disabled):hover {
+  background-color: var(--color-button-destructive-background);
+  border-color: var(--color-button-destructive-border);
+  color: var(--color-button-destructive);
 }
 
 /* Modal active */
