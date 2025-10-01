@@ -489,15 +489,15 @@
   background-color: var(--color-region-2);
 }
 
-.lx-region .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before,
-.lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before,
-.lx-modal .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before {
+.lx .lx-region .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before,
+.lx .lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before,
+.lx .lx-modal .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:before {
   background: linear-gradient(180deg, var(--color-background) 20%, transparent 100%);
 }
 
-.lx-region .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after,
-.lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after,
-.lx-modal .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after {
+.lx .lx-region .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after,
+.lx .lx-form-section .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after,
+.lx .lx-modal .lx-datepicker-default .lx-calendar-container .lx-time-picker-time-list:after {
   background: linear-gradient(0deg, var(--color-background) 20%, transparent 100%);
 }
 

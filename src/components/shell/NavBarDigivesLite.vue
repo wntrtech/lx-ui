@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, provide } from 'vue';
 import { useWindowSize, onClickOutside } from '@vueuse/core';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -127,6 +127,8 @@ const emits = defineEmits([
 ]);
 
 const windowSize = useWindowSize();
+
+const insideNavBar = ref(true);
 
 const selectedMegaMenuItemModel = computed({
   get() {
@@ -516,6 +518,7 @@ const navPanel = ref();
 
 const isResponsiveView = computed(() => windowSize.width.value <= 1000);
 
+provide('insideNavBar', insideNavBar);
 onClickOutside(navPanel, toggleNavBar);
 </script>
 <template>

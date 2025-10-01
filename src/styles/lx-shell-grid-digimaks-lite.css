@@ -7,7 +7,7 @@
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 8100;
 }
 
 .lx-layout-digimaks > header:not(:has(.lx-nav-panel-expanded)) {

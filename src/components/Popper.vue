@@ -116,10 +116,14 @@ watch(plc, (newPlacement) => {
 });
 
 // Automatically detect if inside higher context
+const insideHeader = inject('insideHeader', ref(false));
+const insideNavBar = inject('insideNavBar', ref(false));
 const insideModal = inject('insideModal', ref(false));
 const insideFullscreenMap = inject('insideFullscreenMap', ref(false));
 
-const needsHighZ = computed(() => insideModal.value || insideFullscreenMap.value);
+const needsHighZ = computed(
+  () => insideModal.value || insideFullscreenMap.value || insideHeader.value || insideNavBar.value
+);
 
 onMounted(() => {
   emits('update:placement', basePlacement.value);

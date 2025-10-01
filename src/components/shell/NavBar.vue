@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, provide } from 'vue';
 import { vOnClickOutside } from '@vueuse/components';
 import { useWindowSize, useScroll } from '@vueuse/core';
 
@@ -72,6 +72,8 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const width = ref(useWindowSize().width);
+const insideNavBar = ref(true);
+
 const { y } = useScroll(window);
 
 const navItemsPrimary = computed(() =>
@@ -224,6 +226,8 @@ function scrollUp() {
     behavior: 'smooth',
   });
 }
+
+provide('insideNavBar', insideNavBar);
 </script>
 <template>
   <div class="lx-nav-panel" v-on-click-outside="navToggle" :tabindex="-1">

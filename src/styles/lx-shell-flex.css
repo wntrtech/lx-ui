@@ -866,7 +866,8 @@ code {
   position: inherit;
 }
 
-.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:hover {
+.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:hover,
+.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:focus {
   background-color: var(--color-grid-hover-background);
 }
 

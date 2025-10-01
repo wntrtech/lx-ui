@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, ref } from 'vue';
+import { computed, watch, ref, provide } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDown from '@/components/Dropdown.vue';
@@ -77,6 +77,8 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 const windowSize = useWindowSize();
+
+const insideHeader = ref(true);
 
 const navItemsUserMenu = computed(() =>
   props.navItems?.filter((item) => item.type === 'buttons' || item.type === 'helper')
@@ -179,6 +181,7 @@ function changePerson(item) {
 function navClick(id) {
   emits('navClick', id);
 }
+
 const contextMenu = ref();
 function triggerContextPersonMenu() {
   if (contextMenu.value.menuOpen) {
@@ -187,6 +190,8 @@ function triggerContextPersonMenu() {
     contextMenu.value.openMenu();
   }
 }
+
+provide('insideHeader', insideHeader);
 </script>
 <template>
   <div

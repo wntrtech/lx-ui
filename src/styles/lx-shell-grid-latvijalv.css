@@ -48,7 +48,7 @@
     top: 0;
     width: 100%;
     align-items: center;
-    z-index: 250;
+    z-index: 8100;
     border-bottom: 2px solid var(--color-chrome);
     display: grid;
     grid-template-columns: 1fr var(--body-column-size) 1fr;
@@ -258,7 +258,7 @@
     grid-area: nav;
     position: sticky;
     top: var(--nav-row-size);
-    z-index: 150;
+    z-index: 8100;
     width: 100%;
     height: var(--row-size);
     border-bottom: 2px solid var(--color-chrome);
@@ -627,7 +627,7 @@
     .lx-layout.lx-layout-latvijalv>header {
       grid-template-columns: 1fr 100% 1fr;
       border-bottom: 0;
-      z-index: 1001;
+      z-index: 8100;
     }
   
     .lx-layout.lx-layout-latvijalv>header>.lx-header {

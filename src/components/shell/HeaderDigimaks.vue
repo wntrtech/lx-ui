@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, provide } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxModal from '@/components/Modal.vue';
@@ -118,6 +118,7 @@ const emits = defineEmits([
 
 const alternativeProfilesModal = ref();
 const contextPersonModal = ref();
+const insideHeader = ref(true);
 
 const navToggle = () => {
   emits('nav-toggle', !props.navBarSwitch);
@@ -508,6 +509,8 @@ const languagesDisplayItems = computed(() =>
     active: selectedLanguageModel.value?.id === item?.id,
   }))
 );
+
+provide('insideHeader', insideHeader);
 </script>
 <template>
   <div class="lx-header" :class="[{ 'lx-nav-panel-expanded': !navBarSwitch }]">

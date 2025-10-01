@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, provide } from 'vue';
 
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -150,6 +150,7 @@ const alternativeProfilesModal = ref();
 const contextPersonModal = ref();
 const settings = ref(false);
 const customButton = ref();
+const insideHeader = ref(true);
 
 function navToggle(closeSettings = false) {
   if (closeSettings) {
@@ -443,6 +444,8 @@ function goBack() {
   }
   emits('go-back', -1);
 }
+
+provide('insideHeader', insideHeader);
 </script>
 <template>
   <div

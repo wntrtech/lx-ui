@@ -259,7 +259,7 @@
 }
 
 .lx-layout.lx-layout-default.lx-layout-digives-lite>nav {
-  z-index: 999;
+  z-index: 8100;
 }
 
 .lx .lx-layout.lx-layout-digives-lite>footer {
@@ -998,10 +998,6 @@ border-top: 2px solid var(--color-brand-secondary);
 
 .lx-layout-digives-lite .lx-dropdown-panel .user-menu-panel ul.lx-group>li:first-child {
   border-top: 1px solid var(--color-chrome);
-}
-
-.lx .lx-layout .popper {
-  z-index: 8100;
 }
 
 @media (max-width: 1260px) {

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, ref } from 'vue';
+import { computed, watch, ref, provide } from 'vue';
 
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { useWindowSize } from '@vueuse/core';
@@ -125,6 +125,7 @@ const vCleanHtml = buildVueDompurifyHTMLDirective();
 const windowSize = useWindowSize();
 const themeIcon = ref('theme-alternative');
 const themeMenu = ref();
+const insideHeader = ref(true);
 
 const navItemsUserMenu = computed(() =>
   props.navItems?.filter((item) => item.type === 'user-menu')
@@ -512,6 +513,8 @@ function themeDropdownClicked(id, value) {
     themeChange(id);
   }
 }
+
+provide('insideHeader', insideHeader);
 </script>
 <template>
   <div

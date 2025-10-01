@@ -2017,7 +2017,7 @@
 
   .lx-layout.lx-layout-default > nav {
     width: var(--row-size);
-    z-index: 1000;
+    z-index: 8100;
   }
 
   .lx-layout.lx-layout-default > nav .lx-nav-panel {

@@ -86,8 +86,10 @@ svg .lx-shade {
   margin-right: var(--gap);
 }
 
-.lx-form-grid > header > .lx-group .lx-info-wrapper:hover .lx-toolbar-chip,
-.lx-form-grid > header > .lx-group .lx-info-wrapper:hover .lx-toolbar-chip > .lx-state {
+.lx-form-grid > header > .lx-group .lx-info-wrapper-content:hover .lx-toolbar-chip,
+.lx-form-grid > header > .lx-group .lx-info-wrapper-content:focus .lx-toolbar-chip,
+.lx-form-grid > header > .lx-group .lx-info-wrapper-content:hover .lx-toolbar-chip > .lx-state,
+.lx-form-grid > header > .lx-group .lx-info-wrapper-content:focus .lx-toolbar-chip > .lx-state {
   background-color: var(--color-grid-hover-background);
   cursor: help;
 }

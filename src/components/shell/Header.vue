@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, nextTick, onMounted } from 'vue';
+import { computed, ref, watch, nextTick, onMounted, provide } from 'vue';
 import { useScroll, useWindowSize } from '@vueuse/core';
 
 import LxButton from '@/components/Button.vue';
@@ -148,6 +148,7 @@ const emits = defineEmits([
 
 const alternativeProfilesModal = ref();
 const contextPersonModal = ref();
+const insideHeader = ref(true);
 
 const navToggle = () => {
   emits('nav-toggle', !props.navBarSwitch);
@@ -412,6 +413,8 @@ onMounted(() => {
     navBarShortMode.value = false;
   }
 });
+
+provide('insideHeader', insideHeader);
 </script>
 <template>
   <div class="lx-header">
