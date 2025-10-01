@@ -686,13 +686,13 @@ watch(
  * Sets the selected index for the forms based on the provided index ID.
  * @param {string} indexId - The identifier(id) of the index to select.
  */
-function setSelectedIndex(indexId) {
+function setSelectedIndex(indexId, skipAnnouncement = false) {
   const indexExists = props.index.some((o) => o?.id === indexId);
   if (!indexExists) return;
 
   if (props.indexType === 'tabs') {
     tabControl.value?.setActiveTab(indexId);
-    tabControl.value?.setAnnouncementMessage();
+    tabControl.value?.setAnnouncementMessage(skipAnnouncement);
     hideAll();
   } else if (props.indexType === 'wizard') {
     wizardModel.value = indexId;

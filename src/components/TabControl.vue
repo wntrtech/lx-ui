@@ -45,11 +45,13 @@ function isActiveTab(itemCode) {
   return itemCode === activeItemCode.value;
 }
 
-function setAnnouncementMessage() {
-  if (announcementMessage.value) announcementMessage.value = '';
-  nextTick(() => {
-    announcementMessage.value = `${displayTexts.value.tabSelected} "${activeItemName.value}"`;
-  });
+function setAnnouncementMessage(skipAnnouncement = false) {
+  if (!skipAnnouncement) {
+    if (announcementMessage.value) announcementMessage.value = '';
+    nextTick(() => {
+      announcementMessage.value = `${displayTexts.value.tabSelected} "${activeItemName.value}"`;
+    });
+  }
 }
 
 function setNextTab() {

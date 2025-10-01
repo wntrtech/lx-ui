@@ -465,6 +465,7 @@ svg .lx-shade {
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row > .lx-row-header > label,
 .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main .lx-row > .lx-row-header > label,
 .lx-form-grid > .lx-main .lx-row > .lx-row-header > label,
+.lx-form-grid > .lx-main .lx-row > .lx-row-header > .lx-info-slot-wrapper label,
 .lx-row > .lx-row-header > .lx-info-wrapper label,
 .lx .lx-dropdown-panel .lx-mega-menu-container label,
 .lx-form-grid > .lx-main .lx-row > .lx-row-header .lx-info-wrapper-content label {
