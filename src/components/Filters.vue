@@ -227,6 +227,7 @@ defineExpose({ toggleExpander, focus });
           <LxDropDownMenu
             v-if="(fastFilters && fastFilters.length > 1) || enableFilterEditing"
             :actionDefinitions="fastFilterDisplay"
+            :disabled="disabled"
             @actionClick="(id) => fastFilterClick(id)"
           >
             <LxButton

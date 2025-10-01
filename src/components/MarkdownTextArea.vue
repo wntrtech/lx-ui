@@ -682,7 +682,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
               @click="editor.chain().focus()[button.command]().run()"
             />
 
-            <LxDropDownMenu v-if="showColorPicker">
+            <LxDropDownMenu v-if="showColorPicker" :disabled="isSelectionEmpty || isDisabled">
               <LxButton
                 icon="color"
                 kind="ghost"
@@ -714,7 +714,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
           </LxToolbarGroup>
 
           <LxToolbarGroup class="left-group">
-            <LxDropDownMenu v-if="showHeadingPicker">
+            <LxDropDownMenu v-if="showHeadingPicker" :disabled="isSelectionEmpty || isDisabled">
               <LxButton
                 icon="text-heading"
                 kind="ghost"
@@ -789,8 +789,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
                 v-model="inputLink"
                 :invalid="isNotLink"
                 :invalidation-message="displayTexts.invalidLinkMessage"
-              >
-              </LxTextInput>
+              />
             </LxModal>
 
             <div v-if="props.showImagePicker" class="lx-toolbar-group">
@@ -829,8 +828,7 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
                       v-model="inputImage"
                       :invalid="isNotImage"
                       :invalidation-message="displayTexts.invalidImageLink"
-                    >
-                    </LxTextInput>
+                    />
                   </LxRow>
 
                   <LxRow
@@ -862,7 +860,9 @@ defineExpose({ removeImageLoader, removeAllImageLoaders, repleaceImageLoader });
           </LxToolbarGroup>
 
           <LxToolbarGroup v-if="props.showPlaceholderPicker" class="left-group">
-            <LxDropDownMenu>
+            <LxDropDownMenu
+              :disabled="isDisabled || !checkArrayObjectProperty(dictionary, 'value')"
+            >
               <LxButton
                 icon="tag"
                 kind="ghost"

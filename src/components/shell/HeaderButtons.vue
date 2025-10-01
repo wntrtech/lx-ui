@@ -545,9 +545,10 @@ watch(
         :badgeType="customButtonBadgeType"
         :badgeIcon="customButtonBadgeIcon"
         customClass="lx-header-button"
+        :disabled="headerNavDisable"
         @click="emits('customButtonClick')"
       />
-      <LxDropDownMenu ref="customButton" v-else>
+      <LxDropDownMenu ref="customButton" v-else :disabled="headerNavDisable">
         <LxButton
           id="lx-shell-custom-button"
           kind="ghost"
@@ -558,6 +559,7 @@ watch(
           :badge="customButtonBadge"
           :badgeType="customButtonBadgeType"
           :badgeIcon="customButtonBadgeIcon"
+          :disabled="headerNavDisable"
           customClass="lx-header-button"
         />
         <template #panel v-if="$slots.customButtonPanel">
@@ -573,6 +575,7 @@ watch(
       <LxDropDownMenu
         ref="themeMenu"
         :actionDefinitions="themeDisplayItems"
+        :disabled="headerNavDisable"
         @actionClick="themeDropdownClicked"
       >
         <div class="lx-toolbar">
@@ -590,7 +593,10 @@ watch(
     </div>
 
     <div class="lx-alert-menu" v-if="hasAlerts">
-      <LxDropDownMenu v-if="alertsKind === 'menu' || alertsKind === 'combo'">
+      <LxDropDownMenu
+        v-if="alertsKind === 'menu' || alertsKind === 'combo'"
+        :disabled="headerNavDisable"
+      >
         <LxButton
           customClass="lx-header-button"
           variant="icon-only"
@@ -689,7 +695,11 @@ watch(
     </div>
 
     <div class="lx-language-menu" v-if="hasLanguagePicker">
-      <LxDropDownMenu :actionDefinitions="languagesDisplayItems" @actionClick="languageChange">
+      <LxDropDownMenu
+        :actionDefinitions="languagesDisplayItems"
+        :disabled="headerNavDisable"
+        @actionClick="languageChange"
+      >
         <LxButton
           customClass="lx-header-button"
           variant="icon-only"
@@ -697,6 +707,7 @@ watch(
           icon="language"
           :label="displayTexts.languagesTitle"
           :tabindex="-1"
+          :disabled="headerNavDisable"
         />
       </LxDropDownMenu>
     </div>
@@ -709,8 +720,8 @@ watch(
         :items="megaMenuItems"
         :groupDefinitions="megaMenuGroupDefinitions"
         :hasShowAll="megaMenuHasShowAll"
+        :disabled="headerNavDisable"
         :texts="displayTexts"
-        :tabindex="-1"
         @mega-menu-show-all-click="triggerShowAllClick"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
       />
@@ -816,7 +827,11 @@ watch(
     <ul class="header-items">
       <li v-if="hasLanguagePicker" class="lx-language-picker">
         <div class="lx-language-menu">
-          <LxDropDownMenu :actionDefinitions="languagesDisplayItems" @actionClick="languageChange">
+          <LxDropDownMenu
+            :actionDefinitions="languagesDisplayItems"
+            :disabled="headerNavDisable"
+            @actionClick="languageChange"
+          >
             <div class="lx-toolbar">
               <LxButton
                 customClass="lx-header-button"
@@ -824,6 +839,7 @@ watch(
                 kind="ghost"
                 icon="language"
                 tabindex="-1"
+                :disabled="headerNavDisable"
               />
             </div>
           </LxDropDownMenu>
@@ -833,6 +849,7 @@ watch(
         <div class="lx-theme-menu">
           <LxDropDownMenu
             :action-definitions="themeDisplayItems"
+            :disabled="headerNavDisable"
             @actionClick="themeDropdownClicked"
           >
             <div class="lx-toolbar">
@@ -842,6 +859,7 @@ watch(
                 kind="ghost"
                 :icon="themeIcon"
                 tabindex="-1"
+                :disabled="headerNavDisable"
               />
             </div>
           </LxDropDownMenu>

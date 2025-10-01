@@ -13,6 +13,7 @@ const props = defineProps({
   groupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
   buttonVariant: { type: String, default: 'icon-only' },
+  disabled: { type: Boolean, default: false },
   texts: {
     type: Object,
     required: false,
@@ -111,7 +112,7 @@ function getIconSet(item) {
 }
 </script>
 <template>
-  <LxDropDownMenu>
+  <LxDropDownMenu :disabled="disabled">
     <div class="lx-toolbar">
       <LxButton
         customClass="lx-header-button"
@@ -119,6 +120,7 @@ function getIconSet(item) {
         kind="ghost"
         icon="apps"
         :tabindex="-1"
+        :disabled="disabled"
         :label="displayTexts.megaMenuTitle"
       />
     </div>

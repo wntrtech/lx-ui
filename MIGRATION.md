@@ -4,6 +4,32 @@
 
 ### Breaking changes
 
+#### LxDropDownMenu tabindex
+
+The default slot button inside LxDropDownMenu should use `tabindex="-1"` since the LxDropDownMenu itself is focusable.
+```js
+<LxDropDownMenu>
+	<LxButton :tabindex="-1"/>
+</LxDropDownMenu>
+```
+
+#### Disabling LxDropDownMenu
+
+The way LxDropDownMenu components are disabled has changed.
+
+Before the dropdown could be disabled by disabling only the button inside it:
+```js
+<LxDropDownMenu>
+	<LxButton :disabled="true"/>
+</LxDropDownMenu>
+```
+Now both the LxDropDownMenu and the LxButton must be disabled explicitly:
+```js
+<LxDropDownMenu :disabled="true">
+	<LxButton :disabled="true"/>
+</LxDropDownMenu>
+```
+
 #### Builder changes
 
 ##### Builder LxRow actionDefinitions

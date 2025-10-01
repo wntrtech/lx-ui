@@ -335,7 +335,7 @@ defineExpose({ getPng });
             />
           </LxToolbarGroup>
 
-          <LxDropDownMenu v-if="showColorPicker">
+          <LxDropDownMenu v-if="showColorPicker" :disabled="props.disabled">
             <LxButton
               icon="color"
               kind="ghost"

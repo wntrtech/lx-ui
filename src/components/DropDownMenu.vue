@@ -130,7 +130,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       <div
         v-if="props.triggerClick === 'right'"
         class="lx-dropdown-toggler"
-        :tabindex="disabled ? -1 : tabindex || 0"
+        :tabindex="disabled ? null : tabindex || 0"
         @keyup.enter="openMenu('keyboard')"
         @keyup.space="openMenu('keyboard')"
         @keydown.esc="closeMenu('keyboard')"
@@ -144,7 +144,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           :title="mainButton?.title"
           :icon="mainButton?.icon"
           :iconSet="mainButton?.iconSet"
-          :disabled="mainButton?.disabled"
+          :disabled="disabled || mainButton?.disabled"
           :loading="mainButton?.loading"
           :busy="mainButton?.busy"
           :destructive="mainButton?.destructive"
@@ -161,7 +161,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
       <div
         v-else
         class="lx-dropdown-toggler"
-        :tabindex="disabled ? -1 : tabindex || 0"
+        :tabindex="disabled ? null : tabindex || 0"
         @keyup.enter="openMenu('keyboard')"
         @keyup.space="openMenu('keyboard')"
         @keydown.esc="closeMenu('keyboard')"
@@ -175,7 +175,7 @@ defineExpose({ closeMenu, openMenu, preventClose, menuOpen });
           :title="mainButton?.title"
           :icon="mainButton?.icon"
           :iconSet="mainButton?.iconSet"
-          :disabled="mainButton?.disabled"
+          :disabled="disabled || mainButton?.disabled"
           :loading="mainButton?.loading"
           :busy="mainButton?.busy"
           :destructive="mainButton?.destructive"

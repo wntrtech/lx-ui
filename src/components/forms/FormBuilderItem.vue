@@ -2894,7 +2894,14 @@ function getCustomVariant(row) {
     :labelId="displaySchema?.properties[name]?.lx?.labelId"
     :texts="displaySchema?.properties[name]?.lx?.texts"
   />
-  <LxDropDownMenu v-else-if="selectedComponent === 'dropDownMenu'">
+  <LxDropDownMenu
+    v-else-if="selectedComponent === 'dropDownMenu'"
+    :disabled="
+      displaySchema?.properties[name]?.type === 'object'
+        ? model[name]?.disabled
+        : displaySchema?.properties[name]?.lx?.disabled
+    "
+  >
     <LxButton
       :id="id + '-' + name"
       :label="model[name]?.label || model[name] || displaySchema?.properties[name]?.lx?.label"

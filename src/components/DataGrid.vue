@@ -1430,6 +1430,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             >
               <LxDropDownMenu
                 :actionDefinitions="selectionActionDefinitions"
+                :disabled="isDisabled"
                 @actionClick="(id) => selectionActionClicked(id, selectedRows)"
               >
                 <LxButton
@@ -1438,7 +1439,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :label="displayTexts.overflowMenu"
                   variant="icon-only"
                   tabindex="-1"
-                  :disabled="loading || busy"
+                  :disabled="isDisabled"
                 />
               </LxDropDownMenu>
             </div>
@@ -1923,7 +1924,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   "
                 />
 
-                <LxDropDownMenu placement="left-start">
+                <LxDropDownMenu placement="left-start" :disabled="isDisabled">
                   <div class="lx-toolbar">
                     <LxButton
                       :id="`${id}-${row[idAttribute]}-action`"

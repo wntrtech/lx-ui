@@ -148,7 +148,10 @@ function actionClicked(id) {
               :variant="action?.variant ? action.variant : action?.label ? 'default' : 'icon-only'"
               @click="actionClicked(action.id)"
             />
-            <LxDropDownMenu v-if="action?.groupId === group.id && action.nestedGroupId">
+            <LxDropDownMenu
+              v-if="action?.groupId === group.id && action.nestedGroupId"
+              :disabled="action?.disabled || props.disabled || props.loading"
+            >
               <LxButton
                 v-if="action?.groupId === group.id && action.nestedGroupId"
                 :id="`${id}-action-${action.id}`"
@@ -207,13 +210,17 @@ function actionClicked(id) {
               @click="actionClicked(item.id)"
             />
           </template>
-          <LxDropDownMenu v-if="leftActionsSmall?.length > 1">
+          <LxDropDownMenu
+            v-if="leftActionsSmall?.length > 1"
+            :disabled="props.disabled || props.loading"
+          >
             <LxButton
               kind="ghost"
               :tabindex="-1"
               icon="menu"
               :label="displayTexts.overflowMenu"
               variant="icon-only"
+              :disabled="props.disabled || props.loading"
             />
             <template #panel>
               <template v-for="button in leftActionsSmall" :key="button.id">
@@ -292,7 +299,10 @@ function actionClicked(id) {
               :custom-class="action?.customClass"
               @click="actionClicked(action.id)"
             />
-            <LxDropDownMenu v-if="action?.groupId === group.id && action.nestedGroupId">
+            <LxDropDownMenu
+              v-if="action?.groupId === group.id && action.nestedGroupId"
+              :disabled="action?.disabled || props.disabled || props.loading"
+            >
               <LxButton
                 v-if="action?.groupId === group.id && action.nestedGroupId"
                 :id="`${id}-action-${action.id}`"
@@ -334,7 +344,10 @@ function actionClicked(id) {
           class="action-definitions-small"
           v-if="rightActionsSmall?.length > 0 || nonResponsiveRightActions?.length > 0"
         >
-          <LxDropDownMenu v-if="rightActionsSmall?.length > 1">
+          <LxDropDownMenu
+            v-if="rightActionsSmall?.length > 1"
+            :disabled="props.disabled || props.loading"
+          >
             <LxButton
               kind="ghost"
               :tabindex="-1"

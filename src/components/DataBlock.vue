@@ -210,6 +210,7 @@ const expandIconTitle = computed(() => {
         </template>
         <LxDropDownMenu
           :actionDefinitions="actionDefinitions"
+          :disabled="isDisabled"
           @actionClick="(id) => actionClicked(id, props.id)"
         >
           <div class="lx-toolbar" v-if="actionDefinitions.length >= 2">
