@@ -2816,6 +2816,12 @@ h2.lx-section-header + p.lx-invalidation-message,
   font-size: var(--input-text-font-size);
 }
 
+.lx-dropdown-default .lx-dropdown-input-wrapper > .lx-dropdown-default-panel > .lx-placeholder > span,
+.lx-dropdown-default .lx-dropdown-input-wrapper > .lx-dropdown-default-panel > .lx-dropdown-default-data .lx-state > .lx-primary{
+	overflow-x: hidden;
+	text-overflow: ellipsis;
+}
+
 /*** Input area + pseudo input styles ***/
 
 .lx .lx-layout .lx-input-wrapper .lx-input-area {

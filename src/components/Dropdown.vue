@@ -469,17 +469,19 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                 :title="tooltip"
                 v-if="variant === 'state'"
               >
-                <LxStateDisplay
-                  :value="selectedItem?.id ? selectedItem?.id : props.placeholder"
-                  :dictionary="[
-                    {
-                      value: selectedItem?.id ? selectedItem?.id : props.placeholder,
-                      displayName: selectedItem?.name ? selectedItem?.name : props.placeholder,
-                      displayType: selectedItem?.displayType,
-                      displayShape: selectedItem?.displayShape,
-                    },
-                  ]"
-                />
+                <span class="lx-input-text">
+                  <LxStateDisplay
+                    :value="selectedItem?.id ? selectedItem?.id : props.placeholder"
+                    :dictionary="[
+                      {
+                        value: selectedItem?.id ? selectedItem?.id : props.placeholder,
+                        displayName: selectedItem?.name ? selectedItem?.name : props.placeholder,
+                        displayType: selectedItem?.displayType,
+                        displayShape: selectedItem?.displayShape,
+                      },
+                    ]"
+                  />
+                </span>
               </div>
               <div
                 class="lx-dropdown-default-data lx-dropdown-flag lx-input-area"
@@ -492,13 +494,13 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                   :locale="locale"
                   :meaningful="meaningful"
                 />
-                <span class="lx-input-text"> {{ name }} </span>
+                <span class="lx-input-text">{{ name }}</span>
               </div>
               <div class="lx-dropdown-default-data lx-input-area" :title="tooltip" v-else>
-                {{ name }}
+                <span class="lx-input-text">{{ name }}</span>
               </div>
               <div v-if="isPlaceholderVisible()" class="lx-placeholder lx-input-area">
-                {{ placeholder }}
+                <span>{{ placeholder }}</span>
               </div>
               <div v-if="invalid" class="lx-invalidation-icon-wrapper">
                 <LxIcon customClass="lx-invalidation-icon" value="invalid" />
