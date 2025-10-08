@@ -137,17 +137,17 @@
     background-color: var(--color-list-hover-background);
 }
 
-.tree-list .tree-item .tree-item-invalid>.lx-button svg,
-.tree-list-small>.tree-item-invalid>.lx-button svg,
-.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button > .lx-button-content-wrapper svg,
-.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button > .lx-button-content-wrapper svg {
+.tree-list .tree-item .tree-item-invalid>.lx-button:not(.lx-disabled) svg,
+.tree-list-small>.tree-item-invalid>.lx-button:not(.lx-disabled) svg,
+.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button:not(.lx-disabled) > .lx-button-content-wrapper svg,
+.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button:not(.lx-disabled) > .lx-button-content-wrapper svg {
     fill: var(--color-list-icon);
 }
 
-.tree-list .tree-item .tree-item-invalid>.lx-button:hover svg,
-.tree-list-small>.tree-item-invalid>.lx-button:hover svg,
-.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button:hover>.lx-button-content-wrapper svg,
-.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button:hover>.lx-button-content-wrapper svg {
+.tree-list .tree-item .tree-item-invalid>.lx-button:hover:not(.lx-disabled) svg,
+.tree-list-small>.tree-item-invalid>.lx-button:hover:not(.lx-disabled) svg,
+.lx-list-wrapper .tree-item-small:not(.tree-item-small-parent)>.lx-button:hover:not(.lx-disabled)>.lx-button-content-wrapper svg,
+.lx-list-wrapper .tree-list .tree-item .tree-item-body>.lx-button:hover:not(.lx-disabled)>.lx-button-content-wrapper svg {
     fill: var(--color-interactive-hover-foreground);
 }
 
@@ -161,12 +161,12 @@
     background-color: var(--color-highlight-background);
 }
 
-.tree-list .tree-item .tree-item-body.selected-children>.lx-button > .lx-button-content-wrapper svg {
+.tree-list .tree-item .tree-item-body.selected-children>.lx-button:not(.lx-disabled) > .lx-button-content-wrapper svg {
     fill: var(--color-data);
 }
 
-.lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children>.lx-button:hover {
-    background-color: var(--color-interactive-hover-background)
+.lx-list-wrapper .tree-list .tree-item .tree-item-body.selected-children>.lx-button:hover:not(.lx-disabled) {
+    background-color: var(--color-interactive-hover-background);
 }
 
 .lx-list-wrapper .tree-list .tree-item:first-child {

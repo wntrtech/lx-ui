@@ -88,12 +88,22 @@ function secureURL(url) {
 function getItemId(id, parentId) {
   return `${parentId}-item-${id}`;
 }
+
+const tabIndex = computed(() => {
+  if (props.disabled || props.busy || props.loading) {
+    return -1;
+  }
+  if (props.href || props.clickable) {
+    return 0;
+  }
+  return -1;
+});
 </script>
 <template>
   <div class="lx-list-item-wrapper" :id="id">
     <div
       v-if="!href"
-      :tabindex="href || clickable ? 0 : -1"
+      :tabindex="tabIndex"
       class="lx-list-item"
       :id="getItemId(id, parentId)"
       @click="performClick()"
@@ -193,7 +203,7 @@ function getItemId(id, parentId) {
           class="lx-list-item-actions"
           :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
         >
-          <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
+          <LxDropDownMenu ref="dropDownMenu" :disabled="loading || busy || disabled">
             <div>
               <LxButton
                 :id="`${id}-action-open-menu`"
@@ -202,6 +212,7 @@ function getItemId(id, parentId) {
                 :disabled="loading || busy || disabled"
                 :label="displayTexts.overflowMenu"
                 variant="icon-only"
+                tabindex="-1"
                 @click="openDropDownMenu($event, clickable ? false : true)"
               />
             </div>
@@ -227,7 +238,7 @@ function getItemId(id, parentId) {
                 />
               </div>
             </template>
-          </lx-drop-down-menu>
+          </LxDropDownMenu>
         </div>
       </div>
     </div>
@@ -275,7 +286,7 @@ function getItemId(id, parentId) {
             visibleActionDefinitions?.length > 0 && actionsLayout === 'vertical',
         },
       ]"
-      :tabindex="href || clickable ? 0 : -1"
+      :tabindex="disabled ? -1 : href || clickable ? 0 : -1"
     >
       <div class="lx-category-displayer" />
       <header>
@@ -330,7 +341,7 @@ function getItemId(id, parentId) {
           class="lx-list-item-actions"
           :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
         >
-          <lx-drop-down-menu ref="dropDownMenu" :disabled="loading || busy || disabled">
+          <LxDropDownMenu ref="dropDownMenu" :disabled="loading || busy || disabled">
             <div>
               <LxButton
                 :id="`${id}-action-open-menu`"
@@ -339,6 +350,7 @@ function getItemId(id, parentId) {
                 :disabled="loading || busy || disabled"
                 :label="displayTexts.overflowMenu"
                 variant="icon-only"
+                tabindex="-1"
                 @click="openDropDownMenu($event, true)"
               />
             </div>
@@ -364,7 +376,7 @@ function getItemId(id, parentId) {
                 />
               </div>
             </template>
-          </lx-drop-down-menu>
+          </LxDropDownMenu>
         </div>
       </div>
     </router-link>
@@ -405,7 +417,7 @@ function getItemId(id, parentId) {
       class="lx-list-item-actions"
       :class="{ 'lx-list-actions-hidden': !visibleActionDefinitions?.length }"
     >
-      <lx-drop-down-menu :disabled="loading || busy || disabled">
+      <LxDropDownMenu :disabled="loading || busy || disabled">
         <div>
           <LxButton
             :id="`${id}-action-overflow-menu`"
@@ -414,6 +426,7 @@ function getItemId(id, parentId) {
             :label="displayTexts.overflowMenu"
             variant="icon-only"
             :disabled="loading || busy || disabled"
+            tabindex="-1"
           />
         </div>
         <template v-slot:panel>
@@ -438,7 +451,7 @@ function getItemId(id, parentId) {
             />
           </div>
         </template>
-      </lx-drop-down-menu>
+      </LxDropDownMenu>
     </div>
   </div>
 </template>

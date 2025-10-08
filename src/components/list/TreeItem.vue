@@ -43,6 +43,7 @@ const props = defineProps({
   texts: { type: Object, default: () => {} },
   parents: { type: Array, default: () => [] },
   children: { type: Object, default: () => {} },
+  disabled: { type: Boolean, default: false },
 });
 
 const emits = defineEmits([
@@ -182,6 +183,7 @@ watch(
         :icon="isExpanded(item?.[idAttribute]) ? 'chevron-up' : 'chevron-down'"
         variant="icon-only"
         :label="isExpanded(item?.[idAttribute]) ? texts?.collapse : texts?.expand"
+        :disabled="disabled || states?.[item[idAttribute]]?.disabled"
         @click="collapse(item?.[idAttribute], item)"
       />
       <div class="lx-list-item-container">
@@ -197,7 +199,7 @@ watch(
           :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
           :tooltip="item[tooltipAttribute]"
           :category="item[categoryAttribute]"
-          :disabled="states?.[item[idAttribute]]?.disabled"
+          :disabled="disabled || states?.[item[idAttribute]]?.disabled"
           :busy="states?.[item[idAttribute]]?.busy"
           :value="item"
           :selected="isItemSelected(item[idAttribute])"
@@ -216,6 +218,11 @@ watch(
               :id="`select-${id}-${item[idAttribute]}`"
               v-model="selected[item[idAttribute]]"
               :value="item[idAttribute]"
+              :disabled="
+                disabled ||
+                states?.[item[idAttribute]]?.disabled ||
+                states?.[item[idAttribute]]?.busy
+              "
               @click="selectRow(item[idAttribute])"
             />
             <LxCheckbox
@@ -223,6 +230,11 @@ watch(
               :id="`select-${id}-${item[idAttribute]}`"
               v-model="selected[item[idAttribute]]"
               :value="item[idAttribute]"
+              :disabled="
+                disabled ||
+                states?.[item[idAttribute]]?.disabled ||
+                states?.[item[idAttribute]]?.busy
+              "
             />
           </template>
           <p v-else class="lx-checkbox-placeholder"></p>
@@ -239,6 +251,7 @@ watch(
         icon="refresh"
         variant="icon-only"
         :label="texts?.reload"
+        :disabled="disabled"
         @click="reloadItem(item[idAttribute])"
       />
     </div>
@@ -267,9 +280,10 @@ watch(
       v-model:items-states="states"
       :mode="mode"
       :texts="texts"
-      @loadChildren="loadChildren"
       :parents="updateParents(item)"
       :children="children"
+      :disabled="disabled"
+      @loadChildren="loadChildren"
       @action-click="actionClicked"
     >
       <template #customItem="customItem" v-if="$slots.customItem">

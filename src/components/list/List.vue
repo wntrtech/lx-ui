@@ -1499,11 +1499,12 @@ const toolbarActions = computed(() => {
                     <LxDropDownMenu
                       triggerClick="right"
                       :disabled="loading || busy || draggableIsDisabledByQuery"
+                      :tabindex="-1"
                     >
                       <div
                         class="lx-handle"
                         :id="`handleId-${element[props.idAttribute]}`"
-                        tabindex="0"
+                        :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
                         :aria-label="displayTexts.draggableItem"
                         @keydown.up.prevent="moveGroupedItem(element, 'forward')"
                         @keydown.down.prevent="moveGroupedItem(element, 'backward')"
@@ -1699,11 +1700,12 @@ const toolbarActions = computed(() => {
         :selectingKind="selectingKind"
         :query="searchString"
         :areSomeExpandable="areSomeExpandable"
-        @action-click="actionClicked"
+        :disabled="busy || loading"
         v-model:selectedItems="selectedItemsRaw"
         v-model:itemsStates="states"
         :mode="mode"
         :texts="displayTexts"
+        @action-click="actionClicked"
         @loadChildren="loadChildren"
       >
         <template #customItem="items" v-if="$slots.customItem">
@@ -1822,11 +1824,12 @@ const toolbarActions = computed(() => {
             :selectingKind="selectingKind"
             :query="searchString"
             :areSomeExpandable="areSomeExpandable"
-            @action-click="actionClicked"
+            :disabled="busy || loading"
             v-model:selectedItems="selectedItemsRaw"
             v-model:itemsStates="states"
             :mode="mode"
             :texts="displayTexts"
+            @action-click="actionClicked"
             @loadChildren="loadChildren"
           >
             <template #customItem="items" v-if="$slots.customItem">
@@ -2026,11 +2029,12 @@ const toolbarActions = computed(() => {
                     <LxDropDownMenu
                       triggerClick="right"
                       :disabled="loading || busy || draggableIsDisabledByQuery"
+                      :tabindex="-1"
                     >
                       <div
                         class="lx-handle"
                         :id="`handleId-${element[props.idAttribute]}`"
-                        tabindex="0"
+                        :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
                         :aria-label="displayTexts.draggableItem"
                         @keydown.up.prevent="moveUngroupedItem(element, 'forward')"
                         @keydown.down.prevent="moveUngroupedItem(element, 'backward')"
@@ -2150,11 +2154,12 @@ const toolbarActions = computed(() => {
                       <LxDropDownMenu
                         triggerClick="right"
                         :disabled="loading || busy || draggableIsDisabledByQuery"
+                        :tabindex="-1"
                       >
                         <div
                           class="lx-handle"
                           :id="`handleId-${element[props.idAttribute]}`"
-                          tabindex="0"
+                          :tabindex="draggableIsDisabledByQuery || loading || busy ? -1 : 0"
                           :aria-label="displayTexts.draggableItem"
                           @keydown.up.prevent="moveGroupedItem(element, 'forward')"
                           @keydown.down.prevent="moveGroupedItem(element, 'backward')"
@@ -2247,11 +2252,12 @@ const toolbarActions = computed(() => {
         :iconSet="iconSet"
         :hasSelecting="hasSelecting"
         :selectingKind="selectingKind"
-        @actionClick="actionClicked"
+        :disabled="busy || loading"
         v-model:selected-items="selectedItemsRaw"
         v-model:itemsStates="states"
         :mode="mode"
         :texts="displayTexts"
+        @actionClick="actionClicked"
         @loadChildren="loadChildren"
       >
         <template #customItem="items" v-if="$slots.customItem">

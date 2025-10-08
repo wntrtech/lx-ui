@@ -36,6 +36,7 @@ const props = defineProps({
     default: () => useLx().getGlobals()?.iconSet,
   },
   hasSelecting: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
   selectingKind: { type: String, default: 'single' }, // single, multiple
   selectedItems: { type: Object, default: () => {} },
   itemsStates: { type: Object, default: () => {} },
@@ -210,15 +211,16 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
         :iconSet="iconSet"
         :hasSelecting="hasSelecting"
         :selectingKind="selectingKind"
-        @action-click="actionClicked"
         v-model:selectedItems="selected"
         v-model:itemsStates="states"
         :mode="mode"
         :texts="texts"
-        @loadChildren="loadChildren"
         :children="childMap"
         :query="query"
         :areSomeExpandable="props.areSomeExpandable || areSomeExpandable"
+        :disabled="disabled"
+        @action-click="actionClicked"
+        @loadChildren="loadChildren"
       >
         <template #customItem="items" v-if="$slots.customItem">
           <slot name="customItem" v-bind="items" />
@@ -237,6 +239,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           icon="collapse-left"
           variant="icon-only"
           :label="texts?.collapse"
+          :disabled="disabled || states?.[parent[idAttribute]]?.disabled"
           @click="goBack()"
         />
         <div class="lx-list-item-container">
@@ -252,7 +255,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
             :iconSet="parent[iconSetAttribute] ? parent[iconSetAttribute] : iconSet"
             :tooltip="parent[tooltipAttribute]"
             :category="parent[categoryAttribute]"
-            :disabled="states?.[parent[idAttribute]]?.disabled"
+            :disabled="disabled || states?.[parent[idAttribute]]?.disabled"
             :busy="states?.[parent[idAttribute]]?.busy"
             :value="parent"
             :selected="isItemSelected(parent[idAttribute])"
@@ -271,6 +274,11 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
                 :id="`select-${id}-${parent[idAttribute]}`"
                 v-model="selected[parent[idAttribute]]"
                 :value="parent[idAttribute]"
+                :disabled="
+                  disabled ||
+                  states?.[parent[idAttribute]]?.disabled ||
+                  states?.[parent[idAttribute]]?.busy
+                "
                 @click="selectRow(parent[idAttribute])"
               />
               <LxCheckbox
@@ -278,6 +286,11 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
                 :id="`select-${id}-${parent[idAttribute]}`"
                 v-model="selected[parent[idAttribute]]"
                 :value="parent[idAttribute]"
+                :disabled="
+                  disabled ||
+                  states?.[parent[idAttribute]]?.disabled ||
+                  states?.[parent[idAttribute]]?.busy
+                "
               />
             </template>
             <p v-else class="lx-checkbox-placeholder"></p>
@@ -294,6 +307,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           icon="refresh"
           variant="icon-only"
           :label="texts?.reload"
+          :disabled="disabled"
           @click="reloadItem(parent[idAttribute])"
         />
       </div>
@@ -314,6 +328,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
           icon="collapse-right"
           variant="icon-only"
           :label="texts?.expand"
+          :disabled="disabled || states?.[item[idAttribute]]?.disabled"
           @click="goTo(item[idAttribute], item)"
         />
         <div class="lx-list-item-container">
@@ -329,7 +344,7 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
             :iconSet="item[iconSetAttribute] ? item[iconSetAttribute] : iconSet"
             :tooltip="item[tooltipAttribute]"
             :category="item[categoryAttribute]"
-            :disabled="states?.[item[idAttribute]]?.disabled"
+            :disabled="disabled || states?.[item[idAttribute]]?.disabled"
             :busy="states?.[item[idAttribute]]?.busy"
             :value="item"
             :selected="isItemSelected(item[idAttribute])"
@@ -347,6 +362,11 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
                 :id="`select-${id}-${item[idAttribute]}`"
                 v-model="selected[item[idAttribute]]"
                 :value="item[idAttribute]"
+                :disabled="
+                  disabled ||
+                  states?.[item[idAttribute]]?.disabled ||
+                  states?.[item[idAttribute]]?.busy
+                "
                 @click="selectRow(item[idAttribute])"
               />
               <LxCheckbox
@@ -354,6 +374,11 @@ const isItemSelected = computed(() => (itemId) => !!selected.value[itemId]);
                 :id="`select-${id}-${item[idAttribute]}`"
                 v-model="selected[item[idAttribute]]"
                 :value="item[idAttribute]"
+                :disabled="
+                  disabled ||
+                  states?.[item[idAttribute]]?.disabled ||
+                  states?.[item[idAttribute]]?.busy
+                "
               />
             </template>
             <p v-else class="lx-checkbox-placeholder"></p>
