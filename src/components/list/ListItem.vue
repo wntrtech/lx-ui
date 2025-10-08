@@ -113,6 +113,7 @@ const tabIndex = computed(() => {
       :aria-invalid="invalid"
       v-on:keyup.enter="performClick()"
       v-on:keyup.space="performClick()"
+      v-on:keydown.space.prevent
       :title="clickable ? tooltip : ''"
       :class="[
         { 'lx-list-item-interactive': href || clickable },
@@ -250,6 +251,7 @@ const tabIndex = computed(() => {
       :aria-describedby="description && clickable ? `${id}-desc` : null"
       :aria-invalid="invalid"
       :to="secureURL(href)"
+      v-on:keydown.space.prevent
       :title="tooltip"
       :class="[
         { 'lx-list-item-interactive': href || clickable },
