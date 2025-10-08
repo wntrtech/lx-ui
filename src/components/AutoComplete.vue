@@ -31,6 +31,7 @@ const props = defineProps({
   queryDebounce: { type: [String, Number], default: 200 },
   placeholder: { type: String, default: null },
   tooltip: { type: String, default: null },
+  tooltipAttribute: { type: String, default: null },
   readOnly: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   invalid: { type: Boolean, default: false },
@@ -266,6 +267,25 @@ function getName(returnPlaceholder = true) {
   }
   return returnPlaceholder ? props.placeholder : result;
 }
+
+function getItemTooltip(item) {
+  if (!item) return '';
+  
+  const tooltipValue = props.tooltipAttribute && item[props.tooltipAttribute];
+  const nameValue = props.nameAttribute && item[props.nameAttribute];
+  
+  return tooltipValue || nameValue || '';
+}
+
+const customTooltip = computed(() => {
+  if (props.selectingKind !== 'single') return '';
+
+  if (selectedItem.value) {
+    return getItemTooltip(selectedItem.value);
+  }
+
+  return props.tooltip;
+});
 
 const hasValue = computed(() => {
   if (selectedItem.value && Object.keys(selectedItem.value).length > 0) return true;
@@ -1075,7 +1095,7 @@ onMounted(() => {
             <div
               ref="refAutocomplete"
               class="lx-autocomplete"
-              :title="tooltip"
+              :title="customTooltip"
               tabindex="-1"
               @keydown.esc.prevent="closeDropDownDefaultOnEsc"
               @keydown.enter.prevent="onEnter"
@@ -1088,7 +1108,7 @@ onMounted(() => {
               <div
                 class="lx-autocomplete-default-panel"
                 :class="[{ multiselect: selectingKind === 'multiple' }]"
-                :title="tooltip"
+                :title="selectingKind === 'single' ? customTooltip : props.tooltip"
               >
                 <div
                   class="lx-autocomplete-default-data"
@@ -1160,7 +1180,7 @@ onMounted(() => {
                     <template v-if="shouldShowValuePlaceholder">
                       <div
                         class="lx-value lx-input-area"
-                        :title="selectingKind === 'single' ? getName(false) : ''"
+                        :title="customTooltip"
                       >
                         <div>
                           <template v-if="variant === 'country' && selectingKind === 'single'">
@@ -1368,7 +1388,7 @@ onMounted(() => {
                           :group-id="groupId"
                           :label="item[nameAttribute]"
                           :disabled="loading"
-                          :title="item[nameAttribute]"
+                          :title="getItemTooltip(item)"
                           @click.prevent="
                             props.selectingKind === 'single'
                               ? selectSingle(item)
