@@ -60,7 +60,9 @@ const props = defineProps({
 const defaultTexts = {
   filters: 'Filtri',
   search: 'Atlasīt',
+  searchTitle: '',
   clear: 'Notīrīt',
+  clearTitle: '',
   fastFiltersLabel: 'Ātrie filtri',
   filtersApplied: 'Filtri tiek piemēroti',
   saveFilter: 'Saglabāt',
@@ -220,6 +222,7 @@ defineExpose({ toggleExpander, focus });
             id="filter-search-button"
             :kind="filterButtonKind"
             :label="displayTexts.search"
+            :title="displayTexts.searchTitle"
             icon="refresh"
             :disabled="disabled"
             @click="filterSearch"
@@ -240,11 +243,11 @@ defineExpose({ toggleExpander, focus });
             />
           </LxDropDownMenu>
           <LxButton
+            v-if="fastFilters && fastFilters.length === 1 && !enableFilterEditing"
             id="fast-filter-button"
             kind="tertiary"
             icon="flash"
             :disabled="disabled"
-            v-if="fastFilters && fastFilters.length === 1 && !enableFilterEditing"
             :label="fastFilters[0][fastNameAttribute]"
             @click="fastFilterClick(fastFilters[0][fastIdAttribute])"
           />
@@ -252,6 +255,7 @@ defineExpose({ toggleExpander, focus });
             id="filter-clear-button"
             kind="tertiary"
             :label="displayTexts.clear"
+            :title="displayTexts.clearTitle"
             icon="filters-reset"
             :disabled="disabled"
             @click="filterReset"
