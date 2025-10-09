@@ -1187,8 +1187,9 @@ function toolbarActionClicked(id) {
     toggleSearch();
   } else if (id === 'select-all') {
     selectRows();
+  } else {
+    emits('toolbarActionClick', id);
   }
-  emits('toolbarActionClick', id);
 }
 
 const toolbarActions = computed(() => {
