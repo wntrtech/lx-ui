@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, focusNextFocusableElement } from '@/utils/generalUtils';
+import { logError } from '@/utils/devUtils';
+import useLx from '@/hooks/useLx';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -42,17 +44,7 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
 
-const model = computed({
-  get() {
-    return props.modelValue;
-  },
-  set(value) {
-    emits('update:modelValue', value);
-  },
-});
-
 const notSelectedId = 'notSelected';
-const currentIndex = ref(0);
 
 const rotatorItemsArray = computed(() => {
   if (!props.nullable) {
@@ -67,7 +59,19 @@ const rotatorItemsArray = computed(() => {
   ];
 });
 
+const model = computed({
+  get() {
+    return props.modelValue ?? rotatorItemsArray.value[0]?.[props.idAttribute];
+  },
+  set(value) {
+    emits('update:modelValue', value);
+  },
+});
+
+const currentIndex = ref(0);
 const itemsModel = ref({});
+const highlightedItemId = ref(null);
+const dropdownMenuRef = ref(null);
 
 function activate() {
   rotatorItemsArray.value?.forEach((item) => {
@@ -189,7 +193,12 @@ function selectSingle(id) {
     } else {
       currentIndex.value = (currentIndex.value + 1) % rotatorItemsArray.value.length;
     }
-    model.value = [rotatorItemsArray.value[currentIndex.value][props.idAttribute]];
+    const currentItemId = rotatorItemsArray.value[currentIndex.value][props.idAttribute];
+    model.value = [currentItemId];
+    highlightedItemId.value = currentItemId;
+    if (dropdownMenuRef.value && dropdownMenuRef.value.menuOpen) {
+      dropdownMenuRef.value.closeMenu();
+    }
   }
 }
 
@@ -255,10 +264,86 @@ function isActive(item) {
     return model.value.includes(id);
   }
 
-  return model.value[0] === id;
+  return model.value === id;
 }
 
-// TODO: fix transition bug when there is 3 items, fix also transition bugs with nullable
+const getIdAttributeString = (item) => {
+  const attribute = item[props.idAttribute];
+
+  if (attribute === undefined || attribute === null) {
+    logError(
+      `Rotator: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(item)}`,
+      useLx().getGlobals().environment
+    );
+  }
+
+  return attribute;
+};
+
+function onDown() {
+  const wasMenuOpen = dropdownMenuRef.value?.menuOpen;
+
+  if (!wasMenuOpen && rotatorItemsArray.value.length > 0) {
+    dropdownMenuRef.value.openMenu();
+    if (!highlightedItemId.value) {
+      highlightedItemId.value = getIdAttributeString(rotatorItemsArray.value[0]);
+    }
+  } else {
+    const currentBaseId =
+      highlightedItemId.value || getIdAttributeString(rotatorItemsArray.value[0]);
+    const index = rotatorItemsArray.value.findIndex(
+      (x) => getIdAttributeString(x) === currentBaseId
+    );
+    highlightedItemId.value =
+      index === -1 || index >= rotatorItemsArray.value.length - 1
+        ? getIdAttributeString(rotatorItemsArray.value[0])
+        : getIdAttributeString(rotatorItemsArray.value[index + 1]);
+  }
+
+  nextTick(() => {
+    document.getElementById(`${highlightedItemId.value}-item-button`)?.focus();
+  });
+}
+
+function onUp() {
+  const wasMenuOpen = dropdownMenuRef.value?.menuOpen;
+
+  if (!wasMenuOpen && rotatorItemsArray.value.length > 0) {
+    dropdownMenuRef.value.openMenu();
+    if (!highlightedItemId.value) {
+      highlightedItemId.value = getIdAttributeString(
+        rotatorItemsArray.value[rotatorItemsArray.value.length - 1]
+      );
+    }
+  } else {
+    const currentBaseId =
+      highlightedItemId.value ||
+      getIdAttributeString(rotatorItemsArray.value[rotatorItemsArray.value.length - 1]);
+    const index = rotatorItemsArray.value.findIndex(
+      (x) => getIdAttributeString(x) === currentBaseId
+    );
+
+    highlightedItemId.value =
+      index === -1 || index === 0
+        ? getIdAttributeString(rotatorItemsArray.value[rotatorItemsArray.value.length - 1])
+        : getIdAttributeString(rotatorItemsArray.value[index - 1]);
+  }
+
+  nextTick(() => {
+    document.getElementById(`${highlightedItemId.value}-item-button`)?.focus();
+  });
+}
+
+const rotatorInputRef = ref(null);
+
+function skipTab() {
+  if (dropdownMenuRef.value?.menuOpen) {
+    dropdownMenuRef.value.closeMenu('tab');
+    focusNextFocusableElement(rotatorInputRef.value);
+  }
+}
+
+// TODO: fix transition bugs with nullable
 // better refactor rotation logic for smarter solution
 </script>
 
@@ -281,17 +366,29 @@ function isActive(item) {
       :class="[{ 'lx-invalid': invalid }]"
       :title="tooltip"
     >
-      <LxDropDownMenu triggerClick="right" :disabled="disabled">
+      <LxDropDownMenu
+        ref="dropdownMenuRef"
+        triggerClick="right"
+        :disabled="disabled"
+        :tabindex="-1"
+      >
         <div
+          ref="rotatorInputRef"
           class="lx-rotator-dropdown-wrapper lx-input-wrapper"
           :class="[{ 'lx-invalid': invalid }, { 'lx-disabled': disabled }]"
           :aria-invalid="invalid"
-          :tabindex="-1"
+          :tabindex="disabled ? -1 : 0"
           :aria-labelledby="labelId"
           :aria-disabled="disabled"
           @click="!disabled && selectSingle(null)"
-          @keydown.space.prevent="!disabled && selectSingle(null)"
           @contextmenu.prevent="disabled"
+          @keyup.space.stop="selectSingle(null)"
+          @keyup.enter.stop="selectSingle(null)"
+          @keyup.down.prevent="onDown"
+          @keyup.up.prevent="onUp"
+          @keydown.down.prevent
+          @keydown.up.prevent
+          @keydown.tab="skipTab"
         >
           <div class="pseudo-input" />
 
@@ -323,14 +420,22 @@ function isActive(item) {
         </div>
 
         <template #panel>
-          <LxButton
-            v-for="item in rotatorItemsArray"
-            :key="item?.id"
-            :label="item?.name"
-            kind="ghost"
-            :active="isActive(item)"
-            @click="selectSingle(item?.id)"
-          />
+          <div
+            @keydown.prevent
+            @keyup.down.prevent="onDown"
+            @keyup.up.prevent="onUp"
+            @keydown.tab="skipTab"
+          >
+            <LxButton
+              v-for="item in rotatorItemsArray"
+              :id="`${item?.id}-item-button`"
+              :key="item?.id"
+              :label="item?.name"
+              kind="ghost"
+              :active="isActive(item)"
+              @click="selectSingle(item?.id)"
+            />
+          </div>
         </template>
       </LxDropDownMenu>
 
