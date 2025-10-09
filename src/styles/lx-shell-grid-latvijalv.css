@@ -667,7 +667,7 @@
       display: flex;
     }
   
-    .lx .lx-layout.lx-layout-latvijalv nav {
+    .lx .lx-layout.lx-layout-latvijalv > nav {
       width: var(--row-size);
       z-index: 1000;
       top: var(--nav-row-size);
@@ -676,7 +676,7 @@
       transition: width .1s ease-out, margin-right .1s ease-out;
     }
   
-    .lx .lx-layout.lx-layout-latvijalv.lx-collapsed nav {
+    .lx .lx-layout.lx-layout-latvijalv.lx-collapsed > nav {
       width: auto;
       margin-left: calc(0px - var(--row-size));
     }

@@ -511,7 +511,7 @@
   color: var(--color-button-nav);
 }
 
-.lx-layout.lx-layout-digives nav {
+.lx-layout.lx-layout-digives > nav {
   z-index: 999;
 }
 
@@ -603,7 +603,7 @@
 }
 
 @media (max-width: 1800px) {
-  .lx-layout.lx-layout-default.lx-layout-digives.lx-collapsed-null nav {
+  .lx-layout.lx-layout-default.lx-layout-digives.lx-collapsed-null > nav {
     display: none;
   }
 }

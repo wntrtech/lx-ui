@@ -24,7 +24,7 @@
 .lx-master-detail .lx-master .lx-button {
     width: 100%;
     margin: 0;
-    --button-tertiary-outline-offset: -2px;
+    --button-tertiary-outline-offset: -4px;
 }
 
 .lx-master-detail .lx-master li:last-of-type {

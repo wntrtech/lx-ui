@@ -389,7 +389,7 @@
   color: var(--color-button-nav);
 }
 
-.lx-layout.lx-layout-digives-lite nav {
+.lx-layout.lx-layout-digives-lite > nav {
   z-index: 999;
 }
 
@@ -797,7 +797,7 @@ border-top: 2px solid var(--color-brand-secondary);
 }
 
 @media (max-width: 1800px) {
-  .lx-layout.lx-layout-default.lx-layout-digives-lite.lx-collapsed-null nav {
+  .lx-layout.lx-layout-default.lx-layout-digives-lite.lx-collapsed-null > nav {
     display: none;
   }
 }

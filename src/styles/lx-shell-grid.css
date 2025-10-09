@@ -2221,7 +2221,7 @@
     font-size: 2rem;
   }
 
-  .lx-layout.lx-layout-default.lx-collapsed nav {
+  .lx-layout.lx-layout-default.lx-collapsed > nav {
     width: auto;
     margin-left: calc(0px - var(--row-size));
   }

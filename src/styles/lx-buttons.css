@@ -2327,3 +2327,10 @@ a.lx-button.lx-button-ghost svg {
     display: flex;
   }
 }
+
+@media (max-width: 550px) {
+  .lx-error-landing > .lx-button-set > .lx-error-action-definitions {
+    flex-direction: column;
+    width: 100%;
+  }
+}

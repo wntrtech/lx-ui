@@ -526,7 +526,7 @@
     display: flex;
   }
 
-  .lx .lx-layout.lx-layout-public nav {
+  .lx .lx-layout.lx-layout-public > nav {
     width: var(--row-size);
     z-index: 999;
     top: var(--nav-row-size);
@@ -535,7 +535,7 @@
     transition: width .1s ease-out, margin-right .1s ease-out;
   }
 
-  .lx .lx-layout.lx-layout-public.lx-collapsed nav {
+  .lx .lx-layout.lx-layout-public.lx-collapsed > nav {
     width: auto;
     margin-left: calc(0px - var(--row-size));
   }

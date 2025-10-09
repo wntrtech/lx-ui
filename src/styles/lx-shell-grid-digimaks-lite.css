@@ -33,7 +33,7 @@
   inset: 0rem 0rem auto auto;
 }
 
-.lx-layout-digimaks nav {
+.lx-layout-digimaks > header nav {
   background-color: var(--color-region);
   min-height: var(--row-size);
   height: calc(100dvh - var(--nav-row-size));
