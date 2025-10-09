@@ -350,7 +350,8 @@
 
 .lx-date-time-picker-wrapper.lx-date,
 .lx-date-time-picker-wrapper.lx-time,
-.lx-date-time-picker-wrapper.lx-date-time {
+.lx-date-time-picker-wrapper.lx-date-time,
+.lx-date-time-picker-wrapper.lx-date-time-full {
   display: grid;
 }
 
@@ -373,6 +374,8 @@
 
 .lx-date-time-picker-wrapper.lx-date-time .lx-input-wrapper,
 .lx-date-time-picker-wrapper.lx-date-time,
+.lx-date-time-picker-wrapper.lx-date-time-full .lx-input-wrapper,
+.lx-date-time-picker-wrapper.lx-date-time-full,
 .lx-date-picker-dropdown .lx-field-wrapper,
 .lx-date-dropdowns .lx-field-wrapper {
   width: var(--input-container-width-large);

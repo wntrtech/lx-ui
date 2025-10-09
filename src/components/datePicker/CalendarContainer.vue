@@ -13,7 +13,7 @@ import {
   canSelectTime,
   isSameMonth,
   getSurroundingHours,
-  getSurroundingMinutes,
+  getSurroundingMinutesOrSeconds,
   checkForSpecialDate,
   hasSpecialDates,
   getDaysInMonthGrid,
@@ -28,6 +28,8 @@ import {
   quarterFromMonth,
   findDecadeStartYear,
   isStartOrEndYear,
+  isDefined,
+  isNil,
 } from '@/components/datePicker/helpers';
 
 import LxButton from '@/components/Button.vue';
@@ -36,7 +38,7 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 const props = defineProps({
   id: { type: String, default: null },
   modelValue: { type: [String, Date, Object], default: null },
-  mode: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters'
+  mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full' 'date-time', 'date-time-full' 'month', 'year', 'month-year', 'quarters'
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   disabled: { type: Boolean, default: false },
   locale: { type: String, default: 'lv-LV' },
@@ -50,6 +52,7 @@ const props = defineProps({
   openMenu: { type: Function, default: () => {} },
   menuState: { type: Boolean, default: false },
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
+  cadenceOfSeconds: { type: Number, default: 1 }, // 1, 5, 15
   clearIfNotExact: { type: Boolean, default: false },
   pickerType: { type: String, default: 'single' }, // 'single', 'range'
   activeInput: { type: String, default: 'startInput' }, // 'startInput', 'endInput'
@@ -63,7 +66,7 @@ const props = defineProps({
 const textsDefault = {
   clear: 'Attīrīt',
   clearButton: 'Attīrīt vērtību',
-  todayButton: 'Šodiena',
+  todayButton: 'Atgriezties uz šodienu',
   clearStart: 'Notīrīt sākuma vērtību',
   clearEnd: 'Notīrīt beigu vērtību',
   next: 'Nākamais',
@@ -130,7 +133,7 @@ const shouldCloseMenu = ref(true);
 
 const windowSize = useWindowSize();
 
-// Hours and minutes arrays
+// Hours, minutes and seconds arrays
 const hours = ref(
   Array.from({ length: 24 }, (_, i) => ({
     value: i.toString().padStart(2, '0'),
@@ -145,11 +148,21 @@ const minutes = ref(
   }))
 );
 
-// State to store the currently visible hours and minutes
+const seconds = ref(
+  Array.from({ length: 60 }, (_, i) => ({
+    value: i.toString().padStart(2, '0'),
+    orderIndex: i,
+  }))
+);
+
+// State to store the currently visible hours, minutes and seconds
 const visibleHours = ref([]);
 const visibleMinutes = ref([]);
+const visibleSeconds = ref([]);
+
 const selectedHour = ref(null);
 const selectedMinute = ref(null);
+const selectedSecond = ref(null);
 
 const outsideOfToday = ref(false);
 
@@ -258,6 +271,7 @@ function clearSelectedValues(handleActiveInputSwitch = true) {
   selectedYear.value = null;
   selectedHour.value = null;
   selectedMinute.value = null;
+  selectedSecond.value = null;
   selectedQuarter.value = null;
 
   selectedStartDate.value = null;
@@ -453,7 +467,7 @@ function handleLayoutDisplay() {
       return;
     }
 
-    if (isMobileScreen.value && props.mode === 'date-time') {
+    if (isMobileScreen.value && (props.mode === 'date-time' || props.mode === 'date-time-full')) {
       regularLayout.value = true;
       mobileTimeLayout.value = false;
       return;
@@ -495,12 +509,41 @@ const filteredMinutes = computed(() => {
   return filtered.map((item) => ({ ...item, id: generateUUID() }));
 });
 
+// Create a computed property for filtering seconds based on cadence
+const filteredSeconds = computed(() => {
+  const validCadenceValues = [1, 5, 15];
+  let cadence = props.cadenceOfSeconds;
+
+  if (!validCadenceValues.includes(cadence)) {
+    cadence = 1;
+  }
+
+  // Filter the seconds array based on the cadence
+  let filtered = seconds.value.filter((_, index) => index % cadence === 0);
+
+  // Extend the array if it has fewer than 9 items (for consistent rendering)
+  const minVisibleItems = 9; // Minimum number of visible items for smooth scrolling
+  if (filtered.length < minVisibleItems) {
+    while (filtered.length < minVisibleItems) {
+      filtered = filtered.concat(filtered);
+    }
+  }
+
+  // Map over filtered array to add unique IDs (to avoid key duplication issues)
+  return filtered.map((item) => ({ ...item, id: generateUUID() }));
+});
+
 const currentHourIndex = ref(getTimeOrderIndex(hours.value, todayDate.value.getHours()));
 const currentMinuteIndex = ref(
   getTimeOrderIndex(filteredMinutes.value, todayDate.value.getMinutes(), props.cadenceOfMinutes)
 );
 const selectedMinuteId = ref(null);
 const selectedMinuteCenterId = ref(filteredMinutes.value[currentMinuteIndex.value]?.id);
+const currentSecondIndex = ref(
+  getTimeOrderIndex(filteredSeconds.value, todayDate.value.getSeconds(), props.cadenceOfSeconds)
+);
+const selectedSecondId = ref(null);
+const selectedSecondCenterId = ref(filteredSeconds.value[currentSecondIndex.value]?.id);
 
 // Update visible hours
 function updateVisibleHours() {
@@ -513,9 +556,18 @@ function updateVisibleHours() {
 
 // Update visible minutes
 function updateVisibleMinutes() {
-  visibleMinutes.value = getSurroundingMinutes(
+  visibleMinutes.value = getSurroundingMinutesOrSeconds(
     filteredMinutes.value,
     selectedMinuteCenterId.value,
+    isMobileScreen.value
+  );
+}
+
+// Update visible seconds
+function updateVisibleSeconds() {
+  visibleSeconds.value = getSurroundingMinutesOrSeconds(
+    filteredSeconds.value,
+    selectedSecondCenterId.value,
     isMobileScreen.value
   );
 }
@@ -651,7 +703,7 @@ function handleRangeDifferentCaseValidation(date) {
   }
 }
 
-function checkCadence(cadence, filteredIndexParameter, minutesValue) {
+function checkMinutesCadence(cadence, filteredIndexParameter, minutesValue) {
   let filteredIndex = filteredIndexParameter;
   // Check if cadence is 5 and filteredMinutes length is 12
   if (cadence === 5 && filteredMinutes.value.length === 12) {
@@ -660,6 +712,20 @@ function checkCadence(cadence, filteredIndexParameter, minutesValue) {
   // Check if cadence is 15 and filteredMinutes length is 16
   else if (cadence === 15 && filteredMinutes.value.length === 16) {
     filteredIndex = filteredMinutes.value.findIndex((item) => Number(item.value) === minutesValue);
+  }
+
+  return filteredIndex;
+}
+
+function checkSecondsCadence(cadence, filteredIndexParameter, secondsValue) {
+  let filteredIndex = filteredIndexParameter;
+  // Check if cadence is 5 and filteredSeconds length is 12
+  if (cadence === 5 && filteredSeconds.value.length === 12) {
+    filteredIndex = filteredSeconds.value.findIndex((item) => Number(item.value) === secondsValue);
+  }
+  // Check if cadence is 15 and filteredSeconds length is 16
+  else if (cadence === 15 && filteredSeconds.value.length === 16) {
+    filteredIndex = filteredSeconds.value.findIndex((item) => Number(item.value) === secondsValue);
   }
 
   return filteredIndex;
@@ -684,7 +750,10 @@ function handleDateLayoutAutoScroll(date) {
 }
 
 function isPartialTimeSelection() {
-  return selectedDay.value && (selectedHour.value === null || selectedMinute.value === null);
+  return (
+    selectedDay.value &&
+    (selectedHour.value === null || selectedMinute.value === null || selectedSecond.value === null)
+  );
 }
 
 function isCompleteTimeSelection() {
@@ -696,20 +765,45 @@ function isCompleteTimeSelection() {
   );
 }
 
+function isCompleteTimeFullSelection() {
+  return (
+    selectedHour.value !== null &&
+    selectedHour.value !== undefined &&
+    selectedMinute.value !== null &&
+    selectedMinute.value !== undefined &&
+    selectedSecond.value !== null &&
+    selectedSecond.value !== undefined
+  );
+}
+
 function applyHourBoundsIfNeeded(date) {
   if (props.clearIfNotExact) return;
 
-  const sameDay = props.minDateRef && date.getDate() === props.minDateRef.getDate();
+  const sameMinDay =
+    props.minDateRef &&
+    date.getFullYear() === props.minDateRef.getFullYear() &&
+    date.getMonth() === props.minDateRef.getMonth() &&
+    date.getDate() === props.minDateRef.getDate();
 
-  if (sameDay && selectedHour.value < props.minDateRef.getHours()) {
+  const sameMaxDay =
+    props.maxDateRef &&
+    date.getFullYear() === props.maxDateRef.getFullYear() &&
+    date.getMonth() === props.maxDateRef.getMonth() &&
+    date.getDate() === props.maxDateRef.getDate();
+
+  if (
+    sameMinDay &&
+    (selectedHour.value == null || selectedHour.value < props.minDateRef.getHours())
+  ) {
     selectedHour.value = props.minDateRef.getHours();
     currentHourIndex.value = getTimeOrderIndex(hours.value, selectedHour.value);
     updateVisibleHours();
   }
 
-  const sameMaxDay = props.maxDateRef && date.getDate() === props.maxDateRef.getDate();
-
-  if (sameMaxDay && selectedHour.value > props.maxDateRef.getHours()) {
+  if (
+    sameMaxDay &&
+    (selectedHour.value == null || selectedHour.value > props.maxDateRef.getHours())
+  ) {
     selectedHour.value = props.maxDateRef.getHours();
     currentHourIndex.value = getTimeOrderIndex(hours.value, selectedHour.value);
     updateVisibleHours();
@@ -723,15 +817,21 @@ function applyMinuteBoundsIfNeeded(date) {
   let filteredIndex = -1;
 
   const sameMinDay = props.minDateRef && date.getDate() === props.minDateRef.getDate();
-  if (sameMinDay && selectedMinute.value < props.minDateRef.getMinutes()) {
+  if (
+    sameMinDay &&
+    (isNil(selectedMinute.value) || selectedMinute.value < props.minDateRef.getMinutes())
+  ) {
     selectedMinute.value = props.minDateRef.getMinutes();
-    filteredIndex = checkCadence(cadence, filteredIndex, selectedMinute.value);
+    filteredIndex = checkMinutesCadence(cadence, filteredIndex, selectedMinute.value);
   }
 
   const sameMaxDay = props.maxDateRef && date.getDate() === props.maxDateRef.getDate();
-  if (sameMaxDay && selectedMinute.value > props.maxDateRef.getMinutes()) {
+  if (
+    sameMaxDay &&
+    (isNil(selectedMinute.value) || selectedMinute.value > props.maxDateRef.getMinutes())
+  ) {
     selectedMinute.value = props.maxDateRef.getMinutes();
-    filteredIndex = checkCadence(cadence, filteredIndex, selectedMinute.value);
+    filteredIndex = checkMinutesCadence(cadence, filteredIndex, selectedMinute.value);
   }
 
   if (filteredIndex === -1) {
@@ -744,12 +844,49 @@ function applyMinuteBoundsIfNeeded(date) {
   updateVisibleMinutes();
 }
 
-function buildAndEmitFinalDateTime(date, baseDate) {
+function applySecondBoundsIfNeeded(date) {
+  if (props.clearIfNotExact) return;
+
+  const cadence = props.cadenceOfSeconds;
+  let filteredIndex = -1;
+
+  const sameMinDay = props.minDateRef && date.getDate() === props.minDateRef.getDate();
+  if (
+    sameMinDay &&
+    (isNil(selectedSecond.value) || selectedSecond.value < props.minDateRef.getSeconds())
+  ) {
+    selectedSecond.value = props.minDateRef.getSeconds();
+    filteredIndex = checkSecondsCadence(cadence, filteredIndex, selectedSecond.value);
+  }
+
+  const sameMaxDay = props.maxDateRef && date.getDate() === props.maxDateRef.getDate();
+  if (
+    sameMaxDay &&
+    (isNil(selectedSecond.value) || selectedSecond.value > props.maxDateRef.getSeconds())
+  ) {
+    selectedSecond.value = props.maxDateRef.getSeconds();
+    filteredIndex = checkSecondsCadence(cadence, filteredIndex, selectedSecond.value);
+  }
+
+  if (filteredIndex === -1) {
+    filteredIndex = getTimeOrderIndex(filteredSeconds.value, selectedSecond.value, cadence);
+  }
+
+  currentSecondIndex.value = Math.max(0, filteredIndex);
+
+  selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value].id;
+  selectedSecondId.value = filteredSeconds.value[currentSecondIndex.value].id;
+  updateVisibleSeconds();
+}
+
+function buildAndEmitFinalDateTime(date, baseDate, fullTime = false) {
   if (props.minDateRef && baseDate.getDate() === props.minDateRef.getDate()) {
     if (selectedHour.value < props.minDateRef.getHours())
       selectedHour.value = props.minDateRef.getHours();
     if (selectedMinute.value < props.minDateRef.getMinutes())
       selectedMinute.value = props.minDateRef.getMinutes();
+    if (selectedSecond.value < props.minDateRef.getSeconds() && fullTime)
+      selectedSecond.value = props.minDateRef.getSeconds();
   }
 
   if (props.maxDateRef && baseDate.getDate() === props.maxDateRef.getDate()) {
@@ -757,12 +894,16 @@ function buildAndEmitFinalDateTime(date, baseDate) {
       selectedHour.value = props.maxDateRef.getHours();
     if (selectedMinute.value > props.maxDateRef.getMinutes())
       selectedMinute.value = props.maxDateRef.getMinutes();
+    if (selectedSecond.value > props.maxDateRef.getSeconds() && fullTime)
+      selectedSecond.value = props.maxDateRef.getSeconds();
   }
 
   date.setHours(selectedHour.value);
   date.setMinutes(selectedMinute.value);
+  if (selectedSecond.value && fullTime) date.setSeconds(selectedSecond.value);
 
   currentDate.value = date;
+
   emits('update:modelValue', date);
   handleLayoutDisplay();
   if (shouldCloseMenu.value) props.closeMenu();
@@ -770,7 +911,6 @@ function buildAndEmitFinalDateTime(date, baseDate) {
 }
 
 function handleDateSelection(selectedValue) {
-  // 1. Basic selections
   selectedDay.value = selectedValue.getDate();
   selectedMonth.value = selectedValue.getMonth();
   selectedYear.value = selectedValue.getFullYear();
@@ -778,7 +918,6 @@ function handleDateSelection(selectedValue) {
   const updatedDate = new Date(selectedYear.value, selectedMonth.value, selectedDay.value);
   selectedDate.value = updatedDate;
 
-  // 2. Handle mode === 'date'
   if (props.mode === 'date') {
     handleDateLayoutAutoScroll(updatedDate);
     emits('update:modelValue', updatedDate);
@@ -788,7 +927,6 @@ function handleDateSelection(selectedValue) {
     return;
   }
 
-  // 3. Handle date-time cases
   if (props.mode === 'date-time') {
     if (props.clearIfNotExact && isPartialTimeSelection()) {
       clearSelectedValues();
@@ -802,6 +940,24 @@ function handleDateSelection(selectedValue) {
 
       if (isCompleteTimeSelection()) {
         buildAndEmitFinalDateTime(updatedDate, selectedValue);
+      }
+    }
+  }
+
+  if (props.mode === 'date-time-full') {
+    if (props.clearIfNotExact && isPartialTimeSelection()) {
+      clearSelectedValues();
+      return;
+    }
+
+    // Hour, minute & second bound enforcement
+    if (!mobileTimeLayout.value) {
+      applyHourBoundsIfNeeded(selectedValue);
+      applyMinuteBoundsIfNeeded(selectedValue);
+      applySecondBoundsIfNeeded(selectedValue);
+
+      if (isCompleteTimeFullSelection()) {
+        buildAndEmitFinalDateTime(updatedDate, selectedValue, true);
       }
     }
   }
@@ -1354,8 +1510,16 @@ function returnToToday() {
   );
   selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
 
+  currentSecondIndex.value = getTimeOrderIndex(
+    filteredSeconds.value,
+    newDate.getSeconds(),
+    props.cadenceOfSeconds
+  );
+  selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
+
   updateVisibleHours();
   updateVisibleMinutes();
+  updateVisibleSeconds();
 
   handleLayoutDisplay();
 }
@@ -1379,6 +1543,18 @@ function onScrollClick(direction, type) {
       selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
 
       updateVisibleMinutes();
+    }
+  } else if (type === 'seconds') {
+    if (filteredSeconds.value.length) {
+      // Update the currentSecondIndex based on cadence
+      currentSecondIndex.value =
+        (currentSecondIndex.value + direction + filteredSeconds.value.length) %
+        filteredSeconds.value.length;
+
+      // Set the selectedSecondId based on the updated currentSecondIndex
+      selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value].id;
+
+      updateVisibleSeconds();
     }
   }
 }
@@ -1429,34 +1605,53 @@ const selectHour = (hourObj, isNotSelectable) => {
   }
 
   if (
-    props.mode === 'date-time' &&
-    selectedYear.value &&
-    selectedMonth.value !== null &&
-    selectedMonth.value !== undefined &&
-    selectedDay.value &&
+    props.mode === 'time-full' &&
     selectedMinute.value !== null &&
-    selectedMinute.value !== undefined
+    selectedMinute.value !== undefined &&
+    selectedSecond.value !== null &&
+    selectedSecond.value !== undefined
   ) {
-    // Construct the updated date based on the variant condition
+    const updatedDate = new Date(
+      todayDate.value.getFullYear(),
+      todayDate.value.getMonth(),
+      todayDate.value.getDate(),
+      selectedHour.value,
+      selectedMinute.value,
+      selectedSecond.value
+    );
+    emits('update:modelValue', updatedDate);
+    props.closeMenu();
+    props.setActiveInput('startInput', props.id);
+  }
+
+  if (
+    isDefined(selectedYear.value) &&
+    isDefined(selectedMonth.value) &&
+    isDefined(selectedDay.value) &&
+    isDefined(selectedHour.value) &&
+    isDefined(selectedMinute.value) &&
+    (props.mode === 'date-time' ||
+      (props.mode === 'date-time-full' && isDefined(selectedSecond.value)))
+  ) {
+    // Construct the date (include seconds only for full mode)
     const updatedDate = new Date(
       selectedYear.value,
       selectedMonth.value,
       selectedDay.value,
       selectedHour.value,
-      selectedMinute.value
+      selectedMinute.value,
+      props.mode === 'date-time-full' ? selectedSecond.value : 0
     );
 
-    // Update the selectedDate value and emit the event
     selectedDate.value = updatedDate;
     currentDate.value = updatedDate;
     emits('update:modelValue', updatedDate);
 
-    if (isMobileScreen.value) return;
-
-    // Handle layout display and close the menu
-    handleLayoutDisplay();
-    if (shouldCloseMenu.value) props.closeMenu();
-    props.setActiveInput('startInput', props.id);
+    if (!isMobileScreen.value) {
+      handleLayoutDisplay();
+      if (shouldCloseMenu.value) props.closeMenu();
+      props.setActiveInput('startInput', props.id);
+    }
   }
 };
 
@@ -1479,40 +1674,123 @@ const selectMinute = (minuteObj, isNotSelectable) => {
       selectedHour.value,
       selectedMinute.value
     );
+
     emits('update:modelValue', updatedDate);
     props.closeMenu();
     props.setActiveInput('startInput', props.id);
   }
 
   if (
-    props.mode === 'date-time' &&
-    selectedYear.value &&
-    selectedMonth.value !== null &&
-    selectedMonth.value !== undefined &&
-    selectedDay.value &&
+    props.mode === 'time-full' &&
     selectedHour.value !== null &&
-    selectedHour.value !== undefined
+    selectedHour.value !== undefined &&
+    selectedSecond.value !== null &&
+    selectedSecond.value !== undefined
   ) {
-    // Construct the updated date based on the variant condition
+    const updatedDate = new Date(
+      todayDate.value.getFullYear(),
+      todayDate.value.getMonth(),
+      todayDate.value.getDate(),
+      selectedHour.value,
+      selectedMinute.value,
+      selectedSecond.value
+    );
+    emits('update:modelValue', updatedDate);
+    props.closeMenu();
+    props.setActiveInput('startInput', props.id);
+  }
+
+  if (
+    isDefined(selectedYear.value) &&
+    isDefined(selectedMonth.value) &&
+    isDefined(selectedDay.value) &&
+    isDefined(selectedHour.value) &&
+    isDefined(selectedMinute.value) &&
+    (props.mode === 'date-time' ||
+      (props.mode === 'date-time-full' && isDefined(selectedSecond.value)))
+  ) {
     const updatedDate = new Date(
       selectedYear.value,
       selectedMonth.value,
       selectedDay.value,
       Number(selectedHour.value),
-      Number(selectedMinute.value)
+      Number(selectedMinute.value),
+      props.mode === 'date-time-full' ? Number(selectedSecond.value) : 0
     );
 
-    // Update the selectedDate value and emit the event
     selectedDate.value = updatedDate;
     currentDate.value = updatedDate;
     emits('update:modelValue', updatedDate);
 
-    if (isMobileScreen.value) return;
+    if (!isMobileScreen.value) {
+      handleLayoutDisplay();
+      if (shouldCloseMenu.value) props.closeMenu();
+      props.setActiveInput('startInput', props.id);
+    }
+  }
+};
 
-    // Handle layout display and close the menu
-    handleLayoutDisplay();
-    if (shouldCloseMenu.value) props.closeMenu();
+const selectSecond = (secondObj, isNotSelectable) => {
+  if (props.disabled) return;
+  if (isNotSelectable) return;
+  currentSecondIndex.value = secondObj.orderIndex;
+
+  selectedSecond.value = Number(secondObj.value);
+  selectedSecondId.value = secondObj.id;
+  selectedSecondCenterId.value = secondObj.id;
+
+  updateVisibleSeconds();
+
+  if (
+    props.mode === 'time-full' &&
+    selectedHour.value !== null &&
+    selectedHour.value !== undefined &&
+    selectedMinute.value !== null &&
+    selectedMinute.value !== undefined &&
+    selectedSecond.value !== null &&
+    selectedSecond.value !== undefined
+  ) {
+    const updatedDate = new Date(
+      todayDate.value.getFullYear(),
+      todayDate.value.getMonth(),
+      todayDate.value.getDate(),
+      selectedHour.value,
+      selectedMinute.value,
+      selectedSecond.value
+    );
+
+    emits('update:modelValue', updatedDate);
+    props.closeMenu();
     props.setActiveInput('startInput', props.id);
+  }
+
+  if (
+    isDefined(selectedYear.value) &&
+    isDefined(selectedMonth.value) &&
+    isDefined(selectedDay.value) &&
+    isDefined(selectedHour.value) &&
+    isDefined(selectedMinute.value) &&
+    (props.mode === 'date-time' ||
+      (props.mode === 'date-time-full' && isDefined(selectedSecond.value)))
+  ) {
+    const updatedDate = new Date(
+      selectedYear.value,
+      selectedMonth.value,
+      selectedDay.value,
+      Number(selectedHour.value),
+      Number(selectedMinute.value),
+      props.mode === 'date-time-full' ? Number(selectedSecond.value) : undefined
+    );
+
+    selectedDate.value = updatedDate;
+    currentDate.value = updatedDate;
+    emits('update:modelValue', updatedDate);
+
+    if (!isMobileScreen.value) {
+      handleLayoutDisplay();
+      if (shouldCloseMenu.value) props.closeMenu();
+      props.setActiveInput('startInput', props.id);
+    }
   }
 };
 
@@ -1774,6 +2052,7 @@ const isCalendarRootAvailable = computed(
   () =>
     props.mode === 'date' ||
     props.mode === 'date-time' ||
+    props.mode === 'date-time-full' ||
     props.mode === 'month' ||
     props.mode === 'year' ||
     props.mode === 'month-year' ||
@@ -2006,7 +2285,8 @@ const clearButtonDisableState = computed(() => {
       props.mode !== 'quarters' &&
       !selectedDate.value &&
       selectedHour.value === null &&
-      selectedMinute.value === null
+      selectedMinute.value === null &&
+      selectedSecond.value === null
     ) {
       return true;
     }
@@ -2076,7 +2356,7 @@ onClickOutside(
 watch(
   () => [selectedDate.value, selectedHour.value, selectedMinute.value],
   (_, [oldSelectDate, oldSelectHour, oldSelectMinute]) => {
-    if (props.mode !== 'date-time') return;
+    if (props.mode !== 'date-time' && props.mode !== 'date-time-full') return;
     if (oldSelectDate && oldSelectHour && oldSelectMinute) {
       shouldCloseMenu.value = false;
     }
@@ -2099,6 +2379,7 @@ watch(
   () => {
     updateVisibleHours();
     updateVisibleMinutes();
+    updateVisibleSeconds();
   }
 );
 
@@ -2176,7 +2457,7 @@ watch(
           const minutesValue = selectedMinute.value;
           let filteredIndex = -1;
 
-          filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
+          filteredIndex = checkMinutesCadence(cadence, filteredIndex, minutesValue);
 
           // Use fallback index (0) if filteredIndex is invalid
           currentMinuteIndex.value =
@@ -2198,6 +2479,7 @@ watch(
 
           updateVisibleHours();
           updateVisibleMinutes();
+          updateVisibleSeconds();
         }
       }
 
@@ -2235,9 +2517,24 @@ watch(
 watch(
   () => props.cadenceOfMinutes,
   () => {
+    if (props.mode !== 'time' && props.mode !== 'date-time') return;
+
     selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
     updateVisibleHours();
     updateVisibleMinutes();
+  },
+  { immediate: true }
+);
+
+watch(
+  () => props.cadenceOfSeconds,
+  () => {
+    if (props.mode !== 'time-full' && props.mode !== 'date-time-full') return;
+
+    selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
+    updateVisibleHours();
+    updateVisibleMinutes();
+    updateVisibleSeconds();
   },
   { immediate: true }
 );
@@ -2254,16 +2551,13 @@ watch(
 watch(
   () => props.modelValue,
   (newValue) => {
-    if ((newValue === null || newValue === undefined) && props.pickerType === 'single') {
+    if (isNil(newValue) && props.pickerType === 'single') {
       clearSelectedValues();
       emits('update:modelValue', null);
       return;
     }
 
-    if (
-      (newValue === null || newValue === undefined || (!newValue.start && !newValue.end)) &&
-      props.pickerType === 'range'
-    ) {
+    if ((isNil(newValue) || (!newValue.start && !newValue.end)) && props.pickerType === 'range') {
       clearSelectedValues(false);
       emits('update:modelValue', null);
       return;
@@ -2280,29 +2574,41 @@ watch(
       return;
     }
 
-    if (props.pickerType === 'single' && newValue !== null && newValue !== undefined) {
-      if (props.mode === 'date' || props.mode === 'date-time') {
+    if (props.pickerType === 'single' && isDefined(newValue)) {
+      if (props.mode === 'date' || props.mode === 'date-time' || props.mode === 'date-time-full') {
         selectedDate.value = newValue;
         if (!selectedManually.value) currentDate.value = selectedDate.value;
 
         selectedDay.value = newValue.getDate();
         selectedMonth.value = newValue.getMonth();
         selectedYear.value = newValue.getFullYear();
+
         selectedHour.value = newValue.getHours();
         selectedMinute.value = newValue.getMinutes();
+        selectedSecond.value = newValue.getSeconds();
         currentHourIndex.value = getTimeOrderIndex(hours.value, newValue.getHours());
 
-        const cadence = props.cadenceOfMinutes;
+        const cadenceM = props.cadenceOfMinutes;
+        const cadenceS = props.cadenceOfSeconds;
         const minutesValue = newValue.getMinutes();
-        let filteredIndex = -1;
+        const secondsValue = newValue.getSeconds();
+        let filteredMinuteIndex = -1;
+        let filteredSecondIndex = -1;
 
-        filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
+        filteredMinuteIndex = checkMinutesCadence(cadenceM, filteredMinuteIndex, minutesValue);
+        filteredSecondIndex = checkSecondsCadence(cadenceS, filteredSecondIndex, secondsValue);
 
-        // Use fallback index (0) if filteredIndex is invalid
+        // Use fallback index (0) if filteredMinuteIndex is invalid
         currentMinuteIndex.value =
-          filteredIndex !== -1
-            ? filteredIndex
+          filteredMinuteIndex !== -1
+            ? filteredMinuteIndex
             : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
+
+        // Use fallback index (0) if filteredSecondIndex is invalid
+        currentSecondIndex.value =
+          filteredSecondIndex !== -1
+            ? filteredSecondIndex
+            : getTimeOrderIndex(filteredSeconds.value, secondsValue, props.cadenceOfSeconds);
 
         // Ensure currentMinuteIndex is valid, otherwise default to 0
         if (
@@ -2313,8 +2619,20 @@ watch(
           currentMinuteIndex.value = 0;
         }
 
+        // Ensure currentSecondIndex is valid, otherwise default to 0
+        if (
+          currentSecondIndex.value === null ||
+          currentSecondIndex.value === undefined ||
+          currentSecondIndex.value < 0
+        ) {
+          currentSecondIndex.value = 0;
+        }
+
         selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value].id;
         selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value].id;
+
+        selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value].id;
+        selectedSecondId.value = filteredSeconds.value[currentSecondIndex.value].id;
 
         const decadeStartYear = findDecadeStartYear(newValue.getFullYear());
         startYear.value = decadeStartYear - 1;
@@ -2330,7 +2648,7 @@ watch(
         const minutesValue = newValue.getMinutes();
         let filteredIndex = -1;
 
-        filteredIndex = checkCadence(cadence, filteredIndex, minutesValue);
+        filteredIndex = checkMinutesCadence(cadence, filteredIndex, minutesValue);
 
         // Use fallback index (0) if filteredIndex is invalid
         currentMinuteIndex.value =
@@ -2351,6 +2669,62 @@ watch(
         selectedMinute.value = newValue.getMinutes();
         selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
         selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
+
+        emits('update:modelValue', newValue);
+      }
+
+      if (props.mode === 'time-full') {
+        currentHourIndex.value = getTimeOrderIndex(hours.value, newValue.getHours());
+
+        const cadenceM = props.cadenceOfMinutes;
+        const cadenceS = props.cadenceOfSeconds;
+        const minutesValue = newValue.getMinutes();
+        const secondsValue = newValue.getSeconds();
+        let filteredIndexM = -1;
+        let filteredIndexS = -1;
+
+        filteredIndexM = checkMinutesCadence(cadenceM, filteredIndexM, minutesValue);
+        filteredIndexS = checkSecondsCadence(cadenceS, filteredIndexS, secondsValue);
+
+        // Use fallback index (0) if filteredIndexM is invalid
+        currentMinuteIndex.value =
+          filteredIndexM !== -1
+            ? filteredIndexM
+            : getTimeOrderIndex(filteredMinutes.value, minutesValue, props.cadenceOfMinutes);
+
+        // Use fallback index (0) if filteredIndexS is invalid
+        currentSecondIndex.value =
+          filteredIndexS !== -1
+            ? filteredIndexS
+            : getTimeOrderIndex(filteredSeconds.value, secondsValue, props.cadenceOfSeconds);
+
+        // Ensure currentMinuteIndex is valid, otherwise default to 0
+        if (
+          currentMinuteIndex.value === null ||
+          currentMinuteIndex.value === undefined ||
+          currentMinuteIndex.value < 0
+        ) {
+          currentMinuteIndex.value = 0;
+        }
+
+        // Ensure currentSecondIndex is valid, otherwise default to 0
+        if (
+          currentSecondIndex.value === null ||
+          currentSecondIndex.value === undefined ||
+          currentSecondIndex.value < 0
+        ) {
+          currentSecondIndex.value = 0;
+        }
+
+        selectedHour.value = newValue.getHours();
+
+        selectedMinute.value = newValue.getMinutes();
+        selectedMinuteId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
+        selectedMinuteCenterId.value = filteredMinutes.value[currentMinuteIndex.value]?.id;
+
+        selectedSecond.value = newValue.getSeconds();
+        selectedSecondId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
+        selectedSecondCenterId.value = filteredSeconds.value[currentSecondIndex.value]?.id;
 
         emits('update:modelValue', newValue);
       }
@@ -2605,9 +2979,10 @@ watch(
       }
     }
 
-    // Initialize the visible hours and minutes
+    // Initialize the visible hours, minutes and seconds
     updateVisibleHours();
     updateVisibleMinutes();
+    updateVisibleSeconds();
   },
   { immediate: true }
 );
@@ -2631,6 +3006,7 @@ watch(
       <LxButton
         v-if="
           mode !== 'time' &&
+          mode !== 'time-full' &&
           mode !== 'month' &&
           mode !== 'year' &&
           mode !== 'month-year' &&
@@ -2646,7 +3022,13 @@ watch(
       />
 
       <LxButton
-        v-if="mode !== 'time' && mode !== 'month' && mode !== 'year' && mode !== 'quarters'"
+        v-if="
+          mode !== 'time' &&
+          mode !== 'time-full' &&
+          mode !== 'month' &&
+          mode !== 'year' &&
+          mode !== 'quarters'
+        "
         customClass="lx-calendar-years-select-button"
         :label="yearsSelectButtonLabel"
         kind="ghost"
@@ -2695,8 +3077,12 @@ watch(
                 mode !== 'month' &&
                 mode !== 'year' &&
                 mode !== 'quarters'),
-            'mobile-date-time': mode === 'date-time' && isMobileScreen,
-            'date-time-only': mode === 'date-time' && isMobileScreen && mobileTimeLayout,
+            'mobile-date-time':
+              (mode === 'date-time' || mode === 'date-time-full') && isMobileScreen,
+            'date-time-only':
+              (mode === 'date-time' || mode === 'date-time-full') &&
+              isMobileScreen &&
+              mobileTimeLayout,
             'months-only': mode === 'month' && !isMobileScreen,
             'range-month-year': pickerType === 'range' && mode === 'month-year' && !isMobileScreen,
           },
@@ -3420,17 +3806,24 @@ watch(
 
       <div
         v-if="
-          ((mode === 'time' || mode === 'date-time') && !isMobileScreen) ||
-          (mode === 'time' && isMobileScreen) ||
-          (mode === 'date-time' && isMobileScreen && mobileTimeLayout)
+          ((mode === 'time' ||
+            mode === 'date-time' ||
+            mode === 'time-full' ||
+            mode === 'date-time-full') &&
+            !isMobileScreen) ||
+          ((mode === 'time' || mode === 'time-full') && isMobileScreen) ||
+          ((mode === 'date-time' || mode === 'date-time-full') &&
+            isMobileScreen &&
+            mobileTimeLayout)
         "
         class="lx-calendar-time-picker"
         :class="[
           {
-            'date-time-only': mode === 'time',
+            'date-time-only': mode === 'time' || mode === 'time-full',
           },
         ]"
       >
+        <!-- Hours -->
         <div class="lx-time-picker-time-list-wrapper">
           <LxButton
             kind="ghost"
@@ -3473,7 +3866,7 @@ watch(
                       Number(hour.value) === selectedHour,
                   },
                   {
-                    'lx-disabled-hour':
+                    'lx-disabled-time-unit':
                       !canSelectTime(
                         hour.value,
                         minDateRef,
@@ -3484,7 +3877,8 @@ watch(
                         'hour',
                         selectedHour,
                         selectedMinute,
-                        mode === 'time'
+                        selectedSecond,
+                        mode === 'time' || mode === 'time-full'
                       ) || disabled,
                   },
                 ]"
@@ -3501,7 +3895,8 @@ watch(
                     'hour',
                     selectedHour,
                     selectedMinute,
-                    mode === 'time'
+                    selectedSecond,
+                    mode === 'time' || mode === 'time-full'
                   )
                     ? '0'
                     : '-1'
@@ -3519,7 +3914,8 @@ watch(
                       'hour',
                       selectedHour,
                       selectedMinute,
-                      mode === 'time'
+                      selectedSecond,
+                      mode === 'time' || mode === 'time-full'
                     )
                   )
                 "
@@ -3536,7 +3932,8 @@ watch(
                       'hour',
                       selectedHour,
                       selectedMinute,
-                      mode === 'time'
+                      selectedSecond,
+                      mode === 'time' || mode === 'time-full'
                     )
                   )
                 "
@@ -3558,6 +3955,7 @@ watch(
 
         <span class="lx-time-lists-separator">:</span>
 
+        <!-- Minutes -->
         <div class="lx-time-picker-time-list-wrapper">
           <LxButton
             kind="ghost"
@@ -3596,7 +3994,7 @@ watch(
                       minute.id === selectedMinuteId,
                   },
                   {
-                    'lx-disabled-hour':
+                    'lx-disabled-time-unit':
                       !canSelectTime(
                         minute.value,
                         minDateRef,
@@ -3607,7 +4005,8 @@ watch(
                         'minute',
                         selectedHour,
                         selectedMinute,
-                        mode === 'time'
+                        selectedSecond,
+                        mode === 'time' || mode === 'time-full'
                       ) || disabled,
                   },
                 ]"
@@ -3624,7 +4023,8 @@ watch(
                     'minute',
                     selectedHour,
                     selectedMinute,
-                    mode === 'time'
+                    selectedSecond,
+                    mode === 'time' || mode === 'time-full'
                   )
                     ? '0'
                     : '-1'
@@ -3642,7 +4042,8 @@ watch(
                       'minute',
                       selectedHour,
                       selectedMinute,
-                      mode === 'time'
+                      selectedSecond,
+                      mode === 'time' || mode === 'time-full'
                     )
                   )
                 "
@@ -3659,7 +4060,8 @@ watch(
                       'minute',
                       selectedHour,
                       selectedMinute,
-                      mode === 'time'
+                      selectedSecond,
+                      mode === 'time' || mode === 'time-full'
                     )
                   )
                 "
@@ -3678,11 +4080,146 @@ watch(
             @click.stop.prevent="onScrollClick(1, 'minutes')"
           />
         </div>
+
+        <span
+          v-if="mode === 'time-full' || mode === 'date-time-full'"
+          class="lx-time-lists-separator"
+          >:</span
+        >
+
+        <!-- Seconds -->
+        <div
+          v-if="mode === 'time-full' || mode === 'date-time-full'"
+          class="lx-time-picker-time-list-wrapper"
+        >
+          <LxButton
+            kind="ghost"
+            icon="caret-up"
+            variant="icon-only"
+            :disabled="disabled"
+            :label="displayTexts.scrollUp"
+            @click.stop.prevent="onScrollClick(-1, 'seconds')"
+          />
+
+          <div
+            class="time-picker-wrapper"
+            :class="[
+              {
+                'date-time-only':
+                  (mode === 'date-time-full' && isMobileScreen && mobileTimeLayout) ||
+                  (mode === 'time-full' && isMobileScreen),
+              },
+            ]"
+          >
+            <TransitionGroup
+              tag="div"
+              class="lx-time-picker-time-list"
+              @wheel.prevent="onScrollWheel($event, 'seconds')"
+            >
+              <div
+                v-for="(second, index) in visibleSeconds"
+                :key="second.id"
+                class="lx-time-list-item"
+                :class="[
+                  {
+                    'is-active':
+                      index >= 3 &&
+                      index <= (isMobileScreen ? 11 : 9) &&
+                      second.orderIndex === selectedSecond &&
+                      second.id === selectedSecondId,
+                  },
+                  {
+                    'lx-disabled-time-unit':
+                      !canSelectTime(
+                        second.value,
+                        minDateRef,
+                        maxDateRef,
+                        selectedDay,
+                        selectedMonth,
+                        selectedYear,
+                        'second',
+                        selectedHour,
+                        selectedMinute,
+                        selectedSecond,
+                        mode === 'time-full'
+                      ) || disabled,
+                  },
+                ]"
+                :tabindex="
+                  index >= 3 &&
+                  index <= (isMobileScreen ? 11 : 9) &&
+                  canSelectTime(
+                    second.value,
+                    minDateRef,
+                    maxDateRef,
+                    selectedDay,
+                    selectedMonth,
+                    selectedYear,
+                    'second',
+                    selectedHour,
+                    selectedMinute,
+                    selectedSecond,
+                    mode === 'time-full'
+                  )
+                    ? '0'
+                    : '-1'
+                "
+                @click.stop.prevent="
+                  selectSecond(
+                    second,
+                    !canSelectTime(
+                      second.value,
+                      minDateRef,
+                      maxDateRef,
+                      selectedDay,
+                      selectedMonth,
+                      selectedYear,
+                      'second',
+                      selectedHour,
+                      selectedMinute,
+                      selectedSecond,
+                      mode === 'time-full'
+                    )
+                  )
+                "
+                @keyup.enter.stop.prevent="
+                  selectSecond(
+                    second,
+                    !canSelectTime(
+                      second.value,
+                      minDateRef,
+                      maxDateRef,
+                      selectedDay,
+                      selectedMonth,
+                      selectedYear,
+                      'second',
+                      selectedHour,
+                      selectedMinute,
+                      selectedSecond,
+                      mode === 'time-full'
+                    )
+                  )
+                "
+              >
+                {{ second.value }}
+              </div>
+            </TransitionGroup>
+          </div>
+
+          <LxButton
+            kind="ghost"
+            icon="caret-down"
+            variant="icon-only"
+            :disabled="disabled"
+            :label="displayTexts.scrollDown"
+            @click.stop.prevent="onScrollClick(1, 'seconds')"
+          />
+        </div>
       </div>
     </div>
 
     <div
-      v-if="isMobileScreen && mode === 'date-time'"
+      v-if="(mode === 'date-time' || mode === 'date-time-full') && isMobileScreen"
       class="lx-mobile-time-selection-button-wrapper"
     >
       <LxButton

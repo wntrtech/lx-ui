@@ -7,6 +7,7 @@ export function parseDate(date) {
   if (date.length === 10) {
     return parse(date, 'yyyy-MM-dd', new Date());
   }
+
   return isDate(date) ? date : parseJSON(date);
 }
 
@@ -22,6 +23,10 @@ export function formatJSON(date) {
       d = parse(d, 'dd.MM.yyyy HH:mm', new Date());
     } else if (d.length === 17) {
       d = parse(d, 'dd.MM.yyyy. HH:mm', new Date());
+    } else if (d.length === 19) {
+      d = parse(d, 'dd.MM.yyyy HH:mm:ss', new Date());
+    } else if (d.length === 20) {
+      d = parse(d, 'dd.MM.yyyy. HH:mm:ss', new Date());
     }
     return d;
   }
@@ -33,13 +38,29 @@ export function isDateValid(date) {
 }
 
 export function isTimeValid(value) {
-  // Check the basic format first using regex
+  // Basic format check: HH:mm (two digits each)
   const timePattern = /^\d{2}:\d{2}$/;
   if (!timePattern.test(value)) return false;
-  // Split the time string into hours and minutes
+
+  // Split into parts and convert to numbers
   const [hours, minutes] = value.split(':').map(Number);
-  // Check if hours and minutes are within valid ranges
+
+  // Validate ranges
   return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
+}
+
+export function isTimeFullValid(value) {
+  // Basic format check: HH:mm:ss (two digits each)
+  const timePattern = /^\d{2}:\d{2}:\d{2}$/;
+  if (!timePattern.test(value)) return false;
+
+  // Split into parts and convert to numbers
+  const [hours, minutes, seconds] = value.split(':').map(Number);
+
+  // Validate ranges
+  return (
+    hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59 && seconds >= 0 && seconds <= 59
+  );
 }
 
 export function isSameDate(date1, date2) {

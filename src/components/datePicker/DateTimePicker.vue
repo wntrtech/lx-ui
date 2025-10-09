@@ -11,6 +11,7 @@ import {
   isTimeValid,
   getMonthYearString,
   getMonthNames,
+  formatFull,
 } from '@/utils/dateUtils';
 import { lxDateUtils } from '@/utils';
 import useLx from '@/hooks/useLx';
@@ -46,13 +47,14 @@ const props = defineProps({
   dictionary: { type: Array, default: () => [] },
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
+  cadenceOfSeconds: { type: Number, default: 1 }, // 1, 5, 15
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
 });
 
 const textsDefault = {
   clear: 'Attīrīt',
-  todayButton: 'Šodiena',
+  todayButton: 'Atgriezties uz šodienu',
   clearButton: 'Attīrīt vērtību',
   next: 'Nākamais',
   previous: 'Iepriekšējais',
@@ -69,7 +71,7 @@ const textsDefault = {
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
 const emits = defineEmits(['update:modelValue']);
-const { dateFormat, dateTimeFormat } = useLx().getGlobals();
+const { dateFormat, dateTimeFormat, dateTimeFullFormat } = useLx().getGlobals();
 
 function extractTime(datetimeStr) {
   const timeRegex = /(\d{2}:\d{2}(:\d{2})?(\s?[APMapm]{2})?)/;
@@ -86,11 +88,14 @@ const localeFirstDay = computed(() =>
 const localeMasks = computed(() => {
   const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
   const dateTimeFormatToUse = dateTimeFormat || 'dd.MM.yyyy. HH:mm';
+  const dateTimeFullFormatToUse = dateTimeFullFormat || 'dd.MM.yyyy. HH:mm:ss';
 
   const defaultMasks = {
     inputDateTime24hr: dateTimeFormatToUse,
+    inputDateTimeFull24hr: dateTimeFullFormatToUse,
     input: dateFormatToUse,
     inputTime24hr: 'HH:mm',
+    inputTimeFull24hr: 'HH:mm:ss',
     inputMonthYear: 'yyyy-MM',
     inputQuarters: 'yyyy-QQQ',
     inputYear: 'yyyy',
@@ -107,6 +112,16 @@ const model = computed({
           newDate.setDate(1); // Set to the first day of the month
           newDate.setHours(Number(props.modelValue?.slice(0, 2)));
           newDate.setMinutes(Number(props.modelValue?.slice(3, 5)));
+          return newDate;
+        }
+        return parseDate(props.modelValue);
+      case 'time-full':
+        if (typeof props.modelValue === 'string' && props.modelValue?.length === 8) {
+          const newDate = new Date();
+          newDate.setDate(1); // Set to the first day of the month
+          newDate.setHours(Number(props.modelValue?.slice(0, 2)));
+          newDate.setMinutes(Number(props.modelValue?.slice(3, 5)));
+          newDate.setSeconds(Number(props.modelValue?.slice(6, 8)));
           return newDate;
         }
         return parseDate(props.modelValue);
@@ -151,10 +166,16 @@ const model = computed({
     if (props.kind === 'time') {
       const nv = extractTime(formatDateTime(newValue));
       emits('update:modelValue', nv);
+    } else if (props.kind === 'time-full') {
+      const nv = extractTime(formatFull(newValue));
+      emits('update:modelValue', nv);
     } else if (props.kind === 'date') {
       const nv = formatDateJSON(newValue);
       emits('update:modelValue', nv);
     } else if (props.kind === 'dateTime' || props.kind === 'date-time') {
+      const nv = formatJSON(newValue);
+      emits('update:modelValue', nv);
+    } else if (props.kind === 'date-time-full') {
       const nv = formatJSON(newValue);
       emits('update:modelValue', nv);
     } else if (props.kind === 'month') {
@@ -176,6 +197,7 @@ const model = computed({
     }
   },
 });
+
 function getNameDate() {
   if (isDateValid(props.modelValue)) {
     return formatDate(new Date(props.modelValue));
@@ -347,8 +369,9 @@ const labelledBy = computed(() => props.labelId || rowId.value);
         class="lx-date-time-picker-wrapper"
         :class="{
           'lx-date': kind === 'date' || kind === 'month' || kind === 'year' || kind === 'quarters',
-          'lx-time': kind === 'time',
+          'lx-time': kind === 'time' || kind === 'time-full',
           'lx-date-time': kind === 'dateTime' || kind === 'date-time' || kind === 'month-year',
+          'lx-date-time-full': kind === 'dateTimeFull' || kind === 'date-time-full',
         }"
         :data-invalid="invalid ? '' : null"
         :data-disabled="disabled ? '' : null"
@@ -371,6 +394,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :special-dates-attributes="attributesComputed"
           :clearIfNotExact="clearIfNotExact"
           :cadenceOfMinutes="cadenceOfMinutes"
+          :cadenceOfSeconds="cadenceOfSeconds"
           :texts="displayTexts"
           :labelled-by="labelledBy"
         />

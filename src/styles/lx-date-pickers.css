@@ -775,7 +775,7 @@
 .lx .lx-layout .lx-calendar-container .lx-calendar-months .lx-calendar-month.lx-disabled-month,
 .lx .lx-layout .lx-calendar-container .lx-calendar-years .lx-calendar-year.lx-disabled-year,
 .lx .lx-layout .lx-calendar-container .lx-calendar-quarters .lx-calendar-quarter.lx-disabled-quarter,
-.lx .lx-layout .lx-calendar-container .lx-calendar-time-picker .lx-time-picker-time-list .lx-time-list-item.lx-disabled-hour {
+.lx .lx-layout .lx-calendar-container .lx-calendar-time-picker .lx-time-picker-time-list .lx-time-list-item.lx-disabled-time-unit {
   opacity: 1;
   color: var(--color-disabled-foreground);
   cursor: not-allowed;

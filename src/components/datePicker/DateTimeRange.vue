@@ -49,7 +49,7 @@ const props = defineProps({
 const textsDefault = {
   clear: 'Attīrīt',
   clearButton: 'Attīrīt vērtību',
-  todayButton: 'Šodiena',
+  todayButton: 'Atgriezties uz šodienu',
   clearStart: 'Notīrīt sākuma vērtību',
   clearEnd: 'Notīrīt beigu vērtību',
   next: 'Nākamais',

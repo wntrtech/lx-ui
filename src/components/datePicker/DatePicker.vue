@@ -11,6 +11,7 @@ import {
   isDateValid,
   isTimeValid,
   formatLocalizedDate,
+  isTimeFullValid,
 } from '@/utils/dateUtils';
 import {
   getMonthNameByOrder,
@@ -23,6 +24,8 @@ import {
   validateDateByMask,
   removeLastNonAlphanumeric,
   sanitizeDateInput,
+  formatInputRawTimeFull,
+  formatInputRawDateTimeFull,
   validateDateRange,
 } from '@/components/datePicker/helpers';
 import { DATE_VALIDATION_RESULT } from '@/constants';
@@ -33,7 +36,7 @@ import LxIcon from '@/components/Icon.vue';
 const props = defineProps({
   id: { type: String, default: null },
   modelValue: { type: [String, Date, Object], default: null },
-  mode: { type: String, default: 'date' }, // 'date', 'time', 'date-time', 'month', 'year', 'month-year', 'quarters',
+  mode: { type: String, default: 'date' }, // 'date', 'time', 'time-full', 'date-time', 'date-time-full', 'month', 'year', 'month-year', 'quarters',
   variant: { type: String, default: 'default' }, // 'default', 'picker', 'full', 'full-rows', 'full-columns'
   masks: { type: Object, default: () => {} },
   placeholder: { type: String, default: null },
@@ -48,6 +51,7 @@ const props = defineProps({
   specialDatesAttributes: { type: Array, default: null },
   clearIfNotExact: { type: Boolean, default: false },
   cadenceOfMinutes: { type: Number, default: 1 }, // 1, 5, 15
+  cadenceOfSeconds: { type: Number, default: 1 }, // 1, 5, 15
   pickerType: { type: String, default: 'single' }, // 'single', 'range'
   labelledBy: { type: String, default: null },
   legacyMode: { type: Boolean, default: false }, // legacy mode flag to separate logic without breaking date mode flow and validations
@@ -60,7 +64,7 @@ const props = defineProps({
 const textsDefault = {
   clear: 'Attīrīt',
   clearButton: 'Attīrīt vērtību',
-  todayButton: 'Šodiena',
+  todayButton: 'Atgriezties uz šodienu',
   clearStart: 'Notīrīt sākuma vērtību',
   clearEnd: 'Notīrīt beigu vērtību',
   next: 'Nākamais',
@@ -521,6 +525,74 @@ function validateIfExact(e, type = 'startInput') {
     emits('update:modelValue', updatedValue);
   }
 
+  if (props.mode === 'time-full') {
+    const now = new Date();
+    const timeFull = e.target.value;
+    const inputTimeFull24hrMask = props.masks?.inputTimeFull24hr || 'HH:mm:ss';
+
+    if (
+      inputTimeFull24hrMask.length !== timeFull.length ||
+      !validateDateByMask(timeFull, inputTimeFull24hrMask)
+    ) {
+      const updatedValue = props.clearIfNotExact ? null : new Date();
+      emits('update:modelValue', updatedValue);
+
+      const newHours = new Date().getHours();
+      const newMinutes = new Date().getMinutes();
+      const newSeconds = new Date().getSeconds();
+
+      const newTimeString = inputTimeFull24hrMask
+        .replace('HH', zeroPad(newHours))
+        .replace('mm', zeroPad(newMinutes))
+        .replace('ss', zeroPad(newSeconds));
+
+      e.target.value = props.clearIfNotExact ? null : newTimeString;
+      return;
+    }
+
+    const hoursIndex = inputTimeFull24hrMask?.indexOf('HH');
+    const minutesIndex = inputTimeFull24hrMask?.indexOf('mm');
+    const secondsIndex = inputTimeFull24hrMask?.indexOf('ss');
+
+    const hours = Number(timeFull.substring(hoursIndex, hoursIndex + 2));
+    const minutes = Number(timeFull.substring(minutesIndex, minutesIndex + 2));
+    const seconds = Number(timeFull.substring(secondsIndex, secondsIndex + 2));
+
+    const normalizedHours = zeroPad(hours);
+    const normalizedMinutes = zeroPad(minutes);
+    const normalizedSeconds = zeroPad(seconds);
+
+    // Check if the constructed time is valid
+    if (!isTimeFullValid(`${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`)) {
+      const updatedValue = props.clearIfNotExact ? null : new Date();
+      emits('update:modelValue', updatedValue);
+
+      const newHours = new Date().getHours();
+      const newMinutes = new Date().getMinutes();
+      const newSeconds = new Date().getSeconds();
+
+      const newTimeString = inputTimeFull24hrMask
+        .replace('HH', zeroPad(newHours))
+        .replace('mm', zeroPad(newMinutes))
+        .replace('ss', zeroPad(newSeconds));
+
+      e.target.value = props.clearIfNotExact ? null : newTimeString;
+      return;
+    }
+
+    // Update the value with the valid date
+    const updatedValue = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      hours,
+      minutes,
+      seconds
+    );
+
+    emits('update:modelValue', updatedValue);
+  }
+
   if (props.mode === 'date-time') {
     const dateTime = e.target.value;
     const inputDateTime24hrMask = props.masks?.inputDateTime24hr || 'dd.MM.yyyy. HH:mm';
@@ -583,6 +655,92 @@ function validateIfExact(e, type = 'startInput') {
 
     // Check if the constructed date and time is valid
     if (!isDateValid(dateString) || !isTimeValid(timeString)) {
+      const updatedValue = props.clearIfNotExact ? null : new Date();
+      emits('update:modelValue', updatedValue);
+      return;
+    }
+
+    // Combine the date and time strings into a valid ISO string
+    const dateTimeString = `${dateString}T${fullTimeString}`;
+
+    // Check if the date is within the min/max range
+    if (!canSelectDate(new Date(dateTimeString), props.minDate, props.maxDate, props.mode)) {
+      const updatedValue = props.clearIfNotExact ? null : new Date();
+      emits('update:modelValue', updatedValue);
+      modelInput.value = null;
+      return;
+    }
+
+    // Update the value with the valid date
+    const updatedValue = new Date(dateTimeString);
+    emits('update:modelValue', updatedValue);
+  }
+
+  if (props.mode === 'date-time-full') {
+    const dateTimeFull = e.target.value;
+    const inputDateTimeFull24hrMask = props.masks?.inputDateTimeFull24hr || 'dd.MM.yyyy. HH:mm:ss';
+
+    const [date, time] = dateTimeFull.split(' ');
+    const [dateMask, timeMask] = inputDateTimeFull24hrMask.split(' ');
+
+    const cleanedDate = removeLastNonAlphanumeric(date);
+    const cleanedMask = removeLastNonAlphanumeric(dateMask);
+
+    const constructedDateTimeString = `${cleanedDate} ${time}`;
+    const constructedMaskString = `${cleanedMask} ${timeMask}`;
+
+    if (
+      (dateTimeFull && !validateDateByMask(constructedDateTimeString, constructedMaskString)) ||
+      timeMask.length !== time.length ||
+      cleanedDate.length !== cleanedMask.length
+    ) {
+      const updatedValue = props.clearIfNotExact ? null : new Date();
+      emits('update:modelValue', updatedValue);
+
+      const newDay = new Date().getDate();
+      const newMonth = new Date().getMonth();
+      const newYear = new Date().getFullYear();
+      const newHours = new Date().getHours();
+      const newMinutes = new Date().getMinutes();
+      const newSeconds = new Date().getSeconds();
+
+      const newDateTimeFullString = inputDateTimeFull24hrMask
+        .replace('dd', zeroPad(newDay))
+        .replace('MM', zeroPad(newMonth + 1))
+        .replace('yyyy', newYear)
+        .replace('HH', newHours)
+        .replace('mm', newMinutes)
+        .replace('ss', newSeconds);
+
+      e.target.value = props.clearIfNotExact ? null : newDateTimeFullString;
+      return;
+    }
+
+    const dayIndex = constructedMaskString?.indexOf('dd');
+    const monthIndex = constructedMaskString?.indexOf('MM');
+    const yearIndex = constructedMaskString?.indexOf('yyyy');
+    const hoursIndex = constructedMaskString?.indexOf('HH');
+    const minutesIndex = constructedMaskString?.indexOf('mm');
+    const secondsIndex = constructedMaskString?.indexOf('ss');
+
+    const day = constructedDateTimeString?.substring(dayIndex, dayIndex + 2);
+    const month = constructedDateTimeString?.substring(monthIndex, monthIndex + 2);
+    const year = constructedDateTimeString?.substring(yearIndex, yearIndex + 4);
+    const hours = constructedDateTimeString?.substring(hoursIndex, hoursIndex + 2);
+    const minutes = constructedDateTimeString?.substring(minutesIndex, minutesIndex + 2);
+    const seconds = constructedDateTimeString?.substring(secondsIndex, secondsIndex + 2);
+
+    const normalizedDay = zeroPad(day);
+    const normalizedMonth = zeroPad(month);
+    const normalizedHours = zeroPad(hours);
+    const normalizedMinutes = zeroPad(minutes);
+    const normalizedSeconds = zeroPad(seconds);
+
+    const dateString = `${year}-${normalizedMonth}-${normalizedDay}`; // "YYYY-MM-DD"
+    const fullTimeString = `${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`; // "HH:mm:ss"
+
+    // Check if the constructed date and time is valid
+    if (!isDateValid(dateString) || !isTimeFullValid(fullTimeString)) {
       const updatedValue = props.clearIfNotExact ? null : new Date();
       emits('update:modelValue', updatedValue);
       return;
@@ -883,8 +1041,12 @@ function formatDateByMode(date) {
       return formatInputRawDate(props.masks.input, date);
     case 'date-time':
       return formatInputRawDateTime(props.masks.inputDateTime24hr, date);
+    case 'date-time-full':
+      return formatInputRawDateTimeFull(props.masks.inputDateTimeFull24hr, date);
     case 'time':
       return formatInputRawTime(props.masks.inputTime24hr, date);
+    case 'time-full':
+      return formatInputRawTimeFull(props.masks.inputTimeFull24hr, date);
     case 'month':
       return getMonthNameByOrder(localizedMonthsList.value, date.getMonth(), true);
     case 'year':
@@ -909,6 +1071,8 @@ const placeholderComputed = computed(() => {
       return 'dd.mm.gggg. st:mi';
     case 'time':
       return 'st:mi';
+    case 'time-full':
+      return 'st:mi:ss';
     default:
       return null;
   }
@@ -927,6 +1091,7 @@ const startInputIndex = computed(() => {
   if (activeInput.value === 'endInput' && dropDownMenuRef.value?.menuOpen) return '-1';
   return '0';
 });
+
 const endInputIndex = computed(() => {
   if (activeInput.value === 'startInput' && dropDownMenuRef.value?.menuOpen) return '-1';
   return '0';
@@ -942,8 +1107,16 @@ const getMaxLength = computed(() => {
     const inputTime24hrMask = props.masks?.inputTime24hr || 'HH:mm';
     return inputTime24hrMask.length;
   }
+  if (mode.value === 'time-full') {
+    const inputTime24hrMask = props.masks?.inputTimeFull24hr || 'HH:mm:ss';
+    return inputTime24hrMask.length;
+  }
   if (mode.value === 'date-time') {
     const inputDateTime24hrMask = props.masks?.inputDateTime24hr || 'dd.MM.yyyy. HH:mm';
+    return inputDateTime24hrMask.length;
+  }
+  if (mode.value === 'date-time-full') {
+    const inputDateTime24hrMask = props.masks?.inputDateTimeFull24hr || 'dd.MM.yyyy. HH:mm:ss';
     return inputDateTime24hrMask.length;
   }
   return null; // No limit if not a specific mode
@@ -962,12 +1135,17 @@ watch(
 );
 
 watch(
-  () => [props.minDate, props.maxDate],
+  () => [props.minDate, props.maxDate, props.mode],
   ([newMinDate, newMaxDate]) => {
     if (newMinDate) {
       const parsedMinDate = parseDate(newMinDate);
       if (parsedMinDate) {
-        const normalizedMinDate = parsedMinDate.setSeconds(0, 0);
+        let normalizedMinDate;
+        if (props.mode === 'time-full' || props.mode === 'date-time-full') {
+          normalizedMinDate = parsedMinDate.setMilliseconds(0);
+        } else {
+          normalizedMinDate = parsedMinDate.setSeconds(0, 0);
+        }
         minDateRef.value = new Date(normalizedMinDate);
       }
     } else {
@@ -977,7 +1155,12 @@ watch(
     if (newMaxDate) {
       const parsedMaxDate = parseDate(newMaxDate);
       if (parsedMaxDate) {
-        const normalizedMaxDate = parsedMaxDate.setSeconds(0, 0);
+        let normalizedMaxDate;
+        if (props.mode === 'time-full' || props.mode === 'date-time-full') {
+          normalizedMaxDate = parsedMaxDate.setMilliseconds(0);
+        } else {
+          normalizedMaxDate = parsedMaxDate.setSeconds(0, 0);
+        }
         maxDateRef.value = new Date(normalizedMaxDate);
       }
     } else {
@@ -1215,6 +1398,7 @@ onMounted(async () => {
           :openMenu="dropDownMenuRef?.openMenu"
           :menuState="dropDownMenuRef?.menuOpen"
           :cadenceOfMinutes="cadenceOfMinutes"
+          :cadenceOfSeconds="cadenceOfSeconds"
           :clearIfNotExact="clearIfNotExact"
           :pickerType="pickerType"
           :activeInput="activeInput"
@@ -1244,6 +1428,7 @@ onMounted(async () => {
       :minDateRef="minDateRef"
       :maxDateRef="maxDateRef"
       :cadenceOfMinutes="cadenceOfMinutes"
+      :cadenceOfSeconds="cadenceOfSeconds"
       :clearIfNotExact="clearIfNotExact"
       :pickerType="pickerType"
       :texts="displayTexts"
