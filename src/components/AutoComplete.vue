@@ -205,11 +205,18 @@ const queryDebounceValue = computed(() =>
 
 const debouncedSearchReq = useDebounceFn(async (val) => {
   if (typeof props.items === 'function') {
+    menuOpen.value = false;
+    deactivate({
+      returnFocus: false,
+    });
+
     loadingState.value = true;
     activeQuery.value = val;
     const items = await props.items(val);
     allItems.value = items;
     loadingState.value = activeQuery.value !== val;
+
+    openMenu(false);
   }
 }, queryDebounceValue);
 
@@ -244,6 +251,7 @@ watch(
           allItems.value = [];
         }
       }
+
       await debouncedSearchReq(finalQuery);
     }
   },
@@ -270,10 +278,10 @@ function getName(returnPlaceholder = true) {
 
 function getItemTooltip(item) {
   if (!item) return '';
-  
+
   const tooltipValue = props.tooltipAttribute && item[props.tooltipAttribute];
   const nameValue = props.nameAttribute && item[props.nameAttribute];
-  
+
   return tooltipValue || nameValue || '';
 }
 
@@ -301,8 +309,8 @@ function getLabelId(id) {
   return `${id}-${props.id}-label`;
 }
 
-function initSearchInput() {
-  query.value = null;
+function initSearchInput(shouldClear = true) {
+  if (shouldClear) query.value = null;
   if (refQuery.value) refQuery.value.focus();
 }
 
@@ -320,7 +328,7 @@ function initInputFocus() {
 function handleMenuAndInputKeydown(e) {
   const inputElement = document.activeElement;
 
-  if (e.key === 'Tab' && menuOpen.value) {
+  if (e.key === 'Tab' && menuOpen.value && filteredItems.value.length > 0) {
     const tabPressed = e.shiftKey ? 'backward' : 'forward';
 
     query.value = null;
@@ -350,7 +358,7 @@ function handleMenuAndInputKeydown(e) {
 
   if (isPrintableChar || isBackspaceKey || isDeleteKey) {
     if (!menuOpen.value) {
-      openMenu();
+      openMenu(false);
     }
 
     if (model.value && props.selectingKind === 'single') clear();
@@ -363,16 +371,16 @@ function handleTouchStart() {
   inputReadonly.value = false; // Allow touch input interaction
 }
 
-function openMenu() {
-  if (!props.disabled && !menuOpen.value) {
+function openMenu(shouldClear = true) {
+  if (!props.disabled && !menuOpen.value && !loadingState.value) {
     panelWidth.value = refContainer.value?.offsetWidth;
     menuOpen.value = true;
 
     nextTick(() => {
-      if (filteredItems.value.length > 0) {
+      if (!loadingState.value && filteredItems.value.length > 0) {
         activate();
       }
-      initSearchInput();
+      initSearchInput(shouldClear);
     });
   }
 }
@@ -1178,10 +1186,7 @@ onMounted(() => {
                       {{ displayTexts.loadingState }}
                     </div>
                     <template v-if="shouldShowValuePlaceholder">
-                      <div
-                        class="lx-value lx-input-area"
-                        :title="customTooltip"
-                      >
+                      <div class="lx-value lx-input-area" :title="customTooltip">
                         <div>
                           <template v-if="variant === 'country' && selectingKind === 'single'">
                             <LxFlagItemDisplay
@@ -1314,7 +1319,7 @@ onMounted(() => {
                     tabindex="-1"
                     role="listbox"
                   >
-                    <template v-if="filteredItems?.length">
+                    <template v-if="filteredItems?.length && !loadingState">
                       <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
                         <!-- Inject "Select All" just before the first item -->
                         <div
@@ -1454,12 +1459,7 @@ onMounted(() => {
                     >
                       <div class="lx-empty">
                         <LxIcon value="info" />
-                        <div
-                          v-if="!filteredItems?.length"
-                          class="lx-invisible"
-                          aria-hidden="true"
-                          tabindex="0"
-                        ></div>
+                        <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
                         <p>
                           {{ displayTexts.empty }} "<span class="lx-highlighted-item">{{
                             query.toLowerCase()
@@ -1477,6 +1477,7 @@ onMounted(() => {
                     >
                       <div class="lx-empty">
                         <LxIcon value="info" />
+                        <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
                         <p>
                           {{
                             props.queryMinLength % 10 === 1 && props.queryMinLength !== 11
