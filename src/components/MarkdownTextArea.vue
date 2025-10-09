@@ -295,7 +295,9 @@ function createEditorExtensions() {
     }),
     TextStyle,
     Color,
-    ImageComponent,
+    ImageComponent.configure({
+      allowBase64: true,
+    }),
     CustomHeadingWithAutoId,
     HiddenIdNode,
     Underline,
@@ -469,7 +471,11 @@ function setImage() {
   const { src, alt, title, width, height, isBase64 } = getImageSource();
   const containerElementSize = useElementSize(markdownWrapper);
   const aspect = calculateAspectRatio(width, height);
-  const loaderVisualData = determineLoaderClass(width, height, containerElementSize);
+  const {
+    loaderClass,
+    height: loaderHeight,
+    width: loaderWidth,
+  } = determineLoaderClass(width, height, containerElementSize);
 
   if (!src) {
     emitNotification('noImageGiven');
@@ -479,16 +485,12 @@ function setImage() {
   const updatedAlt = updateAltText(alt, isBase64);
   const updatedTitle = updateTitleText(title, isBase64);
 
+  const loaderId = generateUUID();
+
+  createImageLoader(src, loaderWidth, loaderHeight, loaderClass, updatedAlt, updatedTitle, aspect);
+
   if (isBase64Image(src)) {
-    createImageLoader(
-      src,
-      loaderVisualData.width,
-      loaderVisualData.height,
-      loaderVisualData.loaderClass,
-      updatedAlt,
-      updatedTitle,
-      aspect
-    );
+    repleaceImageLoader(src, loaderId, updatedAlt, updatedTitle);
     closeImageModal();
     return;
   }
@@ -504,14 +506,9 @@ function setImage() {
     return;
   }
 
-  editor.value
-    .chain()
-    .focus()
-    .setImage({ src: formattedUrl, alt: updatedAlt, title: updatedTitle })
-    .run();
+  repleaceImageLoader(formattedUrl, loaderId, updatedAlt, updatedTitle);
   closeImageModal();
 }
-
 function updateEditorExtensions() {
   editor.value.destroy();
   createEditorExtensions();
@@ -602,7 +599,7 @@ watch(inputImage, (n) => {
 watch(model, (newText) => {
   const textInEditor = editor.value.storage.markdown.getMarkdown();
   if (newText !== textInEditor) {
-    editor.value.commands.setContent(newText);
+    editor.value.commands.setContent(newText, false);
   }
   loading.value = false;
   if (props.maxlength) {

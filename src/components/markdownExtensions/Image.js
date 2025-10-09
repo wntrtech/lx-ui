@@ -42,7 +42,14 @@ const Image = Node.create({
   parseHTML() {
     return [
       {
-        tag: this.options.allowBase64 ? 'img[src]' : 'img[src]:not([src^="data:"])',
+        tag: 'img[src]',
+        getAttrs: (element) => {
+          const src = element.getAttribute('src');
+          if (!this.options.allowBase64 && src.startsWith('data:')) {
+            return false;
+          }
+          return {};
+        },
       },
     ];
   },
