@@ -241,6 +241,79 @@ const textsDefault = {
 // Merge texts prop with defaults
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
+const form = ref();
+const formHeader = ref();
+const formFooter = ref();
+
+const bounding = useElementBounding(form);
+const windowSize = useWindowSize();
+const headerSize = useElementSize(formHeader);
+const footerSize = useElementSize(formFooter);
+
+const shellLayoutMode = computed(() => {
+  const layoutElement = document.querySelector('.lx-layout');
+  if (!layoutElement) {
+    return 'default';
+  }
+
+  const siblingElements = Array.from(layoutElement.parentElement.children);
+  const hasPublicClass = siblingElements.some((sibling) =>
+    sibling.classList.contains('lx-layout-public')
+  );
+
+  return hasPublicClass ? 'public' : 'default';
+});
+
+function remToPx(remValue) {
+  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+  return remValue * rootFontSize;
+}
+
+const layoutElement = document.querySelector('.lx-layout');
+
+const headerElement = layoutElement?.querySelector(':scope > header');
+
+function publicShellOffset(el) {
+  const navPx = remToPx(parseFloat(getComputedStyle(el).getPropertyValue('--nav-row-size').trim()));
+  const rowPx = remToPx(parseFloat(getComputedStyle(el).getPropertyValue('--row-size').trim()));
+
+  const publicNavElement = layoutElement?.querySelector(':scope > nav');
+  const isNavVisible = publicNavElement
+    ? getComputedStyle(publicNavElement).display !== 'none'
+    : false;
+
+  if (!isNavVisible) {
+    return navPx;
+  }
+
+  if (window.innerHeight > remToPx(40)) {
+    return window.innerWidth > 900 ? navPx + rowPx : rowPx;
+  }
+  return window.innerWidth > 900 ? rowPx : 0;
+}
+
+// Calculates the offset for the form header and footer
+function calculateOffset(el, considerRow = true) {
+  let offset = 0;
+
+  if (props.showHeader && props.stickyHeader && formHeader.value) {
+    offset += formHeader.value.offsetHeight;
+  }
+
+  if (considerRow) {
+    const navRems = parseFloat(getComputedStyle(el).getPropertyValue('--nav-row-size').trim());
+    let navPx = remToPx(navRems);
+
+    if (shellLayoutMode.value === 'public') {
+      navPx = publicShellOffset(el);
+    }
+
+    offset += navPx;
+  }
+
+  return offset;
+}
+
 // Scrolls to the element with the specified ID
 function scrollTo(id) {
   const elementForm = document.getElementById(props.id);
@@ -256,37 +329,6 @@ function scrollTo(id) {
     top: targetPosition,
     behavior: 'smooth',
   });
-}
-
-const form = ref();
-const formHeader = ref();
-const formFooter = ref();
-
-const bounding = useElementBounding(form);
-const windowSize = useWindowSize();
-const headerSize = useElementSize(formHeader);
-const footerSize = useElementSize(formFooter);
-
-function remToPx(remValue) {
-  const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-  return remValue * rootFontSize;
-}
-
-// Calculates the offset for the form header and footer
-function calculateOffset(el, considerRow = true) {
-  let offset = 0;
-
-  if (props.showHeader && props.stickyHeader && formHeader.value) {
-    offset += formHeader.value.offsetHeight;
-  }
-
-  if (considerRow) {
-    const navRems = parseFloat(getComputedStyle(el).getPropertyValue('--nav-row-size').trim());
-    const navPx = remToPx(navRems);
-    offset += navPx;
-  }
-
-  return offset;
 }
 
 /**
@@ -602,21 +644,25 @@ function focusFirstFocusableElementAfter() {
 
 function isElementVisible(el) {
   if (!el) return false;
-  const formHeaderHeight =
-    props.showHeader && props.stickyHeader && formHeader.value ? formHeader.value.offsetHeight : 0;
+  const formHeaderHeight = props.showHeader && props.stickyHeader && formHeader.value ? 0 : -30;
   const bottomMargin =
     props.showFooter && props.stickyFooter && formFooter.value ? formFooter.value.offsetHeight : 0;
 
-  // Temporary extra margin to avoid some cases where the element is barely visible
-  let defaultMargin = 30;
-  if (getComputedStyle(el).getPropertyValue('--nav-row-size') === '9rem') {
-    defaultMargin = 110;
+  const headerHeight = headerElement ? headerElement.offsetHeight : 0;
+
+  let extraMargin = 5;
+
+  let topMargin = 0;
+
+  if (shellLayoutMode.value === 'public') {
+    extraMargin += publicShellOffset(el);
+    topMargin = formHeaderHeight + extraMargin;
+  } else {
+    topMargin = formHeaderHeight + headerHeight + extraMargin;
   }
 
-  const topMargin = formHeaderHeight + defaultMargin;
   const rect = el.getBoundingClientRect();
   const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-
   const isVisible = rect.top <= viewportHeight - bottomMargin && rect.bottom >= topMargin;
 
   return isVisible;
