@@ -2845,6 +2845,8 @@ watch(
                               :arrow="true"
                               :focusable="false"
                             >
+                              <!-- There are cases in which the button must not be focusable. For instance, when the date is out of the min/max range.-->
+                              <!-- eslint-disable-next-line vuejs-accessibility/interactive-supports-focus -->
                               <div
                                 class="lx-calendar-day"
                                 :class="[

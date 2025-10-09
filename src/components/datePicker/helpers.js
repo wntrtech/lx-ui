@@ -12,6 +12,7 @@ import {
   addDays,
 } from 'date-fns';
 import useLx from '@/hooks/useLx';
+import { DATE_VALIDATION_RESULT } from '@/constants';
 
 export const zeroPad = (value) => {
   if (value === null) return null;
@@ -39,6 +40,37 @@ export function getMonthNameByOrder(arrList, orderNumber, capitalize = false, na
   return capitalize ? capitalizeFirstLetter(monthName) : monthName;
 }
 
+/**
+ * Checks whether a date (mode = 'date') is within the allowed range and returns an enum describing the result.
+ * @returns {import('@/constants').DATE_VALIDATION_RESULT } Validation result
+ */
+export function validateDateRange(date, minDate, maxDate) {
+  if (!date) return DATE_VALIDATION_RESULT.NO_VALUE;
+
+  // Parse minDate and maxDate if they are strings
+  const minDateParsed = minDate ? new Date(minDate) : null;
+  const maxDateParsed = maxDate ? new Date(maxDate) : null;
+
+  // Normalize the date by stripping the time
+  const normalizeDate = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+  const normalizedDate = normalizeDate(new Date(date));
+  const normalizedMinDate = minDateParsed ? normalizeDate(minDateParsed) : null;
+  const normalizedMaxDate = maxDateParsed ? normalizeDate(maxDateParsed) : null;
+
+  const isAfterMinDate = !normalizedMinDate || normalizedDate >= normalizedMinDate;
+  const isBeforeMaxDate = !normalizedMaxDate || normalizedDate <= normalizedMaxDate;
+
+  if (!isAfterMinDate) {
+    return DATE_VALIDATION_RESULT.OUT_OF_RANGE_MIN;
+  }
+  if (!isBeforeMaxDate) {
+    return DATE_VALIDATION_RESULT.OUT_OF_RANGE_MAX;
+  }
+
+  return DATE_VALIDATION_RESULT.VALID;
+}
+
 export function canSelectDate(date, minDate, maxDate, mode = 'date') {
   if (!date) return false;
 
@@ -56,7 +88,6 @@ export function canSelectDate(date, minDate, maxDate, mode = 'date') {
 
     const isAfterMinDate = !normalizedMinDate || normalizedDate >= normalizedMinDate;
     const isBeforeMaxDate = !normalizedMaxDate || normalizedDate <= normalizedMaxDate;
-
     return isAfterMinDate && isBeforeMaxDate;
   }
 

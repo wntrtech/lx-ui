@@ -21,6 +21,7 @@ import {
 } from '@/components/datePicker/helpers';
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
+import { DATE_VALIDATION_RESULT } from '@/constants';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -366,16 +367,34 @@ const modelEnd = computed({
 const startMaxDate = computed(() => modelEnd.value || props.maxDate);
 const endMinDate = computed(() => modelStart.value || props.minDate);
 
-function onOutOfRangeStartDate() {
-  emits('outOfRange:startDate');
+function onOutOfRangeStartDate(payload) {
+  if (
+    [DATE_VALIDATION_RESULT.OUT_OF_RANGE_MIN, DATE_VALIDATION_RESULT.OUT_OF_RANGE_MAX].includes(
+      payload
+    )
+  ) {
+    emits('outOfRange:startDate', payload);
+  }
 }
 
-function onOutOfRangeEndDate() {
-  emits('outOfRange:endDate');
+function onOutOfRangeEndDate(payload) {
+  if (
+    [DATE_VALIDATION_RESULT.OUT_OF_RANGE_MIN, DATE_VALIDATION_RESULT.OUT_OF_RANGE_MAX].includes(
+      payload
+    )
+  ) {
+    emits('outOfRange:endDate', payload);
+  }
 }
 
-function onOutOfRange() {
-  emits('outOfRange');
+function onOutOfRange(payload) {
+  if (
+    [DATE_VALIDATION_RESULT.OUT_OF_RANGE_MIN, DATE_VALIDATION_RESULT.OUT_OF_RANGE_MAX].includes(
+      payload
+    )
+  ) {
+    emits('outOfRange', payload);
+  }
 }
 
 onBeforeMount(() => {

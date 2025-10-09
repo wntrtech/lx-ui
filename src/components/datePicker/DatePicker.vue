@@ -23,8 +23,9 @@ import {
   validateDateByMask,
   removeLastNonAlphanumeric,
   sanitizeDateInput,
+  validateDateRange,
 } from '@/components/datePicker/helpers';
-
+import { DATE_VALIDATION_RESULT } from '@/constants';
 import LxCalendarContainer from '@/components/datePicker/CalendarContainer.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -86,7 +87,6 @@ const emits = defineEmits(['update:modelValue', 'outOfRange']);
 
 const containerRef = ref();
 const dropDownMenuRef = ref();
-
 // Localized month and week days lists
 const localizedMonthsList = ref([]);
 const weekDaysList = ref([]);
@@ -274,16 +274,29 @@ function validateIfExact(e, type = 'startInput') {
       e.target.value = props.clearIfNotExact ? null : newDateString;
       return;
     }
+    const dateRangeValidationResult = validateDateRange(
+      new Date(dateString),
+      props.minDate,
+      props.maxDate
+    );
 
     // Check if the date is within the min/max range
     if (
       day &&
       month &&
       year &&
-      !canSelectDate(new Date(dateString), props.minDate, props.maxDate, 'date')
+      dateRangeValidationResult !== DATE_VALIDATION_RESULT.VALID &&
+      dateRangeValidationResult !== DATE_VALIDATION_RESULT.NO_VALUE
     ) {
       const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('outOfRange');
+      if (
+        [DATE_VALIDATION_RESULT.OUT_OF_RANGE_MAX, DATE_VALIDATION_RESULT.OUT_OF_RANGE_MIN].includes(
+          // @ts-ignore TS2345:: value narrowed at runtime via includes();
+          dateRangeValidationResult
+        )
+      ) {
+        emits('outOfRange', dateRangeValidationResult);
+      }
       emits('update:modelValue', updatedValue);
 
       const newDay = new Date().getDate();
