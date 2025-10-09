@@ -32,11 +32,12 @@ const props = defineProps({
   texts: { type: Object, default: () => ({}) },
 });
 
-const textsDefault = {
+const defaultTexts = {
   removeItem: 'Dzēst ierakstu',
+  addItemButtonTooltip: 'Pievienot ierakstu',
 };
 
-const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+const displayTexts = computed(() => getDisplayTexts(props.texts, defaultTexts));
 
 const emits = defineEmits(['update:modelValue', 'actionClick', 'update:selectedValues']);
 
@@ -293,6 +294,7 @@ defineExpose({ clearModel });
         :id="`${id}-action-add-item`"
         kind="tertiary"
         :label="addButtonLabel"
+        :title="displayTexts.addItemButtonTooltip"
         icon="add-item"
         @click="addItem"
       />
