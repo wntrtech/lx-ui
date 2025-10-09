@@ -1781,8 +1781,8 @@
   padding-bottom: .5rem;
 }
 
-.lx .lx-layout .lx-mega-menu-container ul.primary-menu .primary-menu-tile,
-.lx .lx-layout .lx-mega-menu-container .secondary-menu .secondary-menu-item {
+.lx .lx-layout .lx-mega-menu-container ul.primary-menu .primary-menu-tile .lx-data,
+.lx .lx-layout .lx-mega-menu-container .secondary-menu .secondary-menu-item .lx-data {
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
