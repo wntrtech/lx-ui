@@ -2474,6 +2474,10 @@ h2.lx-section-header + p.lx-invalidation-message,
   padding: 0;
 }
 
+.lx .lx-layout .lx-drawpad-wrapper div.lx-input-wrapper.lx-disabled .lx-canvas-element {
+  cursor: not-allowed;
+}
+
 .lx-input-wrapper.lx-disabled .lx-canvas-element{
   cursor: no-drop;
 }

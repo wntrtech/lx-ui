@@ -439,17 +439,17 @@ a.lx-button.lx-button-ghost svg {
   fill: var(--color-button-toolbar-ghost-icon-active);
 }
 
-.lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost.lx-disabled svg,
-.lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-disabled svg,
-.lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-disabled svg,
-.lx-component-toolbar .second-row .lx-button.lx-button-ghost.lx-disabled svg {
-  fill: var(--color-button-toolbar-ghost-icon-disabled);
-}
-
 .lx .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost.lx-active svg,
 .lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-active svg,
 .lx .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-active svg {
-  fill: var(--color-selected);
+    fill: var(--color-selected);
+}
+
+.lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost.lx-disabled svg,
+.lx .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost.lx-disabled svg,
+.lx .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost.lx-disabled svg,
+.lx-component-toolbar .second-row .lx-button.lx-button-ghost.lx-disabled svg {
+  fill: var(--color-button-toolbar-ghost-icon-disabled);
 }
 
 .lx .lx-layout .lx-dropdown-panel .user-menu-panel .lx-button.lx-active:not(.lx-disabled) svg,
