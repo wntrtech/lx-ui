@@ -17,14 +17,7 @@ const has = (needed, value) => {
   if (!Array.isArray(values)) {
     values = [value];
   }
-  for (let i = 0; i < against.length; i += 1) {
-    for (let j = 0; j < values.length; j += 1) {
-      if (against[i] === values[j]) {
-        return true;
-      }
-    }
-  }
-  return false;
+  return against.some((a) => values.some((v) => a === v));
 };
 const hasPermission = (needed, scope) => {
   if (!needed) {
@@ -41,22 +34,16 @@ const hasPermission = (needed, scope) => {
   if (!Array.isArray(scopes)) {
     scopes = [scope];
   }
-  for (let i = 0; i < against.length; i += 1) {
-    const name = against[i];
+  return against.some((name) => {
     if (name[name.length - 1] === '*') {
-      if (hasAnyScopeWithNamespace(scopes, name.slice(0, -1))) {
-        return true;
-      }
-    } else if (name.indexOf(':') !== -1) {
-      const [n, level] = name.split(':');
-      if (hasScopeAtLeast(scopes, n, level)) {
-        return true;
-      }
-    } else if (hasScope(scopes, name)) {
-      return true;
+      return hasAnyScopeWithNamespace(scopes, name.slice(0, -1));
     }
-  }
-  return false;
+    if (name.includes(':')) {
+      const [n, level] = name.split(':');
+      return hasScopeAtLeast(scopes, n, level);
+    }
+    return hasScope(scopes, name);
+  });
 };
 const validatorMsgRegex =
   /(Key: '(\S+)\.(\S+)'\s+)?Error:.*(for '(?<field>\S+)').*('(?<tag>\S+)' tag)/;

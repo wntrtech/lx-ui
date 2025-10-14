@@ -11,12 +11,7 @@ export function hasAnyScopeWithNamespace(scope, namespace) {
 }
 
 export function hasAnyScope(scope, ...names) {
-  for (let i = 0; i < names.length; i += 1) {
-    if (hasScope(scope, names[i])) {
-      return true;
-    }
-  }
-  return false;
+  return names.some((name) => hasScope(scope, name));
 }
 
 export function hasScopeAtLeast(scope, name, level) {

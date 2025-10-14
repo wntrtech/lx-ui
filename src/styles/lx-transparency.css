@@ -28,7 +28,7 @@
 }
 
 .lx.lx-no-transparency dialog.lx-modal::backdrop {
-  --color-cover-background: rgba(0, 0, 0, .9);;
+  --color-cover-background: rgba(0, 0, 0, .9);
 }
 
 .lx.lx-no-transparency ::backdrop,

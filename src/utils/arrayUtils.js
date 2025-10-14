@@ -9,18 +9,12 @@ export function checkArrayOfObjects(array) {
     return false;
   }
 
-  if (!array.every((item) => Object.keys(item).length !== 0)) {
-    return false;
-  }
-  return true;
+  return array.every((item) => Object.keys(item).length !== 0);
 }
 
 export function checkArrayObjectProperty(array, property) {
   if (!checkArrayOfObjects(array)) {
     return false;
   }
-  if (!array.every((item) => Object.prototype.hasOwnProperty.call(item, property))) {
-    return false;
-  }
-  return true;
+  return array.every((item) => Object.prototype.hasOwnProperty.call(item, property));
 }

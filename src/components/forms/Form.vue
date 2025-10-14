@@ -1,3 +1,4 @@
+<!-- eslint-disable no-param-reassign -->
 <script setup lang="ts">
 import { computed, useSlots, ref, watch, onMounted, nextTick, provide, onUnmounted } from 'vue';
 import { useElementBounding, useElementSize, useWindowSize } from '@vueuse/core';
@@ -544,7 +545,6 @@ const selectedTabValue = computed(() => {
   });
   return res;
 });
-
 // Hides all sections in the form. Necessary for indexType 'tabs' & 'wizard'
 function hideAll() {
   const idValue = document.getElementById(props.id);
@@ -554,9 +554,10 @@ function hideAll() {
   } else if (props.indexType === 'wizard') {
     allElements = idValue.querySelectorAll(`.lx-wizard-body > div.lx-main > .lx-form-section`);
   }
-  for (let i = 0; i < allElements.length; i += 1) {
-    allElements[i].style.display = 'none';
-  }
+  allElements.forEach((element) => {
+    // eslint-disable-next-line no-param-reassign
+    element.style.display = 'none';
+  });
 
   const selectedForm = document.getElementById(props.id);
 

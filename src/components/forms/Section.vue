@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, inject, computed, shallowRef, onMounted, ref } from 'vue';
+import { provide, inject, computed, onMounted, ref } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxExpander from '@/components/Expander.vue';
 import { lxDevUtils } from '@/utils';

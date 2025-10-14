@@ -105,7 +105,6 @@ const accessibleTitle = computed(() => {
     return null;
   }
 
-  tooltip = props.title;
   if (props.busy) {
     tooltip = props.busyTooltip ? props.busyTooltip : tooltip;
   }

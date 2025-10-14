@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import LxSteps from '@/components/Steps.vue';
 import { useElementBounding, useElementSize } from '@vueuse/core';
 

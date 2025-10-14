@@ -20,8 +20,8 @@ const logoAltTexts = {
 const logoMap = {};
 
 Object.entries(logos).forEach(([path, image]) => {
-  const squareMatch = path.match(/\/([^/]+)-square-logo(-dark)?(@\d+x)?\.png$/);
-  const defaultMatch = path.match(/\/([^/]+)-logo(-dark)?(@\d+x)?\.png$/);
+  const squareMatch = /\/([^/]+)-square-logo(-dark)?(@\d+x)?\.png$/.exec(path);
+  const defaultMatch = /\/([^/]+)-logo(-dark)?(@\d+x)?\.png$/.exec(path);
 
   let baseName;
   let kind = 'default';

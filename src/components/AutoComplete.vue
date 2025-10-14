@@ -162,15 +162,10 @@ const mergeItems = (newItems, storedItems) => {
 };
 
 function attributesSearch(item) {
-  for (let i = 0; i < props.searchAttributes.length; i += 1) {
-    const attrName = props.searchAttributes[i] as string;
+  return props.searchAttributes.some((attrName) => {
     const attrValue = item[attrName as keyof typeof item];
-
-    if (textSearch(query.value, attrValue)) {
-      return true;
-    }
-  }
-  return false;
+    return textSearch(query.value, attrValue);
+  });
 }
 
 const filteredItems = computed(() => {
@@ -223,33 +218,20 @@ const debouncedSearchReq = useDebounceFn(async (val) => {
 watch(
   query,
   async (newValue, oldValue) => {
-    // If props.items is not a function and queryMinLength is provided, warn developer
-    if (typeof props.items !== 'function' && props.queryMinLength > 0) {
-      logWarn(
-        "To take effect, props 'queryMinLength' and 'queryDebounce' must be used with an async items function!",
-        globalEnvironment
-      );
+    if (shouldWarnAboutQueryMinLength()) {
       return;
     }
 
-    // Proceed with search if props.items is a function
     if (typeof props.items === 'function') {
       const finalQuery = formatFinalQuery(newValue);
-
       const queryLength = finalQuery?.length || 0;
 
-      if (props.queryMinLength > 0) {
-        if (queryLength < props.queryMinLength) {
-          const destroyResults = queryLength > (oldValue?.length || 0);
-          if (destroyResults) {
-            allItems.value = [];
-          }
-          return;
-        }
-      } else {
-        if (queryLength >= 1) {
-          allItems.value = [];
-        }
+      if (shouldDestroyResults(queryLength, oldValue)) {
+        return;
+      }
+
+      if (shouldClearResults(queryLength)) {
+        allItems.value = [];
       }
 
       await debouncedSearchReq(finalQuery);
@@ -257,6 +239,32 @@ watch(
   },
   { immediate: true }
 );
+
+function shouldWarnAboutQueryMinLength() {
+  if (typeof props.items !== 'function' && props.queryMinLength > 0) {
+    logWarn(
+      "To take effect, props 'queryMinLength' and 'queryDebounce' must be used with an async items function!",
+      globalEnvironment
+    );
+    return true;
+  }
+  return false;
+}
+
+function shouldDestroyResults(queryLength, oldValue) {
+  if (props.queryMinLength > 0 && queryLength < props.queryMinLength) {
+    const destroyResults = queryLength > (oldValue?.length || 0);
+    if (destroyResults) {
+      allItems.value = [];
+    }
+    return true;
+  }
+  return false;
+}
+
+function shouldClearResults(queryLength) {
+  return props.queryMinLength <= 0 && queryLength >= 1;
+}
 
 function getName(returnPlaceholder = true) {
   let result;
@@ -328,6 +336,14 @@ function initInputFocus() {
 function handleMenuAndInputKeydown(e) {
   const inputElement = document.activeElement;
 
+  if (handleTabKey(e)) return;
+
+  if (e.shiftKey && handleShiftArrowKeys(e, inputElement)) return;
+
+  if (handlePrintableOrDeleteKeys(e)) return;
+}
+
+function handleTabKey(e) {
   if (e.key === 'Tab' && menuOpen.value && filteredItems.value.length > 0) {
     const tabPressed = e.shiftKey ? 'backward' : 'forward';
 
@@ -339,19 +355,24 @@ function handleMenuAndInputKeydown(e) {
     });
 
     focusNextFocusableElement(refQuery.value, tabPressed === 'forward');
+    return true;
   }
+  return false;
+}
 
-  if (e.shiftKey) {
-    if (e.key === 'ArrowUp') {
-      handleShiftArrow(inputElement, 'up');
-      return;
-    }
-    if (e.key === 'ArrowDown') {
-      handleShiftArrow(inputElement, 'down');
-      return;
-    }
+function handleShiftArrowKeys(e, inputElement) {
+  if (e.key === 'ArrowUp') {
+    handleShiftArrow(inputElement, 'up');
+    return true;
   }
+  if (e.key === 'ArrowDown') {
+    handleShiftArrow(inputElement, 'down');
+    return true;
+  }
+  return false;
+}
 
+function handlePrintableOrDeleteKeys(e) {
   const isPrintableChar = e.key.length === 1 && e.key.match(/\S/);
   const isBackspaceKey = e.key === 'Backspace';
   const isDeleteKey = e.key === 'Delete';
@@ -364,9 +385,10 @@ function handleMenuAndInputKeydown(e) {
     if (model.value && props.selectingKind === 'single') clear();
     inputReadonly.value = false;
     highlightedItemId.value = null;
+    return true;
   }
+  return false;
 }
-
 function handleTouchStart() {
   inputReadonly.value = false; // Allow touch input interaction
 }

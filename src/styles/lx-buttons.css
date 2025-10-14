@@ -1912,7 +1912,6 @@ a.lx-button.lx-button-ghost svg {
   font-family: var(--font-family-mono);
   font-feature-settings: var(--font-features-mono);
   font-size: var(--small-font-size);
-  color: var(--color-badge-foreground);
   font-weight: bold;
   background: var(--color-data);
   color: var(--color-data);

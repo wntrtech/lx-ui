@@ -166,7 +166,7 @@ export default (
     }
     async function fetchSession() {
       try {
-        if (!getSessionKey()) {
+        if (!(await getSessionKey())) {
           return null;
         }
         const resp = await service.session();
