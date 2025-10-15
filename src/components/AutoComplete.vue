@@ -4,7 +4,7 @@ import { onClickOutside, useDebounceFn } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
-import { logWarn } from '@/utils/devUtils';
+import { logWarn, logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import LxPopper from '@/components/Popper.vue';
 import LxButton from '@/components/Button.vue';
@@ -118,15 +118,19 @@ const model = computed({
 });
 
 const getIdAttributeString = (item) => {
+  if (item?.id === 'select-all') return 'select-all';
+
   const attribute = item[props.idAttribute];
 
   if (attribute === undefined) {
-    throw new Error(
+    logError(
       `Autocomplete: idAttribute (${props.idAttribute}) is not defined for item ${JSON.stringify(
         item
-      )}`
+      )}`,
+      globalEnvironment
     );
   }
+
   return attribute;
 };
 
