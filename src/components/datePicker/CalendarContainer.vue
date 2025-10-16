@@ -7,6 +7,7 @@ import { formatLocalizedDate } from '@/utils/dateUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
 import {
+  normalizeDate,
   getTimeOrderIndex,
   getMonthNameByOrder,
   canSelectDate,
@@ -1795,7 +1796,7 @@ const selectSecond = (secondObj, isNotSelectable) => {
 };
 
 function moveCalendar(minDate, maxDate) {
-  const now = new Date();
+  const now = normalizeDate(new Date(), props.mode);
 
   // Case 1: both in the future
   if (minDate && maxDate && minDate > now && maxDate > now) {
