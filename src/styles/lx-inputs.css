@@ -4686,6 +4686,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   min-height: var(--badge-min-height);
   padding: var(--badge-padding);
   line-height: var(--badge-line-height);
+  color: var(--color-data);
   background-color: var(--color-badge-background);
   border-radius: var(--badge-border-radius);
   border: var(--region-border);

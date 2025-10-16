@@ -877,8 +877,8 @@ svg .lx-shade {
   padding-left: 1ch;
 }
 
-.lx-form-grid .lx-row > .lx-row-header > label span.lx-required-asterisk,
-.lx-form-grid .lx-row > .lx-row-header > .lx-info-wrapper label span.lx-required-asterisk {
+.lx-form-grid .lx-row > .lx-row-header label span.lx-required-asterisk,
+.lx-form-grid .lx-row > .lx-row-header .lx-info-wrapper-content label span.lx-required-asterisk {
   color: var(--color-red);
   font-size: var(--label-font-size);
   font-weight: bold;

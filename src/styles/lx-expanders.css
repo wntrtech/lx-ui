@@ -47,7 +47,7 @@
 }
 
 .lx-form-grid>.lx-main .lx-row .lx-expander {
-  color: var(--color-region-hover-foreground);
+  color: var(--color-data);
 }
 
 .lx-expander:not([data-disabled]) .lx-head:hover svg:not(.lx-button-ghost, .lx-button-icon, .lx-badge-icon) {

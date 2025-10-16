@@ -1446,25 +1446,22 @@
   background: var(--color-region);
 }
 
-.lx-expander .lx-badge.lx-badge-info .lx-badge-text {
+.lx-expander .lx-badge.lx-badge-info .lx-badge-text,
+.lx-form .lx-expander .lx-badge.lx-badge-info .lx-badge-text {
   color: var(--color-data);
 }
 
-.lx-form .lx-expander .lx-badge.lx-badge-info,
-.lx-region .lx-expander .lx-badge.lx-badge-info {
-  background: var(--color-region-2);
-}
-
-.lx-form .lx-expander .lx-badge.lx-badge-info .lx-badge-text,
-.lx-region .lx-expander .lx-badge.lx-badge-info .lx-badge-text {
-  color: var(--color-data);
-}
-
-.lx-form .lx-expander .lx-badge.lx-badge-info .lx-badge-icon,
-.lx-expander .lx-badge.lx-badge-info .lx-badge-icon {
+.lx-expander .lx-badge.lx-badge-info .lx-badge-icon,
+.lx-form .lx-expander .lx-badge.lx-badge-info .lx-badge-icon {
   fill: var(--color-data);
 }
 
+.lx-form .lx-expander .lx-badge.lx-badge-info,
+.lx-modal .lx-expander .lx-badge.lx-badge-info,
+.lx-region .lx-expander .lx-badge.lx-badge-info,
+.lx-form-grid .lx-expander .lx-badge.lx-badge-info {
+  background: var(--color-region-2);
+}
 
 .lx-expander .lx-badge.lx-badge-good {
   background: var(--color-green);
