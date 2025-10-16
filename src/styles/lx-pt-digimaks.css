@@ -22,6 +22,7 @@
 
   --input-border-radius: var(--radius-default);
   --input-border-bottom: var(--input-border);
+  --input-border-bottom-disabled: var(--input-border);
 
   --color-button-nav-selected-background: var(--color-highlight);
 
@@ -32,6 +33,17 @@
   --color-button-secondary-focus-background: var(--color-region);
   --color-button-secondary-focus: var(--color-brand);
   --color-button-secondary-icon-focus: var(--color-brand);
+
+  --button-primary-font-weight: 800;
+  --button-secondary-font-weight: 800;
+  --button-tertiary-font-weight: 800;
+  --button-ghost-font-weight: 800;
+  --button-modal-primary-font-weight: 800;
+  --button-modal-secondary-font-weight: 800;
+  --button-toolbar-primary-font-weight: 800;
+  --button-toolbar-secondary-font-weight: 800;
+  --button-toolbar-tertiary-font-weight: 800;
+  --button-toolbar-ghost-font-weight: 800;
 }
 
 .lx.lx-theme-dark {

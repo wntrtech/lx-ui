@@ -2069,7 +2069,6 @@ watch(
           v-model:hasAnimations="animationsModel"
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
-          v-model:isTouchSensitive="touchModeModel"
           v-model:navBarSwitch="navBarSwitchModel"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           @customButtonClick="emits('customButtonClick')"

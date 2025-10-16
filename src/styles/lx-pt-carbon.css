@@ -188,7 +188,9 @@
   --list-treelist-indent-child-right: 0;
 
   --input-border: 2px solid transparent;
+  --input-border-disabled: 2px solid transparent;
   --input-border-bottom: 1px solid var(--color-label);
+  --input-border-bottom-disabled: 1px solid var(--color-disabled-foreground);
   --input-border-radius: 0;
   --input-button-border-radius: 0;
   --input-button-height: 2.5rem;

@@ -668,7 +668,8 @@
 .lx .lx-override.lx-layout input[disabled],
 .lx .lx-override.lx-layout textarea.lx-disabled,
 .lx .lx-override.lx-layout textarea[disabled] {
-  border-bottom-color: var(--color-input-disabled);
+  border: var(--input-border-disabled);
+  border-bottom: var(--input-border-bottom-disabled);
   cursor: not-allowed;
 }
 

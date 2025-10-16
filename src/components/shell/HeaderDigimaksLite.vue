@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, provide } from 'vue';
+import { computed, ref, watch, provide, onMounted, onUnmounted } from 'vue';
 
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -36,7 +36,6 @@ const props = defineProps({
   hasAnimations: { type: Boolean, default: true },
   hasReducedTransparency: { type: Boolean, default: false },
   hasDeviceFonts: { type: Boolean, default: false },
-  isTouchSensitive: { type: Boolean, default: true },
   hasAlerts: { type: Boolean, default: false },
   alertsKind: { type: String, default: 'menu' },
   clickSafeAlerts: { type: Boolean, default: false },
@@ -106,14 +105,11 @@ const textsDefault = {
   themeContrast: 'Kontrastais režīms',
   animations: 'Samazināt kustības',
   fonts: 'Iekārtas fonti',
-  touchMode: 'Skārienjūtīgs režīms',
   transparency: 'Samazināt caurspīdīgumu',
   reduceMotionOff: 'Nē',
   reduceMotionOn: 'Jā',
   systemFontsOff: 'Nē',
   systemFontsOn: 'Jā',
-  touchModeOff: 'Nē',
-  touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
   userTitle: 'Lietotājs',
@@ -141,7 +137,6 @@ const emits = defineEmits([
   'update:theme',
   'update:hasAnimations',
   'update:hasDeviceFonts',
-  'update:isTouchSensitive',
   'update:selectedMegaMenuItem',
   'update:hasReducedTransparency',
 ]);
@@ -200,15 +195,6 @@ const deviceFontsModel = computed({
   },
   set(value) {
     emits('update:hasDeviceFonts', value);
-  },
-});
-
-const touchModeModel = computed({
-  get() {
-    return props.isTouchSensitive;
-  },
-  set(value) {
-    emits('update:isTouchSensitive', value);
   },
 });
 
@@ -444,6 +430,21 @@ function goBack() {
   }
   emits('go-back', -1);
 }
+
+function handleBackPress() {
+  if (settings.value) {
+    settings.value = false;
+    window.history.pushState(null, '');
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('popstate', handleBackPress);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('popstate', handleBackPress);
+});
 
 provide('insideHeader', insideHeader);
 </script>
@@ -702,7 +703,6 @@ provide('insideHeader', insideHeader);
               <LxRow :label="displayTexts.animations">
                 <LxToggle v-model="animationsModel" />
               </LxRow>
-              <LxRow :label="displayTexts.touchMode"> <LxToggle v-model="touchModeModel" /> </LxRow>
               <LxRow :label="displayTexts.transparency">
                 <LxToggle v-model="transparencyModel" />
               </LxRow>
