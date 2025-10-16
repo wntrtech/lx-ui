@@ -2738,7 +2738,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: 100%;
   height: auto;
   background-color: var(--color-region);
-  border: var(--region-border);
+  border: var(--region-border-transparent);
   overflow-y: auto;
   box-shadow: var(--shadow-dropdown);
   padding: 0;

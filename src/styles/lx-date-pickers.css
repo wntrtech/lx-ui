@@ -50,13 +50,6 @@
   display: flex;
 }
 
-.lx .lx-layout .lx-calendar-container {
-  height: auto;
-  background-color: var(--color-region);
-  border: var(--region-border);
-  overflow-y: auto;
-}
-
 .lx-date-time-picker-wrapper[data-invalid] .lx-datepicker-default > .lx-calendar-container {
   border: 2px solid var(--color-bad);
 }
