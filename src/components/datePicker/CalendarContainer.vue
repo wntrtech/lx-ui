@@ -2338,6 +2338,63 @@ const nextSlideButtonLabel = computed(() => {
   return displayTexts.value.next;
 });
 
+const onToday = computed(() => {
+  const date = currentDate.value;
+  const hour = currentHourIndex.value;
+  const minute = currentMinuteIndex.value;
+  const second = currentSecondIndex.value;
+
+  const now = new Date();
+
+  switch (props.mode) {
+    case 'date': {
+      return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+    }
+
+    case 'date-time': {
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear() &&
+        hour === now.getHours() &&
+        minute === now.getMinutes()
+      );
+    }
+
+    case 'date-time-full': {
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear() &&
+        hour === now.getHours() &&
+        minute === now.getMinutes() &&
+        second === now.getSeconds()
+      );
+    }
+
+    case 'time': {
+      return hour === now.getHours() && minute === now.getMinutes();
+    }
+
+    case 'time-full': {
+      return hour === now.getHours() && minute === now.getMinutes() && second === now.getSeconds();
+    }
+
+    case 'year': {
+      return startYear.value < now.getFullYear() && endYear.value > now.getFullYear();
+    }
+
+    case 'quarters': {
+      return startQuarterYear.value < now.getFullYear() && endQuarterYear.value > now.getFullYear();
+    }
+
+    case 'month-year': {
+      return date.getFullYear() === now.getFullYear();
+    }
+
+    default:
+      return false;
+  }
+});
+
 onClickOutside(
   containerRef,
   () => {
@@ -3048,7 +3105,7 @@ watch(
         icon="reset"
         variant="icon-only"
         :label="displayTexts.todayButton"
-        :disabled="disabled || outsideOfToday"
+        :disabled="disabled || outsideOfToday || onToday"
         @click.stop.prevent="returnToToday"
       />
     </div>
