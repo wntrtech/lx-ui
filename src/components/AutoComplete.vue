@@ -87,6 +87,7 @@ const panelWidth = ref();
 const inputReadonly = ref(false);
 const highlightedItemId = ref(null);
 const infoWrapperRef = ref();
+const isTrapActive = ref(false);
 
 const { activate, deactivate } = useFocusTrap(refListbox, {
   allowOutsideClick: true,
@@ -205,9 +206,6 @@ const queryDebounceValue = computed(() =>
 const debouncedSearchReq = useDebounceFn(async (val) => {
   if (typeof props.items === 'function') {
     menuOpen.value = false;
-    deactivate({
-      returnFocus: false,
-    });
 
     loadingState.value = true;
     activeQuery.value = val;
@@ -327,9 +325,6 @@ function initSearchInput(shouldClear = true) {
 }
 
 function initInputFocus() {
-  deactivate({
-    returnFocus: false,
-  });
   highlightedItemId.value = null;
 
   nextTick(() => {
@@ -354,12 +349,10 @@ function handleTabKey(e) {
     query.value = null;
     menuOpen.value = false;
 
-    deactivate({
-      returnFocus: false,
+    nextTick(() => {
+      focusNextFocusableElement(refQuery.value, tabPressed === 'forward');
+      return true;
     });
-
-    focusNextFocusableElement(refQuery.value, tabPressed === 'forward');
-    return true;
   }
   return false;
 }
@@ -383,7 +376,7 @@ function handlePrintableOrDeleteKeys(e) {
 
   if (isPrintableChar || isBackspaceKey || isDeleteKey) {
     if (!menuOpen.value) {
-      openMenu(false);
+      openMenu();
     }
 
     if (model.value && props.selectingKind === 'single') clear();
@@ -403,9 +396,6 @@ function openMenu(shouldClear = true) {
     menuOpen.value = true;
 
     nextTick(() => {
-      if (!loadingState.value && filteredItems.value.length > 0) {
-        activate();
-      }
       initSearchInput(shouldClear);
     });
   }
@@ -419,10 +409,6 @@ function closeOnClickOutside() {
     menuOpen.value = false;
   }
 
-  deactivate({
-    returnFocus: false,
-  });
-
   query.value = null;
   highlightedItemId.value = null;
 }
@@ -431,10 +417,6 @@ function closeMenu() {
   if (menuOpen.value) {
     menuOpen.value = false;
   }
-
-  deactivate({
-    returnFocus: false,
-  });
 
   highlightedItemId.value = null;
 
@@ -508,7 +490,7 @@ const shouldShowInputPlaceholder = computed(() => {
 });
 
 const shouldShowValuePlaceholder = computed(() => {
-  if (hasValue.value && !menuOpen.value) return true;
+  if (hasValue.value && !menuOpen.value && !query.value) return true;
   return false;
 });
 
@@ -854,7 +836,7 @@ const displaySelectedItems = computed(() => {
     model.value.includes(getIdAttributeString(obj))
   );
   if (!multipleItems) return [];
-  listRef.value?.selectRows(multipleItems);
+  listRef.value?.selectRows(multipleItems, false);
   return multipleItems;
 });
 
@@ -996,6 +978,34 @@ watch([hasValue, query, menuOpen], ([newHasValue, newQuery, newMenuOpen]) => {
   } else {
     inputReadonly.value = false;
   }
+});
+
+const activateTrap = () => {
+  try {
+    if (!refListbox.value) return;
+    if (!filteredItems.value?.length) return;
+    activate();
+    isTrapActive.value = true;
+  } catch (err) {
+    logWarn(`Trap activate skipped, ${err}`, globalEnvironment);
+  }
+};
+
+const deactivateTrap = () => {
+  if (!isTrapActive.value) return;
+  try {
+    deactivate({ returnFocus: false });
+  } catch (err) {
+    logWarn(`Trap deactivate skipped, ${err}`, globalEnvironment);
+  } finally {
+    isTrapActive.value = false;
+  }
+};
+
+watch(menuOpen, async (isOpen) => {
+  await nextTick();
+  if (isOpen) activateTrap();
+  else deactivateTrap();
 });
 
 const rowId = inject('rowId', ref(null));
@@ -1191,6 +1201,7 @@ onMounted(() => {
                         </LxInfoWrapper>
                       </div>
                     </div>
+
                     <input
                       ref="refQuery"
                       :placeholder="shouldShowInputPlaceholder ? getName() : null"
@@ -1208,9 +1219,11 @@ onMounted(() => {
                       @focusout="handleFocusOut"
                       @touchstart="handleTouchStart"
                     />
+
                     <div class="lx-invisible" aria-live="polite" v-if="loadingState || loading">
                       {{ displayTexts.loadingState }}
                     </div>
+
                     <template v-if="shouldShowValuePlaceholder">
                       <div class="lx-value lx-input-area" :title="customTooltip">
                         <div>
@@ -1247,6 +1260,7 @@ onMounted(() => {
                         </div>
                       </div>
                     </template>
+
                     <template v-if="shouldShowPlaceholder">
                       <div class="lx-placeholder lx-input-area">
                         <div>
@@ -1254,15 +1268,18 @@ onMounted(() => {
                         </div>
                       </div>
                     </template>
+
                     <div
                       v-if="invalid && !(loadingState || loading)"
                       class="lx-invalidation-icon-wrapper"
                     >
                       <LxIcon customClass="lx-invalidation-icon" value="invalid" />
                     </div>
+
                     <div v-if="shouldShowIcon" class="lx-input-icon-wrapper">
                       <LxIcon customClass="lx-modifier-icon" :value="icon" />
                     </div>
+
                     <LxButton
                       v-if="
                         selectingKind === 'single' &&
@@ -1278,6 +1295,7 @@ onMounted(() => {
                       :label="displayTexts.clear"
                       @click="clear"
                     />
+
                     <LxButton
                       v-if="
                         selectingKind === 'single' &&
@@ -1293,6 +1311,7 @@ onMounted(() => {
                       :label="displayTexts.clear"
                       @click="clear"
                     />
+
                     <LxButton
                       v-if="shouldShowDetailsBtn"
                       id="detailsButton"
@@ -1301,10 +1320,12 @@ onMounted(() => {
                       kind="ghost"
                       variant="icon-only"
                       :label="displayTexts.detailsButton"
-                      @keydown.enter="openDetails"
-                      @keydown.f3.prevent="openDetails"
-                      @click="openDetails"
+                      @keydown.enter.stop.prevent="openDetails"
+                      @keydown.space.stop.prevent="openDetails"
+                      @keydown.f3.stop.prevent="openDetails"
+                      @click.stop.prevent="openDetails"
                     />
+
                     <div
                       class="lx-autocomplete-loader"
                       v-if="loadingState || loading"
@@ -1313,6 +1334,7 @@ onMounted(() => {
                       <LxLoader loading size="s" />
                     </div>
                   </div>
+
                   <div v-if="invalid" class="lx-invalidation-message" @click.stop>
                     {{ invalidationMessage }}
                   </div>
@@ -1437,6 +1459,7 @@ onMounted(() => {
                             :labelId="getLabelId(item[idAttribute])"
                             @click="selectMultiple(item)"
                           />
+
                           <label :for="item[idAttribute]" :id="getLabelId(item[idAttribute])">
                             <template v-if="variant === 'country'">
                               <LxFlagItemDisplay
@@ -1494,6 +1517,7 @@ onMounted(() => {
                         </p>
                       </div>
                     </template>
+
                     <template
                       v-if="
                         queryMinLength !== 0 &&
