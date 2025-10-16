@@ -949,6 +949,9 @@ svg .lx-shade {
 
 .index-hide-collapsed {
   display: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .additional-buttons-label {
@@ -1300,10 +1303,18 @@ p .lx-person-display-wrapper {
   display: flex;
   justify-content: space-between;
   width: 100%;
+  column-gap: 0.25rem;
+}
+
+.lx-form-grid > .lx-index > ul > li > .index-text > p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lx-form-grid > .lx-index > ul > li > .index-text > .inner-text {
   display: flex;
+  overflow: hidden;
 }
 
 .lx-form-grid > .lx-index > ul > li > .index-text.lx-invalid,
@@ -1316,6 +1327,13 @@ p .lx-person-display-wrapper {
   fill: var(--color-bad);
   width: 1.25rem;
   height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.lx .lx-layout .additional-index-button.lx-button > .lx-button-content-wrapper > p {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .lx-form-grid .additional-index-button.lx-invalid {
