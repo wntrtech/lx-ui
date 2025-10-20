@@ -172,10 +172,11 @@ const model = computed({
     } else if (props.kind === 'date') {
       const nv = formatDateJSON(newValue);
       emits('update:modelValue', nv);
-    } else if (props.kind === 'dateTime' || props.kind === 'date-time') {
-      const nv = formatJSON(newValue);
-      emits('update:modelValue', nv);
-    } else if (props.kind === 'date-time-full') {
+    } else if (
+      props.kind === 'dateTime' ||
+      props.kind === 'date-time' ||
+      props.kind === 'date-time-full'
+    ) {
       const nv = formatJSON(newValue);
       emits('update:modelValue', nv);
     } else if (props.kind === 'month') {

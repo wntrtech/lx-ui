@@ -17,6 +17,7 @@ import LxBadge from '@/components/Badge.vue';
 
 const props = defineProps({
   value: { type: Object, default: () => ({}) },
+  name: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -31,6 +32,7 @@ const textsDefault = {
   infoButton: 'Skatīt detaļas',
   download: 'Lejupielādēt',
   metaPreviewLabel: 'Priekšskatījums',
+  metaPreviewDescription: 'priekšskatījums',
   metaMainLabel: 'Galvenie dati',
   metaMainAuthor: 'Autors',
   metaMainFormat: 'Formāts',
@@ -156,7 +158,14 @@ const nomalizedIconAndType = computed(() => {
       >
         <LxRow columnSpan="3" :hideLabel="true">
           <div class="lx-modal-image-preview">
-            <img :src="props.value.preview" alt="Image Preview" />
+            <img
+              :src="props.value.preview"
+              :alt="
+                name
+                  ? `${name} ${displayTexts.metaPreviewDescription}`
+                  : displayTexts.metaPreviewLabel
+              "
+            />
           </div>
         </LxRow>
       </LxSection>

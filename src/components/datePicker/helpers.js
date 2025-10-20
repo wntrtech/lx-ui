@@ -951,10 +951,8 @@ function formatDate(value, mask) {
     }
 
     // Append delimiter if available and not at the end
-    if (delimiters[i] && valueIndex < cleanValue.length) {
+    if (delimiters[i] && valueIndex <= cleanValue.length) {
       formattedValue += delimiters[i];
-    } else if (delimiters[i] && valueIndex === cleanValue.length) {
-      formattedValue += delimiters[i]; // Automatically add final delimiter if at the end
     }
   }
 

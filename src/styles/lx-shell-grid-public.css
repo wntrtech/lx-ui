@@ -520,19 +520,16 @@
   .lx .lx-layout.lx-layout-public>nav {
     display: block;
     height: calc(100% - var(--nav-row-size));
-  }
-
-  .lx .lx-layout.lx-layout-public>header>.lx-header .lx-group.lx-right-group #nav-toggle {
-    display: flex;
-  }
-
-  .lx .lx-layout.lx-layout-public > nav {
     width: var(--row-size);
     z-index: 999;
     top: var(--nav-row-size);
     position: fixed;
     right: 0;
     transition: width .1s ease-out, margin-right .1s ease-out;
+  }
+
+  .lx .lx-layout.lx-layout-public>header>.lx-header .lx-group.lx-right-group #nav-toggle {
+    display: flex;
   }
 
   .lx .lx-layout.lx-layout-public.lx-collapsed > nav {

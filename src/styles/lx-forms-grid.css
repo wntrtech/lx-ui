@@ -1425,12 +1425,7 @@ p .lx-person-display-wrapper {
 .lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button > .lx-button-content-wrapper svg {
   height: 1.25rem;
   width: 1.25rem;
-  fill: var(--color-data);
-}
-
-.lx-row > .lx-row-header > div > .lx-button > .lx-button-content-wrapper svg, 
-.lx-row-header > div > .lx-context-container .lx-dropdown-toggler .lx-button > .lx-button-content-wrapper svg  {
-    fill: var(--color-button-toolbar-ghost-icon);
+  fill: var(--color-button-toolbar-ghost-icon);
 }
 
 .lx-row > .lx-row-header > div > .lx-button:hover >.lx-button-content-wrapper svg, 

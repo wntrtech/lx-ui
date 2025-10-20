@@ -28,10 +28,10 @@ const popperRef = ref(null);
 const resolvedPlacement = ref();
 
 const ariaLabel = computed(() => {
-  if (!props.label && !props.description) return null;
-  return `${props.label ? `${props.label}${props.description ? '. ' : ''}` : ''}${
-    props.description ? props.description : ''
-  }`;
+  if (props.label && props.description) {
+    return `${props.label}. ${props.description}`;
+  }
+  return props.label || props.description || null;
 });
 
 const spacerStyle = computed(() => {

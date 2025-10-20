@@ -65,6 +65,7 @@ const textsDefault = {
   deletePhoto: 'Mēģināt vēlreiz',
   useCamera: 'Izmantot kameru',
   metaPreviewLabel: 'Priekšskatījums',
+  metaPreviewDescription: 'priekšskatījums',
   metaMainLabel: 'Galvenie dati',
   metaMainAuthor: 'Autors',
   metaMainFormat: 'Formāts',
@@ -676,6 +677,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
   >
     <FileUploaderDetails
       :texts="displayTexts"
+      :name="openedItem?.name"
       :value="
         fileUploaderUtils.getDetails(
           openedItem,

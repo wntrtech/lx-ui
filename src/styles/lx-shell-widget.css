@@ -257,7 +257,6 @@ header.lx.lx-layout-public>.lx-header .lx-main-button p.lx-description {
 }
 
 header.lx.lx-layout-default .lx-header .lx-main-button p,
-header.lx.lx-layout-default .lx-header .lx-user-button p,
 header.lx.lx-layout-default .lx-header .lx-user-button p {
 text-overflow: ellipsis;
 word-wrap: normal;

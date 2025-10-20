@@ -1043,9 +1043,6 @@
 
 .lx .lx-data-grid-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded {
   background-color: var(--color-list-region-background);
-}
-
-.lx .lx-data-grid-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded {
   --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
   --color-button-toolbar-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }

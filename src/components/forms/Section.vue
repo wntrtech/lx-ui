@@ -350,7 +350,13 @@ provide('sectionOrientation', sectionOrientation);
     <header v-if="label || description || actionDefinitions?.length > 0">
       <div>
         <!-- eslint-disable-next-line vuejs-accessibility/role-has-required-aria-props -->
-        <div :id="`${sectionUUID}-label`" v-if="label" class="heading-3" role="heading">
+        <div
+          :id="`${sectionUUID}-label`"
+          v-if="label"
+          class="heading-3"
+          role="heading"
+          aria-level="3"
+        >
           {{ label }}
         </div>
         <legend :id="`${sectionUUID}-desc`" v-if="description" class="lx-description">

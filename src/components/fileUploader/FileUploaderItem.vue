@@ -41,6 +41,8 @@ const textsDefault = {
   download: 'Lejupielādēt',
   clear: 'Noņemt',
   infoButton: 'Informācija',
+  metaPreviewLabel: 'Priekšskatījums',
+  metaPreviewDescription: 'priekšskatījums',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -119,11 +121,11 @@ const additionalInfoTitle = computed(() => {
         </div>
 
         <div class="lx-download-icon" v-if="props.hasDownloadButton">
-          <LxIcon v-if="props.hasDownloadButton" value="download"></LxIcon>
+          <LxIcon v-if="props.hasDownloadButton" value="download" />
         </div>
       </div>
       <div class="lx-file-indicators" v-if="props.customItem.state">
-        <LxLoader v-if="props.customItem.state === 'loading'" :loading="true" size="s"></LxLoader>
+        <LxLoader v-if="props.customItem.state === 'loading'" :loading="true" size="s" />
         <LxIcon
           v-if="props.customItem.state === 'invalid'"
           customClass="lx-invalidation-icon"
@@ -164,7 +166,7 @@ const additionalInfoTitle = computed(() => {
         :class="{ 'small-preview': reactiveContainerElementWidth < 280 }"
       >
         <div class="lx-file-preview-wrapper">
-          <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview"></div>
+          <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview" />
           <div class="lx-file-preview" v-else>
             <LxIcon v-if="!props.imagePreview" customClass="lx-icon" :value="props.defaultIcon" />
 
@@ -185,7 +187,15 @@ const additionalInfoTitle = computed(() => {
               />
             </template>
 
-            <img v-if="props.imagePreview" :src="props.imagePreview" alt="Image Preview" />
+            <img
+              v-if="props.imagePreview"
+              :src="props.imagePreview"
+              :alt="
+                customItem?.name
+                  ? `${customItem?.name} ${displayTexts.metaPreviewDescription}`
+                  : displayTexts.metaPreviewLabel
+              "
+            />
             <div
               class="lx-file-info-button"
               :class="{ 'lx-icon-only-button': infoButtonVariant === 'icon-only' }"
@@ -311,7 +321,7 @@ const additionalInfoTitle = computed(() => {
             </div>
 
             <div class="lx-download-icon" v-if="props.hasDownloadButton">
-              <LxIcon v-if="props.hasDownloadButton" value="download"></LxIcon>
+              <LxIcon v-if="props.hasDownloadButton" value="download" />
             </div>
           </div>
 
@@ -357,8 +367,16 @@ const additionalInfoTitle = computed(() => {
       </div>
       <template #panel>
         <div class="lx-file-preview">
-          <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview"></div>
-          <img v-else :src="props.imagePreview" alt="Image Preview" />
+          <div class="lx-skeleton-file-preview" v-if="isUploading && !props.imagePreview" />
+          <img
+            v-else
+            :src="props.imagePreview"
+            :alt="
+              customItem?.name
+                ? `${customItem?.name} ${displayTexts.metaPreviewDescription}`
+                : displayTexts.metaPreviewLabel
+            "
+          />
         </div>
       </template>
     </LxInfoWrapper>

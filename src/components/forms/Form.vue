@@ -1029,19 +1029,20 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
               </p>
               <div class="lx-button-set">
                 <div
-                  class="additional-index-button lx-button lx-button-ghost"
                   v-for="i in modifiedIndexRef"
+                  class="additional-index-button lx-button lx-button-ghost"
                   :key="i.id"
                   ref="indexItems"
                   :class="[
                     { 'lx-active': findIfSectionSelected(i.id) },
                     { 'lx-invalid': i?.invalid },
                   ]"
+                  :title="i.invalid ? i.invalidationMessage : ''"
+                  tabindex="0"
+                  role="button"
                   v-on:keyup.enter="scrollTo(i.id)"
                   v-on:keyup.space="scrollTo(i.id)"
                   @click="scrollTo(i.id)"
-                  :title="i.invalid ? i.invalidationMessage : ''"
-                  tabindex="0"
                 >
                   <div class="lx-button-content-wrapper">
                     <p>{{ i.name }}</p>
@@ -1078,10 +1079,11 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
                   { 'lx-active': findIfSectionSelected(i.id) },
                   { 'lx-invalid': i?.invalid },
                 ]"
-                v-on:keyup.enter="scrollTo(i.id)"
-                v-on:keyup.space="scrollTo(i.id)"
                 :title="i.invalid ? i.invalidationMessage : ''"
                 tabindex="0"
+                role="button"
+                v-on:keyup.enter="scrollTo(i.id)"
+                v-on:keyup.space="scrollTo(i.id)"
                 @click="scrollTo(i.id)"
               >
                 <div class="lx-button-content-wrapper">

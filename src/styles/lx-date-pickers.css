@@ -95,14 +95,6 @@
 .lx .lx-layout .lx-calendar-container
   .lx-calendar-header
   .lx-button.lx-calendar-years-select-button
-  svg,
-.lx .lx-layout .lx-calendar-container
-  .lx-calendar-header
-  .lx-button.lx-calendar-months-select-button
-  svg,
-.lx .lx-layout .lx-calendar-container
-  .lx-calendar-header
-  .lx-button.lx-calendar-years-select-button
   svg {
   width: 1.25rem;
   height: 1.25rem;
@@ -993,9 +985,6 @@
   background-color: var(--color-data);
 }
 
-/* .lx .lx-layout .lx-date-time-picker-wrapper .lx-datepicker-default .lx-calendar-container {
-  background-color: var(--color-background);
-} */
 
 @media (max-width: 640px) {
   .lx .lx-layout .lx-calendar-container .lx-calendar-layouts-wrapper,

@@ -1383,16 +1383,13 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx-value-picker-wrapper .lx-component-toolbar {
   margin-bottom: 0.5rem;
+  border-top: 1px solid transparent;
 }
 
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area,
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group,
 .lx-value-picker-wrapper .lx-component-toolbar > .first-row > .left-area > .lx-group > .lx-field-wrapper {
   width: 100%;
-}
-
-.lx-value-picker-wrapper .lx-component-toolbar {
-  border-top: 1px solid transparent;
 }
 
 .lx-value-picker-wrapper .lx-component-toolbar .left-area > .lx-group {
