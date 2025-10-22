@@ -77,7 +77,6 @@ const refQuery = ref();
 const refRoot = ref();
 const refListbox = ref();
 const query = ref();
-const activeQuery = ref();
 const loadingState = ref(false);
 const allItems = ref([]);
 const itemsModel = ref({});
@@ -203,15 +202,24 @@ const queryDebounceValue = computed(() =>
   typeof props.queryDebounce === 'string' ? Number(props.queryDebounce) : props.queryDebounce
 );
 
+const latestRequestId  = ref(0);
+
 const debouncedSearchReq = useDebounceFn(async (val) => {
   if (typeof props.items === 'function') {
     menuOpen.value = false;
 
+    latestRequestId.value = latestRequestId.value + 1;
+    const requestId = latestRequestId.value;
+
     loadingState.value = true;
-    activeQuery.value = val;
-    const items = await props.items(val);
-    allItems.value = items;
-    loadingState.value = activeQuery.value !== val;
+
+    try {
+      const items = await props.items(val);
+      if (requestId !== latestRequestId.value) return;
+      allItems.value = items;
+    } finally {
+      if (requestId === latestRequestId.value) loadingState.value = false;
+    }
 
     openMenu(false);
   }
@@ -972,8 +980,8 @@ watch(
   }
 );
 
-watch([hasValue, query, menuOpen], ([newHasValue, newQuery, newMenuOpen]) => {
-  if ((!newHasValue && !newMenuOpen) || (newHasValue && !newMenuOpen)) {
+watch([hasValue, query, menuOpen, loadingState], ([newHasValue, newQuery, newMenuOpen, isLoading]) => {
+  if (!isLoading && ((!newHasValue && !newMenuOpen) || (newHasValue && !newMenuOpen))) {
     inputReadonly.value = true;
   } else {
     inputReadonly.value = false;
