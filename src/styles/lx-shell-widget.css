@@ -203,6 +203,7 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button::after {
 
 .lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-alert-menu::before,
 .lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-help-button::before,
+.lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-spotlight-button::before,
 .lx.lx-layout-default .lx-header > .lx-group > :not(:last-child).lx-mega-menu::before {
   position: absolute;
   z-index: 10;

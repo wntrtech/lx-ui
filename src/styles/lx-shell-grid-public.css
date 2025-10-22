@@ -230,6 +230,7 @@
 .lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-alert-menu::before,
 .lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-theme-menu::before,
 .lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-help-button::before,
+.lx .lx-layout.lx-layout-public .lx-header>.lx-right-group .lx-spotlight-button::before,
 .lx .lx-layout.lx-layout-public .lx-header>.lx-right-group #nav-toggle::before {
   display: none;
 }
@@ -306,8 +307,13 @@
   grid-template-columns: 1fr var(--body-column-size) 1fr;
 }
 
-.lx-layout.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-button-content-wrapper .lx-badge {
+.lx-layout.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton) > .lx-button-content-wrapper .lx-badge,
+.lx-layout.lx-layout-public .lx-spotlight-button .lx-button:not(#userMenuButton) > .lx-button-content-wrapper .lx-badge {
   border-color: var(--color-region);
+}
+
+.lx-layout.lx-layout-public .lx-nav-panel .lx-spotlight-button .lx-button:not(#userMenuButton)>.lx-button-content-wrapper .lx-badge {
+  border-color: var(--color-nav-background);
 }
 
 .lx-layout.lx-layout-public .lx-alert-menu .lx-button:not(#userMenuButton):hover > .lx-button-content-wrapper.lx-badge {
@@ -543,7 +549,8 @@
   }
 
   .lx-layout-public .lx-nav-panel ul li > .lx-button,
-  .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button {
+  .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button,
+  .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button {
     justify-content: left;
     width: 100%;
   }

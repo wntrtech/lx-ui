@@ -77,6 +77,9 @@ const props = defineProps({
   customButtonBlink: { type: Boolean, default: false },
   customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
 
+  hasSpotlight: { type: Boolean, default: false },
+  spotlightHasBadge: { type: Boolean, default: true },
+
   texts: { type: Object, default: () => {} },
 });
 
@@ -144,6 +147,7 @@ const emits = defineEmits([
   'update:selectedMegaMenuItem',
   'update:customButtonOpened',
   'customButtonClick',
+  'toggleSpotlight',
 ]);
 
 const alternativeProfilesModal = ref();
@@ -534,6 +538,8 @@ provide('insideHeader', insideHeader);
         v-model:isTouchSensitive="touchModeModel"
         v-model:selectedContextPerson="selectedContextPersonModel"
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
+        :hasSpotlight="hasSpotlight"
+        :spotlightHasBadge="spotlightHasBadge"
         @mega-menu-show-all-click="triggerShowAllClick"
         @open-alternative-profiles-modal="openAlternativeProfilesModal"
         @open-context-person-modal="openContextPersonModal"
@@ -543,6 +549,7 @@ provide('insideHeader', insideHeader);
         @help-click="helpClicked"
         @log-out="logOut"
         @customButtonClick="emits('customButtonClick')"
+        @toggleSpotlight="emits('toggleSpotlight')"
         :texts="displayTexts"
       >
         <template #customButtonPanel v-if="$slots.customButtonPanel">
@@ -602,6 +609,8 @@ provide('insideHeader', insideHeader);
       v-model:hasDeviceFonts="deviceFontsModel"
       v-model:isTouchSensitive="touchModeModel"
       v-model:selectedContextPerson="selectedContextPersonModel"
+      :hasSpotlight="hasSpotlight"
+      :spotlightHasBadge="spotlightHasBadge"
       @open-alternative-profiles-modal="openAlternativeProfilesModal"
       @open-context-person-modal="openContextPersonModal"
       @language-changed="languageChanged"
@@ -610,6 +619,7 @@ provide('insideHeader', insideHeader);
       @help-click="helpClicked"
       @log-out="logOut"
       @customButtonClick="emits('customButtonClick')"
+      @toggleSpotlight="emits('toggleSpotlight')"
       :texts="displayTexts"
     >
       <template #customButtonPanel v-if="$slots.customButtonPanel">

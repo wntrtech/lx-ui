@@ -57,6 +57,9 @@ const props = defineProps({
   customButtonBlink: { type: Boolean, default: false },
   customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
 
+  hasSpotlight: { type: Boolean, default: false },
+  spotlightHasBadge: { type: Boolean, default: false },
+
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
   selectedMegaMenuItem: { type: String, default: null },
@@ -124,6 +127,7 @@ const emits = defineEmits([
   'update:customButtonOpened',
   'customButtonClick',
   'update:selectedMegaMenuItem',
+  'toggleSpotlight',
 ]);
 
 const windowSize = useWindowSize();
@@ -518,6 +522,11 @@ const navPanel = ref();
 
 const isResponsiveView = computed(() => windowSize.width.value <= 1000);
 
+function toggleSpotlight() {
+  emits('nav-toggle', true);
+  emits('toggleSpotlight');
+}
+
 provide('insideNavBar', insideNavBar);
 onClickOutside(navPanel, toggleNavBar);
 </script>
@@ -778,6 +787,17 @@ onClickOutside(navPanel, toggleNavBar);
       </li>
     </ul>
     <ul class="lx-nav-group">
+      <li v-if="hasSpotlight">
+        <LxButton
+          customClass="lx-header-button"
+          kind="ghost"
+          icon="information"
+          :label="displayTexts.spotlight.label"
+          :disabled="headerNavDisable"
+          :badge="spotlightHasBadge ? ' ' : null"
+          @click="toggleSpotlight"
+        />
+      </li>
       <li class="lx-help-button" v-if="props.hasHelp">
         <LxButton
           customClass="lx-header-button"

@@ -32,6 +32,7 @@ import LxMainHeaderDigimaksLite from '@/components/shell/HeaderDigimaksLite.vue'
 import LxRow from '@/components/forms/Row.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
+import LxSpotlight from '@/components/Spotlight.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const themeModel = useColorMode({
@@ -77,6 +78,8 @@ const emits = defineEmits([
   'update:customButtonOpened',
   'update:customButtonBlink',
   'customButtonClick',
+  'update:spotlightItemCurrent',
+  'spotlightShowMore',
 ]);
 
 const props = defineProps({
@@ -171,6 +174,13 @@ const props = defineProps({
 
   routeName: { type: String, default: null },
   overrideDefaultStyles: { type: Boolean, default: true },
+
+  spotlightItems: { type: Array, default: () => [] },
+  spotlightItemCurrent: { type: String, default: undefined },
+  spotlightHasCounter: { type: Boolean, default: true },
+  spotlightHasShowMore: { type: Boolean, default: false },
+  spotlightHasBadge: { type: Boolean, default: true },
+
   texts: { type: Object, default: () => {} },
 });
 
@@ -243,6 +253,14 @@ const textsDefault = {
     warning: 'brīdinājums',
     good: 'sekmīgs paziņojums',
     important: 'svarīgs paziņojums',
+  },
+  spotlight: {
+    label: 'Lietotnes ceļvedis',
+    close: 'Aizvērt',
+    next: 'Tālāk',
+    back: 'Atpakaļ',
+    showMore: 'Uzzināt vairāk',
+    of: 'no',
   },
 };
 
@@ -893,6 +911,68 @@ watch(
     }
   }
 );
+
+// Spotlight
+
+const spotlight = ref();
+const spotlightVisible = ref(false);
+
+const spotlightFallback = ref(null);
+
+const spotlightItemCurrentModel = computed({
+  get() {
+    if (props.spotlightItemCurrent === undefined) {
+      return spotlightFallback.value;
+    }
+    return props.spotlightItemCurrent;
+  },
+  set(value) {
+    spotlightFallback.value = value;
+    emits('update:spotlightItemCurrent', value);
+  },
+});
+
+function spotlightStart() {
+  if (spotlight.value) {
+    spotlight.value.setSpotlightItem();
+  }
+}
+
+function spotlightEnd() {
+  if (spotlight.value) {
+    spotlight.value.spotlightEnd();
+  }
+}
+
+function toggleSpotlight() {
+  if (spotlightVisible.value) spotlightEnd();
+  else spotlightStart();
+}
+
+const domRefreshTrigger = ref(0);
+
+const viewSpotlightItems = computed(() => {
+  // eslint-disable-next-line no-unused-expressions
+  domRefreshTrigger.value;
+  return props.spotlightItems?.filter(
+    (x) => x?.elementId === null || document.getElementById(x?.elementId) != null
+  );
+});
+
+useMutationObserver(
+  document.body, // target element
+  () => {
+    domRefreshTrigger.value += 1;
+  },
+  {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['id'],
+  }
+);
+
+defineExpose({ spotlightStart, spotlightEnd });
 </script>
 <template>
   <transition name="shell-switch">
@@ -932,6 +1012,8 @@ watch(
           :customButtonBadgeType="customButtonBadgeType"
           :customButtonBadgeIcon="customButtonBadgeIcon"
           :customButtonKind="customButtonKind"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
           v-model:customButtonOpened="customButtonOpenedModal"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
@@ -951,6 +1033,7 @@ watch(
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @customButtonClick="emits('customButtonClick')"
+          @toggleSpotlight="toggleSpotlight"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1063,6 +1146,8 @@ watch(
           :customButtonBadgeIcon="customButtonBadgeIcon"
           :customButtonKind="customButtonKind"
           v-model:customButtonOpened="customButtonOpenedModal"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
@@ -1081,6 +1166,7 @@ watch(
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @customButtonClick="emits('customButtonClick')"
+          @toggleSpotlight="toggleSpotlight"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1226,6 +1312,8 @@ watch(
           :context-persons-info="contextPersonsInfo"
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @language-changed="languageChanged"
@@ -1237,6 +1325,7 @@ watch(
           @log-out="logOut"
           @nav-toggle="navToggle"
           @customButtonClick="emits('customButtonClick')"
+          @toggleSpotlight="toggleSpotlight"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1269,12 +1358,15 @@ watch(
           :texts="displayTexts"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           @nav-toggle="navToggle"
           @navClick="navClick"
+          @toggleSpotlight="toggleSpotlight"
         />
       </nav>
       <main ref="main" class="lx-main">
@@ -1365,6 +1457,8 @@ watch(
           :customButtonBadgeType="customButtonBadgeType"
           :customButtonBadgeIcon="customButtonBadgeIcon"
           :customButtonKind="customButtonKind"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
           v-model:customButtonOpened="customButtonOpenedModal"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
@@ -1390,6 +1484,7 @@ watch(
           @log-out="logOut"
           @nav-toggle="navToggle"
           @customButtonClick="emits('customButtonClick')"
+          @toggleSpotlight="toggleSpotlight"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -1426,8 +1521,11 @@ watch(
           v-model:isTouchSensitive="touchModeModel"
           :selectedNavItems="navItemsSelected"
           :texts="displayTexts"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
           @nav-toggle="navToggle"
           @navClick="navClick"
+          @toggleSpotlight="toggleSpotlight"
         />
       </nav>
       <ul class="lx-latvijalv-alert-list" v-if="alerts?.length > 0 && !hasAlerts">
@@ -1724,6 +1822,8 @@ watch(
           :customButtonBadgeIcon="customButtonBadgeIcon"
           :customButtonKind="customButtonKind"
           v-model:customButtonOpened="customButtonOpenedModal"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:selectedContextPerson="selectedContextPersonModel"
@@ -1744,6 +1844,7 @@ watch(
           @alternative-profile-changed="alternativeProfileChanged"
           @navClick="navClick"
           @customButtonClick="emits('customButtonClick')"
+          @toggleSpotlight="toggleSpotlight"
           :texts="displayTexts"
         >
           <template #customButtonPanel v-if="$slots.customButtonPanel">
@@ -1822,6 +1923,8 @@ watch(
           :customButtonBadgeType="customButtonBadgeType"
           :customButtonBadgeIcon="customButtonBadgeIcon"
           :customButtonKind="customButtonKind"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
@@ -1842,6 +1945,7 @@ watch(
           @log-out="logOut"
           @navClick="navClick"
           @nav-toggle="navToggle"
+          @toggleSpotlight="toggleSpotlight"
         >
           <template #customButtonPanel v-if="$slots.customButtonPanel">
             <slot name="customButtonPanel" />
@@ -2152,6 +2256,8 @@ watch(
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
           @language-changed="languageChanged"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
@@ -2163,6 +2269,7 @@ watch(
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @customButtonClick="emits('customButtonClick')"
+          @toggleSpotlight="toggleSpotlight"
           :texts="displayTexts"
         >
           <template v-if="!systemIcon" #logo>
@@ -2194,12 +2301,15 @@ watch(
           :texts="displayTexts"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
-          @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+          :hasSpotlight="viewSpotlightItems?.length > 0"
+          :spotlightHasBadge="spotlightHasBadge"
+          @mega-menu-show-all-click="triggerShowAllClick"
           @nav-toggle="navToggle"
           @navClick="navClick"
+          @toggleSpotlight="toggleSpotlight"
         />
       </nav>
 
@@ -2302,5 +2412,18 @@ watch(
   >
     <p>{{ confirmDialogData?.$state.confirmDialogState.message }}</p>
   </LxModal>
+
+  <LxSpotlight
+    ref="spotlight"
+    :items="viewSpotlightItems"
+    :hasItemCounter="spotlightHasCounter"
+    :hasShowMore="spotlightHasShowMore"
+    :shellMode="mode"
+    :shellNavItems="navItems"
+    :texts="displayTexts.spotlight"
+    v-model="spotlightItemCurrentModel"
+    v-model:visible="spotlightVisible"
+    @showMore="emits('spotlightShowMore', spotlightItemCurrentModel)"
+  />
   <Notification v-model="notificationModel" />
 </template>

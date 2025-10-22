@@ -426,7 +426,8 @@
 .end-section .shell-buttons.theme-menu,
 .end-section .shell-buttons.language-menu,
 .end-section .shell-buttons.help,
-.end-section .shell-buttons.custom-button {
+.end-section .shell-buttons.custom-button,
+.end-section .shell-buttons.lx-spotlight-button {
   border-right: var(--color-chrome) 1px solid;
   padding-right: 0.5rem;
 }

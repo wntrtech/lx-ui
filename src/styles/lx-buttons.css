@@ -282,7 +282,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar .lx-button svg,
 .lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button svg,
-.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button svg {
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button svg,
+.lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button svg,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button svg {
   fill: var(--color-button-nav-public-icon);
 }
 
@@ -291,7 +293,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button:hover svg,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button:hover svg,
 .lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button:hover svg,
-.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover svg {
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover svg,
+.lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button:hover svg,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button:hover svg {
   fill: var(--color-button-nav-public-icon-hover);
 }
 
@@ -744,7 +748,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button,
 .lx-layout-public .lx-nav-panel ul li>.lx-context-container .lx-dropdown-toggler .lx-button,
-.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button {
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button,
+.lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button {
   flex-direction: row;
   justify-content: center;
   padding: var(--button-nav-public-padding);
@@ -765,7 +771,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-public .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
-.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper {
+.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
+.lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper {
   grid-template-areas: var(--button-nav-public-grid-areas);
   grid-template-columns: var(--button-nav-public-grid-template-columns);
   grid-template-rows: var(--button-nav-public-grid-template-rows);
@@ -782,7 +790,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-public .lx-nav-panel ul li > .lx-button .lx-button-content,
 .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content,
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button .lx-button-content,
-.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content {
+.lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content,
+.lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content {
   text-align: var(--button-nav-public-text-align);
 }
 
@@ -791,7 +801,9 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button:hover,
 .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button:hover,
 .lx-layout-public .lx-nav-panel ul li > .lx-context-container .lx-dropdown-toggler .lx-button:hover,
-.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover {
+.lx-layout.lx-layout-public > nav > .lx-button.scroll-up-button:hover,
+.lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button:hover,
+.lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button:hover {
   background-color: var(--color-button-nav-public-hover-background);
   border-color: var(--color-button-nav-public-hover-border);
   color: var(--color-button-nav-public-hover);
@@ -2268,7 +2280,9 @@ a.lx-button.lx-button-ghost svg {
   .lx .lx-layout-public .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
   .lx .lx-layout-public .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
   .lx .lx-layout-latvijalv .lx-nav-panel ul li > .lx-button .lx-button-content-wrapper,
-  .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper {
+  .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-toolbar > .lx-button .lx-button-content-wrapper,
+  .lx .lx-layout-public .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper ,
+  .lx .lx-layout-latvijalv .lx-nav-panel ul .lx-spotlight-button .lx-button .lx-button-content-wrapper {
     --button-nav-public-grid-areas: 'icon content';
     --button-nav-public-grid-template-columns: auto 1fr;
     --button-nav-public-text-align: left;

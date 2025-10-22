@@ -63,6 +63,9 @@ const props = defineProps({
   customButtonBlink: { type: Boolean, default: false },
   customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
 
+  hasSpotlight: { type: Boolean, default: false },
+  spotlightHasBadge: { type: Boolean, default: false },
+
   breadcrumbs: {
     type: Array,
     required: false,
@@ -153,6 +156,7 @@ const emits = defineEmits([
   'language-changed',
   'update:customButtonOpened',
   'customButtonClick',
+  'toggleSpotlight',
 ]);
 
 function logOut() {
@@ -563,6 +567,17 @@ provide('insideHeader', insideHeader);
     </div>
 
     <div class="lx-digives-header-row end-section">
+      <div class="shell-buttons lx-spotlight-button" v-if="hasSpotlight">
+        <LxButton
+          kind="ghost"
+          icon="information"
+          :label="displayTexts.spotlight.label"
+          :variant="'icon-only'"
+          :disabled="headerNavDisable"
+          :badge="spotlightHasBadge ? ' ' : null"
+          @click="emits('toggleSpotlight')"
+        />
+      </div>
       <div class="shell-buttons help" v-if="hasHelp">
         <LxButton
           customClass="lx-header-button"

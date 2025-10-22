@@ -40,6 +40,9 @@ const props = defineProps({
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
 
+  hasSpotlight: { type: Boolean, default: false },
+  spotlightHasBadge: { type: Boolean, default: true },
+
   texts: {
     type: Object,
     required: false,
@@ -132,6 +135,7 @@ const emits = defineEmits([
   'navClick',
   'update:selectedMegaMenuItem',
   'megaMenuShowAllClick',
+  'toggleSpotlight',
 ]);
 
 function navToggle(ev) {
@@ -227,6 +231,11 @@ function scrollUp() {
   });
 }
 
+function toggleSpotlight() {
+  emits('nav-toggle', true);
+  emits('toggleSpotlight');
+}
+
 provide('insideNavBar', insideNavBar);
 </script>
 <template>
@@ -289,6 +298,8 @@ provide('insideNavBar', insideNavBar);
         :languages="languages"
         :has-theme-picker="hasThemePicker"
         :available-themes="availableThemes"
+        :has-spotlight="hasSpotlight"
+        :spotlight-has-badge="spotlightHasBadge"
         v-model:selectedLanguage="selectedLanguageModel"
         v-model:theme="themeModel"
         v-model:hasAnimations="animationsModel"
@@ -296,6 +307,7 @@ provide('insideNavBar', insideNavBar);
         v-model:hasDeviceFonts="deviceFontsModel"
         v-model:isTouchSensitive="touchModeModel"
         :texts="displayTexts"
+        @toggleSpotlight="toggleSpotlight"
       />
     </ul>
 

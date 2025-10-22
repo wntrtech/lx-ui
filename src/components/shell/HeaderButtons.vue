@@ -56,6 +56,9 @@ const props = defineProps({
   customButtonBlink: { type: Boolean, default: false },
   customButtonKind: { type: String, default: 'dropdown' }, // 'button' or 'dropdown'
 
+  hasSpotlight: { type: Boolean, default: false },
+  spotlightHasBadge: { type: Boolean, default: true },
+
   texts: {
     type: Object,
     required: false,
@@ -122,6 +125,7 @@ const emits = defineEmits([
   'update:selectedMegaMenuItem',
   'update:customButtonOpened',
   'customButtonClick',
+  'toggleSpotlight',
 ]);
 
 const windowSize = useWindowSize();
@@ -514,10 +518,26 @@ watch(
     }
   }
 );
+
+function toggleSpotlight() {
+  emits('toggleSpotlight');
+}
 </script>
 
 <template>
   <div class="lx-group" v-if="!hasNavBar">
+    <div class="lx-spotlight-button" v-if="hasSpotlight">
+      <LxButton
+        customClass="lx-header-button"
+        kind="ghost"
+        icon="information"
+        :label="displayTexts.spotlight.label"
+        :variant="'icon-only'"
+        :disabled="headerNavDisable"
+        :badge="spotlightHasBadge ? ' ' : null"
+        @click="toggleSpotlight"
+      />
+    </div>
     <div class="lx-help-button" v-if="hasHelp">
       <LxButton
         customClass="lx-header-button"
@@ -863,6 +883,19 @@ watch(
               />
             </div>
           </LxDropDownMenu>
+        </div>
+      </li>
+      <li v-if="hasSpotlight" class="lx-spotlight-button">
+        <div>
+          <LxButton
+            customClass="lx-header-button"
+            kind="ghost"
+            icon="information"
+            :label="displayTexts.spotlight.label"
+            :disabled="headerNavDisable"
+            :badge="spotlightHasBadge ? ' ' : null"
+            @click="toggleSpotlight"
+          />
         </div>
       </li>
     </ul>
