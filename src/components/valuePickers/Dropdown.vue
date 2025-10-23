@@ -63,9 +63,12 @@ const textsDefault = {
   notSelected: 'Nav izvēlēts',
   searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
   selectAll: 'Izvēlēties visu',
+  noItemsMessage: 'Nav pieejamu vērtību',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
+const noItemsMessage = computed(() => displayTexts.value.noItemsMessage);
 
 const model = computed({
   get() {
@@ -337,6 +340,15 @@ const filteredItems = computed(() => {
   return items;
 });
 
+
+const isItemsEmpty = computed(() => {
+  if (!Array.isArray(filteredItems.value)) return true;
+  if (props.hasSelectAll && props.kind === 'multiple') {
+    return filteredItems.value.length <= 1;
+  }
+  return filteredItems.value.length === 0;
+});
+
 function closeDropDownDefault() {
   if (menuOpen.value) {
     menuOpen.value = false;
@@ -595,6 +607,7 @@ const firstFocusableIndex = computed(() =>
       :disabled="disabled"
       :invalid="invalid"
       :invalidation-message="invalidationMessage"
+      :texts="displayTexts"
       kind="default"
       :placeholder="placeholder"
       :variant="variantDropdown"
@@ -696,6 +709,13 @@ const firstFocusableIndex = computed(() =>
             >
               <slot name="panel" @click="closeDropDownDefault()">
                 <div class="lx-dropdown-panel" tabindex="-1" role="listbox">
+                  <template v-if="isItemsEmpty">
+                      <div class="lx-empty">
+                        <LxIcon value="info" />
+                        <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
+                      <p>{{ noItemsMessage }}</p>
+                    </div>
+                  </template>  
                   <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
                     <!-- Inject "Select All" just before the first item -->
                     <div
@@ -703,7 +723,7 @@ const firstFocusableIndex = computed(() =>
                         index === 0 &&
                         hasSelectAll &&
                         kind === 'multiple' &&
-                        filteredItems.length > 0
+                        !isItemsEmpty
                       "
                       id="select-all"
                       class="lx-value-picker-item select-all"

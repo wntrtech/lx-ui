@@ -7,7 +7,7 @@ import LxStateDisplay from '@/components/StateDisplay.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxPopper from '@/components/Popper.vue';
 import { generateUUID } from '@/utils/stringUtils';
-import { focusNextFocusableElement } from '@/utils/generalUtils';
+import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -31,6 +31,7 @@ const props = defineProps({
     type: [Number, String],
     default: 0,
   },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const emits = defineEmits(['update:modelValue', 'change']);
@@ -42,6 +43,16 @@ const panelWidth = ref();
 const highlightedItemId = ref(null);
 
 const panelRef = ref();
+
+const textsDefault = {
+  noItemsMessage: 'Nav pieejamu vērtību',
+};
+
+const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
+
+const noItemsMessage = computed(
+  () => displayTexts.value.noItemsMessage ?? textsDefault.noItemsMessage
+);
 
 const { activate, deactivate } = useFocusTrap(panelRef, {
   allowOutsideClick: true,
@@ -267,6 +278,10 @@ function onUp() {
     }
   }
 }
+
+const isItemsEmpty = computed(
+  () => !Array.isArray(filteredItems.value) || filteredItems.value.length === 0
+);
 
 function focusNextInputElement() {
   onDown();
@@ -528,6 +543,13 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
             >
               <slot name="panel" @click="closeDropDownDefault()">
                 <div class="lx-dropdown-panel" tabindex="-1" role="listbox">
+                  <template v-if="isItemsEmpty">
+                    <div class="lx-empty">
+                      <LxIcon value="info" />
+                      <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
+                      <p>{{ noItemsMessage }}</p>
+                    </div>
+                  </template>
                   <template v-if="filteredItems?.length">
                     <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
                       <div
