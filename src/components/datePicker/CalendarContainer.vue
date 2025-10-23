@@ -5,7 +5,7 @@ import { useWindowSize, onClickOutside } from '@vueuse/core';
 
 import { formatLocalizedDate } from '@/utils/dateUtils';
 import { capitalizeFirstLetter, generateUUID } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import { getDisplayTexts, isDefined, isNil } from '@/utils/generalUtils';
 import {
   normalizeDate,
   getTimeOrderIndex,
@@ -29,8 +29,6 @@ import {
   quarterFromMonth,
   findDecadeStartYear,
   isStartOrEndYear,
-  isDefined,
-  isNil,
 } from '@/components/datePicker/helpers';
 
 import LxButton from '@/components/Button.vue';

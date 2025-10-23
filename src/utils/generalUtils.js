@@ -111,3 +111,36 @@ export function getDisplayTexts(textsPassed, textsDefault, noCopy) {
 
   return ret;
 }
+
+/**
+ * Checks whether a value is `null` or `undefined`.
+ *
+ * @param {*} v - The value to check.
+ * @returns {boolean} `true` if the value is `null` or `undefined`, otherwise `false`.
+ */
+export const isNil = (v) => v === null || v === undefined;
+
+/**
+ * Checks whether a value is not `null` or `undefined`.
+ *
+ * @param {*} v - The value to check.
+ * @returns {boolean} `true` if the value is neither `null` nor `undefined`, otherwise `false`.
+ */
+export const isDefined = (v) => v !== null && v !== undefined;
+
+/**
+ * Checks whether a value is empty.
+ * A value is considered empty if it is `null`, `undefined`, or an empty string (`''`).
+ *
+ * @param {*} v - The value to check.
+ * @returns {boolean} `true` if the value is empty, otherwise `false`.
+ */
+export const isEmpty = (v) => v === null || v === undefined || v === '';
+
+/**
+ * Checks whether a value is a boolean.
+ *
+ * @param {*} v - The value to check.
+ * @returns {boolean} `true` if the value is a boolean (`true` or `false`), otherwise `false`.
+ */
+export const isBoolean = (v) => typeof v === 'boolean';

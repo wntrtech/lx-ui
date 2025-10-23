@@ -3,7 +3,13 @@ import { ref, computed, onMounted, nextTick, watch, inject } from 'vue';
 import { onClickOutside, useDebounceFn } from '@vueuse/core';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
 import { generateUUID, textSearch } from '@/utils/stringUtils';
-import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import {
+  focusNextFocusableElement,
+  getDisplayTexts,
+  isBoolean,
+  isDefined,
+  isNil,
+} from '@/utils/generalUtils';
 import { logWarn, logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import LxPopper from '@/components/Popper.vue';
@@ -76,7 +82,7 @@ const refAutocomplete = ref();
 const refQuery = ref();
 const refRoot = ref();
 const refListbox = ref();
-const query = ref();
+const query = ref(null);
 const loadingState = ref(false);
 const allItems = ref([]);
 const itemsModel = ref({});
@@ -102,11 +108,11 @@ const finalQuery = computed(() => {
   return formatFinalQuery(query.value);
 });
 
-const convertBooleanToString = (value) => (typeof value === 'boolean' ? value.toString() : value);
+const convertBooleanToString = (v) => (isBoolean(v) ? v.toString() : v);
 
 const model = computed({
   get: () => {
-    if (props.modelValue !== undefined && props.modelValue !== null) {
+    if (isDefined(props.modelValue)) {
       return convertBooleanToString(props.modelValue);
     }
     return null;
@@ -202,11 +208,13 @@ const queryDebounceValue = computed(() =>
   typeof props.queryDebounce === 'string' ? Number(props.queryDebounce) : props.queryDebounce
 );
 
-const latestRequestId  = ref(0);
+const latestRequestId = ref(0);
 
 const debouncedSearchReq = useDebounceFn(async (val) => {
   if (typeof props.items === 'function') {
-    menuOpen.value = false;
+    if (menuOpen.value) {
+      menuOpen.value = false;
+    }
 
     latestRequestId.value = latestRequestId.value + 1;
     const requestId = latestRequestId.value;
@@ -215,19 +223,22 @@ const debouncedSearchReq = useDebounceFn(async (val) => {
 
     try {
       const items = await props.items(val);
+
       if (requestId !== latestRequestId.value) return;
       allItems.value = items;
     } finally {
       if (requestId === latestRequestId.value) loadingState.value = false;
     }
 
-    openMenu(false);
+    if (isDefined(val)) {
+      openMenu(false);
+    }
   }
 }, queryDebounceValue);
 
 watch(
   query,
-  async (newValue, oldValue) => {
+  async (newValue, oldValue = null) => {
     if (shouldWarnAboutQueryMinLength()) {
       return;
     }
@@ -256,6 +267,7 @@ function shouldWarnAboutQueryMinLength() {
       "To take effect, props 'queryMinLength' and 'queryDebounce' must be used with an async items function!",
       globalEnvironment
     );
+
     return true;
   }
   return false;
@@ -394,6 +406,7 @@ function handlePrintableOrDeleteKeys(e) {
   }
   return false;
 }
+
 function handleTouchStart() {
   inputReadonly.value = false; // Allow touch input interaction
 }
@@ -918,12 +931,9 @@ function selectionChanged(selectedValue) {
 
 const displayReadOnlyPlaceholder = computed(() => {
   if (
-    (props.selectingKind === 'single' &&
-      (selectedItem.value === null || selectedItem.value === undefined)) ||
+    (props.selectingKind === 'single' && isNil(selectedItem.value)) ||
     (props.selectingKind === 'multiple' &&
-      (selectedItems.value === null ||
-        selectedItems.value === undefined ||
-        selectedItems.value?.length === 0))
+      (isNil(selectedItems.value) || selectedItems.value?.length === 0))
   ) {
     return true;
   }
@@ -980,13 +990,16 @@ watch(
   }
 );
 
-watch([hasValue, query, menuOpen, loadingState], ([newHasValue, newQuery, newMenuOpen, isLoading]) => {
-  if (!isLoading && ((!newHasValue && !newMenuOpen) || (newHasValue && !newMenuOpen))) {
-    inputReadonly.value = true;
-  } else {
-    inputReadonly.value = false;
+watch(
+  [hasValue, query, menuOpen, loadingState],
+  ([newHasValue, newQuery, newMenuOpen, isLoading]) => {
+    if (!isLoading && ((!newHasValue && !newMenuOpen) || (newHasValue && !newMenuOpen))) {
+      inputReadonly.value = true;
+    } else {
+      inputReadonly.value = false;
+    }
   }
-});
+);
 
 const activateTrap = () => {
   try {
@@ -1509,7 +1522,7 @@ onMounted(() => {
                     <template
                       v-if="
                         finalQuery &&
-                        finalQuery.length >= props.queryMinLength &&
+                        finalQuery.length >= queryMinLength &&
                         !filteredItems?.length &&
                         !loadingState
                       "
@@ -1538,9 +1551,9 @@ onMounted(() => {
                         <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
                         <p>
                           {{
-                            props.queryMinLength % 10 === 1 && props.queryMinLength !== 11
-                              ? displayTexts.tryEndingWith1?.replace('{0}', props.queryMinLength)
-                              : displayTexts.try?.replace('{0}', props.queryMinLength)
+                            queryMinLength % 10 === 1 && queryMinLength !== 11
+                              ? displayTexts.tryEndingWith1?.replace('{0}', queryMinLength)
+                              : displayTexts.try?.replace('{0}', queryMinLength)
                           }}
                         </p>
                       </div>

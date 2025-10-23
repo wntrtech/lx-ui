@@ -13,9 +13,8 @@ import {
 } from 'date-fns';
 import useLx from '@/hooks/useLx';
 import { DATE_VALIDATION_RESULT } from '@/constants';
+import { isDefined, isNil } from '@/utils/generalUtils';
 
-export const isNil = (v) => v === null || v === undefined;
-export const isDefined = (v) => v !== null && v !== undefined;
 export const normalizeDate = (d, mode = 'date') => {
   if (!d) return null;
 
