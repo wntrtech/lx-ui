@@ -596,11 +596,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
   background: transparent;
 }
 
-.leaflet-container a.leaflet-popup-close-button:hover,
-.leaflet-container a.leaflet-popup-close-button:focus {
-  color: #585858;
-}
-
 .leaflet-popup-scrolled {
   overflow: auto;
   border-bottom: 1px solid #ddd;
@@ -766,7 +761,15 @@ svg.leaflet-image-layer.leaflet-interactive path {
 }
 
 .lx a.leaflet-popup-close-button:hover {
-  color: var(--color-blue);
+  background: var(--color-interactive-hover-background);
+}
+
+.lx a.leaflet-popup-close-button:focus {
+  outline: 2px solid var(--color-focus-background);
+}
+
+.lx a.leaflet-popup-close-button:active {
+  background: var(--color-interactive-active-background);
 }
 
 .lx-map-toolbar {
