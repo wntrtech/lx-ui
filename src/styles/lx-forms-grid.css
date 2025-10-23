@@ -766,7 +766,7 @@ svg .lx-shade {
 .lx-form-grid > .lx-wizard header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
   position: sticky;
   top: calc(var(--nav-row-size) + var(--row-size));
-  z-index: 2;
+  z-index: 3;
   border-bottom: 1px solid var(--color-chrome);
 }
 
