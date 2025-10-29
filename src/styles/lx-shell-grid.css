@@ -2131,6 +2131,7 @@
 /* Arrow contains shadow, but is transparent */
 /* Arrow :: before used to create the arrow shape, and clip-path is used to not overflow text */
 
+
 .lx .lx-layout .popper .lx-spotlight + .popper-floating-arrow::before{
   content: '';
   position: absolute;
@@ -2177,6 +2178,13 @@
 
 .lx .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-bottom::before{
   clip-path: polygon(0 0, 100% 0, 100% 10%, 10% 100%, 0 100%);
+}
+
+.lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-right,
+.lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-left,
+.lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-top,
+.lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-bottom {
+  box-shadow: none;
 }
 
 .lx-spotlight > .lx-spotlight-footer{
