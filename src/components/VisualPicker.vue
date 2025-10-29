@@ -152,11 +152,11 @@ watch(
     if (JSON?.stringify(newValue) !== JSON?.stringify(oldValue)) {
       if (typeof newValue === 'string' || newValue === null) {
         const res = items.value?.find((item) => item?.id === newValue);
-        if (res && res?.id) listRef.value?.selectRows([res]);
-        if (res === undefined) listRef.value?.cancelSelection();
+        if (res && res?.id) listRef.value?.selectRows([res], false);
+        if (res === undefined) listRef.value?.cancelSelection(false);
       } else {
         const res = newValue.map((x) => items.value?.find((item) => item?.id === x));
-        listRef.value?.selectRows(res);
+        listRef.value?.selectRows(res, false);
       }
     }
   }
@@ -243,7 +243,7 @@ watch(
   () => props.kind,
   async (newValue) => {
     if (listRef.value) {
-      await listRef.value.cancelSelection();
+      await listRef.value.cancelSelection(false);
     }
 
     errorState.value = false;

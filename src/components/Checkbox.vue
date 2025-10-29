@@ -57,6 +57,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       :value="value"
       :tabindex="tabindex"
       :aria-labelledby="labelledBy"
+      :aria-label="label"
       @click="click"
     />
     <label :for="idValue" class="lx-checkbox-label-wrapper">
