@@ -1607,7 +1607,7 @@ defineExpose({ spotlightStart, spotlightEnd });
     </div>
 
     <div
-      v-else-if="mode === 'digives'"
+      v-if="mode === 'digives'"
       class="lx-layout lx-layout-default lx-layout-digives"
       :class="[
         { 'lx-collapsed': navBarSwitchModel },
@@ -1768,7 +1768,7 @@ defineExpose({ spotlightStart, spotlightEnd });
     </div>
 
     <div
-      v-else-if="mode === 'digives-lite'"
+      v-if="mode === 'digives-lite'"
       class="lx-layout lx-layout-default lx-layout-digives-lite"
       :class="[
         { 'lx-collapsed': navBarSwitchModel },
@@ -2019,7 +2019,7 @@ defineExpose({ spotlightStart, spotlightEnd });
     </div>
 
     <div
-      v-else-if="mode === 'digimaks'"
+      v-if="mode === 'digimaks'"
       class="lx-layout lx-layout-digimaks"
       :class="{ 'lx-override': overrideDefaultStyles }"
     >
@@ -2105,7 +2105,7 @@ defineExpose({ spotlightStart, spotlightEnd });
       <div ref="poppers" id="poppers"></div>
     </div>
     <div
-      v-else-if="mode === 'digimaks-lite'"
+      v-if="mode === 'digimaks-lite'"
       class="lx-layout lx-layout-digimaks"
       :class="{ 'lx-override': overrideDefaultStyles }"
     >
@@ -2194,7 +2194,16 @@ defineExpose({ spotlightStart, spotlightEnd });
       <div ref="poppers" id="poppers"></div>
     </div>
     <div
-      v-else
+      v-if="
+        mode !== 'cover' &&
+        mode !== 'cover-digives-lite' &&
+        mode !== 'public' &&
+        mode !== 'latvijalv' &&
+        mode !== 'digives' &&
+        mode !== 'digives-lite' &&
+        mode !== 'digimaks' &&
+        mode !== 'digimaks-lite'
+      "
       class="lx-layout lx-layout-default"
       :class="[{ 'lx-collapsed': navBarSwitchBasic }, { 'lx-override': overrideDefaultStyles }]"
     >
