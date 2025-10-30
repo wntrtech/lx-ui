@@ -784,12 +784,18 @@
   background-color: var(--color-region);
 }
 
+.lx .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
+.lx-list-wrapper .lx-component-toolbar .second-row {
+    background-color: var(--color-region);
+}
+
 .lx .lx-region .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
 .lx .lx-region .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx .lx-form-grid .lx-list-wrapper .lx-component-toolbar .second-row .lx-button,
-.lx .lx-modal .lx-list-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
-.lx .lx-modal .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
+.lx-modal .lx-list-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx-modal .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx .lx-modal .lx-component-toolbar .second-row .lx-button,
 .lx-region .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-region .lx-list-wrapper .lx-component-toolbar .second-row .lx-text-input-wrapper .lx-text-input,
@@ -798,15 +804,9 @@
 .lx-form-grid .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-form-grid .lx-list-wrapper > .lx-list-toolbar .second-row .lx-text-input-wrapper .lx-text-input,
 .lx-form-grid .lx-list-toolbar .second-row .lx-button,
-.lx .lx-form-grid .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
-.lx .lx-modal .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded {
+.lx-form-grid .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
+.lx-modal .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded {
   background-color: var(--color-list-region-background);
-}
-
-.lx .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
-.lx .lx-list-wrapper:where(:not(.lx-region .lx-list-wrapper)) .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
-.lx-list-wrapper .lx-component-toolbar .second-row {
-    background-color: var(--color-region);
 }
 
 .lx-component-toolbar .toolbar-search-button.is-expanded:hover .lx-button,
@@ -820,7 +820,6 @@
   fill: var(--color-focus-foreground);
 }
 
-.lx .lx-list-wrapper .lx-component-toolbar .lx-button.toolbar-search-button.is-expanded,
 .lx .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-list-wrapper .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button {
   --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
