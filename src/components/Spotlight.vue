@@ -140,32 +140,34 @@ function setSpotlightItem() {
         (props.shellMode === 'public' || props.shellMode === 'latvijalv') &&
         props.shellNavItems?.length > 0 &&
         width.value > 900
-      )
+      ) {
         elem = document.querySelector('.lx-layout > nav');
-      else elem = document.querySelector('.lx-layout > header');
+      } else {
+        elem = document.querySelector('.lx-layout > header');
+      }
     }
 
-    if (elem) {
-      // Check if elem is inside a <header> or <nav> of .lx-layout
-      const insideHeader = !!elem.closest('.lx-layout > header');
-      const insideNav = !!elem.closest('.lx-layout > nav');
+    if (!elem) return;
 
-      if (insideHeader || insideNav) needsHighZ.value = true;
-      else needsHighZ.value = false;
+    // Check if elem is inside a <header> or <nav> of .lx-layout
+    const insideHeader = !!elem.closest('.lx-layout > header');
+    const insideNav = !!elem.closest('.lx-layout > nav');
 
-      target.value = elem;
+    if (insideHeader || insideNav) needsHighZ.value = true;
+    else needsHighZ.value = false;
 
-      // scroll only when specific element is highlighted
-      if (spotlightItem?.elementId && !needsHighZ.value) {
-        const headerOffset = getOffsetTop();
-        // Only scroll if element is not visible
-        if (!isElementInViewport(elem, headerOffset)) {
-          const topPosition = elem.getBoundingClientRect().top + window.scrollY - headerOffset;
-          window.scrollTo({
-            top: topPosition,
-            behavior: 'smooth',
-          });
-        }
+    target.value = elem;
+
+    // scroll only when specific element is highlighted
+    if (spotlightItem?.elementId && !needsHighZ.value) {
+      const headerOffset = getOffsetTop();
+      // Only scroll if element is not visible
+      if (!isElementInViewport(elem, headerOffset)) {
+        const topPosition = elem.getBoundingClientRect().top + window.scrollY - headerOffset;
+        window.scrollTo({
+          top: topPosition,
+          behavior: 'smooth',
+        });
       }
     }
   });
@@ -228,7 +230,7 @@ watch(
     if (
       !newValue ||
       newValue?.length === 0 ||
-      newValue.findIndex((x) => x?.id === model.value || x?.id === model.value) === -1
+      newValue.findIndex((x) => x?.id === model.value || x?.elementId === model.value) === -1
     ) {
       visible.value = false;
       target.value = null;

@@ -2029,10 +2029,6 @@
   border-bottom: none;
 }
 
-.lx-spotlight > .lx-spotlight-main {
-  border-inline: 1px solid var(--color-chrome);
-}
-
 .lx-spotlight > .lx-spotlight-header > div {
   display: flex;
   justify-content: space-between;
@@ -2050,6 +2046,7 @@
   padding-inline: 1rem;
   padding-bottom: 1.25rem;
   padding-top: 0.5rem;
+  border-inline: 1px solid var(--color-chrome);
 }
 
 .lx-spotlight > .lx-spotlight-main .lx-spotlight-label {
@@ -2066,6 +2063,7 @@
   display: grid;
   width: 100%;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  z-index: 101;
 }
 
 .lx-spotlight > .lx-spotlight-footer > .lx-button {
@@ -2185,10 +2183,6 @@
 .lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-top,
 .lx.lx-no-transparency .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-bottom {
   box-shadow: none;
-}
-
-.lx-spotlight > .lx-spotlight-footer{
-  z-index: 101;
 }
 
 .lx-layout-latvijalv .lx-spotlight .lx-spotlight-footer > .lx-button {
