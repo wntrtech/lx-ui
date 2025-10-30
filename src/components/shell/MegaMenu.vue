@@ -115,6 +115,7 @@ function getIconSet(item) {
   <LxDropDownMenu :disabled="disabled">
     <div class="lx-toolbar">
       <LxButton
+        id="lx-shell-mega-menu-button"
         customClass="lx-header-button"
         :variant="buttonVariant"
         kind="ghost"

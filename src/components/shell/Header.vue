@@ -435,6 +435,7 @@ provide('insideHeader', insideHeader);
         @click="navToggle"
       />
       <div
+        id="lx-header-main-button"
         class="lx-main-button"
         :class="[{ 'lx-nav-bar-hidden': !hideNavBar }]"
         tabindex="0"

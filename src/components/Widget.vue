@@ -59,6 +59,7 @@ function actionClicked(id) {
 </script>
 <template>
   <div
+    :id="id"
     class="lx-widget"
     :class="[size, { 'fancy-background': kind === 'fancy' }]"
     :style="{ backgroundImage: kind === 'fancy' ? 'url(' + coverImage + ')' : 'none' }"

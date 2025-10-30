@@ -528,6 +528,7 @@ function toggleSpotlight() {
   <div class="lx-group" v-if="!hasNavBar">
     <div class="lx-spotlight-button" v-if="hasSpotlight">
       <LxButton
+        id="lx-shell-spotlight-button"
         customClass="lx-header-button"
         kind="ghost"
         icon="information"
@@ -540,6 +541,7 @@ function toggleSpotlight() {
     </div>
     <div class="lx-help-button" v-if="hasHelp">
       <LxButton
+        id="lx-shell-help-button"
         customClass="lx-header-button"
         kind="ghost"
         icon="help"
@@ -600,6 +602,7 @@ function toggleSpotlight() {
       >
         <div class="lx-toolbar">
           <LxButton
+            id="lx-shell-theme-button"
             customClass="lx-header-button"
             variant="icon-only"
             kind="ghost"
@@ -618,6 +621,7 @@ function toggleSpotlight() {
         :disabled="headerNavDisable"
       >
         <LxButton
+          id="lx-shell-alerts-button"
           customClass="lx-header-button"
           variant="icon-only"
           kind="ghost"
@@ -700,6 +704,7 @@ function toggleSpotlight() {
 
       <LxButton
         v-if="alertsKind === 'button'"
+        id="lx-shell-alerts-button"
         customClass="lx-header-button"
         variant="icon-only"
         kind="ghost"
@@ -721,6 +726,7 @@ function toggleSpotlight() {
         @actionClick="languageChange"
       >
         <LxButton
+          id="lx-shell-language-button"
           customClass="lx-header-button"
           variant="icon-only"
           kind="ghost"
@@ -750,6 +756,7 @@ function toggleSpotlight() {
     <div class="lx-user-menu" v-if="userInfo">
       <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
         <div
+          id="lx-shell-user-button"
           :title="displayTexts.userMenuTitle"
           :aria-label="displayTexts.userMenuTitle"
           class="lx-user-button"
@@ -854,6 +861,7 @@ function toggleSpotlight() {
           >
             <div class="lx-toolbar">
               <LxButton
+                id="lx-shell-language-button"
                 customClass="lx-header-button"
                 :label="displayTexts.languagesTitle"
                 kind="ghost"
@@ -874,6 +882,7 @@ function toggleSpotlight() {
           >
             <div class="lx-toolbar">
               <LxButton
+                id="lx-shell-theme-button"
                 customClass="lx-header-button"
                 :label="displayTexts.themeTitle"
                 kind="ghost"
@@ -888,6 +897,7 @@ function toggleSpotlight() {
       <li v-if="hasSpotlight" class="lx-spotlight-button">
         <div>
           <LxButton
+            id="lx-shell-spotlight-button"
             customClass="lx-header-button"
             kind="ghost"
             icon="information"
