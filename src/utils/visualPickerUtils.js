@@ -182,7 +182,7 @@ const latvia = {
   '0035000': 'Limbažu novads',
   '0036000': 'Līvānu novads',
   '0037000': 'Ludzas novads',
-  '0038000': 'Madonas novads',
+  '0038001': 'Madonas novads',
   '0039000': 'Mārupes novads',
   '0040000': 'Ogres novads',
   '0041000': 'Olaines novads',
