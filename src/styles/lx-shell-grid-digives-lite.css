@@ -796,6 +796,12 @@ border-top: 2px solid var(--color-brand-secondary);
   border-image: none;
 }
 
+.lx-layout.lx-layout-default.lx-layout-digives-lite  > .lx-main .lx-header {
+  margin-top: var(--gap);
+  margin-bottom: var(--gap);
+}
+
+
 @media (max-width: 1800px) {
   .lx-layout.lx-layout-default.lx-layout-digives-lite.lx-collapsed-null > nav {
     display: none;

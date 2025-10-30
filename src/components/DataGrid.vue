@@ -1762,8 +1762,8 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     :class="{
                       'lx-icon-has-tooltip':
                         row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label,
+                      'only-icon': !isValidString(row?.[col?.attributeName]?.label),
                     }"
-                    :title="row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label"
                   >
                     <template
                       v-if="
@@ -1771,24 +1771,34 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         isValidString(row?.[col?.attributeName]?.label)
                       "
                     >
-                      <LxIcon
-                        :value="
-                          isValidString(row?.[col?.attributeName]?.icon)
-                            ? row?.[col?.attributeName]?.icon
-                            : 'default'
-                        "
-                        :icon-set="row?.[col?.attributeName]?.iconSet"
-                        :title="
-                          row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label
-                        "
-                        :customClass="`lx-grid-column-icon ${row?.[col?.attributeName]?.category}`"
-                      />
-                      <p
-                        v-if="col.size !== 'xs' && isValidString(row?.[col?.attributeName]?.label)"
-                        class="lx-grid-icon-text"
-                      >
-                        {{ row?.[col?.attributeName].label }}
-                      </p>
+                      <LxInfoWrapper>
+                        <LxIcon
+                          :value="
+                            isValidString(row?.[col?.attributeName]?.icon)
+                              ? row?.[col?.attributeName]?.icon
+                              : 'default'
+                          "
+                          :icon-set="row?.[col?.attributeName]?.iconSet"
+                          :customClass="`lx-grid-column-icon ${
+                            row?.[col?.attributeName]?.category
+                          }`"
+                        />
+                        <p
+                          v-if="
+                            col.size !== 'xs' && isValidString(row?.[col?.attributeName]?.label)
+                          "
+                          class="lx-grid-icon-text"
+                        >
+                          {{ row?.[col?.attributeName].label }}
+                        </p>
+                        <template #panel>
+                          <p class="lx-data">
+                            {{
+                              row?.[col?.attributeName]?.title || row?.[col?.attributeName]?.label
+                            }}
+                          </p>
+                        </template>
+                      </LxInfoWrapper>
                     </template>
                     <span class="empty-icon-value" v-else>—</span>
                   </div>
@@ -2195,18 +2205,24 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                   :class="{
                     'lx-icon-has-tooltip':
                       item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label,
+                    'only-icon': !isValidString(item?.[col?.attributeName]?.label),
                   }"
-                  :title="item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label"
                 >
-                  <LxIcon
-                    :value="item?.[col?.attributeName]?.icon"
-                    :icon-set="item?.[col?.attributeName]?.iconSet"
-                    :title="item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label"
-                    :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
-                  />
-                  <p v-if="col.size !== 'xs'" class="lx-grid-icon-text">
-                    {{ item?.[col?.attributeName].label }}
-                  </p>
+                  <LxInfoWrapper>
+                    <LxIcon
+                      :value="item?.[col?.attributeName]?.icon"
+                      :icon-set="item?.[col?.attributeName]?.iconSet"
+                      :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
+                    />
+                    <p v-if="col.size !== 'xs'" class="lx-grid-icon-text">
+                      {{ item?.[col?.attributeName].label }}
+                    </p>
+                    <template #panel>
+                      <p class="lx-data">
+                        {{ item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label }}
+                      </p>
+                    </template>
+                  </LxInfoWrapper>
                 </div>
               </template>
               <template
