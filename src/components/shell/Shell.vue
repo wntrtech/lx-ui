@@ -959,17 +959,49 @@ const viewSpotlightItems = computed(() => {
   );
 });
 
-useMutationObserver(
-  document.body, // target element
-  () => {
-    domRefreshTrigger.value += 1;
-  },
-  {
-    childList: true,
-    subtree: true,
-    attributes: true,
-    attributeFilter: ['id'],
+let mutationTimeout = null;
+let mutationObserver = null;
+
+function startObserver() {
+  if (!mutationObserver && props.spotlightItems?.length > 0) {
+    useMutationObserver(
+      document.body,
+      () => {
+        // Debounce the mutation observer to reduce frequency
+        if (mutationTimeout) clearTimeout(mutationTimeout);
+        mutationTimeout = setTimeout(() => {
+          domRefreshTrigger.value += 1;
+          mutationTimeout = null;
+        }, 100);
+      },
+      {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['id'],
+      }
+    );
   }
+}
+
+function stopObserver() {
+  if (mutationObserver) {
+    mutationObserver.stop();
+    mutationObserver = null;
+  }
+}
+
+// Watch for changes in spotlight items to start/stop observer
+watch(
+  () => props.spotlightItems?.length,
+  (newLength) => {
+    if (newLength > 0) {
+      startObserver();
+    } else {
+      stopObserver();
+    }
+  },
+  { immediate: true }
 );
 
 defineExpose({ spotlightStart, spotlightEnd });
