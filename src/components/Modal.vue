@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, nextTick, provide, computed } from 'vue';
+import { ref, nextTick, provide, computed, watch } from 'vue';
 import LxButton from '@/components/Button.vue';
 import { logWarn } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import { generateUUID } from '@/utils/stringUtils';
 import { useFocusTrap } from '@vueuse/integrations/useFocusTrap';
+import { useElementSize, useScroll } from '@vueuse/core';
 
 const props = defineProps({
   id: {
@@ -38,6 +39,14 @@ const isOpen = ref(false);
 const isOpenModal = ref(false);
 const modalRef = ref();
 const insideModal = ref(true);
+const modalHeader = ref();
+const modalContent = ref();
+const modalFooter = ref();
+
+const headerSize = useElementSize(modalHeader);
+const footerSize = useElementSize(modalFooter);
+
+const { y: scrollYPos } = useScroll(modalContent);
 
 const { activate, deactivate } = useFocusTrap(modalRef, {
   allowOutsideClick: true,
@@ -141,6 +150,58 @@ const actionDefinitionsDisplay = computed(() => {
   return [...primary.slice(0, 1), ...secondary.slice(0, 1)];
 });
 
+const topOutOfBounds = computed(() => {
+  const keyOpacity = '--modal-top-shadow-opacity';
+  const keySize = '--modal-header-size';
+  const limit = 100;
+  const size = headerSize.height?.value;
+
+  if (!modalContent.value || !modalHeader.value)
+    return `${keyOpacity}: 0; ${keySize}: var(--row-size);`;
+
+  const scrollTop = scrollYPos.value || 0;
+
+  if (scrollTop > limit) {
+    return `${keyOpacity}: 1; ${keySize}: ${size}px;`;
+  }
+  if (scrollTop > 0) {
+    return `${keyOpacity}: ${scrollTop / limit}; ${keySize}: ${size}px;`;
+  }
+  return `${keyOpacity}: 0; ${keySize}: ${size}px;`;
+});
+
+const bottomOutOfBounds = computed(() => {
+  const keyOpacity = '--modal-bottom-shadow-opacity';
+  const keySize = '--modal-footer-size';
+  const limit = 100;
+  const size = footerSize.height?.value;
+
+  if (!modalContent.value || !modalFooter.value)
+    return `${keyOpacity}: 0; ${keySize}: var(--row-size);`;
+
+  const maxScrollDistance = modalContent.value.scrollHeight - modalContent.value.clientHeight;
+  const scrollTop = scrollYPos.value || 0;
+  const v = maxScrollDistance - scrollTop;
+
+  if (v > limit) {
+    return `${keyOpacity}: 1; ${keySize}: ${size}px;`;
+  }
+  if (v > 0) {
+    return `${keyOpacity}: ${v / limit}; ${keySize}: ${size}px;`;
+  }
+  return `${keyOpacity}: 0; ${keySize}: ${size}px;`;
+});
+
+watch([isOpen, isOpenModal], ([newIsOpen, newIsOpenModal]) => {
+  if (newIsOpen || newIsOpenModal) {
+    nextTick(() => {
+      if (modalContent.value) {
+        scrollYPos.value = 0;
+      }
+    });
+  }
+});
+
 provide('insideModal', insideModal);
 
 defineExpose({ open, close });
@@ -167,8 +228,9 @@ defineExpose({ open, close });
             { 'lx-modal-l': size === 'l' },
             { 'lx-modal-xl': size === 'xl' },
           ]"
+          :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
         >
-          <header>
+          <header ref="modalHeader">
             <p class="lx-primary" :title="label">{{ label }}</p>
             <LxButton
               v-if="!disableClosing"
@@ -179,10 +241,11 @@ defineExpose({ open, close });
               @click="close()"
             />
           </header>
-          <article class="lx-main">
+          <article class="lx-main" ref="modalContent">
             <slot />
           </article>
           <footer
+            ref="modalFooter"
             class="lx-button-set"
             :class="[
               {
@@ -233,7 +296,7 @@ defineExpose({ open, close });
           </footer>
         </div>
       </div>
-      <div :class="[{ 'lx-visible': isOpenModal }]" v-if="kind === 'native'">
+      <div v-if="kind === 'native'" :class="[{ 'lx-visible': isOpenModal }]">
         <dialog
           ref="nativeModal"
           :id="id"
@@ -247,8 +310,9 @@ defineExpose({ open, close });
             { 'lx-modal-xl': size === 'xl' },
           ]"
           tabindex="-1"
+          :style="`${topOutOfBounds}; ${bottomOutOfBounds}`"
         >
-          <header>
+          <header ref="modalHeader">
             <p class="lx-primary">{{ label }}</p>
 
             <LxButton
@@ -260,10 +324,11 @@ defineExpose({ open, close });
               @click="close()"
             />
           </header>
-          <article class="lx-main">
+          <article class="lx-main" ref="modalContent">
             <slot />
           </article>
           <footer
+            ref="modalFooter"
             class="lx-button-set"
             :class="[
               {
