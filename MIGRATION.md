@@ -1,5 +1,14 @@
 # LX/UI Migration Guide
 
+## 1.10 → 1.11
+
+### Breaking changes
+
+#### LxInfoWrapper open/close delay
+
+The `openDelay` and `closeDelay` props have been **removed**.  
+Instead, `LxInfoWrapper` now uses a **fixed hover delay of 100ms** for opening and closing the popper.  
+
 ## 1.9 → 1.10
 
 ### Breaking changes

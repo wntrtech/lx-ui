@@ -2,7 +2,6 @@
 import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxPopper from '@/components/Popper.vue';
-import { useDebounceFn } from '@vueuse/core';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -13,8 +12,6 @@ const props = defineProps({
   arrow: { type: Boolean, default: true },
   arrowPadding: { type: String, default: '0' },
   disabled: { type: Boolean, default: false },
-  openDelay: { type: String, default: '0' },
-  closeDelay: { type: String, default: '0' },
   content: { default: null },
   locked: { type: Boolean, default: false },
   focusable: { type: Boolean, default: true },
@@ -43,11 +40,6 @@ const spacerStyle = computed(() => {
   return '';
 });
 
-const parseDelay = (v) => Number(v) || 0;
-
-const oDelay = computed(() => parseDelay(props.openDelay));
-const cDelay = computed(() => parseDelay(props.closeDelay));
-
 const handleOpen = () => {
   showPopper.value = true;
 };
@@ -56,34 +48,45 @@ const handleClose = () => {
   showPopper.value = false;
 };
 
-const debouncedOpen = useDebounceFn(async () => {
-  handleOpen();
-}, oDelay);
-
-const debouncedClose = useDebounceFn(async () => {
-  handleClose();
-}, cDelay);
+let openTimeout = null;
+let closeTimeout = null;
 
 const handleMouseEnter = () => {
-  if ((!props.hover || props.disabled) && !showPopper.value) return;
-  debouncedOpen();
+  if (!props.hover || props.disabled) return;
+
+  if (closeTimeout) {
+    clearTimeout(closeTimeout);
+    closeTimeout = null;
+  }
+
+  openTimeout = setTimeout(() => {
+    showPopper.value = true;
+    openTimeout = null;
+  }, 100);
 };
 
 const handleMouseLeave = (event) => {
-  if ((!props.hover || props.disabled) && showPopper.value) return;
+  if (!props.hover || props.disabled) return;
+
+  if (openTimeout) {
+    clearTimeout(openTimeout);
+    openTimeout = null;
+  }
 
   const { relatedTarget } = event;
   const triggerEl = triggerRef.value;
   const popperEl = popperRef.value;
-
   if (
-    relatedTarget &&
+    relatedTarget instanceof Element &&
     triggerEl instanceof HTMLElement &&
     popperEl instanceof HTMLElement &&
     !triggerEl.contains(relatedTarget) &&
     !popperEl.contains(relatedTarget)
   ) {
-    debouncedClose();
+    closeTimeout = setTimeout(() => {
+      showPopper.value = false;
+      closeTimeout = null;
+    }, 100);
   }
 };
 
