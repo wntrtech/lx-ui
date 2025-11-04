@@ -186,7 +186,7 @@
   .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-user-button {
     display: grid;
     grid-template-columns: auto 1fr;
-    height: var(--row-size);
+    min-height: var(--row-size);
     align-items: center;
     outline: none;
     border: 2px solid transparent;
