@@ -135,8 +135,6 @@ defineExpose({ handleOpen, handleClose, showPopper });
     :arrowPointer="arrow"
     :arrow-padding="arrowPadding"
     :disabled="disabled"
-    :open-delay="openDelay"
-    :close-delay="closeDelay"
     :content="content"
     :show="showPopper"
     :locked="locked"

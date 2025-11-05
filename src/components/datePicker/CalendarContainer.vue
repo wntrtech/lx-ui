@@ -612,94 +612,91 @@ function handleRangeDifferentCaseValidation(date) {
   const end = selectedEndDate.value;
   const input = props.activeInput;
 
-  // Case 1: No dates selected
+  const isStartInput = input === 'startInput';
+  const isEndInput = input === 'endInput';
+
+  const setActiveToOpposite = () => {
+    props.setActiveInput(isStartInput ? 'endInput' : 'startInput', props.id);
+  };
+
+  const setRange = (s, e, resetEnd = false) => {
+    updateRange(s, e);
+    if (resetEnd) resetEndDate();
+  };
+
+  const finalizeSelection = (s, e) => {
+    updateRange(s, e);
+    hoveredDate.value = null;
+    handleLayoutDisplay();
+  };
+
+  // No dates selected
   if (!start && !end) {
-    if (input === 'startInput') {
-      updateStart(date);
-      updateRange(date, null);
-      props.setActiveInput('endInput', props.id);
-    } else {
-      updateEnd(date);
-      updateRange(null, date);
-      props.setActiveInput('startInput', props.id);
-    }
+    if (isStartInput) updateStart(date);
+    else updateEnd(date);
+    setRange(isStartInput ? date : null, isEndInput ? date : null);
+    setActiveToOpposite();
     return;
   }
 
-  // Case 2: Start is selected, end is not
+  // Only start selected
   if (start && !end) {
-    if (input === 'startInput') {
+    if (isStartInput) {
       updateStart(date);
-      updateRange(date, null);
-      props.setActiveInput('endInput', props.id);
-    } else {
-      if (date >= start) {
-        updateEnd(date);
-        updateRange(start, date);
-        hoveredDate.value = null;
-        handleLayoutDisplay();
-      } else {
-        updateStart(date);
-        updateRange(date, null);
-      }
-      props.setActiveInput('endInput', props.id);
+      setRange(date, null);
+      setActiveToOpposite();
+      return;
     }
+
+    if (date >= start) finalizeSelection(start, date);
+    else {
+      updateStart(date);
+      setRange(date, null);
+    }
+
+    setActiveToOpposite();
     return;
   }
 
-  // Case 3: End is selected, start is not
+  // Only end selected
   if (!start && end) {
-    if (input === 'startInput') {
+    if (isStartInput) {
       if (date > end) {
         updateStart(date);
-        resetEndDate();
-        updateRange(date, null);
+        setRange(date, null, true);
       } else {
         setStartDate(date);
-        updateRange(date, end);
-        hoveredDate.value = null;
+        finalizeSelection(date, end);
       }
-      props.setActiveInput('endInput', props.id);
-    } else {
-      updateEnd(date);
-      updateRange(start, end);
-      hoveredDate.value = date;
-      handleLayoutDisplay();
-      props.setActiveInput('startInput', props.id);
+      setActiveToOpposite();
+      return;
     }
+
+    updateEnd(date);
+    finalizeSelection(start, end);
+    hoveredDate.value = date;
+    setActiveToOpposite();
     return;
   }
 
-  // Case 4: Both start and end are selected
-  if (start && end) {
-    if (input === 'endInput') {
-      if (date >= start) {
-        updateEnd(date);
-        updateRange(start, date);
-        hoveredDate.value = null;
-        handleLayoutDisplay();
-      } else {
-        updateStart(date);
-        resetEndDate();
-        updateRange(date, null);
-        hoveredDate.value = date;
-      }
-      props.setActiveInput('endInput', props.id);
-    } else {
-      if (date <= end) {
-        updateStart(date);
-        updateRange(date, end);
-        hoveredDate.value = null;
-        handleLayoutDisplay();
-      } else {
-        updateStart(date);
-        resetEndDate();
-        updateRange(date, null);
-        hoveredDate.value = date;
-      }
-      props.setActiveInput('endInput', props.id);
+  // Both selected
+  const handleBothSelected = () => {
+    if (isEndInput && date >= start) {
+      finalizeSelection(start, date);
+      return;
     }
-  }
+    if (!isEndInput && date <= end) {
+      finalizeSelection(date, end);
+      return;
+    }
+
+    updateStart(date);
+    setRange(date, null, true);
+    hoveredDate.value = date;
+    props.setActiveInput('endInput', props.id);
+  };
+
+  handleBothSelected();
 }
 
 function checkMinutesCadence(cadence, filteredIndexParameter, minutesValue) {
@@ -879,37 +876,55 @@ function applySecondBoundsIfNeeded(date) {
 }
 
 function buildAndEmitFinalDateTime(date, baseDate, fullTime = false) {
-  if (props.minDateRef && baseDate.getDate() === props.minDateRef.getDate()) {
-    if (selectedHour.value < props.minDateRef.getHours())
-      selectedHour.value = props.minDateRef.getHours();
-    if (selectedMinute.value < props.minDateRef.getMinutes())
-      selectedMinute.value = props.minDateRef.getMinutes();
-    if (selectedSecond.value < props.minDateRef.getSeconds() && fullTime)
-      selectedSecond.value = props.minDateRef.getSeconds();
-  }
+  const { minDateRef, maxDateRef, id, closeMenu, setActiveInput } = props;
 
-  if (props.maxDateRef && baseDate.getDate() === props.maxDateRef.getDate()) {
-    if (selectedHour.value > props.maxDateRef.getHours())
-      selectedHour.value = props.maxDateRef.getHours();
-    if (selectedMinute.value > props.maxDateRef.getMinutes())
-      selectedMinute.value = props.maxDateRef.getMinutes();
-    if (selectedSecond.value > props.maxDateRef.getSeconds() && fullTime)
-      selectedSecond.value = props.maxDateRef.getSeconds();
-  }
+  const selected = { Hour: selectedHour, Minute: selectedMinute, Second: selectedSecond };
 
+  const adjustWithinBounds = (bound, comparator) => {
+    if (!bound || baseDate.getDate() !== bound.getDate()) return;
+
+    const compareAndClamp = (unit, get, set, checkFull = false) => {
+      if (checkFull && !fullTime) return;
+      const boundValue = get.call(bound);
+      if (comparator(selected[unit].value, boundValue)) selected[unit].value = boundValue;
+    };
+
+    compareAndClamp('Hour', Date.prototype.getHours, (v) => {
+      selectedHour.value = v;
+    });
+    compareAndClamp('Minute', Date.prototype.getMinutes, (v) => {
+      selectedMinute.value = v;
+    });
+    compareAndClamp(
+      'Second',
+      Date.prototype.getSeconds,
+      (v) => {
+        selectedSecond.value = v;
+      },
+      true
+    );
+  };
+
+  // Apply min/max boundaries
+  adjustWithinBounds(minDateRef, (a, b) => a < b);
+  adjustWithinBounds(maxDateRef, (a, b) => a > b);
+
+  // Apply selected time values
   date.setHours(selectedHour.value);
   date.setMinutes(selectedMinute.value);
-  if (selectedSecond.value && fullTime) date.setSeconds(selectedSecond.value);
+  if (fullTime) date.setSeconds(selectedSecond.value || 0);
 
   currentDate.value = date;
-
   emits('update:modelValue', date);
+
   handleLayoutDisplay();
-  if (shouldCloseMenu.value) props.closeMenu();
-  props.setActiveInput('startInput', props.id);
+
+  if (shouldCloseMenu.value) closeMenu();
+  setActiveInput('startInput', id);
 }
 
 function handleDateSelection(selectedValue) {
+  // Update selected date parts
   selectedDay.value = selectedValue.getDate();
   selectedMonth.value = selectedValue.getMonth();
   selectedYear.value = selectedValue.getFullYear();
@@ -917,47 +932,41 @@ function handleDateSelection(selectedValue) {
   const updatedDate = new Date(selectedYear.value, selectedMonth.value, selectedDay.value);
   selectedDate.value = updatedDate;
 
-  if (props.mode === 'date') {
+  const { mode, id, closeMenu, setActiveInput, clearIfNotExact } = props;
+  const isFullTimeMode = mode === 'date-time-full';
+  const isDateOnly = mode === 'date';
+  const isDateTime = mode === 'date-time' || isFullTimeMode;
+
+  if (isDateOnly) {
     handleDateLayoutAutoScroll(updatedDate);
     emits('update:modelValue', updatedDate);
     handleLayoutDisplay();
-    props.closeMenu();
-    props.setActiveInput('startInput', props.id);
+    closeMenu();
+    setActiveInput('startInput', id);
     return;
   }
 
-  if (props.mode === 'date-time') {
-    if (props.clearIfNotExact && isPartialTimeSelection()) {
+  if (isDateTime) {
+    const isPartial =
+      (isFullTimeMode && isPartialTimeSelection()) || (!isFullTimeMode && isPartialTimeSelection());
+
+    if (clearIfNotExact && isPartial) {
       clearSelectedValues();
       return;
     }
 
-    // Hour & minute bound enforcement
-    if (!mobileTimeLayout.value) {
-      applyHourBoundsIfNeeded(selectedValue);
-      applyMinuteBoundsIfNeeded(selectedValue);
+    if (mobileTimeLayout.value) return;
 
-      if (isCompleteTimeSelection()) {
-        buildAndEmitFinalDateTime(updatedDate, selectedValue);
-      }
-    }
-  }
+    // Apply bounds
+    applyHourBoundsIfNeeded(selectedValue);
+    applyMinuteBoundsIfNeeded(selectedValue);
+    if (isFullTimeMode) applySecondBoundsIfNeeded(selectedValue);
 
-  if (props.mode === 'date-time-full') {
-    if (props.clearIfNotExact && isPartialTimeSelection()) {
-      clearSelectedValues();
-      return;
-    }
+    // Emit if full time is complete
+    const isComplete = isFullTimeMode ? isCompleteTimeFullSelection() : isCompleteTimeSelection();
 
-    // Hour, minute & second bound enforcement
-    if (!mobileTimeLayout.value) {
-      applyHourBoundsIfNeeded(selectedValue);
-      applyMinuteBoundsIfNeeded(selectedValue);
-      applySecondBoundsIfNeeded(selectedValue);
-
-      if (isCompleteTimeFullSelection()) {
-        buildAndEmitFinalDateTime(updatedDate, selectedValue, true);
-      }
+    if (isComplete) {
+      buildAndEmitFinalDateTime(updatedDate, selectedValue, isFullTimeMode);
     }
   }
 }
@@ -1402,66 +1411,42 @@ const isSelectedYearRange = (year) => {
 };
 
 const isSelectedQuarterRange = (quarterYear, quarterItem) => {
-  // Check if both start and end month and year are selected
-  if (selectedStartMonth.value !== null && selectedEndMonth.value !== null) {
-    // When both start and end are in the same year
-    if (selectedStartYear.value === selectedEndYear.value) {
-      return (
-        quarterYear === Number(selectedStartYear.value) &&
-        quarterItem >= quarterFromMonth(selectedStartMonth.value) &&
-        quarterItem <= quarterFromMonth(selectedEndMonth.value)
-      );
+  const sMonth = selectedStartMonth.value;
+  const eMonth = selectedEndMonth.value;
+  const sYear = Number(selectedStartYear.value);
+  const eYear = Number(selectedEndYear.value);
+  const startQuarter = sMonth !== null ? quarterFromMonth(sMonth) : null;
+  const endQuarter = eMonth !== null ? quarterFromMonth(eMonth) : null;
+
+  const hasStart = sMonth !== null;
+  const hasEnd = eMonth !== null;
+
+  const sameYear = hasStart && hasEnd && sYear === eYear;
+  const betweenYears = quarterYear > sYear && quarterYear < eYear;
+
+  // Both start and end selected
+  if (hasStart && hasEnd) {
+    if (sameYear) {
+      return quarterYear === sYear && quarterItem >= startQuarter && quarterItem <= endQuarter;
     }
 
-    // When start year is earlier than end year
-    if (quarterYear === Number(selectedStartYear.value)) {
-      return quarterItem >= quarterFromMonth(selectedStartMonth.value); // Hovering in the start year
-    }
-    if (quarterYear === Number(selectedEndYear.value)) {
-      return quarterItem <= quarterFromMonth(selectedEndMonth.value); // Hovering in the end year
-    }
-
-    // For years between the start and end years
-    if (
-      quarterYear > Number(selectedStartYear.value) &&
-      quarterYear < Number(selectedEndYear.value)
-    ) {
-      return true; // Hovering for all months in the intermediate years
-    }
+    if (quarterYear === sYear) return quarterItem >= startQuarter;
+    if (quarterYear === eYear) return quarterItem <= endQuarter;
+    return betweenYears;
   }
 
-  // Case where only the start month and year are selected
-  if (
-    selectedStartMonth.value !== null &&
-    selectedEndMonth.value === null &&
-    !selectedManually.value
-  ) {
-    // Forward selection from the start quarter
-    if (quarterYear === Number(selectedStartYear.value)) {
-      return quarterItem >= quarterFromMonth(selectedStartMonth.value);
-    }
-    // Selection spans across future years
-    if (quarterYear > Number(selectedStartYear.value)) {
-      return true; // Include all quarters in years after the start year
-    }
+  // Only start selected (forward selection)
+  if (hasStart && !hasEnd && !selectedManually.value) {
+    if (quarterYear === sYear) return quarterItem >= startQuarter;
+    if (quarterYear > sYear) return true;
   }
 
-  // Case where only the end month and year are selected
-  if (
-    selectedEndMonth.value !== null &&
-    selectedStartMonth.value === null &&
-    !selectedManually.value
-  ) {
-    // Backward selection to the end quarter
-    if (quarterYear === Number(selectedEndYear.value)) {
-      return quarterItem <= quarterFromMonth(selectedEndMonth.value);
-    }
-    // Selection spans across previous years
-    if (quarterYear < Number(selectedEndYear.value)) {
-      return true; // Include all quarters in years before the end year
-    }
+  // Only end selected (backward selection)
+  if (hasEnd && !hasStart && !selectedManually.value) {
+    if (quarterYear === eYear) return quarterItem <= endQuarter;
+    if (quarterYear < eYear) return true;
   }
-  // No match for selected range
+
   return false;
 };
 
