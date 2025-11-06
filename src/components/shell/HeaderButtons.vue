@@ -8,10 +8,17 @@ import LxMegaMenu from '@/components/shell/MegaMenu.vue';
 import LxAvatar from '@/components/Avatar.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
+import LxBadge from '@/components/Badge.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 
 import { shortenUserName, safeString } from '@/utils/stringUtils';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import {
+  getDisplayTexts,
+  sessionEndsInText,
+  secondsToMinutesAndSeconds,
+} from '@/utils/generalUtils';
 import { useWindowSize } from '@vueuse/core';
+import LxRow from '@/components/forms/Row.vue';
 
 const props = defineProps({
   mode: { type: String, default: 'default' },
@@ -59,6 +66,9 @@ const props = defineProps({
   hasSpotlight: { type: Boolean, default: false },
   spotlightHasBadge: { type: Boolean, default: true },
 
+  showIdleBadge: { type: Boolean, default: false },
+  secondsToLive: { type: Number, default: null },
+
   texts: {
     type: Object,
     required: false,
@@ -94,13 +104,26 @@ const textsDefault = {
   touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
-  userMenuTitle: 'Lietotāja izvēle',
+  userMenuTitle: 'Lietotāja izvēlne',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
     warning: 'brīdinājums',
     good: 'sekmīgs paziņojums',
     important: 'svarīgs paziņojums',
+  },
+  idleBadge: {
+    minutesSingular: 'minūtes',
+    minutes11: 'minūtes',
+    minutesPluralEndsWith1: 'minūtes',
+    minutesPlural: 'minūtēm',
+    secondsSingular: 'sekundes',
+    seconds11: 'sekundēm',
+    secondsPluralEndsWith1: 'sekundes',
+    secondsPlural: 'sekundēm',
+    sessionEndingIn: 'Sesija beigsies pēc',
+    and: 'un',
+    timeCountdown: 'Laika atskaite',
   },
 };
 
@@ -522,6 +545,28 @@ watch(
 function toggleSpotlight() {
   emits('toggleSpotlight');
 }
+
+const timeoutIn = computed(() => {
+  const { minutes, seconds } = secondsToMinutesAndSeconds(props.secondsToLive);
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+});
+
+const sessionTimeoutLabel = computed(() =>
+  sessionEndsInText(props.secondsToLive, displayTexts.value?.idleBadge)
+);
+
+const hasSessionTimeoutBadge = computed(
+  () => props.showIdleBadge && props.secondsToLive && props.secondsToLive < 3600
+);
+
+const userInfoWrapper = ref();
+
+watch(
+  () => dropDownMenu.value?.menuOpen,
+  (newValue) => {
+    if (newValue) userInfoWrapper.value?.handleClose();
+  }
+);
 </script>
 
 <template>
@@ -755,44 +800,52 @@ function toggleSpotlight() {
 
     <div class="lx-user-menu" v-if="userInfo">
       <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
-        <div
-          id="lx-shell-user-button"
-          :title="displayTexts.userMenuTitle"
-          :aria-label="displayTexts.userMenuTitle"
-          class="lx-user-button"
-          role="button"
-          tabindex="-1"
-        >
-          <div class="lx-avatar" v-if="!hasAvatar">
-            <LxIcon
-              :value="!selectedContextPersonModel ? 'user' : 'context-person'"
-              customClass="lx-icon"
-            />
-          </div>
-
-          <LxAvatar v-if="hasAvatar" :value="safeString(fullName)" />
-
-          <div class="lx-user-info">
-            <div class="lx-primary">
-              <template v-if="!selectedContextPersonModel">{{ fullName }}</template>
-              <template v-else>{{ contextPersonFullName }}</template>
+        <LxInfoWrapper ref="userInfoWrapper" :disabled="dropDownMenu?.menuOpen">
+          <div
+            id="lx-shell-user-button"
+            :aria-label="displayTexts.userMenuTitle"
+            class="lx-user-button"
+            role="button"
+            tabindex="-1"
+          >
+            <div class="lx-avatar" v-if="!hasAvatar">
+              <LxIcon
+                :value="!selectedContextPersonModel ? 'user' : 'context-person'"
+                customClass="lx-icon"
+              />
             </div>
-            <div
-              class="lx-secondary"
-              :title="
-                selectedContextPersonModel
-                  ? selectedContextPersonModel?.description
-                  : userInfo?.description
-              "
-            >
-              <template v-if="!selectedContextPersonModel">{{ userInfo?.description }}</template>
-              <template v-else>{{ selectedContextPersonModel?.description }}</template>
+
+            <LxAvatar v-if="hasAvatar" :value="safeString(fullName)" />
+
+            <div class="lx-user-info">
+              <div class="lx-primary">
+                <template v-if="!selectedContextPersonModel">{{ fullName }}</template>
+                <template v-else>{{ contextPersonFullName }}</template>
+              </div>
+              <div class="lx-secondary">
+                <template v-if="!selectedContextPersonModel">{{ userInfo?.description }}</template>
+                <template v-else>{{ selectedContextPersonModel?.description }}</template>
+              </div>
             </div>
+
+            <LxBadge v-if="hasSessionTimeoutBadge" :value="timeoutIn" class="lx-timeout-badge" />
           </div>
-        </div>
+          <template #panel v-if="!dropDownMenu?.menuOpen">
+            <LxRow :label="displayTexts.userMenuTitle">
+              <span v-if="!selectedContextPersonModel">{{ fullName }}</span>
+              <span v-else>{{ contextPersonFullName }}</span>
+
+              <span v-if="!selectedContextPersonModel">{{ userInfo?.description }}</span>
+              <span v-else>{{ selectedContextPersonModel?.description }}</span>
+            </LxRow>
+            <LxRow :label="displayTexts.idleBadge.timeCountdown" v-if="hasSessionTimeoutBadge">
+              <span>{{ sessionTimeoutLabel }}</span>
+            </LxRow>
+          </template>
+        </LxInfoWrapper>
 
         <template #panel>
-          <div class="user-menu-panel">
+          <div class="user-menu-panel" :class="[{ 'has-timeout': hasSessionTimeoutBadge }]">
             <div class="lx-region user-menu-context">
               <LxAvatar size="xl" :value="safeString(fullName)" />
               <div class="lx-data">{{ fullName }}</div>
@@ -803,6 +856,9 @@ function toggleSpotlight() {
               <div class="lx-description" v-if="userInfo?.institution">
                 {{ userInfo?.institution }}
               </div>
+            </div>
+            <div class="session-timeout-wrapper" v-if="hasSessionTimeoutBadge">
+              <LxInfoBox variant="warning" :label="sessionTimeoutLabel" />
             </div>
 
             <LxButton

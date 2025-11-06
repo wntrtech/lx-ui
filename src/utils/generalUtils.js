@@ -112,6 +112,42 @@ export function getDisplayTexts(textsPassed, textsDefault, noCopy) {
   return ret;
 }
 
+export function secondsToMinutesAndSeconds(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return { minutes, seconds: remainingSeconds };
+}
+
+export function sessionEndsInText(secondsToLive, texts) {
+  const { minutes, seconds } = secondsToMinutesAndSeconds(secondsToLive);
+
+  let minutesFinal = texts?.minutesPlural;
+
+  if (minutes === 1 || (minutes % 10 === 1 && minutes !== 11)) {
+    minutesFinal = texts?.minutesSingular;
+  } else if (minutes === 11) {
+    minutesFinal = texts?.minutes11;
+  } else if (minutes % 10 === 1) {
+    minutesFinal = texts?.minutesPluralEndsWith1;
+  }
+
+  let secondsFinal = texts?.secondsPlural;
+
+  if (seconds === 1) {
+    secondsFinal = texts?.secondsSingular;
+  } else if (seconds === 11) {
+    secondsFinal = texts?.seconds11;
+  } else if (seconds % 10 === 1) {
+    secondsFinal = texts?.secondsPluralEndsWith1;
+  }
+
+  let res = texts?.sessionEndingIn;
+  if (minutes > 0) res += ` ${minutes} ${minutesFinal}`;
+  if (minutes > 0 && seconds > 0) res += ` ${texts?.and}`;
+  if (seconds > 0) res += ` ${seconds} ${secondsFinal}`;
+  return res;
+}
+
 /**
  * Checks whether a value is `null` or `undefined`.
  *

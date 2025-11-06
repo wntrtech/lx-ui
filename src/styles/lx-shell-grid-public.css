@@ -400,6 +400,10 @@
   width: fit-content;
 }
 
+.lx-layout.lx-layout-public .lx-header .lx-user-menu .lx-timeout-badge {
+  border-color: var(--color-region);
+}
+
 /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
 @media (max-height: calc(8rem * 5)) {
   .lx-layout.lx-layout-public.lx-collapsed>header {

@@ -80,6 +80,9 @@ const props = defineProps({
   hasSpotlight: { type: Boolean, default: false },
   spotlightHasBadge: { type: Boolean, default: true },
 
+  showIdleBadge: { type: Boolean, default: false },
+  secondsToLive: { type: Number, default: null },
+
   texts: { type: Object, default: () => {} },
 });
 
@@ -116,6 +119,19 @@ const textsDefault = {
   touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
+  idleBadge: {
+    minutesSingular: 'minūtes',
+    minutes11: 'minūtes',
+    minutesPluralEndsWith1: 'minūtes',
+    minutesPlural: 'minūtēm',
+    secondsSingular: 'sekundes',
+    seconds11: 'sekundēm',
+    secondsPluralEndsWith1: 'sekundes',
+    secondsPlural: 'sekundēm',
+    sessionEndingIn: 'Sesija beigsies pēc',
+    and: 'un',
+    timeCountdown: 'Laika atskaite',
+  },
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -541,6 +557,8 @@ provide('insideHeader', insideHeader);
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
         :hasSpotlight="hasSpotlight"
         :spotlightHasBadge="spotlightHasBadge"
+        :secondsToLive="secondsToLive"
+        :showIdleBadge="showIdleBadge"
         @mega-menu-show-all-click="triggerShowAllClick"
         @open-alternative-profiles-modal="openAlternativeProfilesModal"
         @open-context-person-modal="openContextPersonModal"
@@ -612,6 +630,8 @@ provide('insideHeader', insideHeader);
       v-model:selectedContextPerson="selectedContextPersonModel"
       :hasSpotlight="hasSpotlight"
       :spotlightHasBadge="spotlightHasBadge"
+      :secondsToLive="secondsToLive"
+      :showIdleBadge="showIdleBadge"
       @open-alternative-profiles-modal="openAlternativeProfilesModal"
       @open-context-person-modal="openContextPersonModal"
       @language-changed="languageChanged"

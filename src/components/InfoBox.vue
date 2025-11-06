@@ -7,6 +7,9 @@ import LxButton from '@/components/Button.vue';
 import { generateUUID } from '@/utils/stringUtils';
 
 const props = defineProps({
+  id: { type: String, default: generateUUID() },
+  label: { type: String, default: null },
+  description: { type: String, default: null },
   variant: {
     type: String,
     default: 'default',
@@ -20,11 +23,8 @@ const props = defineProps({
     validator: (value) =>
       typeof value === 'string' && ['default', 'clickable', 'button'].includes(value),
   },
-  label: { type: String, default: null },
-  description: { type: String, default: null },
-  id: { type: String, default: generateUUID() },
-  texts: { type: Object, default: () => ({}) },
   actionDefinitions: { type: Array, default: () => [] },
+  texts: { type: Object, default: () => ({}) },
 });
 
 const textsDefault = {
@@ -101,12 +101,12 @@ function handleClick(event) {
     <div class="lx-alert-data">
       <div class="lx-alert-header">
         <p class="lx-data">
-          {{ props.label }}
+          {{ label }}
         </p>
       </div>
-      <div class="lx-alert-description">
+      <div class="lx-alert-description" v-if="description">
         <p class="lx-description">
-          {{ props.description }}
+          {{ description }}
         </p>
       </div>
     </div>

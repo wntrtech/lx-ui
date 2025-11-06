@@ -2206,10 +2206,48 @@
   padding-bottom: 0rem;
 }
 
-
-
 /* Spotlight end */
 
+/* Shell session timeout badge */
+
+.lx-layout .lx-header .lx-user-menu{
+  position: relative;
+}
+
+.lx-layout .lx-header .lx-user-menu .lx-timeout-badge {
+  position: absolute;
+  top: 0;
+  left: 1.25rem;
+  font-family: var(--font-family-mono);
+  font-feature-settings: var(--font-features-mono);
+  font-size: var(--small-font-size);
+  background: var(--color-warning);
+  color: var(--color-badge-foreground);
+  font-weight: 700;
+  padding: var(--button-badge-padding);
+  border: 2px solid var(--color-nav-background);
+}
+
+.lx-layout .lx-header .lx-user-menu .lx-timeout-badge .lx-badge-text{
+  color: var(--color-badge-foreground);
+}
+
+.lx .lx-layout .user-menu-panel.has-timeout .lx-region.user-menu-context {
+  border-color: transparent;
+}
+
+.lx .lx-layout .user-menu-panel .session-timeout-wrapper {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-chrome);
+}
+
+.lx-layout.lx-layout-cover .lx-header .lx-user-menu .lx-timeout-badge{
+  left: auto;
+  right: 0rem;
+  border-color: var(--color-background);
+}
+
+/* Shell session timeout badge end */
 
 @media (max-width: 2000px) {
   .lx-layout.lx-layout-default > header .lx-header {
@@ -2488,6 +2526,11 @@
   .lx-layout.lx-layout-cover > header .lx-header .lx-group,
   .lx-layout.lx-layout-cover-digives-lite > header .lx-header .lx-group {
     min-width: inherit;
+  }
+
+  .lx-layout .lx-header .lx-user-menu .lx-timeout-badge{
+    left: auto;
+    right: 0;
   }
 }
 

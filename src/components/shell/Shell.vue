@@ -145,6 +145,7 @@ const props = defineProps({
   hideHeaderText: { type: Boolean, default: false },
 
   showIdleModal: { type: Boolean, default: false },
+  showIdleBadge: { type: Boolean, default: false },
   secondsToLive: { type: Number, default: null },
 
   confirmDialogData: { type: Object, default: () => {} },
@@ -262,6 +263,19 @@ const textsDefault = {
     back: 'Atpakaļ',
     showMore: 'Uzzināt vairāk',
     of: 'no',
+  },
+  idleBadge: {
+    minutesSingular: 'minūtes',
+    minutes11: 'minūtes',
+    minutesPluralEndsWith1: 'minūtes',
+    minutesPlural: 'minūtēm',
+    secondsSingular: 'sekundes',
+    seconds11: 'sekundēm',
+    secondsPluralEndsWith1: 'sekundes',
+    secondsPlural: 'sekundēm',
+    sessionEndingIn: 'Sesija beigsies pēc',
+    and: 'un',
+    timeCountdown: 'Laika atskaite',
   },
 };
 
@@ -1123,6 +1137,8 @@ defineExpose({ spotlightStart, spotlightEnd });
           :customButtonKind="customButtonKind"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          :secondsToLive="secondsToLive"
+          :showIdleBadge="showIdleBadge"
           v-model:customButtonOpened="customButtonOpenedModal"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
@@ -1257,6 +1273,8 @@ defineExpose({ spotlightStart, spotlightEnd });
           v-model:customButtonOpened="customButtonOpenedModal"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          :secondsToLive="secondsToLive"
+          :showIdleBadge="showIdleBadge"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
@@ -1423,6 +1441,8 @@ defineExpose({ spotlightStart, spotlightEnd });
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          :secondsToLive="secondsToLive"
+          :showIdleBadge="showIdleBadge"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @language-changed="languageChanged"
@@ -1568,6 +1588,8 @@ defineExpose({ spotlightStart, spotlightEnd });
           :customButtonKind="customButtonKind"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          :secondsToLive="secondsToLive"
+          :showIdleBadge="showIdleBadge"
           v-model:customButtonOpened="customButtonOpenedModal"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
@@ -1933,6 +1955,8 @@ defineExpose({ spotlightStart, spotlightEnd });
           v-model:customButtonOpened="customButtonOpenedModal"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          :secondsToLive="secondsToLive"
+          :showIdleBadge="showIdleBadge"
           v-model:theme="themeModel"
           v-model:selectedLanguage="selectedLanguageModel"
           v-model:selectedContextPerson="selectedContextPersonModel"
@@ -2034,6 +2058,8 @@ defineExpose({ spotlightStart, spotlightEnd });
           :customButtonKind="customButtonKind"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          :secondsToLive="secondsToLive"
+          :showIdleBadge="showIdleBadge"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
@@ -2376,6 +2402,8 @@ defineExpose({ spotlightStart, spotlightEnd });
           v-model:isTouchSensitive="touchModeModel"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          :secondsToLive="secondsToLive"
+          :showIdleBadge="showIdleBadge"
           @language-changed="languageChanged"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"

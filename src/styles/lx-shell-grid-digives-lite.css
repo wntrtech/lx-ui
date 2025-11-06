@@ -802,6 +802,49 @@ border-top: 2px solid var(--color-brand-secondary);
 }
 
 
+/* Session timeout badge */
+
+.lx-layout .lx-header-digives-lite .lx-user-menu,
+.lx-layout .digives-lite-nav-panel .lx-user-menu{
+  position: relative;
+}
+
+.lx-layout .lx-header-digives-lite .lx-user-menu .lx-timeout-badge,
+.lx-layout .digives-lite-nav-panel .lx-user-menu .lx-timeout-badge {
+  position: absolute;
+  top: 0.125rem;
+  right: -1.25rem;
+  font-family: var(--font-family-mono);
+  font-feature-settings: var(--font-features-mono);
+  font-size: var(--small-font-size);
+  background: var(--color-warning);
+  color: var(--color-badge-foreground);
+  z-index: 1;
+  font-weight: 700;
+  padding: var(--button-badge-padding);
+  border: 2px solid var(--color-region);
+}
+
+.lx-layout .lx-header-digives-lite .lx-user-menu .lx-timeout-badge .lx-badge-text,
+.lx-layout .digives-lite-nav-panel .lx-user-menu .lx-timeout-badge .lx-badge-text {
+    color: var(--color-badge-foreground);
+}
+
+.lx-layout .digives-lite-nav-panel .lx-user-menu .lx-timeout-badge {
+  right: -.5rem;
+}
+
+.lx-layout.lx-layout-cover-digives-lite .lx-header .lx-user-menu .lx-timeout-badge{
+  left: auto;
+  right: 0rem;
+  border-color: var(--color-background);
+}
+
+.lx .lx-layout .user-menu-context+.session-timeout-wrapper {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-chrome);
+}
+
 @media (max-width: 1800px) {
   .lx-layout.lx-layout-default.lx-layout-digives-lite.lx-collapsed-null > nav {
     display: none;

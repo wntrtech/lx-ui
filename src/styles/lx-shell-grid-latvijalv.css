@@ -532,6 +532,10 @@
   .lx-layout.lx-layout-latvijalv .lx-nav-panel .lx-spotlight-button .lx-button:not(#userMenuButton)>.lx-button-content-wrapper .lx-badge {
     border-color: var(--color-nav-background);
   }
+
+  .lx-layout.lx-layout-latvijalv .lx-header .lx-user-menu .lx-timeout-badge {
+    border-color: var(--color-region);
+  }
     
   /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
   @media (max-height: calc(8rem * 5)) {

@@ -12,7 +12,12 @@ import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxEmptyState from '@/components/EmptyState.vue';
 import LxFlag from '@/components/Flag.vue';
-import { getDisplayTexts } from '@/utils/generalUtils';
+import LxBadge from '@/components/Badge.vue';
+import {
+  getDisplayTexts,
+  sessionEndsInText,
+  secondsToMinutesAndSeconds,
+} from '@/utils/generalUtils';
 
 const props = defineProps({
   systemNameShort: { type: String, default: null },
@@ -65,6 +70,9 @@ const props = defineProps({
 
   hasSpotlight: { type: Boolean, default: false },
   spotlightHasBadge: { type: Boolean, default: false },
+
+  showIdleBadge: { type: Boolean, default: false },
+  secondsToLive: { type: Number, default: null },
 
   breadcrumbs: {
     type: Array,
@@ -119,6 +127,19 @@ const textsDefault = {
     warning: 'brīdinājums',
     good: 'sekmīgs paziņojums',
     important: 'svarīgs paziņojums',
+  },
+  idleBadge: {
+    minutesSingular: 'minūtes',
+    minutes11: 'minūtes',
+    minutesPluralEndsWith1: 'minūtes',
+    minutesPlural: 'minūtēm',
+    secondsSingular: 'sekundes',
+    seconds11: 'sekundēm',
+    secondsPluralEndsWith1: 'sekundes',
+    secondsPlural: 'sekundēm',
+    sessionEndingIn: 'Sesija beigsies pēc',
+    and: 'un',
+    timeCountdown: 'Laika atskaite',
   },
 };
 
@@ -519,6 +540,28 @@ function themeDropdownClicked(id, value) {
 }
 
 provide('insideHeader', insideHeader);
+
+const timeoutIn = computed(() => {
+  const { minutes, seconds } = secondsToMinutesAndSeconds(props.secondsToLive);
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+});
+
+const sessionTimeoutLabel = computed(() =>
+  sessionEndsInText(props.secondsToLive, displayTexts.value?.idleBadge)
+);
+
+const hasSessionTimeoutBadge = computed(
+  () => props.showIdleBadge && props.secondsToLive && props.secondsToLive < 3600
+);
+
+const userInfoWrapper = ref();
+
+watch(
+  () => dropDownMenu.value?.menuOpen,
+  (newValue) => {
+    if (newValue) userInfoWrapper.value?.handleClose();
+  }
+);
 </script>
 <template>
   <div
@@ -831,29 +874,47 @@ provide('insideHeader', insideHeader);
       </div>
       <div class="lx-user-menu" :class="[{ opened: dropDownMenu?.menuOpen }]" v-if="userInfo">
         <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
-          <div class="lx-user-button" tabindex="-1" role="button">
-            <div class="lx-avatar" v-if="!hasAvatar">
-              <LxIcon value="doctor" customClass="lx-icon" />
+          <LxInfoWrapper ref="userInfoWrapper" :disabled="dropDownMenu?.menuOpen">
+            <div class="lx-user-button" tabindex="-1" role="button">
+              <div class="lx-avatar" v-if="!hasAvatar">
+                <LxIcon value="doctor" customClass="lx-icon" />
+              </div>
+
+              <div class="lx-user-info">
+                <div class="lx-primary">
+                  {{ fullName }}
+                </div>
+                <div class="lx-secondary" v-if="userInfo?.description">
+                  {{ userInfo?.description }}
+                </div>
+                <div class="lx-secondary" v-if="userInfo?.institution">
+                  {{ userInfo.institution }}
+                </div>
+              </div>
+              <div class="lx-chevron">
+                <LxIcon :value="dropDownMenu?.menuOpen ? 'chevron-up' : 'chevron-down'" />
+              </div>
+              <LxBadge v-if="hasSessionTimeoutBadge" :value="timeoutIn" class="lx-timeout-badge" />
             </div>
 
-            <div class="lx-user-info">
-              <div class="lx-primary" :title="fullName">
-                {{ fullName }}
-              </div>
-              <div class="lx-secondary" :title="userInfo?.description" v-if="userInfo?.description">
-                {{ userInfo?.description }}
-              </div>
-              <div class="lx-secondary" :title="userInfo?.institution" v-if="userInfo?.institution">
-                {{ userInfo.institution }}
-              </div>
-            </div>
-            <div class="lx-chevron">
-              <LxIcon :value="dropDownMenu?.menuOpen ? 'chevron-up' : 'chevron-down'" />
-            </div>
-          </div>
+            <template #panel v-if="!dropDownMenu?.menuOpen">
+              <LxRow :label="displayTexts.userMenuTitle">
+                <span>{{ fullName }}</span>
+                <span v-if="userInfo?.description">{{ userInfo?.description }}</span>
+
+                <span v-if="userInfo?.role">{{ userInfo?.role }}</span>
+                <span v-if="userInfo?.institution">
+                  {{ userInfo?.institution }}
+                </span>
+              </LxRow>
+              <LxRow :label="displayTexts.idleBadge.timeCountdown" v-if="hasSessionTimeoutBadge">
+                <span>{{ sessionTimeoutLabel }}</span>
+              </LxRow>
+            </template>
+          </LxInfoWrapper>
 
           <template #panel>
-            <div class="user-menu-panel">
+            <div class="user-menu-panel" :class="[{ 'has-timeout': hasSessionTimeoutBadge }]">
               <div class="lx-region user-menu-context">
                 <div class="lx-avatar-display lx-avatar-display-xl">
                   <LxIcon value="doctor" />
@@ -866,6 +927,9 @@ provide('insideHeader', insideHeader);
                 <div class="lx-description" v-if="userInfo?.institution">
                   {{ userInfo?.institution }}
                 </div>
+              </div>
+              <div class="session-timeout-wrapper" v-if="hasSessionTimeoutBadge">
+                <LxInfoBox variant="warning" :label="sessionTimeoutLabel" />
               </div>
 
               <ul class="lx-group" role="group">
