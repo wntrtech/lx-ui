@@ -1055,7 +1055,7 @@
     width: var(--input-container-width-large);
   }
 
-  .lx .lx-layout .lx-calendar-container .lx-datepicker-input-container.range {
+  .lx .lx-layout .lx-context-container .lx-datepicker-input-container.range {
     flex-direction: column;
     align-items: flex-start;
   }

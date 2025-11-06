@@ -1,6 +1,6 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
-import { useWindowSize } from '@vueuse/core';
+import { ref, computed, watch, onMounted, inject, nextTick } from 'vue';
+import { useMediaQuery, useWindowSize } from '@vueuse/core';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 import {
@@ -110,7 +110,12 @@ const endInputRefs = ref({});
 const liveMessage = ref('');
 const inputDescriptionMsg = ref(displayTexts.value.dateFormatMessage);
 
+const tapStage = ref(0);
+
 const windowSize = useWindowSize();
+
+const isTouchSensitive = inject('isTouchMode', ref(false));
+const isTouchMode = useMediaQuery('(pointer: coarse), (pointer: none)');
 
 // Computed model value for selected date handling
 const model = computed({
@@ -123,8 +128,10 @@ const model = computed({
   },
 });
 
-function setActiveInput(type, id) {
+function setActiveInput(type, id, defaultFocus = true) {
   activeInput.value = type;
+
+  if (isTouchSensitive.value && defaultFocus) return;
 
   if (startInputRefs.value[id] && type === 'startInput') {
     startInputRefs.value[id].focus();
@@ -1017,20 +1024,87 @@ function validateIfExact(e, type = 'startInput') {
   }
 }
 
-function handleOpen(type) {
+function openMenu(type) {
   if (props.disabled) return;
   activeInput.value = type;
-  // Prevent opening the menu again if it's already open
-  if (!dropDownMenuRef.value?.menuOpen) {
-    dropDownMenuRef.value?.openMenu();
+  dropDownMenuRef.value?.openMenu();
+}
+
+function closeMenu() {
+  activeInput.value = null;
+  tapStage.value = 0;
+  dropDownMenuRef.value?.closeMenu();
+}
+
+function blurActiveElement() {
+  nextTick(() => {
+    const el = document.activeElement;
+    if (el && typeof el.blur === 'function') el.blur();
+  });
+}
+
+function handleTouchToggle(isOpen, type) {
+  if (!isOpen) {
+    tapStage.value = 1;
+    openMenu(type);
+    return;
+  }
+
+  switch (tapStage.value) {
+    case 1:
+      tapStage.value = 2;
+      nextTick(() => setActiveInput(type, props.id, false));
+      break;
+
+    case 2:
+      if (activeInput.value !== type) {
+        nextTick(() => setActiveInput(type, props.id, false));
+      } else {
+        closeMenu();
+        blurActiveElement();
+      }
+      break;
+
+    default:
+      tapStage.value = 0;
+      closeMenu();
+      blurActiveElement();
+      break;
   }
 }
 
-function handleClose() {
-  activeInput.value = null;
-  // Prevent closing the menu again if it's already close
-  if (dropDownMenuRef.value?.menuOpen) {
-    dropDownMenuRef.value?.closeMenu();
+function handleDesktopToggle(isOpen, type) {
+  if (!isOpen) {
+    openMenu(type);
+  } else {
+    closeMenu();
+  }
+}
+
+function toggleMenu(e, type) {
+  if (props.disabled) return;
+
+  const menu = dropDownMenuRef.value;
+  const isOpen = menu?.menuOpen;
+
+  if (!isTouchSensitive.value) {
+    handleDesktopToggle(isOpen, type);
+    return;
+  }
+
+  handleTouchToggle(isOpen, type);
+}
+
+function preventDefaultFocus(e) {
+  if (isTouchSensitive.value && !isTouchMode.value) {
+    e.preventDefault();
+  }
+}
+
+function onTouchStart(e, type) {
+  if (isTouchSensitive.value) {
+    e.preventDefault();
+    toggleMenu(e, type);
   }
 }
 
@@ -1234,6 +1308,7 @@ watch(
   (newValue) => {
     if (!newValue) {
       activeInput.value = null;
+      tapStage.value = 0;
     }
   }
 );
@@ -1311,11 +1386,13 @@ onMounted(async () => {
                 ? `${id}-lx-range-input-description`
                 : null
             "
-            @click="handleOpen('startInput')"
-            @keydown.arrow-down.prevent="handleOpen('startInput')"
-            @keyup.enter.stop="handleOpen('startInput')"
-            @keyup.space.stop="handleOpen('startInput')"
-            @keydown.esc.prevent="handleClose"
+            @mousedown="preventDefaultFocus"
+            @touchstart="onTouchStart($event, 'startInput')"
+            @click="toggleMenu($event, 'startInput')"
+            @keydown.arrow-down.prevent="openMenu('startInput')"
+            @keyup.enter.stop="toggleMenu('startInput')"
+            @keyup.space.stop="toggleMenu('startInput')"
+            @keydown.esc.prevent="closeMenu"
             @change="validateIfExact($event, 'startInput')"
             @input="sanitizeDateInput($event, mode)"
           />
@@ -1362,11 +1439,13 @@ onMounted(async () => {
               :aria-invalid="invalid"
               :aria-label="displayTexts.endDateLabel"
               :aria-describedby="`${id}-lx-range-input-description`"
-              @click="handleOpen('endInput')"
-              @keydown.arrow-down.prevent="handleOpen('endInput')"
-              @keyup.enter.stop="handleOpen('endInput')"
-              @keyup.space.stop="handleOpen('endInput')"
-              @keydown.esc.prevent="handleClose"
+              @mousedown="preventDefaultFocus"
+              @touchstart="onTouchStart($event, 'endInput')"
+              @click="toggleMenu($event, 'endInput')"
+              @keydown.arrow-down.prevent="openMenu('endInput')"
+              @keyup.enter.stop="toggleMenu($event, 'endInput')"
+              @keyup.space.stop="toggleMenu($event, 'endInput')"
+              @keydown.esc.prevent="closeMenu"
               @change="validateIfExact($event, 'endInput')"
               @input="sanitizeDateInput($event, mode)"
             />

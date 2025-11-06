@@ -93,6 +93,7 @@ const inputReadonly = ref(false);
 const highlightedItemId = ref(null);
 const infoWrapperRef = ref();
 const isTrapActive = ref(false);
+const tapStage = ref(0);
 
 const { activate, deactivate } = useFocusTrap(refListbox, {
   allowOutsideClick: true,
@@ -100,6 +101,8 @@ const { activate, deactivate } = useFocusTrap(refListbox, {
 });
 
 const globalEnvironment = useLx().getGlobals()?.environment;
+
+const isTouchSensitive = inject('isTouchMode', ref(false));
 
 function formatFinalQuery(q) {
   return q?.trim();
@@ -339,13 +342,15 @@ function getLabelId(id) {
   return `${id}-${props.id}-label`;
 }
 
-function initSearchInput(shouldClear = true) {
+function initSearchInput(shouldClear = true, shouldFocus = true) {
   if (shouldClear) query.value = null;
-  if (refQuery.value) refQuery.value.focus();
+  if (refQuery.value && shouldFocus) refQuery.value.focus();
 }
 
 function initInputFocus() {
   highlightedItemId.value = null;
+
+  if (isTouchSensitive.value) return;
 
   nextTick(() => {
     refQuery.value.focus();
@@ -411,13 +416,13 @@ function handleTouchStart() {
   inputReadonly.value = false; // Allow touch input interaction
 }
 
-function openMenu(shouldClear = true) {
+function openMenu(shouldClear = true, shouldFocus = true) {
   if (!props.disabled && !menuOpen.value && !loadingState.value) {
     panelWidth.value = refContainer.value?.offsetWidth;
     menuOpen.value = true;
 
     nextTick(() => {
-      initSearchInput(shouldClear);
+      initSearchInput(shouldClear, shouldFocus);
     });
   }
 }
@@ -429,7 +434,7 @@ function closeOnClickOutside() {
   if (menuOpen.value) {
     menuOpen.value = false;
   }
-
+  tapStage.value = 0;
   query.value = null;
   highlightedItemId.value = null;
 }
@@ -440,8 +445,10 @@ function closeMenu() {
   }
 
   highlightedItemId.value = null;
-
+  tapStage.value = 0;
   query.value = null;
+
+  if (isTouchSensitive.value) return;
 
   nextTick(() => {
     refQuery.value.focus();
@@ -452,17 +459,46 @@ function closeDropDownDefaultOnEsc() {
   menuOpen.value = false;
   query.value = null;
 
+  if (isTouchSensitive.value) return;
+
   nextTick(() => {
     refQuery.value.focus();
   });
 }
 
 function toggleMenu(e) {
-  if (menuOpen.value && e.target?.id === props.id) {
-    closeMenu();
+  if (
+    !isTouchSensitive.value ||
+    (isTouchSensitive.value &&
+      props.queryMinLength > 0 &&
+      !props.preloadedItems &&
+      typeof props.items === 'function')
+  ) {
+    if (menuOpen.value && e.target?.id === props.id) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
     return;
   }
-  openMenu();
+
+  if (!menuOpen.value) {
+    tapStage.value = 1;
+    openMenu(true, false);
+    return;
+  }
+
+  if (menuOpen.value && e.target?.id === props.id && tapStage.value === 1) {
+    tapStage.value = 2;
+    nextTick(() => {
+      initSearchInput();
+    });
+    return;
+  }
+
+  if (menuOpen.value && e.target?.id === props.id && tapStage.value === 2) {
+    closeMenu();
+  }
 }
 
 onClickOutside(refRoot, closeOnClickOutside, {
