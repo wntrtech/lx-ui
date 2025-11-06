@@ -104,9 +104,17 @@
   grid-area: actions;
 }
 
+.lx-list-item-actions .lx-context-container,
+.lx-list-item-actions .popper-wrapper,
+.lx-list-item-actions .lx-dropdown-toggler,
+.lx-list-item-actions .lx-dropdown-toggler > div {
+  height: 100%;
+}
+
 .lx .lx-list-item-actions .lx-button {
   min-width: var(--list-button-width);
-  height: var(--list-button-height);
+  height: 100%;
+  max-height: var(--list-button-max-height);
   border-radius: var(--list-button-border-radius);
 }
 

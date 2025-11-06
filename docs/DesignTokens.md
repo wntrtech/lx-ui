@@ -13,7 +13,7 @@ LX uses some custom properties (variables) to promote and improve consistency, a
 | Variable name                             | Default value                                                 |
 |-------------------------------------------|---------------------------------------------------------------|
 | `--list-button-border-radius`             | 0                                                             |
-| `--list-button-height`                    | calc(var(--row-size) - 4px)                                   |
+| `--list-button-max-height`                | `--row-size`                                                  |
 | `--list-button-width`                     | `--row-size`                                                  |
 | `--list-category-border-radius`           | 0                                                             |
 | `--list-category-margin`                  | 0.25rem                                                       |
@@ -151,6 +151,84 @@ Customized value for contrast mode:
 | Variable name                       | Contrast mode value     |
 |-------------------------------------|-------------------------|
 | `--color-tile-hover-text-secondary` | `--contrast-background` |
+
+
+## LxDataBlock
+
+It is worth noting that some LxDataBlock tokens use LxList tokens as default values, so any changes to token values should be made with caution to avoid unintended effects.
+
+### Layout
+
+| Variable name                               | Default value                                          |
+|---------------------------------------------|--------------------------------------------------------|
+| `--data-block-border`                       | `--list-item-border`                                   |
+| `--data-block-button-max-height-m`          | `--row-size`                                           |
+| `--data-block-button-max-height-l`          | 4rem                                                   |
+| `--data-block-button-width-m`               | `--row-size`                                           |
+| `--data-block-button-width-l`               | 4rem                                                   |
+| `--data-block-chevron-height`               | 1rem                                                   |
+| `--data-block-chevron-width`                | 1rem                                                   |
+| `--data-block-chevron-wrapper-max-height-m` | `--row-size`                                           |
+| `--data-block-chevron-wrapper-max-height-l` | 4rem                                                   |
+| `--data-block-chevron-wrapper-width-m`      | `--row-size`                                           |
+| `--data-block-chevron-wrapper-width-l`      | 4rem                                                   |
+| `--data-block-content-padding-m`            | 1rem                                                   |
+| `--data-block-content-padding-l`            | 2rem                                                   |
+| `--data-block-grid-areas`                   | 'icon-loader-selecting content chevron-invalid button' |
+| `--data-block-grid-template-columns`        | auto 1fr auto auto                                     |
+| `--data-block-height-m`                     | `--list-item-min-height`                               |
+| `--data-block-height-l`                     | 4rem                                                   |
+| `--data-block-icon-height`                  | 2rem                                                   |
+| `--data-block-icon-width`                   | 2rem                                                   |
+| `--data-block-icon-wrapper-max-height-m`    | `--row-size`                                           |
+| `--data-block-icon-wrapper-max-height-l`    | 4rem                                                   |
+| `--data-block-icon-wrapper-width-m`         | `--row-size`                                           |
+| `--data-block-icon-wrapper-width-l`         | 4rem                                                   |
+| `--data-block-invalid-icon-height`          | 1rem                                                   |
+| `--data-block-invalid-icon-width`           | 1rem                                                   |
+| `--data-block-left-indent-m`                | 1rem                                                   |
+| `--data-block-left-indent-l`                | 2rem                                                   |
+| `--data-block-right-indent-m`               | 1rem                                                   |
+| `--data-block-right-indent-l`               | 2rem                                                   |
+| `--data-block-text-primary-font-size`       | `--list-text-primary-font-size`                        |
+| `--data-block-text-primary-font-weight`     | `--list-text-primary-font-weight`                      |
+| `--data-block-text-primary-line-height`     | `--list-text-primary-line-height`                      |
+| `--data-block-text-primary-margin`          | 0                                                      |
+| `--data-block-text-primary-padding`         | 0.25rem 0                                              |
+| `--data-block-text-secondary-font-size`     | `--list-text-secondary-font-size`                      |
+| `--data-block-text-secondary-font-weight`   | `--list-text-secondary-font-weight`                    |
+| `--data-block-text-secondary-line-height`   | `--list-text-secondary-line-height`                    |
+| `--data-block-text-secondary-margin`        | -0.125rem 0                                            |
+| `--data-block-text-secondary-padding`       | 0 0 0.25rem 0                                          |
+
+
+### Color
+
+| Variable name                            | Light mode value                  | Dark mode value                   |
+|------------------------------------------|-----------------------------------|-----------------------------------|
+| `--color-data-block-primary`             | `--color-data`                    | `--color-data`                    |
+| `--color-data-block-secondary`           | `--color-label`                   | `--color-label`                   |
+| `--color-data-block-background`          | `--color-region`                  | `--color-region`                  |
+| `--color-data-block-region-background`   | `--color-region-2`                | `--color-region-2`                |
+| `--color-data-block-hover-background`    | `--color-region-hover`            | `--color-region-hover`            |
+| `--color-data-block-hover-foreground`    | `--color-region-hover-foreground` | `--color-region-hover-foreground` |
+| `--color-data-block-icon`                | `--color-label`                   | `--color-label`                   |
+| `--color-data-block-button-icon`         | `--color-data`                    | `--color-data`                    |
+| `--color-data-block-chevron`             | `--color-data`                    | `--color-data`                    |
+| `--color-data-block-disabled-foreground` | `--color-disabled-foreground`     | `--color-disabled-foreground`     |
+
+
+## LxAppendableList
+
+### Layout
+
+| Variable name                                  | Default value                                       |
+|------------------------------------------------|-----------------------------------------------------|
+| `--appendable-list-button-padding`             | 0.25rem                                             |
+| `--appendable-list-padding`                    | 1rem calc(var(--row-size) + 0.5rem) 1rem 1rem       |
+| `--appendable-list-padding-compact`            | 0.5rem calc(var(--row-size) + 0.5rem) 0.5rem 0.5rem |
+| `--appendable-list-padding-expandable`         | 1rem                                                |
+| `--appendable-list-padding-expandable-compact` | 0.5rem                                              |
 
 
 ## LxCard

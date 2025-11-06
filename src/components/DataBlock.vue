@@ -101,7 +101,7 @@ const selected = computed({
 });
 
 const expandIcon = computed(() => {
-  if (props.invalid && !props.busy) {
+  if (props.invalid) {
     return 'invalid';
   }
   if (expanded.value) {
@@ -111,7 +111,7 @@ const expandIcon = computed(() => {
 });
 
 const expandIconTitle = computed(() => {
-  if (props.invalid && !props.busy) {
+  if (props.invalid) {
     return props.invalidationMessage;
   }
   if (expanded.value) {
@@ -131,7 +131,7 @@ const expandIconTitle = computed(() => {
       { 'lx-data-block-disabled': disabled || busy || loading },
       { 'lx-data-block-custom-header': $slots.customHeader },
       { 'lx-data-block-invalid': invalid },
-      { 'lx-data-block-busy': busy },
+      { 'lx-data-block-selected': selected },
     ]"
   >
     <div class="lx-data-block">
@@ -146,25 +146,28 @@ const expandIconTitle = computed(() => {
       >
         <slot name="customHeader" v-if="$slots.customHeader" />
         <template v-else>
-          <div class="lx-icons" v-if="hasSelecting" @click.stop>
-            <LxRadioButton
-              v-model="selected"
-              @click="emits('selectingClick', id)"
-              v-if="props.hasSelecting && props.selectingKind === 'single'"
-            />
-            <LxCheckbox
-              v-model="selected"
-              @click="emits('selectingClick', id)"
-              v-if="props.hasSelecting && props.selectingKind === 'multiple'"
-            />
+          <div class="lx-icons" @click.stop>
+            <template v-if="hasSelecting">
+              <LxRadioButton
+                v-model="selected"
+                :disabled="disabled || loading || busy"
+                @click="emits('selectingClick', id)"
+                v-if="props.hasSelecting && props.selectingKind === 'single'"
+              />
+              <LxCheckbox
+                v-model="selected"
+                :disabled="disabled || loading || busy"
+                @click="emits('selectingClick', id)"
+                v-if="props.hasSelecting && props.selectingKind === 'multiple'"
+              />
+            </template>
+            <template v-else-if="props.icon !== null && !hasSelecting">
+              <LxIcon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
+              <div class="lx-loader-container" v-show="busy">
+                <LxLoader :loading="true" size="s" />
+              </div>
+            </template>
           </div>
-          <div class="lx-icons" v-if="props.icon !== null && !hasSelecting">
-            <LxIcon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
-            <div class="lx-loader-container" v-show="busy">
-              <LxLoader :loading="true" size="s" />
-            </div>
-          </div>
-          <div v-if="props.icon === null && !hasSelecting" />
           <div class="lx-content">
             <div
               :class="[{ 'lx-primary-uppercase': forceUppercase }]"
@@ -182,15 +185,14 @@ const expandIconTitle = computed(() => {
               {{ description }}
             </div>
           </div>
-          <div class="lx-indications" v-if="expandable">
+          <div class="lx-indications">
             <LxIcon
-              v-show="expandable"
+              v-if="expandable || invalid"
               :value="expandIcon"
               :title="expandIconTitle"
               :meaningful="invalid"
             />
           </div>
-          <div v-if="!expandable" />
         </template>
       </header>
       <div class="additional-buttons" v-if="Number(actionDefinitionsLength) !== 0">
@@ -213,17 +215,15 @@ const expandIconTitle = computed(() => {
           :disabled="isDisabled"
           @actionClick="(id) => actionClicked(id, props.id)"
         >
-          <div class="lx-toolbar" v-if="actionDefinitions.length >= 2">
-            <LxButton
-              icon="overflow-menu"
-              kind="ghost"
-              :disabled="isDisabled"
-              :label="displayTexts.overflowMenu"
-              variant="icon-only"
-              tabindex="-1"
-            />
-          </div>
-          <template v-slot:toolbar />
+          <LxButton
+            v-if="actionDefinitions.length > 1"
+            icon="overflow-menu"
+            kind="ghost"
+            :disabled="isDisabled"
+            :label="displayTexts.overflowMenu"
+            variant="icon-only"
+            tabindex="-1"
+          />
         </LxDropDownMenu>
       </div>
       <div v-if="Number(actionDefinitionsLength) === 0" />

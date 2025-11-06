@@ -27,6 +27,7 @@ const props = defineProps({
   selectingKind: { type: String, default: 'single' }, // 'single' or 'multiple'
   defaultExpanded: { type: Boolean, default: true }, //
   expandedAttribute: { type: String, default: 'extended' },
+  invalidAttribute: { type: String, default: 'invalid' },
   selectedValues: { type: Object, default: () => {} },
   labelId: { type: String, default: null },
   texts: { type: Object, default: () => ({}) },
@@ -239,6 +240,7 @@ defineExpose({ clearModel });
           :forceUppercase="forceUppercase"
           :hasSelecting="hasSelecting"
           :selectingKind="selectingKind"
+          :invalid="item[invalidAttribute]"
           @actionClick="(val) => actionClick(val, item[idAttribute], item._lx_appendableKey)"
           @selectingClick="changeSelecting"
         >

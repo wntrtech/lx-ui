@@ -383,6 +383,10 @@
   animation: expand-collapse-column 0.1s ease-out;
 }
 
+.lx:not(.lx-no-animations) .lx-data-block-expander .lx-data-block-header {
+  transition: background-color 0.1s ease-in, color 0.1s ease-in;
+}
+
 .lx:not(.lx-no-animations)
   .lx-data-block-wrapper
   > .lx-data-block

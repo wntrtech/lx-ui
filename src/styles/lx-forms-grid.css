@@ -988,6 +988,7 @@ svg .lx-shade {
   position: absolute;
   top: 0;
   right: 0;
+  padding: var(--appendable-list-button-padding);
 }
 
 .lx-appendable-list-item {
@@ -1016,21 +1017,20 @@ svg .lx-shade {
   grid-template-columns: minmax(auto, var(--form-column-size));
 }
 
-.lx-appendable-list-item > .lx-form-grid .lx-form-section {
-  padding-right: var(--row-size);
-}
-
-.lx-appendable-list-compact .lx-appendable-list-item > .lx-form-grid .lx-form-section,
-.lx-appendable-list-compact
-  .lx-appendable-list-item
-  .lx-data-block-content
-  .lx-form-grid
-  .lx-form-section {
-  padding: 0.5rem var(--row-size) 0.5rem 0.5rem;
-}
-
 .lx-appendable-list-item > .lx-data-block-wrapper > .lx-data-block-content > .lx-main {
-  padding: 0.5rem;
+  padding: var(--appendable-list-padding-expandable);
+}
+
+.lx-appendable-list-compact .lx-appendable-list-item > .lx-data-block-wrapper > .lx-data-block-content > .lx-main {
+  padding: var(--appendable-list-padding-expandable-compact);
+}
+
+.lx-appendable-list-item > .lx-form-grid > .lx-main.lx-compact-sections > .lx-form-section {
+  padding: var(--appendable-list-padding);
+}
+
+.lx-appendable-list-compact .lx-appendable-list-item > .lx-form-grid > .lx-main.lx-compact-sections > .lx-form-section {
+  padding: var(--appendable-list-padding-compact);
 }
 
 .lx-form-grid .lx-appendable-list-item .lx-data-block > .additional-buttons {

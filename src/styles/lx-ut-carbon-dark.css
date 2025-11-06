@@ -422,4 +422,15 @@
   --color-badge-background: var(--color-region);
   --color-badge-region-background: var(--color-region-2);
   --color-badge-text-color: var(--color-data);
+
+  --color-data-block-primary: var(--color-data);
+  --color-data-block-secondary: var(--color-label);
+  --color-data-block-background: var(--color-region);
+  --color-data-block-region-background: var(--color-region-2);
+  --color-data-block-hover-background: var(--color-region-hover);
+  --color-data-block-hover-foreground: var(--color-region-hover-foreground);
+  --color-data-block-icon: var(--color-label);
+  --color-data-block-button-icon: var(--color-data);
+  --color-data-block-chevron: var(--color-data);
+  --color-data-block-disabled-foreground: var(--color-disabled-foreground);
 }

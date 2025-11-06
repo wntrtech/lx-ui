@@ -1022,18 +1022,8 @@
   display: none;
 }
 
-.lx-data-grid-wrapper
-  .lx-appendable-list
-  .lx-appendable-list-item
-  .lx-data-block
-  .lx-data-block-header,
-.lx-data-grid-wrapper
-  .lx-appendable-list
-  .lx-appendable-list-item
-  .lx-data-block
-  .additional-buttons,
-.lx-data-grid-wrapper .lx-appendable-list .lx-appendable-list-item .lx-data-block-content {
-  background-color: var(--color-region);
+.lx-data-grid-wrapper .lx-appendable-list .lx-data-block-wrapper {
+  background: var(--color-data-block-background);
 }
 
 .lx-data-grid-wrapper .lx-component-toolbar .selection-action-button-toolbar > .selection-action-buttons {
@@ -1045,10 +1035,6 @@
   background-color: var(--color-list-region-background);
   --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
   --color-button-toolbar-ghost-icon-hover: var(--color-interactive-hover-foreground);
-}
-
-.lx-data-block-header {
-  outline-color: var(--color-focus-background);
 }
 
 .lx-data-grid-wrapper .lx-data-block-content .lx-row.lx-cell-clickable div {
