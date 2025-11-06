@@ -900,7 +900,7 @@
   top: 1.5rem;
 }
 
-.lx-info-wrapper-content {
+.lx-info-wrapper-content:not(.lx-disabled) {
   cursor: help;
 }
 
@@ -908,8 +908,8 @@
   color: var(--color-data);
 }
 
-.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:hover,
-.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:focus {
+.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):hover,
+.lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):focus {
   background-color: var(--color-grid-hover-background);
 }
 

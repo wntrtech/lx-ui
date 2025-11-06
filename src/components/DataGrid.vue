@@ -1771,7 +1771,12 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         isValidString(row?.[col?.attributeName]?.label)
                       "
                     >
-                      <LxInfoWrapper>
+                      <LxInfoWrapper
+                        :disabled="
+                          !isValidString(row?.[col?.attributeName]?.title) &&
+                          !isValidString(row?.[col?.attributeName]?.label)
+                        "
+                      >
                         <LxIcon
                           :value="
                             isValidString(row?.[col?.attributeName]?.icon)
@@ -1791,6 +1796,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                         >
                           {{ row?.[col?.attributeName].label }}
                         </p>
+
                         <template #panel>
                           <p class="lx-data">
                             {{
@@ -2208,7 +2214,12 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                     'only-icon': !isValidString(item?.[col?.attributeName]?.label),
                   }"
                 >
-                  <LxInfoWrapper>
+                  <LxInfoWrapper
+                    :disabled="
+                      !isValidString(item?.[col?.attributeName]?.title) &&
+                      !isValidString(item?.[col?.attributeName]?.label)
+                    "
+                  >
                     <LxIcon
                       :value="item?.[col?.attributeName]?.icon"
                       :icon-set="item?.[col?.attributeName]?.iconSet"

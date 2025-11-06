@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, computed } from 'vue';
+import { onMounted, onBeforeUnmount, ref, computed, useSlots } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxPopper from '@/components/Popper.vue';
 
@@ -19,6 +19,7 @@ const props = defineProps({
   description: { type: String, default: null },
 });
 
+const slots = useSlots();
 const showPopper = ref(false);
 const triggerRef = ref(null);
 const popperRef = ref(null);
@@ -40,7 +41,13 @@ const spacerStyle = computed(() => {
   return '';
 });
 
+const isPanelAvailable = computed(() => {
+  const panelSlot = slots.panel?.();
+  return (panelSlot && panelSlot.length > 0) || props.content;
+});
+
 const handleOpen = () => {
+  if (!isPanelAvailable.value || props.disabled) return;
   showPopper.value = true;
 };
 
@@ -52,7 +59,7 @@ let openTimeout = null;
 let closeTimeout = null;
 
 const handleMouseEnter = () => {
-  if (!props.hover || props.disabled) return;
+  if (!props.hover || props.disabled || !isPanelAvailable.value) return;
 
   if (closeTimeout) {
     clearTimeout(closeTimeout);
@@ -66,7 +73,7 @@ const handleMouseEnter = () => {
 };
 
 const handleMouseLeave = (event) => {
-  if (!props.hover || props.disabled) return;
+  if (!props.hover || props.disabled || !isPanelAvailable.value) return;
 
   if (openTimeout) {
     clearTimeout(openTimeout);
@@ -91,7 +98,7 @@ const handleMouseLeave = (event) => {
 };
 
 const handleFocusIn = () => {
-  if (props.disabled) return;
+  if (props.disabled || !isPanelAvailable.value) return;
   showPopper.value = true;
 };
 
@@ -106,7 +113,7 @@ function handlePlacementChange(newPlacement) {
 }
 
 function togglePopperOnMobile() {
-  if (window.matchMedia('(hover: none)').matches) {
+  if (window.matchMedia('(hover: none)').matches && isPanelAvailable.value) {
     showPopper.value = !showPopper.value;
   }
 }
@@ -134,7 +141,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
     :hover="hover"
     :arrowPointer="arrow"
     :arrow-padding="arrowPadding"
-    :disabled="disabled"
+    :disabled="disabled || !isPanelAvailable"
     :content="content"
     :show="showPopper"
     :locked="locked"
@@ -145,6 +152,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
     <div
       ref="triggerRef"
       class="lx-info-wrapper-content"
+      :class="[{ 'lx-disabled': disabled || !isPanelAvailable }]"
       :aria-label="ariaLabel"
       :aria-describedby="`${id}-description`"
       :tabindex="$slots.panel && focusable && !disabled ? '0' : '-1'"
@@ -157,7 +165,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
       <slot />
     </div>
 
-    <template #content v-if="$slots.panel">
+    <template #content v-if="isPanelAvailable">
       <div
         ref="popperRef"
         class="lx-info-wrapper"
@@ -199,6 +207,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
           @click.prevent="handleClose"
         >
           <slot name="panel" />
+          <p v-if="!$slots.panel && props.content" class="lx-data">{{ props.content }}</p>
         </div>
       </div>
     </template>
