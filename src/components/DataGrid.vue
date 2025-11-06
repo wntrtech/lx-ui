@@ -93,6 +93,7 @@ const props = defineProps({
   searchString: { type: String, default: '' },
   searchSide: { type: String, default: 'server' }, // server, TODO add client search
   locale: { type: String, default: null }, // lv, en
+  fullBleed: { type: Boolean, default: true },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -185,6 +186,20 @@ const searchField = ref(false);
 const queryInputDefault = ref();
 const sortedColumns = ref({});
 const queryInputCompact = ref();
+const dataGridWrapperRef = ref(null);
+const selectedRowsRaw = ref({});
+const gridTemplateColumns = ref('');
+const skeletonGridTemplateColumns = ref('6rem 12rem auto');
+const header = ref(null);
+const container = ref(null);
+const showLoadingAlert = ref(false);
+const autoScrollable = ref(false);
+
+const { width, height } = useWindowSize();
+const bounding = useElementBounding(container);
+const headerSize = useElementSize(header);
+const lxElement = document.querySelector('.lx');
+const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
 
 function isValueEmpty(value) {
   return value === null || value === undefined || value === '';
@@ -218,8 +233,6 @@ const columnsComputed = computed(() => {
 const gridColumnsDisplay = computed(() =>
   columnsComputed.value.filter((col) => col.kind !== 'extra' || props.showAllColumns)
 );
-
-const selectedRowsRaw = ref({});
 
 function formatBoolean(value) {
   if (value === null || value === undefined || value === '') {
@@ -276,6 +289,7 @@ function formatValue(value, type, options = null) {
       return value.toString();
   }
 }
+
 function formatTooltip(displayName, title) {
   const trimmedDisplayName = typeof displayName === 'string' ? displayName.trim() : displayName;
   const trimmedTitle = title?.trim();
@@ -316,11 +330,13 @@ function actionClicked(actionName, rowCode, additionalParam) {
     emits('actionClick', actionName, rowCode, additionalParam);
   }
 }
+
 function selectionActionClicked(actionName, selectedRowCodes) {
   if (!props.loading && !props.busy) {
     emits('selectionActionClicked', actionName, selectedRowCodes);
   }
 }
+
 function selectPageClicked(pageNum) {
   if (!props.loading && !props.busy) {
     emits('selectPage', pageNum);
@@ -345,9 +361,11 @@ function defaultActionClicked(rowCode, row) {
 function selectNextPage() {
   selectPageClicked(Number(props.pageCurrent) + 1);
 }
+
 function selectPreviousPage() {
   selectPageClicked(Number(props.pageCurrent) - 1);
 }
+
 function selectFirstPage() {
   selectPageClicked(0);
 }
@@ -776,6 +794,7 @@ function compareIcons(a, b, colCode, ascending) {
   const valueB = (typeof iconB === 'object' ? iconB.icon : iconB) || '';
   return new Intl.Collator('lv').compare(valueA, valueB);
 }
+
 function compareBoolean(a, b, colCode) {
   const aBool = a[colCode];
   const bBool = b[colCode];
@@ -897,6 +916,7 @@ const rows = computed(() => {
   }
   return [];
 });
+
 const pagesTotal = computed(() => Math.ceil(props.itemsTotal / props.itemsPerPage));
 const itemsLabel = computed(() => {
   const num = rows.value.length;
@@ -949,6 +969,7 @@ const hasActionButtons = computed(() => {
   }
   return ret;
 });
+
 const itemsCountSelector = computed(() => [10, 20, 30, 40, 50]);
 
 function changeItemsPerPage(value) {
@@ -962,6 +983,7 @@ function arrayToObject(arr) {
   });
   return ret;
 }
+
 function selectRows(arr = null) {
   if (arr === null) {
     selectedRowsRaw.value = arrayToObject(props.items?.map((x) => x[props.idAttribute].toString()));
@@ -969,6 +991,7 @@ function selectRows(arr = null) {
     selectedRowsRaw.value = arrayToObject(arr.map((x) => x[props.idAttribute].toString()));
   }
 }
+
 function sortBy(columnCode, direction = 'asc') {
   if (!isDisabled.value) {
     sortedColumns.value = {};
@@ -1043,9 +1066,6 @@ const gridColumnWidths = {
   '*': 'minmax(auto, 20fr)',
 };
 
-const gridTemplateColumns = ref('');
-const skeletonGridTemplateColumns = ref('6rem 12rem auto');
-
 function modifyColumn(templateColumns, condition, columnValue, prepend) {
   const index = templateColumns.indexOf(columnValue);
   if (condition && index === -1) {
@@ -1072,12 +1092,6 @@ function updateGridTemplateColumns() {
   gridTemplateColumns.value = templateColumns.join(' ');
 }
 
-const header = ref(null);
-const container = ref(null);
-const { width, height } = useWindowSize();
-
-const autoScrollable = ref(false);
-
 function syncHeaderScroll() {
   if (header.value && container.value) {
     header.value.scrollLeft = container.value.scrollLeft;
@@ -1089,6 +1103,7 @@ function syncContainerScroll() {
     container.value.scrollLeft = header.value.scrollLeft;
   }
 }
+
 function syncColumnWidths() {
   if (!header.value || !container.value) return;
 
@@ -1129,9 +1144,6 @@ function calculateOffset(el) {
   return parseInt(rowRems, 10) * parseFloat(fontSize);
 }
 
-const bounding = useElementBounding(container);
-const headerSize = useElementSize(header);
-
 const topOutOfBounds = computed(() => {
   const keyOpacity = '--grid-top-shadow-opacity';
   const keySize = '--grid-header-size';
@@ -1151,6 +1163,37 @@ const topOutOfBounds = computed(() => {
     return `${keyOpacity}: ${(0 - v) / limit}; ${keySize}: ${headerHeight}px;`;
   }
   return `${keyOpacity}: 0; ${keySize}: ${headerHeight}px;`;
+});
+
+const fullBleedMargin = computed(() => {
+  if (
+    !props.fullBleed ||
+    !props.scrollable ||
+    !props.showAllColumns ||
+    !lxElement ||
+    dataGridWrapperRef.value?.closest('#modals') ||
+    dataGridWrapperRef.value?.closest('.lx-form-grid') ||
+    width.value <= 1920
+  ) {
+    return `--grid-side-margin: 0;`;
+  }
+
+  const bodyColWidth = parseFloat(
+    getComputedStyle(lxElement).getPropertyValue('--body-column-size')
+  );
+
+  const isDefaultLayout = !!lxElement.querySelector('.lx-layout-default');
+
+  const gapRem = isDefaultLayout ? 1 : 3;
+  const gapPx = gapRem * rootFontSize;
+
+  const navBarWidth = isDefaultLayout
+    ? parseFloat(getComputedStyle(lxElement).getPropertyValue('--aside-size')) * rootFontSize || 0
+    : 0;
+
+  const margin = `${-((width.value - bodyColWidth) / 2 - navBarWidth - gapPx)}px`;
+
+  return `--grid-side-margin: ${margin};`;
 });
 
 function serverSideSearch() {
@@ -1195,8 +1238,6 @@ watch([width, height], () => {
   });
 });
 
-const dataGridWrapperRef = ref(null);
-
 useMutationObserver(
   dataGridWrapperRef,
   (mutations) => {
@@ -1221,8 +1262,6 @@ watch(
     }
   }
 );
-
-const showLoadingAlert = ref(false);
 
 onMounted(() => {
   if (props.items && !props.idAttribute) {
@@ -1297,7 +1336,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
 <template>
   <div
     class="lx-data-grid-wrapper"
-    :style="`${topOutOfBounds}`"
+    :style="`${topOutOfBounds} ${fullBleedMargin}`"
     :class="[{ 'lx-grid-sticky': stickyHeader }]"
     ref="dataGridWrapperRef"
   >

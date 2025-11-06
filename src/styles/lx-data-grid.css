@@ -1,6 +1,8 @@
 .lx .lx-data-grid-wrapper {
+  position: relative;
   background-color: var(--color-region);
   min-width: 0; /* So that scrolling works properly */
+  margin: 0 var(--grid-side-margin);
 }
 
 .lx .lx-data-grid-wrapper header:not(.lx-data-block header) {
@@ -987,10 +989,6 @@
   position: static;
   box-shadow: var(--shadow-dropdown);
   overflow-y: auto;
-}
-
-.lx-data-grid-wrapper {
-  position: relative;
 }
 
 .lx-data-grid-wrapper .lx-grid-toolbar.lx-main-toolbar {

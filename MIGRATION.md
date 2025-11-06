@@ -4,6 +4,12 @@
 
 ### Breaking changes
 
+#### LxDataGrid behavior on large screens
+
+LxDataGrid will now stretch beyond the main content column on screens 1921px and wider, when both the `scrollable` and `showAllColumns` props are enabled.
+
+To disable this behavior, set the `fullBleed` prop to `false`.
+
 #### LxInfoWrapper open/close delay
 
 The `openDelay` and `closeDelay` props have been **removed**.  
