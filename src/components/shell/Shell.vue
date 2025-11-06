@@ -33,6 +33,7 @@ import LxRow from '@/components/forms/Row.vue';
 import LxInfoBox from '@/components/InfoBox.vue';
 import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxSpotlight from '@/components/Spotlight.vue';
+import LxDialog from '@/components/Dialog.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
 const themeModel = useColorMode({
@@ -911,6 +912,82 @@ watch(
     }
   }
 );
+
+const confirmModalActions = computed(() => {
+  const primary = {
+    id: 'primary',
+    kind: 'primary',
+    name:
+      props.confirmDialogData?.$state.confirmDialogState.primaryLabel ||
+      displayTexts.value.confirmModalPrimaryDefaultLabel,
+    busy:
+      props.confirmDialogData?.$state.confirmDialogState.primaryBusy !== null
+        ? props.confirmDialogData?.$state.confirmDialogState.primaryBusy
+        : props.confirmPrimaryButtonBusy,
+    destructive: props.confirmPrimaryButtonDestructive,
+  };
+  const secondary = {
+    id: 'secondary',
+    kind: 'secondary',
+    name:
+      props.confirmDialogData?.$state.confirmDialogState.secondaryLabel ||
+      displayTexts.value.confirmModalSecondaryDefaultLabel,
+    busy:
+      props.confirmDialogData?.$state.confirmDialogState.secondaryBusy !== null
+        ? props.confirmDialogData?.$state.confirmDialogState.secondaryBusy
+        : props.confirmSecondaryButtonBusy,
+  };
+  return [primary, secondary];
+});
+
+function confirmModalClicked(item) {
+  if (item === 'primary') {
+    if (props.confirmClosesOnPrimary)
+      props.confirmDialogData?.confirm(
+        props.confirmDialogData?.$state.confirmDialogState.primaryCallback
+      );
+    else props.confirmDialogData?.$state.confirmDialogState.primaryCallback();
+  } else if (props.confirmClosesOnSecondary)
+    props.confirmDialogData?.confirm(
+      props.confirmDialogData?.$state.confirmDialogState.secondaryCallback
+    );
+  else props.confirmDialogData?.$state.confirmDialogState.secondaryCallback();
+}
+
+const idleModalActions = computed(() => {
+  const primary = {
+    id: 'primary',
+    kind: 'primary',
+    name: displayTexts.value.idleModalPrimaryLabel,
+  };
+  const secondary = {
+    id: 'secondary',
+    kind: 'secondary',
+    name: displayTexts.value.idleModalSecondaryLabel,
+  };
+  return [primary, secondary];
+});
+
+function idleModalClicked(item) {
+  if (item === 'primary') {
+    idleModalPrimaryClicked();
+  } else {
+    idleModalSecondaryClicked();
+  }
+}
+
+const idleModalDescription = computed(() => {
+  if (props.secondsToLive >= 60) {
+    const minutes = Math.floor(props.secondsToLive / 60);
+    const seconds = props.secondsToLive % 60;
+    let description = displayTexts.value.descriptionMinutes.replace('{count}', minutes);
+    if (seconds > 0) {
+      description += ` ${displayTexts.value.descriptionMinutesSmall.replace('{count}', seconds)}`;
+    }
+    return description;
+  }
+  return displayTexts.value.idleDescription.replace('{count}', props.secondsToLive);
+});
 
 // Spotlight
 
@@ -2386,73 +2463,29 @@ defineExpose({ spotlightStart, spotlightEnd });
       <div ref="poppers" id="poppers"></div>
     </div>
   </transition>
-  <LxModal
+  <LxDialog
     ref="idleModalRef"
+    kind="warning"
     :label="displayTexts.idleModalLabel"
-    :button-primary-label="displayTexts.idleModalPrimaryLabel"
-    :button-primary-visible="true"
-    :button-secondary-label="displayTexts.idleModalSecondaryLabel"
-    :button-secondary-visible="true"
-    :button-secondary-is-cancel="false"
-    :disable-closing="true"
-    @primary-action="idleModalPrimaryClicked()"
-    @secondary-action="idleModalSecondaryClicked()"
-  >
-    <p v-if="secondsToLive > 60">
-      {{
-        displayTexts.descriptionMinutes?.replace('{count}', Math.floor(props.secondsToLive / 60))
-      }}
-      {{
-        secondsToLive % 60 > 0
-          ? displayTexts.descriptionMinutesSmall?.replace('{count}', props.secondsToLive % 60)
-          : null
-      }}
-    </p>
-    <p v-else>
-      {{ displayTexts.idleDescription?.replace('{count}', props.secondsToLive) }}
-    </p>
-  </LxModal>
-  <LxModal
+    :description="idleModalDescription"
+    :buttonSecondaryIsCancel="false"
+    :disableClosing="true"
+    :actionDefinitions="idleModalActions"
+    @actionClick="idleModalClicked"
+  />
+
+  <LxDialog
     ref="confirmModal"
+    kind="question"
     :label="confirmDialogData?.$state.confirmDialogState.title"
-    :button-primary-visible="true"
-    :button-primary-label="
-      confirmDialogData?.$state.confirmDialogState.primaryLabel ||
-      displayTexts.confirmModalPrimaryDefaultLabel
-    "
-    :button-primary-busy="
-      confirmDialogData?.$state.confirmDialogState.primaryBusy !== null
-        ? confirmDialogData?.$state.confirmDialogState.primaryBusy
-        : confirmPrimaryButtonBusy
-    "
-    :button-secondary-visible="true"
-    :button-secondary-label="
-      confirmDialogData?.$state.confirmDialogState.secondaryLabel ||
-      displayTexts.confirmModalSecondaryDefaultLabel
-    "
-    :button-secondary-busy="
-      confirmDialogData?.$state.confirmDialogState.secondaryBusy !== null
-        ? confirmDialogData?.$state.confirmDialogState.secondaryBusy
-        : confirmSecondaryButtonBusy
-    "
-    :button-secondary-is-cancel="false"
-    :buttonPrimaryIsDestructive="confirmPrimaryButtonDestructive"
+    :description="confirmDialogData?.$state.confirmDialogState.message"
+    :buttonSecondaryIsCancel="false"
     :disableClosing="confirmDialogData?.$state.confirmDialogState?.disableClosing ?? false"
     :escEnabled="confirmDialogData?.$state.confirmDialogState.escEnabled"
-    @primary-action="
-      confirmClosesOnPrimary
-        ? confirmDialogData?.confirm(confirmDialogData?.$state.confirmDialogState.primaryCallback)
-        : confirmDialogData?.$state.confirmDialogState.primaryCallback()
-    "
-    @secondary-action="
-      confirmClosesOnSecondary
-        ? confirmDialogData?.confirm(confirmDialogData?.$state.confirmDialogState.secondaryCallback)
-        : confirmDialogData?.$state.confirmDialogState.secondaryCallback()
-    "
+    :actionDefinitions="confirmModalActions"
+    @actionClick="confirmModalClicked"
     @closed="onClosedConfirmModal"
-  >
-    <p>{{ confirmDialogData?.$state.confirmDialogState.message }}</p>
-  </LxModal>
+  />
 
   <LxSpotlight
     ref="spotlight"

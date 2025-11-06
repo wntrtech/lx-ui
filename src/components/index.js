@@ -21,6 +21,7 @@ export { default as LxDataGrid } from '@/components/DataGrid.vue';
 export { default as LxDataVisualizer } from '@/components/DataVisualizer.vue';
 export { default as LxDateTimePicker } from '@/components/datePicker/DateTimePicker.vue';
 export { default as LxDateTimeRange } from '@/components/datePicker/DateTimeRange.vue';
+export { default as LxDialog } from '@/components/Dialog.vue';
 export { default as LxDropDown } from '@/components/Dropdown.vue';
 export { default as LxDropDownMenu } from '@/components/DropDownMenu.vue';
 export { default as LxEmptyState } from '@/components/EmptyState.vue';

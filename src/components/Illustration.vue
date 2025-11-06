@@ -40,11 +40,19 @@ watch(
   { immediate: true }
 );
 </script>
-
 <template>
   <div :class="props.class">
-    <Transition :name="`illustration-${animation}`">
-      <icon-path />
-    </Transition>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      style="enable-background: new 0 0 32 32"
+      x="0px"
+      y="0px"
+      focusable="false"
+    >
+      <Transition :name="`illustration-${animation}`">
+        <icon-path />
+      </Transition>
+    </svg>
   </div>
 </template>

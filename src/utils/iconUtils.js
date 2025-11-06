@@ -45,3 +45,8 @@ export function getAvailableIconsMatrix() {
 export function getAvailableIconSets() {
   return ['cds', 'material', 'brand', 'phosphor'];
 }
+
+export function getAvailableIllustrations() {
+  const icons = import.meta.glob('@/components/pictograms/*.vue', { eager: true, as: 'url' });
+  return Object.keys(icons).map((o) => camelToKebab(removeExtension(getFileNameFromPath(o))));
+}

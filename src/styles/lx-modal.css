@@ -183,3 +183,24 @@ dialog {
 .lx-modal.lx-modal-xl>header>label {
   max-width: calc(100% - var(--row-size) - 2rem);
 }
+
+/* LxDialog */
+
+.lx-dialog > header .lx-illustration {
+  height: 4rem;
+  width: 4rem;
+}
+
+.lx-dialog > header .lx-illustration > svg {
+  fill: var(--illustration-color);
+}
+
+.lx-dialog > header > .illustration-wrapper {
+  padding: 1rem 1rem 0 1rem;
+}
+
+.lx-dialog > .lx-main {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
