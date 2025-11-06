@@ -70,6 +70,17 @@ function toggleExpander() {
     }
   }
 }
+
+// Prevent page scrolling on space for non-checkbox/radio elements
+function handleKeyDown(event) {
+  const { target } = event;
+  if (
+    !(target instanceof HTMLInputElement) ||
+    (target.type !== 'checkbox' && target.type !== 'radio')
+  ) {
+    event.preventDefault();
+  }
+}
 watch(
   () => props.modelValue,
   (newValue) => {
@@ -142,7 +153,8 @@ const expandIconTitle = computed(() => {
         :aria-invalid="invalid"
         :aria-describedby="`data-block-${id}-desc`"
         @click="toggleExpander"
-        @keydown.space.prevent="toggleExpander"
+        @keydown.space="handleKeyDown"
+        @keyup.space="toggleExpander"
       >
         <slot name="customHeader" v-if="$slots.customHeader" />
         <template v-else>
@@ -151,12 +163,14 @@ const expandIconTitle = computed(() => {
               <LxRadioButton
                 v-model="selected"
                 :disabled="disabled || loading || busy"
+                @keyup.space.stop="emits('selectingClick', id)"
                 @click="emits('selectingClick', id)"
                 v-if="props.hasSelecting && props.selectingKind === 'single'"
               />
               <LxCheckbox
                 v-model="selected"
                 :disabled="disabled || loading || busy"
+                @keyup.space.stop="emits('selectingClick', id)"
                 @click="emits('selectingClick', id)"
                 v-if="props.hasSelecting && props.selectingKind === 'multiple'"
               />
