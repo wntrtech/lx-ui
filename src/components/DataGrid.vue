@@ -1528,7 +1528,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           class="lx-cell-header"
           :aria-sort="getAriaSorting(sortedColumns[col.id])"
           :aria-label="formatTooltip(col.name, col.title)"
-          :tabindex="hasSorting ? '0' : '-1'"
+          :tabindex="hasSorting ? '0' : null"
           role="button"
           :class="[
             {
