@@ -722,60 +722,57 @@ const main = ref(null);
 const nav = ref(null);
 const footer = ref(null);
 
-onMounted(() => {
+function initializeTheme() {
   if (!props.hasThemePicker && props.mode !== 'digimaks-lite') {
     themeModel.value = 'none';
   }
+}
 
+function initializeAnimations() {
   const storageKey = `${
     useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'
   }-animations`;
 
-  if (JSON.parse(localStorage.getItem(storageKey)) === null) {
-    if (usePreferredReducedMotion().value === 'no-preference') {
-      defaultAnimations.value = false;
-    } else {
-      defaultAnimations.value = true;
-    }
+  const storedAnimations = JSON.parse(localStorage.getItem(storageKey));
+  if (storedAnimations === null) {
+    defaultAnimations.value = usePreferredReducedMotion().value !== 'no-preference';
   } else if (props.hasAnimations === null) {
-    animationsModel.value = JSON.parse(localStorage.getItem(storageKey));
+    animationsModel.value = storedAnimations;
   }
   animationModeChange(animationsModel.value, storageKey);
+}
 
+function initializeTransparency() {
   const transparencyKey = ref(
     `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-transparency`
   );
 
-  if (JSON.parse(localStorage.getItem(transparencyKey.value)) === null) {
-    if (usePreferredReducedTransparency().value === 'no-preference') {
-      transparencyToggle.value = false;
-    } else {
-      transparencyToggle.value = true;
-    }
+  const storedTransparency = JSON.parse(localStorage.getItem(transparencyKey.value));
+  if (storedTransparency === null) {
+    transparencyToggle.value = usePreferredReducedTransparency().value !== 'no-preference';
   } else if (props.hasReducedTransparency === null) {
-    transparencyModel.value = JSON.parse(localStorage.getItem(transparencyKey.value));
+    transparencyModel.value = storedTransparency;
   }
   transparencyModeChange(transparencyModel.value, transparencyKey);
+}
 
+function initializeDeviceFonts() {
   const storedValue = localStorage.getItem(deviceFontsStorageKey.value);
   fontToggle.value = storedValue ? JSON.parse(storedValue) : false;
-
   applyDeviceFonts(deviceFontsModel.value);
+}
 
+function initializeTouchMode() {
   if (props.isTouchSensitive === null) {
     const stored = localStorage.getItem(touchModeStorageKey.value);
-    if (stored !== null) {
-      touchModeToggle.value = JSON.parse(stored);
-    } else {
-      touchModeToggle.value = isTouchMode.value;
-    }
+    touchModeToggle.value = stored !== null ? JSON.parse(stored) : isTouchMode.value;
   } else {
     touchModeToggle.value = props.isTouchSensitive;
   }
   touchModeChange(touchModeToggle.value);
+}
 
-  defineVars();
-
+function observeModals() {
   useMutationObserver(
     modals,
     () => {
@@ -790,6 +787,16 @@ onMounted(() => {
     },
     { childList: true }
   );
+}
+
+onMounted(() => {
+  initializeTheme();
+  initializeAnimations();
+  initializeTransparency();
+  initializeDeviceFonts();
+  initializeTouchMode();
+  defineVars();
+  observeModals();
 });
 
 function navClick(id = null) {

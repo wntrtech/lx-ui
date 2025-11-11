@@ -363,30 +363,24 @@ export async function getMeta(file, texts) {
     reader.onload = async (e) => {
       try {
         const arrayBuffer = e.target.result;
-        const acceptedImageTypes = acceptedMimeImage(file.name);
-        const acceptedArchiveTypes = acceptedMimeArchive(file.name);
-        const acceptedOfficeTypes = acceptedMimeOffice(file.name);
-        const acceptedESginedDocs = acceptedESignedDocument(file.name);
-        const acceptedPdfFile = file.type === 'application/pdf';
 
         // Handle image files with ExifReader
-        if (acceptedImageTypes) {
+        const handleImageFiles = async () => {
           const ExifReader = await loadExifReader();
           const exif = ExifReader.load(arrayBuffer);
           meta.exif = exif;
 
           // Extract c2pa metadata
           const c2paMeta = await extractC2paMetadata(arrayBuffer, file.type);
-
           if (c2paMeta) {
             meta.eSignMeta = [c2paMeta];
             meta.c2paSigned = c2paMeta.signatureId;
             meta.createdUsingAi = c2paMeta.isAIGenerated;
           }
-        }
+        };
 
         // Handle zip archive files
-        if (acceptedArchiveTypes) {
+        const handleZipFiles = async () => {
           const JSZip = await loadJSZip();
           const zip = await JSZip.loadAsync(arrayBuffer);
 
@@ -404,10 +398,10 @@ export async function getMeta(file, texts) {
 
           await Promise.all(promises);
           meta.archive = getArchiveContentData(meta.archive);
-        }
+        };
 
         // Handle Office files (docx, pptx, xlsx)
-        if (acceptedOfficeTypes) {
+        const handleOfficeFiles = async () => {
           const JSZip = await loadJSZip();
           const zip = await JSZip.loadAsync(arrayBuffer);
 
@@ -418,25 +412,28 @@ export async function getMeta(file, texts) {
           meta.officeMeta = {};
 
           if (coreXmlFile) {
-            const coreXmlContentPromise = coreXmlFile.async('string').then((coreXmlContent) => {
-              const coreXml = parseXML(coreXmlContent);
-              meta.officeMeta.core = extractAllMetadata(coreXml);
-            });
-            promises.push(coreXmlContentPromise);
+            promises.push(
+              coreXmlFile.async('string').then((coreXmlContent) => {
+                const coreXml = parseXML(coreXmlContent);
+                meta.officeMeta.core = extractAllMetadata(coreXml);
+              })
+            );
           }
 
           if (appXmlFile) {
-            const appXmlContentPromise = appXmlFile.async('string').then((appXmlContent) => {
-              const appXml = parseXML(appXmlContent);
-              meta.officeMeta.app = extractAllMetadata(appXml);
-            });
-            promises.push(appXmlContentPromise);
+            promises.push(
+              appXmlFile.async('string').then((appXmlContent) => {
+                const appXml = parseXML(appXmlContent);
+                meta.officeMeta.app = extractAllMetadata(appXml);
+              })
+            );
           }
+
           await Promise.all(promises);
-        }
+        };
 
         // Handle eSign files (edoc, asice)
-        if (acceptedESginedDocs) {
+        const handleESignedFiles = async () => {
           const JSZip = await loadJSZip();
           const zip = await JSZip.loadAsync(arrayBuffer);
           const extension = getFileExtension(file.name) || DASH;
@@ -446,7 +443,6 @@ export async function getMeta(file, texts) {
           meta.eSigned = true;
           meta.eSignArchive = [];
           meta.additionalInfo = texts.metaAdditionalInfoeSigned;
-          meta.signType = '';
 
           const allSignerInfos = [];
 
@@ -456,14 +452,10 @@ export async function getMeta(file, texts) {
                 relativePath.endsWith('.xml')) ||
               (relativePath.startsWith('META-INF/signatures') && relativePath.endsWith('.xml'))
             ) {
-              const edicSignatureXmlContentPromise = zipEntry
-                .async('string')
-                .then(async (edicSignatureXmlContent) => {
+              promises.push(
+                zipEntry.async('string').then(async (edicSignatureXmlContent) => {
                   const edicSignatureXml = parseXML(edicSignatureXmlContent);
-
                   const signatureId = relativePath.split('/').pop().replace('.xml', '');
-
-                  meta.eSignMeta[signatureId] = {};
 
                   // Extract signer information from X.509 certificates
                   const x509CertElement =
@@ -484,27 +476,26 @@ export async function getMeta(file, texts) {
                     signatureId,
                     signerInfo,
                   });
-                });
-
-              promises.push(edicSignatureXmlContentPromise);
+                })
+              );
             } else if (!zipEntry.dir && !isMacOsMetaFile(zipEntry.name)) {
-              const filePromise = zipEntry.async('arraybuffer').then((data) => {
-                if (relativePath !== 'META-INF/manifest.xml' && relativePath !== 'mimetype') {
-                  addFileToArchive(meta.eSignArchive, zipEntry, data.byteLength);
-                }
-              });
-
-              promises.push(filePromise);
+              promises.push(
+                zipEntry.async('arraybuffer').then((data) => {
+                  if (relativePath !== 'META-INF/manifest.xml' && relativePath !== 'mimetype') {
+                    addFileToArchive(meta.eSignArchive, zipEntry, data.byteLength);
+                  }
+                })
+              );
             }
           });
 
           await Promise.all(promises);
           meta.eSignMeta = allSignerInfos;
           meta.eSignArchive = getArchiveContentData(meta.eSignArchive);
-        }
+        };
 
         // Handle PDF files
-        if (acceptedPdfFile) {
+        const handlePdfFiles = async () => {
           const pdfjs = await loadPdfLib();
           const uint8Array = new Uint8Array(arrayBuffer);
 
@@ -533,8 +524,16 @@ export async function getMeta(file, texts) {
           if (metadata.info?.IsSignaturesPresent) {
             meta.additionalInfo = texts.metaAdditionalInfoeSigned;
           }
-        }
-        // ADD NEW META TYPES HERE
+        };
+
+        // ADD NEW META TYPE FUNCTIONS HERE
+
+        // Determine file type and process accordingly
+        if (acceptedMimeImage(file.name)) await handleImageFiles();
+        if (acceptedMimeArchive(file.name)) await handleZipFiles();
+        if (acceptedMimeOffice(file.name)) await handleOfficeFiles();
+        if (acceptedESignedDocument(file.name)) await handleESignedFiles();
+        if (file.type === 'application/pdf') await handlePdfFiles();
 
         resolve(meta);
       } catch (error) {

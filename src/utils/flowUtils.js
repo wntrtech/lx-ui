@@ -101,6 +101,64 @@ const getError = (error) => {
   };
 };
 
+function handleAnonymousRoute(to, from, next, successCallbackFn) {
+  const allowAnonymous = to.matched.some((record) => record.meta.anonymous);
+  if (allowAnonymous) {
+    if (typeof successCallbackFn === 'function') {
+      successCallbackFn(to, from, next);
+    } else {
+      next();
+    }
+    return true;
+  }
+  return false;
+}
+
+async function ensureSession(authStore, appStore, next) {
+  // Checking if session is ok
+  if (authStore.session.st === null) {
+    try {
+      await authStore.fetchSession();
+    } catch (err) {
+      const e = getError(err);
+      if ([401, 403, 404].includes(e.status)) {
+        authStore.$reset();
+      } else {
+        appStore.setError(e?.data);
+        next();
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+function checkAuthorizationAndScope(to, authStore) {
+  // Not authorized when met the first unmatched state configuration (going bottom to top in view hierarchy)
+  const reversedMatch = [...to.matched].reverse();
+
+  // Authorized here doesn't mean "has session", it means "allowed to see this route based on session state"
+  const isAuthorized = reversedMatch.every((record) =>
+    has(record.meta.state, authStore.session.st)
+  );
+
+  const withScope = to.matched.filter((r) => r.meta.scope);
+  const hasScopeInternal =
+    withScope.length === 0 ||
+    withScope.some((record) => hasPermission(record.meta.scope, authStore.session.scope));
+
+  return { isAuthorized, hasScopeInternal };
+}
+
+function redirectTo(next, routeName, path) {
+  next({
+    params: { pathMatch: path.substring(1) },
+    query: { returnPath: path },
+    replace: true,
+    name: routeName,
+  });
+}
+
 /**
  * @param { import('vue-router').RouteLocationNormalized } to
  * @param { import('vue-router').RouteLocationNormalized } from
@@ -121,54 +179,22 @@ export async function beforeEach(to, from, next, appStore, authStore, successCal
     await isAppVersionChanged(undefined);
   }
 
-  // If allowed to be anonymous:
-  const allowAnonymous = to.matched.some((record) => record.meta.anonymous);
-  if (allowAnonymous) {
-    if (typeof successCallbackFn === 'function') {
-      successCallbackFn(to, from, next);
-      return;
-    }
-    next();
+  // Handle anonymous routes
+  if (handleAnonymousRoute(to, from, next, successCallbackFn)) {
     return;
   }
 
-  // If needs to be authorized:
-
-  // Checking if session is ok
-  if (authStore.session.st === null) {
-    try {
-      await authStore.fetchSession();
-    } catch (err) {
-      const e = getError(err);
-      if (e.status === 401 || e.status === 403 || e.status === 404) {
-        authStore.$reset();
-      } else {
-        appStore.setError(e?.data);
-        next();
-        return;
-      }
-    }
+  // Ensure session is valid
+  if (!(await ensureSession(authStore, appStore, next))) {
+    return;
   }
 
-  // Not authorized when met the first unmatched state configuration (going bottom to top in view hierarchy)
-  const reversedMatch = [...to.matched].reverse();
-  // Authorized here doesn't mean "has session", it means "allowed to see this route based on session state"
-  const isAuthorized = reversedMatch.every((record) =>
-    has(record.meta.state, authStore.session.st)
-  );
-
-  const withScope = to.matched.filter((r) => r.meta.scope);
-  const hasScopeInternal =
-    withScope.length === 0 ||
-    withScope.some((record) => hasPermission(record.meta.scope, authStore.session.scope));
+  // Check authorization and scope
+  const { isAuthorized, hasScopeInternal } = checkAuthorizationAndScope(to, authStore);
 
   if (!isAuthorized) {
-    next({
-      params: { pathMatch: to.path.substring(1) },
-      query: { returnPath: to.path },
-      replace: true,
-      name: 'notAuthorized',
-    });
+    redirectTo(next, 'notAuthorized', to.path);
+    return;
   }
 
   // If authorized, but route requires scopes:
@@ -182,21 +208,12 @@ export async function beforeEach(to, from, next, appStore, authStore, successCal
   }
 
   if (isAuthorized && !hasScopeInternal) {
-    next({
-      params: { pathMatch: to.path.substring(1) },
-      query: { returnPath: to.path },
-      replace: true,
-      name: 'forbidden',
-    });
+    redirectTo(next, 'forbidden', to.path);
+    return;
   }
 
-  // Otherwise - error:
-  next({
-    params: { pathMatch: to.path.substring(1) },
-    query: { returnPath: to.path },
-    replace: true,
-    name: 'error',
-  });
+  // Default error case
+  redirectTo(next, 'error', to.path);
 }
 
 export async function afterEach(to, from, appStore, viewStore) {

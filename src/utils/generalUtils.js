@@ -22,6 +22,46 @@ function findFocusableElements(element) {
   return candidates.filter((el) => !el.disabled && el.offsetParent !== null);
 }
 
+function findNextFocusableElement(startElement, forward) {
+  let currentElement = forward
+    ? startElement.nextElementSibling
+    : startElement.previousElementSibling;
+
+  while (currentElement) {
+    const focusable = findFocusableElements(currentElement);
+    if (focusable.length > 0) {
+      return forward ? focusable[0] : focusable[focusable.length - 1];
+    }
+    currentElement = forward
+      ? currentElement.nextElementSibling
+      : currentElement.previousElementSibling;
+  }
+
+  return null;
+}
+
+function findFocusableInSiblingsAndParents(startElement, forward) {
+  let currentElement = startElement.parentElement;
+
+  while (currentElement && currentElement !== document.body) {
+    let sibling = forward
+      ? currentElement.nextElementSibling
+      : currentElement.previousElementSibling;
+
+    while (sibling) {
+      const focusable = findFocusableElements(sibling);
+      if (focusable.length > 0) {
+        return forward ? focusable[0] : focusable[focusable.length - 1];
+      }
+      sibling = forward ? sibling.nextElementSibling : sibling.previousElementSibling;
+    }
+
+    currentElement = currentElement.parentElement;
+  }
+
+  return null;
+}
+
 export function focusNextFocusableElement(startElement, forward = true) {
   if (!startElement) return;
 
@@ -30,68 +70,13 @@ export function focusNextFocusableElement(startElement, forward = true) {
     (el) => !el.disabled && el.offsetParent !== null
   );
 
-  if (forward) {
-    let currentElement = startElement.nextElementSibling;
+  const nextFocusable =
+    findNextFocusableElement(startElement, forward) ||
+    findFocusableInSiblingsAndParents(startElement, forward) ||
+    (forward ? allFocusable[0] : allFocusable[allFocusable.length - 1]);
 
-    while (currentElement) {
-      const focusable = findFocusableElements(currentElement);
-      if (focusable.length > 0) {
-        focusable[0].focus();
-        return;
-      }
-      currentElement = currentElement.nextElementSibling;
-    }
-
-    currentElement = startElement.parentElement;
-    while (currentElement && currentElement !== document.body) {
-      let sibling = currentElement.nextElementSibling;
-      while (sibling) {
-        const focusable = findFocusableElements(sibling);
-        if (focusable.length > 0) {
-          focusable[0].focus();
-          return;
-        }
-        sibling = sibling.nextElementSibling;
-      }
-      currentElement = currentElement.parentElement;
-    }
-
-    // If no next focusable element is found, focus the first focusable element in the document
-    const firstFocusableElement = allFocusable[0];
-    if (firstFocusableElement) {
-      firstFocusableElement.focus();
-    }
-  } else {
-    let currentElement = startElement.previousElementSibling;
-
-    while (currentElement) {
-      const focusable = findFocusableElements(currentElement);
-      if (focusable.length > 0) {
-        focusable[focusable.length - 1].focus();
-        return;
-      }
-      currentElement = currentElement.previousElementSibling;
-    }
-
-    currentElement = startElement.parentElement;
-    while (currentElement && currentElement !== document.body) {
-      let sibling = currentElement.previousElementSibling;
-      while (sibling) {
-        const focusable = findFocusableElements(sibling);
-        if (focusable.length > 0) {
-          focusable[focusable.length - 1].focus();
-          return;
-        }
-        sibling = sibling.previousElementSibling;
-      }
-      currentElement = currentElement.parentElement;
-    }
-
-    // If no next focusable element is found, focus the first focusable element in the document
-    const lastFocusableElement = allFocusable[allFocusable.length - 1];
-    if (lastFocusableElement) {
-      lastFocusableElement.focus();
-    }
+  if (nextFocusable) {
+    nextFocusable.focus();
   }
 }
 
