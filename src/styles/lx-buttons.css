@@ -424,7 +424,6 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout .lx-component-toolbar .lx-button.lx-button-ghost:focus svg,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:focus svg,
 .lx-component-toolbar + .second-row .lx-button.lx-button-ghost:focus svg,
-.lx-mega-menu .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost svg,
 .header-items .popper-wrapper > .lx-dropdown-toggler:focus .lx-button.lx-button-ghost svg {
   fill: var(--color-button-toolbar-ghost-icon-focus);
 }
