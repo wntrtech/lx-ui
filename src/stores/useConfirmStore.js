@@ -18,6 +18,7 @@ export default {
      * @param {boolean|null} [primaryBusy=null] - Primary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmPrimaryButtonBusy`. Defaults to null.
      * @param {boolean|null} [secondaryBusy=null] - Secondary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmSecondaryButtonBusy`. Defaults to null.
      * @param {Function|null} [closeCallback=null] - Callback invoked when the modal closes (close icon, backdrop, Esc); if null, nothing runs. May be async. Defaults to null.
+     * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
      */
     push(
       title,
@@ -29,7 +30,8 @@ export default {
       escEnabled = true,
       primaryBusy = null,
       secondaryBusy = null,
-      closeCallback = null
+      closeCallback = null,
+      kind = null
     ) {
       this.confirmDialogState = {
         title,
@@ -42,6 +44,7 @@ export default {
         primaryBusy,
         secondaryBusy,
         closeCallback,
+        kind,
       };
       this.isOpen = true;
     },
@@ -50,9 +53,22 @@ export default {
      * @param {string} title
      * @param {string} message
      * @param {Function} primaryCallback - may be async
+     * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
      */
-    pushSimple(title, message, primaryCallback) {
-      this.push(title, message, null, null, primaryCallback, () => this.confirm());
+    pushSimple(title, message, primaryCallback, kind = null) {
+      this.push(
+        title,
+        message,
+        null,
+        null,
+        primaryCallback,
+        () => this.confirm(),
+        true,
+        null,
+        null,
+        null,
+        kind
+      );
     },
     /**
      * forcePush - For backward compatibility / edge-cases only.
@@ -69,6 +85,7 @@ export default {
      * @param {boolean|null} [primaryBusy=null] - Primary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmPrimaryButtonBusy`. Defaults to null.
      * @param {boolean|null} [secondaryBusy=null] - Secondary button busy: `true` = busy, `false` = not busy, `null` = use fallback `confirmSecondaryButtonBusy`. Defaults to null.
      * @param {Function|null} [closeCallback=null] - Callback invoked when the modal closes (close icon, backdrop, Esc); if null, nothing runs. May be async. Defaults to null.
+     * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
      */
     forcePush(
       title,
@@ -80,7 +97,8 @@ export default {
       escEnabled = true,
       primaryBusy = null,
       secondaryBusy = null,
-      closeCallback = null
+      closeCallback = null,
+      kind = null
     ) {
       this.confirmDialogState = {
         title,
@@ -94,6 +112,7 @@ export default {
         secondaryBusy,
         closeCallback,
         disableClosing: true,
+        kind,
       };
       this.isOpen = true;
     },
@@ -107,9 +126,22 @@ export default {
      * @param {string} title
      * @param {string} message
      * @param {Function} primaryCallback - may be async
+     * @param {string|null} [kind=null] - The kind of confirmation dialog. Defaults to null.
      */
-    pushSimpleForce(title, message, primaryCallback) {
-      this.forcePush(title, message, null, null, primaryCallback, () => this.confirm());
+    pushSimpleForce(title, message, primaryCallback, kind = null) {
+      this.forcePush(
+        title,
+        message,
+        null,
+        null,
+        primaryCallback,
+        () => this.confirm(),
+        true,
+        null,
+        null,
+        null,
+        kind
+      );
     },
     async confirm(callback) {
       if (callback) {

@@ -2511,7 +2511,7 @@ defineExpose({ spotlightStart, spotlightEnd });
 
   <LxDialog
     ref="confirmModal"
-    kind="question"
+    :kind="confirmDialogData?.$state.confirmDialogState.kind ?? 'question'"
     :label="confirmDialogData?.$state.confirmDialogState.title"
     :description="confirmDialogData?.$state.confirmDialogState.message"
     :buttonSecondaryIsCancel="false"
