@@ -1895,6 +1895,11 @@ p .lx-person-display-wrapper {
   display: none;
 }
 
+.lx:not(.lx-theme-contrast) .lx-dropdown-multiple .popper-wrapper .lx-dropdown-default-panel.lx-input-wrapper .lx-info-wrapper-content:not(.lx-disabled):hover,
+.lx:not(.lx-theme-contrast) .lx-autocomplete .lx-autocomplete-default-data .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):hover {
+  background-color: transparent;
+}
+
 @media (min-width: 800px) {
   .lx-form-grid > header .lx-toolbar-chip .lx-field-wrapper {
     min-width: 10rem;
@@ -1935,6 +1940,7 @@ p .lx-person-display-wrapper {
   .responsive-overflow-header > .overflow-icon-container > .popper-wrapper .lx-info-wrapper-content {
     height: var(--icon-size);
   }
+  
 
   .lx-form-grid > header > .lx-group.lx-primary .lx-toolbar-chip {
     justify-content: left;

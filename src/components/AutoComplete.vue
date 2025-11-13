@@ -1120,6 +1120,10 @@ function selectAll() {
   }
 }
 
+function countDigits(number) {
+  return number.toString().length;
+}
+
 onMounted(() => {
   activateItems();
 });
@@ -1223,7 +1227,7 @@ onMounted(() => {
                     :class="[{ 'lx-disabled': disabled }, { 'lx-invalid': invalid }]"
                     :data-invalid="invalid ? '' : null"
                   >
-                    <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag">
+                    <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag" :class="[{ ['chars-' + countDigits(model?.length) ] : model?.length > 0 }]">
                       <div class="lx-tag-label">{{ model?.length }}</div>
                       <div class="lx-tag-button">
                         <LxInfoWrapper

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch, nextTick } from 'vue';
-import { textSearch } from '@/utils/stringUtils';
+import { textSearch, generateUUID } from '@/utils/stringUtils';
 import LxIcon from '@/components/Icon.vue';
 import LxCheckbox from '@/components/Checkbox.vue';
 import LxButton from '@/components/Button.vue';
 import LxSearchableText from '@/components/SearchableText.vue';
 import LxAutoComplete from '@/components/AutoComplete.vue';
+import LxInfoWrapper from '@/components/InfoWrapper.vue';
 import LxDropDown from '@/components/Dropdown.vue';
 import { onClickOutside } from '@vueuse/core';
 import LxPopper from '@/components/Popper.vue';
@@ -64,6 +65,8 @@ const textsDefault = {
   searchPlaceholder: 'Ievadiet nosaukuma daļu, lai sameklētu vērtības',
   selectAll: 'Izvēlēties visu',
   noItemsMessage: 'Nav pieejamu vērtību',
+  tooltipDisplayTextSingle: 'cits',
+  tooltipDisplayTextMulti: 'citi'
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -556,6 +559,45 @@ const columnReadOnly = computed(() => {
 const firstFocusableIndex = computed(() =>
   props.hasSelectAll && props.kind === 'multiple' ? 1 : 0
 );
+
+const displayTooltipItems = computed(() => {
+  if (!model.value) return [];
+
+  const multipleItems = selectedItems.value?.filter((obj) =>
+    model.value?.includes(getIdAttributeString(obj))
+  );
+  if (!multipleItems) return [];
+
+  const itemCount = multipleItems.length;
+  if (itemCount === 0) return [];
+
+  const displayedItems = multipleItems.slice(0, 10);
+  const remainingCount = itemCount - 10;
+
+  const itemCountSingle =
+    remainingCount === 1 && displayTexts.value.tooltipDisplayTextSingle
+      ? `+ ${remainingCount} ${displayTexts.value.tooltipDisplayTextSingle}`
+      : '';
+  const itemCountMulti =
+    remainingCount > 1 && displayTexts.value.tooltipDisplayTextMulti
+      ? `+ ${remainingCount} ${displayTexts.value.tooltipDisplayTextMulti}`
+      : '';
+
+  const displayText = [itemCountSingle, itemCountMulti].filter(Boolean).join(', ');
+
+  if (remainingCount > 0) {
+    displayedItems.push({
+      id: generateUUID(),
+      name: displayText,
+    });
+  }
+
+  return displayedItems;
+});
+
+function countDigits(number) {
+  return number.toString().length;
+}
 </script>
 
 <template>
@@ -620,7 +662,7 @@ const firstFocusableIndex = computed(() =>
 
     <div
       v-if="kind === 'multiple' && !hasSearch"
-      class="lx-value-picker-dropdown-wrapper"
+      class="lx-value-picker-dropdown-wrapper lx-dropdown-multiple"
       ref="refRoot"
     >
       <div
@@ -658,18 +700,38 @@ const firstFocusableIndex = computed(() =>
           >
             <slot>
               <div class="pseudo-input" />
-              <div v-if="model?.length > 0" class="lx-tag">
+              <div v-if="model?.length > 0" class="lx-tag" :class="[{ ['chars-' + countDigits(model?.length) ] : model?.length > 0 }]">
                 <div class="lx-tag-label">{{ model?.length }}</div>
                 <div class="lx-tag-button">
-                  <LxButton
-                    id="clearButton"
-                    :label="displayTexts.clearChosen"
+                  <LxInfoWrapper
+                    ref="infoWrapperRef"
                     :disabled="disabled"
-                    kind="secondary"
-                    variant="icon-only"
-                    icon="remove"
-                    @click="clear"
-                  />
+                    :focusable="false"
+                  >
+                    <LxButton
+                      id="clearButton"
+                      :label="displayTexts.clearChosen"
+                      :disabled="disabled"
+                      kind="secondary"
+                      variant="icon-only"
+                      icon="remove"
+                      @click="clear"
+                    />
+                    <template
+                      #panel
+                      v-if="
+                        displayTooltipItems?.length > 0
+                      "
+                    >
+                      <ul class="lx-list">
+                        <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
+                          <div class="lx-row">
+                            <p class="lx-data">{{ item[nameAttribute] }}</p>
+                          </div>
+                        </li>
+                      </ul>
+                    </template>
+                  </LxInfoWrapper>
                 </div>
               </div>
 
