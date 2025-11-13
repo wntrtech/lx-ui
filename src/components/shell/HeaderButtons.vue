@@ -800,7 +800,7 @@ watch(
 
     <div class="lx-user-menu" v-if="userInfo">
       <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
-        <LxInfoWrapper ref="userInfoWrapper" :disabled="dropDownMenu?.menuOpen">
+        <LxInfoWrapper ref="userInfoWrapper" :disabled="dropDownMenu?.menuOpen" :focusable="false">
           <div
             id="lx-shell-user-button"
             :aria-label="displayTexts.userMenuTitle"

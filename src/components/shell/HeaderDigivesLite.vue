@@ -874,7 +874,11 @@ watch(
       </div>
       <div class="lx-user-menu" :class="[{ opened: dropDownMenu?.menuOpen }]" v-if="userInfo">
         <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
-          <LxInfoWrapper ref="userInfoWrapper" :disabled="dropDownMenu?.menuOpen">
+          <LxInfoWrapper
+            ref="userInfoWrapper"
+            :disabled="dropDownMenu?.menuOpen"
+            :focusable="false"
+          >
             <div class="lx-user-button" tabindex="-1" role="button">
               <div class="lx-avatar" v-if="!hasAvatar">
                 <LxIcon value="doctor" customClass="lx-icon" />
