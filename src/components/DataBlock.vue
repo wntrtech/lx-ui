@@ -158,29 +158,27 @@ const expandIconTitle = computed(() => {
       >
         <slot name="customHeader" v-if="$slots.customHeader" />
         <template v-else>
-          <div class="lx-icons" @click.stop>
-            <template v-if="hasSelecting">
-              <LxRadioButton
-                v-model="selected"
-                :disabled="disabled || loading || busy"
-                @keyup.space.stop="emits('selectingClick', id)"
-                @click="emits('selectingClick', id)"
-                v-if="props.hasSelecting && props.selectingKind === 'single'"
-              />
-              <LxCheckbox
-                v-model="selected"
-                :disabled="disabled || loading || busy"
-                @keyup.space.stop="emits('selectingClick', id)"
-                @click="emits('selectingClick', id)"
-                v-if="props.hasSelecting && props.selectingKind === 'multiple'"
-              />
-            </template>
-            <template v-else-if="props.icon !== null && !hasSelecting">
-              <LxIcon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
-              <div class="lx-loader-container" v-show="busy">
-                <LxLoader :loading="true" size="s" />
-              </div>
-            </template>
+          <div class="lx-icons" v-if="hasSelecting" @click.stop>
+            <LxRadioButton
+              v-model="selected"
+              :disabled="disabled || loading || busy"
+              @keyup.space.stop="emits('selectingClick', id)"
+              @click="emits('selectingClick', id)"
+              v-if="props.hasSelecting && props.selectingKind === 'single'"
+            />
+            <LxCheckbox
+              v-model="selected"
+              :disabled="disabled || loading || busy"
+              @keyup.space.stop="emits('selectingClick', id)"
+              @click="emits('selectingClick', id)"
+              v-if="props.hasSelecting && props.selectingKind === 'multiple'"
+            />
+          </div>
+          <div class="lx-icons" v-else-if="props.icon !== null && !hasSelecting">
+            <LxIcon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
+            <div class="lx-loader-container" v-show="busy">
+              <LxLoader :loading="true" size="s" />
+            </div>
           </div>
           <div class="lx-content">
             <div

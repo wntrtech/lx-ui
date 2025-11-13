@@ -645,6 +645,7 @@
 
 .lx-data-block-wrapper .additional-buttons {
   grid-area: button;
+  height: 100%;
 }
 
 .lx-data-block-wrapper .additional-buttons .lx-context-container,
