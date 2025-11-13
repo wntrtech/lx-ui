@@ -445,4 +445,42 @@
   --color-data-block-button-icon: var(--color-data);
   --color-data-block-chevron: var(--color-data);
   --color-data-block-disabled-foreground: var(--color-disabled-foreground);
+
+  --color-draft-background: var(--color-draft);
+  --color-new-background: var(--color-new);
+  --color-edited-background: var(--color-edited);
+  --color-error-background: var(--color-error);
+  --color-inactive-background: var(--color-inactive);
+  --color-incomplete-background: var(--color-incomplete);
+  --color-finished-background: var(--color-finished);
+  --color-deleted-background: var(--color-deleted);
+  --color-ongoing-background: var(--color-ongoing);
+  --color-signed-background: var(--color-signed);
+  --color-waiting-background: var(--color-waiting);
+  --color-red-background: var(--color-red);
+  --color-green-background: var(--color-green);
+  --color-blue-background: var(--color-blue);
+  --color-purple-background: var(--color-purple);
+  --color-orange-background: var(--color-orange);
+  --color-yellow-background: var(--color-yellow);
+  --color-teal-background: var(--color-teal);
+
+  --color-draft-foreground: var(--color-region);
+  --color-new-foreground: var(--color-region);
+  --color-edited-foreground: var(--color-region);
+  --color-error-foreground: var(--color-region);
+  --color-inactive-foreground: var(--color-region);
+  --color-incomplete-foreground: var(--color-region);
+  --color-finished-foreground: var(--color-region);
+  --color-deleted-foreground: var(--color-region);
+  --color-ongoing-foreground: var(--color-region);
+  --color-signed-foreground: var(--color-region);
+  --color-waiting-foreground: var(--color-region);
+  --color-red-foreground: var(--color-region);
+  --color-green-foreground: var(--color-region);
+  --color-blue-foreground: var(--color-region);
+  --color-purple-foreground: var(--color-region);
+  --color-orange-foreground: var(--color-region);
+  --color-yellow-foreground: #333;
+  --color-teal-foreground: var(--color-region);
 }

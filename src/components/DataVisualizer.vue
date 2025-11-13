@@ -36,6 +36,10 @@ const textsDefault = {
   from: 'no',
   to: 'līdz',
   target: 'Mērķis',
+  nameColumn: 'Nosaukums',
+  groupColumn: 'Grupa',
+  valueColumn: 'Vērtība',
+  iconColumn: 'Ikona',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -101,7 +105,7 @@ function checkValue(item, cloneThreshold, grid) {
 
   const { excludes, min, max, color } = cloneThreshold;
   const value = item[props.valueAttribute];
-  const getColor = () => (!grid ? `var(--color-${color})` : color);
+  const getColor = () => (!grid ? `var(--color-${color}-background)` : color);
 
   if (
     (!excludes && value >= min && value <= max) ||
@@ -140,6 +144,10 @@ function getBarColor(item, grid = false) {
     return color;
   }
 
+  if (!color && grid && (props.kind === 'bars-horizontal' || props.kind === 'bars-vertical')) {
+    return 'data';
+  }
+
   if (color) {
     return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
       ? `--bar-color: ${color}`
@@ -148,12 +156,18 @@ function getBarColor(item, grid = false) {
 
   if (item[props.colorAttribute])
     return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
-      ? `--bar-color: var(--color-${item[props.colorAttribute]})`
-      : `var(--color-${item[props.colorAttribute]})`;
+      ? `--bar-color: var(--color-${item[props.colorAttribute]}-background)`
+      : `var(--color-${item[props.colorAttribute]}-background)`;
 
   return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
     ? '--bar-color: var(--color-data)'
     : 'var(--color-data)';
+}
+
+function getBackTextColor(item) {
+  const color = getBarColor(item, true);
+  if (color === 'data') return '--bar-text-color: var(--color-region)';
+  return `--bar-text-color: var(--color-${color}-foreground)`;
 }
 
 function colorSvg() {
@@ -258,9 +272,8 @@ const columnDef = computed(() => {
   const res = [];
   res.push({
     id: 'name',
-    name: 'Nosaukums',
+    name: displayTexts.value?.nameColumn,
     attributeName: 'name',
-    title: 'Nosaukums',
     type: 'primary',
     kind: 'clickable',
     size: '*',
@@ -269,9 +282,8 @@ const columnDef = computed(() => {
   if (hasSubBars.value) {
     res.push({
       id: 'group',
-      name: 'Grupa',
+      name: displayTexts.value?.groupColumn,
       attributeName: 'group',
-      title: 'Grupa',
       type: 'primary',
       size: '*',
     });
@@ -279,9 +291,8 @@ const columnDef = computed(() => {
 
   res.push({
     id: 'value',
-    name: 'Vērtība',
+    name: displayTexts.value?.valueColumn,
     attributeName: 'value',
-    title: 'Vērtība',
     type: 'decimal',
     size: 's',
   });
@@ -290,7 +301,7 @@ const columnDef = computed(() => {
     id: 'icon',
     name: ' ',
     attributeName: 'icon',
-    title: 'Icon',
+    title: displayTexts.value?.iconColumn,
     type: 'icon',
     size: 'xs',
   });
@@ -562,7 +573,7 @@ watch(
           ]"
           :style="`${getBarWidth(item)}; ${getBarColor(item)}; ${getSubItemCount(
             item?.[valueAttribute]
-          )}`"
+          )}; ${getBackTextColor(item)}`"
           :title="
             Array.isArray(item?.[valueAttribute])
               ? null
@@ -591,7 +602,9 @@ watch(
                     'text-outside': isSubTextOutside(`${index}-${subIndex}`),
                   },
                 ]"
-                :style="`${getBarWidth(subItem)}; ${getBarColor(subItem)}`"
+                :style="`${getBarWidth(subItem)}; ${getBarColor(subItem)}; ${getBackTextColor(
+                  subItem
+                )}`"
                 :title="
                   showValues === 'never'
                     ? `${subItem?.[nameAttribute]}`
@@ -855,7 +868,7 @@ watch(
 
     <div class="lx-legend" v-if="showLegend && contentModel === 'default'">
       <div v-for="item in thresholds" :key="item?.color">
-        <div class="legend-item" :style="`--legend-color: var(--color-${item?.color})`">
+        <div class="legend-item" :style="`--legend-color: var(--color-${item?.color}-background)`">
           <div class="legend-indicator" />
           <p v-if="item?.min && item?.max">
             {{ `${formatDecimal(item?.min)} - ${formatDecimal(item?.max)}` }}

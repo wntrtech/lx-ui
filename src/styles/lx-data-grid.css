@@ -1115,13 +1115,12 @@
   display: flex;
 }
 
-.lx-data-grid svg.lx-grid-column-icon.draft,
+
 .lx-data-grid svg.lx-grid-column-icon.new,
-.lx-vertical svg.lx-grid-column-icon.draft {
+.lx-vertical svg.lx-grid-column-icon.new {
   fill: var(--color-state-new);
 }
 
-.lx-data-grid svg.lx-grid-column-icon.draft,
 .lx-data-grid svg.lx-grid-column-icon.edited,
 .lx-vertical svg.lx-grid-column-icon.edited {
   fill: var(--color-state-edited);
@@ -1178,6 +1177,47 @@
 .lx-vertical svg.lx-grid-column-icon.yellow {
   fill: var(--color-yellow);
 }
+
+.lx-data-grid svg.lx-grid-column-icon.draft,
+.lx-vertical svg.lx-grid-column-icon.draft {
+  fill: var(--color-draft-background);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.error,
+.lx-vertical svg.lx-grid-column-icon.error {
+  fill: var(--color-error-background);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.incomplete,
+.lx-vertical svg.lx-grid-column-icon.incomplete {
+  fill: var(--color-incomplete-background);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.deleted,
+.lx-vertical svg.lx-grid-column-icon.deleted {
+  fill: var(--color-deleted-background);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.ongoing,
+.lx-vertical svg.lx-grid-column-icon.ongoing {
+  fill: var(--color-ongoing-background);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.signed,
+.lx-vertical svg.lx-grid-column-icon.signed {
+  fill: var(--color-signed-background);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.waiting,
+.lx-vertical svg.lx-grid-column-icon.waiting {
+  fill: var(--color-waiting-background);
+}
+
+.lx-data-grid svg.lx-grid-column-icon.teal,
+.lx-vertical svg.lx-grid-column-icon.teal {
+  fill: var(--color-teal-background);
+}
+
 
 .lx .lx-data-grid-wrapper .lx-data-grid .lx-cell svg.lx-grid-column-icon,
 .lx

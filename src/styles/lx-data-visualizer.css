@@ -336,7 +336,11 @@
 }
 
 .lx .lx-layout div.target-value-multiple-inner {
-  text-align: center;
+  width: 1.25em;
+  height: 1.25em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .lx-data-visualizer .targets-list {
@@ -465,4 +469,13 @@
 
 .lx .lx-data-visualizer .popper-wrapper .lx-info-wrapper-content:hover {
   background-color: transparent;
+}
+
+.lx-data-visualizer .bar>p, 
+.lx-data-visualizer .sub-bar>p {
+  color: var(--bar-text-color);
+}
+
+.lx-data-visualizer .lx-target-wrapper-multiple  .target-value-multiple .lx-info-wrapper-content{
+  border-radius: 50%;
 }

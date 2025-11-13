@@ -64,9 +64,9 @@ test('LxDataVisualizer colorAttribute', () => {
   });
 
   const bars = wrapper.findAll('.bar');
-  expect(bars[0].attributes().style).toContain('--bar-color: var(--color-red)');
+  expect(bars[0].attributes().style).toContain('--bar-color: var(--color-red-background)');
   expect(bars[1].attributes().style).toContain('--bar-color: var(--color-data)');
-  expect(bars[2].attributes().style).toContain('--bar-color: var(--color-good)');
+  expect(bars[2].attributes().style).toContain('--bar-color: var(--color-good-background)');
 });
 
 test('LxDataVisualizer showValues', async () => {
@@ -158,9 +158,9 @@ test('LxDataVisualizer threshold coloring 1', () => {
   });
 
   const bars = wrapper.findAll('.bar');
-  expect(bars[0].attributes().style).toContain('--bar-color: var(--color-red)');
-  expect(bars[1].attributes().style).toContain('--bar-color: var(--color-purple)');
-  expect(bars[2].attributes().style).toContain('--bar-color: var(--color-teal)');
+  expect(bars[0].attributes().style).toContain('--bar-color: var(--color-red-background)');
+  expect(bars[1].attributes().style).toContain('--bar-color: var(--color-purple-background)');
+  expect(bars[2].attributes().style).toContain('--bar-color: var(--color-teal-background)');
 });
 
 test('LxDataVisualizer threshold coloring 2', () => {
@@ -182,9 +182,9 @@ test('LxDataVisualizer threshold coloring 2', () => {
   });
 
   const bars = wrapper.findAll('.bar');
-  expect(bars[0].attributes().style).toContain('--bar-color: var(--color-purple)');
-  expect(bars[1].attributes().style).toContain('--bar-color: var(--color-teal)');
-  expect(bars[2].attributes().style).toContain('--bar-color: var(--color-teal)');
+  expect(bars[0].attributes().style).toContain('--bar-color: var(--color-purple-background)');
+  expect(bars[1].attributes().style).toContain('--bar-color: var(--color-teal-background)');
+  expect(bars[2].attributes().style).toContain('--bar-color: var(--color-teal-background)');
 });
 
 test('LxDataVisualizer threshold coloring 3', () => {
@@ -206,8 +206,8 @@ test('LxDataVisualizer threshold coloring 3', () => {
   });
 
   const bars = wrapper.findAll('.bar');
-  expect(bars[0].attributes().style).toContain('--bar-color: var(--color-red)');
-  expect(bars[1].attributes().style).toContain('--bar-color: var(--color-red)');
+  expect(bars[0].attributes().style).toContain('--bar-color: var(--color-red-background)');
+  expect(bars[1].attributes().style).toContain('--bar-color: var(--color-red-background)');
   expect(bars[2].attributes().style).toContain('--bar-color: var(--color-data)');
 });
 

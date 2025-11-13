@@ -23,7 +23,6 @@ import Notification from '@/components/Notification.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxLoader from '@/components/Loader.vue';
-import LxModal from '@/components/Modal.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import LxAlertWidget from '@/components/AlertWidget.vue';
