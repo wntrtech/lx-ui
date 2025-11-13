@@ -121,7 +121,7 @@
   }
 
   .lx-curtain .lx-modal .lx-main {
-    max-height: calc(100dvh - 8.75rem);
+    max-height: calc(100dvh - 7.75rem);
   }
 }
 
@@ -203,4 +203,34 @@ dialog {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+/* LxModalForm */
+
+.lx-modal-form > .lx-main {
+  padding: 0;
+}
+
+.lx-layout .lx-modal.lx-modal-form .lx-form-grid>header.lx-sticky {
+  top: 0;
+}
+
+@media (max-width: 800px) {
+  .lx-curtain .lx-modal.lx-modal-form .lx-main {
+    max-height: calc(100dvh - 4.75rem);
+  }
+
+  .lx-curtain .lx-modal.lx-modal-form .lx-main .lx-form-grid .lx-main {
+    max-height: 100%;
+  }
+
+  .lx-curtain .lx-modal.lx-modal-form:has(footer.lx-button-set:empty) > .lx-main{
+    max-height: 100%;
+  }
+}
+
+@media (max-height: 499px) {
+  .lx-modal-form .lx-form-grid > header.lx-sticky{
+    position: sticky;
+  }
 }

@@ -1055,6 +1055,10 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
         </LxDropDownMenu>
       </div>
 
+      <div class="lx-group lx-single-header-button">
+        <slot name="header-additional" />
+      </div>
+
       <div
         class="responsive-default-index-button"
         v-if="additionalButtons?.length === 0 && props.indexType === 'default' && index?.length > 0"

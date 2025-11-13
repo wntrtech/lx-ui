@@ -35,7 +35,7 @@ svg .lx-shade {
   min-height: var(--row-size);
   border-bottom: 1pt solid var(--color-chrome);
   display: grid;
-  grid-template-columns: 1fr auto 1fr auto auto;
+  grid-template-columns: 1fr auto 1fr auto auto auto;
 }
 
 .lx-form-grid > header.lx-sticky {
@@ -1944,7 +1944,7 @@ p .lx-person-display-wrapper {
   }
 
   .lx-form-grid > header {
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: 1fr auto auto auto;
   }
 
   .lx-form-grid > header .lx-toolbar-chip .lx-dropdown-default .lx-dropdown-default-data {

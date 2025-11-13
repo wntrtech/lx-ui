@@ -46,6 +46,7 @@ export { default as LxMap } from '@/components/Map.vue';
 export { default as LxMarkdownTextArea } from '@/components/MarkdownTextArea.vue';
 export { default as LxMasterDetail } from '@/components/MasterDetail.vue';
 export { default as LxModal } from '@/components/Modal.vue';
+export { default as LxModalForm } from '@/components/ModalForm.vue';
 export { default as LxNotification } from '@/components/Notification.vue';
 export { default as LxNumberSlider } from '@/components/NumberSlider.vue';
 export { default as LxPlaceholder } from '@/components/forms/Placeholder.vue';
