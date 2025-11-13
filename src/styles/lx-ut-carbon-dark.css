@@ -46,16 +46,12 @@
   --color-toggle-background-true: var(--color-interactive-background);
   --color-toggle-foreground-true: var(--color-region);
   --color-toggle-border-false: var(--color-data);
-  --color-toggle-background-false: var(--color-data);
-  --color-toggle-foreground-false: var(--color-region);
-  --color-toggle-border-null: var(--color-data);
-  --color-toggle-background-null: var(--color-region);
+  --color-toggle-background-false: var(--color-region);
+  --color-toggle-foreground-false: var(--color-data);
   --color-toggle-foreground-null: var(--color-data);
   --color-toggle-hover-border: var(--color-interactive-hover-background);
   --color-toggle-hover-background: var(--color-interactive-hover-background);
   --color-toggle-hover-foreground: var(--color-region);
-  --color-toggle-indeterminate: #dddddd;
-  --color-toggle-indeterminate-hover: #cccccc;
 
   --color-content-switcher-foreground: var(--color-data);
   --color-cover-title: var(--color-data);

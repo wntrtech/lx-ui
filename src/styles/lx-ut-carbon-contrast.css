@@ -54,11 +54,7 @@
   --color-toggle-border-false: var(--contrast-foreground);
   --color-toggle-background-false: var(--contrast-background);
   --color-toggle-foreground-false: var(--contrast-foreground);
-  --color-toggle-border-null: var(--contrast-foreground);
-  --color-toggle-background-null: var(--contrast-background);
   --color-toggle-foreground-null: var(--contrast-foreground);
-  --color-toggle-indeterminate: var(--contrast-foreground);
-  --color-toggle-indeterminate-hover: var(--contrast-hover);
 
   --color-content-switcher-foreground: var(--contrast-interactive);
   --color-cover-title: var(--contrast-foreground);

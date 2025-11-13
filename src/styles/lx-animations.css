@@ -516,17 +516,8 @@
 }
 
 .lx:not(.lx-no-animations) .lx-toggle-appearance::before {
-  -webkit-transition: 70ms cubic-bezier(0.2, 0, 1, 0.9) all;
-  transition: 70ms cubic-bezier(0.2, 0, 1, 0.9) all;
-}
-
-.lx:not(.lx-no-animations)
-  .lx-toggle-wrapper.lx-small
-  .lx-toggle:checked
-  + .lx-toggle-label-wrapper
-  .lx-toggle-appearance::after {
-  -webkit-transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
-  transition: background-color 70ms cubic-bezier(0.2, 0, 1, 0.9);
+  -webkit-transition: 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83) all;
+  transition: 0.2s cubic-bezier(0.76, 0.11, 0.11, 0.83) all;
 }
 
 .lx:not(.lx-no-animations) .lx-value-picker-item {

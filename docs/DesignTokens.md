@@ -279,6 +279,55 @@ It is worth noting that some LxDataBlock tokens use LxList tokens as default val
 | `--color-badge-text-color`          | `--color-data`                      | `--color-data`                      |
 
 
+## LxToggle
+
+### Layout
+
+| Variable name                           | Default value                           |
+|-----------------------------------------|-----------------------------------------|
+| `--toggle-border`                       | 1px solid transparent                   |
+| `--toggle-border-invalid`               | 2px solid transparent                   |
+| `--toggle-width`                        | 3rem                                    |
+| `--toggle-height`                       | 1.5rem                                  |
+| `--toggle-thumb-width`                  | 1rem                                    |
+| `--toggle-thumb-height`                 | 1rem                                    |
+| `--toggle-thumb-border-radius`          | 50%                                     |
+| `--toggle-s-width`                      | 2rem                                    |
+| `--toggle-s-height`                     | 1rem                                    |
+| `--toggle-s-thumb-width`                | 0.625rem                                |
+| `--toggle-s-thumb-height`               | 0.625rem                                |
+| `--toggle-border-radius`                | 0.75rem                                 |
+| `--toggle-padding-left-false`           | 0.165rem                                |
+| `--toggle-padding-left-true`            | 1.7rem                                  |
+| `--toggle-indeterminate-padding-left`   | 0.935rem                                |
+| `--toggle-indeterminate-padding-right`  | 0.935rem                                |
+| `--toggle-s-indeterminate-padding-left` | 0.625rem                                |
+| `--toggle-s-indeterminate-padding-right`| 0.625rem                                |
+| `--toggle-s-padding-left-true`          | 1.075rem                                |
+| `--toggle-padding-right`                | 0.165rem                                |
+| `--toggle-label-readonly-margin`        | 0.4rem 0                                |
+| `--toggle-text-margin-left`             | 0.5rem                                  |
+| `--toggle-checked-icon-position-left`   | 0.185rem                                |
+| `--toggle-checked-icon-width`           | 1.5rem                                  |
+| `--toggle-checked-icon-height`          | 1.5rem                                  |
+
+
+### Color
+
+| Variable name                       | Light mode value                        | Dark mode value                         |
+|-------------------------------------|-----------------------------------------|-----------------------------------------|
+| `--color-toggle-border-true`        | `--color-interactive-background`        | `--color-interactive-background`        |
+| `--color-toggle-background-true`    | `--color-interactive-background`        | `--color-interactive-background`        |
+| `--color-toggle-foreground-true`    | `--color-region`                        | `--color-region`                        |
+| `--color-toggle-border-false`       | `--color-data`                          | `--color-data`                          |
+| `--color-toggle-background-false`   | `--color-interactive-foreground`        | `--color-interactive-foreground`        |
+| `--color-toggle-foreground-false`   | `--color-data`                          | `--color-data`                          |
+| `--color-toggle-foreground-null`    | `--color-data`                          | `--color-data`                          |
+| `--color-toggle-hover-border`       | `--color-interactive-hover-background`  | `--color-interactive-hover-background`  |
+| `--color-toggle-hover-background`   | `--color-interactive-hover-background`  | `--color-interactive-hover-background`  |
+| `--color-toggle-hover-foreground`   | `--color-interactive-hover-foreground`  | `--color-region`                        |
+
+
 ## Inputs 
 
 Some input components are both visually and functionally similar. This includes:

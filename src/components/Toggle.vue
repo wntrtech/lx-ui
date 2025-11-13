@@ -128,24 +128,26 @@ onMounted(() => {
       <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label-->
       <input
         ref="input"
+        v-model="model"
         type="checkbox"
         class="lx-toggle"
         :class="[{ 'lx-invalid': invalid }]"
         :id="id"
         :name="id"
-        v-model="model"
         :checked="model"
+        :disabled="disabled"
+        role="switch"
         :aria-checked="model"
         :aria-invalid="invalid"
         :aria-label="!(size !== 's' && hasSlots) ? tooltipValue : null"
-        role="switch"
-        :disabled="disabled"
         :aria-labelledby="labelledBy"
       />
-      <div class="lx-toggle-label-wrapper">
-        <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
-        <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
-        <span class="lx-toggle-appearance" @click="toggleValue" role="presentation" />
+      <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
+      <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
+      <div class="lx-toggle-label-wrapper" @click.stop.prevent="toggleValue">
+        <LxIcon v-if="model && size === 'm'" value="check" />
+        <span class="lx-toggle-appearance" role="presentation" />
+
         <label class="lx-toggle-text" v-if="size !== 's' && hasSlots" :for="id">
           <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate"> <slot /> </span>
           <span v-show="model === null">
