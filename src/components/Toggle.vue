@@ -141,6 +141,7 @@ onMounted(() => {
         :aria-invalid="invalid"
         :aria-label="!(size !== 's' && hasSlots) ? tooltipValue : null"
         :aria-labelledby="labelledBy"
+        tabindex="0"
       />
       <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
