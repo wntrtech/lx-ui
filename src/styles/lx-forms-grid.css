@@ -441,7 +441,6 @@ svg .lx-shade {
   font-size: var(--label-font-size);
 }
 
-.lx-form-grid > .lx-main .lx-row,
 .lx-form-grid > .lx-tab-control > .lx-tab-body > .lx-main .lx-row,
 .lx-form-grid > .lx-wizard > .lx-wizard-body > .lx-main .lx-row {
   max-width: 100%;

@@ -906,10 +906,6 @@
   cursor: help;
 }
 
-.lx .lx-layout .popper-wrapper .lx-info-wrapper-content .lx-data {
-  color: var(--color-data);
-}
-
 .lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):hover,
 .lx:not(.lx-theme-contrast) .popper-wrapper .lx-info-wrapper-content:not(.lx-disabled):focus {
   background-color: var(--color-grid-hover-background);
