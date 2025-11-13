@@ -4,6 +4,30 @@
 
 ### Breaking changes
 
+#### confirmStore now uses LxDialog component
+
+confirmStore now uses LxDialog component instead of LxModal.
+
+The overall appearance remains similar — the main difference is that the dialog now includes an illustration.
+
+`question` illustration is used by default, however if confirmStore is displaying message that is not a question, different `kind` should be used.
+
+Available `kind` prop options:
+- `question`
+- `info`
+- `warning`
+- `error`
+- `success`
+
+`kind` can be set using confirmStore `push` or `pushSimple` confirmStore functions.
+
+Examples:
+```js
+confirmStore.pushSimple('Do you want to leave without saving?', null, primaryAction, 'question');
+
+confirmStore.pushSimple('Are you sure you want to delete this item?', 'This action cannot be undone', primaryAction, 'warning');
+```
+
 #### LxDataGrid behavior on large screens
 
 LxDataGrid will now stretch beyond the main content column on screens 1921px and wider, when both the `scrollable` and `showAllColumns` props are enabled.
