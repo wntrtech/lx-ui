@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, watch, nextTick } from 'vue';
+import { computed, onMounted, ref, watch, nextTick, useSlots } from 'vue';
 import {
   useWindowSize,
   useElementBounding,
@@ -7,7 +7,6 @@ import {
   useMutationObserver,
   useDebounceFn,
 } from '@vueuse/core';
-
 import { formatDateTime, formatDate, formatFull } from '@/utils/dateUtils';
 import { generateUUID, foldToAscii } from '@/utils/stringUtils';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -43,7 +42,7 @@ const emits = defineEmits([
   'emptyStateActionClick',
   'searched',
 ]);
-
+const slots = useSlots();
 const props = defineProps({
   id: {
     type: String,
@@ -1331,6 +1330,18 @@ watch(
   }
 );
 
+const isToolbarVisible = computed(() => {
+  const hasValidToolbarActionDefinitions =
+    props.toolbarActionDefinitions && props.toolbarActionDefinitions.length > 0;
+  const isToolbarSlotUsed = !!slots.toolbar;
+
+  return (
+    props.hasSelecting ||
+    (props.showToolbar &&
+      (hasValidToolbarActionDefinitions || isToolbarSlotUsed || props.hasSearch))
+  );
+});
+
 defineExpose({ cancelSelection, selectRows, sortBy });
 </script>
 <template>
@@ -1344,7 +1355,10 @@ defineExpose({ cancelSelection, selectRows, sortBy });
       <div class="heading-2" :id="`${id}-label`">{{ label }}</div>
       <p :id="`${id}-description`" class="lx-description">{{ description }}</p>
     </header>
-    <div :class="[{ 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length }]">
+    <div
+      v-if="isToolbarVisible"
+      :class="[{ 'lx-selection-toolbar': hasSelecting && selectedRows && selectedRows.length }]"
+    >
       <LxToolbar
         :id="`${props.id}-toolbar`"
         :actionDefinitions="toolbarActions"
