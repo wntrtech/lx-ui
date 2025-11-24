@@ -2025,7 +2025,7 @@
 }
 
 .lx-spotlight > .lx-spotlight-header{
-  border: 1px solid var(--color-chrome);
+  border: 3px solid var(--color-interactive-background);
   border-bottom: none;
 }
 
@@ -2046,7 +2046,7 @@
   padding-inline: 1rem;
   padding-bottom: 1.25rem;
   padding-top: 0.5rem;
-  border-inline: 1px solid var(--color-chrome);
+  border-inline: 3px solid var(--color-interactive-background);
 }
 
 .lx-spotlight > .lx-spotlight-main .lx-spotlight-label {
@@ -2139,8 +2139,8 @@
 }
 
 .lx .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-right {
-  border-left: 1px solid var(--color-chrome);
-  border-bottom: 1px solid var(--color-chrome);
+  border-left: 3px solid var(--color-interactive-background);
+  border-bottom: 3px solid var(--color-interactive-background);
   box-shadow: -4px 4px 8px -4px var(--color-shadow);
 }
 
@@ -2149,8 +2149,8 @@
 }
 
 .lx .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-left {
-  border-right: 1px solid var(--color-chrome);
-  border-top: 1px solid var(--color-chrome);
+  border-right: 3px solid var(--color-interactive-background);
+  border-top: 3px solid var(--color-interactive-background);
   box-shadow: 4px -4px 8px -4px var(--color-shadow);
 }
 
@@ -2159,8 +2159,8 @@
 }
 
 .lx .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-top {
-  border-bottom: 1px solid var(--color-chrome);
-  border-right: 1px solid var(--color-chrome);
+  border-bottom: 3px solid var(--color-interactive-background);
+  border-right: 3px solid var(--color-interactive-background);
   box-shadow: 4px 4px 8px -4px var(--color-shadow);
 }
 
@@ -2169,8 +2169,8 @@
 }
 
 .lx .lx-layout .popper .lx-spotlight + .popper-floating-arrow.arrow-bottom {
-  border-left: 1px solid var(--color-chrome);
-  border-top: 1px solid var(--color-chrome);
+  border-left: 3px solid var(--color-interactive-background);
+  border-top: 3px solid var(--color-interactive-background);
   box-shadow: -2px -2px 6px -4px var(--color-shadow);
 }
 
@@ -2193,7 +2193,7 @@
   align-items: end;
   padding-inline: 1rem;
   padding-bottom: 1rem;
-  border: 1px solid var(--color-chrome);
+  border: 3px solid var(--color-interactive-background);
   border-top: none;
 }
 

@@ -89,21 +89,21 @@ const {
         :style="{
           position: 'absolute',
           left: plc.startsWith('right')
-            ? '-16px'
+            ? '-15px'
             : plc.startsWith('left')
             ? 'auto'
             : middlewareData.arrow?.x != null
             ? `${middlewareData.arrow.x - Number(props.offsetSkid)}px`
             : '',
-          right: plc.startsWith('left') ? '-16px' : '',
+          right: plc.startsWith('left') ? '-15px' : '',
           top: plc.startsWith('top')
             ? 'auto'
             : plc.startsWith('bottom')
-            ? '-16px'
+            ? '-15px'
             : middlewareData.arrow?.y != null
             ? `${middlewareData.arrow.y}px`
             : '',
-          bottom: plc.startsWith('top') ? '-16px' : '',
+          bottom: plc.startsWith('top') ? '-15px' : '',
         }"
       />
     </div>
