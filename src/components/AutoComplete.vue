@@ -1437,7 +1437,8 @@ onMounted(() => {
                             hasSelectAll &&
                             typeof props.items !== 'function' &&
                             selectingKind === 'multiple' &&
-                            filteredItems.length > 0
+                            filteredItems.length > 0 &&
+                            (!query || query?.length === 0)
                           "
                           id="select-all"
                           class="lx-value-picker-item select-all"
