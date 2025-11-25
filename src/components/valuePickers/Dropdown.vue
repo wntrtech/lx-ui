@@ -793,7 +793,7 @@ function countDigits(number) {
                       :tabindex="
                         highlightedItemId === 'select-all' ? '0' : !highlightedItemId ? '0' : '-1'
                       "
-                      role="option"
+                      role="button"
                       :title="areSomeSelected ? displayTexts.clearChosen : displayTexts.selectAll"
                       @keydown.enter.prevent="selectAll"
                       @keydown.space.prevent="selectAll"

@@ -664,9 +664,6 @@
 
 .lx .lx-layout .lx-calendar-container
   .lx-time-picker-time-list-wrapper
-  .lx-button,
-.lx .lx-layout .lx-calendar-container
-  .lx-time-picker-time-list-wrapper
   .lx-button {
   height: 2rem;
 }

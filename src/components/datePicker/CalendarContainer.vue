@@ -702,11 +702,11 @@ function handleRangeDifferentCaseValidation(date) {
 function checkMinutesCadence(cadence, filteredIndexParameter, minutesValue) {
   let filteredIndex = filteredIndexParameter;
   // Check if cadence is 5 and filteredMinutes length is 12
-  if (cadence === 5 && filteredMinutes.value.length === 12) {
-    filteredIndex = filteredMinutes.value.findIndex((item) => Number(item.value) === minutesValue);
-  }
   // Check if cadence is 15 and filteredMinutes length is 16
-  else if (cadence === 15 && filteredMinutes.value.length === 16) {
+  if (
+    (cadence === 5 && filteredMinutes.value.length === 12) ||
+    (cadence === 15 && filteredMinutes.value.length === 16)
+  ) {
     filteredIndex = filteredMinutes.value.findIndex((item) => Number(item.value) === minutesValue);
   }
 
@@ -716,11 +716,11 @@ function checkMinutesCadence(cadence, filteredIndexParameter, minutesValue) {
 function checkSecondsCadence(cadence, filteredIndexParameter, secondsValue) {
   let filteredIndex = filteredIndexParameter;
   // Check if cadence is 5 and filteredSeconds length is 12
-  if (cadence === 5 && filteredSeconds.value.length === 12) {
-    filteredIndex = filteredSeconds.value.findIndex((item) => Number(item.value) === secondsValue);
-  }
   // Check if cadence is 15 and filteredSeconds length is 16
-  else if (cadence === 15 && filteredSeconds.value.length === 16) {
+  if (
+    (cadence === 5 && filteredSeconds.value.length === 12) ||
+    (cadence === 15 && filteredSeconds.value.length === 16)
+  ) {
     filteredIndex = filteredSeconds.value.findIndex((item) => Number(item.value) === secondsValue);
   }
 

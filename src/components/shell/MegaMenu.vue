@@ -141,6 +141,7 @@ function getIconSet(item) {
                 'default-icon': !item.id,
               },
             ]"
+            role="button"
             @click="updateSelectedMegaMenuItem(item.id)"
             @keyup.enter.prevent="updateSelectedMegaMenuItem(item.id)"
           >
@@ -187,6 +188,7 @@ function getIconSet(item) {
                     'default-icon': !item.icon,
                   },
                 ]"
+                role="button"
                 @click="updateSelectedMegaMenuItem(item.id)"
                 @keyup.enter.prevent="updateSelectedMegaMenuItem(item.id)"
               >

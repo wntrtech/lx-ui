@@ -701,7 +701,7 @@ watch(
             ]"
             :style="`${getBarHeight(item)}; ${getBarColor(item)}; ${getSubItemCount(
               item?.[valueAttribute]
-            )}`"
+            )}; ${getBackTextColor(item)}`"
             :title="
               Array.isArray(item?.[valueAttribute])
                 ? null
@@ -730,7 +730,9 @@ watch(
                       'text-outside': isSubTextOutside(`${index}-${subIndex}`),
                     },
                   ]"
-                  :style="`${getBarHeight(subItem)}; ${getBarColor(subItem)}`"
+                  :style="`${getBarHeight(subItem)}; ${getBarColor(subItem)}; ${getBackTextColor(
+                    subItem
+                  )}`"
                   :title="
                     showValues === 'never'
                       ? `${subItem?.[nameAttribute]}`

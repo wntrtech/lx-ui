@@ -404,6 +404,8 @@
   z-index: 105;
   background-color: var(--color-background);
   padding: 0 1rem;
+  overflow-y: scroll;
+  padding-bottom: var(--row-size);
 }
 
 .lx-layout-digimaks .lx-settings-menu .lx-settings-header {
@@ -418,11 +420,6 @@
 }
  
 /* Settings menu */
-
-.lx-layout-digimaks .lx-settings-menu {
-  overflow-y: scroll;
-  padding-bottom: var(--row-size);
-}
 
 .lx-layout-digimaks .lx-settings-menu > .lx-button {
   --button-tertiary-width: 100%;

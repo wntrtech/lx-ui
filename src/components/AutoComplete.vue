@@ -1450,7 +1450,7 @@ onMounted(() => {
                               ? '0'
                               : '-1'
                           "
-                          role="option"
+                          role="button"
                           @keydown.enter.prevent="selectAll"
                           @keydown.space.prevent="selectAll"
                           @click="selectAll"

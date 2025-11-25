@@ -668,16 +668,13 @@
       font-size: calc(var(--font-size) * 1.1);
     }
   
-    .lx .lx-layout.lx-layout-latvijalv>nav {
-      display: block;
-      height: calc(100% - var(--nav-row-size));
-    }
-  
     .lx .lx-layout.lx-layout-latvijalv>header>.lx-header .lx-group.lx-right-group #nav-toggle {
       display: flex;
     }
   
     .lx .lx-layout.lx-layout-latvijalv > nav {
+      display: block;
+      height: calc(100% - var(--nav-row-size));
       width: var(--row-size);
       z-index: 1000;
       top: var(--nav-row-size);

@@ -122,7 +122,7 @@
   line-height: 1em;
   font-weight: var(--font-weight-bold);
   font-size: var(--small-font-size);
-  color: var(--color-region);
+  color: var(--bar-text-color);
   position: absolute;
 }
 
@@ -469,11 +469,6 @@
 
 .lx .lx-data-visualizer .popper-wrapper .lx-info-wrapper-content:hover {
   background-color: transparent;
-}
-
-.lx-data-visualizer .bar>p, 
-.lx-data-visualizer .sub-bar>p {
-  color: var(--bar-text-color);
 }
 
 .lx-data-visualizer .lx-target-wrapper-multiple  .target-value-multiple .lx-info-wrapper-content{
