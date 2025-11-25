@@ -4,6 +4,10 @@
 
 ### Breaking changes
 
+#### LxDialog new default kind value
+
+The default value of the `kind` prop in `LxDialog` has been changed from `default` to `question`.
+
 #### confirmStore now uses LxDialog component
 
 confirmStore now uses LxDialog component instead of LxModal.

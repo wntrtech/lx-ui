@@ -98,7 +98,7 @@ const actionDefinitionsDisplay = computed(() => {
 });
 
 const illustrationMap = {
-  default: 'info',
+  default: 'question',
   question: 'question',
   info: 'info',
   warning: 'warning',
@@ -107,13 +107,13 @@ const illustrationMap = {
 };
 
 const colorMap = {
-  default: 'var(--color-new)',
-  question: 'var(--color-purple)',
-  info: 'var(--color-new)',
+  default: 'var(--color-data)',
+  question: 'var(--color-data)',
+  info: 'var(--color-data)',
   warning: 'var(--color-warning)',
   error: 'var(--color-error)',
   success: 'var(--color-good)',
-  custom: 'var(--color-neutral)',
+  custom: 'var(--color-data)',
 };
 
 provide('insideModal', insideModal);
