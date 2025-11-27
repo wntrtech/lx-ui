@@ -53,6 +53,7 @@ const props = defineProps({
   hasSelectAll: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
+  enableAdditionalText: { type: Boolean, default: false},
 });
 
 const textsDefault = {
@@ -69,6 +70,7 @@ const textsDefault = {
   clearChosen: 'Notīrīt visas izvēlētās vērtības',
   selectAll: 'Izvēlēties visu',
   loadingState: 'Notiek ielāde',
+  additionalText: 'Mēģiniet meklēt, izmantojot citu vārdu vai frāzi',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -1244,14 +1246,13 @@ onMounted(() => {
                             icon="remove"
                             @click.stop="clear"
                           />
-
                           <template
                             #panel
-                            v-if="
-                              props.selectingKind === 'multiple' && displayTooltipItems?.length > 0
-                            "
+                           
                           >
-                            <ul class="lx-list">
+                            <ul class="lx-list"  v-if="
+                              displayTooltipItems.length > 0
+                            ">
                               <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
                                 <div class="lx-row">
                                   <p class="lx-data">{{ item[nameAttribute] }}</p>
@@ -1428,6 +1429,17 @@ onMounted(() => {
                     tabindex="-1"
                     role="listbox"
                   >
+                  <template
+                      v-if="props.enableAdditionalText"
+                    >
+                      <div class="lx-empty additional-text">
+                        <LxIcon value="info" />
+                        <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
+                         <p>
+                          {{ displayTexts.additionalText }}
+                      </p>
+                      </div>
+                    </template>
                     <template v-if="filteredItems?.length && !loadingState">
                       <template v-for="(item, index) in filteredItems" :key="item[idAttribute]">
                         <!-- Inject "Select All" just before the first item -->
@@ -1565,7 +1577,8 @@ onMounted(() => {
                         finalQuery &&
                         finalQuery.length >= queryMinLength &&
                         !filteredItems?.length &&
-                        !loadingState
+                        !loadingState &&
+                        !props.enableAdditionalText
                       "
                     >
                       <div class="lx-empty">
@@ -1584,7 +1597,7 @@ onMounted(() => {
                       v-if="
                         queryMinLength !== 0 &&
                         (!finalQuery || finalQuery.length < queryMinLength) &&
-                        (!filteredItems || filteredItems?.length === 0)
+                        (!filteredItems || filteredItems?.length === 0) && !props.enableAdditionalText
                       "
                     >
                       <div class="lx-empty">
@@ -1599,6 +1612,7 @@ onMounted(() => {
                         </p>
                       </div>
                     </template>
+                    
                   </div>
                 </transition>
               </slot>
