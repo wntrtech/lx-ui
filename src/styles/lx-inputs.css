@@ -3553,8 +3553,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   background-color: var(--color-data);
 }
 
-.lx-upload-files-skeleton .lx-empty-state-wrapper,
-.lx-file-upload-wrapper > .lx-uploaded-file-list-wrapper > .lx-list-wrapper > div {
+.lx-upload-files-skeleton .lx-empty-state-wrapper{
   display: none;
 }
 

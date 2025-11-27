@@ -96,7 +96,10 @@ const additionalInfoTitle = computed(() => {
   <div
     v-if="props.mode === 'default'"
     class="lx-file-wrapper"
-    :class="{ 'lx-invalid': props.customItem.state === 'invalid', 'lx-disabled': props.disabled }"
+    :class="{
+      'lx-invalid': props.customItem.state === 'invalid',
+      'lx-disabled': props.disabled || props.loading || props.busy,
+    }"
     ref="wrapperContainer"
   >
     <div class="lx-file-main-part">
@@ -141,9 +144,8 @@ const additionalInfoTitle = computed(() => {
           icon="remove"
           :label="displayTexts.clear"
           :destructive="true"
-          :disabled="props.disabled"
+          :disabled="props.disabled || props.busy"
           :loading="props.loading"
-          :busy="props.busy"
           @click="removeFile(props.customItem.id)"
         />
       </div>
@@ -204,9 +206,8 @@ const additionalInfoTitle = computed(() => {
               <LxButton
                 kind="ghost"
                 :label="displayTexts.infoButton"
-                :disabled="props.disabled"
+                :disabled="props.disabled || props.busy"
                 :loading="props.loading"
-                :busy="props.busy"
                 icon="info"
                 :variant="infoButtonVariant"
                 @click="openModal(props.customItem.id)"
@@ -242,9 +243,8 @@ const additionalInfoTitle = computed(() => {
               v-if="props.showMeta"
               kind="ghost"
               :label="displayTexts.infoButton"
-              :disabled="props.disabled"
+              :disabled="props.disabled || props.busy"
               :loading="props.loading"
-              :busy="props.busy"
               icon="info"
               :variant="infoButtonVariant"
               @click="openModal(props.customItem.id)"
@@ -261,7 +261,7 @@ const additionalInfoTitle = computed(() => {
         class="lx-file-wrapper"
         :class="{
           'lx-invalid': props.customItem.state === 'invalid',
-          'lx-disabled': props.disabled,
+          'lx-disabled': props.disabled || props.loading || props.busy,
         }"
         ref="wrapperContainer"
       >
@@ -343,25 +343,23 @@ const additionalInfoTitle = computed(() => {
               v-if="props.showMeta && !props.readOnly && props.mode === 'compact'"
               kind="ghost"
               variant="icon-only"
-              :disabled="props.disabled"
+              :disabled="props.disabled || props.busy"
               :loading="props.loading"
-              :busy="props.busy"
               icon="info"
               :title="displayTexts.infoButton"
               @click="openModal(props.customItem.id)"
-            ></LxButton>
+            />
             <LxButton
               v-if="!props.readOnly"
               kind="ghost"
               variant="icon-only"
               icon="remove"
               :title="displayTexts.clear"
-              @click="removeFile(props.customItem.id)"
               :destructive="true"
-              :disabled="props.disabled"
+              :disabled="props.disabled || props.busy"
               :loading="props.loading"
-              :busy="props.busy"
-            ></LxButton>
+              @click="removeFile(props.customItem.id)"
+            />
           </div>
         </div>
       </div>

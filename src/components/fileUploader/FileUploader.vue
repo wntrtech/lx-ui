@@ -263,7 +263,7 @@ function provideAdditionalIconAndType(id) {
 }
 
 const triggerFileUpload = () => {
-  if (props.disabled || props.loading) return;
+  if (props.disabled || props.loading || props.busy) return;
   fileInput.value.click();
 };
 
