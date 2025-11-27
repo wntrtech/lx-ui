@@ -1161,10 +1161,10 @@ export const sanitizeDateInput = (e, mode) => {
   // Set allowed characters based on the mode
   if (mode === 'date') {
     allowedChars = /[^0-9.,/-]/g; // number, dot, comma, slash, dash
-  } else if (mode === 'date-time') {
+  } else if (mode === 'date-time' || mode === 'date-time-full') {
     allowedChars = /[^0-9.,/\- :]/g; // number, dot, comma, slash, dash, space, colon
-  } else if (mode === 'time') {
-    allowedChars = /[^0-9:]/g; // only number and colon
+  } else if (mode === 'time' || mode === 'time-full') {
+    allowedChars = /[^0-9.,:]/g; // only number and colon
   } else if (mode === 'year') {
     allowedChars = /[^0-9]/g; // only number
   }
@@ -1181,4 +1181,131 @@ export function findDecadeStartYear(year) {
 // Helper function to check if the year is start or end
 export function isStartOrEndYear(year, startYear, endYear) {
   return year === startYear || year === endYear;
+}
+
+function ensureTwoDigits(n) {
+  return n.toString().padStart(2, '0');
+}
+
+function isValidTime(h, m, s, supportSeconds) {
+  if (h < 0 || h > 23) return false;
+  if (m < 0 || m > 59) return false;
+  if (supportSeconds && (s < 0 || s > 59)) return false;
+  return true;
+}
+
+export function normalizeFlexibleTimeInput(raw, supportSeconds = false) {
+  if (!raw) return null;
+
+  const value = raw.replace(/[.,]/g, ':').replace(/\s+/g, '');
+
+  const build = (h, m, s = 0) => {
+    if (!isValidTime(h, m, s, supportSeconds)) return null;
+
+    if (!supportSeconds) {
+      return `${ensureTwoDigits(h)}:${ensureTwoDigits(m)}`;
+    }
+
+    return `${ensureTwoDigits(h)}:${ensureTwoDigits(m)}:${ensureTwoDigits(s)}`;
+  };
+
+  if (value.includes(':')) {
+    const parts = value.split(':');
+    const h = Number(parts[0]);
+    const m = Number(parts[1] ?? 0);
+    const s = Number(parts[2] ?? 0);
+
+    if ([h, m, s].some((v) => Number.isNaN(v))) return null;
+
+    return build(h, m, s);
+  }
+
+  const digits = value.replace(/\D/g, '');
+
+  if (digits.length === 1) {
+    const h = Number(digits);
+    return build(h, 0, 0);
+  }
+
+  if (digits.length === 2) {
+    const h = Number(digits);
+    return build(h, 0, 0);
+  }
+
+  if (digits.length === 3) {
+    const h = Number(digits.slice(0, 1));
+    const m = Number(digits.slice(1));
+    return build(h, m, 0);
+  }
+
+  if (digits.length === 4) {
+    const h = Number(digits.slice(0, 2));
+    const m = Number(digits.slice(2));
+    return build(h, m, 0);
+  }
+
+  if (digits.length === 5) {
+    if (!supportSeconds) return null;
+    const h = Number(digits.slice(0, 1));
+    const m = Number(digits.slice(1, 3));
+    const s = Number(digits.slice(3));
+    return build(h, m, s);
+  }
+
+  if (digits.length === 6) {
+    if (!supportSeconds) return null;
+    const h = Number(digits.slice(0, 2));
+    const m = Number(digits.slice(2, 4));
+    const s = Number(digits.slice(4));
+    return build(h, m, s);
+  }
+
+  return null;
+}
+
+export function isStandardTimeMask(mask) {
+  const h = mask.indexOf('HH');
+  const m = mask.indexOf('mm');
+  const s = mask.indexOf('ss');
+
+  const baseValid = h !== -1 && m !== -1 && h < m;
+
+  if (s !== -1) return baseValid && m < s;
+  return baseValid;
+}
+
+function timeToSeconds(time) {
+  if (!time) return null;
+
+  let h;
+  let m;
+  let s;
+
+  if (time instanceof Date) {
+    h = time.getHours();
+    m = time.getMinutes();
+    s = time.getSeconds();
+  } else if (typeof time === 'string') {
+    const p = time.split(':');
+    h = Number(p[0]) || 0;
+    m = Number(p[1]) || 0;
+    s = Number(p[2]) || 0;
+  } else {
+    return null;
+  }
+
+  return h * 3600 + m * 60 + s;
+}
+
+export function isTimeWithinMinMax(time, min, max) {
+  const t = timeToSeconds(time);
+  if (t === null) return false;
+
+  const minS = timeToSeconds(min);
+  const maxS = timeToSeconds(max);
+
+  if (minS !== null && t < minS) return false;
+  if (maxS !== null && t > maxS) return false;
+
+  return true;
 }

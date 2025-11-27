@@ -27,6 +27,9 @@ import {
   formatInputRawTimeFull,
   formatInputRawDateTimeFull,
   validateDateRange,
+  normalizeFlexibleTimeInput,
+  isStandardTimeMask,
+  isTimeWithinMinMax,
 } from '@/components/datePicker/helpers';
 import { DATE_VALIDATION_RESULT } from '@/constants';
 import LxCalendarContainer from '@/components/datePicker/CalendarContainer.vue';
@@ -484,76 +487,116 @@ function validateIfExact(e, type = 'startInput') {
 
   if (props.mode === 'time') {
     const now = new Date();
-    const time = e.target.value;
     const inputTime24hrMask = props.masks?.inputTime24hr || 'HH:mm';
 
-    if (inputTime24hrMask.length !== time.length || !validateDateByMask(time, inputTime24hrMask)) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
+    const standardMask = isStandardTimeMask(inputTime24hrMask);
 
-      const newHours = new Date().getHours();
-      const newMinutes = new Date().getMinutes();
+    const rawInput = e.target.value;
+    const normalizedInput = standardMask ? normalizeFlexibleTimeInput(rawInput) : rawInput;
+
+    if (!normalizedInput || !validateDateByMask(normalizedInput, inputTime24hrMask)) {
+      const updatedValue = new Date();
+
+      if (props.clearIfNotExact) {
+        e.target.value = null;
+        emits('update:modelValue', null);
+        return;
+      }
+
+      if (!isTimeWithinMinMax(updatedValue, minDateRef.value, maxDateRef.value)) {
+        e.target.value = null;
+        emits('update:modelValue', null);
+        return;
+      }
+
+      const newHours = zeroPad(updatedValue.getHours());
+      const newMinutes = zeroPad(updatedValue.getMinutes());
 
       const newTimeString = inputTime24hrMask
         .replace('HH', zeroPad(newHours))
         .replace('mm', zeroPad(newMinutes));
 
-      e.target.value = props.clearIfNotExact ? null : newTimeString;
+      e.target.value = newTimeString;
+      emits('update:modelValue', updatedValue);
       return;
     }
 
-    const hoursIndex = inputTime24hrMask?.indexOf('HH');
-    const minutesIndex = inputTime24hrMask?.indexOf('mm');
+    const hoursIndex = inputTime24hrMask.indexOf('HH');
+    const minutesIndex = inputTime24hrMask.indexOf('mm');
 
-    const hours = Number(time.substring(hoursIndex, hoursIndex + 2));
-    const minutes = Number(time.substring(minutesIndex, minutesIndex + 2));
+    const hours = Number(normalizedInput.substring(hoursIndex, hoursIndex + 2));
+    const minutes = Number(normalizedInput.substring(minutesIndex, minutesIndex + 2));
 
     const normalizedHours = zeroPad(hours);
     const normalizedMinutes = zeroPad(minutes);
 
-    // Check if the constructed time is valid
     if (!isTimeValid(`${normalizedHours}:${normalizedMinutes}`)) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
+      const updatedValue = new Date();
 
-      const newHours = new Date().getHours();
-      const newMinutes = new Date().getMinutes();
+      if (props.clearIfNotExact) {
+        e.target.value = null;
+        emits('update:modelValue', null);
+        return;
+      }
+
+      const newHours = updatedValue.getHours();
+      const newMinutes = updatedValue.getMinutes();
 
       const newTimeString = inputTime24hrMask
         .replace('HH', zeroPad(newHours))
         .replace('mm', zeroPad(newMinutes));
 
-      e.target.value = props.clearIfNotExact ? null : newTimeString;
+      e.target.value = newTimeString;
+      emits('update:modelValue', updatedValue);
       return;
     }
 
-    // Update the value with the valid date
-    const updatedValue = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
-    emits('update:modelValue', updatedValue);
+    const updatedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes);
+
+    if (!isTimeWithinMinMax(updatedDate, minDateRef.value, maxDateRef.value)) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    emits('update:modelValue', updatedDate);
   }
 
   if (props.mode === 'time-full') {
     const now = new Date();
-    const timeFull = e.target.value;
     const inputTimeFull24hrMask = props.masks?.inputTimeFull24hr || 'HH:mm:ss';
 
-    if (
-      inputTimeFull24hrMask.length !== timeFull.length ||
-      !validateDateByMask(timeFull, inputTimeFull24hrMask)
-    ) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
+    const standardMask = isStandardTimeMask(inputTimeFull24hrMask);
 
-      const newHours = new Date().getHours();
-      const newMinutes = new Date().getMinutes();
-      const newSeconds = new Date().getSeconds();
+    const rawInput = e.target.value;
+    const normalizedInput = standardMask ? normalizeFlexibleTimeInput(rawInput, true) : rawInput;
+
+    if (!normalizedInput || !validateDateByMask(normalizedInput, inputTimeFull24hrMask)) {
+      const updatedValue = new Date();
+
+      if (props.clearIfNotExact) {
+        e.target.value = null;
+        emits('update:modelValue', null);
+        return;
+      }
+
+      if (!isTimeWithinMinMax(updatedValue, minDateRef.value, maxDateRef.value)) {
+        e.target.value = null;
+        emits('update:modelValue', null);
+        return;
+      }
+
+      const newHours = updatedValue.getHours();
+      const newMinutes = updatedValue.getMinutes();
+      const newSeconds = updatedValue.getSeconds();
 
       const newTimeString = inputTimeFull24hrMask
         .replace('HH', zeroPad(newHours))
         .replace('mm', zeroPad(newMinutes))
         .replace('ss', zeroPad(newSeconds));
 
-      e.target.value = props.clearIfNotExact ? null : newTimeString;
+      e.target.value = newTimeString;
+      emits('update:modelValue', updatedValue);
       return;
     }
 
@@ -561,34 +604,38 @@ function validateIfExact(e, type = 'startInput') {
     const minutesIndex = inputTimeFull24hrMask?.indexOf('mm');
     const secondsIndex = inputTimeFull24hrMask?.indexOf('ss');
 
-    const hours = Number(timeFull.substring(hoursIndex, hoursIndex + 2));
-    const minutes = Number(timeFull.substring(minutesIndex, minutesIndex + 2));
-    const seconds = Number(timeFull.substring(secondsIndex, secondsIndex + 2));
+    const hours = Number(normalizedInput.substring(hoursIndex, hoursIndex + 2));
+    const minutes = Number(normalizedInput.substring(minutesIndex, minutesIndex + 2));
+    const seconds = Number(normalizedInput.substring(secondsIndex, secondsIndex + 2));
 
     const normalizedHours = zeroPad(hours);
     const normalizedMinutes = zeroPad(minutes);
     const normalizedSeconds = zeroPad(seconds);
 
-    // Check if the constructed time is valid
     if (!isTimeFullValid(`${normalizedHours}:${normalizedMinutes}:${normalizedSeconds}`)) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
+      const updatedValue = new Date();
 
-      const newHours = new Date().getHours();
-      const newMinutes = new Date().getMinutes();
-      const newSeconds = new Date().getSeconds();
+      if (props.clearIfNotExact) {
+        e.target.value = null;
+        emits('update:modelValue', null);
+        return;
+      }
+
+      const newHours = updatedValue.getHours();
+      const newMinutes = updatedValue.getMinutes();
+      const newSeconds = updatedValue.getSeconds();
 
       const newTimeString = inputTimeFull24hrMask
         .replace('HH', zeroPad(newHours))
         .replace('mm', zeroPad(newMinutes))
         .replace('ss', zeroPad(newSeconds));
 
-      e.target.value = props.clearIfNotExact ? null : newTimeString;
+      e.target.value = newTimeString;
+      emits('update:modelValue', updatedValue);
       return;
     }
 
-    // Update the value with the valid date
-    const updatedValue = new Date(
+    const updatedDate = new Date(
       now.getFullYear(),
       now.getMonth(),
       now.getDate(),
@@ -597,7 +644,13 @@ function validateIfExact(e, type = 'startInput') {
       seconds
     );
 
-    emits('update:modelValue', updatedValue);
+    if (!isTimeWithinMinMax(updatedDate, minDateRef.value, maxDateRef.value)) {
+      e.target.value = null;
+      emits('update:modelValue', null);
+      return;
+    }
+
+    emits('update:modelValue', updatedDate);
   }
 
   if (props.mode === 'date-time') {
