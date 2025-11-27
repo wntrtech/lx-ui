@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, shallowRef } from 'vue';
+import { computed, ref, watch, shallowRef, onMounted } from 'vue';
 import { generateUUID } from '@/utils/stringUtils';
 import LxButton from '@/components/Button.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
@@ -102,23 +102,26 @@ watch(
   { immediate: true }
 );
 
-watch(
-  isFlipped,
-  (newFlipped, oldFlipped) => {
-    if (isAnimating.value) return;
+watch(isFlipped, (newFlipped, oldFlipped) => {
+  if (isAnimating.value) return;
 
-    applyTilt(0, oldFlipped ? -180 : 0);
-    isAnimating.value = true;
+  applyTilt(0, oldFlipped ? -180 : 0);
+  isAnimating.value = true;
+
+  setTimeout(() => {
+    applyTilt(0, newFlipped ? -180 : 0);
+
+    emit('update:modelValue', newFlipped);
 
     setTimeout(() => {
-      applyTilt(0, newFlipped ? -180 : 0);
-      setTimeout(() => {
-        isAnimating.value = false;
-      }, 750);
-    }, 50);
-  },
-  { immediate: true }
-);
+      isAnimating.value = false;
+    }, 750);
+  }, 50);
+});
+
+onMounted(() => {
+  applyTilt(0, isFlipped.value ? -180 : 0);
+});
 </script>
 <template>
   <div
