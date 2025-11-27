@@ -228,6 +228,7 @@ defineExpose({ focus });
           :label="
             selectStatus === 'none' ? displayTexts.selectWholeGroup : displayTexts.clearSelected
           "
+          :disabled="disabled"
           @click="selectExpander($event, id)"
         />
       </template>

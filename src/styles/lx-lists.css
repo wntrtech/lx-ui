@@ -824,10 +824,6 @@
   background-color: var(--color-interactive-hover-background);
 }
 
-.lx-list-wrapper .lx-expander .lx-head > .lx-button:hover > .lx-button-content-wrapper svg {
-  fill: var(--color-focus-foreground);
-}
-
 .lx .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-list-wrapper .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button {
   --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
