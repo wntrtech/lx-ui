@@ -2902,6 +2902,13 @@ h2.lx-section-header + p.lx-invalidation-message,
 	text-overflow: ellipsis;
 }
 
+.lx-layout-default header .lx-header .lx-login-button .lx-button-content  {
+  color: var(--color-nav-foreground);
+}
+.lx .lx-layout-default  .lx-login-button .lx-button-content-wrapper {
+grid-template-areas: var(--button-nav-grid-areas)
+}
+
 /*** Input area + pseudo input styles ***/
 
 .lx .lx-layout .lx-input-wrapper .lx-input-area {

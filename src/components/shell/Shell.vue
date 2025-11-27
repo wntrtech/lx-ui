@@ -56,6 +56,7 @@ const emits = defineEmits([
   'logOut',
   'languageChanged',
   'alertItemClick',
+  'logInClick',
   'alertsClick',
   'helpClick',
   'contextPersonChanged',
@@ -106,6 +107,7 @@ const props = defineProps({
       'home';
     },
   },
+  hasLoginButton: { type: Boolean, default: false },
   pageBackPath: { type: [Object, String], default: null },
   pageBackButtonVisible: { type: Boolean, default: true },
   pageHeaderVisible: { type: Boolean, default: true },
@@ -248,6 +250,8 @@ const textsDefault = {
   settings: 'Iestatījumi',
   contextPersonsTooltipLabel: 'Konteksta persona',
   contextPersonsTooltipDescription: 'Konteksta personas apraksts',
+  loginButtonLabel: 'Autorizēties',
+  loginButtonTitle: 'Pieslēgties sistēmai',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
@@ -632,6 +636,9 @@ function alertItemClicked(alert) {
 }
 function alertsClicked() {
   emits('alertsClick');
+}
+function loginClicked() {
+  emits('logInClick');
 }
 function helpClicked() {
   emits('helpClick');
@@ -1412,6 +1419,7 @@ defineExpose({ spotlightStart, spotlightEnd });
           :available-themes="availableThemes"
           :system-icon="systemIcon"
           :has-alerts="hasAlerts"
+          :has-login-button="hasLoginButton"
           :alerts-kind="alertsKind"
           :clickSafeAlerts="clickSafeAlerts"
           :alerts="alerts"
@@ -1449,6 +1457,7 @@ defineExpose({ spotlightStart, spotlightEnd });
           :spotlightHasBadge="spotlightHasBadge"
           :secondsToLive="secondsToLive"
           :showIdleBadge="showIdleBadge"
+          @log-in-click="loginClicked"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @language-changed="languageChanged"
@@ -1478,6 +1487,7 @@ defineExpose({ spotlightStart, spotlightEnd });
       <nav ref="nav" aria-label="navigation panel" v-if="!hideNavBar">
         <LxNavBar
           layoutMode="public"
+          :userInfo="userInfo"
           :nav-items="navItems"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"
@@ -1495,10 +1505,12 @@ defineExpose({ spotlightStart, spotlightEnd });
           :megaMenuItems="megaMenuItems"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          :hasLoginButton="hasLoginButton"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
+          @log-in-click="loginClicked"
           @nav-toggle="navToggle"
           @navClick="navClick"
           @toggleSpotlight="toggleSpotlight"
@@ -1570,6 +1582,7 @@ defineExpose({ spotlightStart, spotlightEnd });
           :has-language-picker="hasLanguagePicker"
           :languages="languages"
           :has-theme-picker="hasThemePicker"
+          :has-login-button="false"
           :available-themes="availableThemes"
           :system-icon="systemIcon"
           :has-alerts="hasAlerts"
@@ -1610,6 +1623,7 @@ defineExpose({ spotlightStart, spotlightEnd });
           :context-persons-info="contextPersonsInfo"
           v-model:selectedContextPerson="selectedContextPersonModel"
           v-model:selectedAlternativeProfile="selectedAlternativeProfileModel"
+          @log-in-click="loginClicked"
           @context-person-changed="contextPersonChanged"
           @alternative-profile-changed="alternativeProfileChanged"
           @language-changed="languageChanged"
@@ -1640,6 +1654,7 @@ defineExpose({ spotlightStart, spotlightEnd });
         <LxNavBar
           layoutMode="latvijalv"
           :nav-items="navItems"
+          :userInfo="userInfo"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"
           :has-language-picker="hasLanguagePicker"
@@ -1660,6 +1675,8 @@ defineExpose({ spotlightStart, spotlightEnd });
           :texts="displayTexts"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          :hasLoginButton="false"
+          @log-in-click="loginClicked"
           @nav-toggle="navToggle"
           @navClick="navClick"
           @toggleSpotlight="toggleSpotlight"
@@ -2389,6 +2406,7 @@ defineExpose({ spotlightStart, spotlightEnd });
           :headerNavDisable="headerNavDisable"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
+          :hasLoginButton="hasLoginButton"
           @mega-menu-show-all-click="triggerShowAllClick"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
@@ -2410,6 +2428,7 @@ defineExpose({ spotlightStart, spotlightEnd });
           :spotlightHasBadge="spotlightHasBadge"
           :secondsToLive="secondsToLive"
           :showIdleBadge="showIdleBadge"
+          @log-in-click="loginClicked"
           @language-changed="languageChanged"
           @alert-item-click="alertItemClicked"
           @alerts-click="alertsClicked"
@@ -2444,6 +2463,7 @@ defineExpose({ spotlightStart, spotlightEnd });
           v-model:hasReducedTransparency="transparencyModel"
           v-model:hasDeviceFonts="deviceFontsModel"
           v-model:isTouchSensitive="touchModeModel"
+          :userInfo="userInfo"
           :nav-items="navItems"
           :has-theme-picker="hasThemePicker"
           :available-themes="availableThemes"
@@ -2453,11 +2473,13 @@ defineExpose({ spotlightStart, spotlightEnd });
           :texts="displayTexts"
           :hasMegaMenu="hasMegaMenu"
           :megaMenuItems="megaMenuItems"
+          :has-login-button="hasLoginButton"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           :megaMenuHasShowAll="megaMenuHasShowAll"
           :megaMenuGroupDefinitions="megaMenuGroupDefinitions"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
+          @log-in-click="loginClicked"
           @mega-menu-show-all-click="triggerShowAllClick"
           @nav-toggle="navToggle"
           @navClick="navClick"

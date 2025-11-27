@@ -47,6 +47,7 @@ const props = defineProps({
   hasHelp: { type: Boolean, default: false },
   headerNavDisable: { type: Boolean, default: false },
   hasNavBar: { type: Boolean, default: false },
+  hasLoginButton: { type: Boolean, default: false },
 
   hasMegaMenu: { type: Boolean, default: false },
   megaMenuItems: { type: Array, default: () => [] },
@@ -105,6 +106,8 @@ const textsDefault = {
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
   userMenuTitle: 'Lietotāja izvēlne',
+  loginButtonLabel: 'Autorizēties',
+  loginButtonTitle: 'Pieslēgties sistēmai',
   badgeTypes: {
     default: 'informatīvs paziņojums',
     info: 'informatīvs paziņojums',
@@ -134,6 +137,7 @@ const emits = defineEmits([
   'language-changed',
   'alert-item-click',
   'alerts-click',
+  'logInClick',
   'help-click',
   'megaMenuShowAllClick',
   'openAlternativeProfilesModal',
@@ -236,6 +240,9 @@ function alertItemClicked(alert) {
 
 function alertsClicked() {
   emits('alerts-click');
+}
+function loginClicked() {
+  emits('logInClick');
 }
 
 function helpClicked() {
@@ -567,6 +574,16 @@ watch(
     if (newValue) userInfoWrapper.value?.handleClose();
   }
 );
+
+const loginButtonVariant = computed(() => {
+  if (props.mode === 'public' && windowWidth.value < 1000) {
+    return 'icon-only';
+  }
+  if (props.mode === 'default' && windowWidth.value < 800) {
+    return 'icon-only';
+  }
+  return 'default';
+});
 </script>
 
 <template>
@@ -797,7 +814,19 @@ watch(
         v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
       />
     </div>
-
+    <div class="lx-login-button" v-if="hasLoginButton && windowWidth > 500 && !userInfo">
+      <LxButton
+        id="lx-shell-login-button"
+        customClass="lx-header-button"
+        :kind="mode === 'default' ? 'ghost' : 'tertiary'"
+        :icon="mode === 'latvijalv' ? 'user' : 'login'"
+        :label="displayTexts.loginButtonLabel"
+        :title="displayTexts.loginButtonTitle"
+        :variant="loginButtonVariant"
+        :disabled="headerNavDisable"
+        @click="loginClicked"
+      />
+    </div>
     <div class="lx-user-menu" v-if="userInfo">
       <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
         <LxInfoWrapper ref="userInfoWrapper" :disabled="dropDownMenu?.menuOpen" :focusable="false">

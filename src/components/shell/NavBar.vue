@@ -22,6 +22,7 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  userInfo: { type: Object, default: null },
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark', 'contrast'] },
   theme: { type: String, default: 'auto' },
@@ -39,6 +40,7 @@ const props = defineProps({
   megaMenuHasShowAll: { type: Boolean, default: false },
   megaMenuGroupDefinitions: { type: Array, default: null },
   selectedMegaMenuItem: { type: String, default: null },
+  hasLoginButton: { type: Boolean, default: false },
 
   hasSpotlight: { type: Boolean, default: false },
   spotlightHasBadge: { type: Boolean, default: true },
@@ -70,6 +72,8 @@ const textsDefault = {
   touchModeOn: 'Jā',
   overflowNavItems: 'Atvērt papildu izvēlni',
   scrollUp: 'Atgriezties uz augšu',
+  loginButtonLabel: 'Autorizēties',
+  loginButtonTitle: 'Pieslēgties sistēmai',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -132,11 +136,16 @@ const emits = defineEmits([
   'update:hasReducedTransparency',
   'update:hasDeviceFonts',
   'update:isTouchSensitive',
+  'logInClick',
   'navClick',
   'update:selectedMegaMenuItem',
   'megaMenuShowAllClick',
   'toggleSpotlight',
 ]);
+
+function loginClicked() {
+  emits('logInClick');
+}
 
 function navToggle(ev) {
   if (!props.navBarHidden && ev.target.id !== 'nav-toggle') {
@@ -338,6 +347,20 @@ provide('insideNavBar', insideNavBar);
           buttonVariant="default"
           v-model:selectedMegaMenuItem="selectedMegaMenuItemModel"
           @mega-menu-show-all-click="triggerShowAllClick"
+        />
+      </li>
+      <li
+        v-if="props.hasLoginButton && width <= 500 && !userInfo"
+        class="lx-login-button-nav-item lx-login-button"
+      >
+        <LxButton
+          id="lx-shell-login-button"
+          customClass="lx-header-button"
+          :kind="'ghost'"
+          icon="login"
+          :label="displayTexts.loginButtonLabel"
+          :title="displayTexts.loginButtonTitle"
+          @click="loginClicked"
         />
       </li>
     </ul>

@@ -33,6 +33,7 @@ const props = defineProps({
   languages: { type: Array, default: () => [] },
   selectedLanguage: { type: Object, default: null },
   systemIcon: { type: String, default: null },
+  hasLoginButton: { type: Boolean, default: false },
 
   hasThemePicker: { type: Boolean, default: false },
   availableThemes: { type: Array, default: () => ['auto', 'light', 'dark'] },
@@ -119,6 +120,8 @@ const textsDefault = {
   touchModeOn: 'Jā',
   showAllLabel: 'Vairāk',
   megaMenuTitle: 'Lietotnes',
+  loginButtonLabel: 'Autorizēties',
+  loginButtonTitle: 'Pieslēgties sistēmai',
   idleBadge: {
     minutesSingular: 'minūtes',
     minutes11: 'minūtes',
@@ -147,6 +150,7 @@ const emits = defineEmits([
   'go-back',
   'language-changed',
   'alert-item-click',
+  'logInClick',
   'alerts-click',
   'help-click',
   'megaMenuShowAllClick',
@@ -218,6 +222,10 @@ function alertsClicked() {
 
 function alertItemClicked(alert) {
   emits('alert-item-click', alert);
+}
+
+function logInClicked() {
+  emits('logInClick');
 }
 
 function scrollUp() {
@@ -526,6 +534,7 @@ provide('insideHeader', insideHeader);
         :has-theme-picker="hasThemePicker"
         :available-themes="availableThemes"
         :has-alerts="hasAlerts"
+        :has-login-button="hasLoginButton"
         :alerts-kind="alertsKind"
         :clickSafeAlerts="clickSafeAlerts"
         :alerts="alerts"
@@ -560,6 +569,7 @@ provide('insideHeader', insideHeader);
         :secondsToLive="secondsToLive"
         :showIdleBadge="showIdleBadge"
         @mega-menu-show-all-click="triggerShowAllClick"
+        @log-in-click="logInClicked"
         @open-alternative-profiles-modal="openAlternativeProfilesModal"
         @open-context-person-modal="openContextPersonModal"
         @language-changed="languageChanged"
@@ -604,6 +614,7 @@ provide('insideHeader', insideHeader);
       :alert-count="alertCount"
       :alert-level="alertLevel"
       :has-help="hasHelp"
+      :has-login-button="hasLoginButton"
       :headerNavDisable="headerNavDisable"
       :has-avatar="hasAvatar"
       :alternative-profiles-info="alternativeProfilesInfo"
@@ -633,6 +644,7 @@ provide('insideHeader', insideHeader);
       :secondsToLive="secondsToLive"
       :showIdleBadge="showIdleBadge"
       @open-alternative-profiles-modal="openAlternativeProfilesModal"
+      @log-in-click="logInClicked"
       @open-context-person-modal="openContextPersonModal"
       @language-changed="languageChanged"
       @alert-item-click="alertItemClicked"
