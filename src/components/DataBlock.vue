@@ -160,23 +160,23 @@ const expandIconTitle = computed(() => {
         <template v-else>
           <div class="lx-icons" v-if="hasSelecting" @click.stop>
             <LxRadioButton
+              v-if="selectingKind === 'single'"
               v-model="selected"
               :disabled="disabled || loading || busy"
               @keyup.space.stop="emits('selectingClick', id)"
               @click="emits('selectingClick', id)"
-              v-if="props.hasSelecting && props.selectingKind === 'single'"
             />
             <LxCheckbox
+              v-else-if="selectingKind === 'multiple'"
               v-model="selected"
               :disabled="disabled || loading || busy"
               @keyup.space.stop="emits('selectingClick', id)"
               @click="emits('selectingClick', id)"
-              v-if="props.hasSelecting && props.selectingKind === 'multiple'"
             />
           </div>
-          <div class="lx-icons" v-else-if="props.icon !== null && !hasSelecting">
+          <div class="lx-icons" v-else>
             <LxIcon v-if="icon && !busy" :value="icon" customClass="lx-icon" :iconSet="iconSet" />
-            <div class="lx-loader-container" v-show="busy">
+            <div class="lx-loader-container" v-if="busy">
               <LxLoader :loading="true" size="s" />
             </div>
           </div>

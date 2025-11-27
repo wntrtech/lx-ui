@@ -4,6 +4,10 @@
 
 ### Breaking changes
 
+#### LxDataBlock custom header styles
+
+Due to the refactoring of LxDataBlock styles, some custom header styles may have shifted, including sizing of icons, text and alignment. Check any custom LxDataBlock, LxAppendableList and small-screen LxDataGrid styles and adjust them where necessary.
+
 #### LxDialog new default kind value
 
 The default value of the `kind` prop in `LxDialog` has been changed from `default` to `question`.
