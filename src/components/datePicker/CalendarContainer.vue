@@ -2095,7 +2095,7 @@ const canSelectPrevious = computed(() => {
 
   // Check only years for 'years' layout
   if (yearsLayout.value) {
-    return startYear.value > props.minDateRef.getFullYear() && !props.disabled;
+    return startYear.value >= props.minDateRef.getFullYear() && !props.disabled;
   }
 
   // Always enable in other cases
@@ -2139,7 +2139,7 @@ const canSelectNext = computed(() => {
 
   // Check only years for 'years' layout
   if (yearsLayout.value) {
-    return endYear.value < props.maxDateRef.getFullYear() && !props.disabled;
+    return endYear.value <= props.maxDateRef.getFullYear() && !props.disabled;
   }
 
   // Always enable in other cases
