@@ -201,7 +201,7 @@ const model = computed({
 
 function getNameDate() {
   if (isDateValid(props.modelValue)) {
-    return formatDate(new Date(props.modelValue));
+    return formatDate(props.modelValue);
   }
   if (typeof props.modelValue !== 'string') {
     return formatDate(props.modelValue);
@@ -221,7 +221,7 @@ function getNameTime() {
 
 function getNameDateTime() {
   if (isDateValid(props.modelValue)) {
-    return formatDateTime(new Date(props.modelValue));
+    return formatDateTime(props.modelValue);
   }
   if (typeof props.modelValue !== 'string') {
     return formatDateTime(props.modelValue);

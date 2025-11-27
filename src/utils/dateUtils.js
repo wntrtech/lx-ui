@@ -85,10 +85,14 @@ export function formatDate(date, empty = '') {
   const dateFormatToUse = dateFormat || 'dd.MM.yyyy.';
 
   if (!date) return empty;
-  let d = date;
-  if (typeof d === 'string') {
-    d = new Date(date);
+
+  let d;
+  if (typeof date === 'string') {
+    d = parse(date, 'yyyy-MM-dd', new Date());
+  } else {
+    d = date;
   }
+
   return format(d, dateFormatToUse);
 }
 
