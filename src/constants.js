@@ -24,3 +24,14 @@ export const DATE_VALIDATION_RESULT = Object.freeze({
   /** Value to check has not been received */
   NO_VALUE: 'NO_VALUE',
 });
+
+/**
+ * Maximum allowed input lengths by prefix (e.g., phone country code).
+ * Key: string prefix, Value: max character count.
+ */
+export const PHONE_MAX_LENGTH_BY_PREFIX = new Map([
+  // Latvia phone numbers: "+371" + 8 digits = 12 characters total
+  ['+371', 12],
+  // Latvia phone numbers: "00371" + 8 digits = 13 characters total
+  ['00371', 13],
+]);

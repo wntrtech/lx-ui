@@ -7,8 +7,8 @@ import LxButton from '@/components/Button.vue';
 import { generateUUID, isEmail } from '@/utils/stringUtils';
 import { flagMap } from '@/utils/flagUtils';
 import LxFlag from '@/components/Flag.vue';
-import { getDisplayTexts } from '@/utils/generalUtils';
-
+import { getDisplayTexts, isDefined } from '@/utils/generalUtils';
+import { PHONE_MAX_LENGTH_BY_PREFIX } from '@/constants';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 
 const props = defineProps({
@@ -87,11 +87,33 @@ function focus() {
 
 const minValueComp = computed(() => 10 ** Number(props.maxlength || 20) - 1);
 
+function findBestPrefix(value) {
+  const prefixes = Array.from(PHONE_MAX_LENGTH_BY_PREFIX.keys()).sort(
+    (a, b) => b.length - a.length
+  );
+  return prefixes.find((p) => value.startsWith(p)) ?? null;
+}
+
 const maxLengthValue = computed(() => {
-  if (!props.maxlength) return null;
-  return (props.mask === 'decimal' || props.mask === 'integer') && props.signed
-    ? null
-    : Number(props.maxlength);
+  const baseMax = isDefined(props.maxlength) ? Number(props.maxlength) : null;
+  if (props.kind === 'phone') {
+    if (isDefined(baseMax)) {
+      return baseMax;
+    }
+    const resultingLength = PHONE_MAX_LENGTH_BY_PREFIX.get(findBestPrefix(valueRaw.value));
+    return resultingLength ?? null;
+  }
+  if ((props.mask === 'integer' || props.mask === 'decimal') && props.signed) {
+    if (baseMax == null) {
+      return null;
+    }
+    return baseMax + 1;
+  }
+  if (isDefined(baseMax)) {
+    return baseMax;
+  }
+
+  return null;
 });
 
 const inputMask = computed(() => {
