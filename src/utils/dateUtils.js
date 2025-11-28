@@ -1,4 +1,4 @@
-import { parse, parseJSON, format, formatRFC3339, isDate } from 'date-fns';
+import { parse, parseJSON, format, formatRFC3339, isDate, isValid, parseISO } from 'date-fns';
 import useLx from '@/hooks/useLx';
 import { capitalizeFirstLetter } from '@/utils/stringUtils';
 
@@ -88,12 +88,12 @@ export function formatDate(date, empty = '') {
 
   let d;
   if (typeof date === 'string') {
-    d = parse(date, 'yyyy-MM-dd', new Date());
+    d = parseISO(date);
   } else {
     d = date;
   }
 
-  return format(d, dateFormatToUse);
+  return isValid(d) ? format(d, dateFormatToUse) : empty;
 }
 
 export function formatDateTime(date, empty = '') {
