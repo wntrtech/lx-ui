@@ -162,6 +162,10 @@ It is worth noting that some LxDataBlock tokens use LxList tokens as default val
 | Variable name                               | Default value                                          |
 |---------------------------------------------|--------------------------------------------------------|
 | `--data-block-border`                       | `--list-item-border`                                   |
+| `--data-block-border-radius`                | `--list-item-border-radius`                            |
+| `--data-block-border-radius-inner`          | `--data-block-border-radius`                           |
+| `--data-block-border-radius-expanded`       | `--data-block-border-radius`                           |
+| `--data-block-border-radius-inner-expanded` | `--data-block-border-radius`                           |
 | `--data-block-button-max-height-m`          | `--row-size`                                           |
 | `--data-block-button-max-height-l`          | 4rem                                                   |
 | `--data-block-button-width-m`               | `--row-size`                                           |

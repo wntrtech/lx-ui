@@ -214,6 +214,10 @@
   --tile-text-secondary-margin: 1.2rem 0 0 0;
 
   --data-block-border: var(--list-item-border);
+  --data-block-border-radius: var(--list-item-border-radius);
+  --data-block-border-radius-inner: var(--data-block-border-radius);
+  --data-block-border-radius-expanded: var(--data-block-border-radius);
+  --data-block-border-radius-inner-expanded: var(--data-block-border-radius);
   --data-block-button-max-height-m: var(--row-size);
   --data-block-button-max-height-l: 4rem;
   --data-block-button-width-m: var(--row-size);

@@ -312,6 +312,11 @@
   display: grid;
   margin-bottom: var(--row-size);
   background: var(--color-data-block-background);
+  border-radius: var(--data-block-border-radius);
+}
+
+.lx-data-block-expanded.lx-data-block-wrapper {
+  border-radius: var(--data-block-border-radius-expanded);
 }
 
 .lx-region .lx-data-block-wrapper,
@@ -332,6 +337,7 @@
   grid-row: 1;
   padding: 0;
   border: var(--data-block-border);
+  border-radius: var(--data-block-border-radius);
 }
 
 .lx-data-block-wrapper-m .lx-data-block {
@@ -356,6 +362,11 @@
   grid-template-columns: subgrid;
   grid-template-rows: subgrid;
   grid-column: span 3;
+  border-radius: var(--data-block-border-radius-inner);
+}
+
+.lx-data-block-expanded .lx-data-block-header {
+  border-radius: var(--data-block-border-radius-inner-expanded);
 }
 
 .lx-data-block-expander .lx-data-block-header:hover {
