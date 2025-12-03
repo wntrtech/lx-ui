@@ -1907,6 +1907,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 :customAttributes="col.options?.customAttributes"
                 :texts="row[col.attributeName]?.texts || displayTexts.personDisplay"
                 size="s"
+                :customRole="col.kind === 'clickable' ? clickableRole : null"
+                @click="
+                  defaultActionName && col.kind === 'clickable'
+                    ? defaultActionClicked(row[idAttribute], row)
+                    : null
+                "
+                @keyup.enter.space="
+                  defaultActionName && col.kind === 'clickable'
+                    ? defaultActionClicked(row[idAttribute], row)
+                    : null
+                "
               />
               <template v-if="col.type === 'array'">
                 <LxInfoWrapper
@@ -2223,6 +2234,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               :customAttributes="col.options?.customAttributes"
               :texts="item[col.attributeName]?.texts || displayTexts.personDisplay"
               size="s"
+              :customRole="col.kind === 'clickable' ? clickableRole : null"
+              @click="
+                defaultActionName && col.kind === 'clickable'
+                  ? defaultActionClicked(item[idAttribute], item)
+                  : null
+              "
+              @keydown.enter="
+                defaultActionName && col.kind === 'clickable'
+                  ? defaultActionClicked(item[idAttribute], item)
+                  : null
+              "
             />
           </LxRow>
 

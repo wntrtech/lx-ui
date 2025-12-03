@@ -17,6 +17,7 @@ const props = defineProps({
   focusable: { type: Boolean, default: true },
   label: { type: String, default: null },
   description: { type: String, default: null },
+  customRole: { type: String, default: null },
 });
 
 const slots = useSlots();
@@ -156,6 +157,7 @@ defineExpose({ handleOpen, handleClose, showPopper });
       :aria-label="ariaLabel"
       :aria-describedby="`${id}-description`"
       :tabindex="$slots.panel && focusable && !disabled ? '0' : '-1'"
+      :role="customRole"
       @focusin="handleFocusIn"
       @focusout="handleMouseLeave"
       @mouseenter="handleMouseEnter"

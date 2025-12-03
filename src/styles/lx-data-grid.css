@@ -451,14 +451,32 @@
 }
 
 .lx .lx-data-grid .lx-cell-clickable > span,
+.lx .lx-data-grid .lx-cell-clickable .lx-person-display-name,
+.lx .lx-data-grid .lx-cell-clickable .lx-empty-person-value,
 .lx-data-grid-wrapper
   .lx-appendable-list
   .lx-appendable-list-item
   .lx-row.lx-cell-clickable
-  .lx-vertical {
+  .lx-vertical,
+.lx-data-grid-wrapper
+  .lx-appendable-list
+  .lx-appendable-list-item
+  .lx-row.lx-cell-clickable
+  .lx-vertical
+  .lx-person-display-name,
+.lx-data-grid-wrapper
+  .lx-appendable-list
+  .lx-appendable-list-item
+  .lx-row.lx-cell-clickable
+  .lx-vertical
+  .lx-empty-person-value {
   font-weight: bold;
   text-decoration: underline;
   color: var(--color-interactive-background);
+  cursor: pointer;
+}
+
+.lx .lx-data-grid-wrapper .lx-cell-clickable .lx-person-display-wrapper .lx-info-wrapper-content {
   cursor: pointer;
 }
 

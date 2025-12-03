@@ -88,6 +88,10 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  customRole: {
+    type: String,
+    default: null,
+  },
   texts: { type: Object, default: () => ({}) },
 });
 
@@ -228,7 +232,7 @@ const showDescription = computed(() => description.value && props.size === 'l');
 </script>
 <template>
   <div class="lx-person-display-wrapper">
-    <LxInfoWrapper>
+    <LxInfoWrapper :customRole>
       <div
         v-if="!showMultiple"
         class="lx-person-display"
