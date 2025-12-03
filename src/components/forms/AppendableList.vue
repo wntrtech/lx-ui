@@ -16,6 +16,7 @@ const props = defineProps({
   descriptionAttribute: { type: String, default: null },
   iconAttribute: { type: String, default: null },
   hideRemoveAttribute: { type: String, default: null },
+  removeEnableByAttribute: { type: String, default: null },
   addButtonLabel: { type: String, default: 'Pievienot ierakstu' },
   columnCount: { type: Number, default: 1 },
   kind: { type: String, default: 'default' }, // default || compact
@@ -156,8 +157,8 @@ const allActions = computed(() => {
         icon: 'remove-item',
         destructive: true,
         title: displayTexts.value.removeItem,
+        enableByAttribute: props.removeEnableByAttribute,
       },
-      ...props.actionDefinitions,
     ];
   }
   if (!props.readOnly && props.actionDefinitions.length > 0) {
@@ -168,6 +169,7 @@ const allActions = computed(() => {
         icon: 'remove-item',
         destructive: true,
         title: displayTexts.value.removeItem,
+        enableByAttribute: props.removeEnableByAttribute,
       },
       ...props.actionDefinitions,
     ];
@@ -281,6 +283,7 @@ defineExpose({ clearModel });
               :label="displayTexts.removeItem"
               :destructive="true"
               kind="ghost"
+              :disabled="!!removeEnableByAttribute && !item[removeEnableByAttribute]"
               @click="
                 () => actionClick('appendableListDelete', item[idAttribute], item._lx_appendableKey)
               "
