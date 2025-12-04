@@ -670,14 +670,6 @@ a.lx-button.lx-button-ghost svg {
   fill: var(--color-button-destructive-icon);
 }
 
-.lx .lx-layout .lx-button.lx-button.lx-destructive:not(.lx-disabled):active svg,
-.lx .lx-layout .lx-dropdown-panel .lx-button.lx-button.lx-destructive:not(.lx-disabled):active svg {
-  fill: var(--color-button-primary-icon-active);
-}
-
-.lx .lx-layout .lx-dropdown-panel > div > .lx-button.lx-destructive:focus svg{
-  fill: var(--color-button-dropdown-icon-focus);
-}
 /* Disabled icon styles */
 
 .lx .lx-layout .lx-button.lx-disabled svg {
@@ -1751,8 +1743,6 @@ a.lx-button.lx-button-ghost svg {
 /* Active styles */
 .lx .lx-button:active,
 .lx-dropdown-toggler:active .lx-button,
-.lx .lx-layout.lx-override .lx-button.lx-button.lx-destructive:not(.lx-disabled):active,
-.lx .lx-layout.lx-override .lx-component-toolbar .lx-button.lx-button.lx-destructive:not(.lx-disabled):active,
 .lx-override button:active,
 .lx .lx-layout.lx-override input[type="button"]:where(:active),
 .lx .lx-layout.lx-override input[type="submit"]:where(:active),

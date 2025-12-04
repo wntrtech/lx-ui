@@ -96,7 +96,7 @@
   border-collapse: collapse;
 }
 
-.lx-layout-digimaks .lx-nav-panel-group ul li .lx-button:hover {
+.lx-layout-digimaks .lx-nav-panel-group ul li:not(.lx-selected) .lx-button:hover {
   background-color: var(--color-button-nav-hover-background);
   border-color: var(--color-button-nav-hover-border);
   color: var(--color-button-nav-hover);
@@ -105,6 +105,7 @@
 .lx-layout-digimaks .lx-nav-panel-group ul li .lx-button svg {
   height: var(--button-nav-icon-height);
   width: var(--button-nav-icon-width);
+  fill: var(--color-button-nav-icon);
   --color-button-ghost-icon: var(--color-button-nav-icon);
   --color-button-primary-icon: var(--color-button-nav-icon);
   --color-button-primary-icon-focus: var(--color-button-nav-icon);
@@ -304,8 +305,10 @@
 
 .lx-layout-digimaks .lx-nav-panel .lx-nav-header > div .lx-button svg {
   --color-button-ghost-icon: var(--color-button-nav-icon);
+  --color-button-ghost-icon-focus: var(--color-button-nav-icon);
+  --color-button-ghost-icon-hover: var(--color-button-nav-icon);
+  --color-button-ghost-icon-active: var(--color-button-nav-icon);
 }
-
 
 .lx-layout-digimaks .lx-nav-panel ul li .lx-button {
   --button-nav-padding: 0rem 1rem 0rem 2rem;
@@ -343,6 +346,8 @@
 .lx-layout-digimaks > header > .lx-header .lx-button.lx-nav-back {
   --color-button-ghost-background: var(--color-background);
   --color-button-ghost-hover-background: var(--color-background);
+  --color-button-ghost-focus-background: var(--color-background);
+  --color-button-ghost-active-background: var(--color-background);
   /* TODO: add other styles */
 }
 
@@ -350,6 +355,7 @@
   --color-button-ghost-icon: var(--color-data);
   --color-button-ghost-icon-focus: var(--color-data);
   --color-button-ghost-icon-hover: var(--color-data);
+  --color-button-ghost-icon-active: var(--color-data);
   /* TODO: add other styles */
 }
 
@@ -427,6 +433,7 @@
 
 .lx-layout-digimaks .lx-settings-menu > .lx-form-grid > .lx-main > .lx-form-section {
   padding-left: 0.5rem;
+  padding-bottom: 0;
   gap: 0.25rem;
 }
 
@@ -469,6 +476,45 @@
   padding-bottom: 0;
 }
 
+.lx-layout-digimaks .lx-settings-menu .lx-settings-link {
+  height: var(--list-item-min-height);
+  border: 2px solid var(--color-chrome);
+  border-radius: var(--list-item-border-radius);
+  padding-bottom: 0;
+  margin-bottom: 1rem;
+}
+
+.lx-layout-digimaks .lx-settings-menu .lx-settings-link:last-of-type {
+  margin-bottom: 0;
+}
+
+.lx-layout-digimaks .lx-settings-menu .lx-settings-link .lx-button {
+  --color-button-tertiary: var(--color-list-primary);
+  --color-button-tertiary-background: var(--color-list-background);
+  --color-button-tertiary-icon: var(--color-list-primary);
+  --color-button-tertiary-hover: var(--color-list-primary);
+  --color-button-tertiary-hover-background: var(--color-list-background);
+  --color-button-tertiary-icon-hover: var(--color-list-primary);
+  --color-button-tertiary-focus: var(--color-list-primary);
+  --color-button-tertiary-focus-background: var(--color-list-background);
+  --color-button-tertiary-icon-focus: var(--color-list-primary);
+  --color-button-tertiary-active: var(--color-list-primary);
+  --color-button-tertiary-active-background: var(--color-list-background);
+  --color-button-tertiary-icon-active: var(--color-list-primary);
+  --button-tertiary-border: none;
+  --button-tertiary-border-radius: var(--list-item-border-radius);
+  --button-tertiary-padding: 0.35rem 0 0.2rem 1rem;
+  --button-tertiary-height: 100%;
+  --button-icon-width: var(--list-icon-width);
+  --button-icon-height: var(--list-icon-height);
+  --button-icon-margin: 0 0.75rem 0 0;
+  --button-tertiary-font-weight: var(--font-weight);
+}
+
+.lx-layout-digimaks .lx-settings-menu .lx-tag {
+  border-radius: var(--radius-default);
+}
+
 .lx-layout-digimaks>header:has(>.lx-header .lx-left-group:empty) {
   height: 0;
 }
@@ -493,4 +539,48 @@
 .lx .lx-layout-digimaks nav .lx-nav-panel .lx-nav-header {
   padding-bottom: 0.25rem;
   overflow-x: hidden;
+}
+
+.lx .lx-layout-digimaks a:hover {
+  --color-interactive-hover-foreground: var(--color-interactive-background);
+  --color-interactive-hover-background: transparent;
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button.lx-destructive {
+  --color-button-destructive: var(--color-button-primary);
+  --color-button-destructive-background: var(--color-button-primary-background);
+  --color-button-destructive-border: var(--color-button-primary-background);
+  --color-button-destructive-icon: var(--color-button-primary-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button-secondary.lx-destructive {
+  --color-button-destructive: var(--color-button-secondary);
+  --color-button-destructive-background: var(--color-button-secondary-background);
+  --color-button-destructive-border: var(--color-chrome);
+  --color-button-destructive-icon: var(--color-button-secondary-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button-tertiary.lx-destructive {
+  --color-button-destructive: var(--color-button-tertiary);
+  --color-button-destructive-background: var(--color-button-tertiary-background);
+  --color-button-destructive-border: var(--color-button-tertiary);
+  --color-button-destructive-icon: var(--color-button-tertiary-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button-ghost.lx-destructive {
+  --color-button-destructive: var(--color-button-ghost);
+  --color-button-destructive-background: var(--color-button-ghost-background);
+  --color-button-destructive-border: var(--color-button-ghost-background);
+  --color-button-destructive-icon: var(--color-button-ghost-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-dropdown-panel .lx-button.lx-destructive {
+  --color-button-destructive: var(--color-button-dropdown);
+  --color-button-destructive-background: var(--color-button-dropdown-background);
+  --color-button-destructive-border: transparent;
+  --color-button-destructive-icon: var(--color-button-dropdown-icon);
+}
+
+.lx .lx-layout.lx-layout-digimaks .lx-button {
+  outline: none;
 }
