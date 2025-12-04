@@ -1131,10 +1131,16 @@ export const getDayTabIndex = (
 };
 
 // Removes last character thats is not number or letter
-export const removeLastNonAlphanumeric = (input) => input.replace(/[^a-zA-Z0-9]$/, '');
+export const removeLastNonAlphanumeric = (input) => {
+  if (!input) return input;
+  return input.replace(/[^a-zA-Z0-9]$/, '');
+};
 
 // Validate the date based on the mask
-export const validateDateByMask = (date, mask) => isMatch(date, mask);
+export const validateDateByMask = (date, mask) => {
+  if (!date || !mask) return false;
+  return isMatch(date, mask);
+};
 
 // Function to sanitize the input based on mode (date, date-time, or time)
 export const sanitizeDateInput = (e, mode) => {
@@ -1172,6 +1178,39 @@ function ensureTwoDigits(n) {
 
 function isValidTime(h, m, s, supportSeconds) {
   return !(h < 0 || h > 23 || m < 0 || m > 59 || (supportSeconds && (s < 0 || s > 59)));
+}
+
+function timeToSeconds(time) {
+  if (!time) return null;
+
+  let h;
+  let m;
+  let s;
+
+  if (time instanceof Date) {
+    h = time.getHours();
+    m = time.getMinutes();
+    s = time.getSeconds();
+  } else if (typeof time === 'string') {
+    const p = time.split(':');
+    h = Number(p[0]) || 0;
+    m = Number(p[1]) || 0;
+    s = Number(p[2]) || 0;
+  } else {
+    return null;
+  }
+
+  return h * 3600 + m * 60 + s;
+}
+
+export function isTimeWithinMinMax(time, min, max) {
+  const t = timeToSeconds(time);
+  if (t === null) return false;
+
+  const minS = timeToSeconds(min);
+  const maxS = timeToSeconds(max);
+
+  return !((minS !== null && t < minS) || (maxS !== null && t > maxS));
 }
 
 export function normalizeFlexibleTimeInput(raw, supportSeconds = false) {
@@ -1254,35 +1293,89 @@ export function isStandardTimeMask(mask) {
   return baseValid;
 }
 
-function timeToSeconds(time) {
-  if (!time) return null;
+function resolveTwoDigitYear(twoDigits, maxYear) {
+  const parsed = parseInt(twoDigits, 10);
+  const currentCentury = Math.floor(new Date().getFullYear() / 100) * 100;
+  const prevCentury = currentCentury - 100;
 
-  let h;
-  let m;
-  let s;
+  const candidate20 = currentCentury + parsed;
 
-  if (time instanceof Date) {
-    h = time.getHours();
-    m = time.getMinutes();
-    s = time.getSeconds();
-  } else if (typeof time === 'string') {
-    const p = time.split(':');
-    h = Number(p[0]) || 0;
-    m = Number(p[1]) || 0;
-    s = Number(p[2]) || 0;
-  } else {
-    return null;
+  // If it's <= maxYear: 20xx
+  if (candidate20 <= maxYear) {
+    return candidate20.toString();
   }
 
-  return h * 3600 + m * 60 + s;
+  // Otherwise: 19xx
+  return (prevCentury + parsed).toString();
 }
 
-export function isTimeWithinMinMax(time, min, max) {
-  const t = timeToSeconds(time);
-  if (t === null) return false;
+export function normalizeFlexibleDateInput(raw, maxDate = null) {
+  if (!raw || typeof raw !== 'string') return '';
 
-  const minS = timeToSeconds(min);
-  const maxS = timeToSeconds(max);
+  const input = raw
+    .replace(/[/\-\s]+/g, '.')
+    .replace(/\.+/g, '.')
+    .trim();
 
-  return !((minS !== null && t < minS) || (maxS !== null && t > maxS));
+  const digitsOnly = input.replace(/\D/g, '');
+
+  const defaultMaxYear = new Date().getFullYear() + 100;
+  const maxYear = maxDate ? new Date(maxDate).getFullYear() : defaultMaxYear;
+
+  if (digitsOnly.length >= 4 && !input.includes('.')) {
+    let day = '';
+    let month = '';
+    let year = '';
+
+    let pos = 0;
+
+    day = digitsOnly.slice(pos, pos + 2).padStart(2, '0');
+    pos += 2;
+
+    if (pos < digitsOnly.length) {
+      month = digitsOnly.slice(pos, pos + 2).padStart(2, '0');
+      pos += 2;
+    }
+
+    year = digitsOnly.slice(pos);
+
+    if (year === '') {
+      year = new Date().getFullYear().toString();
+    } else if (year.length === 1) {
+      year = `200${year}`;
+    } else if (year.length === 2) {
+      year = resolveTwoDigitYear(year, maxYear);
+    } else if (year.length === 3) {
+      return raw;
+    }
+
+    return `${day}.${month}.${year}.`;
+  }
+
+  const parts = input
+    .split('.')
+    .map((p) => p.trim())
+    .filter(Boolean);
+
+  if (parts.length < 2) return input;
+
+  const [dayStr, monthStr, yearStr] = parts;
+
+  const day = dayStr.padStart(2, '0').slice(0, 2);
+  const month = monthStr.padStart(2, '0').slice(0, 2);
+
+  let year = yearStr || '';
+  if (!year) {
+    year = new Date().getFullYear().toString();
+  } else if (year.length === 1) {
+    year = `200${year}`;
+  } else if (year.length === 2) {
+    year = resolveTwoDigitYear(year, maxYear);
+  } else if (year.length === 3) {
+    return input;
+  } else if (year.length > 4) {
+    year = year.slice(-4);
+  }
+
+  return `${day}.${month}.${year}.`;
 }

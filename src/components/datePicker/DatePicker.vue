@@ -30,6 +30,7 @@ import {
   normalizeFlexibleTimeInput,
   isStandardTimeMask,
   isTimeWithinMinMax,
+  normalizeFlexibleDateInput,
 } from '@/components/datePicker/helpers';
 import { DATE_VALIDATION_RESULT } from '@/constants';
 import LxCalendarContainer from '@/components/datePicker/CalendarContainer.vue';
@@ -153,13 +154,14 @@ function validateIfExact(e, type = 'startInput') {
   }
 
   if (props.mode === 'date') {
-    const date = e.target.value;
+    const rawDate = normalizeFlexibleDateInput(e.target.value, maxDateRef.value);
+
     const inputMask = props.masks?.input || 'dd.MM.yyyy.';
 
-    const cleanedDate = removeLastNonAlphanumeric(date);
+    const cleanedDate = removeLastNonAlphanumeric(rawDate);
     const cleanedMask = removeLastNonAlphanumeric(inputMask);
 
-    if (date && !validateDateByMask(cleanedDate, cleanedMask)) {
+    if (!rawDate || !validateDateByMask(cleanedDate, cleanedMask)) {
       if (props.pickerType === 'range') {
         if (type === 'startInput' && model.value.end) {
           const updatedDatesObject = {
@@ -657,8 +659,11 @@ function validateIfExact(e, type = 'startInput') {
     const dateTime = e.target.value;
     const inputDateTime24hrMask = props.masks?.inputDateTime24hr || 'dd.MM.yyyy. HH:mm';
 
-    const [date, time] = dateTime.split(' ');
+    let [date, time] = dateTime.split(' ');
     const [dateMask, timeMask] = inputDateTime24hrMask.split(' ');
+
+    date = normalizeFlexibleDateInput(removeLastNonAlphanumeric(date), maxDateRef.value);
+    time = normalizeFlexibleTimeInput(time);
 
     const cleanedDate = removeLastNonAlphanumeric(date);
     const cleanedMask = removeLastNonAlphanumeric(dateMask);
@@ -740,8 +745,11 @@ function validateIfExact(e, type = 'startInput') {
     const dateTimeFull = e.target.value;
     const inputDateTimeFull24hrMask = props.masks?.inputDateTimeFull24hr || 'dd.MM.yyyy. HH:mm:ss';
 
-    const [date, time] = dateTimeFull.split(' ');
+    let [date, time] = dateTimeFull.split(' ');
     const [dateMask, timeMask] = inputDateTimeFull24hrMask.split(' ');
+
+    date = normalizeFlexibleDateInput(removeLastNonAlphanumeric(date), maxDateRef.value);
+    time = normalizeFlexibleTimeInput(time, true);
 
     const cleanedDate = removeLastNonAlphanumeric(date);
     const cleanedMask = removeLastNonAlphanumeric(dateMask);
@@ -1134,7 +1142,7 @@ function handleDesktopToggle(isOpen, type) {
   }
 }
 
-function toggleMenu(e, type) {
+function toggleMenu(type) {
   if (props.disabled) return;
 
   const menu = dropDownMenuRef.value;
@@ -1157,7 +1165,7 @@ function preventDefaultFocus(e) {
 function onTouchStart(e, type) {
   if (isTouchSensitive.value) {
     e.preventDefault();
-    toggleMenu(e, type);
+    toggleMenu(type);
   }
 }
 
@@ -1392,6 +1400,7 @@ onMounted(async () => {
         ]"
         :aria-labelledby="pickerType === 'range' ? labelledBy : null"
         @click="dropDownMenuRef?.preventClose"
+        @keyup="dropDownMenuRef?.preventClose"
         @keydown="dropDownMenuRef?.preventClose"
       >
         <div
@@ -1428,10 +1437,9 @@ onMounted(async () => {
             "
             @mousedown="preventDefaultFocus"
             @touchstart="onTouchStart($event, 'startInput')"
-            @click="toggleMenu($event, 'startInput')"
+            @click="toggleMenu('startInput')"
             @keydown.arrow-down.prevent="openMenu('startInput')"
             @keyup.enter.stop="toggleMenu('startInput')"
-            @keyup.space.stop="toggleMenu('startInput')"
             @keydown.esc.prevent="closeMenu"
             @change="validateIfExact($event, 'startInput')"
             @input="sanitizeDateInput($event, mode)"
@@ -1481,10 +1489,9 @@ onMounted(async () => {
               :aria-describedby="`${id}-lx-range-input-description`"
               @mousedown="preventDefaultFocus"
               @touchstart="onTouchStart($event, 'endInput')"
-              @click="toggleMenu($event, 'endInput')"
+              @click="toggleMenu('endInput')"
               @keydown.arrow-down.prevent="openMenu('endInput')"
-              @keyup.enter.stop="toggleMenu($event, 'endInput')"
-              @keyup.space.stop="toggleMenu($event, 'endInput')"
+              @keyup.enter.stop="toggleMenu('endInput')"
               @keydown.esc.prevent="closeMenu"
               @change="validateIfExact($event, 'endInput')"
               @input="sanitizeDateInput($event, mode)"
