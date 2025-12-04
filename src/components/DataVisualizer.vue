@@ -121,6 +121,7 @@ function checkValue(item, cloneThreshold, grid) {
 
 function getBarColor(item, grid = false) {
   let color = null;
+  const isBarKind = props.kind === 'bars-horizontal' || props.kind === 'bars-vertical';
 
   if (!props.thresholds || props.thresholds.length === 0) {
     if (grid && item[props.colorAttribute]) {
@@ -144,24 +145,20 @@ function getBarColor(item, grid = false) {
     return color;
   }
 
-  if (!color && grid && (props.kind === 'bars-horizontal' || props.kind === 'bars-vertical')) {
+  if (!color && grid && isBarKind) {
     return 'data';
   }
 
   if (color) {
-    return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
-      ? `--bar-color: ${color}`
-      : color;
+    return isBarKind ? `--bar-color: ${color}` : color;
   }
 
   if (item[props.colorAttribute])
-    return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
+    return isBarKind
       ? `--bar-color: var(--color-${item[props.colorAttribute]}-background)`
       : `var(--color-${item[props.colorAttribute]}-background)`;
 
-  return props.kind === 'bars-horizontal' || props.kind === 'bars-vertical'
-    ? '--bar-color: var(--color-data)'
-    : 'var(--color-data)';
+  return isBarKind ? '--bar-color: var(--color-data)' : 'var(--color-data)';
 }
 
 function getBackTextColor(item) {

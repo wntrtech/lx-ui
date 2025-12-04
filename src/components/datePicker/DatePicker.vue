@@ -1261,38 +1261,25 @@ watch(
   { immediate: true }
 );
 
+function normalizeDate(date) {
+  if (!date) return null;
+
+  const parsed = parseDate(date);
+  if (!parsed) return null;
+
+  const timestamp =
+    props.mode === 'time-full' || props.mode === 'date-time-full'
+      ? parsed.setMilliseconds(0)
+      : parsed.setSeconds(0, 0);
+
+  return new Date(timestamp);
+}
+
 watch(
   () => [props.minDate, props.maxDate, props.mode],
   ([newMinDate, newMaxDate]) => {
-    if (newMinDate) {
-      const parsedMinDate = parseDate(newMinDate);
-      if (parsedMinDate) {
-        let normalizedMinDate;
-        if (props.mode === 'time-full' || props.mode === 'date-time-full') {
-          normalizedMinDate = parsedMinDate.setMilliseconds(0);
-        } else {
-          normalizedMinDate = parsedMinDate.setSeconds(0, 0);
-        }
-        minDateRef.value = new Date(normalizedMinDate);
-      }
-    } else {
-      minDateRef.value = null;
-    }
-
-    if (newMaxDate) {
-      const parsedMaxDate = parseDate(newMaxDate);
-      if (parsedMaxDate) {
-        let normalizedMaxDate;
-        if (props.mode === 'time-full' || props.mode === 'date-time-full') {
-          normalizedMaxDate = parsedMaxDate.setMilliseconds(0);
-        } else {
-          normalizedMaxDate = parsedMaxDate.setSeconds(0, 0);
-        }
-        maxDateRef.value = new Date(normalizedMaxDate);
-      }
-    } else {
-      maxDateRef.value = null;
-    }
+    minDateRef.value = normalizeDate(newMinDate);
+    maxDateRef.value = normalizeDate(newMaxDate);
   },
   { immediate: true }
 );

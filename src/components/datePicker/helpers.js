@@ -262,9 +262,7 @@ export function canSelectTime(
 
       // If no minutes selected (or no seconds when seconds are needed), validate hour normally
       if (isNil(selectedMinutes) && isNil(selectedSeconds)) {
-        if (minDateParsed && hour < minHour) return false;
-        if (maxDateParsed && hour > maxHour) return false;
-        return true;
+        return !((minDateParsed && hour < minHour) || (maxDateParsed && hour > maxHour));
       }
 
       // minutes selected but no seconds
@@ -309,9 +307,7 @@ export function canSelectTime(
       // only seconds selected (no minutes)
       // keep hours within min/max hour boundaries (don’t unlock everything)
       if (isNil(selectedMinutes) && !isNil(selectedSeconds)) {
-        if (minDateParsed && hour < minHour) return false;
-        if (maxDateParsed && hour > maxHour) return false;
-        return true;
+        return !((minDateParsed && hour < minHour) || (maxDateParsed && hour > maxHour));
       }
 
       return true;
@@ -418,15 +414,7 @@ export function canSelectTime(
         return false;
       }
 
-      if (selectedHours < minHour) {
-        return false;
-      }
-
-      if (selectedHours > maxHour) {
-        return false;
-      }
-
-      return true;
+      return !(selectedHours < minHour || selectedHours > maxHour);
     }
 
     // Allow any time if timeUnit isn't specified
@@ -470,15 +458,10 @@ export function canSelectTime(
     }
 
     // If no minute selected, fall back to basic min/max hour bounds
-    if (isMinDay && hourMinuteOrSecondValue < minDateParsed.getHours()) {
-      return false;
-    }
-
-    if (isMaxDay && hourMinuteOrSecondValue > maxDateParsed.getHours()) {
-      return false;
-    }
-
-    return true;
+    return !(
+      (isMinDay && hourMinuteOrSecondValue < minDateParsed.getHours()) ||
+      (isMaxDay && hourMinuteOrSecondValue > maxDateParsed.getHours())
+    );
   }
 
   // Validate minutes
@@ -500,10 +483,10 @@ export function canSelectTime(
       isNil(selectedSeconds) ? 0 : selectedSeconds
     );
 
-    if (minDateParsed && current < minDateParsed) return false;
-    if (maxDateParsed && current > maxDateParsed) return false;
-
-    return true;
+    return !(
+      (minDateParsed && current < minDateParsed) ||
+      (maxDateParsed && current > maxDateParsed)
+    );
   }
 
   // Validate seconds
@@ -1188,10 +1171,7 @@ function ensureTwoDigits(n) {
 }
 
 function isValidTime(h, m, s, supportSeconds) {
-  if (h < 0 || h > 23) return false;
-  if (m < 0 || m > 59) return false;
-  if (supportSeconds && (s < 0 || s > 59)) return false;
-  return true;
+  return !(h < 0 || h > 23 || m < 0 || m > 59 || (supportSeconds && (s < 0 || s > 59)));
 }
 
 export function normalizeFlexibleTimeInput(raw, supportSeconds = false) {
@@ -1304,8 +1284,5 @@ export function isTimeWithinMinMax(time, min, max) {
   const minS = timeToSeconds(min);
   const maxS = timeToSeconds(max);
 
-  if (minS !== null && t < minS) return false;
-  if (maxS !== null && t > maxS) return false;
-
-  return true;
+  return !((minS !== null && t < minS) || (maxS !== null && t > maxS));
 }
