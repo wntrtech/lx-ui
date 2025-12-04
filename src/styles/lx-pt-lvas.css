@@ -7,13 +7,16 @@
     --color-background: #eeeff2;
     --color-data: #111827;
     --color-region-2: #ededee;
+    --color-region-hover: #ebebeb;
+    --color-label:#6b6b6b;
   }
-  
-  .lx.lx-theme-dark {
-    --color-brand: #4f98c0;
-    --color-interactive-background: #4f98c0;
+
+.lx.lx-theme-dark {
+    --color-brand: #5ba8d2;
+    --color-interactive-background: #5ba8d2;
     --color-interactive-hover-background: #046e98;
     --color-nav-selected-background: var(--color-highlight);
     --color-highlight: #1c3b4a;
     --color-region: #25272d;
+    --color-interactive-secondary-background:#6c6c6c;
   }
