@@ -372,6 +372,7 @@ const animationsModel = computed({
     defaultAnimations.value = value;
   },
 });
+provide('hasAnimations', animationsModel);
 
 const transparencyStorageKey = ref(
   `${useLx().getGlobals()?.systemId ? useLx().getGlobals()?.systemId : 'lx'}-transparency`

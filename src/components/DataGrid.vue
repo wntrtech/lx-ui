@@ -26,6 +26,7 @@ import LxRow from '@/components/forms/Row.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import LxPersonDisplay from '@/components/PersonDisplay.vue';
 import LxTextInput from '@/components/TextInput.vue';
+import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
 import { logError } from '@/utils/devUtils';
 import useLx from '@/hooks/useLx';
 import { formatValueArray } from '@/utils/formatUtils';
@@ -1678,7 +1679,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         </div>
 
         <div class="lx-grid-content">
-          <TransitionGroup
+          <TransitionGroupWrapper
             tag="div"
             name="data-grid"
             class="lx-grid-row"
@@ -2042,7 +2043,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 </LxDropDownMenu>
               </div>
             </div>
-          </TransitionGroup>
+          </TransitionGroupWrapper>
         </div>
       </div>
 

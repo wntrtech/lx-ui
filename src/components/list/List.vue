@@ -22,6 +22,7 @@ import LxTreeList from '@/components/list/TreeList.vue';
 import LxSkipLink from '@/components/SkipLink.vue';
 import LxToolbar from '@/components/Toolbar.vue';
 import { focusNextFocusableElement, getDisplayTexts } from '@/utils/generalUtils';
+import TransitionGroupWrapper from '@/components/TransitionGroupWrapper.vue';
 
 const props = defineProps({
   id: { type: String, default: () => generateUUID() },
@@ -1488,7 +1489,7 @@ const toolbarActions = computed(() => {
           :aria-labelledby="labelledBy"
         >
           <template #item="{ element }">
-            <TransitionGroup
+            <TransitionGroupWrapper
               class="draggable-list-item-wrapper"
               type="transition"
               :name="!dragging ? 'flip-list' : null"
@@ -1561,7 +1562,7 @@ const toolbarActions = computed(() => {
                   </div>
                 </div>
               </div>
-            </TransitionGroup>
+            </TransitionGroupWrapper>
           </template>
         </draggable>
       </div>
@@ -2018,7 +2019,7 @@ const toolbarActions = computed(() => {
           :aria-labelledby="labelledBy"
         >
           <template #item="{ element }">
-            <TransitionGroup
+            <TransitionGroupWrapper
               class="draggable-list-item-wrapper"
               type="transition"
               :name="!dragging ? 'flip-list' : null"
@@ -2092,7 +2093,7 @@ const toolbarActions = computed(() => {
                   </div>
                 </div>
               </div>
-            </TransitionGroup>
+            </TransitionGroupWrapper>
           </template>
         </draggable>
       </div>
@@ -2143,7 +2144,7 @@ const toolbarActions = computed(() => {
             :aria-labelledby="labelledBy"
           >
             <template #item="{ element }">
-              <TransitionGroup
+              <TransitionGroupWrapper
                 class="draggable-list-item-wrapper"
                 type="transition"
                 :name="!dragging ? 'flip-list' : null"
@@ -2220,7 +2221,7 @@ const toolbarActions = computed(() => {
                     </div>
                   </div>
                 </div>
-              </TransitionGroup>
+              </TransitionGroupWrapper>
             </template>
           </draggable>
         </div>
