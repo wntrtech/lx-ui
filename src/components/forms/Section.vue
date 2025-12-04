@@ -366,12 +366,21 @@ provide('sectionOrientation', sectionOrientation);
       <div v-if="actionDefinitions?.length > 0">
         <LxButton
           v-if="actionDefinitions?.length === 1"
+          :id="actionDefinitions?.[0]?.id"
+          :label="actionDefinitions?.[0]?.name || actionDefinitions?.[0]?.label"
+          :title="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.tooltip"
           :icon="actionDefinitions?.[0]?.icon"
           :iconSet="actionDefinitions?.[0]?.iconSet"
-          variant="icon-only"
-          :label="actionDefinitions?.[0]?.title || actionDefinitions?.[0]?.name"
+          :loading="actionDefinitions?.[0]?.loading"
+          :busy="actionDefinitions?.[0]?.busy"
           :disabled="actionDefinitions?.[0]?.disabled"
           :destructive="actionDefinitions?.[0]?.destructive"
+          :active="actionDefinitions?.[0]?.active"
+          :badge="actionDefinitions?.[0]?.badge"
+          :badgeType="actionDefinitions?.[0]?.badgeType"
+          :badgeIcon="actionDefinitions?.[0]?.badgeIcon"
+          :badgeTitle="actionDefinitions?.[0]?.badgeTitle"
+          variant="icon-only"
           kind="ghost"
           @click="emits('actionClick', actionDefinitions?.[0]?.id)"
         />

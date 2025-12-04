@@ -182,12 +182,12 @@ const tabIndex = computed(() => {
             v-for="action in visibleActionDefinitions"
             :id="`${id}-action-${action.id}`"
             :key="action.id"
-            kind="ghost"
-            :tabindex="0"
+            :label="action.name || action.label"
+            :title="action.title || action.tooltip"
             :icon="action.icon"
             :icon-set="action.iconSet"
-            variant="icon-only"
-            :label="action.name"
+            :loading="action.loading"
+            :busy="action.busy"
             :destructive="action.destructive"
             :disabled="
               action.disabled != null
@@ -196,6 +196,13 @@ const tabIndex = computed(() => {
                 ? !value[action.enableByAttribute]
                 : loading || busy || disabled
             "
+            kind="ghost"
+            variant="icon-only"
+            :active="action.active"
+            :badge="action.badge"
+            :badge-type="action.badgeType"
+            :badgeIcon="action.badgeIcon"
+            :badgeTitle="action.badgeTitle"
             @click="actionClicked(action.id, id, $event)"
           />
         </div>
@@ -221,12 +228,14 @@ const tabIndex = computed(() => {
               <div class="lx-button-set" v-if="visibleActionDefinitions.length > 1">
                 <LxButton
                   v-for="action in visibleActionDefinitions"
-                  :id="`${id}-action-${action.id}`"
                   :key="action.id"
+                  :id="`${id}-action-${action.id}`"
+                  :label="action.name || action.label"
+                  :title="action.title || action.tooltip"
                   :icon="action.icon"
                   :icon-set="action.iconSet"
-                  :label="action.name"
-                  :tabindex="0"
+                  :loading="action.loading"
+                  :busy="action.busy"
                   :destructive="action.destructive"
                   :disabled="
                     action.disabled != null
@@ -235,6 +244,11 @@ const tabIndex = computed(() => {
                       ? !value[action.enableByAttribute]
                       : false
                   "
+                  :active="action.active"
+                  :badge="action.badge"
+                  :badge-type="action.badgeType"
+                  :badgeIcon="action.badgeIcon"
+                  :badgeTitle="action.badgeTitle"
                   @click="actionClicked(action.id, id, $event, false, true)"
                 />
               </div>
@@ -321,12 +335,12 @@ const tabIndex = computed(() => {
             v-for="action in visibleActionDefinitions"
             :id="`${id}-action-${action.id}`"
             :key="action.id"
-            kind="ghost"
-            :tabindex="0"
+            :label="action.name || action.label"
+            :title="action.title || action.tooltip"
             :icon="action.icon"
             :icon-set="action.iconSet"
-            variant="icon-only"
-            :label="action.name"
+            :loading="action.loading"
+            :busy="action.busy"
             :destructive="action.destructive"
             :disabled="
               action.disabled != null
@@ -335,6 +349,13 @@ const tabIndex = computed(() => {
                 ? !value[action.enableByAttribute]
                 : loading || busy || disabled
             "
+            :active="action.active"
+            :badge="action.badge"
+            :badge-type="action.badgeType"
+            :badgeIcon="action.badgeIcon"
+            :badgeTitle="action.badgeTitle"
+            kind="ghost"
+            variant="icon-only"
             @click="actionClicked(action.id, id, $event, true)"
           />
         </div>
@@ -362,10 +383,12 @@ const tabIndex = computed(() => {
                   v-for="action in visibleActionDefinitions"
                   :id="`${id}-action-${action.id}`"
                   :key="action.id"
+                  :label="action.name || action.label"
+                  :title="action.title || action.tooltip"
                   :icon="action.icon"
                   :icon-set="action.iconSet"
-                  :label="action.name"
-                  :tabindex="0"
+                  :loading="action.loading"
+                  :busy="action.busy"
                   :destructive="action.destructive"
                   :disabled="
                     action.disabled != null
@@ -374,6 +397,11 @@ const tabIndex = computed(() => {
                       ? !value[action.enableByAttribute]
                       : false
                   "
+                  :active="action.active"
+                  :badge="action.badge"
+                  :badge-type="action.badgeType"
+                  :badgeIcon="action.badgeIcon"
+                  :badgeTitle="action.badgeTitle"
                   @click="actionClicked(action.id, id, $event, true, true)"
                 />
               </div>
@@ -398,11 +426,10 @@ const tabIndex = computed(() => {
         :id="`${id}-action-${action.id}`"
         :key="action.id"
         kind="ghost"
-        :tabindex="0"
-        :icon="action.icon"
-        :icon-set="action.iconSet"
-        variant="icon-only"
-        :label="action.name"
+        :label="action.name || action.label"
+        :title="action.title || action.tooltip"
+        :loading="action.loading"
+        :busy="action.busy"
         :destructive="action.destructive"
         :disabled="
           action.disabled != null
@@ -411,6 +438,14 @@ const tabIndex = computed(() => {
             ? !value[action.enableByAttribute]
             : loading || busy || disabled
         "
+        :icon="action.icon"
+        :icon-set="action.iconSet"
+        variant="icon-only"
+        :active="action.active"
+        :badge="action.badge"
+        :badge-type="action.badgeType"
+        :badgeIcon="action.badgeIcon"
+        :badgeTitle="action.badgeTitle"
         @click="actionClicked(action.id, id, $event)"
       />
     </div>
@@ -435,12 +470,14 @@ const tabIndex = computed(() => {
           <div class="lx-button-set" v-if="visibleActionDefinitions.length > 1">
             <LxButton
               v-for="action in visibleActionDefinitions"
-              :id="`${id}-action-${action.id}`"
               :key="action.id"
+              :id="`${id}-action-${action.id}`"
+              :label="action.name || action.label"
+              :title="action.title || action.tooltip"
               :icon="action.icon"
               :icon-set="action.iconSet"
-              :label="action.name"
-              :tabindex="0"
+              :loading="action.loading"
+              :busy="action.busy"
               :destructive="action.destructive"
               :disabled="
                 action.disabled != null
@@ -449,6 +486,11 @@ const tabIndex = computed(() => {
                   ? !value[action.enableByAttribute]
                   : false
               "
+              :active="action.active"
+              :badge="action.badge"
+              :badge-type="action.badgeType"
+              :badgeIcon="action.badgeIcon"
+              :badgeTitle="action.badgeTitle"
               @click="actionClicked(action.id, id)"
             />
           </div>

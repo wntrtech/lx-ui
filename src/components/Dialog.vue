@@ -165,13 +165,14 @@ defineExpose({ open, close });
                 v-for="action in actionDefinitionsDisplay"
                 :key="action?.id"
                 :id="`${id}-action-${action?.id}`"
-                :kind="action?.kind"
                 :label="action?.name || action?.label"
-                :title="action?.title"
+                :title="action?.title || action?.tooltip"
+                :kind="action?.kind"
                 :loading="action?.loading"
                 :busy="action?.busy"
                 :destructive="action?.destructive"
                 :disabled="action?.disabled"
+                :active="action?.active"
                 @click="actionClicked(action)"
               />
             </template>

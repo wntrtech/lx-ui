@@ -121,12 +121,22 @@ function handleClick(event) {
       <template v-if="actionDefinitions.length === 1">
         <LxButton
           :key="actionDefinitions[0].id"
-          kind="ghost"
-          variant="icon-only"
-          tabindex="0"
+          :id="actionDefinitions[0].id"
+          :label="actionDefinitions[0].name || actionDefinitions[0].label"
+          :title="actionDefinitions[0].title || actionDefinitions[0].tooltip"
           :icon="actionDefinitions[0].icon"
-          :label="actionDefinitions[0].title || actionDefinitions[0].name"
+          :iconSet="actionDefinitions[0].iconSet"
+          kind="ghost"
+          :loading="actionDefinitions[0].loading"
+          :busy="actionDefinitions[0].busy"
           :destructive="actionDefinitions[0].destructive"
+          :disabled="actionDefinitions[0].disabled"
+          variant="icon-only"
+          :active="actionDefinitions[0].active"
+          :badge="actionDefinitions[0].badge"
+          :badgeType="actionDefinitions[0].badgeType"
+          :badgeIcon="actionDefinitions[0].badgeIcon"
+          :badgeTitle="actionDefinitions[0].badgeTitle"
           @click="actionClicked(actionDefinitions[0].id, props.id)"
         />
       </template>

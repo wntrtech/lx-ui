@@ -1303,11 +1303,21 @@ const toolbarActions = computed(() => {
                 <LxButton
                   v-for="selectAction in selectionActionDefinitions"
                   :key="selectAction.id"
+                  :id="selectAction.id"
+                  :label="selectAction.name || selectAction.label"
+                  :title="selectAction.title || selectAction.tooltip"
+                  :loading="selectAction.loading"
+                  :busy="selectAction.busy"
                   :icon="selectAction.icon"
-                  :label="selectAction.name"
+                  :iconSet="selectAction.iconSet"
                   :destructive="selectAction.destructive"
                   :disabled="selectAction.disabled || busy || loading"
                   kind="ghost"
+                  :active="selectAction.active"
+                  :badge="selectAction.badge"
+                  :badge-type="selectAction.badgeType"
+                  :badgeIcon="selectAction.badgeIcon"
+                  :badgeTitle="selectAction.badgeTitle"
                   @click="selectionActionClick(selectAction.id, selectedItems)"
                 />
               </div>
