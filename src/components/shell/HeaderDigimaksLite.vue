@@ -408,6 +408,14 @@ const navItemsUserMenu = computed(() =>
   props.navItems?.filter((item) => item.type === 'user-menu')
 );
 
+const navItemsSettingsMenuLinks = computed(() =>
+  props.navItems?.filter((item) => item.type === 'settings-menu-links')
+);
+
+function settingsLinkClick(link) {
+  window.location.href = link;
+}
+
 const themeItems = computed(() =>
   props.availableThemes?.map((item) => ({
     id: item,
@@ -706,7 +714,9 @@ provide('insideHeader', insideHeader);
               <LxRow :label="displayTexts.transparency">
                 <LxToggle v-model="transparencyModel" />
               </LxRow>
-              <LxRow :label="displayTexts.fonts"> <LxToggle v-model="deviceFontsModel" /> </LxRow>
+              <LxRow :label="displayTexts.fonts">
+                <LxToggle v-model="deviceFontsModel" />
+              </LxRow>
             </LxForm>
             <div
               v-if="hasCustomButton"
@@ -767,6 +777,22 @@ provide('insideHeader', insideHeader);
               />
             </div>
 
+            <ul class="lx-settings-link-list" v-if="navItemsSettingsMenuLinks">
+              <li
+                v-for="item in navItemsSettingsMenuLinks"
+                :key="item.label"
+                class="lx-user-menu-item lx-settings-link"
+              >
+                <LxButton
+                  kind="tertiary"
+                  :label="item.label"
+                  :icon="item.icon"
+                  :disabled="headerNavDisable"
+                  @click="() => settingsLinkClick(item.link)"
+                  @keydown.enter="() => settingsLinkClick(item.link)"
+                />
+              </li>
+            </ul>
             <ul v-if="userInfo">
               <li v-for="item in navItemsUserMenu" :key="item.label" class="lx-user-menu-item">
                 <LxButton
