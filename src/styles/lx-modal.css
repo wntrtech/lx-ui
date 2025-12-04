@@ -123,6 +123,10 @@
   .lx-curtain .lx-modal .lx-main {
     max-height: calc(100dvh - 7.75rem);
   }
+
+  .lx-curtain .lx-dialog .lx-main {
+    max-height: calc(100dvh - 9.75rem);
+  }
 }
 
 dialog.lx-modal {
