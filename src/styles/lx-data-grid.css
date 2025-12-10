@@ -942,7 +942,7 @@
   width: 100%;
 }
 
-.lx .lx-info-wrapper-content:focus {
+.lx .popper-wrapper > .lx-info-wrapper-content:focus {
   outline: 2px solid var(--color-focus-background);     
 }
 

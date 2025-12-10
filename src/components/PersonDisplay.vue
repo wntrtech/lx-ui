@@ -100,6 +100,12 @@ const textsDefault = {
   description: 'Apraksts',
   role: 'Loma',
   institution: 'Iestāde',
+  multiplePersonLabel: {
+    singular: 'persona',
+    plural: 'personas',
+    endingWith234: 'personas',
+    endingWith1: 'persona',
+  },
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -229,10 +235,28 @@ function getAvatarKey(value) {
 }
 
 const showDescription = computed(() => description.value && props.size === 'l');
+
+const ariaLabel = computed(() => {
+  if (!showMultiple.value) {
+    return null;
+  }
+  const num = tooltipItems.value.length;
+  const numDisplay = num.toString();
+  let label = displayTexts.value.multiplePersonLabel.plural;
+
+  if (num === 1) {
+    label = displayTexts.value.multiplePersonLabel.singular;
+  } else if (num > 20 && (num % 10 === 2 || num % 10 === 3 || num % 10 === 4)) {
+    label = displayTexts.value.multiplePersonLabel.endingWith234;
+  } else if (num > 11 && num % 10 === 1) {
+    label = displayTexts.value.multiplePersonLabel.endingWith1;
+  }
+  return `${numDisplay} ${label}`;
+});
 </script>
 <template>
   <div class="lx-person-display-wrapper">
-    <LxInfoWrapper :customRole>
+    <LxInfoWrapper :label="ariaLabel" :customRole>
       <div
         v-if="!showMultiple"
         class="lx-person-display"
