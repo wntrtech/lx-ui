@@ -17,7 +17,7 @@
   --color-focus-background: #9f1853;
   --color-destructive: #ba1b23;
 
-  --font-family-mono: monospace, sans-serif;
+  --font-family-mono: 'RobotoLX', monospace, sans-serif;
   --font-weight-data: 600;
   --font-weight-bold: 600;
   --font-weight-extra-bold: 700;
@@ -40,3 +40,4 @@
 	--color-region-hover: #2f2f31;
 	--color-button-nav-selected-background: var(--color-highlight);
 }
+
