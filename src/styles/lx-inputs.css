@@ -1296,8 +1296,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 
 .lx .lx-toggle-wrapper
   .lx-toggle[checked]
-  + .lx-toggle-label-wrapper
-  svg {
+  + .lx-toggle-label-wrapper>svg {
   position: absolute;
   left: var(--toggle-checked-icon-position-left);
   width: var(--toggle-checked-icon-width);
@@ -1305,15 +1304,14 @@ h2.lx-section-header + p.lx-invalidation-message,
   z-index: 1;
 }
 
-.lx-toggle:disabled + .lx-toggle-label-wrapper svg {
+.lx-toggle:disabled + .lx-toggle-label-wrapper>svg {
   fill: var(--color-disabled-foreground);
   cursor: not-allowed;
 }
 
 .lx .lx-toggle-wrapper:not([data-disabled])
   .lx-toggle[checked]
-  + .lx-toggle-label-wrapper
-  svg {
+  + .lx-toggle-label-wrapper>svg {
   fill: var(--color-region);
   cursor: pointer;
 }
