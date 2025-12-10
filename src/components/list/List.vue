@@ -1090,7 +1090,7 @@ const processedToolbarActions = computed(() => {
     kind: action.kind ?? 'ghost',
     variant: action.variant ?? 'icon-only',
     groupId: action.groupId ?? 'lx-default',
-    disabled: loading || busy,
+    disabled: action.disabled || loading || busy,
     ...overrides,
   });
 

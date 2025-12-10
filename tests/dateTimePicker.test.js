@@ -1195,4 +1195,43 @@ describe('LxDateTimePicker', () => {
       });
     });
   });
+
+  describe('kind date-time pre unix and historical date handling', () => {
+    function mountTimePicker() {
+      return mount(LxDateTimePicker, {
+        props: {
+          modelValue: null,
+          kind: 'date-time',
+          'onUpdate:modelValue': (v) => {
+            wrapper.setProps({ modelValue: v });
+          },
+        },
+        global: {
+          stubs: ['router-link'],
+          directives: { ClickAway: {} },
+        },
+      });
+    }
+
+    const normalizeCases = [
+      ['01011965 5', '01.01.1965. 05:00'],
+      ['02051935 17', '02.05.1935. 17:00'],
+      ['15051920 830', '15.05.1920. 08:30'],
+      ['07091820 0000', '07.09.1820. 00:00'],
+      ['23111215 00', '23.11.1215. 00:00'],
+    ];
+
+    normalizeCases.forEach(([input, expected]) => {
+      it(`"${input}" → "${expected}"`, async () => {
+        wrapper = mountTimePicker();
+        const pickerInput = wrapper.find('.lx-date-time-picker.lx-input-area');
+        expect(pickerInput.exists()).toBe(true);
+
+        await pickerInput.setValue(input);
+        await pickerInput.trigger('change');
+
+        expect(pickerInput.element.value).toBe(expected);
+      });
+    });
+  });
 });
