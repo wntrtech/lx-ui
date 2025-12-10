@@ -242,6 +242,7 @@ const textsDefault = {
 // Merge texts prop with defaults
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
+const { width } = useWindowSize();
 const form = ref();
 const formHeader = ref();
 const formFooter = ref();
@@ -321,7 +322,7 @@ function scrollTo(id) {
   const element = elementForm?.querySelector(`#${id}`);
   if (!element) return;
 
-  const topPosition = element.getBoundingClientRect().top + window.scrollY;
+  const topPosition = (element?.getBoundingClientRect().top ?? 0) + window.scrollY;
   const offset = calculateOffset(element);
 
   const targetPosition = topPosition - offset;
@@ -662,10 +663,9 @@ function isElementVisible(el) {
     topMargin = formHeaderHeight + headerHeight + extraMargin;
   }
 
-  const rect = el.getBoundingClientRect();
+  const rect = el?.getBoundingClientRect();
   const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
   const isVisible = rect.top <= viewportHeight - bottomMargin && rect.bottom >= topMargin;
-
   return isVisible;
 }
 
@@ -770,8 +770,33 @@ function setSelectedIndex(indexId, skipAnnouncement = false) {
   }
 }
 
+watch(width, () => {
+  nextTick(() => {
+    const elementForm = document.getElementById(props.id);
+    props.index?.forEach((o) => {
+      const sectionId = `${props.id}-${o.id}`;
+      const el = elementForm?.querySelector(`#${sectionId}`);
+      visibilities.value[sectionId] = isElementVisible(el);
+    });
+  });
+});
+
+const indexDefault = ref(null);
+
+const { height } = useElementSize(indexDefault);
+
+watch(height, () => {
+  const heightElementForm = document?.getElementById(props.id);
+  props.index?.forEach((o) => {
+    const sectionId = `${props.id}-${o.id}`;
+    const el = heightElementForm?.querySelector(`#${sectionId}`);
+    visibilities.value[sectionId] = isElementVisible(el);
+  });
+});
+
 onMounted(() => {
   const elementForm = document.getElementById(props.id);
+
   const updateVisibility = () => {
     props.index?.forEach((o) => {
       const sectionId = `${props.id}-${o.id}`;
@@ -781,7 +806,9 @@ onMounted(() => {
   };
 
   // Initial visibility check, useElementVisibility with rootMargin doesn't work well without normal root element (and viewPort)
-  updateVisibility();
+  nextTick(() => {
+    updateVisibility();
+  });
   window.addEventListener('scroll', updateVisibility);
   onUnmounted(() => {
     window.removeEventListener('scroll', updateVisibility);
@@ -820,6 +847,7 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
       v-if="props.indexType === 'default' && modifiedIndexRef?.length > 0"
       class="lx-index"
       aria-label="navigation block"
+      ref="indexDefault"
     >
       <ul>
         <li
