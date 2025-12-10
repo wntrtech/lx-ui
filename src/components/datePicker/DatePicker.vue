@@ -676,8 +676,13 @@ function validateIfExact(e, type = 'startInput') {
       timeMask.length !== time.length ||
       cleanedDate.length !== cleanedMask.length
     ) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
+      if (props.clearIfNotExact) {
+        e.target.value = null;
+        emits('update:modelValue', null);
+        return;
+      }
+
+      const updatedValue = new Date();
 
       const newDay = new Date().getDate();
       const newMonth = new Date().getMonth();
@@ -692,7 +697,8 @@ function validateIfExact(e, type = 'startInput') {
         .replace('HH', newHours)
         .replace('mm', newMinutes);
 
-      e.target.value = props.clearIfNotExact ? null : newDateTimeString;
+      e.target.value = newDateTimeString;
+      emits('update:modelValue', updatedValue);
       return;
     }
 
@@ -762,8 +768,13 @@ function validateIfExact(e, type = 'startInput') {
       timeMask.length !== time.length ||
       cleanedDate.length !== cleanedMask.length
     ) {
-      const updatedValue = props.clearIfNotExact ? null : new Date();
-      emits('update:modelValue', updatedValue);
+      if (props.clearIfNotExact) {
+        e.target.value = null;
+        emits('update:modelValue', null);
+        return;
+      }
+
+      const updatedValue = new Date();
 
       const newDay = new Date().getDate();
       const newMonth = new Date().getMonth();
@@ -780,7 +791,8 @@ function validateIfExact(e, type = 'startInput') {
         .replace('mm', newMinutes)
         .replace('ss', newSeconds);
 
-      e.target.value = props.clearIfNotExact ? null : newDateTimeFullString;
+      e.target.value = newDateTimeFullString;
+      emits('update:modelValue', updatedValue);
       return;
     }
 
@@ -1204,6 +1216,8 @@ const placeholderComputed = computed(() => {
       return 'dd.mm.gggg.';
     case 'date-time':
       return 'dd.mm.gggg. st:mi';
+    case 'date-time-full':
+      return 'dd.mm.gggg. st:mi:ss';
     case 'time':
       return 'st:mi';
     case 'time-full':

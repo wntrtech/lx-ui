@@ -1192,10 +1192,11 @@ function timeToSeconds(time) {
     m = time.getMinutes();
     s = time.getSeconds();
   } else if (typeof time === 'string') {
-    const p = time.split(':');
-    h = Number(p[0]) || 0;
-    m = Number(p[1]) || 0;
-    s = Number(p[2]) || 0;
+    const [, timePart] = time.split('T'); // handles full ISO strings safely
+    const [hh, mm, ss] = timePart.split(':');
+    h = Number(hh);
+    m = Number(mm);
+    s = Number(ss || 0);
   } else {
     return null;
   }
@@ -1378,4 +1379,42 @@ export function normalizeFlexibleDateInput(raw, maxDate = null) {
   }
 
   return `${day}.${month}.${year}.`;
+}
+
+export function parseExact(value) {
+  if (!value) return null;
+
+  if (value instanceof Date && !Number.isNaN(value)) {
+    value.setMilliseconds(0);
+    return value;
+  }
+
+  if (typeof value === 'string') {
+    const clean = value.replace(/[+-]\d{2}:\d{2}.*$/, '').replace(/Z$/, '');
+    const fullMatch = /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2}):(\d{2})$/.exec(clean);
+
+    if (fullMatch) {
+      // eslint-disable-next-line no-unused-vars
+      const [_, y, m, d, hh, mm, ss] = fullMatch.map(Number);
+      const date = new Date(y, m - 1, d, hh, mm, ss, 0);
+      if (!Number.isNaN(date.getTime())) return date;
+    }
+
+    const dateOnlyMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(clean);
+
+    if (dateOnlyMatch) {
+      // eslint-disable-next-line no-unused-vars
+      const [_, y, m, d] = dateOnlyMatch.map(Number);
+      const date = new Date(y, m - 1, d, 0, 0, 0, 0);
+      if (!Number.isNaN(date.getTime())) return date;
+    }
+  }
+
+  const fallback = new Date(value);
+  if (!Number.isNaN(fallback)) {
+    fallback.setMilliseconds(0);
+    return fallback;
+  }
+
+  return null;
 }

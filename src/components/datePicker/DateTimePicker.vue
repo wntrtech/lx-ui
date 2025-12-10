@@ -1,6 +1,5 @@
 <script setup>
 import { computed, inject, ref } from 'vue';
-
 import {
   parseDate,
   formatJSON,
@@ -22,9 +21,9 @@ import {
   extractYearFromDate,
   extractYearMonthFromDate,
   getMonthNameByOrder,
+  parseExact,
 } from '@/components/datePicker/helpers';
 import { generateUUID } from '@/utils/stringUtils';
-
 import LxDatePicker from '@/components/datePicker/DatePicker.vue';
 import { getDisplayTexts } from '@/utils/generalUtils';
 
@@ -159,7 +158,7 @@ const model = computed({
         }
         return parseDate(props.modelValue);
       default:
-        return parseDate(props.modelValue);
+        return parseExact(props.modelValue);
     }
   },
   set(newValue) {
