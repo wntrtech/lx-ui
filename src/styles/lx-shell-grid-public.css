@@ -296,6 +296,8 @@
 
 .lx-layout.lx-layout-public>main {
   grid-area: main;
+  /* 100dvh - publicHeaderHeight - footerMarginTop */
+  min-height: calc(100dvh - var(--public-nav-header-size) - 5rem);
 }
 
 .lx-layout.lx-layout-public>footer {
@@ -353,7 +355,7 @@
 
 .lx-layout.lx-layout-public .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar), 
 .lx-layout.lx-layout-public .lx-form-grid:not(:has(>header))>.lx-wizard header.lx-toolbar.lx-sticky {
-    top: calc(var(--public-nav-header-size) );
+    top: calc(var(--public-nav-header-size));
 }
 
 .lx-layout.lx-layout-public.lx-hide-nav-bar .lx-form-grid:not(:has(>header))>.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper>header.lx-toolbar), 
@@ -602,6 +604,8 @@
 
   .lx-layout.lx-layout-public>main {
     margin-inline: 1rem;
+    /* 100dvh - publicHeaderHeight */
+    min-height: calc(100dvh - var(--public-nav-header-size));
   }
 }
 

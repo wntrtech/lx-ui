@@ -462,6 +462,8 @@
 
 .lx-layout.lx-layout-default > .lx-main {
   margin-bottom: var(--row-size);
+  /* 100dvh - headerHeight - mainMarginBottom */
+  min-height: calc(100dvh - var(--nav-row-size) - 3rem);
 }
 
 .lx-layout.lx-layout-default > .lx-main .lx-header {

@@ -337,6 +337,8 @@
     grid-area: main;
     margin-left: 1rem;
     margin-right: 1rem;
+    /* 100dvh - publicHeaderHeight - footerMarginTop */
+    min-height: calc(100dvh - var(--public-nav-header-size) - 5rem);
   }
   
   .lx-layout.lx-layout-latvijalv>footer {
