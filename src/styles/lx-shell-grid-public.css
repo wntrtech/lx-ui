@@ -218,7 +218,7 @@
 .lx-layout.lx-layout-public>header>.lx-header .lx-user-button .lx-user-info .lx-secondary {
   font-size: var(--small-font-size);
   color: var(--color-label);
-  line-height: 1.1em;
+  line-height: 1.2em; /* to prevent partial hiding of diacritics */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

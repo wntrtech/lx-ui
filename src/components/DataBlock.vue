@@ -149,7 +149,7 @@ const expandIconTitle = computed(() => {
       <header
         class="lx-data-block-header"
         :for="id"
-        :tabindex="expandable && !disabled ? 0 : -1"
+        :tabindex="expandable && !disabled ? 0 : null"
         :aria-invalid="invalid"
         :aria-describedby="`data-block-${id}-desc`"
         @click="toggleExpander"

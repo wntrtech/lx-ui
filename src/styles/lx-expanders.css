@@ -319,10 +319,19 @@
   border-radius: var(--data-block-border-radius-expanded);
 }
 
+.lx-data-block-wrapper .lx-data-block-wrapper,
+.lx-form-grid .lx-data-block-wrapper,
 .lx-region .lx-data-block-wrapper,
 .lx-modal .lx-data-block-wrapper,
 .lx-card .lx-data-block-wrapper {
   background: var(--color-data-block-region-background);
+}
+
+.lx-form-grid .lx-data-block-wrapper .lx-data-block-wrapper,
+.lx-region .lx-data-block-wrapper .lx-data-block-wrapper,
+.lx-modal .lx-data-block-wrapper .lx-data-block-wrapper,
+.lx-card .lx-data-block-wrapper .lx-data-block-wrapper {
+  background: var(--color-data-block-background);
 }
 
 .lx-data-block-wrapper.lx-data-block-wrapper-m,
@@ -369,7 +378,7 @@
   border-radius: var(--data-block-border-radius-inner-expanded);
 }
 
-.lx-data-block-expander .lx-data-block-header:hover {
+.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover {
   background: var(--color-data-block-hover-background);
   cursor: pointer;
 }
@@ -444,8 +453,8 @@
 
 /* Hover text styles */
 
-.lx-data-block-expander .lx-data-block-header:hover .lx-primary,
-.lx-data-block-expander .lx-data-block-header:hover .lx-secondary {
+.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-primary,
+.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-secondary {
   color: var(--color-data-block-hover-foreground);
 }
 
@@ -471,8 +480,8 @@
 
 /* Contrast text styles */
 
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) .lx-data-block-header:hover .lx-primary,
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) .lx-data-block-header:hover .lx-secondary,
+.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) > .lx-data-block > .lx-data-block-header:hover .lx-primary,
+.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) > .lx-data-block > .lx-data-block-header:hover .lx-secondary,
 .lx-theme-contrast .lx-data-block-selected .lx-data-block-header .lx-primary,
 .lx-theme-contrast .lx-data-block-selected .lx-data-block-header .lx-secondary {
   color: var(--contrast-background);
@@ -500,7 +509,7 @@
 
 /* Radio button contrast styles */
 
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled):not(.lx-data-block-selected) .lx-data-block-header:hover .lx-radio-button-appearance,
+.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled):not(.lx-data-block-selected) > .lx-data-block > .lx-data-block-header:hover .lx-radio-button-appearance,
 .lx-theme-contrast .lx-data-block-selected .lx-radio-button-appearance {
   border-color: var(--contrast-background);
 }
@@ -511,13 +520,13 @@
 
 /* Checkbox contrast styles */
 
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) .lx-data-block-header:hover .lx-checkbox-appearance,
+.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) > .lx-data-block > .lx-data-block-header:hover .lx-checkbox-appearance,
 .lx-theme-contrast .lx-data-block-wrapper.lx-data-block-selected .lx-checkbox-wrapper .lx-checkbox-appearance {
   border-color: var(--contrast-background);
   background-color: var(--contrast-background);
 }
 
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) .lx-data-block-header:hover .lx-checkbox-appearance svg,
+.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) > .lx-data-block > .lx-data-block-header:hover .lx-checkbox-appearance svg,
 .lx-theme-contrast .lx-data-block-wrapper.lx-data-block-selected .lx-checkbox-wrapper .lx-checkbox-appearance svg {
   fill: var(--contrast-foreground);
 }
@@ -613,8 +622,8 @@
 
 /* Hover icon styles */
 
-.lx-data-block-expander .lx-data-block-header:hover .lx-indications > svg,
-.lx-data-block-expander .lx-data-block-header:hover .lx-icons > .lx-icon {
+.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-indications > svg,
+.lx-data-block-expander > .lx-data-block > .lx-data-block-header:hover .lx-icons > .lx-icon {
   fill: var(--color-data-block-hover-foreground);
 }
 
@@ -645,8 +654,8 @@
 
 /* Contrast icon styles */
 
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) .lx-data-block-header:hover .lx-indications > svg,
-.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) .lx-data-block-header:hover .lx-icons > .lx-icon,
+.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) > .lx-data-block > .lx-data-block-header:hover .lx-indications > svg,
+.lx-theme-contrast .lx-data-block-expander:not(.lx-data-block-disabled) > .lx-data-block > .lx-data-block-header:hover .lx-icons > .lx-icon,
 .lx-theme-contrast .lx-data-block-wrapper.lx-data-block-selected .lx-data-block-header .lx-indications > svg,
 .lx-theme-contrast .lx-data-block-wrapper.lx-data-block-selected .lx-data-block-header .lx-icons > .lx-icon {
   fill: var(--contrast-background);

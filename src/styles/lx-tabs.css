@@ -39,11 +39,16 @@
   display: none;
 }
 
-.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
+.lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar),
+.lx .lx-layout .lx-modal > .lx-main .lx-tab-control header.lx-toolbar:not(.lx-file-upload-wrapper > header.lx-toolbar) {
   height: auto;
   position: sticky;
   top: var(--nav-row-size);
   z-index: 2;
+}
+
+.lx-modal .lx-form-grid > .lx-tab-control > .tab-control-default > .lx-dropdown-container .lx-dropdown-input-wrapper > .lx-dropdown-default-panel .lx-input-text {
+  margin-left: 0;
 }
 
 .lx-tab-control header.lx-toolbar .lx-group {
