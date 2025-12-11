@@ -14,6 +14,7 @@ import LxIcon from '@/components/Icon.vue';
 import LxAvatar from '@/components/Avatar.vue';
 import LxFlag from '@/components/Flag.vue';
 import LxBadge from '@/components/Badge.vue';
+import LxInfoBox from '@/components/InfoBox.vue';
 
 const props = defineProps({
   value: { type: Object, default: () => ({}) },
@@ -64,6 +65,7 @@ const textsDefault = {
   metaArchiveContentLabel: 'Arhīva saturs',
   metaEdocArchiveContentLabel: 'Saturs',
   metaEDocContentLabel: 'Paraksti',
+  metaEDocContentSystemErrorLabel: 'Neizdevās pārbaudīt datnes parakstus!',
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -102,8 +104,18 @@ const normalizedAuthors = computed(() => {
   return Array.isArray(authorValue) ? authorValue : [authorValue];
 });
 
+const showEdocSection = computed(
+  () =>
+    (props.value?.edocContentData && props.value?.edocContentData?.length !== 0) ||
+    props.value?.edocContentSystemError
+);
+
+const edocSectionBadge = computed(() =>
+  props.value?.edocContentSystemError ? null : props.value?.edocContentData?.length.toString()
+);
+
 const archiveContentSectionlabel = computed(() => {
-  if (props.value?.edocContentData && props.value?.edocContentData.length > 0) {
+  if (showEdocSection.value) {
     return displayTexts.value.metaEdocArchiveContentLabel;
   }
   return displayTexts.value.metaArchiveContentLabel;
@@ -199,17 +211,22 @@ const nomalizedIconAndType = computed(() => {
       </LxSection>
 
       <LxSection
-        v-if="props.value?.edocContentData && props.value?.edocContentData?.length !== 0"
+        v-if="showEdocSection"
         id="metaEDocContent"
         class="lx-edoc-signs-list-section"
         icon="sign"
         :customClass="customEsignSectionClass"
         :label="displayTexts.metaEDocContentLabel"
-        :badge="props.value?.edocContentData.length.toString()"
+        :badge="edocSectionBadge"
         :badge-title="displayTexts.metaEDocContentLabel"
       >
         <LxRow :column-span="1">
-          <LxList list-type="1" :items="props.value?.edocContentData">
+          <LxInfoBox
+            v-if="value?.edocContentSystemError"
+            variant="error"
+            :label="displayTexts.metaEDocContentSystemErrorLabel"
+          />
+          <LxList v-else list-type="1" :items="props.value?.edocContentData">
             <template
               #customItem="{
                 nameAndSurname,

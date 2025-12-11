@@ -303,16 +303,29 @@ export async function extractC2paMetadata(arrayBuffer, fileType) {
     'ChatGPT',
   ];
 
-  const { createC2pa, selectProducer, wasmSrc, workerSrc } = await loadC2paComponents();
-
-  const c2pa = await createC2pa({
-    wasmSrc,
-    workerSrc,
-  });
-
-  const c2paBlob = new Blob([arrayBuffer], { type: fileType });
+  let selectProducer = () => {};
+  let c2pa = {};
 
   try {
+    const {
+      createC2pa,
+      selectProducer: iSelectProducer,
+      wasmSrc,
+      workerSrc,
+    } = await loadC2paComponents();
+    selectProducer = iSelectProducer;
+
+    c2pa = await createC2pa({
+      wasmSrc,
+      workerSrc,
+    });
+  } catch {
+    return { error: true };
+  }
+
+  try {
+    const c2paBlob = new Blob([arrayBuffer], { type: fileType });
+
     const { manifestStore } = await c2pa.read(c2paBlob);
     const activeManifest = manifestStore?.activeManifest;
     const assertionDataActions = activeManifest.assertions.get('c2pa.actions');
@@ -372,7 +385,9 @@ export async function getMeta(file, texts) {
 
           // Extract c2pa metadata
           const c2paMeta = await extractC2paMetadata(arrayBuffer, file.type);
-          if (c2paMeta) {
+          if (c2paMeta?.error) {
+            meta.c2paSetupError = true;
+          } else if (c2paMeta) {
             meta.eSignMeta = [c2paMeta];
             meta.c2paSigned = c2paMeta.signatureId;
             meta.createdUsingAi = c2paMeta.isAIGenerated;
@@ -1066,6 +1081,7 @@ export function getDetails(advancedFile, base64String, texts, additionalIconAndT
         details.preview = base64String;
       }
       details.mainData = getImageMainData(advancedFile, texts, additionalIconAndType);
+      details.edocContentSystemError = advancedFile.meta.c2paSetupError;
       details.edocContentData = getEDocContentData(advancedFile.meta.eSignMeta);
       details.imageData = getImageData(advancedFile.meta.exif, texts);
       if (advancedFile.meta.exif.GPSLatitude && advancedFile.meta.exif.GPSLongitude) {
