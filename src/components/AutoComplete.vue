@@ -1129,6 +1129,34 @@ function countDigits(number) {
 onMounted(() => {
   activateItems();
 });
+
+const autoCompleteState = computed(() => {
+  if (Array.isArray(model.value) && model.value.length > 0) {
+    return 'selected';
+  } else if (model.value) {
+    return 'selected'; 
+  }
+
+  if (
+    props.queryMinLength !== 0 &&
+    (!finalQuery.value || finalQuery.value.length < props.queryMinLength)
+  ) {
+    return 'start'; 
+  }
+
+  if (
+    finalQuery.value &&
+    finalQuery.value.length >= props.queryMinLength &&
+    !filteredItems.value.length
+  ) {
+    return 'empty'; 
+  }
+
+  return 'default'; 
+});
+
+defineExpose({ autoCompleteState });
+
 </script>
 
 <template>
