@@ -98,11 +98,15 @@ function buttonClicked(action) {
 const actionDefinitionsDisplay = computed(() => {
   if (!props.actionDefinitions || !props.actionDefinitions.length) return [];
 
-  const primary =
-    props.actionDefinitions?.filter((action) => action?.kind === 'primary' || !action?.kind) || [];
+  let primary = props.actionDefinitions?.filter((action) => action?.kind === 'primary') || [];
+  if (primary.length === 0) {
+    primary = props.actionDefinitions?.filter((action) => !action?.kind) || [];
+  }
   const secondary = props.actionDefinitions?.filter((action) => action?.kind === 'secondary') || [];
 
-  const env = useLx().environment;
+  const tertiary = props.actionDefinitions?.filter((action) => action?.kind === 'tertiary') || [];
+
+  const env = useLx().getGlobals()?.environment;
   if (primary.length > 1) {
     logWarn(
       'LxModalForm: Only one primary action is allowed. All other primary actions will be ignored.',
@@ -115,6 +119,13 @@ const actionDefinitionsDisplay = computed(() => {
       env
     );
   }
+  if (tertiary.length > 0) {
+    logWarn(
+      'LxModalForm: All tertiary actions will be ignored. Use additional kind for extra buttons in the header.',
+      env
+    );
+  }
+
   return [...primary.slice(0, 1), ...secondary.slice(0, 1)];
 });
 
@@ -253,8 +264,6 @@ defineExpose({ open, close });
                 :id="`${id}-action-${action?.id}`"
                 :label="action?.name || action?.label"
                 :title="action?.title || action?.tooltip"
-                :icon="action?.icon"
-                :iconSet="action?.iconSet"
                 :kind="action?.kind"
                 :loading="action?.loading"
                 :busy="action?.busy"

@@ -130,11 +130,13 @@ function actionClicked(action) {
 }
 
 const actionDefinitionsDisplay = computed(() => {
-  const primary =
-    props.actionDefinitions?.filter((action) => action?.kind === 'primary' || !action?.kind) || [];
+  let primary = props.actionDefinitions?.filter((action) => action?.kind === 'primary') || [];
+  if (primary.length === 0) {
+    primary = props.actionDefinitions?.filter((action) => !action?.kind) || [];
+  }
   const secondary = props.actionDefinitions?.filter((action) => action?.kind === 'secondary') || [];
 
-  const env = useLx().environment;
+  const env = useLx().getGlobals()?.environment;
   if (primary.length > 1) {
     logWarn(
       'LxModal: Only one primary action is allowed. All other primary actions will be ignored.',
