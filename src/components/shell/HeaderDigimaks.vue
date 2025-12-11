@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch, provide } from 'vue';
+import { computed, ref, watch, provide, inject } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxModal from '@/components/Modal.vue';
@@ -313,7 +313,17 @@ const selectedMegaMenuItemModel = computed({
 });
 
 const themeIcon = ref('theme');
-const themeMenu = ref();
+const themeMenu = ref(null);
+const languageMenu = ref(null);
+const alertMenu = ref(null);
+
+const closeSignal = inject('closeSignal');
+
+const menus = [themeMenu, languageMenu, alertMenu];
+
+watch(closeSignal, () => {
+  menus.forEach((menu) => menu?.value?.closeMenu());
+});
 
 const themeIcons = {
   auto: 'theme-auto',
@@ -556,6 +566,7 @@ provide('insideHeader', insideHeader);
             <div v-if="hasAlerts">
               <LxDropDownMenu
                 v-if="alertsKind === 'menu' || alertsKind === 'combo'"
+                ref="alertMenu"
                 customClass="lx-alert-menu"
               >
                 <LxButton
@@ -763,6 +774,7 @@ provide('insideHeader', insideHeader);
           <ul v-if="hasLanguagePicker || hasThemePicker">
             <li v-if="hasLanguagePicker" class="lx-user-menu-item language-picker">
               <LxDropDownMenu
+                ref="languageMenu"
                 :actionDefinitions="languagesDisplayItems"
                 @actionClick="languageChange"
               >

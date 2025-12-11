@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, provide } from 'vue';
+import { computed, ref, provide, watch, inject } from 'vue';
 import { vOnClickOutside } from '@vueuse/components';
 import { useWindowSize, useScroll } from '@vueuse/core';
 
@@ -245,6 +245,14 @@ function toggleSpotlight() {
   emits('toggleSpotlight');
 }
 
+const overflowMenu = ref(null);
+
+const closeSignal = inject('closeSignal');
+
+watch(closeSignal, () => {
+  overflowMenu?.value?.closeMenu();
+});
+
 provide('insideNavBar', insideNavBar);
 </script>
 <template>
@@ -289,7 +297,11 @@ provide('insideNavBar', insideNavBar);
           { 'lx-selected': overflowNavItems?.some((item) => selectedNavItems[item?.href?.name]) },
         ]"
       >
-        <LxDropDownMenu :actionDefinitions="overflowNavItems" @action-click="(id) => navClick(id)">
+        <LxDropDownMenu
+          ref="overflowMenu"
+          :actionDefinitions="overflowNavItems"
+          @action-click="(id) => navClick(id)"
+        >
           <LxButton
             icon="overflow-menu"
             :label="displayTexts?.overflowNavItems"

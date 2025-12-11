@@ -439,20 +439,14 @@ function goBack() {
   emits('go-back', -1);
 }
 
-function handleBackPress() {
-  if (settings.value) {
-    settings.value = false;
-    window.history.pushState(null, '');
+watch(
+  () => props.navBarSwitch,
+  (newValue) => {
+    if (newValue !== false) {
+      settings.value = false;
+    }
   }
-}
-
-onMounted(() => {
-  window.addEventListener('popstate', handleBackPress);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('popstate', handleBackPress);
-});
+);
 
 provide('insideHeader', insideHeader);
 </script>

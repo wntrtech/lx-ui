@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, ref, provide } from 'vue';
+import { computed, watch, ref, provide, inject } from 'vue';
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
 import LxDropDown from '@/components/Dropdown.vue';
@@ -182,7 +182,14 @@ function navClick(id) {
   emits('navClick', id);
 }
 
-const contextMenu = ref();
+const contextMenu = ref(null);
+
+const closeSignal = inject('closeSignal');
+
+watch(closeSignal, () => {
+  contextMenu?.value?.closeMenu();
+});
+
 function triggerContextPersonMenu() {
   if (contextMenu.value.menuOpen) {
     contextMenu.value.closeMenu();

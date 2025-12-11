@@ -1109,7 +1109,21 @@ watch(
   { immediate: true }
 );
 
-defineExpose({ spotlightStart, spotlightEnd });
+const closeSignal = ref(false);
+provide('closeSignal', closeSignal);
+
+function closeEverything() {
+  if (navBarSwitchModel.value !== true) {
+    navBarSwitchModel.value = true;
+  }
+  if (navBarSwitchBasic.value !== true) {
+    navBarSwitchBasic.value = true;
+  }
+
+  closeSignal.value = !closeSignal.value;
+}
+
+defineExpose({ spotlightStart, spotlightEnd, closeEverything });
 </script>
 <template>
   <transition name="shell-switch">

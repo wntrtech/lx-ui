@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, ref, provide } from 'vue';
+import { computed, watch, ref, provide, inject } from 'vue';
 
 import { buildVueDompurifyHTMLDirective } from 'vue-dompurify-html';
 import { useWindowSize } from '@vueuse/core';
@@ -148,7 +148,20 @@ const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 const vCleanHtml = buildVueDompurifyHTMLDirective();
 const windowSize = useWindowSize();
 const themeIcon = ref('theme-alternative');
-const themeMenu = ref();
+const themeMenu = ref(null);
+const languageMenu = ref(null);
+const alertMenu = ref(null);
+const customButton = ref(null);
+const dropDownMenu = ref(null);
+
+const closeSignal = inject('closeSignal');
+
+const menus = [themeMenu, languageMenu, alertMenu, dropDownMenu, customButton];
+
+watch(closeSignal, () => {
+  menus.forEach((menu) => menu?.value?.closeMenu());
+});
+
 const insideHeader = ref(true);
 
 const navItemsUserMenu = computed(() =>
@@ -345,8 +358,6 @@ function helpClicked() {
   emits('help-click');
 }
 
-const dropDownMenu = ref(null);
-
 const badgeLevelMap = {
   success: 'good',
   warning: 'warning',
@@ -408,8 +419,6 @@ watch(
     emits('language-changed', newValue);
   }
 );
-
-const customButton = ref();
 
 const labelText = computed(() => displayTexts.value.alertsTitle);
 
@@ -696,7 +705,7 @@ watch(
         </LxDropDownMenu>
       </div>
       <div class="shell-buttons language-menu" v-if="hasLanguagePicker">
-        <LxDropDownMenu>
+        <LxDropDownMenu ref="languageMenu">
           <LxButton
             tabindex="-1"
             customClass="lx-header-button"
@@ -722,7 +731,7 @@ watch(
       </div>
       <div class="shell-buttons user-info">
         <div class="lx-alert-menu" v-if="hasAlerts">
-          <LxDropDownMenu v-if="alertsKind === 'menu' || alertsKind === 'combo'">
+          <LxDropDownMenu ref="alertMenu" v-if="alertsKind === 'menu' || alertsKind === 'combo'">
             <LxButton
               customClass="lx-header-button"
               variant="icon-only"
@@ -873,7 +882,7 @@ watch(
         </div>
       </div>
       <div class="lx-user-menu" :class="[{ opened: dropDownMenu?.menuOpen }]" v-if="userInfo">
-        <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
+        <LxDropDownMenu ref="dropDownMenu" :disabled="headerNavDisable">
           <LxInfoWrapper
             ref="userInfoWrapper"
             :disabled="dropDownMenu?.menuOpen"

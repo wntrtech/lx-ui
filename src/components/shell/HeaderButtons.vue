@@ -1,5 +1,5 @@
 <script setup>
-import { computed, watch, ref, onMounted } from 'vue';
+import { computed, watch, ref, onMounted, inject } from 'vue';
 
 import LxButton from '@/components/Button.vue';
 import LxIcon from '@/components/Icon.vue';
@@ -159,7 +159,19 @@ const windowSize = useWindowSize();
 const windowWidth = computed(() => windowSize.width.value);
 
 const themeIcon = ref('theme');
-const themeMenu = ref();
+const themeMenu = ref(null);
+const languageMenu = ref(null);
+const alertMenu = ref(null);
+const dropDownMenu = ref(null);
+const customButton = ref(null);
+
+const closeSignal = inject('closeSignal');
+
+const menus = [themeMenu, languageMenu, alertMenu, dropDownMenu, customButton];
+
+watch(closeSignal, () => {
+  menus.forEach((menu) => menu?.value?.closeMenu());
+});
 
 onMounted(() => {
   if (props.mode === 'cover-digives-lite') {
@@ -402,8 +414,6 @@ function triggerShowAllClick() {
   emits('megaMenuShowAllClick');
 }
 
-const dropDownMenu = ref(null);
-
 const themeDisplayItems = computed(() => {
   const res = [];
   const themes = props.availableThemes?.map((item) => ({
@@ -487,14 +497,6 @@ const languagesDisplayItems = computed(() =>
     active: selectedLanguageModel.value?.id === item?.id,
   }))
 );
-
-function triggerUserMenu() {
-  if (dropDownMenu.value) {
-    dropDownMenu.value.openMenu();
-  }
-}
-
-const customButton = ref();
 
 const labelText = computed(() => displayTexts.value.alertsTitle);
 
@@ -679,6 +681,7 @@ const loginButtonVariant = computed(() => {
 
     <div class="lx-alert-menu" v-if="hasAlerts">
       <LxDropDownMenu
+        ref="alertMenu"
         v-if="alertsKind === 'menu' || alertsKind === 'combo'"
         :disabled="headerNavDisable"
       >
@@ -783,6 +786,7 @@ const loginButtonVariant = computed(() => {
 
     <div class="lx-language-menu" v-if="hasLanguagePicker">
       <LxDropDownMenu
+        ref="languageMenu"
         :actionDefinitions="languagesDisplayItems"
         :disabled="headerNavDisable"
         @actionClick="languageChange"
@@ -828,7 +832,7 @@ const loginButtonVariant = computed(() => {
       />
     </div>
     <div class="lx-user-menu" v-if="userInfo">
-      <LxDropDownMenu :disabled="headerNavDisable" ref="dropDownMenu">
+      <LxDropDownMenu ref="dropDownMenu" :disabled="headerNavDisable">
         <LxInfoWrapper ref="userInfoWrapper" :disabled="dropDownMenu?.menuOpen" :focusable="false">
           <div
             id="lx-shell-user-button"
@@ -940,6 +944,7 @@ const loginButtonVariant = computed(() => {
       <li v-if="hasLanguagePicker" class="lx-language-picker">
         <div class="lx-language-menu">
           <LxDropDownMenu
+            ref="languageMenu"
             :actionDefinitions="languagesDisplayItems"
             :disabled="headerNavDisable"
             @actionClick="languageChange"
@@ -961,6 +966,7 @@ const loginButtonVariant = computed(() => {
       <li v-if="hasThemePicker" class="lx-theme-picker">
         <div class="lx-theme-menu">
           <LxDropDownMenu
+            ref="themeMenu"
             :action-definitions="themeDisplayItems"
             :disabled="headerNavDisable"
             @actionClick="themeDropdownClicked"

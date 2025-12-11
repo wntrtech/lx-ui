@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, inject } from 'vue';
 
 import LxButton from '@/components/Button.vue';
 import LxDropDown from '@/components/Dropdown.vue';
@@ -157,7 +157,14 @@ function toggleNavBar(event) {
     emits('nav-toggle', true);
 }
 
-const contextMenu = ref();
+const contextMenu = ref(null);
+
+const closeSignal = inject('closeSignal');
+
+watch(closeSignal, () => {
+  contextMenu?.value?.closeMenu();
+});
+
 function triggerContextPersonMenu() {
   if (contextMenu.value.menuOpen) {
     contextMenu.value.closeMenu();

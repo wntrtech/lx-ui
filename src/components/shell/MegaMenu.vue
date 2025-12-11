@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import { computed } from 'vue';
+<script setup>
+import { computed, watch, ref, inject } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxButton from '@/components/Button.vue';
 import LxDropDownMenu from '@/components/DropDownMenu.vue';
@@ -110,9 +110,17 @@ function getIconSet(item) {
   }
   return item.iconSet || 'brand';
 }
+
+const menu = ref(null);
+
+const closeSignal = inject('closeSignal');
+
+watch(closeSignal, () => {
+  menu?.value?.closeMenu();
+});
 </script>
 <template>
-  <LxDropDownMenu :disabled="disabled">
+  <LxDropDownMenu ref="menu" :disabled="disabled">
     <div class="lx-toolbar">
       <LxButton
         id="lx-shell-mega-menu-button"
