@@ -91,7 +91,7 @@ function findBestPrefix(value) {
   const prefixes = Array.from(PHONE_MAX_LENGTH_BY_PREFIX.keys()).sort(
     (a, b) => b.length - a.length
   );
-  return prefixes.find((p) => value.startsWith(p)) ?? null;
+  return prefixes.find((p) => value?.startsWith(p)) ?? null;
 }
 
 const maxLengthValue = computed(() => {
