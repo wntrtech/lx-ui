@@ -1,0 +1,32 @@
+.lx {
+  --color-brand: #ae4413;
+  --color-interactive-background: #ae4413;
+  --color-interactive-hover-background: #983101;
+  --color-interactive-secondary-background: #3d464d;
+  --color-layout-background: #203441;
+  --color-nav-hover-background: #182630;
+  --color-highlight: hsl(60, 4%, 89%);
+  --color-background: #edeae8;
+  --color-region-2: #f0efef;
+  --color-region: hsl(0, 20%, 97%);
+  --color-data: #1f323d;
+  --color-label: #5c5e70;
+  --color-footer-label: #afaba8;
+  --color-region-hover: #e2e1df;
+  --color-button-nav-selected-background: var(--color-highlight);
+}
+
+.lx.lx-theme-dark {
+  --color-brand: #ff866e;
+  --color-interactive-background: #ff866e;
+  --color-interactive-hover-background: #a85443;
+  --color-interactive-secondary-background: #565a61;
+  --color-layout-background: #060609;
+  --color-highlight: #313944;
+  --color-background: #121721;
+  --color-region: #272a35;
+  --color-region-hover: #1b2028;
+  --color-label: #949494;
+  --color-data: #e2dad4;
+  --color-button-nav-selected-background: var(--color-highlight);
+}
