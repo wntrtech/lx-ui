@@ -53,7 +53,7 @@ const props = defineProps({
   hasSelectAll: { type: Boolean, default: false },
   texts: { type: Object, default: () => ({}) },
   searchAttributes: { type: Array, default: null }, // array of attributes for search
-  enableAdditionalText: { type: Boolean, default: false},
+  enableAdditionalText: { type: Boolean, default: false },
 });
 
 const textsDefault = {
@@ -619,7 +619,7 @@ function handleSelection(selectedValue) {
 }
 
 function handleClearButton() {
-  if (document.activeElement?.id === 'clearButton') {
+  if (document.activeElement?.id === `${props.id}-clearButton`) {
     clear();
     closeMenu();
     openMenu();
@@ -1134,14 +1134,14 @@ const autoCompleteState = computed(() => {
   if (Array.isArray(model.value) && model.value.length > 0) {
     return 'selected';
   } else if (model.value) {
-    return 'selected'; 
+    return 'selected';
   }
 
   if (
     props.queryMinLength !== 0 &&
     (!finalQuery.value || finalQuery.value.length < props.queryMinLength)
   ) {
-    return 'start'; 
+    return 'start';
   }
 
   if (
@@ -1149,14 +1149,13 @@ const autoCompleteState = computed(() => {
     finalQuery.value.length >= props.queryMinLength &&
     !filteredItems.value.length
   ) {
-    return 'empty'; 
+    return 'empty';
   }
 
-  return 'default'; 
+  return 'default';
 });
 
 defineExpose({ autoCompleteState });
-
 </script>
 
 <template>
@@ -1257,7 +1256,11 @@ defineExpose({ autoCompleteState });
                     :class="[{ 'lx-disabled': disabled }, { 'lx-invalid': invalid }]"
                     :data-invalid="invalid ? '' : null"
                   >
-                    <div v-if="selectingKind === 'multiple' && model?.length > 0" class="lx-tag" :class="[{ ['chars-' + countDigits(model?.length) ] : model?.length > 0 }]">
+                    <div
+                      v-if="selectingKind === 'multiple' && model?.length > 0"
+                      class="lx-tag"
+                      :class="[{ ['chars-' + countDigits(model?.length)]: model?.length > 0 }]"
+                    >
                       <div class="lx-tag-label">{{ model?.length }}</div>
                       <div class="lx-tag-button">
                         <LxInfoWrapper
@@ -1266,7 +1269,7 @@ defineExpose({ autoCompleteState });
                           :focusable="false"
                         >
                           <LxButton
-                            id="clearButton"
+                            :id="`${id}-clearButton`"
                             :label="displayTexts.clear"
                             :disabled="disabled"
                             kind="secondary"
@@ -1274,13 +1277,8 @@ defineExpose({ autoCompleteState });
                             icon="remove"
                             @click.stop="clear"
                           />
-                          <template
-                            #panel
-                           
-                          >
-                            <ul class="lx-list"  v-if="
-                              displayTooltipItems.length > 0
-                            ">
+                          <template #panel>
+                            <ul class="lx-list" v-if="displayTooltipItems.length > 0">
                               <li v-for="item in displayTooltipItems" :key="item[idAttribute]">
                                 <div class="lx-row">
                                   <p class="lx-data">{{ item[nameAttribute] }}</p>
@@ -1377,7 +1375,7 @@ defineExpose({ autoCompleteState });
                         hasValue &&
                         !(loadingState || loading)
                       "
-                      id="clearButton"
+                      :id="`${id}-clearButton`"
                       :disabled="disabled"
                       icon="close"
                       kind="ghost"
@@ -1393,7 +1391,7 @@ defineExpose({ autoCompleteState });
                         hasValue &&
                         !(loadingState || loading)
                       "
-                      id="clearButton"
+                      :id="`${id}-clearButton`"
                       :disabled="disabled"
                       icon="close"
                       kind="ghost"
@@ -1404,7 +1402,7 @@ defineExpose({ autoCompleteState });
 
                     <LxButton
                       v-if="shouldShowDetailsBtn"
-                      id="detailsButton"
+                      :id="`${id}-detailsButton`"
                       :disabled="disabled"
                       icon="search-details"
                       kind="ghost"
@@ -1457,15 +1455,13 @@ defineExpose({ autoCompleteState });
                     tabindex="-1"
                     role="listbox"
                   >
-                  <template
-                      v-if="props.enableAdditionalText"
-                    >
+                    <template v-if="props.enableAdditionalText">
                       <div class="lx-empty additional-text">
                         <LxIcon value="info" />
                         <div class="lx-invisible" aria-hidden="true" tabindex="0"></div>
-                         <p>
+                        <p>
                           {{ displayTexts.additionalText }}
-                      </p>
+                        </p>
                       </div>
                     </template>
                     <template v-if="filteredItems?.length && !loadingState">
@@ -1625,7 +1621,8 @@ defineExpose({ autoCompleteState });
                       v-if="
                         queryMinLength !== 0 &&
                         (!finalQuery || finalQuery.length < queryMinLength) &&
-                        (!filteredItems || filteredItems?.length === 0) && !props.enableAdditionalText
+                        (!filteredItems || filteredItems?.length === 0) &&
+                        !props.enableAdditionalText
                       "
                     >
                       <div class="lx-empty">
@@ -1640,7 +1637,6 @@ defineExpose({ autoCompleteState });
                         </p>
                       </div>
                     </template>
-                    
                   </div>
                 </transition>
               </slot>
