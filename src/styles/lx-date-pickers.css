@@ -1082,5 +1082,13 @@
   .lx-date-time-picker-wrapper.lx-date-time-range-wrapper .legacy-pickers-wrapper .lx-date-time-range-separator {
     margin-top: 0;
   }
+  .lx .lx-layout .lx-calendar-container.mode-date .lx-calendar-layouts-wrapper {
+    height: 19rem;
+  }
+  .lx .lx-layout .lx-calendar-container.mode-month .lx-calendar-layouts-wrapper,
+  .lx .lx-layout .lx-calendar-container.mode-year .lx-calendar-layouts-wrapper,
+  .lx .lx-layout .lx-calendar-container.mode-month-year .lx-calendar-layouts-wrapper {
+    height: 16rem;
+  }
 }
 

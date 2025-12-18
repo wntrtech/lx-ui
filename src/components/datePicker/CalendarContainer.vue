@@ -3052,6 +3052,7 @@ watch(
   <div
     ref="containerRef"
     class="lx-calendar-container"
+    :class="[`mode-${props.mode}`]"
     tabindex="-1"
     @focusout="handleFocusOut"
     @keydown.esc.prevent="handleClose"
