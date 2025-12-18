@@ -112,7 +112,6 @@ const startInputRefs = ref({});
 const endInputRefs = ref({});
 
 const liveMessage = ref('');
-const inputDescriptionMsg = ref(displayTexts.value.dateFormatMessage);
 
 const tapStage = ref(0);
 
@@ -1207,6 +1206,8 @@ function formatDateByMode(date) {
   }
 }
 
+const inputDescriptionMsg = computed(() => displayTexts.value.dateFormatMessage);
+
 const placeholderComputed = computed(() => {
   if (props.placeholder !== null) {
     return props.placeholder;
@@ -1383,7 +1384,7 @@ onMounted(async () => {
 
 <template>
   <div ref="containerRef" class="lx-datepicker-default">
-    <div :id="`${id}-lx-range-input-description`" class="lx-invisible">
+    <div :id="`${id}-lx-input-description`" class="lx-invisible">
       {{ inputDescriptionMsg }}
     </div>
 
@@ -1444,11 +1445,7 @@ onMounted(async () => {
                 : null
             "
             :aria-labelledby="pickerType === 'single' && !legacyMode ? labelledBy : null"
-            :aria-describedby="
-              pickerType === 'range' || (pickerType === 'single' && legacyMode)
-                ? `${id}-lx-range-input-description`
-                : null
-            "
+            :aria-describedby="`${id}-lx-input-description`"
             @mousedown="preventDefaultFocus"
             @touchstart="onTouchStart($event, 'startInput')"
             @click="toggleMenu('startInput')"
@@ -1500,7 +1497,7 @@ onMounted(async () => {
               :maxlength="getMaxLength"
               :aria-invalid="invalid"
               :aria-label="displayTexts.endDateLabel"
-              :aria-describedby="`${id}-lx-range-input-description`"
+              :aria-describedby="`${id}-lx-input-description`"
               @mousedown="preventDefaultFocus"
               @touchstart="onTouchStart($event, 'endInput')"
               @click="toggleMenu('endInput')"
