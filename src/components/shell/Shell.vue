@@ -608,6 +608,8 @@ function navToggle(value) {
     navBarSwitchBasic.value = value;
   }
 }
+
+const semiResponsiveView = computed(() => window.innerWidth < 1900);
 function navToggleButton() {
   if (props.mode === 'digives') {
     if (navBarSwitchModel.value === null) navBarSwitchModel.value = false;
@@ -1789,6 +1791,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         v-if="props.hasSkipLink"
         :label="displayTexts.skipLinkLabel"
         :title="displayTexts.skipLinkTitle"
+        :tabindex="1"
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">
@@ -1950,6 +1953,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         v-if="props.hasSkipLink"
         :label="displayTexts.skipLinkLabel"
         :title="displayTexts.skipLinkTitle"
+        :tabindex="1"
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">
@@ -2384,6 +2388,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         v-if="props.hasSkipLink"
         :label="displayTexts.skipLinkLabel"
         :title="displayTexts.skipLinkTitle"
+        :tabindex="semiResponsiveView ? 1 : 0"
         @click="focusFirstMainFocusableElement"
       />
       <header ref="header">

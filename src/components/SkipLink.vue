@@ -12,7 +12,7 @@ const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   label: { type: String, default: '' },
   title: { type: String, default: '' },
-  tabindex: { type: Number, default: 1 },
+  tabindex: { type: Number, default: 0 },
 });
 </script>
 <template>
