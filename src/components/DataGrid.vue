@@ -266,12 +266,13 @@ function formatValue(value, type, options = null) {
         maximumFractionDigits: optionsValue,
       }).format(value);
 
-    case 'dateTimeFull':
-      return formatFull(value);
-    case 'dateTime':
-      return formatDateTime(value);
     case 'date':
       return formatDate(value);
+    case 'dateTime':
+      return formatDateTime(value);
+    case 'dateTimeFull':
+      return formatFull(value);
+
     case 'array':
       if (!options) {
         optionsValue = 1;
@@ -310,11 +311,18 @@ function getTextTooltip(col, row) {
   if (col.type === 'tooltip-text') {
     return row[col.attributeDescription] || row[col.attributeName];
   }
-
   if (col.type === 'bool' || col.type === 'boolean') {
     return formatBoolean(row[col.attributeName]);
   }
-
+  if (col.type === 'date') {
+    return formatDate(row[col.attributeName]);
+  }
+  if (col.type === 'dateTime') {
+    return formatDateTime(row[col.attributeName]);
+  }
+  if (col.type === 'dateTimeFull') {
+    return formatFull(row[col.attributeName]);
+  }
   return ['xs', 's', 'm'].includes(col.size) ? row[col.attributeName] : '';
 }
 
@@ -1321,6 +1329,23 @@ const manyRowsSelected = computed(
   () => Object.values(selectedRowsRaw.value).filter(Boolean).length > 1
 );
 
+const isDateType = (type) => type === 'date' || type === 'dateTime' || type === 'dateTimeFull';
+
+const isRenderableTextType = (type) =>
+  !['state', 'rating', 'array', 'flag', 'country', 'person', 'icon'].includes(type);
+
+const handleClick = (col, row) => {
+  if (props.defaultActionName && col.kind === 'clickable' && !isDisabled.value) {
+    defaultActionClicked(row[props.idAttribute], row);
+  }
+};
+
+const handleKey = (col, row) => {
+  if (props.defaultActionName && col.kind === 'clickable') {
+    defaultActionClicked(row[props.idAttribute], row);
+  }
+};
+
 watch(
   () => props.selectingKind,
   (newKind) => {
@@ -1769,16 +1794,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 },
               ]"
             >
-              <span
-                v-if="
-                  col.type !== 'state' &&
-                  col.type !== 'rating' &&
-                  col.type !== 'array' &&
-                  col.type !== 'flag' &&
-                  col.type !== 'country' &&
-                  col.type !== 'person' &&
-                  col.type !== 'icon'
-                "
+              <component
+                :is="isDateType(col.type) ? 'time' : 'span'"
+                v-if="isRenderableTextType(col.type)"
                 :aria-label="getAriaLabel(col, row)"
                 :title="getTextTooltip(col, row)"
                 :class="{
@@ -1789,20 +1807,13 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 }"
                 :role="col.kind === 'clickable' ? props.clickableRole : null"
                 :tabindex="col.kind === 'clickable' ? 0 : null"
-                @click="
-                  defaultActionName && col.kind === 'clickable' && !isDisabled
-                    ? defaultActionClicked(row[idAttribute], row)
-                    : null
-                "
-                @keyup.space="
-                  defaultActionName ? defaultActionClicked(row[idAttribute], row) : null
-                "
-                @keyup.enter="
-                  defaultActionName ? defaultActionClicked(row[idAttribute], row) : null
-                "
+                :datetime="isDateType(col.type) ? row[col.attributeName] : null"
+                @click="handleClick(col, row)"
+                @keyup.space="handleKey(col, row)"
+                @keyup.enter="handleKey(col, row)"
               >
                 {{ formatValue(row[col.attributeName], col.type, col.options?.fractionDigits) }}
-              </span>
+              </component>
 
               <LxStateDisplay
                 v-if="col.type === 'state'"
@@ -2169,30 +2180,17 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               },
             ]"
           >
-            <div
-              v-if="
-                col.type !== 'state' &&
-                col.type !== 'rating' &&
-                col.type !== 'array' &&
-                col.type !== 'flag' &&
-                col.type !== 'country' &&
-                col.type !== 'person' &&
-                col.type !== 'icon'
-              "
+            <component
+              :is="isDateType(col.type) ? 'time' : 'span'"
+              v-if="isRenderableTextType(col.type)"
               :tabindex="col.kind === 'clickable' ? 0 : -1"
-              @click="
-                defaultActionName && col.kind === 'clickable'
-                  ? defaultActionClicked(item[idAttribute], item)
-                  : null
-              "
-              @keydown.enter="
-                defaultActionName && col.kind === 'clickable'
-                  ? defaultActionClicked(item[idAttribute], item)
-                  : null
-              "
+              :datetime="isDateType(col.type) ? item[col.attributeName] : null"
+              @click="handleClick(col, item)"
+              @keydown.enter="handleKey(col, item)"
             >
               {{ formatValue(item[col.attributeName], col.type, col.options?.fractionDigits) }}
-            </div>
+            </component>
+
             <template v-if="col.type === 'array'">
               <LxInfoWrapper
                 v-if="
@@ -2227,6 +2225,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                 {{ `${i} ` }}</template
               >
             </template>
+
             <LxStateDisplay
               v-else-if="col.type === 'state'"
               :value="item[col?.attributeName]"
@@ -2239,6 +2238,7 @@ defineExpose({ cancelSelection, selectRows, sortBy });
               mode="read"
               v-model="item[col.attributeName]"
             />
+
             <template v-if="col.type === 'flag' || col.type === 'country'">
               <div
                 class="flag-column"
