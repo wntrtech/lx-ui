@@ -1089,7 +1089,8 @@ a.lx-button.lx-button-ghost svg {
 .lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover,
 .lx-list-wrapper .lx-list-toolbar .lx-button.lx-button-ghost:hover,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:hover,
-.lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:hover {
+.lx .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-button-ghost:hover,
+.lx .lx-layout .lx-form-grid .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:hover {
   background-color: var(--color-button-toolbar-ghost-hover-background);
   border-color: var(--color-button-toolbar-ghost-hover-border);
   color: var(--color-button-toolbar-ghost-hover);
@@ -1120,14 +1121,15 @@ a.lx-button.lx-button-ghost svg {
 .lx-layout .lx-form-grid .lx-component-toolbar .lx-button.lx-button-ghost:active,
 .lx-layout .toolbar-search-button .lx-button.lx-button-ghost:active,
 .lx-toolbar.lx-qr-scanner-toolbar .lx-button.lx-button-ghost:active,
-.lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active {
+.lx .lx-layout .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active,
+.lx .lx-layout .lx-form-grid .lx-list-wrapper .lx-component-toolbar .lx-button.lx-button-ghost:active {
   background-color: var(--color-button-toolbar-ghost-active-background);
   border-color: var(--color-button-toolbar-ghost-active-border);
   color: var(--color-button-toolbar-ghost-active);
 }
 
 .lx .lx-layout .lx-data-grid-wrapper .lx-component-toolbar .second-row .lx-button.lx-disabled {
-    background-color: var(--color-button-toolbar-selection-disabled-background);
+  background-color: var(--color-button-toolbar-selection-disabled-background);
 }
 
 .lx-list-wrapper .lx-component-toolbar.lx-disabled .left-area,

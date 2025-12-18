@@ -109,6 +109,7 @@
 .lx-list-item-actions .lx-dropdown-toggler,
 .lx-list-item-actions .lx-dropdown-toggler > div {
   height: 100%;
+  max-height: var(--list-button-max-height);
 }
 
 .lx .lx-list-item-actions .lx-button {
@@ -826,7 +827,6 @@
 
 .lx .lx-list-wrapper .lx-component-toolbar .toolbar-search-button.is-expanded .lx-button,
 .lx-list-wrapper .lx-list-toolbar .toolbar-search-button.is-expanded .lx-button {
-  --color-button-toolbar-ghost-icon-active: var(--color-button-toolbar-ghost-icon);
   --color-button-toolbar-ghost-icon-hover: var(--color-interactive-hover-foreground);
 }
 
