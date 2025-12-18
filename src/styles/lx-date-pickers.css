@@ -16,9 +16,10 @@
   width: unset;
 }
 
-.lx .lx-layout .lx-calendar-container .lx-datepicker-input-container .lx-date-time-picker::placeholder {
+.lx .lx-layout .lx-datepicker-input-container .lx-date-time-picker::placeholder {
   font-size: var(--font-size);
   font-weight: var(--font-weight);
+  letter-spacing: -0.04rem;
 }
 
 .lx .lx-layout .lx-datepicker-input-container.range .lx-input-wrapper:has(.lx-date-time-picker.input-active) {
@@ -1034,6 +1035,10 @@
   .lx .lx-layout .lx-calendar-container .lx-calendar-time-picker {
     padding: 0 4.94rem;
     border-left: none;
+  }
+  
+  .lx .lx-layout .lx-calendar-container .lx-calendar-time-picker.date-time-full-only {
+    padding: 0 2.8rem;
   }
 
   .lx .lx-layout .lx-calendar-container .lx-time-lists-separator {

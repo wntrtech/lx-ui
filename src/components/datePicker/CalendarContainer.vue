@@ -2240,7 +2240,26 @@ const yearsSelectButtonLabel = computed(() => {
 });
 
 const timeSelectButtonLabel = computed(() => {
-  // Check if selected hour and minute are available
+  if (props.mode === 'date-time-full') {
+    if (
+      selectedHour.value !== null &&
+      selectedMinute.value !== null &&
+      selectedSecond.value !== null
+    ) {
+      const hoursToShow = zeroPad(selectedHour.value);
+      const minutesToShow = zeroPad(selectedMinute.value);
+      const secondsToShow = zeroPad(selectedSecond.value);
+      return `${hoursToShow}:${minutesToShow}:${secondsToShow}`;
+    }
+
+    // Fallback to current time
+    const currentHours = zeroPad(currentDate.value.getHours());
+    const currentMinutes = zeroPad(currentDate.value.getMinutes());
+    const currentSeconds = zeroPad(currentDate.value.getSeconds());
+
+    return `${currentHours}:${currentMinutes}:${currentSeconds}`;
+  }
+
   if (selectedHour.value !== null && selectedMinute.value !== null) {
     const hoursToShow = zeroPad(selectedHour.value);
     const minutesToShow = zeroPad(selectedMinute.value);
@@ -3861,6 +3880,7 @@ watch(
         :class="[
           {
             'date-time-only': mode === 'time' || mode === 'time-full',
+            'date-time-full-only': mode === 'date-time-full',
           },
         ]"
       >
@@ -3880,7 +3900,9 @@ watch(
             :class="[
               {
                 'date-time-only':
-                  (mode === 'date-time' && isMobileScreen && mobileTimeLayout) ||
+                  ((mode === 'date-time' || mode === 'date-time-full') &&
+                    isMobileScreen &&
+                    mobileTimeLayout) ||
                   (mode === 'time' && isMobileScreen),
               },
             ]"
@@ -4012,7 +4034,9 @@ watch(
             :class="[
               {
                 'date-time-only':
-                  (mode === 'date-time' && isMobileScreen && mobileTimeLayout) ||
+                  ((mode === 'date-time' || mode === 'date-time-full') &&
+                    isMobileScreen &&
+                    mobileTimeLayout) ||
                   (mode === 'time' && isMobileScreen),
               },
             ]"
