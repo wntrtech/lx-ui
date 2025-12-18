@@ -85,6 +85,13 @@ a.lx-sitemap-link {
   text-align: var(--button-primary-text-align);
 }
 
+.lx .lx-button .lx-button-content .lx-button-label {
+  display: block;        
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .lx .lx-button:has(.lx-button-content-wrapper) {
   overflow: visible;
 }

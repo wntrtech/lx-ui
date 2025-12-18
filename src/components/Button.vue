@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, unref, useSlots, watch } from 'vue';
 import LxIcon from '@/components/Icon.vue';
 import LxLoader from '@/components/Loader.vue';
 import LxBadge from '@/components/Badge.vue';
@@ -16,9 +16,9 @@ const props = defineProps({
   title: { type: String, default: '' },
   busyTooltip: { type: String, default: '' },
   icon: { type: String, default: '' },
-  iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet },
+  iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet }, // cds, material, brand, phosphor
   iconVariant: { type: String, default: 'default' },
-  kind: { type: String, default: 'default' },
+  kind: { type: String, default: 'default' }, // primary, secondary, tertiary, ghost
   variant: { type: String, default: 'default' }, // default, icon-only
   destructive: { type: Boolean, default: false },
   href: { type: Object, default: () => {} },
@@ -26,7 +26,6 @@ const props = defineProps({
   loading: { type: Boolean, default: false },
   busy: { type: Boolean, default: false },
   ariaLabel: { type: String, default: null },
-
   badge: { type: String, default: '' },
   badgeIcon: { type: String, default: null },
   badgeType: { type: String, default: 'default' }, // default, good, info, warning, important
@@ -45,7 +44,6 @@ const props = defineProps({
       return true;
     },
   },
-
   active: { type: Boolean, default: false },
   tabindex: { type: [Number, String], default: 0 },
   customClass: { type: String, default: '' },
@@ -65,7 +63,25 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
+const labelEl = ref(null);
+const overflowCheckTrigger = ref(0);
+
 const slots = useSlots();
+
+const click = (e) => {
+  if (props.openInNewTab) emits('click', e, true);
+  else emits('click', e);
+};
+
+const checkOverflow = () => {
+  if (props.variant === 'icon-only') return;
+  nextTick(() => {
+    overflowCheckTrigger.value += 1;
+    if (labelEl.value && labelEl.value.scrollWidth === 0) {
+      overflowCheckTrigger.value += 1;
+    }
+  });
+};
 
 const isDisabled = computed(() => {
   let ret = false;
@@ -83,30 +99,39 @@ const showIcon = computed(() => {
   return ret;
 });
 
-const click = (e) => {
-  if (props.openInNewTab) emits('click', e, true);
-  else emits('click', e);
-};
-
 const isIconOnly = computed(() =>
   Boolean(props.variant === 'icon-only' || (!props.label && !slots.default && props.icon))
 );
+
 const isTextOnly = computed(() => Boolean((props.label || slots.default) && !props.icon));
 
 const accessibleTitle = computed(() => {
+  unref(overflowCheckTrigger);
+
   let tooltip = props.title;
 
+  const isBusy = props.busy;
   const isBusyWithTooltip = props.busy && props.busyTooltip;
 
   if (isIconOnly.value) {
-    return props.title ? props.title : props.label;
+    return props.title || props.label;
   }
-  if (!isBusyWithTooltip && (!props.title || props.title === props.label)) {
+
+  if (
+    !isBusyWithTooltip &&
+    labelEl.value &&
+    props.label?.trim() &&
+    (!props.title || props.title === props.label)
+  ) {
+    const { scrollWidth, clientWidth } = labelEl.value;
+    if (scrollWidth > clientWidth + 1) {
+      return props.label;
+    }
     return null;
   }
 
-  if (props.busy) {
-    tooltip = props.busyTooltip ? props.busyTooltip : tooltip;
+  if (isBusy) {
+    tooltip = props.busyTooltip || tooltip;
   }
 
   return tooltip;
@@ -133,6 +158,17 @@ const ariaLabelWithBadge = computed(() => {
       : `${props.label} (${badgeTypeText}, ${props.badge})`;
   }
   return `${props.label} (${badgeTypeText})`;
+});
+
+watch([() => props.label, () => props.variant], checkOverflow, { flush: 'post' });
+
+onMounted(() => {
+  checkOverflow();
+  window.addEventListener('resize', checkOverflow);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', checkOverflow);
 });
 </script>
 <template>
@@ -186,7 +222,7 @@ const ariaLabelWithBadge = computed(() => {
         class="lx-button-content"
         v-if="variant !== 'icon-only' && (label?.trim() !== '' || $slots.default)"
       >
-        <span class="lx-button-label" v-if="label">{{ label }}</span>
+        <span v-if="label" ref="labelEl" class="lx-button-label">{{ label }}</span>
       </div>
 
       <LxBadge
@@ -249,7 +285,7 @@ const ariaLabelWithBadge = computed(() => {
         class="lx-button-content"
         v-if="variant !== 'icon-only' && (label?.trim() !== '' || $slots.default)"
       >
-        <span class="lx-button-label" v-if="label">{{ label }}</span>
+        <span v-if="label" ref="labelEl" class="lx-button-label">{{ label }}</span>
       </div>
 
       <LxBadge
