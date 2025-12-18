@@ -2146,6 +2146,62 @@ const canSelectNext = computed(() => {
   return true;
 });
 
+function hasOtherSelectableMonth(prev, next, min, max) {
+  let canGoPrev = true;
+  let canGoNext = true;
+
+  if (min) {
+    const py = prev.getFullYear();
+    const pm = prev.getMonth();
+    const minY = min.getFullYear();
+    const minM = min.getMonth();
+
+    canGoPrev = py > minY || (py === minY && pm >= minM);
+  }
+
+  if (max) {
+    const ny = next.getFullYear();
+    const nm = next.getMonth();
+    const maxY = max.getFullYear();
+    const maxM = max.getMonth();
+
+    canGoNext = ny < maxY || (ny === maxY && nm <= maxM);
+  }
+
+  return canGoPrev || canGoNext;
+}
+
+function hasOtherSelectableYear(currentYear, min, max) {
+  let canGoPrev = true;
+  let canGoNext = true;
+
+  if (min) canGoPrev = currentYear - 1 >= min.getFullYear();
+  if (max) canGoNext = currentYear + 1 <= max.getFullYear();
+
+  return canGoPrev || canGoNext;
+}
+
+const hasSelectableMonths = computed(() => {
+  if (props.disabled) return false;
+
+  return hasOtherSelectableMonth(
+    previousMonth.value,
+    nextMonth.value,
+    props.minDateRef,
+    props.maxDateRef
+  );
+});
+
+const hasSelectableYears = computed(() => {
+  if (props.disabled) return false;
+
+  return hasOtherSelectableYear(
+    currentDate.value.getFullYear(),
+    props.minDateRef,
+    props.maxDateRef
+  );
+});
+
 // Compute properties for months, years and quarters grid
 const monthsInYear = computed(() =>
   getMonthGrid(
@@ -3078,7 +3134,7 @@ watch(
         kind="ghost"
         :icon="monthsLayout ? 'chevron-up' : 'chevron-down'"
         :active="monthsLayout"
-        :disabled="disabled"
+        :disabled="disabled || !hasSelectableMonths"
         @click.stop.prevent="openMonthSelect"
       />
 
@@ -3095,7 +3151,7 @@ watch(
         kind="ghost"
         :icon="yearsLayout ? 'chevron-up' : 'chevron-down'"
         :active="yearsLayout"
-        :disabled="disabled"
+        :disabled="disabled || !hasSelectableYears"
         @click.stop.prevent="openYearSelect"
       />
 
