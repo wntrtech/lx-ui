@@ -958,10 +958,18 @@ defineExpose({ highlightRow, clearHighlights, setSelectedIndex });
           <LxInfoWrapper v-if="slots['pre-header'] || slots['post-header']">
             <LxIcon value="info" />
             <template #panel>
-              <slot name="pre-header" /> <br v-if="slots['pre-header']" />
-              <slot name="pre-header-info" /><br v-if="slots['pre-header-info']" />
-              <slot name="post-header" /><br v-if="slots['post-header']" />
-              <slot name="post-header-info" />
+              <div class="responsive-slot pre-header" v-if="slots['pre-header']">
+                <slot name="pre-header" />
+              </div>
+              <div class="responsive-slot pre-header-info" v-if="slots['pre-header-info']">
+                <slot name="pre-header-info" />
+              </div>
+              <div class="responsive-slot post-header" v-if="slots['post-header']">
+                <slot name="post-header" />
+              </div>
+              <div class="responsive-slot post-header-info" v-if="slots['post-header-info']">
+                <slot name="post-header-info" />
+              </div>
             </template>
           </LxInfoWrapper>
         </div>
