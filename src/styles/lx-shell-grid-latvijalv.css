@@ -538,6 +538,25 @@
   .lx-layout.lx-layout-latvijalv .lx-header .lx-user-menu .lx-timeout-badge {
     border-color: var(--color-region);
   }
+
+.lx-layout-latvijalv header .lx-header .lx-login-button .lx-button-content {
+  color: var(--color-data);
+  transition: color .1s ease-in;
+}
+.lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:not(.lx-context-container .popper .lx-button):hover {
+  background-color: var(--color-button-primary-hover-background);
+  color: var(--color-button-primary-hover);
+  border-color: var(--color-button-primary-hover-border);
+}
+
+.lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:hover .lx-button-content {
+  color: var(--color-button-primary-hover);
+
+}
+
+.lx .lx-layout.lx-layout-latvijalv > header > .lx-header .lx-group .lx-login-button .lx-button:hover .lx-button-content-wrapper > svg{
+  fill: var(--color-button-primary-icon-hover);
+}
     
   /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
   @media (max-height: calc(8rem * 5)) {

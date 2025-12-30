@@ -578,13 +578,20 @@ watch(
 );
 
 const loginButtonVariant = computed(() => {
-  if (props.mode === 'public' && windowWidth.value < 1000) {
+  if ((props.mode === 'public' || props.mode === 'latvijalv') && windowWidth.value < 1000) {
     return 'icon-only';
   }
-  if (props.mode === 'default' && windowWidth.value < 800) {
+  if ((props.mode === 'public' || props.mode === 'latvijalv') && windowWidth.value < 800) {
     return 'icon-only';
   }
   return 'default';
+});
+
+const loginButtonKind = computed(() => {
+  if (props.mode === 'default' || props.mode === 'latvijalv') {
+    return 'ghost';
+  }
+  return 'tertiary';
 });
 </script>
 
@@ -822,7 +829,7 @@ const loginButtonVariant = computed(() => {
       <LxButton
         id="lx-shell-login-button"
         customClass="lx-header-button"
-        :kind="mode === 'default' ? 'ghost' : 'tertiary'"
+        :kind="loginButtonKind"
         :icon="mode === 'latvijalv' ? 'user' : 'login'"
         :label="displayTexts.loginButtonLabel"
         :title="displayTexts.loginButtonTitle"

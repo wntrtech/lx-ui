@@ -1599,7 +1599,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :has-language-picker="hasLanguagePicker"
           :languages="languages"
           :has-theme-picker="hasThemePicker"
-          :has-login-button="false"
+          :has-login-button="hasLoginButton"
           :available-themes="availableThemes"
           :system-icon="systemIcon"
           :has-alerts="hasAlerts"
@@ -1692,7 +1692,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
           :texts="displayTexts"
           :hasSpotlight="viewSpotlightItems?.length > 0"
           :spotlightHasBadge="spotlightHasBadge"
-          :hasLoginButton="false"
+          :has-login-button="hasLoginButton"
           @log-in-click="loginClicked"
           @nav-toggle="navToggle"
           @navClick="navClick"
@@ -1787,6 +1787,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         { 'lx-override': overrideDefaultStyles },
       ]"
     >
+      <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
       <LxSkipLink
         v-if="props.hasSkipLink"
         :label="displayTexts.skipLinkLabel"
@@ -1949,6 +1950,7 @@ defineExpose({ spotlightStart, spotlightEnd, closeEverything });
         { 'lx-override': overrideDefaultStyles },
       ]"
     >
+      <!-- eslint-disable-next-line vuejs-accessibility/tabindex-no-positive -->
       <LxSkipLink
         v-if="props.hasSkipLink"
         :label="displayTexts.skipLinkLabel"
