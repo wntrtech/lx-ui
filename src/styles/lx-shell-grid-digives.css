@@ -289,9 +289,6 @@
   border-image: linear-gradient(to right, var(--color-brand), var(--color-brand-secondary)) 1 100%;
 }
 
-.lx-layout.lx-layout-digives > nav {
-  z-index: 999;
-}
 
 .lx .lx-layout.lx-layout-digives > footer {
   grid-column-start: 1;

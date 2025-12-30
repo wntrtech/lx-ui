@@ -2516,11 +2516,6 @@ h2.lx-section-header + p.lx-invalidation-message,
   justify-self: center;
 }
 
-.lx .lx-layout .lx-dropdown-panel:has(.lx-color-list) {
-  background-color: var(--color-region);
-  width: auto;
-}
-
 .lx .lx-layout .lx-drawpad-wrapper div.lx-input-wrapper .lx-canvas-element {
   cursor: crosshair;
   touch-action: none;
@@ -2568,6 +2563,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   min-width: calc(9 * var(--row-size) + 1rem);
+    background-color: var(--color-region);
+  width: auto;
 }
 
 .lx-markdown-text-area-wrapper

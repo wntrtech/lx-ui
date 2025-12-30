@@ -1131,10 +1131,8 @@ onMounted(() => {
 });
 
 const autoCompleteState = computed(() => {
-  if (Array.isArray(model.value) && model.value.length > 0) {
-    return 'selected';
-  } else if (model.value) {
-    return 'selected';
+  if ((Array.isArray(model.value) && model.value.length > 0) || model.value) {
+      return 'selected';
   }
 
   if (

@@ -246,7 +246,7 @@ watch(
         paths.value = Array.from(svgDoc.querySelectorAll('path')).map((pathElement) => {
           const strokeColor = pathElement.getAttribute('stroke') || colorsList.value[0].value;
           const colorDataAttribute =
-            pathElement.getAttribute('data-semantic-color') || colorsList.value[0].variable;
+            pathElement.dataset.semanticColor || colorsList.value[0].variable;
 
           return {
             path: pathElement.getAttribute('d') || '',

@@ -940,34 +940,34 @@ function getImageLocationData(advancedFile, texts) {
 
   return locationData;
 }
+function extractAndCleanData(metadata, dataType = 'other') {
+  const result = {};
+  Object.keys(metadata).forEach((key) => {
+    let value;
+    if (dataType === 'exif') {
+      value = metadata[key]?.description;
+    } else {
+      value = metadata[key];
+    }
 
+    if (typeof value === 'number') {
+      value = value.toString();
+    }
+    if (!value || /^(\s|\0)*$/.test(value)) {
+      value = '—';
+    } else {
+      value = value
+        .replace(/\0+/g, '')
+        .trim()
+        .replace(/\s{2,}/g, ' ');
+    }
+    result[key] = value;
+  });
+  return result;
+}
 function getAdditionalData(advancedFile) {
   const ret = {};
-  function extractAndCleanData(metadata, dataType = 'other') {
-    const result = {};
-    Object.keys(metadata).forEach((key) => {
-      let value;
-      if (dataType === 'exif') {
-        value = metadata[key]?.description;
-      } else {
-        value = metadata[key];
-      }
 
-      if (typeof value === 'number') {
-        value = value.toString();
-      }
-      if (!value || /^(\s|\0)*$/.test(value)) {
-        value = '—';
-      } else {
-        value = value
-          .replace(/\0+/g, '')
-          .trim()
-          .replace(/\s{2,}/g, ' ');
-      }
-      result[key] = value;
-    });
-    return result;
-  }
   // Handle exif data if it exists
   if (advancedFile.meta?.exif) {
     Object.assign(ret, extractAndCleanData(advancedFile.meta.exif, 'exif'));

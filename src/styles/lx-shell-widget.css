@@ -107,36 +107,7 @@ header.lx.lx-header-wrapper .lx-header {
   border-bottom: var(--region-border);
 }
 
-header.lx.lx-layout-public {
-  grid-area: header;
-  background-color: var(--color-region);
-  color: var(--color-nav-foreground);
-  height: var(--nav-row-size);
-  position: fixed;
-  top: 0;
-  width: 100%;
-  align-items: center;
-  z-index: 250;
-  border-bottom: 2px solid var(--color-chrome);
-  display: grid;
-  grid-template-columns: 1fr var(--body-column-size) 1fr;
-  transition: height 0.2s ease-in-out;
-}
-
-header.lx.lx-layout-public>.lx-header {
-  grid-column: 2/3;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  width: 100%;
-  padding: 0;
-  padding-left: 1rem;
-  padding-right: 1rem;
-  height: var(--nav-row-size);
-  align-items: center;
-}
-
-
-  header.lx.lx-layout-public>.lx-header>.lx-group {
+header.lx.lx-layout-public>.lx-header>.lx-group {
   min-height: var(--row-size);
 }
 
@@ -307,13 +278,9 @@ header.lx.lx-layout-public>.lx-header .lx-main-button>div {
   background-color: var(--color-button-ghost-background);
   color: var(--color-button-ghost);
   outline-offset: var(--button-ghost-outline-offset);
-  align-items: var(--button-ghost-align);
   grid-template-columns: var(--button-ghost-grid-template-columns);
   grid-template-rows: var(--button-ghost-grid-template-rows);
   grid-template-areas: var(--button-ghost-grid-areas);
-}
-
-.lx .lx-button.lx-button-ghost {
   text-align: var(--button-ghost-text-align);
   align-items: var(--button-ghost-align);
 }
@@ -829,25 +796,6 @@ header.lx.lx-header-wrapper .lx-header .lx-main-button .lx-badge.lx-badge-test {
 .lx .lx-layout .lx-mega-menu-container ul li.secondary-menu-item.selected {
   background-color: var(--color-region-2);
   border-left: 2px solid var(--color-brand);
-}
-
-.primary-menu-tile.selected svg,
-.secondary-menu-item.selected svg {
-  fill: var(--color-brand);
-}
-
-.primary-menu-tile.selected p,
-.secondary-menu-item.selected p {
-  color: var(--color-brand);
-}
-
-.primary-menu-tile.default-icon svg {
-  fill: var(--color-label)
-}
-
-.lx .lx-mega-menu .lx-mega-menu-container .primary-menu:not(:has(+ .secondary-menu)) {
-  border-bottom: none;
-  padding-bottom: 0;
 }
 
 /** Main button + logo + (some) user styles **/

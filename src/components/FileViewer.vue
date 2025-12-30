@@ -178,10 +178,9 @@ const supportedFileType = computed(() => {
 function debounce(func, delay) {
   let timer;
   return function debounced(...args) {
-    const context = this;
     clearTimeout(timer);
     timer = setTimeout(() => {
-      func.apply(context, args);
+      func.apply(this, args);
     }, delay);
   };
 }
