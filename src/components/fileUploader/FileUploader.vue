@@ -178,6 +178,9 @@ async function updateModel() {
     name: file.name,
     meta: file.meta,
     content: file.content,
+    state: file.state,
+    description: file.description,
+    invalidDescription: file.invalidDescription,
   }));
 
   emits('update:modelValue', fileData);
