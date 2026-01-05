@@ -119,7 +119,7 @@ const maxLengthValue = computed(() => {
 const inputMask = computed(() => {
   if (props.kind === 'phone')
     return {
-      mask: /^[\d()+-]+$/,
+      mask: /^(?:\(\+|\+)?[\d()-]*$/,
     };
 
   switch (props.mask) {
