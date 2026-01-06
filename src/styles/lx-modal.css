@@ -42,8 +42,12 @@
 }
 
 .lx-modal {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: auto;
   background-color: var(--color-region);
   min-height: var(--row-size);
+  max-height: calc(100dvh - calc(var(--row-size) * 2)); /* var(--row-size) * 2, to reserve space for top & bottom margin */
   border: var(--region-border);
   min-width: var(--aside-size);
   margin: var(--row-size);
@@ -84,8 +88,6 @@
 .lx-modal>.lx-main {
   padding: var(--padding-modal); 
   overflow-y: auto;
-  max-height: 80vh;
-  max-height: calc(100vh - 10rem);
 }
 
 .lx-modal.lx-modal-xs {
@@ -109,27 +111,16 @@
 }
 
 @media (max-width: 800px) {
-  .lx-modal {
-    width: 100dvw !important;
-    height: 100dvh !important;
+  #modals .lx-modal {
+    width: 100dvw;
+    height: 100dvh;
+    max-height: 100dvh;
+    max-width: 100dvw;
     margin: 0;
-  }
-
-  .lx-modal .lx-main {
-    height: 100%;
-    margin-bottom: 0;
-  }
-
-  .lx-curtain .lx-modal .lx-main {
-    max-height: calc(100dvh - 7.75rem);
-  }
-
-  .lx-curtain .lx-dialog .lx-main {
-    max-height: calc(100dvh - 9.75rem);
   }
 }
 
-dialog.lx-modal {
+#modals dialog.lx-modal {
   border: none;
   margin: auto;
   padding: 0;
@@ -217,20 +208,6 @@ dialog {
 
 .lx-layout .lx-modal.lx-modal-form .lx-form-grid>header.lx-sticky {
   top: 0;
-}
-
-@media (max-width: 800px) {
-  .lx-curtain .lx-modal.lx-modal-form .lx-main {
-    max-height: calc(100dvh - 4.75rem);
-  }
-
-  .lx-curtain .lx-modal.lx-modal-form .lx-main .lx-form-grid .lx-main {
-    max-height: 100%;
-  }
-
-  .lx-curtain .lx-modal.lx-modal-form:has(footer.lx-button-set:empty) > .lx-main{
-    max-height: 100%;
-  }
 }
 
 @media (max-height: 499px) {

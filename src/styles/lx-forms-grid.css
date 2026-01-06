@@ -1852,7 +1852,7 @@ p .lx-person-display-wrapper {
 }
 
 @media (max-width: 800px) {
-  .lx-modal > .lx-main .lx-form-grid > header > .lx-group.lx-primary .lx-toolbar-chip {
+  .lx-modal:not(.lx-modal-form) > .lx-main .lx-form-grid > header > .lx-group.lx-primary .lx-toolbar-chip {
     padding-left: 0;
     margin-left: 0;
   }
