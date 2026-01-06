@@ -40,8 +40,8 @@ function getRouteTitle(route) {
       {{ label }}
     </div>
     <ul class="lx-sitemap" :id="id" :aria-label="label ? label : null">
-      <li class="lx-sitemap-item" v-for="route in visibleRoutes" :key="route.path">
-        <RouterLink class="lx-sitemap-link" :to="route.path">
+      <li class="lx-sitemap-item" v-for="route in visibleRoutes" :key="route.name">
+        <RouterLink class="lx-sitemap-link" :to="{ name: route.name }">
           {{ getRouteTitle(route) }}
         </RouterLink>
       </li>
