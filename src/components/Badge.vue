@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import useLx from '@/hooks/useLx';
 import LxIcon from '@/components/Icon.vue';
 import { lxDevUtils } from '@/utils';
 import { generateUUID } from '@/utils/stringUtils';
 
-defineProps({
+const props = defineProps({
   id: { type: String, default: () => generateUUID() },
   icon: { type: String, default: null },
   iconSet: { type: String, default: () => useLx().getGlobals()?.iconSet },
@@ -24,6 +25,12 @@ defineProps({
       return true;
     },
   },
+  type: { type: String, default: 'auto' }, // auto, number, text
+});
+
+const isValueNumber = computed(() => {
+  if (props.type === 'auto') return !Number.isNaN(Number(String(props.value)?.trim()));
+  return props.type === 'number';
 });
 </script>
 <template>
@@ -51,7 +58,11 @@ defineProps({
     >
       ({{ tooltip }}):
     </div>
-    <div v-if="value" class="lx-data lx-badge-text">
+    <div
+      v-if="value"
+      class="lx-data lx-badge-text"
+      :class="{ 'lx-badge-type-number': isValueNumber }"
+    >
       {{ value }}
     </div>
   </div>

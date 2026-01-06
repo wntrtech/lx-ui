@@ -4798,6 +4798,11 @@ grid-template-areas: var(--button-nav-grid-areas)
   color: var(--color-badge-text-color); 
 }
 
+.lx-badge .lx-badge-text.lx-badge-type-number{
+  font-family: var(--font-family-mono);
+  font-feature-settings: var(--font-features-mono);
+}
+
 @media (max-height: 499px) {
   .lx-file-viewer.lx-file-viewer-sticky .lx-file-viewer-toolbar {
     position: static;

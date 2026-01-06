@@ -1072,6 +1072,92 @@
   fill: var(--color-tile-icon-hover);
 }
 
+
+.lx-tile-wrapper > .lx-tile> .lx-tile-icon-wrapper,
+.lx-tile-wrapper > .lx-tile> .lx-tile-item-loader {
+  justify-content: space-between;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+.lx-tile-wrapper > .lx-tile .lx-badge {
+  --color-badge-background: var(--color-badge-region-background);
+  border: 2px solid var(--color-region);
+  height: var(--badge-min-height);
+}
+
+
+.lx-tile-wrapper > .lx-tile .lx-badge .lx-badge-text {
+  white-space: nowrap;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1em;
+}
+
+.lx-tile-wrapper > .lx-tile .lx-badge:has(.lx-badge-icon) .lx-badge-text{
+  width: calc(100% - var(--badge-icon-width) - var(--badge-gap));
+}
+
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-empty {
+  min-width: 1rem;
+  min-height: 1rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-good {
+  --color-badge-background: var(--color-green);
+}
+
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-warning {
+  --color-badge-background: var(--color-orange);
+}
+
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-important {
+  --color-badge-background: var(--color-red);
+}
+
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-info.lx-badge-empty {
+  --color-badge-background: var(--color-blue);
+}
+
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-good > .lx-badge-text,
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-warning > .lx-badge-text,
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-important > .lx-badge-text {
+  color: var(--color-badge-foreground);
+}
+
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-good > .lx-badge-icon,
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-warning > .lx-badge-icon,
+.lx-tile-wrapper > .lx-tile .lx-badge.lx-badge-important > .lx-badge-icon {
+  fill: var(--color-badge-foreground);
+}
+
+.lx-tile-wrapper > .lx-tile .badge-wrapper {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lx-tile-wrapper > .lx-tile.lx-mini > .lx-tile-icon-wrapper,
+.lx-tile-wrapper > .lx-tile.lx-mini > .lx-tile-item-loader {
+  position: relative;
+  overflow: visible;
+}
+
+.lx-tile-wrapper > .lx-tile.lx-mini .badge-wrapper{
+  position: absolute;
+  left: 1rem;
+  top: -0.5rem;
+}
+
+.lx-tile-wrapper > .lx-tile.lx-mini .badge-wrapper:has(.lx-badge-empty) {
+  left: 1.5rem;
+}
+
+
 .lx-list-item,
 .lx-tile {
   outline-color: var(--color-focus-background);
