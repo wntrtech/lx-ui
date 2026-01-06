@@ -506,6 +506,7 @@ defineExpose({
         (action, value, schemaName, index) =>
           emits('rowActionClick', action, value, schemaName, index)
       "
+      @filterBuilderFilter="filter"
     />
   </LxFilters>
 </template>

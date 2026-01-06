@@ -111,7 +111,7 @@ const textsDefault = {
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
 
-const emits = defineEmits(['update:modelValue', 'rowActionClick', 'emit']);
+const emits = defineEmits(['update:modelValue', 'rowActionClick', 'emit', 'filterBuilderFilter']);
 
 const model = computed({
   get() {
@@ -685,6 +685,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
                   :validations="validations?.[name]?.[itemName]"
                   @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
                   @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
+                  @filterBuilderFilter="emits('filterBuilderFilter')"
                 />
               </template>
             </LxStack>
@@ -703,6 +704,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
               :validations="validations?.[name]"
               @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
               @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
+              @filterBuilderFilter="emits('filterBuilderFilter')"
             />
           </template>
         </LxStack>
@@ -721,6 +723,7 @@ defineExpose({ validateModel, clearValidations, componentSelect });
           :validations="validations"
           @rowActionClick="(a, b, c, d) => rowActionClicked(a, b, c, d)"
           @emit="(a, b, c, d) => componentEmit(a, b, c, d)"
+          @filterBuilderFilter="emits('filterBuilderFilter')"
         />
       </LxRow>
     </template>

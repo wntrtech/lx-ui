@@ -64,7 +64,7 @@ const props = defineProps({
   texts: { type: Object, default: () => {} },
 });
 
-const emits = defineEmits(['update:modelValue', 'rowActionClick', 'emit']);
+const emits = defineEmits(['update:modelValue', 'rowActionClick', 'emit', 'filterBuilderFilter']);
 
 const model = computed({
   get() {
@@ -443,6 +443,7 @@ function getCustomVariant(row) {
     :invalidation-message="invalidMessage"
     :custom-mask-value="displaySchema?.properties[name]?.lx?.customMaskValue"
     v-model="model[name]"
+    @keyup.enter="emits('filterBuilderFilter')"
   />
   <LxTextArea
     v-else-if="selectedComponent === 'textArea'"
@@ -457,6 +458,7 @@ function getCustomVariant(row) {
     :invalid="isInvalid"
     :invalidation-message="invalidMessage"
     v-model="model[name]"
+    @keyup.enter="emits('filterBuilderFilter')"
   />
   <LxDateTimePicker
     v-else-if="selectedComponent === 'dateTimePicker'"
@@ -500,6 +502,7 @@ function getCustomVariant(row) {
     :invalid="isInvalid"
     :invalidation-message="invalidMessage"
     v-model="model[name]"
+    @keyup.enter="emits('filterBuilderFilter')"
   />
   <LxToggle
     v-else-if="selectedComponent === 'toggle'"
