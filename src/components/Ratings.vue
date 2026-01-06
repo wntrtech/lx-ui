@@ -174,7 +174,7 @@ function reset() {
         <label>{{ displayTexts.label }}</label>
         <p v-if="model" class="lx-data">
           <strong>{{ model.toString() }}</strong
-          ><span class="lx-secondary"> / 5:</span> {{ valueDescription }}
+          ><span class="lx-primary">&nbsp;/ 5:&nbsp;</span> {{ valueDescription }}
         </p>
         <p v-else class="lx-data">—</p>
       </div>
