@@ -11,6 +11,7 @@ const logoAltTexts = {
   eparaksts: 'eParaksts.lv logo',
   'eparaksts-mobile': 'eParaksts mobile logo',
   eid: 'eID logo',
+  'eid-scan': 'eID Scan logo',
   'smart-id': 'Smart ID logo',
   'latvija-lv': 'Latvija.lv logo',
   digimaks: 'Digimaks logo',
