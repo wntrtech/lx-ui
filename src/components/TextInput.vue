@@ -160,6 +160,8 @@ const inputMask = computed(() => {
         lazy: false,
         max: 90,
         min: -90,
+        radix: ',',
+        mapToRadix: [',', '.'],
         format: () => '',
       };
     case 'gpslon':
@@ -169,6 +171,8 @@ const inputMask = computed(() => {
         lazy: false,
         max: 180,
         min: -180,
+        radix: ',',
+        mapToRadix: [',', '.'],
         format: () => '',
       };
     case 'time':
@@ -195,6 +199,8 @@ const inputMask = computed(() => {
       };
   }
 });
+
+const isDecimalLikeMask = computed(() => ['decimal', 'gpslat', 'gpslon'].includes(props.mask));
 
 function convertValue(v) {
   if (!props.convertToString) {
@@ -238,7 +244,7 @@ function onAccept(e) {
   v = convertValue(v);
 
   valueRaw.value = maskRef.value;
-  if (props.mask !== 'decimal' || maskRef.value.slice(-1) !== ',') {
+  if (isDecimalLikeMask.value || maskRef.value.slice(-1) !== ',') {
     model.value = v;
   }
 }
@@ -428,7 +434,7 @@ function formatPhoneValue(newValue) {
 }
 
 function updateValueRaw(newValue) {
-  if (props.mask === 'decimal') {
+  if (isDecimalLikeMask.value) {
     valueRaw.value = model.value?.toString().replace('.', ',');
   } else if (props.mask === 'time') {
     valueRaw.value = formatTimeValue(newValue);
@@ -487,7 +493,7 @@ watch(
 
 onMounted(() => {
   maskUpdate();
-  if (props.mask === 'decimal') {
+  if (isDecimalLikeMask.value) {
     valueRaw.value = props.modelValue?.toString()?.replace('.', ',');
   } else {
     valueRaw.value = props.modelValue?.toString();
