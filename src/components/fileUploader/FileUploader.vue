@@ -19,6 +19,7 @@ const props = defineProps({
   modelValue: { type: Array, default: null },
   kind: { type: String, default: 'single' }, // multiple, single
   mode: { type: String, default: 'default' }, // default, compact
+  maxlength: { type: Number, default: null },
   draggable: { type: Boolean, default: false },
   dataType: { type: String, default: 'meta' }, // content, meta
   hasSearch: { type: Boolean, default: false },
@@ -139,6 +140,21 @@ const fileInput = ref(null);
 const infoModal = ref();
 const cameraModal = ref();
 
+const maxLength = computed(() => {
+  if (props.kind !== 'multiple') return 1;
+  return Number(props.maxlength);
+});
+
+const isAtMaxLength = computed(() => {
+  const current = advancedFilesData.value?.length || 0;
+  return props.kind === 'multiple' && current >= maxLength.value;
+});
+
+const remainingSlots = computed(() => {
+  if (props.kind !== 'multiple') return 0;
+  return Math.max(0, maxLength.value - (advancedFilesData.value?.length || 0));
+});
+
 function changeState(e) {
   advancedFilesData.value = advancedFilesData.value.map((file) => {
     const matchingObject = e.find((obj) => obj.id === file.id);
@@ -167,7 +183,7 @@ const model = computed({
   },
 });
 
-// errors: format, size
+// errors: format, size, maxLength
 function onError(id, errorType) {
   emits('onError', id, errorType);
 }
@@ -267,6 +283,7 @@ function provideAdditionalIconAndType(id) {
 
 const triggerFileUpload = () => {
   if (props.disabled || props.loading || props.busy) return;
+  if (isAtMaxLength.value) return;
   fileInput.value.click();
 };
 
@@ -386,8 +403,28 @@ const handleDragLeave = () => {
   isDragging.value = false;
 };
 
+function limitFilesToRemainingSlots(files) {
+  if (props.kind !== 'multiple') return files.slice(0, 1);
+
+  const slots = remainingSlots.value;
+
+  if (slots <= 0) {
+    onError(props.id, 'maxLength');
+    return [];
+  }
+
+  if (files.length > slots) {
+    onError(props.id, 'maxLength');
+    return [];
+  }
+
+  return files;
+}
+
 async function uploadFiles(event) {
-  const files = Array.from(event.target.files);
+  const incoming = Array.from(event.target.files);
+  const files = limitFilesToRemainingSlots(incoming);
+
   isUploading.value = true;
   await processFiles(files);
   await updateModel();
@@ -402,11 +439,15 @@ async function handleDrop(event) {
   }
   event.preventDefault();
   if (props.draggable) {
-    let files = Array.from(event.dataTransfer.files);
+    const incoming = Array.from(event.dataTransfer.files);
+    let files = incoming;
 
     if (props.kind === 'single') {
       files = [files[0]];
+    } else {
+      files = limitFilesToRemainingSlots(incoming);
     }
+
     isUploading.value = true;
     await processFiles(files);
     await updateModel();
@@ -450,6 +491,7 @@ const base64ToBlob = (base64) => {
 };
 
 async function saveImageAsFile() {
+  if (isAtMaxLength.value) return;
   const blob = base64ToBlob(cameraPhoto.value);
   const id = generateUUID();
   const file = new File([blob], `${id}.jpeg`, { type: blob.type });
@@ -512,7 +554,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           :label="displayTexts.buttonLabel"
           kind="tertiary"
           icon="upload"
-          :disabled="props.disabled"
+          :disabled="props.disabled || isAtMaxLength"
           :loading="props.loading"
           :busy="props.busy"
           @click="triggerFileUpload"
@@ -524,7 +566,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           kind="tertiary"
           variant="icon-only"
           :label="displayTexts.useCamera"
-          :disabled="disabled || loading || busy"
+          :disabled="disabled || loading || busy || isAtMaxLength"
           @click="cameraModal.open()"
         />
       </div>
@@ -534,7 +576,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           class="lx-draggable-upload-wrapper"
           :class="[
             { 'lx-dragging': isDragging },
-            { 'lx-disabled': props.disabled || props.loading || props.busy },
+            { 'lx-disabled': props.disabled || props.loading || props.busy || isAtMaxLength },
           ]"
           @dragover.prevent="handleDragOver"
           @dragleave="handleDragLeave"
@@ -557,7 +599,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           kind="tertiary"
           variant="icon-only"
           :label="displayTexts.useCamera"
-          :disabled="disabled || loading || busy"
+          :disabled="disabled || loading || busy || isAtMaxLength"
           @click="cameraModal.open()"
         />
       </div>
@@ -582,7 +624,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           kind="tertiary"
           icon="upload"
           @click="triggerFileUpload"
-          :disabled="props.disabled"
+          :disabled="props.disabled || isAtMaxLength"
           :loading="props.loading"
           :busy="props.busy"
         />
@@ -593,7 +635,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           kind="tertiary"
           variant="icon-only"
           :label="displayTexts.useCamera"
-          :disabled="disabled || loading || busy"
+          :disabled="disabled || loading || busy || isAtMaxLength"
           @click="cameraModal.open()"
         />
       </div>
@@ -603,7 +645,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           class="lx-draggable-upload-wrapper"
           :class="[
             { 'lx-dragging': isDragging },
-            { 'lx-disabled': props.disabled || props.loading || props.busy },
+            { 'lx-disabled': props.disabled || props.loading || props.busy || isAtMaxLength },
           ]"
           @dragover.prevent="handleDragOver"
           @dragleave="handleDragLeave"
@@ -626,7 +668,7 @@ const labelledBy = computed(() => props.labelId || rowId.value);
           kind="tertiary"
           variant="icon-only"
           :label="displayTexts.useCamera"
-          :disabled="disabled || loading || busy"
+          :disabled="disabled || loading || busy || isAtMaxLength"
           @click="cameraModal.open()"
         />
       </div>
