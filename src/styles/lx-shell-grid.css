@@ -2231,7 +2231,7 @@
 
 /* Shell session timeout badge end */
 
-@media (max-width: 2000px) {
+@media (max-width: 2300px) {
   .lx-layout.lx-layout-default > header .lx-header {
     grid-template-columns: auto 1fr auto;
   }
