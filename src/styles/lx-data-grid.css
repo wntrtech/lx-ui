@@ -98,11 +98,6 @@
   z-index: 1;
 }
 
-/* Overrides for login button hover in public shell  */
-.lx-layout.lx-layout-public header .lx-login-button {
-  --color-header-hover-background: var(--color-button-primary-hover-background)
-}
-
 .lx:not(.lx-theme-contrast) .lx-data-grid-wrapper > .lx-grid-header-wrapper::after {
   background: linear-gradient(0deg, transparent 0%, var(--color-background) 100%);
   content: '';

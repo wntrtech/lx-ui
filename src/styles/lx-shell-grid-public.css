@@ -406,6 +406,10 @@
   border-color: var(--color-region);
 }
 
+.lx-layout.lx-layout-public .lx-header .lx-login-button {
+  --color-header-hover-background: var(--color-button-primary-hover-background);
+}
+
 /* (header+nav)*5 = (5rem+3rem)*5, unless screen width <900px */
 @media (max-height: calc(8rem * 5)) {
   .lx-layout.lx-layout-public.lx-collapsed>header {

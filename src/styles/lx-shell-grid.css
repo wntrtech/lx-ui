@@ -1262,6 +1262,14 @@
   border-color: var(--color-nav-hover-background);
 }
 
+.lx-layout-default .lx-header .lx-login-button > .lx-button {
+  --color-button-ghost-hover: var(--color-interactive-hover-foreground);
+  --color-button-ghost-active: var(--color-interactive-hover-foreground);
+  --color-button-ghost: var(--color-nav-foreground);
+  --button-ghost-grid-areas: var(--button-nav-grid-areas);
+  --button-ghost-grid-template-columns: var(--button-nav-grid-template-columns);
+}
+
 .lx-layout > nav .header-items > .lx-spotlight-button .lx-button:not(#userMenuButton) .lx-badge {
   left: 2rem;
   border-color: var(--color-region);
