@@ -60,7 +60,10 @@ const labelledBy = computed(() => props.labelId || rowId.value);
       :aria-label="label"
       @click="click"
     />
-    <label :for="idValue" class="lx-checkbox-label-wrapper">
+    <label
+      :for="idValue"
+      class="lx-checkbox-label-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-1"
+    >
       <span class="lx-checkbox-appearance">
         <span class="lx-checkbox-thumb">
           <LxIcon value="check" icon-set="cds" />

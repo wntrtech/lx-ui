@@ -85,6 +85,20 @@ function getCustomStatusIcon(options, displayType) {
   }
   return 'status-default';
 }
+
+const alignedRowSize = computed(() => {
+  switch (definition.value?.displayShape) {
+    case 'icon':
+    case 'custom':
+      return 'lx-aligned-row-1';
+    case 'circle':
+      return 'lx-aligned-row-4';
+    case 'diamond':
+      return 'lx-aligned-row-5';
+    default:
+      return 'lx-aligned-row-4';
+  }
+});
 </script>
 <template>
   <!--
@@ -96,8 +110,9 @@ function getCustomStatusIcon(options, displayType) {
   -->
 
   <div
-    class="lx-state"
+    class="lx-state lx-aligned-row"
     :class="[
+      alignedRowSize,
       `lx-state-${definition?.displayType} ${
         definition?.displayShape ? `lx-state-shape-${definition?.displayShape}` : ''
       }`,

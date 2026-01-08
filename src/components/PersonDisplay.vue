@@ -256,12 +256,17 @@ const ariaLabel = computed(() => {
 </script>
 <template>
   <div class="lx-person-display-wrapper">
-    <LxInfoWrapper :label="ariaLabel" :customRole>
+    <LxInfoWrapper
+      :label="ariaLabel"
+      :customRole
+      :class="showMultiple ? 'lx-aligned-row lx-aligned-row-4 lx-aligned-row-inverse' : ''"
+    >
       <div
         v-if="!showMultiple"
-        class="lx-person-display"
+        class="lx-person-display lx-aligned-row"
         :class="[
-          { 'lx-person-display-s': size === 's' },
+          { 'lx-person-display-s lx-aligned-row-3 lx-aligned-row-inverse': size === 's' },
+          { 'lx-aligned-row-6 lx-aligned-row-inverse': size === 'm' },
           { 'lx-person-display-l': size === 'l' },
           { 'lx-icon-only': variant === 'icon-only' },
         ]"

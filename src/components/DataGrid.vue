@@ -1891,26 +1891,29 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                           !isValidString(row?.[col?.attributeName]?.label)
                         "
                       >
-                        <LxIcon
-                          :value="
-                            isValidString(row?.[col?.attributeName]?.icon)
-                              ? row?.[col?.attributeName]?.icon
-                              : 'default'
-                          "
-                          :icon-set="row?.[col?.attributeName]?.iconSet"
-                          :customClass="`lx-grid-column-icon ${
-                            row?.[col?.attributeName]?.category
-                          }`"
-                        />
-                        <p
-                          v-if="
-                            col.size !== 'xs' && isValidString(row?.[col?.attributeName]?.label)
-                          "
-                          class="lx-grid-icon-text"
+                        <div
+                          class="lx-grid-icon-content-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-4"
                         >
-                          {{ row?.[col?.attributeName].label }}
-                        </p>
-
+                          <LxIcon
+                            :value="
+                              isValidString(row?.[col?.attributeName]?.icon)
+                                ? row?.[col?.attributeName]?.icon
+                                : 'default'
+                            "
+                            :icon-set="row?.[col?.attributeName]?.iconSet"
+                            :customClass="`lx-grid-column-icon ${
+                              row?.[col?.attributeName]?.category
+                            }`"
+                          />
+                          <p
+                            v-if="
+                              col.size !== 'xs' && isValidString(row?.[col?.attributeName]?.label)
+                            "
+                            class="lx-grid-icon-text"
+                          >
+                            {{ row?.[col?.attributeName].label }}
+                          </p>
+                        </div>
                         <template #panel>
                           <p class="lx-data">
                             {{
@@ -2366,14 +2369,16 @@ defineExpose({ cancelSelection, selectRows, sortBy });
                       !isValidString(item?.[col?.attributeName]?.label)
                     "
                   >
-                    <LxIcon
-                      :value="item?.[col?.attributeName]?.icon"
-                      :icon-set="item?.[col?.attributeName]?.iconSet"
-                      :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
-                    />
-                    <p v-if="col.size !== 'xs'" class="lx-grid-icon-text">
-                      {{ item?.[col?.attributeName].label }}
-                    </p>
+                    <div class="lx-grid-icon-content-wrapper lx-aligned-row">
+                      <LxIcon
+                        :value="item?.[col?.attributeName]?.icon"
+                        :icon-set="item?.[col?.attributeName]?.iconSet"
+                        :customClass="`lx-grid-column-icon ${item?.[col?.attributeName]?.category}`"
+                      />
+                      <p v-if="col.size !== 'xs'" class="lx-grid-icon-text">
+                        {{ item?.[col?.attributeName].label }}
+                      </p>
+                    </div>
                     <template #panel>
                       <p class="lx-data">
                         {{ item?.[col?.attributeName]?.title || item?.[col?.attributeName]?.label }}

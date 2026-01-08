@@ -788,7 +788,7 @@ function countDigits(number) {
                         !isItemsEmpty
                       "
                       id="select-all"
-                      class="lx-value-picker-item select-all"
+                      class="lx-value-picker-item select-all lx-aligned-row"
                       :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
                       :tabindex="
                         highlightedItemId === 'select-all' ? '0' : !highlightedItemId ? '0' : '-1'
@@ -817,7 +817,7 @@ function countDigits(number) {
                     <div
                       v-if="getIdAttributeString(item) !== 'select-all'"
                       :title="item[nameAttribute]"
-                      class="lx-value-picker-item"
+                      class="lx-value-picker-item lx-aligned-row"
                       :tabindex="
                         highlightedItemId && highlightedItemId === getIdAttributeString(item)
                           ? '0'
@@ -838,7 +838,7 @@ function countDigits(number) {
                           'lx-selected': isItemSelected(item),
                         },
                         {
-                          'dropdown-multiple': kind === 'multiple',
+                          'dropdown-multiple lx-aligned-row-inverse lx-aligned-row-3': kind === 'multiple',
                         },
                       ]"
                       :id="getItemId(item[idAttribute])"

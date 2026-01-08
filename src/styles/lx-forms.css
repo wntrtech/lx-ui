@@ -110,7 +110,6 @@
 .lx .lx-form .lx-row .lx-button label,
 .lx .lx-form .lx-row .lx-radio-button-wrapper label {
   font-size: var(--font-size) !important;
-  line-height: 1.1em;
 }
 
 .lx .lx-form .lx-row .lx-data,
@@ -187,13 +186,16 @@
 
 .lx-state {
   display: flex;
-  align-items: center;
   line-height: 1.1em;
   background-color: var(--color-region);
   border-radius: 1rem;
   padding-left: 0.25rem;
   padding-right: 0.75rem;
   width: auto;
+}
+
+.lx .lx-state.lx-aligned-row {
+  column-gap: 0;
 }
 
 .lx-state.lx-tooltip-state {
@@ -210,7 +212,6 @@
 }
 
 .lx .lx-state .lx-primary {
-  margin-top: 0.0625rem;
   color: var(--color-data);
   font-size: var(--font-size);
 }
@@ -371,15 +372,12 @@
 
 .lx-state-icon {
   margin-right: 0.5rem;
-  align-self: start;
-  margin-top: 0.3125rem;
 }
 
 .lx-state svg.lx-state-icon {
   height: 1rem;
   width: 1rem;
   margin: 0 0.3rem 0 -0.15rem;
-  margin-top: 0.125rem;
   flex-shrink: 0;
 }
 
@@ -914,4 +912,42 @@
   .lx .lx-form.lx-form-region .lx-row {
     width: 100%;
   }
+}
+
+.lx-layout .lx-aligned-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  column-gap: 0.5rem;
+}
+
+.lx-aligned-row.lx-aligned-row-1:not(.lx-aligned-row-inverse) > *:first-child,
+.lx-aligned-row.lx-aligned-row-inverse.lx-aligned-row-1 > *:nth-child(2) {
+  margin-top: 0.0625rem;
+}
+
+.lx-aligned-row.lx-aligned-row-inverse.lx-aligned-row-2 > *:nth-child(2),
+.lx-aligned-row.lx-aligned-row-2:not(.lx-aligned-row-inverse) > *:first-child {
+  margin-top: 0.125rem;
+}
+
+.lx-aligned-row.lx-aligned-row-inverse.lx-aligned-row-3 > *:nth-child(2),
+.lx-aligned-row.lx-aligned-row-3:not(.lx-aligned-row-inverse) > *:first-child {
+  margin-top: 0.1875rem;
+}
+
+.lx-aligned-row.lx-aligned-row-inverse.lx-aligned-row-4 > *:nth-child(2),
+.lx-aligned-row.lx-aligned-row-4:not(.lx-aligned-row-inverse) > *:first-child {
+  margin-top: 0.25rem;
+}
+
+.lx-aligned-row.lx-aligned-row-inverse.lx-aligned-row-5 > *:nth-child(2),
+.lx-aligned-row.lx-aligned-row-5:not(.lx-aligned-row-inverse) > *:first-child {
+  margin-top: 0.3125rem;
+}
+
+.lx-aligned-row.lx-aligned-row-inverse.lx-aligned-row-6 > *:nth-child(2),
+.lx-aligned-row.lx-aligned-row-6:not(.lx-aligned-row-inverse) > *:first-child {
+  margin-top: 0.375rem;
 }

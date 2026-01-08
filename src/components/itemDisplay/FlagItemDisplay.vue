@@ -44,7 +44,7 @@ const flagTitle = computed(() => {
 });
 </script>
 <template>
-  <div class="lx-item-display">
+  <div class="lx-item-display lx-aligned-row">
     <template v-if="attributeExists(value, idAttribute) || attributeExists(value, nameAttribute)">
       <LxFlag
         v-if="attributeExists(value, idAttribute)"
@@ -54,9 +54,9 @@ const flagTitle = computed(() => {
         :locale="locale"
         :meaningful="meaningful"
       />
-      <p class="lx-data" v-if="attributeExists(value, nameAttribute)">
+      <span class="lx-data" v-if="attributeExists(value, nameAttribute)">
         {{ value[nameAttribute] }}
-      </p>
+      </span>
     </template>
     <span class="empty-flag-value" v-else>—</span>
   </div>

@@ -1475,7 +1475,7 @@ defineExpose({ autoCompleteState });
                             (!query || query?.length === 0)
                           "
                           id="select-all"
-                          class="lx-value-picker-item select-all"
+                          class="lx-value-picker-item select-all lx-aligned-row"
                           :class="{ 'lx-highlighted-item': highlightedItemId === 'select-all' }"
                           :tabindex="
                             highlightedItemId === 'select-all'
@@ -1529,7 +1529,7 @@ defineExpose({ autoCompleteState });
                               'lx-highlighted-item':
                                 highlightedItemId &&
                                 highlightedItemId === getIdAttributeString(item),
-                              'autocomplete-multiple': selectingKind === 'multiple',
+                              'autocomplete-multiple lx-aligned-row lx-aligned-row-inverse lx-aligned-row-3': selectingKind === 'multiple',
                               'autocomplete-default-item': variant === 'default',
                             },
                           ]"

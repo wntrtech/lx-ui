@@ -503,13 +503,15 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                 :title="tooltip"
                 v-else-if="variant === 'country'"
               >
-                <LxFlag
-                  :value="selectedItem?.country ? selectedItem?.country : 'lv'"
-                  size="small"
-                  :locale="locale"
-                  :meaningful="meaningful"
-                />
-                <span class="lx-input-text">{{ name }}</span>
+                <div class="lx-aligned-row lx-aligned-row-3">
+                  <LxFlag
+                    :value="selectedItem?.country ? selectedItem?.country : 'lv'"
+                    size="small"
+                    :locale="locale"
+                    :meaningful="meaningful"
+                  />
+                  <span class="lx-input-text">{{ name }}</span>
+                </div>
               </div>
               <div class="lx-dropdown-default-data lx-input-area" :title="tooltip" v-else>
                 <span class="lx-input-text">{{ name }}</span>
@@ -588,13 +590,15 @@ const ariaExpandedState = computed(() => (props.disabled ? false : menuOpen.valu
                           ]"
                         />
                         <template v-else-if="variant === 'country'">
-                          <LxFlag
-                            :value="item?.country ? item?.country : 'lv'"
-                            size="small"
-                            :locale="locale"
-                            :meaningful="meaningful"
-                          />
-                          {{ item[nameAttribute] }}
+                          <div class="lx-aligned-row">
+                            <LxFlag
+                              :value="item?.country ? item?.country : 'lv'"
+                              size="small"
+                              :locale="locale"
+                              :meaningful="meaningful"
+                            />
+                            <span>{{ item[nameAttribute] }}</span>
+                          </div>
                         </template>
                         <template v-else-if="variant === 'custom'">
                           <slot name="customItem" v-bind="item"></slot>

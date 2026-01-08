@@ -1002,10 +1002,12 @@ svg .lx-shade {
   display: flex;
 }
 
+.lx .lx-person-display-wrapper > .lx-aligned-row {
+  grid-template-columns: auto;
+  column-gap: 0;
+}
+
 .lx-person-display {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
   gap: 0 1ch;
 }
 
@@ -1019,12 +1021,13 @@ svg .lx-shade {
 
 .lx-person-display p.lx-data {
   font-weight: var(--font-weight-data);
+  line-height: 1.1em;
 }
 
 .lx-person-display p.lx-description {
   font-size: var(--small-font-size);
   color: var(--color-label);
-  margin-top: -0.2em;
+  margin-top: -0.125rem;
 }
 
 .lx-person-display > svg {

@@ -145,7 +145,7 @@ onMounted(() => {
       />
       <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
-      <div class="lx-toggle-label-wrapper" @click.stop.prevent="toggleValue">
+      <div class="lx-toggle-label-wrapper lx-aligned-row" @click.stop.prevent="toggleValue">
         <LxIcon v-if="model && size === 'm'" value="check" :title="tooltipValue" />
         <span class="lx-toggle-appearance" role="presentation" />
 

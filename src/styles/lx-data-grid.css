@@ -542,23 +542,20 @@
   text-overflow: ellipsis;
   word-wrap: normal;
   word-break: normal;
-  margin-top: 0.3rem;
-  margin-bottom: 0.15rem;
 }
 
-.lx .lx-data-grid .flag-column:has(.lx-flag),
-.lx .lx-data-grid .lx-person-display-wrapper,
-.lx .lx-data-grid .lx-grid-icon-wrapper:has(.lx-grid-column-icon) {
-  margin-top: -5px;
-  margin-bottom: -5px;
+.lx .lx-data-grid .lx-person-display-wrapper {
+  margin-top: -0.125rem;
+  margin-bottom: -0.125rem;
+}
+
+.lx .lx-data-grid .lx-grid-icon-wrapper {
+  margin-top: -0.1875rem;
+  margin-bottom: -0.1875rem;
 }
 
 .lx .lx-data-grid-wrapper .lx-grid-icon-wrapper.lx-icon-has-tooltip {
   cursor: help;
-}
-
-.lx .lx-data-grid .lx-empty-person-value {
-  padding-top: 5px;
 }
 
 .lx .lx-data-grid .flag-column:not(:has(.lx-flag)) p.lx-data,
@@ -1091,17 +1088,6 @@
   margin-left: 0.25rem;
 }
 
-.lx .lx-data-grid .lx-item-display,
-.lx-data-grid-wrapper
-  .lx-appendable-list
-  .lx-appendable-list-item
-  .lx-row
-  .flag-column.lx-item-display {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  overflow: hidden;
-}
-
 .lx .lx-data-grid .lx-item-display:has(.lx-flag),
 .lx-data-grid-wrapper
   .lx-appendable-list
@@ -1111,18 +1097,12 @@
   gap: 0.75ch;
 }
 
-.lx .lx-data-grid .lx-item-display > .lx-flag {
-  margin-top: 0.15rem;
-}
-
 .lx .lx-data-grid-wrapper .lx-data-grid .flag-column p.lx-data {
   align-self: center;
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: normal;
   word-break: normal;
-  margin-top: 0.3rem;
-  margin-bottom: 0.15rem;
 }
 
 .lx-justified-toolbar .lx-group {
@@ -1253,26 +1233,10 @@
   align-self: flex-start;
 }
 
-.lx-grid-icon-wrapper.lx-icon-has-tooltip .popper-wrapper .lx-info-wrapper-content {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.5rem;
-}
-.lx-grid-icon-wrapper.lx-icon-has-tooltip .popper-wrapper .lx-info-wrapper-content svg.lx-grid-column-icon {
-  margin-top: .3rem;
-  margin-bottom: .15rem;
-}
-
 .lx-data-grid .lx-grid-icon-text,
-.lx-responsive-grid-icons-row .lx-info-wrapper-content .lx-grid-icon-text{
+.lx-responsive-grid-icons-row .lx-info-wrapper-content .lx-grid-icon-text {
   overflow: hidden;
   text-overflow: ellipsis;
-  margin-top: 0.3rem;
-  margin-bottom: 0.15rem;
-}
-.lx-responsive-grid-icons-row .lx-grid-icon-text {
-  margin-top: 0.3rem;
-  margin-bottom: 0.15rem;
 }
 
 .lx-data-grid-wrapper .lx-appendable-list .lx-row > div.lx-vertical {

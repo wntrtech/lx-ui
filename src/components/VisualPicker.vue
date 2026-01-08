@@ -404,8 +404,9 @@ defineExpose({ addTitles });
           @selectionChanged="selectionChanged"
         >
           <template #customItem="{ id, name }" v-if="kind === 'europe'">
-            <div class="list-country-item">
-              <LxFlag :value="id" :meaningful="false" />{{ name }}
+            <div class="list-country-item lx-aligned-row">
+              <LxFlag :value="id" :meaningful="false" />
+              <p class="list-country-item-text">{{ name }}</p>
             </div>
           </template>
         </LxList>

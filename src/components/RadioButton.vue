@@ -59,7 +59,10 @@ onMounted(() => {
       :aria-labelledby="labelledBy"
       @click="click"
     />
-    <label :for="idValue" class="lx-radio-button-label-wrapper">
+    <label
+      :for="idValue"
+      class="lx-radio-button-label-wrapper lx-aligned-row lx-aligned-row-inverse lx-aligned-row-2"
+    >
       <span class="lx-radio-button-appearance">
         <span class="lx-radio-thumb" />
       </span>

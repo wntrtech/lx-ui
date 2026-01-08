@@ -29,6 +29,11 @@ defineProps({
 <template>
   <div
     class="lx-flag"
+    :class="[
+      { 'lx-small': size === 'small' },
+      { 'lx-normal': size === 'normal' },
+      { 'lx-large': size === 'big' },
+    ]"
     :aria-label="title || formatCountryCode(value, locale)"
     role="img"
     :aria-hidden="!meaningful"
