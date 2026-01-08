@@ -930,6 +930,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx-layout.lx-override input[type="checkbox"] {
+  -webkit-appearance: none;
   appearance: none;
   display: flex;
   align-items: center;
@@ -948,6 +949,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   outline-color: var(--color-focus-background);
 }
 
+/* Necessary for cases, where a native checkbox needs to look like an LX checkbox */
 .lx-override input[type="checkbox"]::before {
   content: "✔";
   color: transparent;
@@ -994,6 +996,7 @@ h2.lx-section-header + p.lx-invalidation-message,
   outline-color: var(--color-focus-background);
 }
 
+/* Necessary for cases, where a native radio button needs to look like an LX radio button */
 .lx-override input[type="radio"]::before {
   content: "●";
   color: transparent;
@@ -1020,6 +1023,11 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx-override input[type="radio"]:checked::before {
   color: var(--color-data);
   opacity: 1;
+}
+
+.lx .lx-override input[type="checkbox"]:checked::before,
+.lx .lx-override input[type="radio"]:checked::before {
+  content: '';
 }
 
 .lx-radio-button-appearance {
