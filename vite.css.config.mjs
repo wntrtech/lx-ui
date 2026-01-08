@@ -33,6 +33,7 @@ function generateInput() {
     'lx-bt-avis.css',
     'lx-bt-bvkb-insurance.css',
     'lx-bt-lasis.css',
+    'lx-bt-viddis.css',
     // add new bundle names here to exclude them from styles folder
   ];
 
@@ -73,6 +74,7 @@ function generateRollupInput(baseDir, extension = '.css') {
     'lx-bt-avis',
     'lx-bt-bvkb-insurance',
     'lx-bt-lasis',
+    'lx-bt-viddis',
     // add new bundle names here
   ];
 

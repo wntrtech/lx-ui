@@ -1,15 +1,19 @@
 .lx {
-  --color-brand: #414875;
-  --color-interactive-background: #414875;
-  --color-interactive-hover-background: #293059;
+  --color-h: 232;
+  --color-s: 29%;
+  --color-l: 36%;
   --color-background: #f5f0e3;
   --color-region: #fefcf8;
   --color-region-2: #f5f0e3;
-  
-  --color-button-nav-selected-background: #edefff;
+  --color-highlight: #dbe0f0;
+
+  --color-button-nav-selected-background: var(--color-highlight);
 }
 .lx.lx-theme-dark {
-  --color-brand: #6a72b1;
-  --color-interactive-background: #6a72b1;
-  --color-interactive-hover-background: #414875;
+  --color-brand: #747cbb;
+  --color-interactive-background: #8991cd;
+  --color-interactive-secondary-background: #60656c;
+  --color-highlight: #292d3d;
+
+  --color-button-nav-selected-background: var(--color-highlight);
 }
