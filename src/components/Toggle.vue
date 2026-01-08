@@ -21,12 +21,17 @@ const props = defineProps({
 const slots = useSlots();
 const emits = defineEmits(['update:modelValue']);
 
+const internalModel = ref(props.modelValue);
+
 const model = computed({
   get() {
     return props.modelValue;
   },
   set(value) {
-    if (!props.readOnly) emits('update:modelValue', value);
+    if (!props.readOnly) {
+      emits('update:modelValue', value);
+      internalModel.value = value;
+    }
   },
 });
 
@@ -45,6 +50,7 @@ function checkModelState() {
     input.value.indeterminate = false;
     input.value.checked = model.value;
   }
+  internalModel.value = model.value;
 }
 
 const booleanTexts = computed(() => ({
@@ -56,9 +62,9 @@ const tooltipValue = computed(() => {
   let res = '';
 
   if (!props.tooltip && (!slots.on || !slots.off)) {
-    res = formatValueBool(model.value, booleanTexts.value);
+    res = formatValueBool(internalModel.value, booleanTexts.value);
   } else if (props.tooltip && (!slots.on || !slots.off)) {
-    res = `${props.tooltip}: ${formatValueBool(model.value, booleanTexts.value)}`;
+    res = `${props.tooltip}: ${formatValueBool(internalModel.value, booleanTexts.value)}`;
   } else if (props.tooltip) {
     res = props.tooltip;
   }
@@ -99,19 +105,19 @@ onMounted(() => {
         class="lx-toggle-text"
         v-if="!$slots.on && !$slots.off && !$slots.indeterminate && !$slots.default"
       >
-        <p class="lx-data">{{ formatValueBool(modelValue, booleanTexts) }}</p>
+        <p class="lx-data">{{ formatValueBool(internalModel, booleanTexts) }}</p>
       </span>
       <span class="lx-toggle-text" v-else>
         <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate">
-          <p class="lx-data"><slot />: {{ formatValueBool(modelValue, booleanTexts) }}</p>
+          <p class="lx-data"><slot />: {{ formatValueBool(internalModel, booleanTexts) }}</p>
         </span>
-        <span v-show="model === null">
+        <span v-show="internalModel === null">
           <slot name="indeterminate" />
         </span>
-        <span v-show="model === false">
+        <span v-show="internalModel === false">
           <slot name="off" />
         </span>
-        <span v-show="model === true">
+        <span v-show="internalModel === true">
           <slot name="on" />
         </span>
       </span>
@@ -146,18 +152,18 @@ onMounted(() => {
       <!-- it's fine, because key events are being caught by the input above, clicks aren't -->
       <!-- eslint-disable-next-line vuejs-accessibility/click-events-have-key-events-->
       <div class="lx-toggle-label-wrapper lx-aligned-row" @click.stop.prevent="toggleValue">
-        <LxIcon v-if="model && size === 'm'" value="check" :title="tooltipValue" />
+        <LxIcon v-if="internalModel && size === 'm'" value="check" :title="tooltipValue" />
         <span class="lx-toggle-appearance" role="presentation" />
 
         <label class="lx-toggle-text" v-if="size !== 's' && hasSlots" :for="id">
           <span v-show="!$slots.on && !$slots.off && !$slots.indeterminate"> <slot /> </span>
-          <span v-show="model === null">
+          <span v-show="internalModel === null">
             <slot name="indeterminate" />
           </span>
-          <span v-show="model === false">
+          <span v-show="internalModel === false">
             <slot name="off" />
           </span>
-          <span v-show="model === true">
+          <span v-show="internalModel === true">
             <slot name="on" />
           </span>
         </label>

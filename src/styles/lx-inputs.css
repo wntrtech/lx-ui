@@ -1305,7 +1305,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx .lx-toggle-wrapper
-  .lx-toggle[checked]
+  .lx-toggle:checked
   + .lx-toggle-label-wrapper>svg {
   position: absolute;
   left: var(--toggle-checked-icon-position-left);
@@ -1320,28 +1320,28 @@ h2.lx-section-header + p.lx-invalidation-message,
 }
 
 .lx .lx-toggle-wrapper:not([data-disabled])
-  .lx-toggle[checked]
+  .lx-toggle:checked
   + .lx-toggle-label-wrapper>svg {
   fill: var(--color-region);
   cursor: pointer;
 }
 
 .lx:not(.lx-touch-mode) .lx-toggle-wrapper:not([data-disabled]):hover
-  .lx-toggle:not([checked])
+  .lx-toggle:not(:checked)
   + .lx-toggle-label-wrapper
   .lx-toggle-appearance {
   border-color: var(--color-toggle-hover-background);
 }
 
 .lx:not(.lx-touch-mode) .lx-toggle-wrapper:not([data-disabled]):hover
-  .lx-toggle:not([checked])
+  .lx-toggle:not(:checked)
   + .lx-toggle-label-wrapper
   .lx-toggle-appearance::before {
   background-color: var(--color-toggle-hover-background);
 }
 
 .lx:not(.lx-touch-mode) .lx-toggle-wrapper:not([data-disabled]):hover
-  .lx-toggle[checked]
+  .lx-toggle:checked
   + .lx-toggle-label-wrapper
   .lx-toggle-appearance {
   background-color: var(--color-toggle-hover-background);
@@ -1376,8 +1376,8 @@ h2.lx-section-header + p.lx-invalidation-message,
   width: fit-content;
 }
 
-.lx .lx-region .lx-appendable-list .lx-toggle:not([checked]) + .lx-toggle-label-wrapper .lx-toggle-appearance,
-.lx .lx-region .lx-data-block-wrapper .lx-toggle:not([checked]) + .lx-toggle-label-wrapper .lx-toggle-appearance {
+.lx .lx-region .lx-appendable-list .lx-toggle:not(:checked) + .lx-toggle-label-wrapper .lx-toggle-appearance,
+.lx .lx-region .lx-data-block-wrapper .lx-toggle:not(:checked) + .lx-toggle-label-wrapper .lx-toggle-appearance {
   background-color: var(--color-toggle-background-false);
 }
 
@@ -3345,7 +3345,7 @@ h2.lx-section-header + p.lx-invalidation-message,
 .lx .lx-region .lx-toggle-appearance,
 .lx .lx-expander .lx-toggle-appearance,
 .lx .lx-modal .lx-toggle-appearance,
-.lx .lx-dropdown-panel-wrapper .lx-dropdown-panel .lx-toggle:not([checked])
+.lx .lx-dropdown-panel-wrapper .lx-dropdown-panel .lx-toggle:not(:checked)
   + .lx-toggle-label-wrapper
   .lx-toggle-appearance {
   background-color: var(--color-region-2);
