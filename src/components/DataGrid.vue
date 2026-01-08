@@ -178,6 +178,11 @@ const textsDefault = {
   overflowMenu: 'Atvērt papildu iespējas',
   loadingStart: 'Ielādē sākas',
   loadingEnd: 'Ielādē beidzas',
+  defaultSortingTooltips: {
+    asc: 'Tiek kārtots augošā secībā pēc',
+    desc: 'Tiek kārtots dilstošā secībā pēc',
+    default: 'Kārtot pēc',
+  },
 };
 
 const displayTexts = computed(() => getDisplayTexts(props.texts, textsDefault));
@@ -225,6 +230,7 @@ const columnsComputed = computed(() => {
       kind: definition.kind ? definition.kind : 'default',
       size: definition.size ? definition.size : '*',
       options: definition.options ? definition.options : null,
+      sortingTooltips: definition.sortingTooltips,
     });
   });
   return ret;
@@ -291,20 +297,43 @@ function formatValue(value, type, options = null) {
   }
 }
 
-function formatTooltip(displayName, title) {
+function formatTooltip(displayName, title, sorting, sortingTooltips) {
+  let sortTooltips;
+
+  if (sortingTooltips && props.hasSorting) {
+    sortTooltips = sortingTooltips;
+  } else {
+    sortTooltips = displayTexts.value.defaultSortingTooltips;
+  }
+
   const trimmedDisplayName = typeof displayName === 'string' ? displayName.trim() : displayName;
   const trimmedTitle = title?.trim();
 
-  if (trimmedDisplayName && trimmedTitle) {
-    return `${trimmedDisplayName}\r\n${trimmedTitle}`;
+  // Sorting tooltip text
+  let sortingText = '';
+  if (sortTooltips && props.hasSorting) {
+    if (sorting === null || sorting === undefined) {
+      sortingText = !sortingTooltips
+        ? `${sortTooltips?.default} "${trimmedDisplayName}"`
+        : `${sortTooltips?.default}`;
+    } else if (sorting === 'asc') {
+      sortingText = !sortingTooltips
+        ? `${sortTooltips?.asc} "${trimmedDisplayName}"`
+        : `${sortTooltips?.asc}`;
+    } else if (sorting === 'desc') {
+      sortingText = !sortingTooltips
+        ? `${sortTooltips?.desc} "${trimmedDisplayName}"`
+        : `${sortTooltips?.desc}`;
+    }
   }
-  if (trimmedDisplayName) {
-    return trimmedDisplayName;
-  }
-  if (trimmedTitle) {
-    return trimmedTitle;
-  }
-  return '';
+
+  // Compose all lines
+  const tooltipLines = [];
+  if (trimmedDisplayName) tooltipLines.push(trimmedDisplayName);
+  if (trimmedTitle) tooltipLines.push(trimmedTitle);
+  if (sortingText && props.hasSorting) tooltipLines.push(sortingText);
+
+  return tooltipLines.join('\r\n');
 }
 
 function getTextTooltip(col, row) {
@@ -1613,10 +1642,12 @@ defineExpose({ cancelSelection, selectRows, sortBy });
         <div
           v-for="col in gridColumnsDisplay"
           :key="col.id"
-          :title="formatTooltip(col.name, col.title)"
+          :title="formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)"
           class="lx-cell-header"
           :aria-sort="getAriaSorting(sortedColumns[col.id])"
-          :aria-label="formatTooltip(col.name, col.title)"
+          :aria-label="
+            formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
+          "
           :tabindex="hasSorting ? '0' : null"
           role="button"
           :class="[
@@ -1661,17 +1692,23 @@ defineExpose({ cancelSelection, selectRows, sortBy });
             <LxIcon
               value="sort-down"
               v-if="sortedColumns[col.id] === 'desc'"
-              :title="formatTooltip(col.name, col.title)"
+              :title="
+                formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
+              "
             />
             <LxIcon
               value="sort-up"
               v-if="sortedColumns[col.id] === 'asc'"
-              :title="formatTooltip(col.name, col.title)"
+              :title="
+                formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
+              "
             />
             <LxIcon
               value="sort-default"
               v-if="!sortedColumns[col.id]"
-              :title="formatTooltip(col.name, col.title)"
+              :title="
+                formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
+              "
             />
           </div>
         </div>
@@ -1705,7 +1742,9 @@ defineExpose({ cancelSelection, selectRows, sortBy });
           <div
             v-for="col in gridColumnsDisplay"
             :key="col.id"
-            :aria-label="formatTooltip(col.name, col.title)"
+            :aria-label="
+              formatTooltip(col.name, col.title, sortedColumns[col.id], col.sortingTooltips)
+            "
             role="columnheader"
           >
             {{ col.name }}
